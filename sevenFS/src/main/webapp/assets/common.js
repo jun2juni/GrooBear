@@ -291,11 +291,14 @@ class FileUpload extends HTMLElement {
     if (this.uploadedFiles != undefined) {
       let files = this.fileVoToJson(this.uploadedFiles);
       // 삭제할 파일 no 가지고 가기
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = "atchFileNo";
-      input.value = files[0].atchFileNo;
-      this.appendChild(input);
+      console.log(files)
+      if (files.length > 0) {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "atchFileNo";
+        input.value = files[0].atchFileNo;
+        this.appendChild(input);
+      }
 
       files.forEach((file) => {
         this.addFileInput(this.querySelector("#fileInputsContainer"), file);
