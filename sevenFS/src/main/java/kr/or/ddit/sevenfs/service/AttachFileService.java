@@ -18,6 +18,6 @@ public interface AttachFileService {
     public int insertFileList(List<AttachFileVO> attachFileVOList);
 
     // 파일 삭제 처리
-    public int removeFileList(AttachFileVO attachFileVO);
+    public int deleteFileList(AttachFileVO attachFileVO);
 
 }

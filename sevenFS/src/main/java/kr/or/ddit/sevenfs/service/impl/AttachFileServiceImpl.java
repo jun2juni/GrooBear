@@ -35,7 +35,7 @@ public class AttachFileServiceImpl implements AttachFileService {
     }
 
     @Override
-    public int removeFileList(AttachFileVO attachFileVO) {
+    public int deleteFileList(AttachFileVO attachFileVO) {
         return attachFileMapper.removeFileList(attachFileVO);
     }
 }
