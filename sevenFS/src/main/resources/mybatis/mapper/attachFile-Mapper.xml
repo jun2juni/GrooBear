@@ -36,7 +36,7 @@
         FROM ATTATCH_FILE
         WHERE ATCH_FILE_NO = #{atchFileNo}
           AND FILE_USE_YN = 'Y'
-        ORDER BY FILE_SN
+        ORDER BY FILE_SN DESC
     </select>
 
     <update id="removeFileList" parameterType="attachFileVO">

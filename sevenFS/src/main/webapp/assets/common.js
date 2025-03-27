@@ -273,6 +273,7 @@ class FileUpload extends HTMLElement {
     this.name = this.getAttribute("name") || "";
     this.contextPath = this.getAttribute("contextPath") || "";
     this.uploadedFiles = this.getAttribute("uploaded-file");
+    this.atchFileNo = this.getAttribute("atch-file-no");
     // this.fileRoot = this.getAttribute("file-root") || "";
     this.render();
   }
@@ -287,19 +288,18 @@ class FileUpload extends HTMLElement {
     `;
     this.addEventListeners();
 
-    // 이미 추가된 파일 추가
-    if (this.uploadedFiles != undefined) {
-      let files = this.fileVoToJson(this.uploadedFiles);
-      // 삭제할 파일 no 가지고 가기
-      console.log(files)
-      if (files.length > 0) {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "atchFileNo";
-        input.value = files[0].atchFileNo;
-        this.appendChild(input);
-      }
+    // 파일 수정 하는 경우
+    if (this.atchFileNo) {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "atchFileNo";
+      input.value = this.atchFileNo;
+      this.appendChild(input);
+    }
 
+    // 이미 추가된 파일 추가
+    if (this.uploadedFiles != undefined && this.uploadedFiles != "[]") {
+      let files = this.fileVoToJson(this.uploadedFiles);
       files.forEach((file) => {
         this.addFileInput(this.querySelector("#fileInputsContainer"), file);
       });

@@ -41,9 +41,10 @@
 					  ${articlePage}
 					<page-navi
 						url="/demo?${articlePage.getSearchVo()}"
-						current="${param.get("currentPage")}"
+						current="${articlePage.getCurrentPage()}"
 						show-max="3"
-						total="30"></page-navi>
+						total="${articlePage.getTotal()}"
+					></page-navi>
 					  
 					  <page-navi
 						url="/demo?"
@@ -65,8 +66,6 @@
 							<li>max-files => 최대 추가 가능한 이미지 갯수</li>
 							<li>context-path => 이미지 루트 경로 ex)localhost 걍로</li>
 							<li>uploaded-file => 업로드 된 파일 목록</li>
-							
-							
 							<li>max-files="1" 1을 할당하면 1개만 단일 피일 업로드 로 사용 가능</li>
 						</ul>
 <%--						${fileAttachList}--%>
@@ -87,26 +86,25 @@
 				<div class="col-6">
 					<div class="card-style">
 						<h1>파일 업로드 수정</h1>
-						<%--							<file-upload></file-upload>--%>
+						<%-- <file-upload></file-upload> --%>
 						<ul>
 							<li>name => 파라미터명 (백에서 받기위한 값)</li>
 							<li>label => 파일 업로드 명</li>
 							<li>max-files => 최대 추가 가능한 이미지 갯수</li>
 							<li>context-path => 이미지 루트 경로 ex)localhost 걍로</li>
 							<li>uploaded-file => 업로드 된 파일 목록</li>
-							
-							
+							<li>atch-file-no => 수정인 경우 필수로 파일 넘버 넘기기</li>
 							<li>max-files="1" 1을 할당하면 1개만 단일 피일 업로드 로 사용 가능</li>
 						</ul>
-						<%--						${fileAttachList}--%>
+					 
 						<form action="/fileUpdate" method="post" enctype="multipart/form-data">
-						 
 							<file-upload
 									label="메뉴 이미지"
 									name="uploadFile"
 									max-files="5"
 									contextPath="${pageContext.request.contextPath  }"
 									uploaded-file="${fileAttachList}"
+									atch-file-no="1"
 							></file-upload>
 							
 							<button type="submit" class="btn btn-primary">전송</button>
@@ -236,6 +234,7 @@
 								<template>
 									<%--  div안에 감싸줘야 사용 가능 --%>
 									<div class="mb-4">
+										<!-- 진짜 화면에 보여지는쪽 -->
 									  <div>atchFileNo = > {{atchFileNo}}</div>
 									  <div>fileSn = > {{fileSn}}</div>
 									  <div>fileStrePath = >

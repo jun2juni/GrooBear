@@ -1,5 +1,6 @@
 package kr.or.ddit.sevenfs.controller;
 
+import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.ChatService;
 import kr.or.ddit.sevenfs.utils.AttachFile;
 import kr.or.ddit.sevenfs.vo.*;
@@ -26,7 +27,7 @@ public class ChatController {
     private ChatService chatService;
 
     @Autowired
-    private AttachFile AttachFile;
+    private AttachFileService attachFileService;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -75,7 +76,7 @@ public class ChatController {
 
         // 파일 업로드
         if (uploadFiles != null && uploadFiles.length > 0) {
-            attachFileVOList = this.AttachFile.addFiles("chat", uploadFiles);
+            attachFileService.insertFileList("chat", uploadFiles);
         }
 
         resultMap.put("fileVOList", attachFileVOList);

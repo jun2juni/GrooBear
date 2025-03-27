@@ -27,41 +27,13 @@ public class AttachFile {
     // svn 업로드 폴더 안에 추가
     String saveDir = "/Users/heoseongjin/Documents/GitHub/ddit/05_LAST/upload/";
 
-    @Autowired
-    AttachFileService attachFileService;
-
-    public List<AttachFileVO> addFiles(String dir, MultipartFile[] files) {
-        List<AttachFileVO> attachFileVOList = fileRealSave(dir, files, Optional.empty());
-
-        // 디비에 파일 저장 파일이 있는 경우만
-        if (!attachFileVOList.isEmpty()) {
-            attachFileService.insertFileList(attachFileVOList);
-        }
-
-        return attachFileVOList;
-    }
-
-    //  파일 수정
-    public void updateFiles(String dir, MultipartFile[] files, AttachFileVO attachFileVO) {
-        // 파일 삭제 처리 (디비에서만)
-        removeFiles(attachFileVO);
-
-        // 파일 추가 처리
-        List<AttachFileVO> attachFileVOList = fileRealSave(dir, files, Optional.of(attachFileVO.getAtchFileNo()));
-
-        // 디비에 파일 저장 파일이 있는 경우만
-        if (!attachFileVOList.isEmpty()) {
-            attachFileService.insertFileList(attachFileVOList);
-        }
-    }
-
     // 실제 파일 저장 메소드
-    private List<AttachFileVO> fileRealSave(String dir, MultipartFile[] files, Optional<Long> savedFileNo) {
+    public List<AttachFileVO> fileRealSave(String dir, MultipartFile[] files, Long atchFileNo, int atchFileSn) {
         List<AttachFileVO> attachFileVOList = new ArrayList<>();
         folderMkdirs(dir);
         // 저장된 파일 인경우는 넘겨줘야힘
-        long atchFileNo = savedFileNo.orElse(attachFileService.getAttachFileNo());
-        int atchFileSn = attachFileService.getAttachFileSn(atchFileNo);
+
+        // int atchFileSn = attachFileService.getAttachFileSn(atchFileNo);
 
         for (MultipartFile file : files) {
             if (file.getSize() == 0) continue;
@@ -94,13 +66,6 @@ public class AttachFile {
         return attachFileVOList;
     }
 
-    // 파일 유무 변경
-    private void removeFiles(AttachFileVO attachFileVO) {
-        int[] removeFileId = attachFileVO.getRemoveFileId();
-        if (removeFileId != null && removeFileId.length > 0) {
-            attachFileService.deleteFileList(attachFileVO);
-        }
-    }
 
     // 진짜 파일 삭제
     public void deleteRealFiles(List<AttachFileVO> attachFileVOList) {

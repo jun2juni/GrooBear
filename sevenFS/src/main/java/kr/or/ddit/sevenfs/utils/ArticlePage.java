@@ -34,7 +34,6 @@ public class ArticlePage<T> {
 
 	public ArticlePage(int total, int currentPage, int size) {
 		// size : 한 화면에 보여질 목록의 행 수
-		System.out.println(total + "????");
 		this.total = total;
 		this.currentPage = currentPage;
 

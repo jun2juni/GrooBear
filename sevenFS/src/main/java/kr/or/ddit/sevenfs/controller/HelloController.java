@@ -2,7 +2,6 @@ package kr.or.ddit.sevenfs.controller;
 
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
-import kr.or.ddit.sevenfs.utils.AttachFile;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,67 +19,68 @@ import java.util.Map;
 @Slf4j
 @Controller
 public class HelloController {
+	@Autowired
+	private AttachFileService attachFileService;
 
-    @Autowired
-    private AttachFile attachFile;
+	@GetMapping("/")
+	public String index(Model model) {
+		return "home";
+	}
 
-    @Autowired
-    private AttachFileService attachFileService;
+	@GetMapping("/demo")
+	public String demo(Model model, 
+			@RequestParam(defaultValue = "1") int total,
+			@RequestParam(defaultValue = "1") int currentPage, 
+			@RequestParam(defaultValue = "10") int size) {
+		ArticlePage<AttachFileVO> articlePage = new ArticlePage<>(total, currentPage, size);
+		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(1);
 
-    @GetMapping("/")
-    public String index(Model model) {
+		model.addAttribute("fileAttachList", fileAttachList);
 
-        return "home";
-    }
+		AttachFileVO attachFileVO = new AttachFileVO();
+		attachFileVO.setFileNm("파일이름");
+		attachFileVO.setFileExtsn("파일확장자");
+		attachFileVO.setFileStreNm("저장이름");
+		articlePage.setSearchVo(attachFileVO);
 
-    @GetMapping("/demo")
-    public String demo(Model model,
-                        @RequestParam(defaultValue = "1") int total,
-                        @RequestParam(defaultValue = "1") int currentPage,
-                        @RequestParam(defaultValue = "10") int size
-                        ) {
-        ArticlePage<Map<String, Object>> articlePage = new ArticlePage<>(total, currentPage, size);
-        List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(2);
+		articlePage.setTotal(100);
+		articlePage.setCurrentPage(currentPage);
 
-        model.addAttribute("fileAttachList", fileAttachList);
 
-        model.addAttribute("articlePage", articlePage);
+		model.addAttribute("articlePage", articlePage);
 
-        return "1demo/demo";
-    }
+		return "1demo/demo";
+	}
 
-    @GetMapping("/file/list")
-    @ResponseBody
-    public Map<String, Object> fileList() {
-        Map<String, Object> resultMap = new HashMap<>();
-        List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(1);
+	@GetMapping("/file/list")
+	@ResponseBody
+	public Map<String, Object> fileList() {
+		Map<String, Object> resultMap = new HashMap<>();
+		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(1);
 
-        resultMap.put("items", fileAttachList);
-        return resultMap;
-    }
+		resultMap.put("items", fileAttachList);
 
-    @GetMapping("/download")
-    public ResponseEntity<Resource> download(@RequestParam String fileName) {
-        return attachFile.download(fileName);
-    }
+		return resultMap;
+	}
 
-    @PostMapping("/fileUpload")
-    public String fileUpload(MultipartFile[] uploadFile) {
+	@GetMapping("/download")
+	public ResponseEntity<Resource> download(@RequestParam String fileName) {
+		return attachFileService.downloadFile(fileName);
+	}
 
-        log.debug("uploadFile = {}", uploadFile);
-        List<AttachFileVO> fileList = attachFile.addFiles("test", uploadFile);
+	@PostMapping("/fileUpload")
+	public String fileUpload(MultipartFile[] uploadFile) {
 
-        return "redirect:/demo";
-    }
+		attachFileService.insertFileList("test", uploadFile);
 
-    @PostMapping("/fileUpdate")
-    public String fileUpdate(MultipartFile[] uploadFile, AttachFileVO attachFileVO) {
+		return "redirect:/demo";
+	}
 
-        log.debug("uploadFile = {}", uploadFile);
-        log.debug("attachFileVO = {}", attachFileVO);
-        // List<AttachFileVO> fileList = attachFile.addFiles("test", uploadFile);
-        attachFile.updateFiles("test", uploadFile, attachFileVO);
+	@PostMapping("/fileUpdate")
+	public String fileUpdate(MultipartFile[] uploadFile, AttachFileVO attachFileVO) {
 
-        return "redirect:/demo";
-    }
+		attachFileService.updateFileList("test", uploadFile, attachFileVO);
+
+		return "redirect:/demo";
+	}
 }

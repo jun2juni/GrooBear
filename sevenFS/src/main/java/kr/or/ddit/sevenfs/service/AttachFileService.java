@@ -1,6 +1,9 @@
 package kr.or.ddit.sevenfs.service;
 
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,9 +18,12 @@ public interface AttachFileService {
     public List<AttachFileVO> getFileAttachList(long attachFileNo);
 
     // 파일 디비 저장
-    public int insertFileList(List<AttachFileVO> attachFileVOList);
+    public long insertFileList(String dir, MultipartFile[] files);
 
-    // 파일 삭제 처리
-    public int deleteFileList(AttachFileVO attachFileVO);
+    // 파일 수정 처리
+    public int updateFileList(String dir, MultipartFile[] files, AttachFileVO attachFileVO);
+
+    // 파일 다운로드
+    public ResponseEntity<Resource> downloadFile(String fileName);
 
 }
