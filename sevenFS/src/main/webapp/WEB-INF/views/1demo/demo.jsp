@@ -40,13 +40,13 @@
 					  
 					  ${articlePage}
 					<page-navi
-						url="/?${articlePage.getSearchVo()}"
+						url="/demo?${articlePage.getSearchVo()}"
 						current="${param.get("currentPage")}"
 						show-max="3"
 						total="30"></page-navi>
 					  
 					  <page-navi
-						url="/?"
+						url="/demo?"
 						current="${param.get("currentPage")}"
 						show-max="10"
 						total="5"></page-navi>

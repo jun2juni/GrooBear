@@ -35,39 +35,37 @@ document.addEventListener("DOMContentLoaded", function() {
   let infoAlert = new Alert(document.getElementById('infoSuccess'));
 
   // 내 계정 알림 구독
-  connectWebSocket({
-    roomPath: "alert/room",
-    chttRoomNo: emp, receiveMessage: (message) => {
-      console.log(message, "alert" + message);
-
-      if (message.type === TALK) {
-        for (const dom of document.querySelectorAll(".chatRoom")) {
-          // 내가 보고 있는 채팅방이 아닌 경우
-          if (!dom.classList.contains("bg-body-secondary") && dom.dataset.chttRoomNo == message.chttRoomNo) {
-            let badgeDom = dom.querySelector(".read-badge");
-            let chatLastMsgDom = dom.querySelector(".chat-last-msg");
-            let chatCreateDateDom = dom.querySelector(".chat-create-date");
-
-            badgeDom.classList.remove("d-none");
-            // 알림 카운트
-            badgeDom.innerHTML = Number(badgeDom.innerHTML) + 1;
-            // 채팅 내용
-            chatLastMsgDom.innerHTML = message?.mssageCn ?? "내용 없음";
-            // 채팅 받은 시간
-            chatCreateDateDom.innerHTML = formatDate(message?.createDate ?? new Date(), "HH:mm");
-
-            message.title = "메시지 알림";
-            infoAlert.setMessage(message);
-            // 내가 보낸 메세지는 안받기
-            infoAlert.show();
-            break; // 루프 중단
-          }
-        }
-      }
-
-
-    }
-  });
+  // connectWebSocket({
+  //   roomPath: "alert/room",
+  //   chttRoomNo: emp, receiveMessage: (message) => {
+  //     console.log(message, "alert" + message);
+  //
+  //     if (message.type === TALK) {
+  //       for (const dom of document.querySelectorAll(".chatRoom")) {
+  //         // 내가 보고 있는 채팅방이 아닌 경우
+  //         if (!dom.classList.contains("bg-body-secondary") && dom.dataset.chttRoomNo == message.chttRoomNo) {
+  //           let badgeDom = dom.querySelector(".read-badge");
+  //           let chatLastMsgDom = dom.querySelector(".chat-last-msg");
+  //           let chatCreateDateDom = dom.querySelector(".chat-create-date");
+  //
+  //           badgeDom.classList.remove("d-none");
+  //           // 알림 카운트
+  //           badgeDom.innerHTML = Number(badgeDom.innerHTML) + 1;
+  //           // 채팅 내용
+  //           chatLastMsgDom.innerHTML = message?.mssageCn ?? "내용 없음";
+  //           // 채팅 받은 시간
+  //           chatCreateDateDom.innerHTML = formatDate(message?.createDate ?? new Date(), "HH:mm");
+  //
+  //           message.title = "메시지 알림";
+  //           infoAlert.setMessage(message);
+  //           // 내가 보낸 메세지는 안받기
+  //           infoAlert.show();
+  //           break; // 루프 중단
+  //         }
+  //       }
+  //     }
+  //   }
+  // });
 
   // 메시지 전송 이벤트 등록
   let submitMessageDom = document.querySelector("#submitMessage");
