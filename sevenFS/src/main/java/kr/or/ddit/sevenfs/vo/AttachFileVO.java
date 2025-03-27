@@ -20,7 +20,6 @@ public class AttachFileVO {
     private String fileViewSize;
     private String fileMime;
 
-
     private int[] removeFileId;
     private long removeAtchFileNo;
 }

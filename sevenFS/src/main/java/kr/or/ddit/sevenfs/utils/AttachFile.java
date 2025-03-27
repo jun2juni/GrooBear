@@ -28,7 +28,7 @@ public class AttachFile {
     String saveDir = "/Users/heoseongjin/Documents/GitHub/ddit/05_LAST/upload/";
 
     @Autowired
-    AttachFileService attachFileService; // 미정
+    AttachFileService attachFileService;
 
     public List<AttachFileVO> addFiles(String dir, MultipartFile[] files) {
         List<AttachFileVO> attachFileVOList = fileRealSave(dir, files, Optional.empty());
@@ -44,7 +44,7 @@ public class AttachFile {
     //  파일 수정
     public void updateFiles(String dir, MultipartFile[] files, AttachFileVO attachFileVO) {
         // 파일 삭제 처리 (디비에서만)
-        deleteFiles(attachFileVO);
+        removeFiles(attachFileVO);
 
         // 파일 추가 처리
         List<AttachFileVO> attachFileVOList = fileRealSave(dir, files, Optional.of(attachFileVO.getAtchFileNo()));
@@ -95,10 +95,10 @@ public class AttachFile {
     }
 
     // 파일 유무 변경
-    private void deleteFiles(AttachFileVO attachFileVO) {
+    private void removeFiles(AttachFileVO attachFileVO) {
         int[] removeFileId = attachFileVO.getRemoveFileId();
         if (removeFileId != null && removeFileId.length > 0) {
-            attachFileService.removeFileList(attachFileVO);
+            attachFileService.deleteFileList(attachFileVO);
         }
     }
 
