@@ -216,6 +216,27 @@
           </ul>
         </li>
         <%--게시판 사이드 바 --%>
+        
+        <%--조직도 사이드 바 --%>
+        <li class="nav-item nav-item-has-children">
+          <a href="#1" class="${fn:contains(currentURL, "/bbs") ? '' : 'collapsed'}"
+             data-bs-toggle="collapse" data-bs-target="#org"
+             aria-controls="org" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="icon material-symbols-outlined">
+            auto_stories
+            </span>
+            <span class="text">조직도</span>
+          </a>
+          <ul id="org" class="dropdown-nav collapse" style="">
+            <li>
+              <a href="/org"> 1뎁스 </a>
+            </li>
+            <li>
+              <a href="/org"> 2뎁스 </a>
+            </li>
+          </ul>
+        </li>
+        <%--조직도 사이드 바 --%>
     </ul>
   </nav>
   <div class="promo-box">
