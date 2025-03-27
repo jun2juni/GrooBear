@@ -56,7 +56,7 @@
           </a>
           <ul id="project" class="dropdown-nav collapse" style="">
             <li>
-              <a href="/project"> 1뎁스 </a>
+              <a href="/project"> 대시보드 </a>
             </li>
             <li>
               <a href="/project"> 2뎁스 </a>
