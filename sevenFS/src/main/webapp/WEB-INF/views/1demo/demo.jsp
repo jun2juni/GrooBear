@@ -55,7 +55,6 @@
 				</div>
 			</div>
 			
-			
 			<div class="row mb-4">
 				<div class="col-6">
 					<div class="card-style">
@@ -123,9 +122,9 @@
 						<h1>다음 주소 API</h1>
 						<div class="mb-4">
 							<label for="restaurantAdd1" class="form-label mb-3">주소찾기</label>
-							<input type="text" name="restaurantAdd1" class="form-control address-select" id="restaurantAdd1" placeholder="주소를 입력하세요." value="${item.address}" required="required" / value="${restaurant.restaurantAdd1 }">
+							<input type="text" name="restaurantAdd1" class="form-control address-select" id="restaurantAdd1" placeholder="주소를 입력하세요." value="" required="required" >
 							<div class="invalid-feedback restaurantAdd1">식당 주소 찾기를 진행해주세요</div>
-							<input type="text" name="restaurantAdd2" class="form-control mt-3" id="addressDetail" maxlength="30" placeholder="상세주소를 입력하세요." value="${item.addressDetail}" required="required" / value="${restaurant.restaurantAdd2 }">
+							<input type="text" name="restaurantAdd2" class="form-control mt-3" id="addressDetail" maxlength="30" placeholder="상세주소를 입력하세요." value="" required="required" >
 							<div class="invalid-feedback">상세주소를 입력해주세요</div>
 						</div>
 					</div>

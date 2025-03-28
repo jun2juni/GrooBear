@@ -33,12 +33,8 @@
             WHERE CHTT_ROOM_NO = #{chttRoomNo}
         </selectKey>
 
-        INSERT INTO MESSAGE(
-            MSSAGE_SN, EMPL_NO, CHTT_ROOM_NO, MSSAGE_CN, MSSAGE_TY, CREAT_DE
-        )
-        VALUES (
-            #{mssageSn}, #{emplNo}, #{chttRoomNo}, #{mssageCn}, #{mssageTy}, #{creatDe}
-        )
+        INSERT INTO MESSAGE(MSSAGE_SN, EMPL_NO, CHTT_ROOM_NO, MSSAGE_CN, MSSAGE_TY, CREAT_DE)
+        VALUES (#{mssageSn}, #{emplNo}, #{chttRoomNo}, #{mssageCn}, #{mssageTy}, #{creatDe})
     </insert>
 
     <select id="selectChatList" parameterType="hashmap" resultType="kr.or.ddit.sevenfs.vo.ChatVO">
