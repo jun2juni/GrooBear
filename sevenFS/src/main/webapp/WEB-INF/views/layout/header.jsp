@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<header class="header">
+<header class="header mb-4">
   <div class="container-fluid">
     <div class="row">
       <div class="col-lg-5 col-md-5 col-6">
