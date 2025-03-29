@@ -2089,7 +2089,7 @@ h6,
   padding: 16px;
   color: #5d657b;
   resize: none;
-  transition: all 0.3s;
+  /*transition: all 0.3s;*/
 }
 @media (max-width: 767px) {
   .input-style-1 input,

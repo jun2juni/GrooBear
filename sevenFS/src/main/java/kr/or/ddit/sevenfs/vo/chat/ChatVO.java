@@ -1,4 +1,4 @@
-package kr.or.ddit.sevenfs.vo;
+package kr.or.ddit.sevenfs.vo.chat;
 
 import lombok.Data;
 
@@ -19,6 +19,10 @@ public class ChatVO {
     private String mssageCn; // 메시지
     private Date creatDe; // 채팅 발송 시간
     private String mssageTy = "0"; // 0: 채팅 | 1: 파일
+
+    private Date partcptnDt;
+    private Date outDt;
+    private String useYn;
 
     // private String fileName; // 파일 저장 경로
     // private String fileData; // Base64 인코딩된 파일 데이터

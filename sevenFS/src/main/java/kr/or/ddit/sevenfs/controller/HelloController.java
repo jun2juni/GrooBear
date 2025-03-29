@@ -83,4 +83,10 @@ public class HelloController {
 
 		return "redirect:/demo";
 	}
+
+	@GetMapping("/validTest")
+	public String validTest(Model model) {
+
+		return "1demo/validTest";
+	}
 }

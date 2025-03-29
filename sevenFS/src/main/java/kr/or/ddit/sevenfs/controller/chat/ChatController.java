@@ -1,9 +1,9 @@
-package kr.or.ddit.sevenfs.controller;
+package kr.or.ddit.sevenfs.controller.chat;
 
 import kr.or.ddit.sevenfs.service.AttachFileService;
-import kr.or.ddit.sevenfs.service.ChatService;
-import kr.or.ddit.sevenfs.utils.AttachFile;
+import kr.or.ddit.sevenfs.service.chat.ChatService;
 import kr.or.ddit.sevenfs.vo.*;
+import kr.or.ddit.sevenfs.vo.chat.ChatVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -274,17 +274,18 @@ class FileUpload extends HTMLElement {
     this.contextPath = this.getAttribute("contextPath") || "";
     this.uploadedFiles = this.getAttribute("uploaded-file");
     this.atchFileNo = this.getAttribute("atch-file-no");
+    this.required = this.getAttribute("required");
     // this.fileRoot = this.getAttribute("file-root") || "";
     this.render();
   }
 
   render() {
     this.innerHTML = `
-      <div class="mb-3">
-        <label class="me-2">${this.label}</label>
-        ${this.maxFiles > 1 ? '<button type="button" id="addFileBtn" class="btn btn-secondary">추가</button>' : ""}
+      <div class="select-style-1">
+        <label>${this.label} ${this.required === 'true' ? ' <span class="text-danger">*</span>' : ''}</label>
+        <div id="fileInputsContainer"></div>
+        <div>${this.maxFiles > 1 ? '<button type="button" id="addFileBtn" class="btn btn-secondary">추가</button>' : ""}</div>
       </div>
-      <div id="fileInputsContainer"></div>
     `;
     this.addEventListeners();
 
@@ -356,13 +357,13 @@ class FileUpload extends HTMLElement {
       <div>
         <div class="input-group mb-3">
           <div class="file-container text-truncate">
-            <label class="input-group-text file-label">${file?.fileStreNm ?? "파일을 선택해주세요"}</label>
-            <input type="file" name="${this.name}" class="file-input" data-id="${file?.fileSn}">
+            <label class="d-flex text-start input-group-text file-label">${file?.fileStreNm ?? "파일을 선택해주세요"}</label>
+            <input type="file" name="${this.name}" class="form-control file-input" data-id="${file?.fileSn}">
           </div>
           <button type="button" data-id="${file?.fileSn}" class="btn btn-danger removeFileBtn">삭제</button>
         </div>
           
-        <div class="col-6  mb-2">
+        <div class="mb-2">
           <img  class="rounded preview"
                 style="width: 100%; height: auto"
                 src="/upload/${file?.fileStrePath}"
@@ -589,7 +590,7 @@ if (document.getElementById('phoneNumber')) {
   });
 }
 
-// 벨리데이션 기능 - form 에 css 추가 (needs-validation) ** novalidate 속성 추가
+// // 벨리데이션 기능 - form 에 css 추가 (needs-validation) ** novalidate 속성 추가
 if (document.querySelector('.needs-validation')) {
   const forms = document.querySelectorAll('.needs-validation')
 

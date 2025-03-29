@@ -1,4 +1,4 @@
-package kr.or.ddit.sevenfs.vo;
+package kr.or.ddit.sevenfs.vo.chat;
 
 import lombok.Data;
 
@@ -9,12 +9,11 @@ public class ChatRoomVO {
 
     private int chttRoomNo;
     private String chttRoomNm;
-    private Date creatDe;
-    private String chttRoomTy;
+    private Date chttCreatDt;
     private int lastMssageNo;
     private int readCount; // 안읽은 채팅 카운트
     private String lastMsg; // 마지막 메세지
-    private String mssageTy;
+    private String chttRoomTy;
 
     // 채팅방에 들어가 있는 사람들
     private int[] emplNo;

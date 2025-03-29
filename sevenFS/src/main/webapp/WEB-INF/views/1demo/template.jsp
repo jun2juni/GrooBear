@@ -23,7 +23,7 @@
 <main class="main-wrapper">
 	<c:import url="../layout/header.jsp" />
 	
-	<section class="section">
+	<section class="section mt-4">
 		<div class="container-fluid">
 			
 			여기 안에서 작업을 진행하면 됩니다~~~~

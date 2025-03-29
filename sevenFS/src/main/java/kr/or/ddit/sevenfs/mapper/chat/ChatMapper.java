@@ -1,7 +1,7 @@
-package kr.or.ddit.sevenfs.mapper;
+package kr.or.ddit.sevenfs.mapper.chat;
 
-import kr.or.ddit.sevenfs.vo.ChatRoomVO;
-import kr.or.ddit.sevenfs.vo.ChatVO;
+import kr.or.ddit.sevenfs.vo.chat.ChatRoomVO;
+import kr.or.ddit.sevenfs.vo.chat.ChatVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

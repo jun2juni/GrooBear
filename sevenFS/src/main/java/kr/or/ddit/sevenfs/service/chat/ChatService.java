@@ -1,7 +1,7 @@
-package kr.or.ddit.sevenfs.service;
+package kr.or.ddit.sevenfs.service.chat;
 
-import kr.or.ddit.sevenfs.vo.ChatRoomVO;
-import kr.or.ddit.sevenfs.vo.ChatVO;
+import kr.or.ddit.sevenfs.vo.chat.ChatRoomVO;
+import kr.or.ddit.sevenfs.vo.chat.ChatVO;
 
 import java.util.List;
 import java.util.Map;

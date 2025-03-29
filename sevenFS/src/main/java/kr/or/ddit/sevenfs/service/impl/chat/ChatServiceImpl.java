@@ -1,9 +1,9 @@
-package kr.or.ddit.sevenfs.service.impl;
+package kr.or.ddit.sevenfs.service.impl.chat;
 
-import kr.or.ddit.sevenfs.mapper.ChatMapper;
-import kr.or.ddit.sevenfs.service.ChatService;
-import kr.or.ddit.sevenfs.vo.ChatRoomVO;
-import kr.or.ddit.sevenfs.vo.ChatVO;
+import kr.or.ddit.sevenfs.mapper.chat.ChatMapper;
+import kr.or.ddit.sevenfs.service.chat.ChatService;
+import kr.or.ddit.sevenfs.vo.chat.ChatRoomVO;
+import kr.or.ddit.sevenfs.vo.chat.ChatVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
