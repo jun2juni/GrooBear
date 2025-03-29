@@ -4,6 +4,8 @@ import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -24,8 +26,11 @@ import java.util.*;
 @Slf4j
 @Component
 public class AttachFile {
+    @Value("${file.save.abs.path}")
+    private String saveDir;
+
     // svn 업로드 폴더 안에 추가
-    String saveDir = "/Users/heoseongjin/Documents/GitHub/ddit/05_LAST/upload/";
+    // String saveDir = "/Users/heoseongjin/Documents/GitHub/ddit/05_LAST/upload/";
 
     // 실제 파일 저장 메소드
     public List<AttachFileVO> fileRealSave(String dir, MultipartFile[] files, Long atchFileNo, int atchFileSn) {
