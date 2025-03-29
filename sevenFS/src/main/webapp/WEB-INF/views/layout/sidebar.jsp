@@ -67,7 +67,7 @@
         
         <%--전자결재 사이드 바 --%>
         <li class="nav-item nav-item-has-children">
-          <a href="#2" class="${fn:contains(currentURL, "/atrz") ? '' : 'collapsed'}"
+          <a href="#2" class="${fn:contains(currentURL, '/atrz') ? '' : 'collapsed'}"
              data-bs-toggle="collapse" data-bs-target="#atrz"
              aria-controls="atrz" aria-expanded="false" aria-label="Toggle navigation">
             <span class="icon material-symbols-outlined">
@@ -109,7 +109,7 @@
         
         <%--일정 사이드 바 --%>
         <li class="nav-item nav-item-has-children">
-          <a href="#4" class="${fn:contains(currentURL, "/schdule") ? '' : 'collapsed'}"
+          <a href="#4" class="${fn:contains(currentURL, '/schdule') ? '' : 'collapsed'}"
              data-bs-toggle="collapse" data-bs-target="#schdule"
              aria-controls="schdule" aria-expanded="false" aria-label="Toggle navigation">
             <span class="icon material-symbols-outlined">
@@ -130,7 +130,7 @@
         
         <%--메일 사이드 바 --%>
         <li class="nav-item nav-item-has-children">
-          <a href="#5" class="${fn:contains(currentURL, "/mail") ? '' : 'collapsed'}"
+          <a href="#5" class="${fn:contains(currentURL, '/mail') ? '' : 'collapsed'}"
              data-bs-toggle="collapse" data-bs-target="#mail"
              aria-controls="mail" aria-expanded="false" aria-label="Toggle navigation">
             <span class="icon material-symbols-outlined">
@@ -160,7 +160,7 @@
         
         <%--알림 사이드 바 --%>
         <li class="nav-item nav-item-has-children">
-          <a href="#6" class="${fn:contains(currentURL, "/notification") ? '' : 'collapsed'}"
+          <a href="#6" class="${fn:contains(currentURL, '/notification') ? '' : 'collapsed'}"
              data-bs-toggle="collapse" data-bs-target="#notification"
              aria-controls="notification" aria-expanded="false" aria-label="Toggle navigation">
             <span class="icon material-symbols-outlined">notifications</span>
@@ -179,7 +179,7 @@
         
         <%--통계 사이드 바 --%>
         <li class="nav-item nav-item-has-children">
-          <a href="#7" class="${fn:contains(currentURL, "/statistics") ? '' : 'collapsed'}"
+          <a href="#7" class="${fn:contains(currentURL, '/statistics') ? '' : 'collapsed'}"
              data-bs-toggle="collapse" data-bs-target="#statistics"
              aria-controls="statistics" aria-expanded="false" aria-label="Toggle navigation">
             <span class="icon material-symbols-outlined">monitoring</span>
@@ -198,7 +198,7 @@
         
         <%--게시판 사이드 바 --%>
         <li class="nav-item nav-item-has-children">
-          <a href="#1" class="${fn:contains(currentURL, "/bbs") ? '' : 'collapsed'}"
+          <a href="#1" class="${fn:contains(currentURL, '/bbs') ? '' : 'collapsed'}"
              data-bs-toggle="collapse" data-bs-target="#bbs"
              aria-controls="bbs" aria-expanded="false" aria-label="Toggle navigation">
             <span class="icon material-symbols-outlined">
@@ -219,12 +219,10 @@
         
         <%--조직도 사이드 바 --%>
         <li class="nav-item nav-item-has-children">
-          <a href="#1" class="${fn:contains(currentURL, "/bbs") ? '' : 'collapsed'}"
+          <a href="#1" class="${fn:contains(currentURL, '/bbs') ? '' : 'collapsed'}"
              data-bs-toggle="collapse" data-bs-target="#org"
              aria-controls="org" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="icon material-symbols-outlined">
-            auto_stories
-            </span>
+            <span class="icon material-symbols-outlined">groups</span>
             <span class="text">조직도</span>
           </a>
           <ul id="org" class="dropdown-nav collapse" style="">
