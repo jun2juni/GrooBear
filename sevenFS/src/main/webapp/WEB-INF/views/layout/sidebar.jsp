@@ -217,25 +217,39 @@
         </li>
         <%--게시판 사이드 바 --%>
         
-        <%--조직도 사이드 바 --%>
+        <%--근태현황 사이드 바 --%>
         <li class="nav-item nav-item-has-children">
-          <a href="#1" class="${fn:contains(currentURL, '/bbs') ? '' : 'collapsed'}"
-             data-bs-toggle="collapse" data-bs-target="#org"
-             aria-controls="org" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="icon material-symbols-outlined">groups</span>
-            <span class="text">조직도</span>
+          <a href="#1" class="${fn:contains(currentURL, '/dclzType') ? '' : 'collapsed'}"
+             data-bs-toggle="collapse" data-bs-target="#dclzType"
+             aria-controls="dclzType" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="icon material-symbols-outlined">
+			work
+			</span>
+            <span class="text">근태</span>
           </a>
-          <ul id="org" class="dropdown-nav collapse" style="">
+          <ul id="dclzType" class="dropdown-nav collapse" style="">
             <li>
-              <a href="/org"> 1뎁스 </a>
+              <a href="/dclzType"> 근태현황</a>
             </li>
             <li>
-              <a href="/org"> 2뎁스 </a>
+              <a href="/vacation"> 연차 </a>
             </li>
           </ul>
         </li>
+        <%--근태현황 사이드 바 --%>
+        
+        
+
+        <%--조직도 사이드 바 --%>
+        <li class="nav-item">
+          <a href="/orglist" class="${fn:contains(currentURL, '/orglist') ? '' : 'collapsed'}" >
+            <span class="icon material-symbols-outlined">groups</span>
+            <span class="text">조직도</span>
+          </a>
+          </li>
         <%--조직도 사이드 바 --%>
     </ul>
+
   </nav>
   <div class="promo-box">
     <div class="promo-icon">

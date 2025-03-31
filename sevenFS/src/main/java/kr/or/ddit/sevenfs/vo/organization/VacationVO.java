@@ -18,5 +18,5 @@ public class VacationVO {
 	private int excessWorkYryc;
 	private int cmpnstnYryc;
 	
-	
+
 }
