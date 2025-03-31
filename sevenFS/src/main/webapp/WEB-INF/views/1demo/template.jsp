@@ -10,27 +10,25 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8" />
-	<meta
-			name="viewport"
-			content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-	/>
+ 	<meta name="viewport"
+		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 	<title>${title}</title>
-	<c:import url="../layout/prestyle.jsp" />
+  <%@ include file="../layout/prestyle.jsp" %>
 </head>
 <body>
-<c:import url="../layout/sidebar.jsp" />
+<%@ include file="../layout/sidebar.jsp" %>
 <main class="main-wrapper">
-	<c:import url="../layout/header.jsp" />
-	
+  <%@ include file="../layout/header.jsp" %>
 	<section class="section">
 		<div class="container-fluid">
 			
 			여기 안에서 작업을 진행하면 됩니다~~~~
+		 
 		</div>
 	</section>
-	<c:import url="../layout/footer.jsp" />
+  <%@ include file="../layout/footer.jsp" %>
 </main>
-<c:import url="../layout/prescript.jsp" />
+<%@ include file="../layout/prescript.jsp" %>
 </body>
 </html>
