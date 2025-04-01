@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper">
+	<select id="list" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+		SELECT * 
+		FROM ATRZ
+		WHERE DRAFTER_EMPNO='20250001'
+	</select>
+	
+	<!-- DraftVO(title=sfadadfs, content=sadfsdafd, draftNo=null) -->
+	<insert id="draftInsert" parameterType="kr.or.ddit.sevenfs.vo.atrz.DraftVO">
+		<selectKey resultType="String" order="BEFORE" keyProperty="draftNo">
+			SELECT NVL(MAX(DRAFT_NO),0)+1 FROM DRAFT
+		</selectKey>
+		INSERT INTO 
+		DRAFT
+		(DRAFT_NO, DRAFT_TITLE, DRAFT_CONTENT)
+		VALUES
+		(#{draftNo},#{draftTitle},#{draftContent})
+	</insert>
+	<select id="draftDetail" resultType="kr.or.ddit.sevenfs.vo.atrz.DraftVO">
+		SELECT DRAFT_NO, DRAFT_TITLE, DRAFT_CONTENT
+		FROM DRAFT
+		WHERE DRAFT_NO = #{draftNo}
+	</select>
+	
+<!-- 	<select id="atrzDetail" resultMap="atrzMap" parameterType="string"> -->
+<!-- 		SELECT  -->
+<!-- 	        A.ATRZ_DOC_NO, A.DRAFTER_EMPNO, A.DRAFTER_CLSF, A.BKMK_YN, A.ATCH_FILE_NO,  -->
+<!-- 	        A.ATRZ_SJ, A.ATRZ_CN, A.ATRZ_OPINION, A.ATRZ_TMPR_STRE_DT, A.ATRZ_DRFT_DT,  -->
+<!-- 	        A.ATRZ_COMPT_DT, A.ATRZ_RTRVL_DT, A.ATRZ_STTUS_CODE, A.ELTSGN_IMAGE,  -->
+<!-- 	        A.DOC_FORM_NO, A.ATRZ_DELETE_YN, -->
+<!-- 	        D.DRAFT_NO, D.DRAFT_TITLE, D.DRAFT_CONTENT -->
+<!-- 	    FROM ATRZ A -->
+<!-- 	    LEFT JOIN DRAFT D  -->
+<!-- 	        ON A.ATRZ_DOC_NO = D.DRAFT_NO -->
+<!-- 	    WHERE A.ATRZ_DOC_NO = #{atrzDocNo} -->
+<!-- 	</select> -->
+	<resultMap id="atrzMap" type="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+		<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
+		<result property="drafterEmpno" column="DRAFTER_EMPNO"/>
+		<result property="drafterClsf" column="DRAFTER_CLSF"/>
+		<result property="bkmkYn" column="BKMK_YN"/>
+		<result property="atchFileNo" column="ATCH_FILE_NO"/>
+		<result property="atrzSj" column="ATRZ_SJ"/>
+		<result property="atrzCn" column="ATRZ_CN"/>
+		<result property="atrzOpinion" column="ATRZ_OPINION"/>
+		<result property="atrzTmprStreDt" column="ATRZ_TMPR_STRE_DT"/>
+		<result property="atrzDrftDt" column="ATRZ_DRFT_DT"/>
+		<result property="atrzComptDt" column="ATRZ_COMPT_DT"/>
+		<result property="atrzRtrvlDt" column="ATRZ_RTRVL_DT"/>
+		<result property="atrzSttusCode" column="ATRZ_STTUS_CODE"/>
+		
+		<collection property="drafts" ofType="DraftVO">
+        	<id property="draftNo" column="DRAFT_NO"/>
+        	<result property="draftTitle" column="DRAFT_TITLE"/>
+        	<result property="draftContent" column="DRAFT_CONTENT"/>
+    	</collection>
+		
+	</resultMap>
+	
+</mapper>
