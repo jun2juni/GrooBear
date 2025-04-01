@@ -42,10 +42,6 @@ public class EmployeeVO implements UserDetails {
 
 	private List<EmpAuthVO> empAuthVOList;
 	
-	// 전자결재 리스트 추가
-	private List<AtrzVO> EmplAtrzList;
-
-
 	// 스프링 시큐리티 용 ----------------------------------
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
