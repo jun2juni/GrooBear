@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.project.ProjectMapper">
+
+<select id="projectList" resultType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
+	SELECT P.PRJCT_NO, C.CTGRY_NM, P.PRJCT_NM
+		, NVL(P_STATUS.CMMN_CODE_NM, '미정') AS PRJCT_STTUS_NM
+		, P.PRJCT_GRAD
+		, P.PRJCT_BEGIN_DATE, P.PRJCT_END_DATE
+		, NVL(LISTAGG(E.EMPL_NM, ', ') WITHIN GROUP (ORDER BY E.EMPL_NM), '') AS PRTCPNT_NM
+	FROM PROJECT P
+	JOIN PROJECT_CATEGORY C ON P.CTGRY_NO = C.CTGRY_NO
+	LEFT JOIN PROJECT_EMP PE ON P.PRJCT_NO = PE.PRJCT_NO AND PE.PRTCPNT_ROLE = '00' <!-- 책임자 코드 수정: '0' → '00' -->
+	LEFT JOIN EMPLOYEE E ON PE.PRTCPNT_EMPNO = E.EMPL_NO
+	LEFT JOIN COMMON_CODE P_STATUS
+	ON P_STATUS.CMMN_CODE_GROUP = 'PRJCT_STTUS'
+	AND P.PRJCT_STTUS = P_STATUS.CMMN_CODE
+	GROUP BY P.PRJCT_NO, C.CTGRY_NM, P.PRJCT_NM, P_STATUS.CMMN_CODE_NM, P.PRJCT_GRAD, P.PRJCT_BEGIN_DATE, P.PRJCT_END_DATE
+</select>
+
+
+</mapper>
