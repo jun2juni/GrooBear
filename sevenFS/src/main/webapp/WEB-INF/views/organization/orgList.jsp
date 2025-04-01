@@ -5,21 +5,35 @@
 
 <!-- 검색 -->
 <div>
-    <nav class="navbar navbar-light" style="margin-bottom: 20px; flex-wrap: nowrap;">
-        <div style="flex-wrap: nowrap;">
-            <input class="dataTable-input" style="width: 200px;" placeholder="Search" aria-label="Search" id="schName">
-            <button class="btn btn-outline-dark" onclick="fSch()">검색</button>
-        </div>
-    </nav>
-    <div style="float: left;">
-        <button id="allBtn" class="main-btn dark-btn rounded-full btn-hover btn-sm"
-                style="font-size: 0.7rem; padding: 0.2rem 0.4rem;" onclick="openTree();">전체
-        </button>
+    <div class="input-group rounded mb-3">
+        <input type="search" class="form-control rounded" placeholder="이름 입력" aria-label="Search"
+               aria-describedby="search-addon" id="schName"
+               onkeydown="fSchEnder(event)"
+        />
+        <span class="input-group-text border-0" id="search-addon"
+              onclick="fSch()">
+            <i class="fas fa-search"></i>
+        </span>
+    </div>
+    
+    <div class="d-flex justify-content-between">
+        <button id="allBtn" class="main-btn dark-btn rounded-full btn-hover btn-xs"
+         onclick="openTree();">전체</button>
+        
+        <c:if test="${pageContext.request.requestURL.indexOf('orglistAdmin') > 0}" >
+            <sec:authorize access="hasRole('ROLE_ADMIN')">
+                <button id="deptInsert" class="main-btn dark-btn rounded-full btn-hover btn-xs"
+                        onclick="deptInsert();">부서등록
+                </button>
+            </sec:authorize>
+        </c:if>
     </div>
 
     <!-- 조직도 -->
-    <div id="jstree" style="clear: both;margin-top: 20px;"></div>
+    <div id="jstree" class="mb-2"></div>
 </div>
+
+
 
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
@@ -42,29 +56,7 @@
             }
         } // end function
         
-        // 부서등록 - 관리자만 가능
-        function deptInsert(){
-            fetch("/depInsert", {
-                method : "get",
-                headers : {
-                    "Content-Type": "application/json"
-                }
-            })
-                .then(resp => resp.text())
-                .then(res => {
-                    console.log("부서등록 : " , res);
-                    $("#emplDetail").html(res);
-                    
-                    $("#insertBtn").on("click", function(){
-                        swal("등록되었습니다.")
-                            .then((value)=>{
-                                $("#depInsertForm").submit();
-                            });
-                    });
-                    
-                })
-        }
-        
+
         // 비동기로 조직도 데이터 가져오기
         fetch("/organization", {
             method : "get",
@@ -130,6 +122,12 @@
         $('#jstree').jstree(true).search($("#schName").val());
     }
     
+    function fSchEnder(e) {
+        if (e.code === "Enter") {
+            $('#jstree').jstree(true).search($("#schName").val());
+        }
+    }
+    
     function openTree() {
         let bTreeOpen = $('#allBtn').html() === "전체";
         if(bTreeOpen){
@@ -143,4 +141,28 @@
             $('#allBtn').html("전체");
         }
     }
+    
+    // 부서등록 - 관리자만 가능
+    function deptInsert(){
+        fetch("/depInsert", {
+            method : "get",
+            headers : {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(resp => resp.text())
+            .then(res => {
+                console.log("부서등록 : " , res);
+                $("#emplDetail").html(res);
+                
+                $("#insertBtn").on("click", function(){
+                    swal("등록되었습니다.")
+                        .then((value)=>{
+                            $("#depInsertForm").submit();
+                        });
+                });
+                
+            })
+    }
+
 </script>

@@ -459,6 +459,10 @@ h6,
   border-right: 1px solid #DFE5EF;
 }
 
+.btn-xs {
+  padding: 5px 15px;
+}
+
 .btn-sm {
   padding: 10px 20px;
   font-weight: 400;
