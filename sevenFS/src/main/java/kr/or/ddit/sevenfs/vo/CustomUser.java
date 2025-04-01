@@ -27,7 +27,7 @@ public class CustomUser extends User {
         //스프링 시큐리티에서 제공해주고 있는 UsersDetails 타입으로 변환
         //회원정보를 보내줄테니 이제부터 프링이 너가 관리해줘
         super(empVO.getEmplNo(), empVO.getPassword(),
-                empVO.getAuthorities().stream()
+                empVO.getEmpAuthVOList().stream()
                         .map(auth ->
                                 new SimpleGrantedAuthority(auth.getAuthority()))
                         .collect(Collectors.toList())
