@@ -20,9 +20,7 @@ public class EmpDetailImpl implements UserDetailsService { // 스프링 시큐�
     @Override
     public UserDetails loadUserByUsername(String emplNo) throws UsernameNotFoundException {
         // 사용자 정보 검색
-        log.debug("emplNo = {}", emplNo);
         EmployeeVO empVO = organizationService.emplDetail(emplNo);
-        log.debug("empVO = {}", empVO);
         CustomUser customUser = new CustomUser(empVO);
 
         return empVO != null ? customUser : null;
