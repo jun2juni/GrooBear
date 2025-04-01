@@ -12,10 +12,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>${title}</title>
 <c:import url="../layout/prestyle.jsp" />
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
-	integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
-	crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 </head>
 <style>
     img {
@@ -50,7 +47,6 @@
 
 		<section class="section">
 			<div class="container-fluid">
-				<c:import url="../layout/title-wrap.jsp" />
 
 				<div class="row">
 					<div class="col-12">
@@ -62,7 +58,7 @@
 								<div class="board-detail">
 									<div>제목<p>${bbsVO.bbscttSj}</p></div><br>
 									<div>내용<p>${bbsVO.bbscttCn}</p></div><br>
-									<div>작성자<p>${bbsVO.emplNo}</p></div><br>
+									<div>작성자<p>${myEmpInfo.emplNm}</p></div><br>
 									<div>작성일<p>${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}</p></div><br>
 									<c:set var="Efile" value="${bbsVO.files}" />
 									<div>파일
