@@ -69,18 +69,21 @@
         <li class="nav-item nav-item-has-children">
           <a href="#2" class="${fn:contains(currentURL, '/atrz') ? '' : 'collapsed'}"
              data-bs-toggle="collapse" data-bs-target="#atrz"
-             aria-controls="atrz" aria-expanded="false" aria-label="Toggle navigation">
+             aria-controls="atrz" aria-expanded="true" aria-label="Toggle navigation">
             <span class="icon material-symbols-outlined">
-              quickreply
+              inventory
             </span>
             <span class="text">전자결재</span>
           </a>
-          <ul id="atrz" class="dropdown-nav collapse" style="">
+          <ul id="atrz" class="dropdown-nav collapse ${fn:contains(currentURL, '/atrz') ? 'show' : ''}" style="">
             <li>
-              <a href="/atrz"> 1뎁스 </a>
+              <a href="/atrz/home" class="${fn:contains(currentURL, '/atrz/home') ? 'active' : ''}"> 전자결재 </a>
             </li>
             <li>
-              <a href="/atrz"> 2뎁스 </a>
+              <a href="/atrz/approval" class="${fn:contains(currentURL, '/atrz/approval') ? 'active' : ''}"> 결재하기 </a>
+            </li>
+            <li>
+              <a href="/atrz/document" class="${fn:contains(currentURL, '/atrz/document') ? 'active' : ''}"> 전자결재 문서함 </a>
             </li>
           </ul>
         </li>
