@@ -44,7 +44,7 @@ public class AttachFile {
             if (file.getSize() == 0) continue;
 
             String saveName = UUID.randomUUID().toString().replace("-", "") + "_" + file.getOriginalFilename();
-            File path = new File(saveDir + dir + "/" + saveName);
+            File path = new File("C:\\SJupload\\"+ saveName);
 
             try {
                 file.transferTo(path);

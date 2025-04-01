@@ -2,74 +2,83 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.bbs.BbsMapper">
 
-	<!-- 게시글 목록 조회 -->
+    <!-- 게시글 목록 조회 -->
     <select id="bbsList" parameterType="list" resultMap="BbsResultMap">
         WITH U AS (
-		    SELECT 
-		        ROW_NUMBER() OVER(ORDER BY B.BBSCTT_CREAT_DT DESC) AS RNUM,
-		        B.BBS_SN,
-		        B.BBS_CTGRY_NO,
-		        B.EMPL_NO,
-		        B.BBSCTT_SJ,
-		        B.BBSCTT_CN,
-		        B.BBSCTT_CREAT_DT,
-		        B.BBSCTT_UPDT_DT,
-		        B.RDCNT,
-		        B.BBSCTT_USE_YN,
-		        B.UPEND_FIXING_YN,
-		        A.ATCH_FILE_NO,
-		        A.FILE_SN,
-		        A.FILE_STRE_PATH,
-		        A.FILE_NM,
-		        A.FILE_STRE_NM,
-		        A.FILE_EXTSN,
-		        A.FILE_MIME,
-		        A.FILE_SIZE,
-		        A.FILE_VIEW_SIZE,
-		        A.DWLD_CO,
-		        A.EMPL_NO AS FILE_EMPL_NO,
-		        A.FILE_USE_YN,
-		        A.FILE_CREAT_DT
-		    FROM BBS B
-		    LEFT JOIN ATTATCH_FILE A 
-		        ON B.ATCH_FILE_NO = A.ATCH_FILE_NO  
-		)
-		SELECT U.*
-		FROM U
+            SELECT 
+                ROW_NUMBER() OVER(ORDER BY B.BBSCTT_CREAT_DT DESC) AS RNUM,
+                B.BBS_SN,
+                B.BBS_CTGRY_NO,
+                B.EMPL_NO,
+                B.BBSCTT_SJ,
+                B.BBSCTT_CN,
+                B.BBSCTT_CREAT_DT,
+                B.BBSCTT_UPDT_DT,
+                B.RDCNT,
+                B.BBSCTT_USE_YN,
+                B.UPEND_FIXING_YN,
+                A.ATCH_FILE_NO,
+                A.FILE_SN,
+                A.FILE_STRE_PATH,
+                A.FILE_NM,
+                A.FILE_STRE_NM,
+                A.FILE_EXTSN,
+                A.FILE_MIME,
+                A.FILE_SIZE,
+                A.FILE_VIEW_SIZE,
+                A.DWLD_CO,
+                A.EMPL_NO AS FILE_EMPL_NO,
+                A.FILE_USE_YN,
+                A.FILE_CREAT_DT
+            FROM BBS B
+            LEFT JOIN ATTATCH_FILE A 
+                ON B.ATCH_FILE_NO = A.ATCH_FILE_NO  
+        )
+        SELECT U.*
+        FROM U
     </select>
 
-    <!-- 게시글 목록 결과 매핑 -->
+    <!-- 게시글 목록 및 상세 결과 매핑 -->
     <resultMap type="kr.or.ddit.sevenfs.vo.bbs.BbsVO" id="BbsResultMap">
-	    <!-- 게시글 정보 매핑 -->
-	    <id property="bbsSn" column="BBS_SN"/>  <!-- 게시글 순번 -->
-	    <result property="bbsCtgryNo" column="BBS_CTGRY_NO"/>  <!-- 게시판 카테고리 번호 -->
-	    <result property="emplNo" column="EMPL_NO"/>  <!-- 사원 번호 -->
-	    <result property="bbscttSj" column="BBSCTT_SJ"/>  <!-- 게시글 제목 -->
-	    <result property="bbscttCn" column="BBSCTT_CN"/>  <!-- 게시글 내용 -->
-	    <result property="bbscttCreatDt" column="BBSCTT_CREAT_DT"/>  <!-- 생성일시 -->
-	    <result property="bbscttUpdtDt" column="BBSCTT_UPDT_DT"/>  <!-- 수정일시 -->
-	    <result property="rdcnt" column="RDCNT"/>  <!-- 조회수 -->
-	    <result property="bbscttUseYn" column="BBSCTT_USE_YN"/>  <!-- 사용 여부 -->
-	    <result property="upendFixingYn" column="UPEND_FIXING_YN"/>  <!-- 상단 고정 여부 -->
-	
-	    <!-- 첨부 파일 정보 매핑 -->
-	    <collection property="files" ofType="kr.or.ddit.sevenfs.vo.AttachFileVO" notNullColumn="ATCH_FILE_NO">
-	        <result property="atchFileNo" column="ATCH_FILE_NO"/>  <!-- 첨부 파일 번호 -->
-	        <result property="fileSn" column="FILE_SN"/>  <!-- 파일 순번 -->
-	        <result property="fileStrePath" column="FILE_STRE_PATH"/>  <!-- 파일 저장 경로 -->
-	        <result property="fileNm" column="FILE_NM"/>  <!-- 원본 파일명 -->
-	        <result property="fileStreNm" column="FILE_STRE_NM"/>  <!-- 저장된 파일명 -->
-	        <result property="fileExtsn" column="FILE_EXTSN"/>  <!-- 확장자 -->
-	        <result property="fileMime" column="FILE_MIME"/>  <!-- MIME 타입 -->
-	        <result property="fileSize" column="FILE_SIZE"/>  <!-- 파일 크기 -->
-	        <result property="fileViewSize" column="FILE_VIEW_SIZE"/>  <!-- 변환된 파일 크기 (KB/MB) -->
-	        <result property="dwldCo" column="DWLD_CO"/>  <!-- 다운로드 횟수 -->
-	        <result property="emplNo" column="FILE_EMPL_NO"/>  <!-- 파일 등록자 -->
-	        <result property="fileUseYn" column="FILE_USE_YN"/>  <!-- 사용 여부 -->
-	        <result property="fileCreatDt" column="FILE_CREAT_DT"/>  <!-- 파일 생성일시 -->
-	    </collection>
-	</resultMap>
+        <!-- 게시글 정보 매핑 -->
+        <id property="bbsSn" column="BBS_SN"/>
+        <result property="bbsCtgryNo" column="BBS_CTGRY_NO"/>
+        <result property="emplNo" column="EMPL_NO"/>
+        <result property="bbscttSj" column="BBSCTT_SJ"/>
+        <result property="bbscttCn" column="BBSCTT_CN"/>
+        <result property="bbscttCreatDt" column="BBSCTT_CREAT_DT"/>
+        <result property="bbscttUpdtDt" column="BBSCTT_UPDT_DT"/>
+        <result property="rdcnt" column="RDCNT"/>
+        <result property="bbscttUseYn" column="BBSCTT_USE_YN"/>
+        <result property="upendFixingYn" column="UPEND_FIXING_YN"/>
+        <result property="atchFileNo" column="ATCH_FILE_NO"/>
 
+        <!-- 첨부 파일 정보 매핑 -->
+        <collection property="files" 
+                    ofType="kr.or.ddit.sevenfs.vo.AttachFileVO" 
+                    column="ATCH_FILE_NO"
+                    select="selectAttachFiles"/>
+    </resultMap>
+
+    <!-- 첨부 파일 조회를 위한 쿼리 -->
+    <select id="selectAttachFiles" resultType="kr.or.ddit.sevenfs.vo.AttachFileVO">
+        SELECT 
+            ATCH_FILE_NO,
+            FILE_SN,
+            FILE_STRE_PATH,
+            FILE_NM,
+            FILE_STRE_NM,
+            FILE_EXTSN,
+            FILE_MIME,
+            FILE_SIZE,
+            FILE_VIEW_SIZE,
+            DWLD_CO,
+            EMPL_NO,
+            FILE_USE_YN,
+            FILE_CREAT_DT
+        FROM ATTATCH_FILE
+        WHERE ATCH_FILE_NO = #{atchFileNo}
+    </select>
 
     <!-- 게시글 상세 조회 -->
     <select id="bbsDetail" resultMap="BbsResultMap" parameterType="int">
@@ -84,24 +93,9 @@
             B.RDCNT,
             B.BBSCTT_USE_YN,
             B.UPEND_FIXING_YN,
-            B.ATCH_FILE_NO as bbsAtchFileNo,
-            F.ATCH_FILE_NO as fileAtchFileNo,
-            F.FILE_SN as fileSn,
-            F.FILE_STRE_PATH as fileStrePath,
-            F.FILE_NM as fileNm,
-            F.FILE_STRE_NM as fileStreNm,
-            F.FILE_EXTSN as fileExtsn,
-            F.FILE_MIME as fileMime,
-            F.FILE_SIZE as fileSize,
-            F.FILE_VIEW_SIZE as fileViewSize,
-            F.DWLD_CO as dwldCo,
-            F.EMPL_NO as fileEmplNo,
-            F.FILE_USE_YN as fileUseYn,
-            F.FILE_CREAT_DT as fileCreatDt
+            B.ATCH_FILE_NO
         FROM BBS B
-        LEFT JOIN ATTATCH_FILE F ON B.ATCH_FILE_NO = F.ATCH_FILE_NO
         WHERE B.BBS_SN = #{bbsSn}
-        ORDER BY B.BBSCTT_CREAT_DT DESC
     </select>
 
     <!-- 게시글 수정 -->
@@ -123,15 +117,34 @@
         </selectKey>
 
         INSERT INTO BBS 
-          (BBS_SN, BBS_CTGRY_NO, EMPL_NO, BBSCTT_SJ, BBSCTT_CN, BBSCTT_CREAT_DT, RDCNT, BBSCTT_USE_YN, BBSCTT_DELETE_YN, UPEND_FIXING_YN, ATCH_FILE_NO)
+            (BBS_SN, BBS_CTGRY_NO, EMPL_NO, BBSCTT_SJ, BBSCTT_CN, 
+             BBSCTT_CREAT_DT, RDCNT, BBSCTT_USE_YN, UPEND_FIXING_YN, ATCH_FILE_NO)
         VALUES 
-          (#{bbsSn},'1', #{emplNo}, #{bbscttSj}, #{bbscttCn}, SYSDATE, 0, 'Y', 'N', #{upendFixingYn}, #{atchFileNo})
+            (#{bbsSn}, '1', #{emplNo}, #{bbscttSj}, #{bbscttCn}, 
+             SYSDATE, 0, 'Y', 'N', #{atchFileNo})
     </insert>
 
     <!-- 게시글에 연결된 파일 조회 -->
     <select id="getFilesByBbsSn" parameterType="int" resultType="kr.or.ddit.sevenfs.vo.AttachFileVO">
-        SELECT * FROM ATTATCH_FILE WHERE bbsSn = #{bbsSn}
+        SELECT 
+            ATCH_FILE_NO, 
+            FILE_SN, 
+            FILE_STRE_PATH, 
+            FILE_NM, 
+            FILE_STRE_NM, 
+            FILE_EXTSN, 
+            FILE_MIME, 
+            FILE_SIZE, 
+            FILE_VIEW_SIZE, 
+            DWLD_CO, 
+            EMPL_NO, 
+            FILE_USE_YN, 
+            FILE_CREAT_DT
+        FROM ATTATCH_FILE
+        WHERE ATCH_FILE_NO IN (
+            SELECT ATCH_FILE_NO 
+            FROM BBS 
+            WHERE BBS_SN = #{bbsSn}
+        )
     </select>
-
-    
 </mapper>
