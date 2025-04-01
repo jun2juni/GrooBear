@@ -8,6 +8,15 @@
        		   CMMN_CODE_DC, USE_YN, UPPER_CMMN_CODE
 		FROM COMMON_CODE
 		WHERE CMMN_CODE_GROUP='DEPARTMENT'
+		AND USE_YN='Y'
+	</select>
+	
+	<select id="deptDetail" parameterType="kr.or.ddit.sevenfs.vo.CommonCodeVO" resultType="kr.or.ddit.sevenfs.vo.CommonCodeVO">
+		SELECT CMMN_CODE_GROUP, CMMN_CODE, CMMN_CODE_NM, 
+       		   CMMN_CODE_DC, USE_YN, UPPER_CMMN_CODE
+		FROM COMMON_CODE
+		WHERE CMMN_CODE_GROUP='DEPARTMENT'
+        AND CMMN_CODE=#{cmmnCode}	
 	</select>
 	
 	<!-- 전체 사원 조회 -->
@@ -80,4 +89,29 @@
 		<result property="partclrMatter" column="PARTCLR_MATTER"/>
 		<result property="contdEmpno" column="CONTD_EMPNO"/>
 	</resultMap>
+	
+	<!-- 부서 등록 -->
+	<insert id="depInsert" parameterType="kr.or.ddit.sevenfs.vo.CommonCodeVO">
+		INSERT INTO COMMON_CODE (CMMN_CODE_GROUP, CMMN_CODE, CMMN_CODE_NM,
+            CMMN_CODE_DC, USE_YN, UPPER_CMMN_CODE, CMMN_CODE_SN)
+		VALUES ('DEPARTMENT', #{cmmnCode}, #{cmmnCodeNm},#{cmmnCodeDc},'Y', #{upperCmmnCode}, #{cmmnCodeSn})
+	</insert>
+	
+	<!-- 부서 수정 -->
+	<update id="deptUpdate" parameterType="kr.or.ddit.sevenfs.vo.CommonCodeVO">
+		UPDATE COMMON_CODE
+		SET CMMN_CODE_NM = #{cmmnCodeNm},
+		    CMMN_CODE_DC = #{cmmnCodeDc},
+		    CMMN_CODE = #{cmmnCode}
+		WHERE CMMN_CODE = #{cmmnCode}
+		AND CMMN_CODE_GROUP = 'DEPARTMENT'
+	</update>
+	
+	<!-- 부서 삭제  -->
+	<update id="deptDelete" parameterType="kr.or.ddit.sevenfs.vo.CommonCodeVO">
+		UPDATE COMMON_CODE
+		SET USE_YN='N'
+		WHERE CMMN_CODE=#{cmmnCode}
+		AND CMMN_CODE_GROUP='DEPARTMENT'
+	</update>
 </mapper>

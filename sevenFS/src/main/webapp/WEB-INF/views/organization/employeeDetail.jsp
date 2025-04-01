@@ -6,7 +6,9 @@
    <h6 class="text-sm text-medium"></h6>
    <div class="chat-about-profile">
      <div class="image mx-auto" style="text-align:center;">
-       <img src="" alt="이미지 넣어야됨"><br/>
+     <form action="/fileUpload" method="post" enctype="multipart/form-data">
+		</form>
+       <img src="/" alt="이미지 넣어야됨"><br/>
        <span class="text-medium text-dark">${empDetail.emplNm}</span>
      </div>
      <div class="content text-center">

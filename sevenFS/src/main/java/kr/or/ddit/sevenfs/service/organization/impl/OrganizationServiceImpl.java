@@ -75,6 +75,34 @@ public class OrganizationServiceImpl implements OrganizationService {
 	// 사원 상세직급
 	public CommonCodeVO empDetailPos(String emplNo) {
 		return organizationMapper.empDetailPos(emplNo);
+	}
+
+	// 부서 상세조회
+	@Override
+	public CommonCodeVO deptDetail(String cmmnCode) {
+		return organizationMapper.deptDetail(cmmnCode);
+	}
+	
+	// 부서 등록
+	public int depInsert(CommonCodeVO commonCodeVO) {
+		return organizationMapper.depInsert(commonCodeVO);
+	}
+
+	// 부서 수정
+	@Override
+	public int deptUpdate(CommonCodeVO commonCodeVO) {
+		int result = organizationMapper.deptUpdate(commonCodeVO);
+		log.info("부서 수정 result : " + result);
+		return result;
+	}
+
+	// 부서 삭제
+	@Override
+	public int deptDelete(String cmmnCode) {
+		return organizationMapper.deptDelete(cmmnCode);
 	};
+	
+
+	
 
 }
