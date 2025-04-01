@@ -78,6 +78,8 @@ public class CommonCode {
         }
     }
 
+    // 부서는 추가가 가능하기 떄문에 사용 불가능으로 판단 - 0401 허성진
+/*
     @Getter
     public enum DepartmentEnum {
         REPRESENTATIVE("00", "대표이사", null),
@@ -124,6 +126,7 @@ public class CommonCode {
             return null;  // 코드가 일치하지 않으면 null 반환
         }
     }
+*/
 
     @Getter
     public enum PositionEnum {
