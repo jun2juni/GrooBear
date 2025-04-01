@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.AuthMapper">
+
+    <resultMap id="loginMap" type="employeeVO">
+        <id property="emplNo" column="EMPL_NO"/>
+        <result property="password" column="PASSWORD"/>
+        <result property="enabled" column="ENABLED"/>
+        <result property="emplNm" column="EMPL_NM"/>
+        <result property="brthdy" column="BRTHDY"/>
+        <result property="telno" column="TELNO"/>
+        <result property="acnutno" column="ACNUTNO"/>
+        <result property="bankNm" column="BANK_NM"/>
+        <result property="email" column="EMAIL"/>
+        <result property="postNo" column="POST_NO"/>
+        <result property="adres" column="ADRES"/>
+        <result property="detailAdres" column="DETAIL_ADRES"/>
+        <result property="ecnyDate" column="ECNY_DATE"/>
+        <result property="retireDate" column="RETIRE_DATE"/>
+        <result property="atchFileNo" column="ATCH_FILE_NO"/>
+        <result property="elctrnSignImageUrl" column="ELCTRN_SIGN_IMAGE_URL"/>
+        <result property="proflPhotoUrl" column="PROFL_PHOTO_URL"/>
+        <result property="deptCode" column="DEPT_CODE"/>
+        <result property="clsfCode" column="CLSF_CODE"/>
+        <result property="genderCode" column="GENDER_CODE"/>
+        <result property="emplSttusCode" column="EMPL_STTUS_CODE"/>
+        <collection property="empAuthVOList" resultMap="loginAuthMap"/>
+    </resultMap>
+    
+    <resultMap id="loginAuthMap" type="empAuthVO">
+        <id property="authority" column="AUTHORITY"/>
+        <id property="emplNo" column="EMPL_NO"/>
+    </resultMap>
+    
+    <select id="login" parameterType="map" resultMap="loginMap">
+        SELECT e.EMPL_NO, PASSWORD, ENABLED, EMPL_NM, BRTHDY, TELNO, ACNUTNO, BANK_NM, EMAIL, POST_NO,
+               ADRES,  DETAIL_ADRES,  ECNY_DATE,  RETIRE_DATE,  ATCH_FILE_NO,  ELCTRN_SIGN_IMAGE_URL,
+               PROFL_PHOTO_URL,
+               DEPT_CODE,
+               CLSF_CODE,
+               GENDER_CODE,
+               EMPL_STTUS_CODE,
+               PARTCLR_MATTER, CONTD_EMPNO,
+               AUTHORITY
+        FROM EMPLOYEE e left outer join auth a on(e.empl_no = e.empl_no)
+        WHERE e.EMPL_NO = #{param1}
+    </select>
+</mapper>

@@ -1,17 +1,23 @@
 package kr.or.ddit.sevenfs.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
+import kr.or.ddit.sevenfs.vo.CustomUser;
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +29,12 @@ public class HelloController {
 	private AttachFileService attachFileService;
 
 	@GetMapping("/")
-	public String index(Model model) {
+	public String index(Model model, HttpServletRequest request) {
+//		CustomUser user = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//		EmployeeVO empVo = user.getEmpVO();
+//		log.debug("user: {}", user);
+//		log.debug("empVo: {}", empVo);
+
 		return "home";
 	}
 

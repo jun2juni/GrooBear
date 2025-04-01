@@ -70,36 +70,12 @@
               <li>
                 <a href="#0">
                   <div class="image">
-                    <img src="/" alt="" />
+                    <img src="" alt="" />
                   </div>
                   <div class="content">
                     <h6>Jacob Jones</h6>
                     <p>Hey!I can across your profile and ...</p>
                     <span>10 mins ago</span>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="#0">
-                  <div class="image">
-                    <img src="/" alt="" />
-                  </div>
-                  <div class="content">
-                    <h6>John Doe</h6>
-                    <p>Would you mind please checking out</p>
-                    <span>12 mins ago</span>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="#0">
-                  <div class="image">
-                    <img src="/" alt="" />
-                  </div>
-                  <div class="content">
-                    <h6>Anee Lee</h6>
-                    <p>Hey! are you available for freelance?</p>
-                    <span>1h ago</span>
                   </div>
                 </a>
               </li>
@@ -113,7 +89,7 @@
               <div class="profile-info">
                 <div class="info">
                   <div class="image">
-                    <img src="/" alt="" />
+<%--                    <img src="/assets" alt="" />--%>
                   </div>
                   <div>
                     <h6 class="fw-500">Adam Joe</h6>
@@ -126,7 +102,7 @@
               <li>
                 <div class="author-info flex items-center !p-1">
                   <div class="image">
-                    <img src="/" alt="image">
+<%--                    <img src="/assets" alt="image">--%>
                   </div>
                   <div class="content">
                     <h4 class="text-sm">Adam Joe</h4>
@@ -153,7 +129,10 @@
               </li>
               <li class="divider"></li>
               <li>
-                <a href="#0"> <i class="lni lni-exit"></i> Sign Out </a>
+                <form action="/logout" method="post">
+                  <button type="submit" class="btn btn-block btn-outline-primary btn-xs">로그아웃</button>
+                  <a href="#0"> <i class="lni lni-exit"></i> Sign Out </a>
+                </form>
               </li>
             </ul>
           </div>

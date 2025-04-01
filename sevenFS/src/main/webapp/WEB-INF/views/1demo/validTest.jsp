@@ -35,14 +35,14 @@
           <%-- 인풋 스타일 --%>
           <div class="input-style-1 form-group col-6">
             <label for="username" class="form-label required">아이디 <span class="text-danger">*</span></label>
-            <input type="text" name="username" class="form-control" id="username" placeholder="아이디를 입력해주세요" required>
+            <input type="text" name="username" class="form-control" id="username" placeholder="아이디를 입력해주세요" required maxlength="100">
             <div class="invalid-feedback">아이디를 입력해주세요.</div>
           </div>
           
           <%-- 인풋 스타일 --%>
           <div class="input-style-1 form-group col-6">
             <label for="password" class="form-label">비밀번호 <span class="text-danger">*</span></label>
-            <input type="password" name="password" class="form-control" id="password" placeholder="비밀번호를 입력해주세요" required>
+            <input type="password" name="password" class="form-control" id="password" placeholder="비밀번호를 입력해주세요" required maxlength="50">
             <div class="invalid-feedback">비밀번호를 입력해주세요.</div>
           </div>
           
