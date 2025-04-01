@@ -1,4 +1,4 @@
-package kr.or.ddit.sevenfs.service.impl.chat;
+package kr.or.ddit.sevenfs.service.chat.impl;
 
 import kr.or.ddit.sevenfs.mapper.chat.ChatMapper;
 import kr.or.ddit.sevenfs.service.chat.ChatService;
