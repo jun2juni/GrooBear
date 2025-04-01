@@ -42,7 +42,7 @@ public class EmployeeVO implements UserDetails {
 
 	private List<EmpAuthVO> empAuthVOList;
 	
-	// 전자결재 리스트 추
+	// 전자결재 리스트 추가
 	private List<AtrzVO> EmplAtrzList;
 
 
