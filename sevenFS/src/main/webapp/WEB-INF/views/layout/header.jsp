@@ -17,6 +17,7 @@
           <h3>${title}</h3>
         </div>
       </div>
+      
       <div class="col-lg-7 col-md-7 col-6">
         <div class="header-right">
           <!-- notification start -->
@@ -83,6 +84,7 @@
             </ul>
           </div>
           <!-- message end -->
+          
           <!-- profile start -->
           <div class="profile-box ml-15">
             <button class="dropdown-toggle bg-transparent border-0" type="button" id="profile"
@@ -90,11 +92,14 @@
               <div class="profile-info">
                 <div class="info">
                   <div class="image">
-<%--                    <img src="/assets" alt="" />--%>
+                    <img src="/upload/${myEmpInfo.proflPhotoUrl}" alt="" />
                   </div>
+                  
                   <div>
-                    <h6 class="fw-500">Adam Joe</h6>
-                    <p>Admin</p>
+                    <h6 class="fw-500">
+                      ${myEmpInfo.emplNm}
+                    </h6>
+                    <p>${myEmpInfo.deptNm}</p>
                   </div>
                 </div>
               </div>
@@ -106,8 +111,8 @@
 <%--                    <img src="/assets" alt="image">--%>
                   </div>
                   <div class="content">
-                    <h4 class="text-sm">Adam Joe</h4>
-                    <a class="text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white text-xs" href="#">Email@gmail.com</a>
+                    <h4 class="text-sm">${myEmpInfo.emplNm}</h4>
+                    <a class="text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white text-xs" href="#">${myEmpInfo.email}</a>
                   </div>
                 </div>
               </li>
@@ -130,10 +135,7 @@
               </li>
               <li class="divider"></li>
               <li>
-                <form action="/logout" method="post">
-                  <button type="submit" class="btn btn-block btn-outline-primary btn-xs">로그아웃</button>
-                  <a href="#0"> <i class="lni lni-exit"></i> Sign Out </a>
-                </form>
+                <a href="/logout"> <i class="lni lni-exit"></i> Sign Out </a>
               </li>
             </ul>
           </div>

@@ -94,7 +94,6 @@ public class SecurityConfig {
                         .rememberMeParameter("remember-me")
                         .tokenValiditySeconds(60 * 60 * 24 * 7)
                         .tokenRepository(persistentTokenRepository())
-                        .userDetailsService(userDetailService) // Oracle DB 기반으로 변경
                 )
                 .build();
     }
