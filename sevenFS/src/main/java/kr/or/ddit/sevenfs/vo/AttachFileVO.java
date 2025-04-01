@@ -15,7 +15,7 @@ public class AttachFileVO {
     private long fileSize; // 파일 크기
     private int dwldCo; // 다운로드 횟수
     private String emplNo;
-    private String fileDeleteAt;
+    private String fileUseYn;
     private Date fileCreatDt;
     private String fileViewSize;
     private String fileMime;
