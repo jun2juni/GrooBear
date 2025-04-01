@@ -19,7 +19,6 @@
     <div class="d-flex justify-content-between">
         <button id="allBtn" class="main-btn dark-btn rounded-full btn-hover btn-xs"
          onclick="openTree();">전체</button>
-        
         <c:if test="${fn:contains(pageContext.request.requestURL, 'orglistAdmin')}" >
             <sec:authorize access="hasRole('ROLE_ADMIN')">
                 <button id="deptInsert" class="main-btn dark-btn rounded-full btn-hover btn-xs"
