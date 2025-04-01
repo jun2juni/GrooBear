@@ -62,11 +62,13 @@
 								</div>
 
 								<!-- 파일 업로드 -->
-								<div class="mb-3">
-									<label class="form-label">파일 업로드</label> 
-									<input type="file" name="files" class="form-control" multiple><br>
-								</div>
-
+								<file-upload
+									label="메뉴 이미지"
+									name="uploadFile"
+									max-files="5"
+									contextPath="${pageContext.request.contextPath}"
+								></file-upload>
+								
 								<!-- 상단 고정 여부 -->
 								<div class="mb-3">
 									<label class="form-label">상단 고정 여부</label>

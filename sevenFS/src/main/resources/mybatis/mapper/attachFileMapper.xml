@@ -3,7 +3,7 @@
 <mapper namespace="kr.or.ddit.sevenfs.mapper.AttachFileMapper">
 
     <select id="getAttachFileNo" resultType="long">
-        SELECT ATTATCH_FILE_SEQ.NEXTVAL FROM DUAL
+        SELECT SEQ_ATTATCH_FILE.NEXTVAL FROM DUAL
     </select>
 
     <select id="getAttachFileSn" resultType="java.lang.Integer" parameterType="long">

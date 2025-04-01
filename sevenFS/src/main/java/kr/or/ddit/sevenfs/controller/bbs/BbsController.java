@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 public class BbsController {
 
 	@Autowired
-	private AttachFileService attachFileService;
+	AttachFileService attachFileService;
 	
 	@Autowired
     BbsService bbsService;
@@ -44,7 +44,9 @@ public class BbsController {
 	
 	@Autowired
 	BeanController beanController;
-    
+	
+	
+	
     @GetMapping("/bbs")
     public String bbs() {
     	
@@ -97,9 +99,12 @@ public class BbsController {
      * 게시글 작성 처리
      */
     @PostMapping("/bbsInsert")
-    public String bbsInsert(@ModelAttribute BbsVO bbsVO, Model model) {
+    public String bbsInsert(@ModelAttribute BbsVO bbsVO, Model model, MultipartFile[] uploadFile, @RequestParam("uploadFile") MultipartFile file) {
         log.info("게시글 등록 요청");
 
+        long attachFileNm = attachFileService.insertFileList("insertFile", uploadFile);
+        bbsVO.setAtchFileNo(attachFileNm);
+        
         // 게시글 저장
         int result = bbsService.bbsInsert(bbsVO);
         int bbsSn = bbsVO.getBbsSn(); // INSERT 후 bbsSn 가져오기
@@ -110,6 +115,10 @@ public class BbsController {
             log.error("게시글 ID(bbsSn)가 0입니다. INSERT 후에도 값이 설정되지 않았습니다.");
             return "redirect:/bbs/bbsList"; // 파일 업로드 진행하지 않음
         }
+        
+        String fileName = file.getOriginalFilename();
+        log.info("파일이름 : " + fileName);
+        
         
         
         return "redirect:/bbs/bbsList";
@@ -123,8 +132,11 @@ public class BbsController {
     public String bbsDetail(Model model, @RequestParam("bbsSn") int bbsSn) {
         log.info("게시글 상세 조회: " + bbsSn);
 
+		
         BbsVO bbsVO = bbsService.bbsDetail(bbsSn);
+        List<AttachFileVO> FileList = attachFileService.getFileAttachList(bbsVO.getAtchFileNo());
         model.addAttribute("bbsVO", bbsVO);
+        model.addAttribute("fileList", FileList);
 
         return "bbs/bbsDetail";
     }
