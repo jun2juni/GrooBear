@@ -3,6 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
 <c:set var="title" scope="application" value="메인" />
 
@@ -42,7 +43,6 @@
 			
 			</div>
 		  </div>
-		  
 		</div>
 	  </div>
 	</section>
@@ -65,6 +65,7 @@
         $("#emplDetail").html(res);
       })
   }
+  
   
   // 부서 클릭 한 경우
   function clickDept(data) {
@@ -114,6 +115,29 @@
         }); // end del function
       })
   }
+  
+	 //부서등록 - 관리자만 가능
+	  function deptInsert(){
+	      fetch("/depInsert", {
+	          method : "get",
+	          headers : {
+	              "Content-Type": "application/json"
+	          }
+	      })
+	          .then(resp => resp.text())
+	          .then(res => {
+	              console.log("부서등록 : " , res);
+	              $("#emplDetail").html(res);
+	              
+	              $("#insertBtn").on("click", function(){
+	                  swal("등록되었습니다.")
+                      .then((value)=>{
+                          $("#depInsertForm").submit();
+                      });
+	              });
+	              
+	          })
+	  }
  </script>
 
 <c:import url="../layout/prescript.jsp" />
