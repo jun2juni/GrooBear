@@ -35,7 +35,7 @@
 									style="margin-bottom: 70px;">
 									<i class="lni lni-arrow-right"></i>
 								</button>
-								<button type="button" class="btn btn-secondary">
+								<button id="remo_appLine" type="button" class="btn btn-secondary">
 									<i class="lni lni-arrow-left"></i>
 								</button>
 								<span> <i class="bi bi-arrow-left-square-fill"
@@ -65,24 +65,7 @@
 								<!-- 여기에 결재선지정 사람들이 들어가야함 -->
 								<tbody class="s_appLine_tbody_cl"
 									style="text-align: center;">
-									<tr class="clsTr">
-										<th>1</th>
-										<th>길준희</th>
-										<th>회계1팀</th>
-										<th>사원</th>
-										<th>
-											<select class="form-select" aria-label="Default select example">
-												<option selected>결재</option>
-												<option value="1">참조</option>
-											</select>
-										</th>
-										<th>
-											<div class="form-check align-middle" style=" width: 24px; padding-left: 60px;">
-												<input class="form-check-input align-middle" type="checkbox" value="" id="flexCheckDefault">
-											  </div>
-										</th>
 
-									</tr>
 
 								</tbody>
 							</table>
@@ -92,7 +75,7 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary"
 						data-bs-dismiss="modal">취소</button>
-					<button type="button" class="btn btn-primary">확인</button>
+					<button id="s_add_appLine_list" type="button" class="btn btn-primary">확인</button>
 				</div>
 			</div>
 		</div>
