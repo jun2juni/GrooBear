@@ -1,5 +1,6 @@
 package kr.or.ddit.sevenfs.service.organization.impl;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +86,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 	
 	// 부서 등록
 	public int depInsert(CommonCodeVO commonCodeVO) {
+		log.info("부서등록 insert " + commonCodeVO);
+
 		return organizationMapper.depInsert(commonCodeVO);
 	}
 

@@ -9,6 +9,7 @@
 		FROM COMMON_CODE
 		WHERE CMMN_CODE_GROUP='DEPARTMENT'
 		AND USE_YN='Y'
+		ORDER BY CMMN_CODE
 	</select>
 	
 	<select id="deptDetail" parameterType="kr.or.ddit.sevenfs.vo.CommonCodeVO" resultType="kr.or.ddit.sevenfs.vo.CommonCodeVO">
@@ -107,9 +108,21 @@
 
 	<!-- 부서 등록 -->
 	<insert id="depInsert" parameterType="kr.or.ddit.sevenfs.vo.CommonCodeVO">
-		INSERT INTO COMMON_CODE (CMMN_CODE_GROUP, CMMN_CODE, CMMN_CODE_NM,
-            CMMN_CODE_DC, USE_YN, UPPER_CMMN_CODE, CMMN_CODE_SN)
-		VALUES ('DEPARTMENT', #{cmmnCode}, #{cmmnCodeNm},#{cmmnCodeDc},'Y', #{upperCmmnCode}, #{cmmnCodeSn})
+			INSERT INTO COMMON_CODE 
+						(CMMN_CODE_GROUP, 
+						 CMMN_CODE, 
+						 CMMN_CODE_NM,
+	            		 CMMN_CODE_DC, 
+	            		 USE_YN, 
+	            		 UPPER_CMMN_CODE, 
+	            		 CMMN_CODE_SN)
+			VALUES ('DEPARTMENT',
+		           	(SELECT NVL(MAX(CMMN_CODE),0)+1
+		            FROM COMMON_CODE
+		            WHERE CMMN_CODE_GROUP = 'DEPARTMENT'
+		            AND UPPER_CMMN_CODE = #{upperCmmnCode}
+		            GROUP BY CMMN_CODE_GROUP),
+					#{cmmnCodeNm}, #{cmmnCodeDc},'Y', #{upperCmmnCode}, NULL)
 	</insert>
 	
 	<!-- 부서 수정 -->
