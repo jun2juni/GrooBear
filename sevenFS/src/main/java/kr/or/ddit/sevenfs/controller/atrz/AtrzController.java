@@ -3,22 +3,19 @@ package kr.or.ddit.sevenfs.controller.atrz;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.servlet.http.HttpServletRequest;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
-import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
 import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
-import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -29,143 +26,13 @@ public class AtrzController {
 	@Autowired
 	AtrzService atrzService;
 
-	
-	
-	//로그인한 정보 가져오기
-	@GetMapping("/some-path")
-    public String someMethod(@AuthenticationPrincipal CustomUser customUser) {
-    EmployeeVO empVO = customUser.getEmpVO();
-    String emplNo = empVO.getEmplNo();
-    // empVO 사용
-    return "view";
-}
-	
-	
 	@GetMapping("/home")
-	public String home(Model model,
-			HttpServletRequest req,
-			@AuthenticationPrincipal CustomUser customUser) {
-		//로그인한 사람정보 가져오기(사번 이름)
-		EmployeeVO empVO = customUser.getEmpVO();
-	    String emplNo = empVO.getEmplNo();
-		log.info("emplNo : " ,emplNo);
-//		String emplNm = employeeVO.getEmplNm();
-		
-		//결재대기문서 갯수
-		int beDocCnt = atrzService.beDocCnt(emplNo);
-		model.addAttribute("beDocCnt",beDocCnt);
-		
-		//전자 결재대기
-		List<AtrzVO> homeBeDoc = atrzService.selectHomeBeDoc(emplNo);
-		model.addAttribute("homeBeDoc",homeBeDoc);
-		
-		//기안진행문서
-		List<AtrzVO> homeReqDoc = atrzService.selectHomeReqDoc(emplNo);
-		model.addAttribute("homeReqDoc",homeReqDoc);
-		
-		//결재수신문서갯수
-		int recDocCnt = atrzService.recDocCnt(emplNo);
-		model.addAttribute("recDocCnt" ,recDocCnt);
-		
-		
+	public String home(Model model) {
 		List<AtrzVO> atrzVOList = this.atrzService.list();
 		model.addAttribute("atrzVOList", atrzVOList);
-		
-		//사원정보 가져오는것 산나님 EmployeeVO에 추가한것있음 나중에 첫글자 소문자로 변경해야함
-		List<AtrzVO> atrzEmploInfo = this.atrzService.atrzEmploInfo();
-		model.addAttribute("atrzEmploInfo",atrzEmploInfo);
-		
 		log.info("전자결재홈");
 		return "atrz/home";
 	}
-	
-	//결재대기문서
-	@GetMapping("/beforeDoc")
-	public String selectBeforeDoc(
-			Model model,
-			HttpServletRequest req,
-			@RequestParam(name = "page",defaultValue = "1")int currentPage,
-			@RequestParam(name = "type", required = false)String type,
-			@RequestParam(name = "keyword", required = false)String keyword, AtrzVO atrzVO) {
-		
-			//로그인한 사람정보 가져오기(사번 이름)
-			EmployeeVO employeeVO = (EmployeeVO)req.getSession().getAttribute("login");
-			String emplNo = employeeVO.getEmplNo();
-			
-			
-//			ArticlePage<AtrzVO> articlePage = new ArticlePage<>()
-			atrzVO.setDrafterEmpno(emplNo);
-			atrzVO.setType(type);
-			atrzVO.setKeyword(keyword);
-			
-			
-			
-//			ArticlePage<AtrzVO> articlePage = new ArticlePage<>()
-			final int pageSize = 6;
-			final int pageBlock = 2;
-			List<AtrzVO> beforeDoc = atrzService.selectBeforeDoc(currentPage,pageSize, atrzVO);
-			
-			int totalCnt = (keyword == null || keyword.isEmpty()) ?  atrzService.beforeTotalCnt(atrzVO) : beforeDoc.size(); 
-			
-			// paging 처리
-		    int pageCnt = totalCnt / pageSize + (totalCnt % pageSize == 0 ? 0 : 1);
-		    int startPage = (currentPage % pageBlock == 0) ? 
-		                    ((currentPage / pageBlock) - 1) * pageBlock + 1 :
-		                    (currentPage / pageBlock) * pageBlock + 1;
-		    int endPage = Math.min(startPage + pageBlock - 1, pageCnt);
-		    
-		    model.addAttribute("startPage", startPage);
-		    model.addAttribute("endPage", endPage);
-		    model.addAttribute("pageCnt", pageCnt);
-		    model.addAttribute("totalCnt", totalCnt);
-		    model.addAttribute("currentPage", currentPage);
-		    model.addAttribute("beforeDoc", beforeDoc);
-		
-		    return "atrz/beforeDoc";
-	}
-	
-	
-	//결재 수신문서
-	@GetMapping("/receiptdoc")
-	public String selectReceiptDoc( Model model,
-	        HttpServletRequest req,
-	        @RequestParam(name="page", defaultValue = "1") int currentPage,
-	        @RequestParam(name="type", required = false) String type,
-	        @RequestParam(name="keyword", required = false) String keyword,
-	        AtrzVO atrzVO) {
-		
-		//로그인한 사람정보 가져오기(사번)
-		EmployeeVO employeeVO = (EmployeeVO)req.getSession().getAttribute("login");
-		String emplNo = employeeVO.getEmplNo();
-		
-		atrzVO.setDrafterEmpno(emplNo);
-		atrzVO.setType(type);
-		atrzVO.setKeyword(keyword);
-
-	    final int pageSize = 6;
-	    final int pageBlock = 2;
-	    
-	    List<AtrzVO> receiptDoc = atrzService.selectReceiptDoc(currentPage,pageSize,atrzVO);
-	    
-	    int totalCnt = (keyword == null|| keyword.isEmpty()) ? atrzService.receiptTotalCnt(atrzVO) : receiptDoc.size();
-	    
-	    // paging 처리
-	    int pageCnt = totalCnt / pageSize + (totalCnt % pageSize == 0 ? 0 : 1);
-	    int startPage = (currentPage % pageBlock == 0) ? 
-	                    ((currentPage / pageBlock) - 1) * pageBlock + 1 :
-	                    (currentPage / pageBlock) * pageBlock + 1;
-	    int endPage = Math.min(startPage + pageBlock - 1, pageCnt);
-	    
-	    
-	    model.addAttribute("startPage", startPage);
-	    model.addAttribute("endPage", endPage);
-	    model.addAttribute("pageCnt", pageCnt);
-	    model.addAttribute("totalCnt", totalCnt);
-	    model.addAttribute("currentPage", currentPage);
-	    model.addAttribute("receiptDoc", receiptDoc);
-		return "atrz/receiptdoc";
-	}
-	
 
 	@GetMapping("/approval")
 	public String approvalList(Model model) {
@@ -263,20 +130,9 @@ public class AtrzController {
 	@ResponseBody
 	//여기선 modelAnd
 	@PostMapping(value = "/insertDoc" ,produces = "text/plain;charset=UTF-8")
-	public String insertDoc(@RequestParam(name = "form" ,required = false) String form, ModelAndView mav,Model model) {
-		//insertDoc->form : 휴가신청서
-		log.info("insertDoc->form : " + form);
-		
-		//공백 제거
-		form = form.trim();
-		
+	public String insertDoc(@RequestParam(name = "form" ,required = false)String form, ModelAndView mav,Model model) {
 	//문서양식 테이블에 db저장
 //			int result = 0;
-		
-		
-		
-		
-		
 //			String df_code = "";
 		//선택한 양식이 휴가신청서인경우
 //			if(form.equals("휴가신청서")) {
@@ -300,19 +156,7 @@ public class AtrzController {
 		
 	}
 	
-	//결재선지정 시 직원명 클릭하면 emplNo을 파라미터로 받아 DB select를 하여 JSON String으로 해당 직원 정보를 응답해줌
-	//요청파라미터 : {"emplNo":emplNo}
-	@ResponseBody
-	@PostMapping(value = "/appLineEmp" ,produces = "text/plain;charset=UTF-8")
-	public EmployeeVO appLineEmp(@RequestParam(name = "emplNo" ,required = false) String emplNo) {
-		//insertDoc->form : 휴가신청서
-		//appLineEmp->emplNo : 20250000
-		log.info("appLineEmp->emplNo : " + emplNo);
-		
-		EmployeeVO employeeVO = null;
-		
-		return employeeVO;
-	}
+	
 	
 	
 //	@GetMapping("/{atrzDocNo}")

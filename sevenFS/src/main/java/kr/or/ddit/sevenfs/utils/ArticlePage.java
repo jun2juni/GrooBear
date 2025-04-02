@@ -47,7 +47,7 @@ public class ArticlePage<T> {
 			// 3 = 31 / 10
 			totalPages = total / size;
 			// 나머지가 있다면, 페이지를 1 증가
-			if (total % size > 0) {
+			if (total / size > 0) {
 				totalPages++;
 			}
 

@@ -1,7 +1,4 @@
 package kr.or.ddit.sevenfs.vo.project;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import lombok.Data;
 
 @Data
@@ -23,35 +20,4 @@ public class ProjectVO {
 	private String prtcpntEmpno; 
 	private String prtcpntNm;
 	private String prjctSttusNm;
-	
-	
-	
-	
-    // 날짜 형식을 변경하는 getter 메소드 추가
-    public String getPrjctBeginDateFormatted() {
-        if (prjctBeginDate == null) return "";
-        // 날짜가 String 타입인 경우
-        try {
-            SimpleDateFormat originalFormat = new SimpleDateFormat("yyyyMMdd"); // 원래 형식
-            SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd"); // 변경할 형식
-            Date date = originalFormat.parse(prjctBeginDate);
-            return targetFormat.format(date);
-        } catch (Exception e) {
-            return prjctBeginDate; // 변환 실패 시 원본 반환
-        }
-    }
-    
-    public String getPrjctEndDateFormatted() {
-        if (prjctEndDate == null) return "";
-        // 날짜가 String 타입인 경우
-        try {
-            SimpleDateFormat originalFormat = new SimpleDateFormat("yyyyMMdd"); // 원래 형식
-            SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd"); // 변경할 형식
-            Date date = originalFormat.parse(prjctEndDate);
-            return targetFormat.format(date);
-        } catch (Exception e) {
-            return prjctEndDate; // 변환 실패 시 원본 반환
-        }
-    }
-	
 }

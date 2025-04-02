@@ -46,44 +46,17 @@
 					<div class="col-sm-12 mb-3 mb-sm-0">
 						<!-- 결재요청 | 임시저장 | 결재선지정 | 취소  -->
 						<div class="col card-body" id="approvalBtn">
-							<!-- 새로운 버튼 -->
-						<div class="tool_bar">
-									<div class="critical d-flex gap-2 mb-3">
-										<!--성진스 버튼-->
-										<a id="s_eap_app" type="button" class="btn btn-outline-primary d-flex align-items-center gap-1">
-											<span class="material-symbols-outlined fs-5">cancel</span> 
-											결재요청</a>
-										<a id="s_eap_stor" type="button" class="btn btn-outline-success d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal">
-											<span class="material-symbols-outlined fs-5">error</span> 
-												임시저장</a>
-										<a id="s_appLine_btn" type="button" class="btn btn-outline-info d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal">
-											<span class="material-symbols-outlined fs-5">error</span> 
-												결재선 지정</a>
-										<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1" href="/atrz/home">
-											<span class="material-symbols-outlined fs-5">cancel</span> 
-											취소</a>
-<!-- 										<a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="/atrz/approval"> -->
-<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
-<!-- 											목록으로</a> -->
-
-<!-- 										<a id="act_draft_withdrawal" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-<!-- 											<span class="material-symbols-outlined fs-5">cancel</span>  -->
-<!-- 											<span class="txt">상신취소</span> -->
-<!-- 										</a> -->
-<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-<!-- 											<span class="material-symbols-outlined fs-5">error</span>  -->
-<!-- 											<span class="txt">결재선 정보</span> -->
-<!-- 										</a> -->
-<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
-<!-- 											<span class="txt">목록</span> -->
-<!-- 										</a> -->
-									</div>
-								</div>
-						
-						<!-- 새로운 버튼 -->
+							<span><a id="s_eap_app" href="#" type="submit" onclick="document.getElementById('draftInsert').submit();"
+								class="btn btn-default approvalBtn"
+								style="background-color: #365CF5;">결재요청</a></span>
+							<!-- 임시저장시 어떻게 쿼리가 날라갈지랑, 어떻게 화면전환될것인가??? 데이터 저장은 어떻게 해? -->
+							<span><a id="s_eap_stor" href="#" class="btn btn-default approvalBtn"
+								style="background-color: #00C1F8;">임시저장</a></span> 
+							<span><a id="s_appLine_btn" href="#" data-bs-toggle="modal" data-bs-target="#atrzLineModal"
+								class="btn btn-default approvalBtn" style="background-color: #F7C800;">결재선 지정</a></span> 
+							<span><a id="s_cancel_btn" class="btn btn-default approvalBtn"
+								style="background-color: #D50100;" href="/atrz/home"
+								onclick="eapHome()">취소</a></span>
 						</div>
 	<!-- 모달창 인포트 -->
 	<c:import url="../documentForm/approvalLineModal.jsp" />
@@ -172,43 +145,7 @@
 					</div>
 				</div>
 			<!-- 여기서 작업 끝 -->
-			<!-- 상하 버튼 추가 -->
-							<div class="tool_bar">
-									<div class="critical d-flex gap-2 mt-3">
-										<!--성진스 버튼-->
-										<a id="s_eap_app" type="button" class="btn btn-outline-primary d-flex align-items-center gap-1">
-											<span class="material-symbols-outlined fs-5">cancel</span> 
-											결재요청</a>
-										<a id="s_eap_stor" type="button" class="btn btn-outline-success d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal">
-											<span class="material-symbols-outlined fs-5">error</span> 
-												임시저장</a>
-										<a id="s_appLine_btn" type="button" class="btn btn-outline-info d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal">
-											<span class="material-symbols-outlined fs-5">error</span> 
-												결재선 지정</a>
-										<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1" href="/atrz/home">
-											<span class="material-symbols-outlined fs-5">cancel</span> 
-											취소</a>
-<!-- 										<a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="/atrz/approval"> -->
-<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
-<!-- 											목록으로</a> -->
-
-<!-- 										<a id="act_draft_withdrawal" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-<!-- 											<span class="material-symbols-outlined fs-5">cancel</span>  -->
-<!-- 											<span class="txt">상신취소</span> -->
-<!-- 										</a> -->
-<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-<!-- 											<span class="material-symbols-outlined fs-5">error</span>  -->
-<!-- 											<span class="txt">결재선 정보</span> -->
-<!-- 										</a> -->
-<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
-<!-- 											<span class="txt">목록</span> -->
-<!-- 										</a> -->
-									</div>
-								</div>
-							<!-- 상하 버튼 추가 -->
+			
 		 
 		</div>
 	</section>
