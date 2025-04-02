@@ -30,6 +30,9 @@
 <script  src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2/lib/stomp.min.js"></script>
 
+<!-- jQuery UI 라이브러리 -->
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+
 
 <%--커스텀 js--%>
 <script src="${pageContext.request.contextPath}/assets/chat.js"></script>
