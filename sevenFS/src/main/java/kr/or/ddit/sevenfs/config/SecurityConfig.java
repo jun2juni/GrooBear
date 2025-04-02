@@ -38,7 +38,7 @@ public class SecurityConfig {
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
                 .requestMatchers(
-                        "/assets/**", "/images/**", "/layout/**");
+                        "/assets/**", "/images/**", "/layout/**", "/ws/**");
     }
 
     @Autowired
@@ -79,7 +79,6 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login", "/signup",
                                  "/error",  "/images/**",  "/layout/**", "/assets/**",
                                 "/api/**"
-//                                "**" // 임시로 모두 열어주기 (개발 중)
                         ).permitAll()
                         // .requestMatchers("/ceo/**").hasRole("ROLE_ADMIN")
                         // .requestMatchers("/manager/**").hasAnyRole("ROLE_ADMIN", "ROLE_MANAGER")
@@ -94,7 +93,6 @@ public class SecurityConfig {
                         .rememberMeParameter("remember-me")
                         .tokenValiditySeconds(60 * 60 * 24 * 7)
                         .tokenRepository(persistentTokenRepository())
-                        .userDetailsService(userDetailService) // Oracle DB 기반으로 변경
                 )
                 .build();
     }

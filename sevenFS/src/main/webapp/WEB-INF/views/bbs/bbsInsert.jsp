@@ -38,7 +38,6 @@
 					<div class="col-12">
 						<div class="card-style">
 							<h2 class="text-primary text-center">(🌸◔ ω ◔)</h2>
-
 							<form action="/bbs/bbsInsert" method="post" name="newProduct"
 								enctype="multipart/form-data" class="mb-4">
 								<!-- 게시글 제목 -->
@@ -46,7 +45,9 @@
 									<label class="form-label">제목</label> 
 									<input type="text" name="bbscttSj" class="form-control" placeholder="최대 255자" required>
 								</div>
-
+								
+								<!-- 작성자 번호 -->
+								<input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
 								<!-- 게시글 내용 (CKEditor) -->
 								<div class="col-sm-12">
 									<label class="form-label">내용</label>
@@ -54,18 +55,20 @@
 									<textarea id="content" name="bbscttCn" rows="3" cols="30" class="form-control" hidden></textarea>
 								</div><br>
 
-								<!-- 작성자 번호 -->
+								<!-- 작성자 이름 -->
 								<div class="mb-3">
-									<label class="form-label">작성자번호</label> 
-									<input type="text" name="emplNo" class="form-control" required>
+									<label class="form-label">작성자</label> 
+									<input type="text" name="emplNm" class="form-control" value="${myEmpInfo.emplNm}" readonly>
 								</div>
 
 								<!-- 파일 업로드 -->
-								<div class="mb-3">
-									<label class="form-label">파일 업로드</label> 
-									<input type="file" name="files" class="form-control" multiple><br>
-								</div>
-
+								<file-upload
+									label="메뉴 이미지"
+									name="uploadFile"
+									max-files="5"
+									contextPath="${pageContext.request.contextPath}"
+								></file-upload>
+								
 								<!-- 상단 고정 여부 -->
 								<div class="mb-3">
 									<label class="form-label">상단 고정 여부</label>
@@ -94,7 +97,7 @@
 	//ckeditor5
 	//<div id="descriptionTemp"></div>
 	//editor : CKEditor객체를 말함
-	ClassicEditor.create(document.querySelector("#descriptionTemp"),{ckfinder:{uploadUrl:"/upload"}})
+	ClassicEditor.create(document.querySelector("#descriptionTemp"),{ckfinder:{uploadUrl:"/bbs/upload"}})
 				 .then(editor=>{window.editor=editor;})
 				 .catch(err=>{console.error(err.stack);});
 

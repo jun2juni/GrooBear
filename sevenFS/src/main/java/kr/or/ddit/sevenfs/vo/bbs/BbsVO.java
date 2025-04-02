@@ -19,7 +19,7 @@ public class BbsVO {
 	private String bbscttUseYn;
 	private String bbscttDeleteYn;
 	private String upendFixingYn;
-	private int atchFileNo;
+	private long atchFileNo;
 	
 	private List<MultipartFile> files;
 }

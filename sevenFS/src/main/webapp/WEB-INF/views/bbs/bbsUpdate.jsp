@@ -3,21 +3,19 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:set var="title" scope="application" value="게시판" />
+<c:set var="title" scope="application" value="게시글 수정" />
 
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>${title}</title>
-    <c:import url="../layout/prestyle.jsp" />
     <script
 		src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
 		integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
 		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-	<script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script>
+    <c:import url="../layout/prestyle.jsp" />
 </head>
 <style>
     .col-sm-12 img {
@@ -32,13 +30,13 @@
         
         <section class="section">
             <div class="container-fluid">
-                <c:import url="../layout/title-wrap.jsp" />
                 <!-- 파일 수정이 되게 하되, 파일이 없다면 새로 추가하는 로직 필요 -->
                 <div class="row">
                     <div class="col-12">
                         <div class="card-style">
                             <h2 class="text-primary text-center">(🌸◔ ω ◔)</h2>
                             <form action="/bbs/bbsUpdate" method="post" enctype="multipart/form-data">
+                            	<input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
                                 <input type="hidden" name="bbsSn" value="${bbsVO.bbsSn}">
                                 <div>
                                     제목
@@ -53,7 +51,7 @@
                                 <br>
                                 <div>
                                     작성자
-                                    <input type="text" name="emplNo" value="${bbsVO.emplNo}" class="form-control" />
+                                    <input type="text" name="emplName" value="${myEmpInfo.emplNm}" class="form-control" readonly/>
                                 </div>
                                 <br>
                                 <div>

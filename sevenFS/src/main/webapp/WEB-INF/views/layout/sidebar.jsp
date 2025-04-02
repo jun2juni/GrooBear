@@ -211,7 +211,7 @@
           </a>
           <ul id="bbs" class="dropdown-nav collapse" style="">
             <li>
-              <a href="/bbs"> 1뎁스 </a>
+              <a href="/bbs/bbsList"> 공지사항 </a>
             </li>
             <li>
               <a href="/bbs"> 2뎁스 </a>
@@ -251,7 +251,23 @@
           </a>
           </li>
         <%--조직도 사이드 바 --%>
+        
+         <!-- 관리자일 경우에만 보이게 하기 -->
+        <%--조직관리 사이드 바 --%>
+        <li class="nav-item">
+          <a href="/orglistAdmin" class="${fn:contains(currentURL, '/orglistAdmin') ? '' : 'collapsed'}" >
+            <span class="icon material-symbols-outlined">
+				manage_accounts
+			</span>
+            <span class="text">조직관리</span>
+          </a>
+          </li>
+        <%--조직관리 사이드 바 --%>
     </ul>
+    
+     
+    </ul>
+    
 
   </nav>
   <div class="promo-box">

@@ -15,7 +15,7 @@ public class DclzTypeController {
 		
 		log.info("근태 현황");
 		
-		model.addAttribute("title" , "내 근태 현황");
+		model.addAttribute("title" , "나의 근태 현황");
 		
 		return "organization/dclzType";
 	}

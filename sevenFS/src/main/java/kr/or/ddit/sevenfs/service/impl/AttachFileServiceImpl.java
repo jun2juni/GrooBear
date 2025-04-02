@@ -59,7 +59,8 @@ public class AttachFileServiceImpl implements AttachFileService {
         }
 
         // 파일 추가 처리
-        long atchFileNo = attachFileVO.getAtchFileNo();
+        // 파일 넘버가 없는 경우가 있을 수 있음 - 성진 0331
+        long atchFileNo = attachFileVO.getAtchFileNo() == 0 ? getAttachFileNo() : attachFileVO.getAtchFileNo();
         int atchFileSn = getAttachFileSn(atchFileNo);
         List<AttachFileVO> attachFileVOList = attachFile.fileRealSave(dir, files, atchFileNo, atchFileSn);
 

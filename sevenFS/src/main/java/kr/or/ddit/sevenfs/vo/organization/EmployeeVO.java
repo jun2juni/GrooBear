@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.vo.organization;
 
 import kr.or.ddit.sevenfs.vo.EmpAuthVO;
+import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,8 +41,7 @@ public class EmployeeVO implements UserDetails {
 	private String posNm;  // 직급명
 
 	private List<EmpAuthVO> empAuthVOList;
-
-
+	
 	// 스프링 시큐리티 용 ----------------------------------
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

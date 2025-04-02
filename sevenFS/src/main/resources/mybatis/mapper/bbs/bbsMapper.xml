@@ -1,10 +1,150 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.bbs.BbsMapper">
-	
-	<select id="bbsList" resultType="kr.or.ddit.sevenfs.vo.bbs.BbsVO" parameterType="list">
-		SELECT *
-		FROM BBS
-	</select>
 
+    <!-- 게시글 목록 조회 -->
+    <select id="bbsList" parameterType="list" resultMap="BbsResultMap">
+        WITH U AS (
+            SELECT 
+                ROW_NUMBER() OVER(ORDER BY B.BBSCTT_CREAT_DT DESC) AS RNUM,
+                B.BBS_SN,
+                B.BBS_CTGRY_NO,
+                B.EMPL_NO,
+                B.BBSCTT_SJ,
+                B.BBSCTT_CN,
+                B.BBSCTT_CREAT_DT,
+                B.BBSCTT_UPDT_DT,
+                B.RDCNT,
+                B.BBSCTT_USE_YN,
+                B.UPEND_FIXING_YN,
+                A.ATCH_FILE_NO,
+                A.FILE_SN,
+                A.FILE_STRE_PATH,
+                A.FILE_NM,
+                A.FILE_STRE_NM,
+                A.FILE_EXTSN,
+                A.FILE_MIME,
+                A.FILE_SIZE,
+                A.FILE_VIEW_SIZE,
+                A.DWLD_CO,
+                A.EMPL_NO AS FILE_EMPL_NO,
+                A.FILE_USE_YN,
+                A.FILE_CREAT_DT
+            FROM BBS B
+            LEFT JOIN ATTATCH_FILE A 
+                ON B.ATCH_FILE_NO = A.ATCH_FILE_NO  
+        )
+        SELECT U.*
+        FROM U
+    </select>
+
+    <!-- 게시글 목록 및 상세 결과 매핑 -->
+    <resultMap type="kr.or.ddit.sevenfs.vo.bbs.BbsVO" id="BbsResultMap">
+        <!-- 게시글 정보 매핑 -->
+        <id property="bbsSn" column="BBS_SN"/>
+        <result property="bbsCtgryNo" column="BBS_CTGRY_NO"/>
+        <result property="emplNo" column="EMPL_NO"/>
+        <result property="bbscttSj" column="BBSCTT_SJ"/>
+        <result property="bbscttCn" column="BBSCTT_CN"/>
+        <result property="bbscttCreatDt" column="BBSCTT_CREAT_DT"/>
+        <result property="bbscttUpdtDt" column="BBSCTT_UPDT_DT"/>
+        <result property="rdcnt" column="RDCNT"/>
+        <result property="bbscttUseYn" column="BBSCTT_USE_YN"/>
+        <result property="upendFixingYn" column="UPEND_FIXING_YN"/>
+        <result property="atchFileNo" column="ATCH_FILE_NO"/>
+
+        <!-- 첨부 파일 정보 매핑 -->
+        <collection property="files" 
+                    ofType="kr.or.ddit.sevenfs.vo.AttachFileVO" 
+                    column="ATCH_FILE_NO"
+                    select="selectAttachFiles"/>
+    </resultMap>
+
+    <!-- 첨부 파일 조회를 위한 쿼리 -->
+    <select id="selectAttachFiles" resultType="kr.or.ddit.sevenfs.vo.AttachFileVO">
+        SELECT 
+            ATCH_FILE_NO,
+            FILE_SN,
+            FILE_STRE_PATH,
+            FILE_NM,
+            FILE_STRE_NM,
+            FILE_EXTSN,
+            FILE_MIME,
+            FILE_SIZE,
+            FILE_VIEW_SIZE,
+            DWLD_CO,
+            EMPL_NO,
+            FILE_USE_YN,
+            FILE_CREAT_DT
+        FROM ATTATCH_FILE
+        WHERE ATCH_FILE_NO = #{atchFileNo}
+    </select>
+
+    <!-- 게시글 상세 조회 -->
+    <select id="bbsDetail" resultMap="BbsResultMap" parameterType="int">
+        SELECT 
+            B.BBS_SN,
+            B.BBS_CTGRY_NO,
+            B.EMPL_NO,
+            B.BBSCTT_SJ,
+            B.BBSCTT_CN,
+            B.BBSCTT_CREAT_DT,
+            B.BBSCTT_UPDT_DT,
+            B.RDCNT,
+            B.BBSCTT_USE_YN,
+            B.UPEND_FIXING_YN,
+            B.ATCH_FILE_NO
+        FROM BBS B
+        WHERE B.BBS_SN = #{bbsSn}
+    </select>
+
+    <!-- 게시글 수정 -->
+    <update id="bbsUpdate" parameterType="kr.or.ddit.sevenfs.vo.bbs.BbsVO">
+        UPDATE BBS
+        SET
+            BBSCTT_SJ = #{bbscttSj},
+            BBSCTT_CN = #{bbscttCn},
+            EMPL_NO = #{emplNo},
+            BBSCTT_UPDT_DT = SYSDATE,
+            UPEND_FIXING_YN = #{upendFixingYn}
+        WHERE BBS_SN = #{bbsSn}
+    </update>
+
+    <!-- 게시글 등록 -->
+    <insert id="bbsInsert" parameterType="kr.or.ddit.sevenfs.vo.bbs.BbsVO" useGeneratedKeys="true">
+        <selectKey resultType="int" order="BEFORE" keyProperty="bbsSn">
+            SELECT SEQ_BBS.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO BBS 
+            (BBS_SN, BBS_CTGRY_NO, EMPL_NO, BBSCTT_SJ, BBSCTT_CN, 
+             BBSCTT_CREAT_DT, RDCNT, BBSCTT_USE_YN, UPEND_FIXING_YN, ATCH_FILE_NO)
+        VALUES 
+            (#{bbsSn}, '1', #{emplNo}, #{bbscttSj}, #{bbscttCn}, 
+             SYSDATE, 0, 'Y', 'N', #{atchFileNo})
+    </insert>
+
+    <!-- 게시글에 연결된 파일 조회 -->
+    <select id="getFilesByBbsSn" parameterType="int" resultType="kr.or.ddit.sevenfs.vo.AttachFileVO">
+        SELECT 
+            ATCH_FILE_NO, 
+            FILE_SN, 
+            FILE_STRE_PATH, 
+            FILE_NM, 
+            FILE_STRE_NM, 
+            FILE_EXTSN, 
+            FILE_MIME, 
+            FILE_SIZE, 
+            FILE_VIEW_SIZE, 
+            DWLD_CO, 
+            EMPL_NO, 
+            FILE_USE_YN, 
+            FILE_CREAT_DT
+        FROM ATTATCH_FILE
+        WHERE ATCH_FILE_NO IN (
+            SELECT ATCH_FILE_NO 
+            FROM BBS 
+            WHERE BBS_SN = #{bbsSn}
+        )
+    </select>
 </mapper>
