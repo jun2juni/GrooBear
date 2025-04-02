@@ -6,12 +6,6 @@
 <div class="card-style chat-about h-100">
    <h6 class="text-sm text-medium"></h6>
    <div class="chat-about-profile">
-     <div class="image mx-auto" style="text-align:center;">
-     <form action="/fileUpload" method="post" enctype="multipart/form-data">
-		</form>
-       <img src="/" alt="이미지 넣어야됨"><br/>
-       <span class="text-medium text-dark">${empDetail.emplNm}</span>
-     </div>
      <div class="content text-center">
        <h5 class="text-bold mb-10"></h5>
        <span class="status-btn info-btn">${empDetail.posNm}</span>
@@ -20,6 +14,21 @@
    </div>
    <div class="activity-meta text-start" style="margin-top: 20px;">
      <ul>
+       <li class="row">
+         <span class="col-4" >사원명</span>
+         <c:set var="day" value=""></c:set>
+         <span class="col-8 text-medium text-dark">${year}.${month}.${day}</span>
+       </li>
+       <li class="row">
+         <span class="col-4" >직급</span>
+         <c:set var="day" value=""></c:set>
+         <span class="col-8 text-medium text-dark">${year}.${month}.${day}</span>
+       </li>
+       <li class="row">
+         <span class="col-4" >소속부서</span>
+         <c:set var="day" value=""></c:set>
+         <span class="col-8 text-medium text-dark">${year}.${month}.${day}</span>
+       </li>
        <li class="row">
          <span class="col-4" >입사일자</span>
          <c:set var="year" value="${empDetail.ecnyDate.substring(0,4)}"></c:set>
@@ -52,6 +61,13 @@
        <li class="row">
          <span class="col-4">성별</span>
          <span class="col-8 text-medium text-dark">${empDetail.genderCode}</span>
+         <select id="duration" class="form-select w-auto" name="upperCmmnCode">
+				<option value="#">없음</option>
+			<c:forEach var="departList" items="${depList}">
+				<option value="00">남성</option>
+				<option value="01">여성</option>
+			</c:forEach>
+		</select>
        </li>
        <hr>
        <li class="row">
@@ -78,9 +94,8 @@
      </ul>
      
      <!-- 로그인한 계정과 사원번호가 일치할경우에만 보이게 -->
-     <!-- emplNo가 관리자일 경우에만 보이게 -->
      <sec:authentication property="principal.empVO" var="emp" />
-     	<c:if test="${emp.emplNo == empDetail.emplNo || emp.emplNo == '20250000'}">
+     	<c:if test="${emp.emplNo == empDetail.emplNo}">
 		     <div class="content text-center" style="margin-top: 40px;">
 			     <a href="/emplUpdate?emplNo=${empDetail.emplNo}" class="main-btn success-btn-light square-btn btn-hover btn-sm">수정</a>
 			     <button id="deptDeleteBtn" type="button" class="main-btn danger-btn-light square-btn btn-hover btn-sm">삭제</button>

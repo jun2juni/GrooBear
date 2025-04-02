@@ -22,6 +22,7 @@
          onclick="openTree();">전체</button>
         
         <c:if test="${fn:contains(pageContext.request.requestURL, 'orglistAdmin')}" >
+            <%-- <sec:authentication property="principal" /> --%>
             <sec:authorize access="hasRole('ROLE_ADMIN')">
                 <button id="deptInsert" class="main-btn dark-btn rounded-full btn-hover btn-xs"
                         onclick="deptInsert();">부서등록
@@ -143,27 +144,6 @@
         }
     }
     
-    // 부서등록 - 관리자만 가능
-    function deptInsert(){
-        fetch("/depInsert", {
-            method : "get",
-            headers : {
-                "Content-Type": "application/json"
-            }
-        })
-            .then(resp => resp.text())
-            .then(res => {
-                console.log("부서등록 : " , res);
-                $("#emplDetail").html(res);
-                
-                $("#insertBtn").on("click", function(){
-                    swal("등록되었습니다.")
-                        .then((value)=>{
-                            $("#depInsertForm").submit();
-                        });
-                });
-                
-            })
-    }
+   
 
 </script>

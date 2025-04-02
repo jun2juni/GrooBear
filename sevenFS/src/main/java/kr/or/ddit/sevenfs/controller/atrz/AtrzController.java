@@ -19,7 +19,6 @@ import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.utils.CommonCode;
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
 import kr.or.ddit.sevenfs.vo.CustomUser;
-import kr.or.ddit.sevenfs.vo.OrganizationVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
 import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;

@@ -3,8 +3,8 @@ package kr.or.ddit.sevenfs.service.organization;
 import java.util.List;
 
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
-import kr.or.ddit.sevenfs.vo.OrganizationVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
+import kr.or.ddit.sevenfs.vo.organization.OrganizationVO;
 
 public interface OrganizationService {
 	
@@ -28,6 +28,9 @@ public interface OrganizationService {
 		
 		// 사원 상세직급
 		public CommonCodeVO empDetailPos(String emplNo);
+		
+		// 사원 수정
+		public int emplUpdatePost(EmployeeVO employeeVO);
 
 		// 부서 등록
 		public int depInsert(CommonCodeVO commonCodeVO);

@@ -12,13 +12,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.gson.Gson;
 
-import kr.or.ddit.sevenfs.vo.OrganizationVO;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
+import kr.or.ddit.sevenfs.utils.CommonCode;
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
+import kr.or.ddit.sevenfs.vo.organization.OrganizationVO;
 import lombok.extern.slf4j.Slf4j;
 
 // 조직도 Controller
@@ -30,22 +32,16 @@ public class OrganizationController {
 	@Autowired
 	OrganizationService organizationService;
 	
-	// 상위부서 , 하위부서 , 소속사원 조회
+	// 조직도 목록 조회
 	@GetMapping("/orglist")
 	public String organizationList(Model model) {
 		//Gson gson = new Gson();
 
 		model.addAttribute("title" , "조직도");
-		
-		//OrganizationVO organization = organizationService.organization();
-		
-		//String orgData = gson.toJson(organization);
-		//model.addAttribute("orgData", orgData);
-		//log.info("orgData : " + organization);
-		
 		return "organization/organizationList";
 	}
-
+	
+	// 부서와 사원 전체 목록 조회
 	@ResponseBody
 	@GetMapping("/organization")
 	public OrganizationVO organization() {
@@ -69,19 +65,6 @@ public class OrganizationController {
 		return "organization/deptDetail";
 	}
 	
-	// 사원상세
-	@GetMapping("/emplDetail")
-	public String emplDetail(@RequestParam(value = "emplNo") String emplNo
-							, Model model) {
-		
-		//log.info("사원번호 와라와라 : " + emplNo);
-		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
-		log.info("사원상세 : " + empDetail);
-		
-		model.addAttribute("empDetail", empDetail);
-		
-		return "organization/employeeDetail";
-	}
 
 	// 관리자일때 조직관리 페이지로 이동
 	@GetMapping("/orglistAdmin")
@@ -92,9 +75,11 @@ public class OrganizationController {
 		return "organization/orglistAdmin";
 	}
 	
-	// 사원 수정 클릭했을때 수정페이지로 이동
+	// 부서 수정 클릭했을때 수정페이지로 이동
 	@GetMapping("/depUpdate")
 	public String depUpdate(@RequestParam String cmmnCode, Model model) {
+		
+		model.addAttribute("title" , "부서 수정");
 		
 		log.info("부서코드 : " + cmmnCode);
 		CommonCodeVO deptDetail = organizationService.deptDetail(cmmnCode);
@@ -114,35 +99,123 @@ public class OrganizationController {
 		
 		this.organizationService.deptUpdate(commonCodeVO);
 		
-		return "organization/organizationList";
+		return "redirect:/orglist";
 	}
 	
 	// 부서 등록
 	@GetMapping("/depInsert")
-	public String depInsert() {
+	public String depInsert(Model model) {
+		List<CommonCodeVO> depList = organizationService.depList();
+		model.addAttribute("depList", depList);
+		
+		model.addAttribute("title" , "부서 등록");
 		
 		return "organization/depInsert";
 	}
 	
+	// 확인 눌렀을때 조직도 목록으로 이동 
 	@PostMapping("/depInsertPost")
 	public String depInsertPost(CommonCodeVO commonCodeVO) {
-
-		int result = organizationService.depInsert(commonCodeVO);
 		
-		return "organization/organizationList";
+		String upperCmmnCode = commonCodeVO.getUpperCmmnCode();
+		log.info("선택한 공통코드 : " + upperCmmnCode);
+		
+		organizationService.depInsert(commonCodeVO);
+		
+		return "redirect:/orglistAdmin";
 	}
 	
 	// 부서 삭제
 	@ResponseBody
 	@GetMapping("/deptDelete")
 	public int deptDelete(String cmmnCode) {
-		
 		log.info("삭제 cmmnCode : " + cmmnCode);
 		int result = organizationService.deptDelete(cmmnCode);
-		
 		return result;
 	}
 	
+
+	// 사용자가 선택한 사원상세
+	@GetMapping("/emplDetail")
+	public String emplDetail(@RequestParam(value = "emplNo") String emplNo
+							, Model model) {
+		
+		//log.info("사원번호 와라와라 : " + emplNo);
+		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
+		log.info("사원상세 : " + empDetail);
+		
+		model.addAttribute("title" , "사원 정보");
+		String maleCode = CommonCode.GenderEnum.MALE.getCode();
+		String femaleCode = CommonCode.GenderEnum.FEMALE.getCode();
+		String mailLabel = CommonCode.GenderEnum.MALE.getLabel();
+		String femailLabel = CommonCode.GenderEnum.FEMALE.getLabel();
+		
+		if(empDetail.getGenderCode().equals(maleCode)) {
+			empDetail.setGenderCode(mailLabel);
+		}else {
+			empDetail.setGenderCode(femailLabel);
+		}
+		model.addAttribute("empDetail", empDetail);
+		
+		return "organization/employeeDetail";
+	}
+	
+	// 관리자가 선택한 사원상세
+	@GetMapping("/emplDetailAdmin")
+	public String emplDetailAdmin(@RequestParam(value = "emplNo") String emplNo
+							, Model model) {
+		
+		//log.info("사원번호 와라와라 : " + emplNo);
+		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
+		log.info("사원상세 : " + empDetail);
+		
+		model.addAttribute("title" , "사원 정보");
+		String maleCode = CommonCode.GenderEnum.MALE.getCode();
+		String femaleCode = CommonCode.GenderEnum.FEMALE.getCode();
+		String mailLabel = CommonCode.GenderEnum.MALE.getLabel();
+		String femailLabel = CommonCode.GenderEnum.FEMALE.getLabel();
+		
+		if(empDetail.getGenderCode().equals(maleCode)) {
+			empDetail.setGenderCode(mailLabel);
+		}else {
+			empDetail.setGenderCode(femailLabel);
+		}
+		model.addAttribute("empDetail", empDetail);
+		
+		return "organization/employeeDetail";
+	}
+	
+	// 사원 수정
+	@GetMapping("/emplUpdate")
+	public String emplUpdate(String emplNo, Model model) {
+		
+		model.addAttribute("title" , "사원 수정");
+		
+		EmployeeVO emplDetail = organizationService.emplDetail(emplNo);
+		
+		String maleCode = CommonCode.GenderEnum.MALE.getCode();
+		String femaleCode = CommonCode.GenderEnum.FEMALE.getCode();
+		String mailLabel = CommonCode.GenderEnum.MALE.getLabel();
+		String femailLabel = CommonCode.GenderEnum.FEMALE.getLabel();
+		
+		if(emplDetail.getGenderCode().equals(maleCode)) {
+			emplDetail.setGenderCode(mailLabel);
+		}else {
+			emplDetail.setGenderCode(femailLabel);
+		}
+		log.info("사원상세 : " + emplDetail);
+		
+		model.addAttribute("emplDetail", emplDetail);
+		
+		return "organization/empUpdate";
+	}
+	
+	// 사원 수정 확인 눌렀을때 이동
+	@PostMapping("/emplUpdatePost")
+	public String emplUpdatePost(EmployeeVO employeeVO) {
+		organizationService.emplUpdatePost(employeeVO);
+		return "redirect:/emplDetail";
+	}
 	
 	
 }

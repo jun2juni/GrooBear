@@ -1,5 +1,6 @@
 package kr.or.ddit.sevenfs.service.organization.impl;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +9,8 @@ import org.springframework.stereotype.Service;
 import kr.or.ddit.sevenfs.mapper.organization.OrganizationMapper;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
-import kr.or.ddit.sevenfs.vo.OrganizationVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
+import kr.or.ddit.sevenfs.vo.organization.OrganizationVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -57,6 +58,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 		
 		// 사원이 속한 부서
 		CommonCodeVO employeeDep = empDetailDep(emplNo);
+		log.info("사원속한부서 : " + employeeDep);
 
 		// 사원의 직급
 		CommonCodeVO employeePos = empDetailPos(emplNo);
@@ -76,6 +78,11 @@ public class OrganizationServiceImpl implements OrganizationService {
 	public CommonCodeVO empDetailPos(String emplNo) {
 		return organizationMapper.empDetailPos(emplNo);
 	}
+	
+	// 사원 수정
+	public int emplUpdatePost(EmployeeVO employeeVO) {
+		return organizationMapper.emplUpdatePost(employeeVO);
+	}
 
 	// 부서 상세조회
 	@Override
@@ -85,6 +92,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 	
 	// 부서 등록
 	public int depInsert(CommonCodeVO commonCodeVO) {
+		log.info("부서등록 insert " + commonCodeVO);
+
 		return organizationMapper.depInsert(commonCodeVO);
 	}
 

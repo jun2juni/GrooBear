@@ -71,7 +71,7 @@ $(function(){
 			})
 			.then((result) =>{
 				if(result.isConfirmed){
-				$("#depUpdateForm").submit();
+				$("#depUpdateForm").submit();   
 				}
 			});
 		});

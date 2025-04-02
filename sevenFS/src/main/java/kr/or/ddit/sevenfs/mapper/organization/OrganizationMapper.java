@@ -28,6 +28,9 @@ public interface OrganizationMapper {
 		// 사원 상세직급
 		public CommonCodeVO empDetailPos(String emplNo);
 		
+		// 사원 수정
+		public int emplUpdatePost(EmployeeVO employeeVO);
+		
 		// 부서 등록
 		public int depInsert(CommonCodeVO commonCodeVO);
 		
@@ -36,5 +39,6 @@ public interface OrganizationMapper {
 		
 		// 부서 삭제
 		public int deptDelete(String cmmnCode);
+
 	
 }

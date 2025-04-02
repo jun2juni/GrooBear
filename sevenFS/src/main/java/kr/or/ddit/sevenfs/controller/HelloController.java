@@ -74,7 +74,7 @@ public class HelloController {
 	@PostMapping("/fileUpload")
 	public String fileUpload(MultipartFile[] uploadFile) {
 
-		attachFileService.insertFileList("test", uploadFile);
+		attachFileService.insertFileList("organization", uploadFile);
 
 		return "redirect:/demo";
 	}
