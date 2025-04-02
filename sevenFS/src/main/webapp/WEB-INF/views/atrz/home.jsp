@@ -100,63 +100,65 @@
 							</div>
 
 							<!-- 오른쪽: 검색창 -->
-							<div class="table_search d-flex align-items-center gap-2">
-								<button id="s_eap_btn" class="btn btn-primary"
-									data-bs-toggle="modal" data-bs-target="#newAtrzDocModal">
-									새 결재 진행</button>
-								<select id="duration" class="form-select w-auto">
-									<option value="all">전체기간</option>
-									<option value="1">1개월</option>
-									<option value="6">6개월</option>
-									<option value="12">1년</option>
-									<option value="period">기간입력</option>
-								</select>
-								<div id="durationPeriod"
-									class="search_option d-none align-items-center">
-									<input id="fromDate" class="form-control" type="text"
-										style="width: 150px;"> ~ <input id="toDate"
-										class="form-control" type="text" style="width: 150px;">
-								</div>
-								<!--기간입력 선택시 활성화 시키는 스크립트-->
-								<script>
-									document
-											.getElementById("duration")
-											.addEventListener(
-													"change",
-													function() {
-														var durationPeriod = document
-																.getElementById("durationPeriod");
-														if (this.value == "period") {
-															durationPeriod.classList
-																	.remove("d-none");
-															durationPeriod.classList
-																	.add("d-flex");
-														} else {
-															durationPeriod.classList
-																	.remove("d-flex");
-															durationPeriod.classList
-																	.add("d-none");
-
-														}
-													})
-								</script>
-								<!-- 검색 유형 선택 -->
-								<select id="searchtype" class="form-select w-auto">
-									<option value="title">제목</option>
-									<option value="drafterName">기안자</option>
-									<option value="drafterDeptName">기안부서</option>
-									<option value="formName">결재양식</option>
-									<option value="activityUserName">결재선</option>
-								</select>
-								<section class="search2">
-									<div
-										class="search_wrap d-flex align-items-center border rounded px-2">
-										<!--focus되면 "search_focus" multi class로 추가해주세요.-->
-										<input id="keyword" class="form-control border-0"
-											type="text" placeholder="검색"> <span
-											class="material-symbols-outlined">search</span>
+							<div class="col">
+								<div class="table_search d-flex align-items-center gap-2">
+									<button id="s_eap_btn" class="btn btn-primary"
+										data-bs-toggle="modal" data-bs-target="#newAtrzDocModal">
+										새 결재 진행</button>
+									<select id="duration" class="form-select w-auto">
+										<option value="all">전체기간</option>
+										<option value="1">1개월</option>
+										<option value="6">6개월</option>
+										<option value="12">1년</option>
+										<option value="period">기간입력</option>
+									</select>
+									<div id="durationPeriod"
+										class="search_option d-none align-items-center">
+										<input id="fromDate" class="form-control" type="text"
+											style="width: 150px;"> ~ <input id="toDate"
+											class="form-control" type="text" style="width: 150px;">
 									</div>
-								</section>
+									<!--기간입력 선택시 활성화 시키는 스크립트-->
+									<script>
+										document
+												.getElementById("duration")
+												.addEventListener(
+														"change",
+														function() {
+															var durationPeriod = document
+																	.getElementById("durationPeriod");
+															if (this.value == "period") {
+																durationPeriod.classList
+																		.remove("d-none");
+																durationPeriod.classList
+																		.add("d-flex");
+															} else {
+																durationPeriod.classList
+																		.remove("d-flex");
+																durationPeriod.classList
+																		.add("d-none");
+
+															}
+														})
+									</script>
+									<!-- 검색 유형 선택 -->
+									<select id="searchtype" class="form-select w-auto">
+										<option value="title">제목</option>
+										<option value="drafterName">기안자</option>
+										<option value="drafterDeptName">기안부서</option>
+										<option value="formName">결재양식</option>
+										<option value="activityUserName">결재선</option>
+									</select>
+									<section class="search2">
+										<div
+											class="search_wrap d-flex align-items-center border rounded px-2">
+											<!--focus되면 "search_focus" multi class로 추가해주세요.-->
+											<input id="keyword" class="form-control border-0"
+												type="text" placeholder="검색"> <span
+												class="material-symbols-outlined">search</span>
+										</div>
+									</section>
+								</div>
 							</div>
 
 						</div>
@@ -169,16 +171,9 @@
 					<div class="tab-content" id="myTabContent">
 						<div class="tab-pane fade show active" id="contact1-tab-pane"
 							role="tabpanel" aria-labelledby="contact1-tab" tabindex="0">
-										<p>${myEmpInfo}</p>
 							<div class="atrzTabCont" style="margin-top: 0px;">
 								<div class="container mt-2">
 									<div class="row flex-nowrap overflow-auto">
-										<p>${beDocCnt}</p>
-										<p>${homeBeDoc}</p>
-<%-- 										<p>${homeReqDoc}</p> --%>
-<%-- 										<p>${recDocCnt}</p> --%>
-<%-- 										<p>${atrzEmploInfo}</p> --%>
-										<input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
 										<c:forEach var="atrzVO" items="${atrzVOList}">
 											<div class="col-sm-3">
 												<div class="card">
@@ -212,13 +207,12 @@
 															</c:choose>
 															<!--결재상태코드에 따른 조건 끝-->
 															<a href="#" class="col-6 col-md-8">
-															
 																<h5 class="homeFr">${atrzVO.atrzSj}</h5>
 															</a>
 														</div>
 													</div>
 													<div class="card-body">
-														<p class="card-text">기안자 : ${myEmpInfo.emplNm}</p>
+														<p class="card-text">기안자 : ${atrzVO.drafterEmpno}</p>
 														<p class="card-text">기안일 :
 															${fn:substring(atrzVO.atrzDocNo, 2,
 																				12)}</p>
@@ -243,52 +237,51 @@
 											<table class="table striped-table">
 												<thead>
 													<tr>
-														<th>
+														<th class="text-center">
 															<h6 class="fw-bolder">기안일</h6>
 														</th>
-														<th>
+														<th class="text-center">
 															<h6 class="fw-bolder">제목</h6>
 														</th>
-														<th>
+														<th class="text-center">
 															<h6 class="fw-bolder">기안부서</h6>
 														</th>
-														<th>
+														<th class="text-center">
 															<h6 class="fw-bolder">기안자</h6>
 														</th>
-														<th>
+														<th class="text-center">
 															<h6 class="fw-bolder">첨부파일</h6>
-														</th>
-														<th>
+														</th class="text-center">
+														<th class="text-center">
 															<h6 class="fw-bolder">결재상태</h6>
 														</th>
 													</tr>
 												</thead>
-												<p>${atrzVOList}</p>
 												<c:forEach var="atrzVO" items="${atrzVOList}">
 													<tbody>
 														<tr>
-															<td 
+															<td class="text-center"
 																style="padding-top: 10px; padding-bottom: 10px;">
 																<p class="text-sm">
 																	${fn:substring(atrzVO.atrzDocNo,
 																						2, 12)}</p>
 															</td>
-															<td  style="padding-top: 0px;">
+															<td class="text-center" style="padding-top: 0px;">
 																<a href="#" class="text-sm fw-bolder listCont">${atrzVO.atrzSj}</a>
 															</td>
-															<td  style="padding-top: 0px;">
+															<td class="text-center" style="padding-top: 0px;">
 																<p class="fw-bolder">기안부서</p>
 															</td>
-															<td style="padding-top: 0px;">
-																<p class="fw-bolder">${atrzVO.atrzSj}</p>
+															<td class="text-center" style="padding-top: 0px;">
+																<p class="fw-bolder">기안자</p>
 															</td>
-															<td style="padding-top: 0px;">
+															<td class="text-center" style="padding-top: 0px;">
 																<p class="fw-bolder">
 																	<span class="material-symbols-outlined">
 																		attach_file </span>
 																</p>
 															</td>
-															<td  style="padding-top: 0px;">
+															<td class="text-center" style="padding-top: 0px;">
 																<h6 class="text-sm">
 																	<p>
 																		<c:choose>
@@ -333,27 +326,27 @@
 							<div class="atrzTabCont">
 								<div class="col-lg-12">
 									<div class="card-style mb-30 docList">
-										<h6 class="mb-10">완료문서</h6>
+										<h6 class="mb-10">기안진행문서</h6>
 										<div class="table-wrapper table-responsive">
 											<table class="table striped-table">
 												<thead>
 													<tr>
-														<th>
+														<th class="text-center">
 															<h6 class="fw-bolder">기안일</h6>
 														</th>
-														<th>
+														<th class="text-center">
 															<h6 class="fw-bolder">제목</h6>
 														</th>
-														<th>
+														<th class="text-center">
 															<h6 class="fw-bolder">기안부서</h6>
 														</th>
-														<th>
+														<th class="text-center">
 															<h6 class="fw-bolder">기안자</h6>
 														</th>
-														<th>
+														<th class="text-center">
 															<h6 class="fw-bolder">첨부파일</h6>
 														</th>
-														<th>
+														<th class="text-center">
 															<h6 class="fw-bolder">결재상태</h6>
 														</th>
 													</tr>
@@ -362,28 +355,28 @@
 												<c:forEach var="atrzVO" items="${atrzVOList}">
 													<tbody>
 														<tr>
-															<td
+															<td class="text-center"
 																style="padding-top: 10px; padding-bottom: 10px;">
 																<p class="text-sm">
 																	${fn:substring(atrzVO.atrzDocNo,
 																						2, 12)}</p>
 															</td>
-															<td class="pt-1 listCont" style="padding-top: 0px;">
+															<td class="text-center" style="padding-top: 0px;">
 																<a href="#" class="text-sm fw-bolder">${atrzVO.atrzSj}</a>
 															</td>
-															<td class="pt-0" style="padding-top: 0px;">
+															<td class="text-center" style="padding-top: 0px;">
 																<p class="text-sm fw-bolder">기안부서</p>
 															</td>
-															<td class="pt-0" style="padding-top: 0px;">
+															<td class="text-center" style="padding-top: 0px;">
 																<p class="text-sm fw-bolder">기안자</p>
 															</td>
-															<td class="pt-0" style="padding-top: 0px;">
+															<td class="text-center" style="padding-top: 0px;">
 																<p class="text-sm fw-bolder">
 																	<span class="material-symbols-outlined">
 																		attach_file </span>
 																</p>
 															</td>
-															<td class="pt-0">
+															<td class="text-center" style="padding-top: 0px;">
 																<h6 class="text-sm">
 																	<p>
 																		<c:choose>

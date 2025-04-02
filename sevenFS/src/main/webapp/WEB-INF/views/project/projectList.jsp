@@ -9,87 +9,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta
-name="viewport"
-content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-/>
-<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-<title>${title}</title>
-<c:import url="../layout/prestyle.jsp" />
+	<meta charset="UTF-8" />
+	<meta
+			name="viewport"
+			content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+	/>
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>${title}</title>
+	<c:import url="../layout/prestyle.jsp" />
 </head>
 <body>
 <c:import url="../layout/sidebar.jsp" />
 <main class="main-wrapper">
-<c:import url="../layout/header.jsp" />
-
-<section class="section">
-<div class="container-fluid">
-    <!-- 검색 폼 추가 -->
-    <div class="row mb-4">
-        <div class="col-6">
-            <div class="card-style">
-                <form id="searchForm" method="get" action="/project/projectList">
-                    <div class="input-group">
-                        <input type="text" name="keyword" value="${param.keyword}" class="form-control" placeholder="검색어를 입력하세요">
-                        <button type="submit" class="btn btn-primary">검색</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <div class="row">
+	<c:import url="../layout/header.jsp" />
+	
+	<section class="section">
+		<div class="container-fluid">
+		<div class="row">
         <div class="col-12">
-            <div class="card-style">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th scope="col" id="proNm">프로젝트 명</th>
-                        <th scope="col">카테고리</th>
-                        <th scope="col">책임자</th>
-                        <th scope="col">상태</th>
-                        <th scope="col">등급</th>
-                        <th scope="col">시작일</th>
-                        <th scope="col">종료일</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach var="project" items="${projectList}">
-                    <tr>
-                        <td>${project.prjctNm}</td>
-                        <td>${project.ctgryNm}</td>
-                        <td>${project.prtcpntNm}</td>
-                        <td>${project.prjctSttusNm}</td>
-                        <td>${project.prjctGrad}</td>
-                        <td>${project.prjctBeginDateFormatted}</td>
-						<td>${project.prjctEndDateFormatted}</td>
-                    </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
-
-				<!-- 페이지 네비게이션 -->
-				<div class="row mb-4">
-				    <div class="col-12">
-				        <div class="card-style">
-				            <div style="display: flex; justify-content: center;">
-				                <page-navi
-				                    url="/project/projectList?keyword=${param.keyword}"
-				                    current="${articlePage.getCurrentPage()}"
-				                    show-max="5"
-				                    total="${articlePage.getTotalPages()}"
-				                ></page-navi>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-            </div>
+          <div class="card-style">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th scope="col">프로젝트 명</th>
+                <th scope="col">카테고리</th>
+                <th scope="col">책임자</th>
+                <th scope="col">상태</th>
+                <th scope="col">등급</th>
+                <th scope="col">시작일</th>
+                <th scope="col">종료일</th>
+              </tr>
+              </thead>
+              <tbody>
+              <c:forEach var="project" items="${projectList}">
+                <tr>
+                  <td>${project.prjctNm}</td>
+                  <td>${project.ctgryNm}</td>
+                  <td>${project.prtcpntNm}</td>
+                  <td>${project.prjctSttusNm}</td>
+                  <td>${project.prjctGrad}</td>
+                  <td>${project.prjctBeginDate}</td>
+                  <td>${project.prjctEndDate}</td>
+                </tr>
+              </c:forEach>
+              </tbody>
+            </table>
+          </div>
         </div>
-    </div>
-</div>
-</section>
-<c:import url="../layout/footer.jsp" />
+      </div>
+			
+		</div>
+	</section>
+	<c:import url="../layout/footer.jsp" />
 </main>
 <c:import url="../layout/prescript.jsp" />
 </body>

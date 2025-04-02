@@ -36,6 +36,5 @@ public interface OrganizationMapper {
 		
 		// 부서 삭제
 		public int deptDelete(String cmmnCode);
-
 	
 }

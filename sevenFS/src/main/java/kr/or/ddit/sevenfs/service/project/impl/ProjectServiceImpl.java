@@ -1,15 +1,12 @@
 package kr.or.ddit.sevenfs.service.project.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.or.ddit.sevenfs.mapper.project.ProjectMapper;
 import kr.or.ddit.sevenfs.service.project.ProjectService;
-import kr.or.ddit.sevenfs.utils.ArticlePage;
-import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,14 +17,9 @@ public class ProjectServiceImpl implements ProjectService{
 	@Autowired
 	ProjectMapper projectMapper;
 	
-	@Override
-	public List<ProjectVO> projectList(Map<String, Object> map) {
+	public List<ProjectVO> projectList() {
 		
-		return projectMapper.projectList(map);
+		return projectMapper.projectList();
 	}
-
-	public int getTotal(Map<String, Object> map) {
-		return projectMapper.getTotal(map);
-	}
-
+	
 }

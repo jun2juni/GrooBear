@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.gson.Gson;
 
@@ -31,11 +30,19 @@ public class OrganizationController {
 	@Autowired
 	OrganizationService organizationService;
 	
+	// 상위부서 , 하위부서 , 소속사원 조회
 	@GetMapping("/orglist")
 	public String organizationList(Model model) {
 		//Gson gson = new Gson();
 
 		model.addAttribute("title" , "조직도");
+		
+		//OrganizationVO organization = organizationService.organization();
+		
+		//String orgData = gson.toJson(organization);
+		//model.addAttribute("orgData", orgData);
+		//log.info("orgData : " + organization);
+		
 		return "organization/organizationList";
 	}
 
@@ -107,26 +114,22 @@ public class OrganizationController {
 		
 		this.organizationService.deptUpdate(commonCodeVO);
 		
-		return "redirect:/orglist";
+		return "organization/organizationList";
 	}
 	
 	// 부서 등록
 	@GetMapping("/depInsert")
-	public String depInsert(Model model) {
-		List<CommonCodeVO> depList = organizationService.depList();
-		model.addAttribute("depList", depList);
+	public String depInsert() {
+		
 		return "organization/depInsert";
 	}
 	
 	@PostMapping("/depInsertPost")
 	public String depInsertPost(CommonCodeVO commonCodeVO) {
+
+		int result = organizationService.depInsert(commonCodeVO);
 		
-		String upperCmmnCode = commonCodeVO.getUpperCmmnCode();
-		log.info("선택한 공통코드 : " + upperCmmnCode);
-		
-		organizationService.depInsert(commonCodeVO);
-		
-		return "redirect:/orglistAdmin";
+		return "organization/organizationList";
 	}
 	
 	// 부서 삭제
