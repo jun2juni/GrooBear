@@ -19,12 +19,9 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 				name="s_document_form_select" class="form-select"F
 				aria-label="Default select example">
 				<option selected="selected">양식을 선택해주세요</option>
-				<option id="s_holiday_form" value="s_holiday_form">휴가신청서
-				</option>
-				<option id="s_spending_form" value="s_spending_form">
-					지출결의서</option>
-				<option id="s_draft_form" value="s_draft_form">기안서
-				</option>
+				<option id="s_holiday_form" value="s_holiday_form">휴가신청서</option>
+				<option id="s_spending_form" value="s_spending_form">지출결의서</option>
+				<option id="s_draft_form" value="s_draft_form">기안서</option>
 				<!-- 			            <option id="s_test_form" value="s_test_form">테스트</option> -->
 			</select>
 			<!-- 여기에 양식 미리보기라고 알려줘야됨 -->
@@ -64,13 +61,14 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 							$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/spendingForm");
 							$("#s_document_form").html('');
 							
-						}else if(selectValue="s_draft_form"){  //기안서의경우
+						}else if(selectValue=="s_draft_form"){  //기안서의경우
 							$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/draftForm");
 							$("#s_document_form").html('');
 						}else{   //양식을 선택하지않았다면
 							$("#s_document_form").html("<div>양식을 선택해주세요.</div>");		
 						}
 					});//양식선택 end
+					
 					//양식선택후 확인버튼 클릭시(입력폼으로이동)
 					$("#liveAlertBtn").click(function(){
 						console.log("?? 길준 여기 안오냐ㅐ?");
@@ -90,21 +88,24 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 			        				  + '</div>'
 			        				+ '</div>')
 						}
+						
 						//결재양식선택에 있는 option의 text를 form변수에 담아줌
 						var form  = $("#s_document_form_select option:selected").text();
+						//휴가신청서
+						console.log("form(후) : ", form);
+						
 						if(form == "양식을 선택해주세요"){
 						}else {
 							$.ajax({
 								url:"<%=request.getContextPath()%>/atrz/insertDoc"
 // 								url:"/selectform/spending"
-								//ajax data로 보냄
+								//ajax data로 보냄(form : 휴가신청서)
 								,data:{"form" : form}
 								,type:"POST"
 								,dataType:"text"
 								,success: function(result){
 									//result :  휴가신청서
 									console.log("result : " , result);
-									
 									// 선택한 문서 양식이 "휴가신청서"일 경우
 								    if (result == "휴가신청서") {
 											// 페이지 이동
@@ -112,9 +113,8 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 								    } else if(result == "지출결의서"){
 								    	location.href="selectForm/spending";
 								    }
-								    
 								    else {
-											location.href="selectForm/draft";
+										location.href="selectForm/draft";
 								    }
 								
 									//받아온 결과가 jsp라서 그자리 html을 result로 넣어즘
@@ -122,6 +122,7 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 								}//ajax success End 
 							})//ajax End
 						} //else End
+						
 					})//결재양식선택확인btn End
 					
 			})//end 달러function

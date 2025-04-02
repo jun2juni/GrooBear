@@ -27,17 +27,44 @@
 					<div class="col-sm-10 mb-3 mb-sm-0">
 					<!-- 결재요청 | 임시저장 | 결재선지정 | 취소  -->
 						<div class="col card-body" id="approvalBtn">
-							<span><a id="s_eap_app" href="#"
-								class="btn btn-default approvalBtn"
-								style="background-color: #365CF5;">결재요청</a></span>
-							<!-- 임시저장시 어떻게 쿼리가 날라갈지랑, 어떻게 화면전환될것인가??? 데이터 저장은 어떻게 해? -->
-							<span><a id="s_eap_stor" href="#" class="btn btn-default approvalBtn"
-								style="background-color: #00C1F8;">임시저장</a></span> 
-							<span><a id="s_appLine_btn" href="#" data-bs-toggle="modal" data-bs-target="#atrzLineModal"
-								class="btn btn-default approvalBtn" style="background-color: #F7C800;">결재선 지정</a></span> 
-							<span><a id="s_cancel_btn" class="btn btn-default approvalBtn"
-								style="background-color: #D50100;" href="/atrz/home"
-								onclick="eapHome()">취소</a></span>
+						<!-- 새로운 버튼 -->
+						<div class="tool_bar">
+									<div class="critical d-flex gap-2 mb-3">
+										<!--성진스 버튼-->
+										<a id="s_eap_app" type="button" class="btn btn-outline-primary d-flex align-items-center gap-1">
+											<span class="material-symbols-outlined fs-5">cancel</span> 
+											결재요청</a>
+										<a id="s_eap_stor" type="button" class="btn btn-outline-success d-flex align-items-center gap-1"
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal">
+											<span class="material-symbols-outlined fs-5">error</span> 
+												임시저장</a>
+										<a id="s_appLine_btn" type="button" class="btn btn-outline-info d-flex align-items-center gap-1"
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal">
+											<span class="material-symbols-outlined fs-5">error</span> 
+												결재선 지정</a>
+										<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1" href="/atrz/home">
+											<span class="material-symbols-outlined fs-5">cancel</span> 
+											취소</a>
+<!-- 										<a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="/atrz/approval"> -->
+<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
+<!-- 											목록으로</a> -->
+
+<!-- 										<a id="act_draft_withdrawal" class="btn d-flex align-items-center gap-1" data-role="button"> -->
+<!-- 											<span class="material-symbols-outlined fs-5">cancel</span>  -->
+<!-- 											<span class="txt">상신취소</span> -->
+<!-- 										</a> -->
+<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
+<!-- 											<span class="material-symbols-outlined fs-5">error</span>  -->
+<!-- 											<span class="txt">결재선 정보</span> -->
+<!-- 										</a> -->
+<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
+<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
+<!-- 											<span class="txt">목록</span> -->
+<!-- 										</a> -->
+									</div>
+								</div>
+						
+						<!-- 새로운 버튼 -->
 						</div>
 	<!-- 모달창 인포트 -->
 	<c:import url="../documentForm/approvalLineModal.jsp" />
@@ -48,8 +75,7 @@
 								<!-- 전자결재 양식 수정도 가능 시작 -->
 								<div id="s_eap_content_box_left" class="s_scroll">
 									<div class="s_div_container s_scroll">
-										<div
-											style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">휴가신청서</div>
+										<div style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">휴가신청서</div>
 
 										<div style="float: left; width: 230px; margin: 0 30px;">
 											<table border="1" id="s_eap_draft_info">
@@ -208,7 +234,45 @@
 								<!-- 기능 끝 -->
 								<!-- 여기다가 작성해주세요(준희) -->
 							</div>
-						</div>
+							</div>
+							<!-- 상하 버튼 추가 -->
+							<div class="tool_bar">
+									<div class="critical d-flex gap-2 mt-3">
+										<!--성진스 버튼-->
+										<a id="s_eap_app" type="button" class="btn btn-outline-primary d-flex align-items-center gap-1">
+											<span class="material-symbols-outlined fs-5">cancel</span> 
+											결재요청</a>
+										<a id="s_eap_stor" type="button" class="btn btn-outline-success d-flex align-items-center gap-1"
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal">
+											<span class="material-symbols-outlined fs-5">error</span> 
+												임시저장</a>
+										<a id="s_appLine_btn" type="button" class="btn btn-outline-info d-flex align-items-center gap-1"
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal">
+											<span class="material-symbols-outlined fs-5">error</span> 
+												결재선 지정</a>
+										<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1" href="/atrz/home">
+											<span class="material-symbols-outlined fs-5">cancel</span> 
+											취소</a>
+<!-- 										<a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="/atrz/approval"> -->
+<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
+<!-- 											목록으로</a> -->
+
+<!-- 										<a id="act_draft_withdrawal" class="btn d-flex align-items-center gap-1" data-role="button"> -->
+<!-- 											<span class="material-symbols-outlined fs-5">cancel</span>  -->
+<!-- 											<span class="txt">상신취소</span> -->
+<!-- 										</a> -->
+<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
+<!-- 											<span class="material-symbols-outlined fs-5">error</span>  -->
+<!-- 											<span class="txt">결재선 정보</span> -->
+<!-- 										</a> -->
+<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
+<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
+<!-- 											<span class="txt">목록</span> -->
+<!-- 										</a> -->
+									</div>
+								</div>
+							<!-- 상하 버튼 추가 -->
+						
 					</div>
 				</div>
 			<!-- 여기서 작업 끝 -->
@@ -224,11 +288,6 @@
 <!-- 결재선지정하는 관련 스크립트 시작-->
 <script>
 
-// 전자결재 홈 클릭
-function eapHome() {
-	$("#menu_eap").get(0).click();
-}
-
 // 결재선 지정 시 결재상태에 따라 글씨색 변경
 for(var i = 0; i < 3; i++) {
 	if($(".s_span_fw").eq(i).text() == '결재') {
@@ -241,12 +300,7 @@ for(var i = 0; i < 3; i++) {
 }
 </script>
 
-	<script>
-   // 결재선 지정 클릭 시
-   $("#s_appLine_btn").click(function() {
-   	$("#s_modal_content").load("<%=request.getContextPath()%>/organ/selectList");
-   });
- 	</script>
+
 
 <script>
       var deptCnt = 1;
@@ -258,6 +312,11 @@ $("#s_add_appLine").click(function() {
           var name = $('.jstree-clicked').text().substr(0,3);
           var job = $('.jstree-clicked').text().substr(4,2); // 부사장 '부사'로 되어 수정
           var result = $('.jstree-clicked').text().substr(4,2).match("^부사") // 부사로 시작하지 않으면 null 리턴
+          console.log("개똥이1 : "empNo);
+          console.log("개똥이2 : "text);
+          console.log("개똥이3 : "name);
+          console.log("개똥이4 : "job);
+          console.log("개똥이5 : "result);
           if(result != null) {
           	job = $('.jstree-clicked').text().substr(4,3);
           }
@@ -295,7 +354,7 @@ $("#s_add_appLine").click(function() {
 		}
 	}
 	// 본인을 결재선 리스트에 추가할 때 alert
-<%-- 			var checkEmpName = "<%=empName%>"; --%>
+	var checkEmpName = \${checkEmpName};
 	if(name == checkEmpName) {
 		swal({
                   title: "",
@@ -344,7 +403,7 @@ $("#s_add_appLine").click(function() {
 	
 });
       
-      // 직책 순으로 정렬하는 함수
+// 직책 순으로 정렬하는 함수
 function fn_arr(arr){
       	var cnt = 1;
       	var aprvList ="";
@@ -388,14 +447,6 @@ $("#s_remove_appLine").click(function() {
 	fn_remove(arr);
 });
 
-// 참조처 쪽 <- 눌렀을 때
-$("#s_remove_appDept").click(function() {
-	$(".s_appDept_tbody_cl").children().last().remove();
-	if(deptCnt == 1) {
-		return;
-	}
-	deptCnt--;
-});
 
 // 모달에서 확인 클릭 시 
 $("#s_add_appLine_list").click(function() {
@@ -719,8 +770,100 @@ function dateCnt() {
 </script>
 
 	<script>
-  	// datepicker위젯
+  	
 $(document).ready(function() {
+	//버튼눌렀을때 작동되게 하기 위해서 변수에 담아준다.
+	let emplNo = null;  //선택된 사원 번호 저장
+	
+// 	여기 중호쌤이랑 같이했던거 해보기
+	 $(document).on("click",".jstree-anchor",function(){
+		let idStr = $(this).prop("id");//20250008_anchor
+		console.log("개똥이->idStr : ",idStr);
+		emplNo = idStr.split("_")[0];//20250008
+		console.log("개똥이->emplNo : ",emplNo);
+		
+	 });//end jstree-anchor
+	 $(document).on("click", "#add_appLine",function(){
+		 if(!emplNo){
+			 swal({
+				 title: "",
+                 text: "선택한 사원이 없습니다.",
+                 icon: "error",
+                 closeOnClickOutside: false,
+                 closeOnEsc: false
+				});
+			 return;
+		 }
+		 var checkEmplNo = emplNo
+// 		 if(emplNo==checkEmplNo){
+// 			 swal({
+//                  title: "",
+//                  text: "본인은 결재선 리스트에 추가할 수 없습니다.",
+//                  icon: "error",
+//                  closeOnClickOutside: false,
+//                  closeOnEsc: false
+//              });
+// 				return;
+// 		 }
+		 
+		 $.ajax({
+				url:"/atrz/appLineEmp",
+				data:{"emplNo":emplNo},
+				type:"post",
+				dataType:"json",
+				success:function(result){
+					let resultObj = result;
+					console.log("result : ", result);
+					console.log("result.emplNm : ",result.emplNm);
+					console.log("result.posNm : ",result.posNm);
+//	 				console.log("typeof result : ", typeof result);
+//	 				console.log("Object.keys(result):", Object.keys(result)); // 키 목록 확인
+//	 				console.log("JSON.stringify(result):", JSON.stringify(result)); // 전체 JSON 구조 확인
+					
+					//중복으로는 못들어가게 만들기
+					
+					//NO처리하기
+					let noLen = $(".clsTr").length;
+					console.log("noLen : ", noLen);
+					
+					let str = `
+						<tr class="clsTr" id="row_\${emplNo}">
+							<th>\${(noLen/2)+1}</th>
+							<th>\${result.emplNm}</th>
+							<th>\${result.deptNm}</th>
+							<th>\${result.posNm}</th>
+							<th>
+								<select class="form-select" aria-label="Default select example">
+									<option selected="">결재</option>
+									<option value="1">참조</option>
+								</select>
+							</th>
+							<th>
+								<div class="form-check align-middle" style=" width: 24px; padding-left: 60px;">
+									<input class="form-check-input align-middle" type="checkbox" value="" id="flexCheckDefault">
+								  </div>
+							</th>
+				
+						</tr>
+					
+						`;
+					$(".s_appLine_tbody_cl").append(str);
+				}//end success
+			});//end ajax
+		 
+	 })
+		
+		
+		
+		
+		
+		
+		
+	
+
+// 개똥이
+
+	// datepicker위젯
 	$("#s_ho_start").datepicker({
 		timepicker: true,
 		changeMonth: true,

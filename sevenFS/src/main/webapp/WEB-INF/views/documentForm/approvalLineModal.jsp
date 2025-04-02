@@ -2,17 +2,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<style>
-#s_btn_i{
-
-}
-</style>
-
 <!-- 결재선 지정 모달창 시작 -->
 	<div class="modal fade" id="atrzLineModal" tabindex="-1"
 		aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog modal-xl">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h1 class="modal-title fs-5" id="exampleModalLabel">결재선지정</h1>
@@ -20,41 +13,16 @@
 						data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<div class="row">
+					<div class="row ">
 						<!-- 좌측 결재선사원선택부분 시작 -->
-						<div class="col-sm-5">
+						<div class="col-md-3 flex-grow-1">
 							<div class="s_scroll"
 								style="float: left; border: 1px solid lightgray; height: 500px; padding: 20px; border-radius: 10px; overflow: auto;">
 								<div class="row">
-								<!-- 검색 -->
-								<nav class="navbar navbar-light"
-									style="float: right;">
-									<div class="container-fluid">
-										<input class="form-control me-2" placeholder="Search"
-											aria-label="Search" id="search" value=""
-											style="width: 100px;">
-									</div>
-								</nav>
 								<!-- 버튼 -->
-								<div style="float: left; margin-top: 10px; margin-bottom: 10px;">
-									<button class="btn btn-outline-success"
-										onclick="openTree();">OPEN</button>
-									<button class="btn btn-outline-dark"
-										onclick="closeTree();">CLOSE</button>
-								</div>
 								<!-- 조직도 -->
-								<div id="oraganList" class="form-control" style="height: 320px;">
-									<table >
-										<tbody>
-											<th>
-											<tr>사원명</tr>
-											</th>
-											
-										</tbody>
-									
-									</table>
-									<p>여기에 조직도 트리가 들어가야함</p>
-								</div>
+									<c:import url="../atrz/orgList.jsp"></c:import>
+								
 								</div>
 							</div>
 						</div>
@@ -63,7 +31,7 @@
 						<div class="col-sm-1">
 							<div id="atrzLineAddRemBtn"
 								style="height: 500px; padding-top: 180px;">
-								<button type="button" class="btn btn-secondary"
+								<button id="add_appLine" type="button" class="btn btn-secondary"
 									style="margin-bottom: 70px;">
 									<i class="lni lni-arrow-right"></i>
 								</button>
@@ -77,7 +45,7 @@
 						</div>
 						<!-- 결재선 추가 삭제 버튼 공간 끝-->
 						<!-- 결재선리스트 -->
-						<div class="col-sm-5"
+						<div class="col-sm-7"
 							style="float: left; text-align: center; margin-left: 20px;">
 							<div style="font-size: 1.2em; font-weight: bold;">결재선
 								리스트</div>
@@ -96,21 +64,21 @@
 								</thead>
 								<!-- 여기에 결재선지정 사람들이 들어가야함 -->
 								<tbody class="s_appLine_tbody_cl"
-									style="text-align: center; width: 300px;">
-									<tr>
+									style="text-align: center;">
+									<tr class="clsTr">
 										<th>1</th>
 										<th>길준희</th>
 										<th>회계1팀</th>
 										<th>사원</th>
 										<th>
-											<select class="form-select" aria-label="Default select example" style="width: 70px;">
+											<select class="form-select" aria-label="Default select example">
 												<option selected>결재</option>
 												<option value="1">참조</option>
 											</select>
 										</th>
 										<th>
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+											<div class="form-check align-middle" style=" width: 24px; padding-left: 60px;">
+												<input class="form-check-input align-middle" type="checkbox" value="" id="flexCheckDefault">
 											  </div>
 										</th>
 

@@ -6,6 +6,9 @@ import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
 import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 
 public interface AtrzService {
+	//사원정보 가져오기
+	public List<AtrzVO> atrzEmploInfo();
+	
 	//목록 출력
 	public List<AtrzVO> list();
 	
@@ -17,6 +20,26 @@ public interface AtrzService {
 	
 	//전자결재와 기안문서 조인을 위한것
 	public AtrzVO atrzDetail(String atrzDocNo);
+	
+	//결재대기문서 갯수
+	public int beDocCnt(String emplNo);
+	
+	//전자 결재대기
+	public List<AtrzVO> selectHomeBeDoc(String emplNo);
+	
+	//기안진행문서
+	public List<AtrzVO> selectHomeReqDoc(String emplNo);
+	
+	//결재수신문서갯수
+	public int recDocCnt(String emplNo);
+	
+	//결재 대기 문서
+	public List<AtrzVO> selectReceiptDoc(int currentPage, int pageSize, AtrzVO atrzVO);
+	public int receiptTotalCnt(AtrzVO atrzVO);
+	//결재 수신문서
+	public List<AtrzVO> selectBeforeDoc(int currentPage, int pageSize, AtrzVO atrzVO);
+	public int beforeTotalCnt(AtrzVO atrzVO);
+	
 	
 	//비즈니스 로직 이란???
 	//컨드롤러에서는 화면에서 보여지는것만 
