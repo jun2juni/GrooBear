@@ -115,7 +115,7 @@
           </a>
           <ul id="schdule" class="dropdown-nav collapse" style="">
             <li>
-              <a href="/schdule"> 1뎁스 </a>
+              <a href="/myCalendar"> 1뎁스 </a>
             </li>
             <li>
               <a href="/schdule"> 2뎁스 </a>

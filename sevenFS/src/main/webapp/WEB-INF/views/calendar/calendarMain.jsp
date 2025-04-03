@@ -4,21 +4,17 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 <script type="text/javascript">
 	document.addEventListener('DOMContentLoaded', function() {
 		let emplNo = "${myEmpInfo.emplNo}";
    		console.log("직원 이름:", emplNo);
-
-		   console.log("FullCalendar 버전:", FullCalendar.version);
-		   console.log("사용 가능한 플러그인:", FullCalendar);
-
-		// 		var insModal = document.getElementById('insModal');
+		console.log("FullCalendar 버전:", FullCalendar.version);
 
 		// bootstrap 시작
 		var insModal = new bootstrap.Modal(document.getElementById('myModal'));
 		console.log("$('#myModal')[0]",$('#myModal')[0]);
-		console.log('start : ',$('#calAddFrm')[0].start.val);
+		// console.log('start : ',$('#calAddFrm')[0].start.val);
 		console.log('insModal : ',insModal);
 
 		// bootstrap 끝
@@ -33,14 +29,14 @@
 		const headerToolbar = {
 			left : 'prevYear,prev,next,nextYear today',
 			center : 'title',
-			right : 'dayGridMonth,timeGridWeek,listWeek'
+			right : 'dayGridMonth,timeGridWeek,listWeek,timeGridDay'
 		};
 
 		const calendarOption = {
+			handleWindowResize:true,
 			height : '700px',
-			expandRows : true,
-			// slotMinTime : '09:00',
-			// slotMaxTime : '18:00',
+			contentHeight: 60,
+			expandRows : false,
 			headerToolbar : headerToolbar,
 			initialView : 'dayGridMonth',
 			locale : 'ko', // 'kr'에서 'ko'로 수정
@@ -54,8 +50,7 @@
 			eventResizableFromStart: true,
 			dayMaxEventRows : 3,
 			nowIndicator : true,
-			// droppable : true,
-			// droppable : false,
+			droppable : true,
 			eventOverlap : true,
 			eventResize: function(info) {
 				console.log("리사이즈 실행 : ", info);
@@ -65,11 +60,6 @@
 						type:"post",
 						data:JSON.stringify(updData),
 						contentType:'application/json',
-						// success:function(response) {
-						// },
-						// error: function(xhr, status, error) {
-						// 	console.error("AJAX 오류:", error);
-						// }
 					});
 			}
 		};
@@ -81,21 +71,23 @@
 				url: "/myCalendar/calendarList",
 				method: 'get',
 				success: function(data) {
-					// console.log("refresh() : ",data);
 					let clndr = chngData(data);
 					console.log("refresh : ",clndr);
 					window.globalCalendar.setOption('events', clndr);
 				}
 			});
 		};
-
+		const overChk = function(date1,date2,num){
+			let differenceInDays = Math.abs((date2 - date1) / (1000 * 60 * 60 * 24));
+			return differenceInDays>=num?true:false;
+		}
 		const chngData = function(dataList){
 			let returnData=[]
 			dataList.forEach(data=>{
 				let startDate = new Date(data.schdulBeginDt);
 				let endDate = new Date(data.schdulEndDt);
-				let differenceInDays = Math.abs((endDate - startDate) / (1000 * 60 * 60 * 24));
-				let chk = differenceInDays>=1?true:false;
+				let chk = overChk(startDate,endDate,1);
+				
 				// console.log("check : ",data.schdulNo,chk);
 
 				returnData.push({
@@ -123,31 +115,7 @@
 		refresh();
 
 // 이벤트들
-		// 드래그로 일정 늘리거나 줄이는 이벤트
-		// const eventResizing=function(event){
-		// 	console.log("리사이즈 실행 : ",event);
-		// }
-		try{
-			calendar.on("evevtResize", function(info) {
-				console.log("리사이즈 이벤트 발생 : ",info);
-				let updData = mkUptData(info);
-					$.ajax({
-						url:"/myCalendar/uptEvent",
-						type:"post",
-						data:JSON.stringify(updData),
-						contentType:'application/json',
-						success:function(response) {
-							// console.log("추가 response : ",response);
-							// refresh(); // 인자 없이 호출
-						},
-						error: function(xhr, status, error) {
-							console.error("AJAX 오류:", error);
-						}
-					});
-			})
-		}catch (error) {
-			console.log(error)
-		}
+		// 드래그로 일정 늘리거나 줄이는 이벤트	=> 이건 위에 있다. 등록되어있음
 
 		// 드래그 앤 드롭 이벤트
 		calendar.on("eventDrop", function(info) {
@@ -168,9 +136,7 @@
 				    });
 		})
 
-
-		// 일자 선택 이벤트
-		calendar.on("select", function(info) {
+		const selectEvent = function(info){
 			// 모달 표시
 			insModal.show();
 			$('#addUpt').val("add");
@@ -200,7 +166,7 @@
 				let minutes = now.getMinutes().toString().padStart(2,'0');
 				let currentTime = hours+":"+minutes;
 				// 선택한 날짜 범위를 폼에 설정
-				console.log("info.start",info.start);
+				// console.log("info.start",info.start);
 				let startStr = date2Str(info.start);
 				let endStr = date2Str(info.end);
 				console.log("startStr",startStr);
@@ -210,13 +176,86 @@
 				$("#schEnd").val(info.endStr);
 				$("#schStartTime").val(currentTime);
 				$("#schEndTime").val("00:00");
-				console.log('start : ',$('#calAddFrm').find('[name="start"]').val());
+				// console.log('start : ',$('#calAddFrm').find('[name="start"]').val());
+			}
+		}
+
+	// 클릭 및 드래그 선택 이벤트 끝
+		let clickTimeout = null;
+		let lastClickTime = 0;
+		const doubleClickDelay = 300; // 밀리초
+		function checkDblClk(){
+			// console.log("클릭");
+			const currentTime = new Date().getTime();
+			const timeSinceLastClick = currentTime - lastClickTime;
+			
+			// 이미 존재하는 타임아웃 제거
+			if (clickTimeout) {
+				clearTimeout(clickTimeout);
+				clickTimeout = null;
+  			}
+			if(timeSinceLastClick < doubleClickDelay){
+				// 다음 시퀀스를 위해 초기화
+				lastClickTime = 0;
+				return true;
+			}else{
+				// 첫 번째 클릭 - 잠재적인 두 번째 클릭을 위한 타이머 설정
+				lastClickTime = currentTime;
+				clickTimeout = setTimeout(function() {
+					// console.log("clickTimeout",clickTimeout);
+					// 지정된 시간 내에 두 번째 클릭이 없으면 실행
+					
+					// 싱글클릭 시 실행할 동작 (필요한 경우)
+					
+					// 다음 시퀀스를 위해 초기화
+					clickTimeout = null;
+					lastClickTime = 0;
+				}, doubleClickDelay);
+				return false;
+			}
+		}
+		calendar.on("dateClick",function(info){
+			let chk = checkDblClk();
+			if(chk){
+				console.log('날짜 더블클릭:', info);
+				insModal.show();
+				$('.modal-title').text("일정 등록");
+				$("#modalSubmit").text("등록");
+				if($("#deleteBtn").length){
+					$("#deleteBtn").remove();
+				}
+			}else{
+				// console.log('날짜 싱글클릭:', info.dateStr);
 			}
 		})
+
+		// 일자 선택 이벤트
+		calendar.on("select", function(info) {
+			if(!lastClickTime){
+				// console.log("select -> lastClickTime 싱글클릭 : ",lastClickTime);
+				let startDate = new Date(info.start);
+				let endDate = new Date(info.end);
+				
+				if(overChk(startDate,endDate,2)){
+					selectEvent(info);
+					$('.modal-title').text("일정 등록");
+					$("#modalSubmit").text("등록");
+					if($("#deleteBtn").length){
+						$("#deleteBtn").remove();
+					}
+				}
+				return;
+			}
+		})
+	// 클릭 및 드래그 선택 이벤트 끝
 
 		// 등록된 일정 클릭시 이벤트
 		calendar.on("eventClick",info=>{
 			console.log("eventClick -> info : ", info);
+			let popover = document.querySelector(".fc-popover");
+			if(popover){
+				popover.remove();
+			}
 			insModal.show();
 			$('.modal-title').text("일정 상세");
 			$("#modalSubmit").text("수정");
@@ -234,18 +273,7 @@
 			$('#schTitle').val(info.event._def.title);
 			$('#schContent').val(info.event._def.extendedProps.schdulCn);
 			$('#schdulTy').val(info.event._def.extendedProps.schdulTy);
-
-			console.log("이벤트 리사이즈 가능 여부:", info.event.endStr !== null);
-			console.log("이벤트 속성 확인:", {
-				id: info.event.id,
-				title: info.event.title,
-				start: info.event.start,
-				end: info.event.end,
-				allDay: info.event.allDay,
-				editable: info.event._def.ui.editable,
-				durationEditable: info.event._def.ui.durationEditable
-			});
-		})
+		})	
 		
 		// allDay 관련 함수들 시작
 		document.getElementById("allDay").addEventListener('change',function(e){
@@ -324,6 +352,11 @@
 			// console.log("event -> input.start : ",e.target.form.start.value);
 			// console.log("event -> input.start : ",e.target.form.startTime.value);
 			
+			if(!e.target.form.schdulSj.value){
+				alert("제목을 입력하세요");
+				return;
+			}
+
 			let {startDate,endDate} = clickEvent2Date(e);
 			console.log("fCalAdd -> startDate : ",startDate);
 			console.log("fCalAdd -> endDate : ",endDate);
@@ -407,8 +440,11 @@
 </script>
 </head>
 <body>
+	<jsp:include page="calendarSidebar.jsp"></jsp:include>
 	<jsp:include page="calendarFormModal.jsp"></jsp:include>
-	<!-- <c:import url="./calendarFormModal.jsp"></c:import> -->
-	<div id='myCalendar'></div>
+	<div id="contentContainer">
+		<div id='myCalendar'></div>
+	</div>
+	
 </body>
-</html><!-- 
+</html>
