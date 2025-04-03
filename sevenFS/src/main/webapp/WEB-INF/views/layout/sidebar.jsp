@@ -244,8 +244,9 @@
           </li>
         <%--조직도 사이드 바 --%>
         
-         <!-- 관리자일 경우에만 보이게 하기 -->
+         <%-- 관리자일 경우에만 보임  --%>
         <%--조직관리 사이드 바 --%>
+        <sec:authorize access="hasRole('ROLE_ADMIN')">
         <li class="nav-item">
           <a href="/orglistAdmin" class="${fn:contains(currentURL, '/orglistAdmin') ? '' : 'collapsed'}" >
             <span class="icon material-symbols-outlined">
@@ -254,6 +255,7 @@
             <span class="text">조직관리</span>
           </a>
           </li>
+          </sec:authorize>
         <%--조직관리 사이드 바 --%>
     </ul>
     
