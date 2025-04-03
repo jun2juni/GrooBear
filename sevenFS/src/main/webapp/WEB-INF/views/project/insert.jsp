@@ -17,12 +17,50 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>${title}</title>
   <c:import url="../layout/prestyle.jsp" />
-  <!-- Bootstrap 5.3 CSS (직접 추가, 디자인 통일용) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- jQuery UI CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.13.2/dist/themes/base/jquery-ui.min.css">
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <style>
+  <style>
+  /* 프로젝트 생성 페이지 특화 스타일 */
+  .card-style input,
+  .card-style select,
+  .card-style textarea,
+  .card-style .form-control,
+  .card-style .input-style-1 input,
+  .card-style .select-style-1 select {
+    text-align: left !important;
+    text-decoration: none !important;
+  }
+  
+  /* 테이블 셀 스타일 */
+  .card-style table td,
+  .card-style table th {
+    text-align: left !important;
+    text-decoration: none !important;
+  }
+  
+  /* 폼 레이블 스타일 */
+  .card-style label {
+    text-align: left !important;
+    text-decoration: none !important;
+    display: block;
+  }
+  
+  /* 선택된 멤버 테이블 스타일 */
+  #selectedMembersTable th,
+  #selectedMembersTable td {
+    text-align: left !important;
+  }
+  
+  /* 가이드 영역 스타일 */
+  .guide-list li {
+    text-align: left !important;
+    text-decoration: none !important;
+  }
+</style>
+  </style>
 </head>
 <body>
   <c:import url="../layout/sidebar.jsp" />
@@ -613,8 +651,6 @@
   </main>
   <c:import url="../layout/prescript.jsp" />
   
-  <!-- Bootstrap 5.3 JS (직접 추가, 디자인 통일용) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <!-- jQuery (부트스트랩 모달 등을 위해 추가) -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- jQuery UI JS -->

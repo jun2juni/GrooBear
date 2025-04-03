@@ -16,12 +16,9 @@ content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=
 />
 <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 <title>${title}</title>
-<c:import url="../layout/prestyle.jsp" />
 </head>
 <body>
-<c:import url="../layout/sidebar.jsp" />
 <main class="main-wrapper">
-<c:import url="../layout/header.jsp" />
 
 <section class="section">
 <div class="container-fluid">
@@ -89,8 +86,6 @@ content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=
     </div>
 </div>
 </section>
-<c:import url="../layout/footer.jsp" />
 </main>
-<c:import url="../layout/prescript.jsp" />
 </body>
 </html>
