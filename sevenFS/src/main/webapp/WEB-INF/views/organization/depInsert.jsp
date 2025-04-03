@@ -15,7 +15,6 @@
 			</div>
 		</div>
 		<div class="activity-meta text-start" style="margin-top: 20px;">
-		
 			<div class="input-style-1 form-group col-8" style="margin-left: 15%;">
 				<label for="upperCmmnCode" class="form-label required">소속부서
 						<span class="text-danger">*</span>
