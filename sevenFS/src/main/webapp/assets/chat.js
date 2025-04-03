@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // 내 계정 알림 구독
   connectWebSocket({
-    roomPath: "alert/room",
+    roomPath: "alert/room/",
     chttRoomNo: emp.emplNo, receiveMessage: (message) => {
       console.log(message, "alert" + message);
 

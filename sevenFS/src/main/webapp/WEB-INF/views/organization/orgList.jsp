@@ -45,7 +45,6 @@
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
         function deptClick(e, data) {
-            console.log(data.node);
             // 클릭한게 사원일때
             if(data.node.original.deptYn == false) {
                 // 여기는 사원 클릭 한 경우 작동
@@ -109,7 +108,27 @@
                         "check_callback" : true
                     }
             })
+
         };
+
+      	// 트리 더블 클릭 기능
+        $('#jstree').on("dblclick.jstree", function (e) {
+          var tree = $(this).jstree();
+          var node = tree.get_node(event.target);
+          
+          if(node.original.deptYn === false) {
+            if (typeof dbClickEmp === "function") {
+              dbClickEmp(node);
+            }
+          }
+          
+          if(node.original.deptYn === true) {
+            if (typeof dbClickDept === "function") {
+              dbClickDept(node);
+            }
+          }
+      
+        });
         
         $('#jstree').on("changed.jstree", function (e, data) {
             //console.log(data.selected);
