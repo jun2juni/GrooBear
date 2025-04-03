@@ -157,17 +157,16 @@ public class BbsController {
      * 게시글 수정 처리
      */
     @PostMapping("/bbsUpdate")
-    public String bbsUpdate(@ModelAttribute BbsVO bbsVO, MultipartFile[] uploadFile, AttachFileVO attachFileVO) {
+    public String bbsUpdate(@ModelAttribute BbsVO bbsVO,MultipartFile[] updateFile, AttachFileVO attachFileVO) {
         log.info("게시글 수정 요청: " + bbsVO);
         
-        long attachFileNm = attachFileService.updateFileList("updateFile", uploadFile, attachFileVO);
-        bbsVO.setAtchFileNo(attachFileNm);
+        attachFileVO.setAtchFileNo(bbsVO.getAtchFileNo());
         
-        int bbsSn = bbsVO.getBbsSn(); // update 후 bbsSn 가져오기
-        log.info("생성된 게시글 ID: " + bbsSn);
+        log.info("업데이트 파일 : " + updateFile);
         
-        log.info("파일이름" + attachFileNm);
-
+        long attachFileNm = attachFileService.updateFileList("updateFile", updateFile, attachFileVO);
+        log.info("어테치파일 넘버 : " + attachFileNm);
+        
         int update = bbsService.bbsUpdate(bbsVO);
         log.info("업데이트 : " + update);
         

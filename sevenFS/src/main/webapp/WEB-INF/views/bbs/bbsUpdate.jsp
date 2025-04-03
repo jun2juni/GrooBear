@@ -55,19 +55,19 @@
                                 </div>
                                 <br>
                                 <div>
-                                    파일
-                                    <c:if test="${not empty bbsVO.files}">
+                                    파일${bbsVO.files}
                                         <c:forEach var="file" items="${bbsVO.files}">
-										<file-upload
-												label="${file.fileStreNm}"
-												name="uploadFile"
-												max-files="5"
-												contextPath="${pageContext.request.contextPath  }"
-												uploaded-file="${fileAttachList}"
-												atch-file-no="${bbsVO.atchFileNo}"
-										></file-upload>
+                                        	<c:if test="${not empty file}">
+											<file-upload
+													label="${file.fileStreNm}"
+													name="updateFile"
+													max-files="5"	
+													contextPath="${pageContext.request.contextPath  }"
+													uploaded-file="${file}"
+													atch-file-no="${bbsVO.atchFileNo}"
+											></file-upload>
+											</c:if>
 										</c:forEach>
-									</c:if>
                                 </div>
                                 <br>
                                 <div>
