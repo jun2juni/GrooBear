@@ -66,7 +66,7 @@ function deptInsert(){
     })
         .then(resp => resp.text())
         .then(res => {
-            console.log("부서등록 : " , res);
+            //console.log("부서등록 : " , res);
             $("#emplDetail").html(res);
             
             $("#insertBtn").on("click", function(){
@@ -94,7 +94,7 @@ function clickEmp(data) {
      .then(resp => resp.text())
      .then(res => {
 
-       console.log("사원상세정보 : " , res);
+       //console.log("사원상세정보 : " , res);
        $("#emplDetail").html(res);
        
    
@@ -134,7 +134,7 @@ function clickDept(data) {
   })
   .then(resp => resp.text())
   .then(res => {
-    console.log("부서상세정보 : " , res);
+    //console.log("부서상세정보 : " , res);
     $("#emplDetail").html(res);
 
     // 부서 삭제 - 관리자만 가능
@@ -156,7 +156,7 @@ function clickDept(data) {
               })
                 .then(resp => resp.text())
                 .then(res => {
-                  console.log("삭제성공? : " , res);
+                  //console.log("삭제성공? : " , res);
                 })
               swal("식제되었습니다.", {
                 icon: "success",

@@ -112,12 +112,12 @@
         };
         
         $('#jstree').on("changed.jstree", function (e, data) {
-            console.log(data.selected);
+            //console.log(data.selected);
         });
         
         // node 열렸을때
         $('#jstree').on("open_node.jstree", function (e, data) {
-            console.log("노드open", data.node);
+            //console.log("노드open", data.node);
         });
         
         $('#jstree').on("select_node.jstree", deptClick);
