@@ -22,7 +22,7 @@
   <!-- jQuery UI CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.13.2/dist/themes/base/jquery-ui.min.css">
   <!-- FontAwesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
   <c:import url="../layout/sidebar.jsp" />
@@ -1415,28 +1415,119 @@
         updateTaskTree();
       });
       
-      // 폼 제출 이벤트 (DB 연결 없이 테스트)
+      
+      
+   // 폼 제출 이벤트 - 백엔드 연결 
       $("#projectForm").submit(function(e) {
+        // 기본 제출 동작 방지 (데이터 가공을 위해)
         e.preventDefault();
         
-        // 폼 데이터 수집
-        const formData = {
-          prjct_nm: $("input[name='prjct_nm']").val(),
-          ctgry: $("select[name='ctgry']").val(),
-          prjct_cn: $("textarea[name='prjct_cn']").val(),
-          prjct_begin_date: $("input[name='prjct_begin_date']").val(),
-          prjct_end_date: $("input[name='prjct_end_date']").val(),
-          prjct_sttus: $("select[name='prjct_sttus']").val(),
-          prjct_grad: $("select[name='prjct_grad']").val(),
-          prjct_url: $("input[name='prjct_url']").val(),
-          prjct_rcvord_amount: $("input[name='prjct_rcvord_amount']").val().replace(/,/g, ''), // 콤마 제거
-          prjct_adres: $("input[name='prjct_adres']").val(),
-          members: selectedMembers,
-          tasks: mainTasks,
-          subTasks: subTasks
-        };
+        // 1. 프로젝트 참여자 처리
+        // 기존 hidden 필드 제거
+        $("input[name='emp_no']").remove();
+        $("input[name='emp_role']").remove();
+        $("input[name='emp_auth']").remove();
         
-        // 콘솔에 데이터 출력 (테스트용)
+        // 책임자 정보 추가
+        if (selectedMembers.responsible) {
+          addHiddenField("emp_no", selectedMembers.responsible.id);
+          addHiddenField("emp_role", "00"); // 책임자 역할 코드
+          addHiddenField("emp_auth", "0011"); // 기본 권한
+        }
+        
+        // 참여자 정보 추가
+        selectedMembers.participants.forEach(participant => {
+          addHiddenField("emp_no", participant.id);
+          addHiddenField("emp_role", "01"); // 참여자 역할 코드
+          addHiddenField("emp_auth", "0001"); // 기본 권한
+        });
+        
+        // 참조자 정보 추가
+        selectedMembers.observers.forEach(observer => {
+          addHiddenField("emp_no", observer.id);
+          addHiddenField("emp_role", "02"); // 참조자 역할 코드
+          addHiddenField("emp_auth", "0001"); // 기본 권한
+        });
+        
+        // 2. 업무(과제) 정보 처리
+        // 기존 hidden 필드 제거
+        $("input[name='task_name']").remove();
+        $("input[name='task_content']").remove();
+        $("input[name='task_priority']").remove();
+        $("input[name='task_grad']").remove();
+        $("input[name='task_charger']").remove();
+        $("input[name='task_begin_dt']").remove();
+        $("input[name='task_end_dt']").remove();
+        $("input[name='task_progrsrt']").remove();
+        $("input[name='task_sttus']").remove();
+        $("input[name='parent_task_id']").remove();
+        
+        // 업무 ID 매핑 (클라이언트 ID -> 인덱스)
+        const taskIdMap = {};
+        let taskIndex = 0;
+        
+        // 상위 업무 추가
+        mainTasks.forEach((task, index) => {
+          taskIdMap[task.id] = "task-" + taskIndex;
+          
+          addHiddenField("task_name", task.title);
+          addHiddenField("task_content", task.title); // 내용이 없으면 제목으로 대체
+          addHiddenField("task_priority", task.priort);
+          addHiddenField("task_grad", task.grad);
+          addHiddenField("task_charger", task.chargerEmpno);
+          addHiddenField("task_begin_dt", task.beginDt);
+          addHiddenField("task_end_dt", task.endDt);
+          addHiddenField("task_progrsrt", "0"); // 초기 진행률 0%
+          addHiddenField("task_sttus", "0"); // 초기 상태 '대기'
+          addHiddenField("parent_task_id", ""); // 상위 업무는 parent_task_id가 없음
+          
+          taskIndex++;
+          
+          // 하위 업무 추가
+          if (task.subTasks && task.subTasks.length > 0) {
+            task.subTasks.forEach(subTask => {
+              addHiddenField("task_name", subTask.title);
+              addHiddenField("task_content", subTask.title);
+              addHiddenField("task_priority", subTask.priort);
+              addHiddenField("task_grad", subTask.grad);
+              addHiddenField("task_charger", subTask.chargerEmpno);
+              addHiddenField("task_begin_dt", subTask.beginDt);
+              addHiddenField("task_end_dt", subTask.endDt);
+              addHiddenField("task_progrsrt", "0");
+              addHiddenField("task_sttus", "0");
+              addHiddenField("parent_task_id", taskIdMap[subTask.parentId]); // 상위 업무 ID 참조
+              
+              taskIndex++;
+            });
+          }
+        });
+        
+        // 3. 금액 처리 - 콤마 제거
+        const amount = $("#amountInput").val().replace(/,/g, '');
+        $("input[name='prjct_rcvord_amount']").val(amount);
+        
+        // 4. 주소 처리
+        updateFullAddress();
+        
+        // 로깅 (디버깅용)
+        console.log("폼 제출 데이터 준비 완료");
+        
+        // 5. 폼 제출
+        this.submit();
+        
+        // Hidden 필드 추가 헬퍼 함수
+        function addHiddenField(name, value) {
+          if (value === undefined || value === null) return;
+          
+          $("<input>").attr({
+            type: "hidden",
+            name: name,
+            value: value
+          }).appendTo("#projectForm");
+        }
+      });
+        
+/*         // 콘솔에 데이터 출력 (테스트용)
         console.log("===== 프로젝트 생성 데이터 =====");
         console.log(formData);
         console.log("=============================");
@@ -1469,12 +1560,12 @@
         const modal = new bootstrap.Modal(document.getElementById('dataPreviewModal'));
         modal.show();
         
-        alert("프로젝트가 성공적으로 생성되었습니다! (테스트 모드)");
+        alert("프로젝트가 성공적으로 생성되었습니다! (테스트 모드)"); */
         
         // 실제 서버 연동 시 아래 코드 사용
-        /*
+        
         // 필요한 데이터를 hidden 필드로 추가
-        if ($("#projectData").length) {
+/*         if ($("#projectData").length) {
           $("#projectData").val(JSON.stringify({
             members: selectedMembers,
             tasks: mainTasks,
@@ -1490,9 +1581,11 @@
         
         // 서버로 폼 제출
         this.submit();
-        */
-      });
+        
+      });*/
     });
+    
+     
   </script>
   
   <style>

@@ -1,9 +1,6 @@
 package kr.or.ddit.sevenfs.vo.project;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-
-import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
 
@@ -27,9 +24,6 @@ public class ProjectVO {
 	private String prtcpntNm;
 	private String prjctSttusNm;
 	
-	private List<MultipartFile> files;
-	
-	
 	private int progrsrt;
 	private String taskSttus;
 	private long atchFileNo;
@@ -37,7 +31,7 @@ public class ProjectVO {
 	private int taskDaycnt;
 	private Date taskEndDt;
 	private int taskNo;
-	private int upperTaskNo;
+	private long upperTaskNo;
 	private String chargerEmpno;
 	private String taskNm;
 	private String taskCn;
@@ -73,5 +67,6 @@ public class ProjectVO {
             return prjctEndDate; // 변환 실패 시 원본 반환
         }
     }
+
 	
 }

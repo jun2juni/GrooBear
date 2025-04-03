@@ -10,6 +10,7 @@ import kr.or.ddit.sevenfs.mapper.project.ProjectMapper;
 import kr.or.ddit.sevenfs.service.project.ProjectService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
+import kr.or.ddit.sevenfs.vo.project.ProjectEmpVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,8 +33,16 @@ public class ProjectServiceImpl implements ProjectService{
 
 	@Override
 	public int projectInsert(ProjectVO projectVO) {
-		// TODO Auto-generated method stub
 		return projectMapper.projectInsert(projectVO);
 	}
+
+	@Override
+	public int insertProjectEmpBatch(List<ProjectEmpVO> projectEmpList) {
+		// TODO Auto-generated method stub
+		return projectMapper.insertProjectEmpBatch(projectEmpList);
+	}
+	
+	
+
 
 }

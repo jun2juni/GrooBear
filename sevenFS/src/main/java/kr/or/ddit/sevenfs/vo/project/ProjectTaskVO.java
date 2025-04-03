@@ -13,8 +13,8 @@ public class ProjectTaskVO {
 	private int taskDaycnt;
 	private Date taskEndDt;
 	private int taskNo;
-	private int prjctNo;
-	private int upperTaskNo;
+	private long prjctNo;
+	private long upperTaskNo;
 	private String chargerEmpno;
 	private String taskNm;
 	private String taskCn;
