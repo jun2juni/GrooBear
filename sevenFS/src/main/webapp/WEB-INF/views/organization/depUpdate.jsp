@@ -18,7 +18,6 @@
   <%@ include file="../layout/prestyle.jsp" %>
 </head>
 <body>
-<!-- 관리자만 보는 부서 수정페이지 -->
 <%@ include file="../layout/sidebar.jsp" %>
 <main class="main-wrapper">
   <%@ include file="../layout/header.jsp" %>

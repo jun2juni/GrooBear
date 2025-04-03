@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.gson.Gson;
 
+import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.utils.CommonCode;
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.organization.OrganizationVO;
@@ -35,6 +38,9 @@ public class OrganizationController {
 	OrganizationService organizationService;
 	@Autowired
 	BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	@Autowired
+	AttachFileService attachFileService;
 	
 	// 조직도 목록 조회
 	@GetMapping("/orglist")
@@ -100,7 +106,7 @@ public class OrganizationController {
 		return "organization/depUpdate";
 	}
 	
-	// 수정확인 눌렀을때 이동
+	// 부서수정확인 눌렀을때 이동
 	@PostMapping("/depUpdatePost")
 	public String depUpdatePost(CommonCodeVO commonCodeVO) {
 		
@@ -155,6 +161,19 @@ public class OrganizationController {
 		//log.info("사원번호 와라와라 : " + emplNo);
 		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
 		log.info("사원상세 : " + empDetail);
+		
+		// 사원 파일 번호 가져오기
+		int fileNo = empDetail.getAtchFileNo();
+		
+		AttachFileVO attachFileVO = new AttachFileVO();
+		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
+		String empFileName = fileAttachList.get(0).getFileStrePath();
+
+		// 사원 프로필 url가져오기
+		empDetail.setProflPhotoUrl(empFileName);
+		log.info("사원상세 프로필 url : " + empFileName);
+		
+		//model.addAttribute("empFileName" , empFileName);
 		
 		model.addAttribute("title" , "사원 정보");
 //		String maleCode = CommonCode.GenderEnum.MALE.getCode();
@@ -247,14 +266,14 @@ public class OrganizationController {
 		
 		organizationService.emplInsert(employeeVO);
 		
-		return "redirect:/orglist";
+		return "redirect:/orglistAdmin";
 	}
 	
 	
 	// 사원 수정 페이지
 	@GetMapping("/emplUpdate")
 	public String emplUpdate(String emplNo, Model model) {
-		
+
 		model.addAttribute("title" , "사원 수정");
 		
 		EmployeeVO emplDetail = organizationService.emplDetail(emplNo);
@@ -274,18 +293,33 @@ public class OrganizationController {
 		
 		model.addAttribute("emplDetail", emplDetailData);
 		
+		
 		return "organization/empUpdate";
 	}
 	
 	// 사원 수정 확인 눌렀을때 이동
 	@PostMapping("/emplUpdatePost")
-	public String emplUpdatePost(EmployeeVO employeeVO) {
+	public String emplUpdatePost(EmployeeVO employeeVO, MultipartFile[] uploadFile, AttachFileVO attachFileVO) {
 		
 		// 비밀번호 암호화
 		String encode = bCryptPasswordEncoder.encode(employeeVO.getPassword());
 		employeeVO.setPassword(encode);
 		
+		int fileNo = employeeVO.getAtchFileNo();
+		
+		log.info("수정된 사원정보 : " + employeeVO);
+		
+		// 프로필사진 수정
+		attachFileService.updateFileList("organization", uploadFile, attachFileVO);
+		
+		// 파일 리스트 가져오기
+		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
+		String empFileName = fileAttachList.get(0).getFileStrePath();
+		employeeVO.setProflPhotoUrl(empFileName);
+		
+		
 		organizationService.emplUpdatePost(employeeVO);
+		
 		
 		return "redirect:/orglistAdmin";
 	}

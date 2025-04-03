@@ -178,7 +178,7 @@
                     PARTCLR_MATTER)
             VALUES(#{emplNo},#{password}, '1', #{emplNm}, #{brthdy}, 
             		#{telno}, #{acnutno}, #{bankNm}, #{email}, #{anslry}, #{adres}, #{detailAdres},
-            		#{ecnyDate}, #{retireDate}, '1', '전사서명 이미지', '프로필사진url', 
+            		#{ecnyDate}, #{retireDate}, '200', '전사서명 이미지', '/organization/290774e410b04697a51b43031dfeb479_사진6.jpeg', 
             		#{deptCode}, #{clsfCode}, #{genderCode}, #{partclrMatter})
  	</insert>
  	
@@ -199,7 +199,8 @@
 		    DETAIL_ADRES=#{detailAdres},
 		    ECNY_DATE=#{ecnyDate},
 		    RETIRE_DATE=#{retireDate},
-		    ATCH_FILE_NO='0',
+		    ATCH_FILE_NO=#{atchFileNo},
+		    PROFL_PHOTO_URL=#{proflPhotoUrl},
 		    ELCTRN_SIGN_IMAGE_URL ='/전자서명경로',
 		    DEPT_CODE=#{deptCode},
 		    CLSF_CODE=#{clsfCode},
@@ -216,7 +217,7 @@
 		SET ENABLED='0'
 		WHERE EMPL_NO = #{emplNo}
  	</update>
-	
+ 	
 	<!--해당 직원의 상세정보 목록을 select
 		public List<EmployeeVO> emplDetailList(List<String> list) 
 		
@@ -240,8 +241,5 @@
 				#{emplNo}
 			</foreach>
 	</select>
+	
 </mapper>
-
-
-
-
