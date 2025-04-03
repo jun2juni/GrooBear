@@ -71,7 +71,7 @@
         })
             .then(resp => resp.json())
             .then(res => {
-                console.log("부서! : ", res.deptList);
+                //console.log("부서! : ", res.deptList);
                 const dep = res.deptList;
                 const emp = res.empList;
                 
