@@ -1,9 +1,11 @@
 package kr.or.ddit.sevenfs.controller;
 
+import jakarta.mail.Session;
 import jakarta.servlet.http.HttpServletRequest;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
+
 import kr.or.ddit.sevenfs.vo.CustomUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
@@ -27,6 +30,8 @@ public class HelloController {
 
 	@GetMapping("/")
 	public String index(Model model, HttpServletRequest request, @AuthenticationPrincipal CustomUser customUser) {
+
+
 		return "home";
 	}
 

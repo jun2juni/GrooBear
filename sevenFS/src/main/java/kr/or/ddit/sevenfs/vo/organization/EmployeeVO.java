@@ -1,7 +1,6 @@
 package kr.or.ddit.sevenfs.vo.organization;
 
-import kr.or.ddit.sevenfs.vo.EmpAuthVO;
-import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
+import kr.or.ddit.sevenfs.vo.auth.EmpAuthVO;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

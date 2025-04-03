@@ -1,6 +1,5 @@
-package kr.or.ddit.sevenfs.service.impl;
+package kr.or.ddit.sevenfs.service.auth.impl;
 
-import kr.or.ddit.sevenfs.mapper.AuthMapper;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;

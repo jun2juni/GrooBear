@@ -1,7 +1,10 @@
 package kr.or.ddit.sevenfs.config;
 
 import jakarta.servlet.DispatcherType;
-import kr.or.ddit.sevenfs.service.impl.EmpDetailImpl;
+import jakarta.servlet.Filter;
+import kr.or.ddit.sevenfs.config.jwt.JwtTokenProvider;
+import kr.or.ddit.sevenfs.filter.JwtAuthenticationFilter;
+import kr.or.ddit.sevenfs.service.auth.impl.EmpDetailImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,29 +13,35 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
 
-    //0. application.properties에 설정한 spring.datasource D.I
-    // DB 연결
-//    private DataSource dataSource;
-
     // 0. 스프링시큐리티의 사용자정보를 담은 객체 DI
     @Autowired
     EmpDetailImpl userDetailService;
+    @Autowired
+    private DataSource dataSource;
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
 
     // 1. 스프링 시큐리티 기능 비활성화
-    /*
-     * 스프링 시큐리티의 모든 기능을 사용하지 않게 설정하는 코드. 즉, 인증, 인가 서비스를 모든 곳에 적용하지는 않음 일반적으로 정적
-     * 리소스(이미지, HTML 파일)에 설정함. 정적 리소스만 스프링 시큐리티 사용을 비활성화 하는 데 static 하위 경로에 있는 리소스를
+    /**
+     * 스프링 시큐리티의 모든 기능을 사용하지 않게 설정하는 코드.
+     * 즉, 인증, 인가 서비스를 모든 곳에 적용하지는 않음 일반적으로 정적
+     * 리소스(이미지, HTML 파일)에 설정함.
+     * 정적 리소스만 스프링 시큐리티 사용을 비활성화 하는 데 static 하위 경로에 있는 리소스를
      * 대상으로 ignoring() 메서드를 사용함
      */
     public WebSecurityCustomizer configure() {
@@ -41,13 +50,9 @@ public class SecurityConfig {
                         "/assets/**", "/images/**", "/layout/**", "/ws/**");
     }
 
-    @Autowired
-    private DataSource dataSource;
-
     /**
      * 서버가 재시작 되어도 로그인 유지를 위힘
      */
-
     @Bean
     public PersistentTokenRepository persistentTokenRepository() {
         JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
@@ -57,8 +62,8 @@ public class SecurityConfig {
         return tokenRepository;
     }
 
-    // ***2. 특정 HTTP 요청에 대한 웹 기반 보안 구성
-    /*
+    // ** 2. 특정 HTTP 요청에 대한 웹 기반 보안 구성
+    /***
      * 이 메서드에서 인증/인가 및 로그인, 로그아웃 관련 설정을 할 수 있음
      *
      * 클라이언트 ----> 필터1 ----> 필터2 ---> 필터3 ---> 서버 클라이언트 <---- 필터1 <---- 필터2 <--- 필터3 <--- 서버
@@ -70,7 +75,8 @@ public class SecurityConfig {
      */
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.csrf(csrf -> csrf.disable())
+        return http
+                .csrf(csrf -> csrf.disable())
                 .headers(config -> config.frameOptions(customizer -> customizer.sameOrigin()))
                 .httpBasic(hbasic -> hbasic.disable())
                 .authorizeHttpRequests(authz -> authz
@@ -78,8 +84,9 @@ public class SecurityConfig {
                         // 허가
                         .requestMatchers("/auth/login", "/signup",
                                  "/error",  "/images/**",  "/layout/**", "/assets/**",
-                                "/api/**"
+                                "/api/login"
                         ).permitAll()
+                        .requestMatchers("/api/**").authenticated() // 나머지 API는 인증 필요
                         // .requestMatchers("/ceo/**").hasRole("ROLE_ADMIN")
                         // .requestMatchers("/manager/**").hasAnyRole("ROLE_ADMIN", "ROLE_MANAGER")
                         .anyRequest().authenticated()
@@ -94,6 +101,8 @@ public class SecurityConfig {
                         .tokenValiditySeconds(60 * 60 * 24 * 7)
                         .tokenRepository(persistentTokenRepository())
                 )
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                        UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

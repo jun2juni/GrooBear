@@ -1,4 +1,4 @@
-package kr.or.ddit.sevenfs.vo;
+package kr.or.ddit.sevenfs.vo.auth;
 
 import lombok.Data;
 

@@ -3,13 +3,11 @@ package kr.or.ddit.sevenfs.vo;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,12 +31,12 @@ public class CustomUser extends User {
                         .collect(Collectors.toList())
         );
 
-        // 비밀번호 정보를 제거한 복사본 만들기
-        EmployeeVO empVOWithoutPassword = new EmployeeVO();
-        BeanUtils.copyProperties(empVO, empVOWithoutPassword);
-        empVOWithoutPassword.setPassword(null); // 비밀번호 제거
+//        // 비밀번호 정보를 제거한 복사본 만들기
+//        EmployeeVO empVOWithoutPassword = new EmployeeVO();
+//        BeanUtils.copyProperties(empVO, empVOWithoutPassword);
+//        empVOWithoutPassword.setPassword(null); // 비밀번호 제거
 
-        this.empVO = empVOWithoutPassword;
+        this.empVO = empVO;
     }
 
 }
