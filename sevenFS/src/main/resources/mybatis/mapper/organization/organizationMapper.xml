@@ -217,4 +217,31 @@
 		WHERE EMPL_NO = #{emplNo}
  	</update>
 	
+	<!--해당 직원의 상세정보 목록을 select
+		public List<EmployeeVO> emplDetailList(List<String> list) 
+		
+		list : [20250008,20250016]
+	 -->
+	<select id="emplDetailList" parameterType="java.util.List" resultType="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
+		SELECT A.EMPL_NO, A.PASSWORD, A.ENABLED, A.EMPL_NM, A.BRTHDY
+		     , A.TELNO, A.ACNUTNO, A.BANK_NM, A.EMAIL, A.POST_NO
+		     , A.ADRES, A.DETAIL_ADRES, A.ECNY_DATE, A.RETIRE_DATE, A.ATCH_FILE_NO
+		     , A.ELCTRN_SIGN_IMAGE_URL, A.PROFL_PHOTO_URL
+		     , A.DEPT_CODE
+		     , FN_GET_CMMN_CODE_NM('DEPARTMENT', A.DEPT_CODE) DEPT_CODE_NM
+		     , A.CLSF_CODE
+		     , FN_GET_CMMN_CODE_NM('POSITION', A.CLSF_CODE) CLSF_CODE_NM
+		     , A.GENDER_CODE
+		     , A.EMPL_STTUS_CODE, A.ANSLRY, A.PARTCLR_MATTER, A.CONTD_EMPNO
+		FROM   EMPLOYEE A
+		WHERE  1 = 1
+		AND    EMPL_NO IN
+			<foreach collection="list" item="emplNo" index="idx" separator="," open="(" close=")">
+				#{emplNo}
+			</foreach>
+	</select>
 </mapper>
+
+
+
+
