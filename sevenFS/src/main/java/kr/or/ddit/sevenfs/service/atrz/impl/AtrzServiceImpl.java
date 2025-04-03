@@ -80,6 +80,11 @@ public class AtrzServiceImpl implements AtrzService {
 	public int beforeTotalCnt(AtrzVO atrzVO) {
 		return this.atrzMapper.beforeTotalCnt(atrzVO);
 	}
+	//문서양식-연차신청서인경우
+	@Override
+	public int insertHoDoc() {
+		return this.atrzMapper.insertHoDoc();
+	}
 	
 	
 //	

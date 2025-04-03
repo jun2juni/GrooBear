@@ -63,7 +63,7 @@
 									</tr>
 								</thead>
 								<!-- 여기에 결재선지정 사람들이 들어가야함 -->
-								<tbody class="s_appLine_tbody_cl"
+								<tbody class="s_appLine_tbody_new"
 									style="text-align: center;">
 
 

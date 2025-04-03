@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.controller.atrz;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -189,7 +190,7 @@ public class AtrzController {
 	@PostMapping(value = "/insertDoc", produces = "text/plain;charset=UTF-8")
 	public String insertDoc(@RequestParam(name = "form", required = false) String form, ModelAndView mav, Model model
 			,@AuthenticationPrincipal CustomUser customUser	) {
-		// insertDoc->form : 휴가신청서
+		// insertDoc->form : 연차신청서
 		log.info("insertDoc->form : " + form);
 		// 공백 제거
 		form = form.trim();
@@ -198,8 +199,8 @@ public class AtrzController {
 		int result = 0;
 		String df_code = "";
 		AtrzVO resultDoc = null;
-		// 선택한 문서 양식이 "휴가신청서"일 경우
-		if ("휴가신청서".equals(form)) {
+		// 선택한 문서 양식이 "연차신청서"일 경우
+		if ("연차신청서".equals(form)) {
 			result = atrzService.insertHoDoc();
 			df_code = "A";
 			//전자결재문서번호를 양식선택시 생성해서 insert해준다.
@@ -210,7 +211,7 @@ public class AtrzController {
 			//문서양식번호 띄울 정보
 //			model.addAttribute("resultDoc",resultDoc);
 			//여기서 이 결과 값을 documentForm/holiday에 보내야함
-			return "휴가신청서";
+			return "연차신청서";
 			
 		} else if ("지출결의서".equals(form)) {
 			df_code = "B";
@@ -243,16 +244,16 @@ public class AtrzController {
 
 	}
 
-	// 휴가신청서 양식조회
+	// 연차신청서 양식조회
 	@GetMapping("/selectForm/holidayForm")
 	public String selectHolidayForm() {
 		return "documentForm/holidayForm";
 	}
 
-	// 휴가신청서 입력양식
+	// 연차신청서 입력양식
 	@GetMapping("/selectForm/holiday")
 	public String selectHoliday(Model model) {
-		model.addAttribute("title", "휴가신청서");
+		model.addAttribute("title", "연차신청서");
 		return "documentForm/holiday";
 	}
 
@@ -283,6 +284,36 @@ public class AtrzController {
 		model.addAttribute("title", "기안서");
 		return "documentForm/draft";
 	}
+	
+	//급여명세서 양식조회
+	@GetMapping("/selectForm/salaryForm")
+	public String selectSalaryForm(Model model) {
+		model.addAttribute("title", "급여명세서");
+		return "documentForm/salaryForm";
+	}
+	
+	//급여명세서 입력양식
+	@GetMapping("/selectForm/salary")
+	public String selectSalary(Model model) {
+		model.addAttribute("title", "급여명세서");
+		return "documentForm/salary";
+	}
+	//급여계좌변경신청서 양식조회
+	@GetMapping("/selectForm/bankAccountForm")
+	public String bankAccountForm(Model model) {
+		model.addAttribute("title", "급여계좌변경신청서");
+		return "documentForm/bankAccountForm";
+	}
+	
+	//급여계좌변경신청서 입력양식
+	@GetMapping("/selectForm/bankAccount")
+	public String bankAccount(Model model) {
+		model.addAttribute("title", "급여계좌변경신청서");
+		return "documentForm/bankAccount";
+	}
+	
+	
+	
 
 	// 2) 기안서 전송양식
 	@PostMapping("/draft/insert")
@@ -318,13 +349,15 @@ public class AtrzController {
 
 		return "documentForm/draftDetail";
 	}
+	
+	
 
 	// 결재선지정 시 직원명 클릭하면 emplNo을 파라미터로 받아 DB select를 하여 JSON String으로 해당 직원 정보를 응답해줌
 	// 요청파라미터 : {"emplNo":emplNo}
 	@ResponseBody
 	@PostMapping(value = "/appLineEmp", produces = "application/json;charset=UTF-8")
 	public EmployeeVO appLineEmp(@RequestParam(name = "emplNo", required = false) String emplNo, @RequestParam Map<String, List<String>> requestData, Model model) {
-		// insertDoc->form : 휴가신청서
+		// insertDoc->form : 연차신청서
 		// appLineEmp->emplNo : 20250000
 		log.info("appLineEmp->emplNo : " + emplNo);
 
@@ -362,15 +395,22 @@ public class AtrzController {
 	@PostMapping(value = "appLineList")
 	public List<EmployeeVO> selectAppLineList(String[] emplNoArr
 			,HttpServletRequest req
-			, Model model
+			, Model model,
+			String[] empNoList,
+			String[] empAttNoList
 			) {
 		
 		List<String> list = new ArrayList<String>();
+		
+		log.debug("empNoList {}", Arrays.toString(empNoList)); // 결재자
+		log.debug("empAttNoList {}", Arrays.toString(empAttNoList)); // 참조자
 		
 		for(String emplNo : emplNoArr) {
 			//selectAppLineList->emplNo : 20250008
 			//selectAppLineList->emplNo : 20250016
 			log.info("selectAppLineList->emplNo : " + emplNo);
+			
+			
 			
 			list.add(emplNo);
 		}
