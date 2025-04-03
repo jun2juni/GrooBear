@@ -63,7 +63,7 @@ public class ChatServiceImpl implements ChatService {
 
     // 이미 있는 채팅방인지 확인하기
     public int invalidChatRoom(int chttRoomNo) {
-        return  this.chatMapper.invalidChatRoom(chttRoomNo);
+        return this.chatMapper.invalidChatRoom(chttRoomNo);
     }
 
     // 실시간 읽음 확인 기능

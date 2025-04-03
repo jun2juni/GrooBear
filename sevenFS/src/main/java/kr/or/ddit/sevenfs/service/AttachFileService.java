@@ -26,4 +26,7 @@ public interface AttachFileService {
     // 파일 다운로드
     public ResponseEntity<Resource> downloadFile(String fileName);
 
+    // 단일 파일 추가
+    public AttachFileVO insertFile(String dir, MultipartFile[] files);
+
 }

@@ -29,7 +29,7 @@
 
       .chat-avatar {
           width: 45px;
-          height: 100%;
+		  height: 45px;
       }
 
       #chatList {
@@ -62,20 +62,12 @@
 	<div class="container-fluid">
 	  
 	  <div class="row">
-		<div class="col-3">
-		  <div class="card">
-			<div class="card-body">
-			  <c:import url="../organization/orgList.jsp" />
-			  
-			</div>
-		  </div>
-		</div>
 		
-		<div class="col-md-3">
+	  	<div class="col-md-9">
 		  <div class="card" id="chat3">
 			<div class="card-body">
 			  <div class="row">
-				<div class="col-md-6 col-lg-5 mb-4 mb-md-0">
+				<div class="col-md-4">
 				  <div class="p-3">
 					<div>
 					  <%--채팅방 목록--%>
@@ -88,18 +80,24 @@
 								  <%-- 채팅방 상대 이미지 --%>
 								<div>
 									<%--채팅방 이미지--%>
-								  <img
-									  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-									  alt="avatar" class="d-flex align-self-center me-3"
-									  width="60">
+								  <img src="/upload/${chatRoom.proflPhotoUrl}"
+									  alt="avatar" class="d-flex align-self-center me-3 rounded-circle chat-avatar"
+								  >
 								  <span class="badge bg-success badge-dot"></span>
 								</div>
 								  
 								  <%-- 채티방 이름 마지막 메세지 --%>
-								<div class="pt-1">
-								  <p class="fw-bold mb-0">${chatRoom.chttRoomNm}</p>
+								<div>
+								  <p class="fw-bold mb-0">
+									  ${chatRoom.chttRoomTy == '0' ? chatRoom.emplNm : chatRoom.chttRoomNm}
+								  </p>
 								  <p class="chat-last-msg small text-muted text-truncate-2">
-									  ${empty chatRoom.lastMsg ? "대화 내용 없음" : chatRoom.mssageTy == "1" ? "사진을 보냈습니다." : chatRoom.lastMsg}
+									  ${empty chatRoom.lastMsg ?
+									  	"대화 내용 없음" : chatRoom.mssageTy == "1" ?
+									  	"사진을 보냈습니다."
+									  	: chatRoom.mssageTy == "2" ?
+									  	"파일을 보냈습니다."
+									  	 : chatRoom.lastMsg}
 								  </p>
 								</div>
 							  </div>
@@ -108,25 +106,25 @@
 								<p class="chat-create-date small text-muted mb-1">
 								  <c:choose>
 									<%-- 오늘이면 시간만 표시 --%>
-									<c:when test="${fn:substring(chatRoom.creatDe, 0, 10) == fn:substring(now, 0, 10)}">
-									  <fmt:formatDate value="${chatRoom.creatDe}" pattern="HH:mm" />
+									<c:when test="${fn:substring(chatRoom.chttCreatDt, 0, 10) == fn:substring(now, 0, 10)}">
+									  <fmt:formatDate value="${chatRoom.chttCreatDt}" pattern="HH:mm" />
 									</c:when>
 									
 									<%-- 전날이면 날짜만 표시 --%>
 									<c:when
-										test="${fn:substring(chatRoom.creatDe, 0, 4) == fn:substring(yesterday, 0, 4)}">
-									  <fmt:formatDate value="${chatRoom.creatDe}" pattern="MM.dd" />
+										test="${fn:substring(chatRoom.chttCreatDt, 0, 4) == fn:substring(yesterday, 0, 4)}">
+									  <fmt:formatDate value="${chatRoom.chttCreatDt}" pattern="MM.dd" />
 									</c:when>
 									
 									<%-- 전날이면 날짜만 표시 --%>
 									<c:when
-										test="${fn:substring(chatRoom.creatDe, 0, 4) != fn:substring(yesterday, 0, 4)}">
-									  <fmt:formatDate value="${chatRoom.creatDe}" pattern="yyyy.MM.dd" />
+										test="${fn:substring(chatRoom.chttCreatDt, 0, 4) != fn:substring(yesterday, 0, 4)}">
+									  <fmt:formatDate value="${chatRoom.chttCreatDt}" pattern="yyyy.MM.dd" />
 									</c:when>
 									
 									<%-- 그 외 날짜+시간 표시 --%>
 									<c:otherwise>
-									  <fmt:formatDate value="${chatRoom.creatDe}" pattern="yyyy.MM.dd HH:mm" />
+									  <fmt:formatDate value="${chatRoom.chttCreatDt}" pattern="yyyy.MM.dd HH:mm" />
 									</c:otherwise>
 								  </c:choose>
 								</p>
@@ -144,7 +142,7 @@
 				  </div>
 				</div>
 				
-				<div id="chat" class="col-md-6 col-lg-7 d-none position-relative">
+				<div id="chat" class="col-8 d-none position-relative">
 				  <div id="chatList" class="pt-3 pe-3">
 					<div id="loader" class="d-none text-center">
 					  <div class="spinner-border" role="status">
@@ -179,8 +177,7 @@
 				  
 				  <%--채팅 발송 부분 --%>
 				  <div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2 gap-3">
-					<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-						 alt="avatar 3" class="chat-avatar">
+				
 					<div class="position-relative">
 					  <%--	<ul class="position-absolute bottom-100 mb-2 bg-white border rounded mt-1 w-100">--%>
 					  <%--		--%>
@@ -198,10 +195,10 @@
 					  <%--		--%>
 					  <%--	</ul>--%>
 					  
-					  <input type="text" class="form-control form-control-lg" id="messageInput"
-							 placeholder="메세지를 입력해주세요." />
+				
 					</div>
-					
+					<input type="text" class="form-control form-control-lg" id="messageInput"
+						   placeholder="메세지를 입력해주세요." />
 					<%--파일--%>
 					<label for="uploadFiles" style="cursor: pointer">
 					  <i class="fas fa-paperclip"></i>
@@ -221,13 +218,19 @@
 				  </div>
 				</div>
 			  </div>
-			
 			</div>
 		  </div>
+		</div>
 		
+		
+		<div class="col-3">
+		  <div class="card">
+			<div class="card-body">
+			  <c:import url="../organization/orgList.jsp" />
+			</div>
+		  </div>
 		</div>
 	  </div>
-	
 	</div>
   </section>
   <c:import url="../layout/footer.jsp" />
@@ -312,9 +315,19 @@
     })
   }
 
+  function dbClickEmp(data) {
+    // 사원채팅방 만들기
+    console.log(data)
+  }
+
+  function dbClickDept(data) {
+    // 부서 채팅방???
+    console.log(data);
+  }
+
   function getChatMessage({chttRoomNo}) {
     // 로그인된 사용자
-    fetch(`/chat/messageList?chttRoomNo=\${chttRoomNo}&emplNo="${myEmpInfo.emplNo}"`)
+    fetch(`/chat/messageList?chttRoomNo=\${chttRoomNo}&emplNo=${myEmpInfo.emplNo}`)
       .then((res) => res.json())
       .then((result) => {
         // console.log(result);

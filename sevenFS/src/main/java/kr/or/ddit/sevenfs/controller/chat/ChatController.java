@@ -28,10 +28,8 @@ import java.util.Map;
 public class ChatController {
     @Autowired
     private ChatService chatService;
-
     @Autowired
     private AttachFileService attachFileService;
-
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
@@ -40,12 +38,19 @@ public class ChatController {
                            @AuthenticationPrincipal CustomUser customUser) {
         EmployeeVO empVO = customUser.getEmpVO();
         // 채팅방 목록 불러오기
+        log.debug("empVO: {}", empVO.getEmplNo());
         List<ChatRoomVO> chatRoomVOList = chatService.chatList(empVO.getEmplNo());
         log.debug("chatRoomVOList: {}", chatRoomVOList);
 
         model.addAttribute("chatRoomVOList", chatRoomVOList);
 
         return "chat/index";
+    }
+
+    // 채팅방 있으면 불러오기 없으면 생성
+    @GetMapping("/chat")
+    public Map<String, Object> chatRoomInsert() {
+        return  null;
     }
 
     // 채팅 메시지 수신 및 저장
@@ -56,10 +61,12 @@ public class ChatController {
         }
 
         log.debug("message => {}", message);
-        int[] empNoList = chatService.insertMessage(message);//메시지를 받을때마다 데이터베이스에 저장
+        int[] empNoList = chatService.insertMessage(message); // 메시지를 받을때마다 데이터베이스에 저장
 
         // 채팅 알림 보내기
+        log.debug("empNoList = {}", Arrays.toString(empNoList));
         for (int emplNo : empNoList) {
+            log.debug("emplNo = {}", emplNo);
             messagingTemplate.convertAndSend("/sub/alert/room/" + emplNo, message);
         }
 
@@ -70,20 +77,20 @@ public class ChatController {
         return ResponseEntity.ok("메시지 전송 완료");
     }
 
-    // 채팅방 목록
+    // 채팅방 파일 추가
     @PostMapping("/message/file")
     @ResponseBody
     public Map<String, Object> sendFile(MultipartFile[] uploadFiles) {
         log.debug("uploadFiles => {}", Arrays.toString(uploadFiles));
         Map<String, Object> resultMap = new HashMap<>();
-        List<AttachFileVO> attachFileVOList = null;
+        AttachFileVO attachFileVO = null;
 
         // 파일 업로드
         if (uploadFiles != null && uploadFiles.length > 0) {
-            attachFileService.insertFileList("chat", uploadFiles);
+            attachFileVO = attachFileService.insertFile("chat", uploadFiles);
         }
 
-        resultMap.put("fileVOList", attachFileVOList);
+        resultMap.put("attachFileVO", attachFileVO);
 
         return resultMap;
     }

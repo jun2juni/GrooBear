@@ -1,6 +1,7 @@
 const RECONNECT_INTERVAL = 5000; // 5초 후 재연결 시도
 const TALK = "TALK";
 const FILE = "FILE";
+const IMAGE = "IMAGE";
 let stompClientMap = {}; //
 let isSubscribedMap = {}; // 구독 중인지 확인
 // let emp = null; // 이거 바꿔야 함 (진짜 empNo로)
@@ -30,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // 내 계정 알림 구독
   connectWebSocket({
-    roomPath: "alert/room/",
+    roomPath: "alert/room",
     chttRoomNo: emp.emplNo, receiveMessage: (message) => {
       console.log(message, "alert" + message);
 
@@ -103,7 +104,6 @@ document.addEventListener("DOMContentLoaded", function() {
     let prevKey = null;
     messageInput.addEventListener("keydown", (e) => {
       // 15 => shift 51 => #
-      console.log(prevKey,  e.keyCode)
       if (prevKey === 16 && e.keyCode === 51) {
         console.log("shift + #")
         // 여기서
@@ -136,9 +136,9 @@ document.addEventListener("DOMContentLoaded", function() {
         let chttRoomNo = findOpenChatRoomNo();
 
         submitMessage({
-          messageValue: data.fileVOList[0].fileStrePath,
+          messageValue: data.attachFileVO.fileStrePath,
           chttRoomNo,
-          type: FILE,
+          type: IMAGE,
           emplNo: emp.emplNo
         });
 
@@ -165,18 +165,18 @@ function connectWebSocket({roomPath = "chat/room", chttRoomNo, receiveMessage}) 
 
   const socket = new SockJS("http://localhost/ws");
   const client = Stomp.over(socket);
-  client.debug = null;
+  // client.debug = null;
 
   client.connect(
     {},
     () => {
-      console.log("웹소켓 연결 성공! => " + roomPath + chttRoomNo);
-
       stompClientMap[chttRoomNo] = client;
       if(!isSubscribed) {
+        console.log("웹소켓 연결 성공! => " + roomPath + chttRoomNo);
+
         client.subscribe(`/sub/${roomPath}/${chttRoomNo}`, (message) => {
           const newMessage = JSON.parse(message.body);
-          // console.log(newMessage, "받은 메시지");
+          console.log(newMessage, "받은 메시지");
           receiveMessage(newMessage);
         });
 
@@ -197,7 +197,7 @@ function connectWebSocket({roomPath = "chat/room", chttRoomNo, receiveMessage}) 
 
 // 웹소켓 끊기
 function disconnectWebSocket({chttRoomNo}) {
-  console.log("disconnect web socket " + chttRoomNo);
+  console.log("웹소켓 연결 끊기! => " + chttRoomNo);
 
   if (stompClientMap[chttRoomNo]) {
     stompClientMap[chttRoomNo].disconnect();
@@ -213,7 +213,7 @@ function chatWebSocketConnect({chttRoomNo}) {
       console.log(message, "recevide" + chttRoomNo);
 
       // 내가 보낸 메세지는 안받기
-      if(emp.emplNo === message.emplNo) return;
+      if(emp.emplNo === message.mssageWritngEmpno) return;
 
       buildChatMessage(
         document.querySelector("#realChatList"),
@@ -245,15 +245,22 @@ function submitMessage({messageValue, type, chttRoomNo, emplNo}) {
   const message = {
     type,
     chttRoomNo,
-    emplNo,
-    emplNm: "허성진",
-    emplProfile: "",
+    mssageWritngEmpno: emplNo,
+    emplNm: emp.emplNM,
+    proflPhotoUrl: emp.proflPhotoUrl,
     mssageCn: messageValue,
-    creatDe: new Date(),
+    mssageCreatDt: new Date(),
     bPrevChat: false,
   };
 
   stompClientMap[chttRoomNo]?.send(`/pub/chat/message`, {}, JSON.stringify(message));
+
+  // 채팅방 목록 텍스트도 변경
+  document.querySelectorAll(".chatRoom").forEach((dom) => {
+    if (dom.dataset.chttRoomNo === chttRoomNo) {
+      dom.querySelector(".chat-last-msg").innerHTML = messageValue;
+    }
+  })
 
   buildChatMessage(
     document.querySelector("#realChatList"),
@@ -278,30 +285,34 @@ function submitMessage({messageValue, type, chttRoomNo, emplNo}) {
  */
 function buildChatMessage(dom, {message}) {
   // 보내는 사람이랑 받는 사람이 같은 경우는 내가보낸 것
-  const messageHTML = message.emplNo === emp.emplNo ? `
+  const messageHTML = message.mssageWritngEmpno === emp.emplNo ? `
       <div class="d-flex flex-row justify-content-end">
           <div class="chat-message text-end d-flex flex-column align-items-end" style="width: 80%">
-              <p class="small me-4" style="font-size: 0.5rem">${message.emplNm}</p>
+              <p class="small me-4">${message.emplNm}</p>
               ${ message.type === TALK ? 
-                `<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary" style="width: fit-content">${message.mssageCn}</p>` 
+                `<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary" style="width: fit-content">${message.mssageCn}</p>`
+                : message.type === FILE ?
+                  `<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary" style="width: fit-content">
+                     <a class="text-white" href="/download?fileName=${message.mssageCn}">${message.mssageCn}</a>  
+                   </p>`
                 : `<img src="/upload/${message.mssageCn}" class="me-3 mb-1 rounded float-start w-50" alt="...">`}
-              <p class="small me-3 mb-3 rounded-3 text-muted" style="font-size: 0.5rem">${formatDate(new Date(message.creatDe))}</p>
+              <p class="small me-3 mb-3 rounded-3 text-muted">${formatDate(new Date(message.mssageCreatDt))}</p>
           </div>
-          <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-               alt="avatar 1" class="chat-avatar">
+          <img src="/upload/${message.proflPhotoUrl}"
+               alt="avatar 1" class="chat-avatar rounded-circle" style="height: 45px">
       </div>
   ` // 보낸 메세지
     : // 받은 메세지
     `
       <div class="d-flex flex-row justify-content-start">
-          <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-               alt="avatar 1" class="chat-avatar">
+          <img src="/upload/${message.proflPhotoUrl}"
+               alt="avatar 1" class="chat-avatar rounded-circle" style="height: 45px;">
           <div class="chat-message d-flex flex-column align-items-start" style="width: 80%">
               <p class="ms-4" style="font-size: 0.5rem">${message.emplNm}</p>
               ${ message.type === TALK ?
               `<p class="small p-2 ms-3 mb-1 rounded-3 bg-body-secondary">${message.mssageCn}</p>`
               : `<img src="/upload/${message.mssageCn}" class="ms-3 mb-1 rounded float-start w-50" alt="...">`}
-              <p class="small ms-3 mb-3 rounded-3 text-muted float-end" style="font-size: 0.5rem">${formatDate(new Date(message.creatDe))}</p>
+              <p class="small ms-3 mb-3 rounded-3 text-muted float-end" style="font-size: 0.5rem">${formatDate(new Date(message.mssageCreatDt))}</p>
           </div>
       </div>
   `;

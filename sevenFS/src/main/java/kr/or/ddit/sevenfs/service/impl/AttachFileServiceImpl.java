@@ -76,4 +76,17 @@ public class AttachFileServiceImpl implements AttachFileService {
     public ResponseEntity<Resource> downloadFile(String fileName) {
         return attachFile.download(fileName);
     }
+
+    @Override
+    public AttachFileVO insertFile(String dir, MultipartFile[] files) {
+        long atchFileNo = getAttachFileNo();
+        List<AttachFileVO> attachFileVOList = attachFile.fileRealSave(dir, files, atchFileNo, 1);
+
+        if (!attachFileVOList.isEmpty()) {
+            attachFileMapper.insertFileList(attachFileVOList);
+            return attachFileVOList.getFirst();
+        }
+
+        return null;
+    }
 }

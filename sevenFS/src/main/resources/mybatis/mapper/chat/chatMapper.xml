@@ -15,32 +15,42 @@
     </update>
 
     <select id="chatList" resultType="chatRoomVO" parameterType="string">
-        SELECT CR.CHTT_ROOM_NO, CHTT_ROOM_TY, CHTT_ROOM_NM,
-               NVL(CR.LAST_MSSAGE_NO - CE.LAST_CNFIRM_NO, 0) as READ_COUNT,
+        SELECT CR.CHTT_ROOM_NO, CHTT_ROOM_TY,
+               CHTT_ROOM_NM,
+               READ_COUNT,
                NVL(M.MSSAGE_CREAT_DT, CR.CHTT_CREAT_DT) AS CHTT_CREAT_DT,
                M.MSSAGE_CN as LAST_MSG,
-               M.MSSAGE_TY
-        FROM CHAT_ROOM CR
-        LEFT JOIN CHAT_EMP CE on (CR.CHTT_ROOM_NO = CE.CHTT_ROOM_NO)
+               CE.EMPL_NO,
+               M.MSSAGE_TY,
+               E.EMPL_NM, E.PROFL_PHOTO_URL
+        FROM (SELECT B.CHTT_ROOM_NO, B.LAST_MSSAGE_NO, B.CHTT_CREAT_DT, B.CHTT_ROOM_NM, B.CHTT_ROOM_TY,
+             NVL(B.LAST_MSSAGE_NO - A.LAST_CNFIRM_NO, 0) as READ_COUNT
+
+              FROM CHAT_EMP A
+              LEFT JOIN CHAT_ROOM B ON (A.CHTT_ROOM_NO = B.CHTT_ROOM_NO)
+              WHERE EMPL_NO = #{emplNo}
+             ) CR
+        LEFT JOIN CHAT_EMP CE ON(CE.CHTT_ROOM_NO = CR.CHTT_ROOM_NO AND CE.EMPL_NO != #{emplNo})
+        LEFT JOIN EMPLOYEE E ON (E.EMPL_NO = CE.EMPL_NO)
         LEFT JOIN CHAT_MESSAGE M ON (M.MSSAGE_SN = CR.LAST_MSSAGE_NO AND M.CHTT_ROOM_NO = CR.CHTT_ROOM_NO)
-        WHERE CE.EMPL_NO = #{emplNo}
         ORDER BY CHTT_CREAT_DT DESC
+
     </select>
 
     <insert id="insertMessage" parameterType="chatVO">
         <selectKey resultType="int" order="BEFORE" keyProperty="mssageSn">
-            SELECT NVL(MAX(MSSAGE_SN), 0) + 1 FROM MESSAGE
+            SELECT NVL(MAX(MSSAGE_SN), 0) + 1 FROM CHAT_MESSAGE
             WHERE CHTT_ROOM_NO = #{chttRoomNo}
         </selectKey>
 
-        INSERT INTO MESSAGE(MSSAGE_SN, EMPL_NO, CHTT_ROOM_NO, MSSAGE_CN, CHTT_ROOM_TY, CHTT_CREAT_DT)
-        VALUES (#{mssageSn}, #{emplNo}, #{chttRoomNo}, #{mssageCn}, #{chttRoomTy}, #{chttCreatDt})
+        INSERT INTO CHAT_MESSAGE(CHTT_ROOM_NO, MSSAGE_SN, MSSAGE_WRITNG_EMPNO, MSSAGE_CN, MSSAGE_TY, MSSAGE_CREAT_DT)
+        VALUES (#{chttRoomNo}, #{mssageSn}, #{mssageWritngEmpno}, #{mssageCn}, #{mssageTy}, #{mssageCreatDt})
     </insert>
 
     <select id="selectChatList" parameterType="hashmap" resultType="kr.or.ddit.sevenfs.vo.chat.ChatVO">
         SELECT MSSAGE_SN, M.MSSAGE_WRITNG_EMPNO, CHTT_ROOM_NO,
                MSSAGE_CN, M.MSSAGE_CREAT_DT, MSSAGE_TY,
-               E.EMPL_NO, EMPL_NM
+               E.EMPL_NO, EMPL_NM, E.PROFL_PHOTO_URL
         FROM CHAT_MESSAGE M
         LEFT JOIN EMPLOYEE E ON (M.MSSAGE_WRITNG_EMPNO = E.EMPL_NO)
         WHERE CHTT_ROOM_NO = #{chttRoomNo}
@@ -48,14 +58,13 @@
     </select>
 
     <select id="invalidChatRoom" resultType="java.lang.Integer">
---         SELECT CHAT_ROOM_NO
---         FROM CHAT_ROOM
+
     </select>
 
     <select id="chatEmpNoList" resultType="int" parameterType="chatVO">
         SELECT EMPL_NO
         FROM CHAT_EMP
         WHERE CHTT_ROOM_NO = #{chttRoomNo}
-        AND EMPL_NO != #{emplNo}
+        AND EMPL_NO != #{mssageWritngEmpno}
     </select>
 </mapper>

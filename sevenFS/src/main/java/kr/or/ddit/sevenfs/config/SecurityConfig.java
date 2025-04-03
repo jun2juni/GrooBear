@@ -84,7 +84,7 @@ public class SecurityConfig {
                         // 허가
                         .requestMatchers("/auth/login", "/signup",
                                  "/error",  "/images/**",  "/layout/**", "/assets/**",
-                                "/api/login"
+                                "/api/login", "/ws/**"
                         ).permitAll()
                         .requestMatchers("/api/**").authenticated() // 나머지 API는 인증 필요
                         // .requestMatchers("/ceo/**").hasRole("ROLE_ADMIN")

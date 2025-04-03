@@ -22,6 +22,7 @@ public interface ChatMapper {
 
     void updateRecentMsg(ChatVO chatRoomVO);
 
+    // 채팅창 들어가 있는 사람들 리스트
     int[] chatEmpNoList(ChatVO chatRoomVO);
 
     // 메세지 저장하기

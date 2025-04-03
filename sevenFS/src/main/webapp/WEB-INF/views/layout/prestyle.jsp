@@ -1,9 +1,9 @@
 <script>
   window.emp = {
   	emplNo: "${myEmpInfo.emplNo}",
+    emplNM: "${myEmpInfo.emplNm}",
+    proflPhotoUrl: "${myEmpInfo.proflPhotoUrl}",
   }
-
-  console.log(emp)
 </script>
 
 
