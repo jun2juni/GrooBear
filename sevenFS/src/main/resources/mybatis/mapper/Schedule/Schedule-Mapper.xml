@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.ScheduleMapper.ScheduleMapper">
+
+<select id="scheduleList" resultType="kr.or.ddit.sevenfs.vo.Schedule.ScheduleVO">
+	SELECT  SCHDUL_NO,
+			EMPL_NO,
+			LBL_NO,
+			SCHDUL_TY,
+			SCHDUL_SJ,
+			SCHDUL_CN,
+			SCHDUL_BEGIN_DT,
+			SCHDUL_END_DT,
+			SCHDUL_PLACE,
+			DEPT_CODE
+	FROM SCHEDULE
+	WHERE SCHDUL_TY = '0'
+</select>
+<insert id="scheduleInsert" parameterType="kr.or.ddit.sevenfs.vo.Schedule.ScheduleVO">
+	<selectKey resultType="int" order="BEFORE" keyProperty="schdulNo">
+		SELECT SEQ_SCHEDULE.NEXTVAL FROM DUAL  
+	</selectKey>
+INSERT INTO SCHEDULE (SCHDUL_NO,
+					  EMPL_NO,
+					  SCHDUL_TY,
+					  SCHDUL_SJ,
+					  SCHDUL_CN,
+					  SCHDUL_BEGIN_DT,
+					  SCHDUL_END_DT,
+					  DEPT_CODE
+					  )
+			VALUES(
+				#{schdulNo},
+				#{emplNo},
+				#{schdulTy},
+				#{schdulSj},
+				#{schdulCn},
+				#{schdulBeginDt},
+				#{schdulEndDt},
+				#{deptCode}
+			)
+</insert>
+<update id="scheduleUpdate" parameterType="kr.or.ddit.sevenfs.vo.Schedule.ScheduleVO">
+	UPDATE schedule
+	SET
+		<if test="lblNo!=null and lblNo!='' and lblNo!=0">
+	    	lbl_no = #{lblNo},
+		</if>
+	    schdul_ty = #{schdulTy},
+	    schdul_sj = #{schdulSj},
+	    schdul_cn = #{schdulCn},
+	    schdul_begin_dt = #{schdulBeginDt},
+	    schdul_end_dt = #{schdulEndDt},
+	    schdul_place = #{schdulPlace}
+	WHERE
+	    schdul_no = #{schdulNo}
+</update>
+
+<delete id="delCalendar" parameterType="kr.or.ddit.sevenfs.vo.Schedule.ScheduleVO">
+DELETE FROM SCHEDULE
+WHERE SCHDUL_NO = #{schdulNo}
+</delete>
+
+</mapper>
