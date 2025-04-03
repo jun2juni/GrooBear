@@ -78,6 +78,11 @@ function deptInsert(){
         })
 }
 
+// 사원 등록
+function emplInsert(){
+	location.href = "/emplInsert";
+}
+
 // 사원상세
 function clickEmp(data) {
     fetch("/emplDetail?emplNo=" + data.node.id, {
@@ -91,7 +96,32 @@ function clickEmp(data) {
 
        console.log("사원상세정보 : " , res);
        $("#emplDetail").html(res);
-     })
+       
+   
+	// 삭제 클릭한 경우
+	 $(function(){
+	     $("#emplDeleteBtn").on("click", function(){
+        swal({
+            title: "정말 삭제하시겠습니까?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+            })
+            .then((willDelete) => {
+              if (willDelete) {
+                swal("식제되었습니다.", {
+                  icon: "success",
+                })
+                .then((res)=>{
+                    location.href = "/emplDelete?emplNo=" + data.node.id;
+                  })
+              } else {
+                swal("취소되었습니다.");
+              }
+            });
+	     })
+	     });
+	 });
  }
  
 //부서 클릭 한 경우
@@ -102,46 +132,48 @@ function clickDept(data) {
       "Content-Type": "application/json"
     }
   })
-    .then(resp => resp.text())
-    .then(res => {
-      console.log("부서상세정보 : " , res);
-      $("#emplDetail").html(res);
+  .then(resp => resp.text())
+  .then(res => {
+    console.log("부서상세정보 : " , res);
+    $("#emplDetail").html(res);
 
-      // 부서 삭제 - 관리자만 가능
-      $(function(){
-        $("#deptDeleteBtn").on("click", function(){
-          swal({
-            title: "정말 삭제하시겠습니까?",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
+    // 부서 삭제 - 관리자만 가능
+    $(function(){
+      $("#deptDeleteBtn").on("click", function(){
+        swal({
+          title: "정말 삭제하시겠습니까?",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
           })
-            .then((willDelete) => {
-              if (willDelete) {
-                fetch("deptDelete?cmmnCode="+ data.node.id,{
-                  method : "get",
-                  headers : {
-                    "Content-Type": "application/json"
-                  }
+          .then((willDelete) => {
+            if (willDelete) {
+              fetch("deptDelete?cmmnCode="+ data.node.id,{
+                method : "get",
+                headers : {
+                  "Content-Type": "application/json"
+                }
+              })
+                .then(resp => resp.text())
+                .then(res => {
+                  console.log("삭제성공? : " , res);
                 })
-                  .then(resp => resp.text())
-                  .then(res => {
-                    console.log("삭제성공? : " , res);
-                  })
-                swal("식제되었습니다.]", {
-                  icon: "success",
+              swal("식제되었습니다.", {
+                icon: "success",
+              })
+                .then((res)=>{
+                  location.href = "/orglist";
                 })
-                  .then((res)=>{
-                    location.href = "/orglist";
-                  })
-              } else {
-                swal("취소되었습니다.");
-              }
-            });
-        }); // end function
-      }); // end del function
-    })
+            } else {
+              swal("취소되었습니다.");
+            }
+          });
+      }); // end function
+    }); // end del function
+  })
 }
  
+
+
 		
 </script>

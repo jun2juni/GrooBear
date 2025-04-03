@@ -1,5 +1,6 @@
 package kr.or.ddit.sevenfs.vo.organization;
 
+import kr.or.ddit.sevenfs.utils.CommonCode;
 import kr.or.ddit.sevenfs.vo.auth.EmpAuthVO;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,6 +21,7 @@ public class EmployeeVO implements UserDetails {
 	private String password;
 	private String partclrMatter; // 특이사항
 	private String genderCode;
+	private String genderCodeNm;
 	private String enabled;
 	private String emplSttusCode;
 	private String emplNo;
@@ -31,6 +33,7 @@ public class EmployeeVO implements UserDetails {
 	private String deptCode;
 	private String contdEmpno; // 부재시 대결자
 	private String clsfCode; // 직급코드
+	private String clsfCodeNm; // 직급코드
 	private String brthdy;
 	private String bankNm;
 	private String adres;
@@ -40,6 +43,18 @@ public class EmployeeVO implements UserDetails {
 	private String posNm;  // 직급명
 
 	private List<EmpAuthVO> empAuthVOList;
+	
+	// 성별코드에 맞는 성별 반환
+	public void setGenderCode(String genderCode) {
+		this.genderCode = genderCode;
+		this.genderCodeNm = CommonCode.GenderEnum.FEMALE.getLabelByCode(genderCode);
+	}
+
+	// 직급코드에 맞는 직급명 반환
+	public void setClsfCode(String clsfCode) {
+		this.clsfCode = clsfCode;
+		this.clsfCodeNm = CommonCode.PositionEnum.INTERN.getLabelByCode(clsfCode);
+	}
 	
 	// 스프링 시큐리티 용 ----------------------------------
 	@Override

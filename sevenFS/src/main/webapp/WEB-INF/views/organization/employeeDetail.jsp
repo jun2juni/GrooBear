@@ -51,13 +51,13 @@
        <hr>
        <li class="row">
          <span class="col-4">성별</span>
-         <span class="col-8 text-medium text-dark">${empDetail.genderCode}</span>
+         <span class="col-8 text-medium text-dark">${empDetail.genderCodeNm}</span>
        </li>
        <hr>
        <li class="row">
          <span class="col-4">주소</span>
-         <span class="col-8 text-medium text-dark">${empDetail.adres}</span>
-         <span class="col-8 text-medium text-dark">${empDetail.detailAdres}</span>
+         <span class="col-8 text-medium text-dark">${empDetail.adres}<br/>
+         	${empDetail.detailAdres}</span>
        </li>
      </ul>
    </div>
@@ -80,12 +80,14 @@
      <!-- 로그인한 계정과 사원번호가 일치할경우에만 보이게 -->
      <!-- emplNo가 관리자일 경우에만 보이게 -->
      <sec:authentication property="principal.empVO" var="emp" />
-     	<c:if test="${emp.emplNo == empDetail.emplNo || emp.emplNo == '20250000'}">
-		     <div class="content text-center" style="margin-top: 40px;">
-			     <a href="/emplUpdate?emplNo=${empDetail.emplNo}" class="main-btn success-btn-light square-btn btn-hover btn-sm">수정</a>
-			     <button id="deptDeleteBtn" type="button" class="main-btn danger-btn-light square-btn btn-hover btn-sm">삭제</button>
-		     </div>
-	     </c:if>
+	     <div class="content text-center" style="margin-top: 40px;">
+	     	<c:if test="${emp.emplNo == empDetail.emplNo || emp.emplNo == '20250000'}">
+		    	 <a href="/emplUpdate?emplNo=${empDetail.emplNo}" class="main-btn success-btn-light square-btn btn-hover btn-sm">수정</a>
+		     </c:if>
+		     <c:if test="${emp.emplNo == '20250000'}">
+		     	<button type="button" id="emplDeleteBtn" class="main-btn danger-btn-light square-btn btn-hover btn-sm">삭제</button>
+	     	 </c:if>
+	     </div>
    </div>
 </div>       
 

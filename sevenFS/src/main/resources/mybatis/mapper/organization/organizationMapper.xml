@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.organization.OrganizationMapper">
 	
-	<!-- 전체 부서 조회 -->
+	<!-- 전체 부서만 조회 -->
 	<select id="depList" resultType="kr.or.ddit.sevenfs.vo.CommonCodeVO">
 		SELECT CMMN_CODE_GROUP, CMMN_CODE, CMMN_CODE_NM, 
        		   CMMN_CODE_DC, USE_YN, UPPER_CMMN_CODE
@@ -11,6 +11,16 @@
 		AND USE_YN='Y'
 	</select>
 	
+	<!-- 전체 직급만 조회 -->
+	<select id="posList" resultType="kr.or.ddit.sevenfs.vo.CommonCodeVO">
+		SELECT CMMN_CODE_GROUP, CMMN_CODE, CMMN_CODE_NM, 
+		       CMMN_CODE_DC, USE_YN, UPPER_CMMN_CODE
+		FROM COMMON_CODE
+		WHERE CMMN_CODE_GROUP='POSITION'
+		AND USE_YN='Y'
+	</select>
+	
+	<!-- 부서 상세 조회 -->
 	<select id="deptDetail" parameterType="kr.or.ddit.sevenfs.vo.CommonCodeVO" resultType="kr.or.ddit.sevenfs.vo.CommonCodeVO">
 		SELECT CMMN_CODE_GROUP, CMMN_CODE, CMMN_CODE_NM, 
        		   CMMN_CODE_DC, USE_YN, UPPER_CMMN_CODE
@@ -24,6 +34,7 @@
 		SELECT EMPL_NO, PASSWORD, ENABLED, EMPL_NM, BRTHDY, TELNO, ACNUTNO, BANK_NM, EMAIL, POST_NO, ADRES, DETAIL_ADRES, ECNY_DATE, RETIRE_DATE, ATCH_FILE_NO, ELCTRN_SIGN_IMAGE_URL,
        			 PROFL_PHOTO_URL, DEPT_CODE, CLSF_CODE, GENDER_CODE, EMPL_STTUS_CODE, ANSLRY, PARTCLR_MATTER, CONTD_EMPNO
 		FROM EMPLOYEE
+		WHERE ENABLED='1'
 	</select>
 	
 	<!-- 사원 상세보기 -->
@@ -115,9 +126,16 @@
 	<!-- 부서 수정 -->
 	<update id="deptUpdate" parameterType="kr.or.ddit.sevenfs.vo.CommonCodeVO">
 		UPDATE COMMON_CODE
-		SET CMMN_CODE_NM = #{cmmnCodeNm},
+		SET CMMN_CODE_GROUP='DEPARTMENT',
+			CMMN_CODE_NM = #{cmmnCodeNm},
 		    CMMN_CODE_DC = #{cmmnCodeDc},
-		    CMMN_CODE = #{cmmnCode}
+		    CMMN_CODE = (
+		                SELECT MAX(CMMN_CODE)+1
+		                FROM COMMON_CODE
+		                WHERE CMMN_CODE_GROUP='DEPARTMENT'
+		                AND UPPER_CMMN_CODE= #{upperCmmnCode}
+		                ),
+		    UPPER_CMMN_CODE = #{upperCmmnCode}
 		WHERE CMMN_CODE = #{cmmnCode}
 		AND CMMN_CODE_GROUP = 'DEPARTMENT'
 	</update>
@@ -129,4 +147,58 @@
 		WHERE CMMN_CODE=#{cmmnCode}
 		AND CMMN_CODE_GROUP='DEPARTMENT'
 	</update>
+	
+	<!-- 사원 등록 -->
+ 	<insert id="emplInsert" parameterType="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
+	 	 <selectKey resultType="String" order="BEFORE" keyProperty="emplNo">
+	 		SELECT NVL(MAX(EMPL_NO),0)+1 FROM EMPLOYEE
+	 	 </selectKey>
+ 		INSERT INTO EMPLOYEE
+ 					(EMPL_NO, PASSWORD, ENABLED, EMPL_NM, BRTHDY, 
+ 					TELNO, ACNUTNO, BANK_NM, EMAIL, ANSLRY,
+                    ADRES, DETAIL_ADRES, ECNY_DATE, RETIRE_DATE, ATCH_FILE_NO, 
+                    ELCTRN_SIGN_IMAGE_URL, PROFL_PHOTO_URL, 
+                    DEPT_CODE, CLSF_CODE, GENDER_CODE,
+                    PARTCLR_MATTER)
+            VALUES(#{emplNo},#{password}, '1', #{emplNm}, #{brthdy}, 
+            		#{telno}, #{acnutno}, #{bankNm}, #{email}, #{anslry}, #{adres}, #{detailAdres},
+            		#{ecnyDate}, #{retireDate}, '1', '전사서명 이미지', '프로필사진url', 
+            		#{deptCode}, #{clsfCode}, #{genderCode}, #{partclrMatter})
+ 	</insert>
+ 	
+ 	<!-- 사원 수정 -->
+ 	<update id="emplUpdatePost" parameterType="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
+ 		UPDATE EMPLOYEE
+		SET
+		    EMPL_NO=#{emplNo},
+		    PASSWORD=#{password},
+		    ENABLED='1',
+		    EMPL_NM=#{emplNm},
+		    BRTHDY=#{brthdy},
+		    TELNO=#{telno},
+		    ACNUTNO=#{acnutno},
+		    BANK_NM=#{bankNm},
+		    EMAIL=#{email},
+		    ADRES=#{adres},
+		    DETAIL_ADRES=#{detailAdres},
+		    ECNY_DATE=#{ecnyDate},
+		    RETIRE_DATE=#{retireDate},
+		    ATCH_FILE_NO='0',
+		    ELCTRN_SIGN_IMAGE_URL ='/전자서명경로',
+		    DEPT_CODE=#{deptCode},
+		    CLSF_CODE=#{clsfCode},
+		    GENDER_CODE=#{genderCode},
+		    EMPL_STTUS_CODE=#{emplSttusCode},   
+		    ANSLRY=#{anslry},
+		    PARTCLR_MATTER=#{partclrMatter} 
+		WHERE EMPL_NO=#{emplNo}
+ 	</update>
+ 	
+ 	<!-- 사원 삭제 -->
+ 	<update id="emplDelete" parameterType="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
+ 		UPDATE EMPLOYEE
+		SET ENABLED='0'
+		WHERE EMPL_NO = #{emplNo}
+ 	</update>
+	
 </mapper>

@@ -8,11 +8,14 @@ import kr.or.ddit.sevenfs.vo.organization.OrganizationVO;
 
 public interface OrganizationService {
 	
-	// 조직도 목록 조회
+		// 조직도 목록 조회
 		public OrganizationVO organization();
 		
-		// 전체 부서 조회
+		// 전체 부서만 조회
 		public List<CommonCodeVO> depList();
+		
+		// 전체 직급만 조회
+		public List<CommonCodeVO> posList();
 		
 		// 전체 사원 조회
 		public List<EmployeeVO> empList();
@@ -40,4 +43,10 @@ public interface OrganizationService {
 		
 		// 부서 삭제
 		public int deptDelete(String cmmnCode);
+		
+		// 사원 등록
+		public int emplInsert(EmployeeVO employeeVO);
+		
+		// 사원 삭제
+		public int emplDelete(String emplNo);
 }

@@ -17,19 +17,24 @@
         </span>
     </div>
     
-    <div class="d-flex justify-content-between">
-        <button id="allBtn" class="main-btn dark-btn rounded-full btn-hover btn-xs"
-         onclick="openTree();">전체</button>
-        
-        <c:if test="${fn:contains(pageContext.request.requestURL, 'orglistAdmin')}" >
-            <%-- <sec:authentication property="principal" /> --%>
-            <sec:authorize access="hasRole('ROLE_ADMIN')">
-                <button id="deptInsert" class="main-btn dark-btn rounded-full btn-hover btn-xs"
-                        onclick="deptInsert();">부서등록
-                </button>
-            </sec:authorize>
-        </c:if>
+  	<div class="d-flex justify-content-between">
+       <button id="allBtn" class="main-btn dark-btn rounded-full btn-hover btn-xs" onclick="openTree();">전체</button>
+	    <div class="content text-center">
+	    	<c:if test="${fn:contains(pageContext.request.requestURL, 'orglistAdmin')}" >
+	            <%-- <sec:authentication property="principal" /> --%>
+	            <sec:authorize access="hasRole('ROLE_ADMIN')">
+	                <button id="deptInsert" class="main-btn dark-btn-light rounded-full btn-hover btn-xs"
+	                        onclick="deptInsert();">부서등록
+	                </button>
+	                <button id="emplInsert" class="main-btn dark-btn-light rounded-full btn-hover btn-xs"
+	                        onclick="emplInsert();">사원등록
+	                </button>
+	            </sec:authorize>
+	        </c:if>
+        </div>
     </div>
+    
+   
 
     <!-- 조직도 -->
     <div id="jstree" class="mb-2"></div>

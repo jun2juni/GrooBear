@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <c:set var="currentURL" value="${pageContext.request.requestURI}" />
 
@@ -240,8 +241,6 @@
           </ul>
         </li>
         <%--근태현황 사이드 바 --%>
-        
-        
 
         <%--조직도 사이드 바 --%>
         <li class="nav-item">
@@ -252,8 +251,9 @@
           </li>
         <%--조직도 사이드 바 --%>
         
-         <!-- 관리자일 경우에만 보이게 하기 -->
+        <%-- 관리자일 경우에만 보임  --%>
         <%--조직관리 사이드 바 --%>
+        <sec:authorize access="hasRole('ROLE_ADMIN')">
         <li class="nav-item">
           <a href="/orglistAdmin" class="${fn:contains(currentURL, '/orglistAdmin') ? '' : 'collapsed'}" >
             <span class="icon material-symbols-outlined">
@@ -262,6 +262,7 @@
             <span class="text">조직관리</span>
           </a>
           </li>
+          </sec:authorize>
         <%--조직관리 사이드 바 --%>
     </ul>
     

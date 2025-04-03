@@ -25,6 +25,8 @@
 	<section class="section">
 		<div class="container-fluid">
 			<form action="/depUpdatePost" method="post" id="depUpdateForm">
+				<c:set var="deptDetail" value="${deptData.deptDetail}"></c:set>
+				<input type="hidden" value="${deptDetail.cmmnCode}" name="cmmnCode" />
 				<div class="card-style chat-about h-100" style="justify-content: center;">
 				   <h6 class="text-sm text-medium"></h6>
 				   <div class="chat-about-profile">
@@ -34,6 +36,16 @@
 				     </div>
 				   </div>
 				   <div class="activity-meta text-start" style="margin-top: 20px;">
+		   	          	<div class="input-style-1 form-group col-8" style="margin-left:15%;">
+			         	 <label for="upperCmmnCode" class="form-label required">소속 부서<span class="text-danger">*</span></label>
+			     	     <select id="duration" class="form-select w-auto" name="upperCmmnCode">
+								<option value="${deptDetail.upperCmmnCode}">변경없음</option>
+							<c:forEach var="depList" items="${deptData.deptList}">
+								<option value="${depList.cmmnCode}">${depList.cmmnCodeNm}</option>
+							</c:forEach>
+						 </select>
+					  	</div>
+			   	          
 			   	          <div class="input-style-1 form-group col-8" style="margin-left:15%;">
 				            <label for="cmmnCodeNm" class="form-label required">부서명 <span class="text-danger">*</span></label>
 				            <input type="text" name="cmmnCodeNm" class="form-control" id="cmmnCodeNm" value="${deptDetail.cmmnCodeNm}" required>
@@ -46,11 +58,11 @@
 				           <div class="invalid-feedback"></div>
 			   	          </div>
 			   	          
-			   	          <div class="input-style-1 form-group col-8" style="margin-left:15%;">
+			   	          <%-- <div class="input-style-1 form-group col-8" style="margin-left:15%;">
 				            <label for="cmmnCode" class="form-label required">부서코드 <span class="text-danger">*</span></label>
 				            <input type="text" name="cmmnCode" class="form-control" id="cmmnCode" value="${deptDetail.cmmnCode}" required>
 				            <div class="invalid-feedback"></div>
-				          </div>
+				          </div> --%>
 				     <div class="content text-center">
 				     <button type="button" id="updateBtn" class="main-btn success-btn-light square-btn btn-hover btn-sm">확인</button>
 				     </div>

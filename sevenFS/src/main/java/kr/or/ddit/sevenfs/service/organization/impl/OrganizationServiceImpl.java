@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import kr.or.ddit.sevenfs.mapper.organization.OrganizationMapper;
@@ -19,8 +20,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
 	@Autowired
 	OrganizationMapper organizationMapper;
-	
-	
+
 	
 	@Override
 	public OrganizationVO organization() {
@@ -40,11 +40,17 @@ public class OrganizationServiceImpl implements OrganizationService {
 		return organizationVO;
 	}
 
-	// 전체 부서 조회
+	// 전체 부서만 조회
 	@Override
 	public List<CommonCodeVO> depList() {
 		return organizationMapper.depList();
 	}
+	
+	// 전체 사원만 조회
+	@Override
+	public List<CommonCodeVO> posList() {
+		return organizationMapper.posList();
+	};
 
 	// 전체 사원 조회
 	@Override
@@ -81,6 +87,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	
 	// 사원 수정
 	public int emplUpdatePost(EmployeeVO employeeVO) {
+		
 		return organizationMapper.emplUpdatePost(employeeVO);
 	}
 
@@ -109,7 +116,22 @@ public class OrganizationServiceImpl implements OrganizationService {
 	@Override
 	public int deptDelete(String cmmnCode) {
 		return organizationMapper.deptDelete(cmmnCode);
-	};
+	}
+
+	// 사원 등록
+	@Override
+	public int emplInsert(EmployeeVO employeeVO) {
+
+		return organizationMapper.emplInsert(employeeVO);
+	}
+
+	// 사원 삭제
+	@Override
+	public int emplDelete(String emplNo) {
+		return organizationMapper.emplDelete(emplNo);
+	}
+
+
 	
 
 	

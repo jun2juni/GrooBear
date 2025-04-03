@@ -150,16 +150,15 @@ public class CommonCode {
         }
 
         // 코드에 맞는 label을 반환하는 메서드
-        public String getLabelByCode(String code) {
-            for (PositionEnum value : values()) {
-                if (value.code.equals(code)) {
-                    return value.label;
-                }
-            }
-
-            return null;  // 코드가 일치하지 않으면 null 반환
-        }
-    }
+        public static String getLabelByCode(String code) {
+	            for (PositionEnum value : values()) {
+	                if (value.code.equals(code)) {
+	                    return value.label;
+	                }
+	            }
+	            return null;  // 코드가 일치하지 않으면 null 반환
+	        }
+	    }
 
     @Getter
     public enum GenderEnum {

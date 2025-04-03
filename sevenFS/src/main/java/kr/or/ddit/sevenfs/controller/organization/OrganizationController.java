@@ -1,10 +1,12 @@
 package kr.or.ddit.sevenfs.controller.organization;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +33,8 @@ public class OrganizationController {
 	
 	@Autowired
 	OrganizationService organizationService;
+	@Autowired
+	BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	// 조직도 목록 조회
 	@GetMapping("/orglist")
@@ -81,10 +85,18 @@ public class OrganizationController {
 		
 		model.addAttribute("title" , "부서 수정");
 		
+		// 전체 부서 목록
+		List<CommonCodeVO> deptList = this.organizationService.depList();
+		
 		log.info("부서코드 : " + cmmnCode);
 		CommonCodeVO deptDetail = organizationService.deptDetail(cmmnCode);
-		model.addAttribute("deptDetail", deptDetail);
+
+		Map<String, Object> deptData = new HashMap<>();
+		deptData.put("deptList", deptList);
+		deptData.put("deptDetail", deptDetail);
 		
+		model.addAttribute("deptData", deptData);
+
 		return "organization/depUpdate";
 	}
 	
@@ -92,14 +104,14 @@ public class OrganizationController {
 	@PostMapping("/depUpdatePost")
 	public String depUpdatePost(CommonCodeVO commonCodeVO) {
 		
-		log.info("commonCodeVO : " + commonCodeVO);
+		log.info("commonCodeVO 수정확인 : " + commonCodeVO);
 		
 		String cmmnCode = commonCodeVO.getCmmnCode();
 		log.info("cmmnCode : " + cmmnCode);
 		
 		this.organizationService.deptUpdate(commonCodeVO);
 		
-		return "redirect:/orglist";
+		return "redirect:/orglistAdmin";
 	}
 	
 	// 부서 등록
@@ -145,16 +157,16 @@ public class OrganizationController {
 		log.info("사원상세 : " + empDetail);
 		
 		model.addAttribute("title" , "사원 정보");
-		String maleCode = CommonCode.GenderEnum.MALE.getCode();
-		String femaleCode = CommonCode.GenderEnum.FEMALE.getCode();
-		String mailLabel = CommonCode.GenderEnum.MALE.getLabel();
-		String femailLabel = CommonCode.GenderEnum.FEMALE.getLabel();
-		
-		if(empDetail.getGenderCode().equals(maleCode)) {
-			empDetail.setGenderCode(mailLabel);
-		}else {
-			empDetail.setGenderCode(femailLabel);
-		}
+//		String maleCode = CommonCode.GenderEnum.MALE.getCode();
+//		String femaleCode = CommonCode.GenderEnum.FEMALE.getCode();
+//		String mailLabel = CommonCode.GenderEnum.MALE.getLabel();
+//		String femailLabel = CommonCode.GenderEnum.FEMALE.getLabel();
+//		
+//		if(empDetail.getGenderCode().equals(maleCode)) {
+//			empDetail.setGenderCode(mailLabel);
+//		}else {
+//			empDetail.setGenderCode(femailLabel);
+//		}
 		model.addAttribute("empDetail", empDetail);
 		
 		return "organization/employeeDetail";
@@ -169,43 +181,98 @@ public class OrganizationController {
 		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
 		log.info("사원상세 : " + empDetail);
 		
-		model.addAttribute("title" , "사원 정보");
-		String maleCode = CommonCode.GenderEnum.MALE.getCode();
-		String femaleCode = CommonCode.GenderEnum.FEMALE.getCode();
-		String mailLabel = CommonCode.GenderEnum.MALE.getLabel();
-		String femailLabel = CommonCode.GenderEnum.FEMALE.getLabel();
+//		model.addAttribute("title" , "사원 정보");
+//		String maleCode = CommonCode.GenderEnum.MALE.getCode();
+//		String femaleCode = CommonCode.GenderEnum.FEMALE.getCode();
+//		String mailLabel = CommonCode.GenderEnum.MALE.getLabel();
+//		String femailLabel = CommonCode.GenderEnum.FEMALE.getLabel();
+//		
+//		if(empDetail.getGenderCode().equals(maleCode)) {
+//			empDetail.setGenderCode(mailLabel);
+//		}else {
+//			empDetail.setGenderCode(femailLabel);
+//		}
 		
-		if(empDetail.getGenderCode().equals(maleCode)) {
-			empDetail.setGenderCode(mailLabel);
-		}else {
-			empDetail.setGenderCode(femailLabel);
-		}
 		model.addAttribute("empDetail", empDetail);
 		
 		return "organization/employeeDetail";
 	}
 	
-	// 사원 수정
+	// 사원 등록 페이지
+	@GetMapping("/emplInsert")
+	public String emplInsert(Model model) {
+		
+		model.addAttribute("title" , "사원 등록");
+		
+//		String maleCode = CommonCode.GenderEnum.MALE.getCode();
+//		String femaleCode = CommonCode.GenderEnum.FEMALE.getCode();
+//		String mailLabel = CommonCode.GenderEnum.MALE.getLabel();
+//		String femailLabel = CommonCode.GenderEnum.FEMALE.getLabel();
+		
+		List<CommonCodeVO> depList = organizationService.depList();
+		List<CommonCodeVO> posList = organizationService.posList();
+		
+//		// 성별 코드 담기
+//		Map<String, Object> genderCode = new HashMap<>();
+//		genderCode.put("maleCode" , maleCode);
+//		genderCode.put("femailCode", femaleCode);
+//
+//		// 성별 라벨 담기
+//		Map<String, Object> genderLabel = new HashMap<>();
+//		genderCode.put("mailLabel" , mailLabel);
+//		genderCode.put("femailLabel", femailLabel);
+
+		Map<String, Object> cmmnList = new HashMap<String, Object>();
+		cmmnList.put("depList", depList);
+		cmmnList.put("posList", posList);
+//		cmmnList.put("genderCode", genderCode);
+//		cmmnList.put("genderLabel", genderLabel);
+		
+		// 전체 부서, 직급. 성별 목록 보내주기
+		model.addAttribute("cmmnList", cmmnList);
+		log.info("전체 부서와 직급 목록 : " + cmmnList);
+		
+		return "organization/empInsert";
+	}
+	
+	// 사원 등록 확인 눌렀을떄 이동
+	@PostMapping("/emplInsertPost")
+	public String emplInsertPost(EmployeeVO employeeVO) {
+		
+		// 비밀번호 암호화
+		String encode = bCryptPasswordEncoder.encode(employeeVO.getPassword());
+		employeeVO.setPassword(encode);
+		
+		log.info("등록한 데이터 : " + employeeVO);
+		
+		organizationService.emplInsert(employeeVO);
+		
+		return "redirect:/orglist";
+	}
+	
+	
+	// 사원 수정 페이지
 	@GetMapping("/emplUpdate")
 	public String emplUpdate(String emplNo, Model model) {
 		
 		model.addAttribute("title" , "사원 수정");
 		
 		EmployeeVO emplDetail = organizationService.emplDetail(emplNo);
-		
-		String maleCode = CommonCode.GenderEnum.MALE.getCode();
-		String femaleCode = CommonCode.GenderEnum.FEMALE.getCode();
-		String mailLabel = CommonCode.GenderEnum.MALE.getLabel();
-		String femailLabel = CommonCode.GenderEnum.FEMALE.getLabel();
-		
-		if(emplDetail.getGenderCode().equals(maleCode)) {
-			emplDetail.setGenderCode(mailLabel);
-		}else {
-			emplDetail.setGenderCode(femailLabel);
-		}
 		log.info("사원상세 : " + emplDetail);
 		
-		model.addAttribute("emplDetail", emplDetail);
+		// 전체 직급 가져오기
+		List<CommonCodeVO> posList = organizationService.posList();
+
+		// 전체 부서 가져오기
+		List<CommonCodeVO> depList = organizationService.depList();
+		
+		Map<String, Object> emplDetailData = new HashMap<>();
+		emplDetailData.put("emplDet", emplDetail);
+		emplDetailData.put("posList", posList);
+		emplDetailData.put("depList", depList);
+		log.info("emplDetailData : " + emplDetailData);
+		
+		model.addAttribute("emplDetail", emplDetailData);
 		
 		return "organization/empUpdate";
 	}
@@ -213,8 +280,25 @@ public class OrganizationController {
 	// 사원 수정 확인 눌렀을때 이동
 	@PostMapping("/emplUpdatePost")
 	public String emplUpdatePost(EmployeeVO employeeVO) {
+		
+		// 비밀번호 암호화
+		String encode = bCryptPasswordEncoder.encode(employeeVO.getPassword());
+		employeeVO.setPassword(encode);
+		
 		organizationService.emplUpdatePost(employeeVO);
-		return "redirect:/emplDetail";
+		
+		return "redirect:/orglistAdmin";
+	}
+	
+	// 사원 삭제
+	@GetMapping("/emplDelete")
+	public String emplDelete(String emplNo) {
+		
+		log.info("삭제시 넘어온 사원번호 : " + emplNo);
+		
+		organizationService.emplDelete(emplNo);
+		
+		return "redirect:/orglistAdmin";
 	}
 	
 	
