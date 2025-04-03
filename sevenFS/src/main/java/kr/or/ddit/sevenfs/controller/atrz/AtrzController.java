@@ -201,7 +201,7 @@ public class AtrzController {
 		AtrzVO resultDoc = null;
 		// 선택한 문서 양식이 "연차신청서"일 경우
 		if ("연차신청서".equals(form)) {
-			result = atrzService.insertHoDoc();
+//			result = atrzService.insertHoDoc();
 			df_code = "A";
 			//전자결재문서번호를 양식선택시 생성해서 insert해준다.
 //			resultDoc =atrzService.selectDoc(df_code);
@@ -413,6 +413,8 @@ public class AtrzController {
 			
 			
 			list.add(emplNo);
+		}
+		for(String emplCerNo : empNoList) {
 		}
 		
 //		해당 직원의 상세정보 목록을 select
