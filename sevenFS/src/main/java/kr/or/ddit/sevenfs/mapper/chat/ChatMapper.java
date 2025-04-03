@@ -10,7 +10,7 @@ import java.util.Map;
 @Mapper
 public interface ChatMapper {
     // 내 채팅방 목록 불러오기
-    public List<ChatRoomVO> chatList(int emplNo);
+    public List<ChatRoomVO> chatList(String emplNo);
 
     int insertMessage(ChatVO chatRoomVO);
 

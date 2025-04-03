@@ -3,13 +3,16 @@ package kr.or.ddit.sevenfs.controller.chat;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.chat.ChatService;
 import kr.or.ddit.sevenfs.vo.*;
+import kr.or.ddit.sevenfs.vo.chat.ChatRoomVO;
 import kr.or.ddit.sevenfs.vo.chat.ChatVO;
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -34,12 +37,13 @@ public class ChatController {
 
     @GetMapping("/chat/list")
     public String chatList(Model model,
-                           @RequestParam(defaultValue = "1") int emplNo) {
+                           @AuthenticationPrincipal CustomUser customUser) {
+        EmployeeVO empVO = customUser.getEmpVO();
         // 채팅방 목록 불러오기
-//        List<ChatRoomVO> chatRoomVOList = chatService.chatList(emplNo);
-//        log.debug("chatRoomVOList: {}", chatRoomVOList);
-//
-//        model.addAttribute("chatRoomVOList", chatRoomVOList);
+        List<ChatRoomVO> chatRoomVOList = chatService.chatList(empVO.getEmplNo());
+        log.debug("chatRoomVOList: {}", chatRoomVOList);
+
+        model.addAttribute("chatRoomVOList", chatRoomVOList);
 
         return "chat/index";
     }

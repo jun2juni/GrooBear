@@ -19,7 +19,7 @@ public class ChatServiceImpl implements ChatService {
     ChatMapper chatMapper;
 
     // 내 채팅방 목록 불러오기
-    public List<ChatRoomVO> chatList(int emplNo) {
+    public List<ChatRoomVO> chatList(String emplNo) {
         return this.chatMapper.chatList(emplNo);
     };
 

@@ -62,24 +62,21 @@
 	<div class="container-fluid">
 	  
 	  <div class="row">
-		<div class="col-md-12">
+		<div class="col-3">
+		  <div class="card">
+			<div class="card-body">
+			  <c:import url="../organization/orgList.jsp" />
+			  
+			</div>
+		  </div>
+		</div>
+		
+		<div class="col-md-3">
 		  <div class="card" id="chat3">
 			<div class="card-body">
 			  <div class="row">
 				<div class="col-md-6 col-lg-5 mb-4 mb-md-0">
 				  <div class="p-3">
-					<button class="btn btn-primary mb-2">
-					  채팅방 만들기
-					</button>
-					
-					<div class="input-group rounded mb-3">
-					  <input type="search" class="form-control rounded" placeholder="이름 입력" aria-label="Search"
-							 aria-describedby="search-addon" />
-					  <span class="input-group-text border-0" id="search-addon">
-												<i class="fas fa-search"></i>
-											</span>
-					</div>
-					
 					<div>
 					  <%--채팅방 목록--%>
 					  <ul class="list-unstyled mb-0">
@@ -133,9 +130,11 @@
 									</c:otherwise>
 								  </c:choose>
 								</p>
-								  <%-- 채팅 안 읽은 카운트 --%>
-								<span
-									class="read-badge badge bg-danger rounded-pill float-end ${chatRoom.readCount != 0 ? '' :  'd-none'}">${chatRoom.readCount}</span>
+								
+								<%-- 채팅 안 읽은 카운트 --%>
+								<span class="read-badge badge bg-danger rounded-pill float-end ${chatRoom.readCount != 0 ? '' :  'd-none'}">
+									${chatRoom.readCount}
+								</span>
 							  </div>
 							</div>
 						  </li>
@@ -314,8 +313,8 @@
   }
 
   function getChatMessage({chttRoomNo}) {
-    // emp 이거는 로그인 정보로 바꿔야함
-    fetch(`/chat/messageList?chttRoomNo=\${chttRoomNo}&emplNo=\${emp}`)
+    // 로그인된 사용자
+    fetch(`/chat/messageList?chttRoomNo=\${chttRoomNo}&emplNo="${myEmpInfo.emplNo}"`)
       .then((res) => res.json())
       .then((result) => {
         // console.log(result);

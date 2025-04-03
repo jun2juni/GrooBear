@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface ChatService {
     // 내 채팅방 목록 불러오기
-    public List<ChatRoomVO> chatList(int emplNo);
+    public List<ChatRoomVO> chatList(String emplNo);
 
     // 메세지 저장하기
     public int[] insertMessage(ChatVO chatRoomVO);

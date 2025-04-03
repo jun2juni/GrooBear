@@ -1,3 +1,12 @@
+<script>
+  window.emp = {
+  	emplNo: "${myEmpInfo.emplNo}",
+  }
+
+  console.log(emp)
+</script>
+
+
 <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
 <link rel="stylesheet" href="/assets/css/lineicons.css" type="text/css" />
 <link rel="stylesheet" href="/assets/css/materialdesignicons.min.css" type="text/css" />

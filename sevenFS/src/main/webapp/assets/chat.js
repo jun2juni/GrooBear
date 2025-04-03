@@ -3,14 +3,8 @@ const TALK = "TALK";
 const FILE = "FILE";
 let stompClientMap = {}; //
 let isSubscribedMap = {}; // 구독 중인지 확인
-let emp = null; // 이거 바꿔야 함 (진짜 empNo로)
+// let emp = null; // 이거 바꿔야 함 (진짜 empNo로)
 // 임시로 사용
-window.location.search.split("&").filter(item => {
-  let [key, value] = item.split("=");
-  if(key.includes("emplNo")) {
-    emp = value;
-  }
-}); // 로그인 된 No 임시
 
 // 알림 클래스
 class Alert {
@@ -35,37 +29,37 @@ document.addEventListener("DOMContentLoaded", function() {
   let infoAlert = new Alert(document.getElementById('infoSuccess'));
 
   // 내 계정 알림 구독
-  // connectWebSocket({
-  //   roomPath: "alert/room",
-  //   chttRoomNo: emp, receiveMessage: (message) => {
-  //     console.log(message, "alert" + message);
-  //
-  //     if (message.type === TALK) {
-  //       for (const dom of document.querySelectorAll(".chatRoom")) {
-  //         // 내가 보고 있는 채팅방이 아닌 경우
-  //         if (!dom.classList.contains("bg-body-secondary") && dom.dataset.chttRoomNo == message.chttRoomNo) {
-  //           let badgeDom = dom.querySelector(".read-badge");
-  //           let chatLastMsgDom = dom.querySelector(".chat-last-msg");
-  //           let chatCreateDateDom = dom.querySelector(".chat-create-date");
-  //
-  //           badgeDom.classList.remove("d-none");
-  //           // 알림 카운트
-  //           badgeDom.innerHTML = Number(badgeDom.innerHTML) + 1;
-  //           // 채팅 내용
-  //           chatLastMsgDom.innerHTML = message?.mssageCn ?? "내용 없음";
-  //           // 채팅 받은 시간
-  //           chatCreateDateDom.innerHTML = formatDate(message?.createDate ?? new Date(), "HH:mm");
-  //
-  //           message.title = "메시지 알림";
-  //           infoAlert.setMessage(message);
-  //           // 내가 보낸 메세지는 안받기
-  //           infoAlert.show();
-  //           break; // 루프 중단
-  //         }
-  //       }
-  //     }
-  //   }
-  // });
+  connectWebSocket({
+    roomPath: "alert/room",
+    chttRoomNo: emp.emplNo, receiveMessage: (message) => {
+      console.log(message, "alert" + message);
+
+      if (message.type === TALK) {
+        for (const dom of document.querySelectorAll(".chatRoom")) {
+          // 내가 보고 있는 채팅방이 아닌 경우
+          if (!dom.classList.contains("bg-body-secondary") && dom.dataset.chttRoomNo == message.chttRoomNo) {
+            let badgeDom = dom.querySelector(".read-badge");
+            let chatLastMsgDom = dom.querySelector(".chat-last-msg");
+            let chatCreateDateDom = dom.querySelector(".chat-create-date");
+
+            badgeDom.classList.remove("d-none");
+            // 알림 카운트
+            badgeDom.innerHTML = Number(badgeDom.innerHTML) + 1;
+            // 채팅 내용
+            chatLastMsgDom.innerHTML = message?.mssageCn ?? "내용 없음";
+            // 채팅 받은 시간
+            chatCreateDateDom.innerHTML = formatDate(message?.createDate ?? new Date(), "HH:mm");
+
+            message.title = "메시지 알림";
+            infoAlert.setMessage(message);
+            // 내가 보낸 메세지는 안받기
+            infoAlert.show();
+            break; // 루프 중단
+          }
+        }
+      }
+    }
+  });
 
   // 메시지 전송 이벤트 등록
   let submitMessageDom = document.querySelector("#submitMessage");
@@ -88,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
           messageValue: messageInput.value,
           chttRoomNo,
           type: TALK,
-          emplNo: emp
+          emplNo: emp.emplNo
         });
         messageInput.value = "";
       }
@@ -101,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function() {
         messageValue: messageInput.value,
         chttRoomNo,
         type: TALK,
-        emplNo: emp
+        emplNo: emp.emplNo
       });
       messageInput.value = "";
     });
@@ -145,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function() {
           messageValue: data.fileVOList[0].fileStrePath,
           chttRoomNo,
           type: FILE,
-          emplNo: emp
+          emplNo: emp.emplNo
         });
 
         e.target.value = null;
@@ -219,7 +213,7 @@ function chatWebSocketConnect({chttRoomNo}) {
       console.log(message, "recevide" + chttRoomNo);
 
       // 내가 보낸 메세지는 안받기
-      if(emp == message.emplNo) return;
+      if(emp.emplNo === message.emplNo) return;
 
       buildChatMessage(
         document.querySelector("#realChatList"),
@@ -284,7 +278,7 @@ function submitMessage({messageValue, type, chttRoomNo, emplNo}) {
  */
 function buildChatMessage(dom, {message}) {
   // 보내는 사람이랑 받는 사람이 같은 경우는 내가보낸 것
-  const messageHTML = message.emplNo == emp ? `
+  const messageHTML = message.emplNo === emp.emplNo ? `
       <div class="d-flex flex-row justify-content-end">
           <div class="chat-message text-end d-flex flex-column align-items-end" style="width: 80%">
               <p class="small me-4" style="font-size: 0.5rem">${message.emplNm}</p>

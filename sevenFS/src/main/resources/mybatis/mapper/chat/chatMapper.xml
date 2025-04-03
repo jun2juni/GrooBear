@@ -14,7 +14,7 @@
         WHERE CHTT_ROOM_NO = #{chttRoomNo}
     </update>
 
-    <select id="chatList" resultType="chatRoomVO" parameterType="int">
+    <select id="chatList" resultType="chatRoomVO" parameterType="string">
         SELECT CR.CHTT_ROOM_NO, CHTT_ROOM_TY, CHTT_ROOM_NM,
                NVL(CR.LAST_MSSAGE_NO - CE.LAST_CNFIRM_NO, 0) as READ_COUNT,
                NVL(M.MSSAGE_CREAT_DT, CR.CHTT_CREAT_DT) AS CHTT_CREAT_DT,
@@ -22,7 +22,7 @@
                M.MSSAGE_TY
         FROM CHAT_ROOM CR
         LEFT JOIN CHAT_EMP CE on (CR.CHTT_ROOM_NO = CE.CHTT_ROOM_NO)
-        LEFT JOIN MESSAGE M ON (M.MSSAGE_SN = CR.LAST_MSSAGE_NO AND M.CHTT_ROOM_NO = CR.CHTT_ROOM_NO)
+        LEFT JOIN CHAT_MESSAGE M ON (M.MSSAGE_SN = CR.LAST_MSSAGE_NO AND M.CHTT_ROOM_NO = CR.CHTT_ROOM_NO)
         WHERE CE.EMPL_NO = #{emplNo}
         ORDER BY CHTT_CREAT_DT DESC
     </select>
@@ -41,7 +41,7 @@
         SELECT MSSAGE_SN, M.MSSAGE_WRITNG_EMPNO, CHTT_ROOM_NO,
                MSSAGE_CN, M.MSSAGE_CREAT_DT, MSSAGE_TY,
                E.EMPL_NO, EMPL_NM
-        FROM MESSAGE M
+        FROM CHAT_MESSAGE M
         LEFT JOIN EMPLOYEE E ON (M.MSSAGE_WRITNG_EMPNO = E.EMPL_NO)
         WHERE CHTT_ROOM_NO = #{chttRoomNo}
         ORDER BY MSSAGE_SN
