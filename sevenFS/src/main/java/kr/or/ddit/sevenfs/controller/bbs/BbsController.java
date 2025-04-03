@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +33,9 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/bbs")
 public class BbsController {
-
+	@Value("${file.save.abs.path}")
+	private String saveDir;
+	
 	@Autowired
 	AttachFileService attachFileService;
 	
@@ -41,10 +44,6 @@ public class BbsController {
 	
 	@Autowired
 	AttachFile attachFile;
-	
-	@Autowired
-	BeanController beanController;
-	
 	
 	
     @GetMapping("/bbs")
@@ -158,10 +157,20 @@ public class BbsController {
      * 게시글 수정 처리
      */
     @PostMapping("/bbsUpdate")
-    public String bbsUpdate(@ModelAttribute BbsVO bbsVO) {
+    public String bbsUpdate(@ModelAttribute BbsVO bbsVO, MultipartFile[] uploadFile, AttachFileVO attachFileVO) {
         log.info("게시글 수정 요청: " + bbsVO);
+        
+        long attachFileNm = attachFileService.updateFileList("updateFile", uploadFile, attachFileVO);
+        bbsVO.setAtchFileNo(attachFileNm);
+        
+        int bbsSn = bbsVO.getBbsSn(); // update 후 bbsSn 가져오기
+        log.info("생성된 게시글 ID: " + bbsSn);
+        
+        log.info("파일이름" + attachFileNm);
 
-        bbsService.bbsUpdate(bbsVO);
+        int update = bbsService.bbsUpdate(bbsVO);
+        log.info("업데이트 : " + update);
+        
         return "redirect:/bbs/bbsDetail?bbsSn=" + bbsVO.getBbsSn();
     }
 
@@ -207,7 +216,7 @@ public class BbsController {
 
 	      // 현재경로/upload/파일명이 저장 경로
 	      // D:\\springboot\\upload
-	      String savePath = this.beanController.getUploadFolder() + "" +newFileName;
+	      String savePath = saveDir + "" +newFileName;
 	      
 	      // 브라우저에서 이미지 불러올 때 절대 경로로 불러오면 보안의 위험 있어 상대경로를 쓰거나
 	      // 이미지 불러오는 jsp 또는 클래스 파일을 만들어

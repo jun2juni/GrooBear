@@ -58,10 +58,16 @@
                                     파일
                                     <c:if test="${not empty bbsVO.files}">
                                         <c:forEach var="file" items="${bbsVO.files}">
-                                            <p>${file.fileStreNm}</p>
-                                        </c:forEach>
-                                    </c:if>
-                                    <input type="file" name="files" class="form-control" multiple>
+										<file-upload
+												label="${file.fileStreNm}"
+												name="uploadFile"
+												max-files="5"
+												contextPath="${pageContext.request.contextPath  }"
+												uploaded-file="${fileAttachList}"
+												atch-file-no="${bbsVO.atchFileNo}"
+										></file-upload>
+										</c:forEach>
+									</c:if>
                                 </div>
                                 <br>
                                 <div>
