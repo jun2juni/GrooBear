@@ -1,4 +1,4 @@
-package kr.or.ddit.sevenfs.vo.Schedule;
+package kr.or.ddit.sevenfs.vo.schedule;
 
 import lombok.Getter;
 import lombok.Setter;
