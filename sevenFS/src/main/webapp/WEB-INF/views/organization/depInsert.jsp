@@ -15,17 +15,32 @@
 			</div>
 		</div>
 		<div class="activity-meta text-start" style="margin-top: 20px;">
+		
+			<%-- 상위부서 값 --%>
+			<%-- 여기가 실제 보내야할 값 --%>
 			<div class="input-style-1 form-group col-8" style="margin-left: 15%;">
-				<label for="upperCmmnCode" class="form-label required">소속부서
+				<label for="upperDep" class="form-label required">부서
 						<span class="text-danger">*</span>
 				</label> 
-				<select id="duration" class="form-select w-auto" name="upperCmmnCode">
-						<option value="#">없음</option>
-					<c:forEach var="departList" items="${depList}">
-						<option value="${departList.cmmnCode}">${departList.cmmnCodeNm}</option>
+				<select id="upperDep" class="form-select w-auto" name="upperCmmnCode" >
+					<c:forEach var="upperDep" items="${upperList}">
+						<option value="${upperDep.cmmnCode}" id="upperDepClick">${upperDep.cmmnCodeNm}</option>
 					</c:forEach>
 				</select>
 			</div>
+			
+			<%-- 부서 선택하면 소속팀 출력 --%>
+			<%--
+			<div class="form-group col-8" style="margin-left: 15%;">
+				<label for="" class="form-label required">소속팀
+						<span class="text-danger">*</span>
+				</label> 
+			    <div class="" id="lowerDepartment">
+			    
+			    </div>
+			</div>
+			 --%>
+			
 			<div class="input-style-1 form-group col-8" style="margin-left: 15%;">
 				<label for="cmmnCodeNm" class="form-label required">부서명 <span
 					class="text-danger">*</span></label> 
@@ -48,6 +63,47 @@
 </form>    
 
 <script type="text/javascript">
+/* $(function(){
+	
+	$("#upperDep").on("change", function(){
+		const upperCmmnCode = this.value;
+		console.log("선택한 상위부서 : " , upperCmmnCode);
+		
+		// 상위코드 보내서 비동기로 보내기
+		fetch("/getLowerdeptList?upperCmmnCode="+upperCmmnCode, {
+			method : "get",
+		    headers : {
+		        "Content-Type": "application/json"
+	       }
+		}) // end fetch
+		.then(resp => resp.json())
+		.then(res => {
+			console.log("선택한 부서의 하위부서 리스트 : ", res);
+			
+			//const lowerSelect = $("#lowerDepartment");
+			
+			 res.map((lowerDep) => {
+					console.log("lowerDep : " , lowerDep.cmmnCodeNm);
+					$("#lowerDepartment").append(
+						`
+						 <input type="radio" value="\${lowerDep.cmmnCode}" id="lower">
+			      		 <label for="lower">\${lowerDep.cmmnCodeNm}</label>
+						`
+					); 
+	 			 }) // end map   
+	 			 
+	 			 
+	 			 
+		})// end result
+	}) // end click event
+	
+}); // end fn */
+
+// 동적으로 만든 라디오 클릭시
+/* $(document).on('change', "input:radio[name='upperCmmnCode']", function() {
+    const val = $("#lower").val();
+    console.log(val);
+ }); */
 
 	
 </script>

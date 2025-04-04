@@ -46,6 +46,18 @@ public class OrganizationServiceImpl implements OrganizationService {
 		return organizationMapper.depList();
 	}
 	
+	// 최상위 부서만 조회
+	@Override
+	public List<CommonCodeVO> upperDepList() {
+		return organizationMapper.upperDepList();
+	}
+	
+	// 하위 부서 조회
+	@Override
+	public List<CommonCodeVO> lowerDepList(String upperCmmnCode) {
+		return organizationMapper.lowerDepList(upperCmmnCode);
+	}
+	
 	// 전체 사원만 조회
 	@Override
 	public List<CommonCodeVO> posList() {
@@ -136,6 +148,10 @@ public class OrganizationServiceImpl implements OrganizationService {
 	public List<EmployeeVO> emplDetailList(List<String> list) {
 		return this.organizationMapper.emplDetailList(list);
 	}
+
+
+
+
 
 
 	

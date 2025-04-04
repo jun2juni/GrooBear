@@ -14,6 +14,12 @@ public interface OrganizationService {
 		// 전체 부서만 조회
 		public List<CommonCodeVO> depList();
 		
+		// 최상위 부서만 조회
+		public List<CommonCodeVO> upperDepList();
+		
+		// 하위 부서 조회
+		public List<CommonCodeVO> lowerDepList(String upperCmmnCode);
+		
 		// 전체 직급만 조회
 		public List<CommonCodeVO> posList();
 		

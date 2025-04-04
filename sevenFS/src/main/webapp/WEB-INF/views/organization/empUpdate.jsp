@@ -16,7 +16,6 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 	<title>${title}</title>
   <%@ include file="../layout/prestyle.jsp" %>
-</style>
 
 </head>
 <body>

@@ -2,11 +2,6 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-
-
-
-
-
 <div class="card-style chat-about h-100">
   <h6 class="text-sm text-medium"></h6>
   <div class="chat-about-profile">

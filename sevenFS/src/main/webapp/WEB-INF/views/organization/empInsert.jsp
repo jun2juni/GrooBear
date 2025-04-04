@@ -16,9 +16,19 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 	<title>${title}</title>
   <%@ include file="../layout/prestyle.jsp" %>
+  
+<style>
+.form-label{
+    font-size: 14px;
+    font-weight: 500;
+    color: #1A2142;
+    display: block;
+    margin-bottom: 10px;
+}
+</style>  
+  
 </head>
 <body>
-<!-- 관리자만 보는 부서 수정페이지 -->
 <%@ include file="../layout/sidebar.jsp" %>
 <main class="main-wrapper">
   <%@ include file="../layout/header.jsp" %>
@@ -27,7 +37,7 @@
 		<div class="card-style chat-about h-100" style="justify-content: center;">
 			<input type="hidden" name="emplNo" value="${emplDetail.emplNo}">
 				<form action="emplInsertPost" method="post" id="emplInsertForm">
-				  <div class="input-style-1 form-group col-12" style="display: flex;">
+				  <div class=" form-group col-12" style="display: flex;">
 				  	<div class="input-style-1 form-group col-2" style="margin-left: 15%">
 			         	 <label for="clsfCode" class="form-label required">직급<span class="text-danger">*</span></label>
 			     	     <select id="duration" class="form-select w-auto" name="clsfCode" required="required">
@@ -36,16 +46,25 @@
 							</c:forEach>
 						 </select>
 				 	 </div>
-				  	<div class="input-style-1 form-group col-6">
-		         	 <label for="deptCode" class="form-label required">부서<span class="text-danger">*</span></label>
-		     	     <select id="duration" class="form-select w-auto" name="deptCode" required="required">
-						<c:forEach var="depList" items="${cmmnList.depList}">
-							<option value="${depList.cmmnCode}">${depList.cmmnCodeNm}</option>
+				  	<div class="input-style-1 form-group col-2">
+		         	 <label for=upperDept class="form-label required">소속부서<span class="text-danger">*</span></label>
+		     	     <select id="upperDept" class="form-select w-auto" required="required">
+						<c:forEach var="upperDepList" items="${cmmnList.upperDepList}">
+							<option value="${upperDepList.cmmnCode}">${upperDepList.cmmnCodeNm}</option>
 						</c:forEach>
 					 </select>
 				  	</div>
+				  	<%-- 부서 선택하면 소속팀 출력 --%>
+					<div>
+						<label class="form-label required">소속팀
+								<span class="text-danger">*</span>
+						</label> 
+					    <div class="" id="lowerDepartment">
+					    
+					    </div>
+					</div>
 				  </div>
-				 <div class="col-12" style="display: flex;">
+				 <div class="col-12 mt-4" style="display: flex;">
 	   	          <div class="input-style-1 form-group" style="margin-left:15%;">
 		            <label for="emplNm" class="form-label required maxlength="10">이름<span class="text-danger">*</span></label>
 		            <input type="text" name="emplNm" class="form-control" id="emplNm" required>
@@ -171,7 +190,50 @@ $(function(){
 				}
 			}); */
 		});
-	});
+
+	
+$("#upperDept").on("change", function(){
+	const upperCmmnCode = this.value;
+	console.log("선택한 상위부서 : " , upperCmmnCode);
+	
+	// 상위코드 보내서 비동기로 보내기
+	fetch("/getLowerdeptList?upperCmmnCode="+upperCmmnCode, {
+		method : "get",
+	    headers : {
+	        "Content-Type": "application/json"
+       }
+	}) // end fetch
+	.then(resp => resp.json())
+	.then(res => {
+		console.log("선택한 부서의 하위부서 리스트 : ", res);
+		 // 여기서 $("#lowerDepartment") 내부 비우기
+		  $("#lowerDepartment").html("");
+		 res.map((lowerDep, idx) => {
+				//console.log("lowerDep : " , lowerDep.cmmnCodeNm);
+				const id = idx;
+				//console.log("id" , id);
+					
+				 $("#lowerDepartment").append(
+					`
+					 <div>
+					 <input type="radio" value="\${lowerDep.cmmnCode}" id="\${id}" name="deptCode">
+		      		 <label for="\${id}">\${lowerDep.cmmnCodeNm}</label>
+					</div>
+					`
+				); 
+ 			 }) // end map   
+ 			
+	})// end result
+}) // end click event
+});	// end fn
+
+//동적으로 만든 라디오 클릭시
+$(document).on('change', "input:radio[name=deptCode]", function(e) {
+    const val = e.target.value;
+    console.log(val);
+    
+ });
+
 
 </script>
   

@@ -11,6 +11,25 @@
 		AND USE_YN='Y'
 	</select>
 	
+	<!-- 최상위 부서만 조회 -->
+	<select id="upperDepList" resultType="kr.or.ddit.sevenfs.vo.CommonCodeVO">
+		SELECT CMMN_CODE_GROUP, CMMN_CODE, CMMN_CODE_NM, 
+   		     CMMN_CODE_DC, USE_YN, UPPER_CMMN_CODE
+		FROM COMMON_CODE
+		WHERE CMMN_CODE_GROUP='DEPARTMENT'
+		AND UPPER_CMMN_CODE = '#'
+        AND USE_YN='Y'
+	</select>
+
+	<!-- 하위부서 조회 -->
+	<select id="lowerDepList" resultType="kr.or.ddit.sevenfs.vo.CommonCodeVO" parameterType="String">
+		SELECT CMMN_CODE, CMMN_CODE_NM
+		FROM COMMON_CODE
+		WHERE UPPER_CMMN_CODE=#{upperCmmnCode}
+		AND CMMN_CODE_GROUP='DEPARTMENT'
+		AND USE_YN='Y'
+	</select>
+	
 	<!-- 전체 직급만 조회 -->
 	<select id="posList" resultType="kr.or.ddit.sevenfs.vo.CommonCodeVO">
 		SELECT CMMN_CODE_GROUP, CMMN_CODE, CMMN_CODE_NM, 
@@ -27,6 +46,7 @@
 		FROM COMMON_CODE
 		WHERE CMMN_CODE_GROUP='DEPARTMENT'
         AND CMMN_CODE=#{cmmnCode}	
+        AND USE_YN='Y'
 	</select>
 	
 	<!-- 전체 사원 조회 -->

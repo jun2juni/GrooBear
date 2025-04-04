@@ -130,9 +130,25 @@ public class OrganizationController {
 		List<CommonCodeVO> depList = organizationService.depList();
 		model.addAttribute("depList", depList);
 		
+		List<CommonCodeVO> upperList = organizationService.upperDepList();
+		model.addAttribute("upperList" , upperList);
+		
 		model.addAttribute("title" , "부서 등록");
 		
+		// 최상위부서 선택했을때 소속된 팀 출력하기
+		
 		return "organization/depInsert";
+	}
+	
+	// 최상위부서 선택시 소속된 부서를 반환
+	@ResponseBody
+	@GetMapping("/getLowerdeptList")
+	public List<CommonCodeVO> getLowerdeptList(@RequestParam String upperCmmnCode) {
+		
+		List<CommonCodeVO> lowerDep = organizationService.lowerDepList(upperCmmnCode);
+		
+		// 하위부서 리스트 반환
+		return lowerDep;
 	}
 	
 	// 확인 눌렀을때 조직도 목록으로 이동 
@@ -206,17 +222,20 @@ public class OrganizationController {
 		
 		model.addAttribute("title" , "사원 등록");
 		
+		// 전체부서 목록
 		List<CommonCodeVO> depList = organizationService.depList();
+		// 전체사원 목록
 		List<CommonCodeVO> posList = organizationService.posList();
+		// 상위부서 목록
+		List<CommonCodeVO> upperDepList = organizationService.upperDepList();
 
 		Map<String, Object> cmmnList = new HashMap<String, Object>();
 		cmmnList.put("depList", depList);
 		cmmnList.put("posList", posList);
+		cmmnList.put("upperDepList", upperDepList);
 		
-		// 전체 부서, 직급. 성별 목록 보내주기
 		model.addAttribute("cmmnList", cmmnList);
 		log.info("전체 부서와 직급 목록 : " + cmmnList);
-		
 		return "organization/empInsert";
 	}
 	
@@ -283,7 +302,7 @@ public class OrganizationController {
 		
 		// 기존 등록된 파일 정보 가져오기
 		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
-		log.info("수정!! fileAttachList : " + fileAttachList);
+		log.info("기존파일정보(수정) ->  fileAttachList : " + fileAttachList);
 		
 		// 기존 파일 No 가져오기
 		long fileNoL = fileAttachList.get(0).getAtchFileNo();
@@ -293,11 +312,11 @@ public class OrganizationController {
 		// 기존 프로필사진 파일 경로가져오기
 		String filePath = fileAttachList.get(0).getFileStrePath();
 		
+		int atchFileNo = employeeVO.getAtchFileNo();
+		
 		// 수정된 파일이 없으면 기존 AttachNo와 프로필 URL로 등록해주기
-		if(employeeVO.getAtchFileNo()==0) {
-			employeeVO.setAtchFileNo(fileNoI);
-			employeeVO.setProflPhotoUrl(filePath);
-		}else {
+		//if(atchFileNo!=0) {
+
 			// 프로필사진 수정
 			//attachFileService.updateFileList("organization", uploadFile, attachFileVO);
 			AttachFileVO insertFile = attachFileService.insertFile("organization", uploadFile);
@@ -311,9 +330,13 @@ public class OrganizationController {
 			log.info("long insertFileNo" + insertFileNo);
 			
 			int updateFileNo = (int)insertFileNo;
-			log.info("int insertFileNo" + insertFileNo);
+			log.info("int insertFileNo" + updateFileNo);
 			employeeVO.setAtchFileNo(updateFileNo);
-		}
+		
+//		}else {
+//			employeeVO.setAtchFileNo(fileNoI);
+//			employeeVO.setProflPhotoUrl(filePath);
+//		}
 		
 		//log.info("jsp에서 넘긴 수정 정보 : " + employeeVO);
 		
