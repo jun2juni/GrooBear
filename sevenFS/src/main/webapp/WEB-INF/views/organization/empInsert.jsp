@@ -36,7 +36,7 @@
 		<div class="container-fluid">
 		<div class="card-style chat-about h-100" style="justify-content: center;">
 			<input type="hidden" name="emplNo" value="${emplDetail.emplNo}">
-				<form action="emplInsertPost" method="post" id="emplInsertForm">
+				<form action="emplInsertPost" method="post" id="emplInsertForm" class="needs-validation" novalidate>
 				  <div class=" form-group col-12" style="display: flex;">
 				  	<div class="input-style-1 form-group col-2" style="margin-left: 15%">
 			         	 <label for="clsfCode" class="form-label required">직급<span class="text-danger">*</span></label>
@@ -163,11 +163,11 @@
 						</div>
 					 </div>
 					 </div>
-					</form>
-	            	<div class="invalid-feedback"></div>
-				    <div class="content text-center">
-				    <button type="button" id="emplInsertBtn" class="main-btn success-btn-light square-btn btn-hover btn-sm">확인</button>
-			    	</div>
+            	<div class="invalid-feedback"></div>
+			    <div class="content text-center">
+			    <button type="submit" id="emplInsertBtn" class="main-btn success-btn-light square-btn btn-hover btn-sm">확인</button>
+		    	</div>
+				</form>
             </div>
 		</div>   
 </section>
@@ -175,11 +175,13 @@
 <%@ include file="../layout/prescript.jsp" %>
  <script type="text/javascript">
 $(function(){
-	$("#emplInsertBtn").on("click", function(){
+	
+	
+	/*$("#emplInsertBtn").on("click", function(){
 		
-		$("#emplInsertForm").submit();
+ 		$("#emplInsertForm").submit();
 		
-		/* Swal.fire({
+		 Swal.fire({
 			  title: "등록되었습니다.",
 			  icon: "success",
 			  draggable: true
@@ -188,8 +190,8 @@ $(function(){
 				if(result.isConfirmed){
 				$("#emplInsertForm").submit();
 				}
-			}); */
-		});
+			}); 
+		}); */
 
 	
 $("#upperDept").on("change", function(){

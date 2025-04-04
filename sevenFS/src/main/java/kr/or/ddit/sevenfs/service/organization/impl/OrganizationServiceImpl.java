@@ -133,14 +133,34 @@ public class OrganizationServiceImpl implements OrganizationService {
 	// 사원 등록
 	@Override
 	public int emplInsert(EmployeeVO employeeVO) {
+		
+		// 사원 등록
+		int result = organizationMapper.emplInsert(employeeVO);
+	
+		log.info("등록한 데이터 : " + employeeVO);
 
-		return organizationMapper.emplInsert(employeeVO);
+		// 사원 번호 가져오기 ? null이겠지
+		String emplNo = employeeVO.getEmplNo();
+		log.info("emp insert -> emplNo : " + emplNo);
+		
+		// 사원이 등록되면 권한 테이블에도 업로드 되어야한다
+		if(result == 1) {
+			organizationMapper.empAuthInsert(emplNo);
+		}
+		
+		return result;
 	}
 
 	// 사원 삭제
 	@Override
 	public int emplDelete(String emplNo) {
 		return organizationMapper.emplDelete(emplNo);
+	}
+	
+	// 권한 등록
+	@Override
+	public int empAuthInsert(String emplNo) {
+		return organizationMapper.empAuthInsert(emplNo);
 	}
 
 	//해당 직원의 상세정보 목록을 select

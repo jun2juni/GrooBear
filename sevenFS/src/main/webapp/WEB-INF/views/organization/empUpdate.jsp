@@ -19,13 +19,12 @@
 
 </head>
 <body>
-<!-- 관리자만 보는 부서 수정페이지 -->
 <%@ include file="../layout/sidebar.jsp" %>
 <main class="main-wrapper">
   <%@ include file="../layout/header.jsp" %>
 	<section class="section">
 		<div class="container-fluid">
-			<form action="/emplUpdatePost" method="post" id="emplUpdateForm" enctype="multipart/form-data">
+			<form action="/emplUpdatePost" method="post" class="needs-validation" novalidate id="emplUpdateForm" enctype="multipart/form-data">
 				<div class="card-style chat-about h-100" style="justify-content: center;">
 				   <h6 class="text-sm text-medium"></h6>
 				   <div class="chat-about-profile" style="justify-content: center;">

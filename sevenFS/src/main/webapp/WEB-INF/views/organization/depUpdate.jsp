@@ -23,7 +23,7 @@
   <%@ include file="../layout/header.jsp" %>
 	<section class="section">
 		<div class="container-fluid">
-			<form action="/depUpdatePost" method="post" id="depUpdateForm">
+			<form name="frm" action="/depUpdatePost" method="post" id="depUpdateForm" class="needs-validation" novalidate>
 				<c:set var="deptDetail" value="${deptData.deptDetail}"></c:set>
 				<input type="hidden" value="${deptDetail.cmmnCode}" name="cmmnCode" />
 				<div class="card-style chat-about h-100" style="justify-content: center;">
@@ -37,9 +37,9 @@
 				   <div class="activity-meta text-start" style="margin-top: 20px;">
 		   	          	<div class="input-style-1 form-group col-8" style="margin-left:15%;">
 			         	 <label for="upperCmmnCode" class="form-label required">소속 부서<span class="text-danger">*</span></label>
-			     	     <select id="duration" class="form-select w-auto" name="upperCmmnCode">
+			     	     <select id="upperCmmnCode" class="form-select w-auto" name="upperCmmnCode" required="required">
 								<option value="${deptDetail.upperCmmnCode}">변경없음</option>
-							<c:forEach var="depList" items="${deptData.deptList}">
+							<c:forEach var="depList" items="${deptData.upperDepList}">
 								<option value="${depList.cmmnCode}">${depList.cmmnCodeNm}</option>
 							</c:forEach>
 						 </select>
@@ -56,14 +56,10 @@
 				            <input type="text" name="cmmnCodeDc" class="form-control" id="cmmnCodeDc" value="${deptDetail.cmmnCodeDc}" required>
 				           <div class="invalid-feedback"></div>
 			   	          </div>
-			   	          
-			   	          <%-- <div class="input-style-1 form-group col-8" style="margin-left:15%;">
-				            <label for="cmmnCode" class="form-label required">부서코드 <span class="text-danger">*</span></label>
-				            <input type="text" name="cmmnCode" class="form-control" id="cmmnCode" value="${deptDetail.cmmnCode}" required>
-				            <div class="invalid-feedback"></div>
-				          </div> --%>
+
 				     <div class="content text-center">
-				     <button type="button" id="updateBtn" class="main-btn success-btn-light square-btn btn-hover btn-sm">확인</button>
+				     <button id="updateBtn" class="main-btn success-btn-light square-btn btn-hover btn-sm">확인</button>
+				     <a href="/orglistAdmin" class="main-btn danger-btn-light square-btn btn-hover btn-sm">수정취소</a>
 				     </div>
 				   </div>
 				</div>   
@@ -73,20 +69,42 @@
   <%@ include file="../layout/footer.jsp" %>
   <%@ include file="../layout/prescript.jsp" %>
  <script type="text/javascript">
-$(function(){
-	$("#updateBtn").on("click", function(){
-		Swal.fire({
+
+  $(function(){
+	$("#updateBtn").on("click", function(e){
+		
+		e.preventDefault();
+		console.log("ㅇㄹㅇ");
+		
+        /* var upperDepClick = document.getElementById("upperCmmnCode").value.trim();
+		console.log("upperDepClick :", upperDepClick);
+        
+        // 유효성 검사
+        if (upperDepClick === "#") {
+            swal("부서는 최대 10개의 부서만 등록 가능합니다.");
+			return;
+        }else{
+        	document.frm.submit();
+        } */
+        
+        const depUpdateSubmit =  document.frm.submit();
+		
+        if(depUpdateSubmit == true){
+   		 Swal.fire({
 			  title: "수정되었습니다.",
 			  icon: "success",
 			  draggable: true
 			})
-			.then((result) =>{
+        }
+
+/* 			.then((result) =>{
 				if(result.isConfirmed){
 				$("#depUpdateForm").submit();   
 				}
-			});
-		});
-	});
+			});  */
+		
+		}); // end click e
+	}); // end fn
 
 </script>
   

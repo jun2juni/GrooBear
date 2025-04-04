@@ -199,8 +199,18 @@
                     PARTCLR_MATTER)
             VALUES(#{emplNo},#{password}, '1', #{emplNm}, #{brthdy}, 
             		#{telno}, #{acnutno}, #{bankNm}, #{email}, #{anslry}, #{adres}, #{detailAdres},
-            		#{ecnyDate}, #{retireDate}, '200', '전사서명 이미지', '/organization/7cb222435c074b0eb3c5ad7194782d15_사진10.jpg', 
+            		#{ecnyDate}, #{retireDate}, '200', '전사서명 이미지', 'organization/7cb222435c074b0eb3c5ad7194782d15_사진10.jpg', 
             		#{deptCode}, #{clsfCode}, #{genderCode}, #{partclrMatter})
+ 	</insert>
+ 	
+ 	<!-- 권한 등록 -->
+ 	<insert id="empAuthInsert" parameterType="String">
+ 		INSERT INTO AUTH
+		    (AUTHORITY, 
+		     EMPL_NO)
+		    VALUES
+		    ('ROLE_MEMBER' , 
+		     #{emplNo})
  	</insert>
  	
  	<!-- 사원 수정 -->

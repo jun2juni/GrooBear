@@ -4,7 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
 
-<form action="/depInsertPost" method="post" id="depInsertForm">
+<form action="/depInsertPost" method="post" id="depInsertForm" class="needs-validation" novalidate>
 	<div class="card-style chat-about h-100"
 		style="justify-content: center;">
 		<h6 class="text-sm text-medium"></h6>
@@ -62,54 +62,13 @@
 	</div>
 </form>    
 
-<script type="text/javascript">
-/* $(function(){
-	
-	$("#upperDep").on("change", function(){
-		const upperCmmnCode = this.value;
-		console.log("선택한 상위부서 : " , upperCmmnCode);
-		
-		// 상위코드 보내서 비동기로 보내기
-		fetch("/getLowerdeptList?upperCmmnCode="+upperCmmnCode, {
-			method : "get",
-		    headers : {
-		        "Content-Type": "application/json"
-	       }
-		}) // end fetch
-		.then(resp => resp.json())
-		.then(res => {
-			console.log("선택한 부서의 하위부서 리스트 : ", res);
-			
-			//const lowerSelect = $("#lowerDepartment");
-			
-			 res.map((lowerDep) => {
-					console.log("lowerDep : " , lowerDep.cmmnCodeNm);
-					$("#lowerDepartment").append(
-						`
-						 <input type="radio" value="\${lowerDep.cmmnCode}" id="lower">
-			      		 <label for="lower">\${lowerDep.cmmnCodeNm}</label>
-						`
-					); 
-	 			 }) // end map   
-	 			 
-	 			 
-	 			 
-		})// end result
-	}) // end click event
-	
-}); // end fn */
+<script>
 
-// 동적으로 만든 라디오 클릭시
-/* $(document).on('change', "input:radio[name='upperCmmnCode']", function() {
-    const val = $("#lower").val();
-    console.log(val);
- }); */
+document.getElementById("insertBtn").addEventListener("click", function() {
+   
+});
 
-	
 </script>
-  
-</main>
-
 
 </body>
 </html>

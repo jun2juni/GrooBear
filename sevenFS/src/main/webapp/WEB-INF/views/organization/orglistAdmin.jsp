@@ -70,10 +70,29 @@ function deptInsert(){
             $("#emplDetail").html(res);
             
             $("#insertBtn").on("click", function(){
-                swal("등록되었습니다.")
+            	
+            	 // 입력 필드 가져오기
+                var departmentName = document.getElementById("cmmnCodeNm").value.trim();
+                var departmentDesc = document.getElementById("cmmnCodeDc").value.trim();
+
+                // 유효성 검사
+                if (departmentName === "") {
+                    swal("부서명을 입력하세요.");
+                    document.getElementById("cmmnCodeNm").focus();
+                    return;
+                }
+                
+                if (departmentDesc === "") {
+                	swal("부서설명을 입력하세요.");
+                    document.getElementById("cmmnCodeDc").focus();
+                    return;
+                }
+            	if(departmentName != "" && departmentDesc != ""){
+            		swal("등록되었습니다.")
                     .then((value)=>{
                         $("#depInsertForm").submit();
                     });
+            	}
             });
         })
 }

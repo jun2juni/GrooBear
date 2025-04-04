@@ -98,12 +98,16 @@ public class OrganizationController {
 		// 전체 부서 목록
 		List<CommonCodeVO> deptList = this.organizationService.depList();
 		
+		// 상위부서만 조회
+		List<CommonCodeVO> upperDepList = organizationService.upperDepList();
+		
 		log.info("부서코드 : " + cmmnCode);
 		CommonCodeVO deptDetail = organizationService.deptDetail(cmmnCode);
 
 		Map<String, Object> deptData = new HashMap<>();
 		deptData.put("deptList", deptList);
 		deptData.put("deptDetail", deptDetail);
+		deptData.put("upperDepList", upperDepList);
 		
 		model.addAttribute("deptData", deptData);
 
@@ -244,14 +248,13 @@ public class OrganizationController {
 	public String emplInsertPost(EmployeeVO employeeVO) {
 		
 		log.info("암호화 전 데이터 : " + employeeVO);
-		
+
 		// 비밀번호 암호화
 		String encode = bCryptPasswordEncoder.encode(employeeVO.getPassword());
 		employeeVO.setPassword(encode);
 		
-		log.info("등록한 데이터 : " + employeeVO);
-		
 		organizationService.emplInsert(employeeVO);
+		
 		
 		return "redirect:/orglistAdmin";
 	}
