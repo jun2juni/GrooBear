@@ -79,8 +79,7 @@
 			 			<input type="hidden" name="emplNo" value="${emp.emplNo}">
 			   	          <div class="input-style-1 form-group col-8" style="margin-left:15%;">
 				            <label for="password" class="form-label required">비밀번호<span class="text-danger">*</span></label>				            
-				            <input type="hidden" name="password" class="form-control" id="password" value="${emp.password}">
-				            <input type="text" name="password" class="form-control" id="password">
+				            <input type="text" name="password" class="form-control" value="${emp.password}">
 				           <div class="invalid-feedback"></div>
 			   	          </div>
 	   	            	<sec:authorize access="hasRole('ROLE_ADMIN')">
