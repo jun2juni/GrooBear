@@ -13,6 +13,7 @@ import lombok.ToString;
 @ToString
 public class ScheduleVO {
 	// front의 요청과 이름이 다르다면 front에서 처리하자
+	// vo
 	
 	// pk
 	private int schdulNo;
