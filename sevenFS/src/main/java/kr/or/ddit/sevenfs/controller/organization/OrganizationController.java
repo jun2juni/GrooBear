@@ -275,13 +275,24 @@ public class OrganizationController {
 		// 전체 부서 가져오기
 		List<CommonCodeVO> depList = organizationService.depList();
 		
+		// 사원의 파일넘버 가져오기
+		int fileNo = emplDetail.getAtchFileNo();
+		
+		// 파일정보 가져오기
+		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
+		log.info("기존파일정보(수정) ->  fileAttachList : " + fileAttachList);
+		
 		Map<String, Object> emplDetailData = new HashMap<>();
 		emplDetailData.put("emplDet", emplDetail);
 		emplDetailData.put("posList", posList);
 		emplDetailData.put("depList", depList);
+		//emplDetailData.put("fileAttachList", fileAttachList);
 		log.info("emplDetailData : " + emplDetailData);
 		
 		model.addAttribute("emplDetail", emplDetailData);
+		
+		model.addAttribute("fileAttachList" , fileAttachList);
+		
 		
 		
 		return "organization/empUpdate";
@@ -291,55 +302,27 @@ public class OrganizationController {
 	@PostMapping("/emplUpdatePost")
 	public String emplUpdatePost(EmployeeVO employeeVO, MultipartFile[] uploadFile, AttachFileVO attachFileVO) {
 		
-		String emplNo = employeeVO.getEmplNo();
-	
 		// 비밀번호 암호화
 		String encode = bCryptPasswordEncoder.encode(employeeVO.getPassword());
 		employeeVO.setPassword(encode);
-		
-		//int fileNo = employeeVO.getAtchFileNo();
-		
-		// 원래있던 사원 조회
-		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
-		int fileNo = empDetail.getAtchFileNo();
-		
-		// 기존 등록된 파일 정보 가져오기
-		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
-		log.info("기존파일정보(수정) ->  fileAttachList : " + fileAttachList);
-		
-		// 기존 파일 No 가져오기
-		long fileNoL = fileAttachList.get(0).getAtchFileNo();
-		int fileNoI = (int)fileNoL;
-		log.info("기존 fileNo" + fileNoI);
-		
-		// 기존 프로필사진 파일 경로가져오기
-		String filePath = fileAttachList.get(0).getFileStrePath();
-		
-		int atchFileNo = employeeVO.getAtchFileNo();
-		
-		// 수정된 파일이 없으면 기존 AttachNo와 프로필 URL로 등록해주기
-		//if(atchFileNo!=0) {
 
-			// 프로필사진 수정
-			//attachFileService.updateFileList("organization", uploadFile, attachFileVO);
-			AttachFileVO insertFile = attachFileService.insertFile("organization", uploadFile);
-			log.info("수정시 등록된파일 : " + insertFile);
-			
-			// 파일 실제저장경로 set해주기
-			employeeVO.setProflPhotoUrl(insertFile.getFileStrePath());
-			
-			// 수정시 등록된 파일넘버 set해주기
-			long insertFileNo = insertFile.getAtchFileNo();
-			log.info("long insertFileNo" + insertFileNo);
-			
-			int updateFileNo = (int)insertFileNo;
-			log.info("int insertFileNo" + updateFileNo);
-			employeeVO.setAtchFileNo(updateFileNo);
+		// 프로필사진 수정
+		// 수정한 파일넘버로 set 해주기
+		int fileNo = employeeVO.getAtchFileNo();
+		attachFileVO.setAtchFileNo(fileNo);
+	
+		attachFileService.updateFileList("organization", uploadFile, attachFileVO);
+		//AttachFileVO insertFile = attachFileService.insertFile("organization", uploadFile);
+		//log.info("수정시 등록된파일 : " + insertFile);
 		
-//		}else {
-//			employeeVO.setAtchFileNo(fileNoI);
-//			employeeVO.setProflPhotoUrl(filePath);
-//		}
+		// 수정한 파일 리스트 가져오기
+		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
+		log.info("수정파일정보 ->  fileAttachList : " + fileAttachList);
+		// 실제 저장된 경로 가져오기
+		String savePath = fileAttachList.get(0).getFileStrePath();
+		
+		// 파일 실제저장경로 set해주기
+		employeeVO.setProflPhotoUrl(savePath);
 		
 		//log.info("jsp에서 넘긴 수정 정보 : " + employeeVO);
 		
@@ -360,7 +343,6 @@ public class OrganizationController {
 		    	return "redirect:/orglist";
 		    }
 		}
-
 		return "redirect:/orglistAdmin";
 	}
 	

@@ -11,7 +11,7 @@
 		<div class="chat-about-profile">
 			<div class="content text-center">
 				<h5 class="text-bold mb-10"></h5>
-				<span class="status-btn info-btn">DEPARTMENT</span>
+				<span class="status-btn main-btn primary-btn-light rounded-full btn-hover">DEPARTMENT</span>
 			</div>
 		</div>
 		<div class="activity-meta text-start" style="margin-top: 20px;">
@@ -19,7 +19,7 @@
 			<%-- 상위부서 값 --%>
 			<%-- 여기가 실제 보내야할 값 --%>
 			<div class="input-style-1 form-group col-8" style="margin-left: 15%;">
-				<label for="upperDep" class="form-label required">부서
+				<label for="upperDep" class="form-label required">소속부서
 						<span class="text-danger">*</span>
 				</label> 
 				<select id="upperDep" class="form-select w-auto" name="upperCmmnCode" >
@@ -42,7 +42,7 @@
 			 --%>
 			
 			<div class="input-style-1 form-group col-8" style="margin-left: 15%;">
-				<label for="cmmnCodeNm" class="form-label required">부서명 <span
+				<label for="cmmnCodeNm" class="form-label required">신규 부서명 <span
 					class="text-danger">*</span></label> 
 					<input type="text" name="cmmnCodeNm" class="form-control" id="cmmnCodeNm" required>
 				<div class="invalid-feedback">부서명을 작성하세요.</div>
@@ -56,7 +56,7 @@
 			</div>
 			<div class="content text-center">
 				<button type="button" id="insertBtn"
-					class="main-btn success-btn-light square-btn btn-hover btn-sm">확인</button>
+					class="main-btn primary-btn-light square-btn btn-hover btn-sm">확인</button>
 			</div>
 		</div>
 	</div>

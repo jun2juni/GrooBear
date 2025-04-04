@@ -27,6 +27,7 @@
 			<form action="/emplUpdatePost" method="post" class="needs-validation" novalidate id="emplUpdateForm" enctype="multipart/form-data">
 				<div class="card-style chat-about h-100" style="justify-content: center;">
 				   <h6 class="text-sm text-medium"></h6>
+				   <c:set var="emplDet" value="${emplDetail.emplDet}"></c:set>
 				   <div class="chat-about-profile" style="justify-content: center;">
 				       <h5 class="text-bold mb-10"></h5>
 					     <div class="image" style="justify-content: center; margin-left: 15%">
@@ -35,6 +36,8 @@
 				              name="uploadFile"
 				              max-files="1"
 				              contextPath="${pageContext.request.contextPath  }"
+				              uploaded-file="${fileAttachList}"
+				              atch-file-no="${emplDet.atchFileNo}"
 				          ></file-upload>
 					       <span class="text-medium text-dark"></span>
 					     </div>

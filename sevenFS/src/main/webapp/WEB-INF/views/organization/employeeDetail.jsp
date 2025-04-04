@@ -9,8 +9,8 @@
     <img src="/upload/${empDetail.proflPhotoUrl}" alt="" style="border-radius: 50%; width:150px; height: 150px; ">
       </div> 
       <div class="content text-center">
-		<span class="status-btn info-btn">${empDetail.posNm}</span>
-		<span class="status-btn info-btn">${empDetail.deptNm}</span>
+		<span class="status-btn main-btn deactive-btn rounded-full btn-hover mr-5">${empDetail.posNm}</span>
+		<span class="status-btn main-btn deactive-btn rounded-full btn-hover">${empDetail.deptNm}</span>
 	</div>
 </div>
    <div class="activity-meta text-start" style="margin-top: 20px;">
@@ -60,7 +60,7 @@
      <ul>
        <li>
        <hr>
-       <span class="status-btn info-bg text-white">특이사항</span>
+       <span class="status-btn main-btn dark-btn-outline">특이사항</span>
        <c:choose>
 		    <c:when test="${empDetail.partclrMatter != null}">
 		         <div style="margin-top: 20px;" class="text-medium text-dark">${empDetail.partclrMatter}</div>
@@ -77,7 +77,7 @@
      <sec:authentication property="principal.empVO" var="emp" />
 	     <div class="content text-center" style="margin-top: 40px;">
 	     	<c:if test="${emp.emplNo == empDetail.emplNo || emp.emplNo == '20250000'}">
-		    	 <a href="/emplUpdate?emplNo=${empDetail.emplNo}" class="main-btn success-btn-light square-btn btn-hover btn-sm">수정</a>
+		    	 <a href="/emplUpdate?emplNo=${empDetail.emplNo}" class="main-btn primary-btn-light square-btn btn-hover btn-sm">수정</a>
 		     </c:if>
 		     <c:if test="${emp.emplNo == '20250000'}">
 		     	<button type="button" id="emplDeleteBtn" class="main-btn danger-btn-light square-btn btn-hover btn-sm">삭제</button>

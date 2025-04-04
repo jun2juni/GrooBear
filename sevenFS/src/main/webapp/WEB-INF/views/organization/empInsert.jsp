@@ -165,7 +165,7 @@
 					 </div>
             	<div class="invalid-feedback"></div>
 			    <div class="content text-center">
-			    <button type="submit" id="emplInsertBtn" class="main-btn success-btn-light square-btn btn-hover btn-sm">확인</button>
+			    <button type="submit" id="emplInsertBtn" class="main-btn primary-btn-light square-btn btn-hover btn-sm">확인</button>
 		    	</div>
 				</form>
             </div>
