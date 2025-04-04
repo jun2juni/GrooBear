@@ -4,7 +4,7 @@
 
 
  	<!-- 프로젝트 ResultMap -->
-	<resultMap type="projectVO" id="projectResultMap">
+	<resultMap type="kr.or.ddit.sevenfs.vo.project.ProjectVO" id="projectResultMap">
 		<id property="prjctNo" column="PRJCT_NO"/>
 		<result property="ctgryNo" column="CTGRY_NO"/>
 		<result property="prjctNm" column="PRJCT_NM"/>
@@ -16,17 +16,16 @@
 		<result property="prjctRcvordAmount" column="PRJCT_RCVORD_AMOUNT"/>
 		<result property="prjctBeginDate" column="PRJCT_BEGIN_DATE"/>
 		<result property="prjctEndDate" column="PRJCT_END_DATE"/>
-		<result property="atchFileNo" column="ATCH_FILE_NO"/>
 		
 		<!-- 프로젝트 참여자 컬렉션 매핑 -->
-		<collection property="projectEmps" ofType="projectEmpVO" column="PRJCT_NO" select="selectProjectEmps"/>
+		<collection property="projectEmpVOList" ofType="projectEmpVO" column="PRJCT_NO" select="selectProjectEmps"/>
 				
 		<!-- 프로젝트 과제 컬렉션 매핑 -->
-		<collection property="projectTasks" ofType="projectTaskVO" column="PRJCT_NO" select="selectProjectTasks"/>
+		<collection property="projectTaskVOList" ofType="projectTaskVO" column="PRJCT_NO" select="selectProjectTasks"/>
 	</resultMap>
 	
 	<!-- 프로젝트 참여자 ResultMap -->
-	<resultMap type="projectEmpVO" id="projectEmpResultMap">
+	<resultMap type="kr.or.ddit.sevenfs.vo.project.ProjectEmpVO" id="projectEmpResultMap">
 		<id property="prjctNo" column="PRJCT_NO"/>
 		<id property="prtcpntEmpno" column="PRTCPNT_EMPNO"/>
 		<result property="prtcpntRole" column="PRTCPNT_ROLE"/>
@@ -43,7 +42,7 @@
 	</resultMap>
 	
 	<!-- 프로젝트 과제 ResultMap -->
-	<resultMap type="projectTaskVO" id="projectTaskResultMap">
+	<resultMap type="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO" id="projectTaskResultMap">
 		<id property="taskNo" column="TASK_NO"/>
 		<result property="prjctNo" column="PRJCT_NO"/>
 		<result property="upperTaskNo" column="UPPER_TASK_NO"/>
@@ -113,26 +112,15 @@
             GROUP BY P.PRJCT_NO
         )
     </select>
-    
-    
-    <!-- 프로젝트 상세조회(참여자, 과제 포함) -->
-    <select id="selectProjectDetail" parameterType="long" resultMap="projectResultMap">
-		SELECT PRJCT_NO, CTGRY_NO, PRJCT_NM, PRJCT_CN, PRJCT_STTUS, PRJCT_GRAD,
-			   PRJCT_ADRES, PRJCT_URL, PRJCT_RCVORD_AMOUNT, PRJCT_BEGIN_DATE, 
-			   PRJCT_END_DATE, ATCH_FILE_NO
-		FROM PROJECT
-		WHERE PRJCT_NO = #{prjctNo}
-    </select>
-    
-    
+
     <!-- 프로젝트 목록 조회 -->
-	<select id="selectProjectList" resultType="projectVO">
+	<select id="selectProjectList" resultType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
 		SELECT PRJCT_NO, CTGRY_NO, PRJCT_NM, PRJCT_CN, PRJCT_STTUS, PRJCT_GRAD,
-			   PRJCT_ADRES, PRJCT_URL, PRJCT_RCVORD_AMOUNT, PRJCT_BEGIN_DATE, 
-			   PRJCT_END_DATE, ATCH_FILE_NO
+		       PRJCT_ADRES, PRJCT_URL, PRJCT_RCVORD_AMOUNT, PRJCT_BEGIN_DATE, 
+		       PRJCT_END_DATE
 		FROM PROJECT
 		ORDER BY PRJCT_NO DESC
-	</select>
+	</select> 
 	
 	<!-- 프로젝트 참여자 조회 (프로젝트 번호 기준) -->
 	<select id="selectProjectEmps" parameterType="long" resultMap="projectEmpResultMap">
@@ -145,35 +133,34 @@
 		WHERE PE.PRJCT_NO = #{prjctNo}
 	</select>
 	
-	<!-- 프로젝트 과제 조회 (프로젝트 번호 기준) -->
-	<select id="selectProjectTasks" parameterType="long" resultMap="projectTaskResultMap">
-		SELECT PT.TASK_NO, PT.PRJCT_NO, PT.UPPER_TASK_NO, PT.CHARGER_EMPNO, 
-			   PT.TASK_NM, PT.TASK_CN, PT.PRIORT, PT.TASK_GRAD, PT.PROGRSRT, 
-			   PT.TASK_STTUS, PT.ATCH_FILE_NO, PT.TASK_BEGIN_DT, PT.TASK_DAYCNT, 
-			   PT.TASK_END_DT,
-			   E.EMPL_NM AS CHARGER_EMP_NM
-		FROM PROJECT_TASK PT
-		LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
-		WHERE PT.PRJCT_NO = #{prjctNo}
+	<!-- 프로젝트 조회  -->
+	<select id="projectDetail" parameterType="int" resultMap="projectResultMap">
+	   SELECT P.PRJCT_NO, P.CTGRY_NO, P.PRJCT_NM, P.PRJCT_CN, P.PRJCT_STTUS, P.PRJCT_GRAD,
+	          P.PRJCT_ADRES, P.PRJCT_URL, P.PRJCT_RCVORD_AMOUNT, P.PRJCT_BEGIN_DATE, 
+	          P.PRJCT_END_DATE
+	   FROM PROJECT P
+	   WHERE P.PRJCT_NO = #{prjctNo}
 	</select>
     
   	<!-- 프로젝트 등록 -->
-	<insert id="projectInsert" parameterType="projectVO">
+	<insert id="projectInsert" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
 		<selectKey resultType="int" order="BEFORE" keyProperty="prjctNo">
 			SELECT SEQ_PROJECT.NEXTVAL FROM DUAL
 		</selectKey>	
 		INSERT INTO PROJECT (
-			PRJCT_NO, CTGRY_NO, PRJCT_NM, PRJCT_CN, PRJCT_STTUS, PRJCT_GRAD,
-			PRJCT_ADRES, PRJCT_URL, PRJCT_RCVORD_AMOUNT, PRJCT_BEGIN_DATE, 
-			PRJCT_END_DATE, ATCH_FILE_NO
+		   PRJCT_NO, CTGRY_NO, PRJCT_NM, PRJCT_CN, PRJCT_STTUS, PRJCT_GRAD,
+		   PRJCT_ADRES, PRJCT_URL, PRJCT_RCVORD_AMOUNT, PRJCT_BEGIN_DATE, 
+		   PRJCT_END_DATE
 		) VALUES (
-			#{prjctNo}, #{ctgryNo}, #{prjctNm}, #{prjctCn}, #{prjctSttus}, 
-			#{prjctGrad}, #{prjctAdres}, #{prjctUrl}, #{prjctRcvordAmount}, 
-			#{prjctBeginDate}, #{prjctEndDate}, #{atchFileNo}
+		   #{prjctNo}, #{ctgryNo}, #{prjctNm}, #{prjctCn}, #{prjctSttus}, 
+		   #{prjctGrad}, #{prjctAdres}, #{prjctUrl}, #{prjctRcvordAmount}, 
+		   #{prjctBeginDate}, #{prjctEndDate}
 		)
 	</insert>
 	
-	<!-- 프로젝트 참여자 등록 -->
+	
+<!-- 	
+	 프로젝트 참여자 등록
 	<insert id="insertProjectEmp" parameterType="map">
 
 		INSERT INTO PROJECT_EMP (
@@ -185,11 +172,13 @@
 			#{evlGrad, jdbcType=VARCHAR}, SYSDATE, 'N'
 		)
 	</insert>
-	
+
+	 -->
+
 
 		
-	<!-- 과제 등록 -->
-	<insert id="insertProjectTask" parameterType="projectTaskVO">
+	<!-- 과제 등록 
+	<insert id="insertProjectTask" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO">
 		<selectKey resultType="int" keyProperty="taskNo">
 			SELECT SEQ_PROJECT_TASK.NEXTVAL FROM DUAL
 		</selectKey>
@@ -205,8 +194,10 @@
 			#{taskDaycnt}, #{taskEndDt}
 		)
 	</insert>	
-		
-    <!-- 여러 과제 일괄 등록 -->
+	-->
+	
+<!-- 		
+    여러 과제 일괄 등록
 	<insert id="insertProjectTaskBatch" parameterType="java.util.List">
 		<foreach collection="list" item="item" separator=";" open="BEGIN" close="END;">
 			INSERT INTO PROJECT_TASK (
@@ -223,7 +214,7 @@
 		</foreach>
 	</insert>
 	
-	<!-- 여러 프로젝트 참여자 일괄 등록 -->
+	여러 프로젝트 참여자 일괄 등록
 	<insert id="insertProjectEmpBatch" parameterType="java.util.List">
 		<foreach collection="list" item="item" separator=";" open="BEGIN" close="END;">
 			INSERT INTO PROJECT_EMP (
@@ -236,23 +227,22 @@
 				SYSDATE, 'N'
 			)
 		</foreach>
-	</insert>
+	</insert> -->
 	
 	<!-- 프로젝트 수정 -->
-	<update id="updateProject" parameterType="projectVO">
-		UPDATE PROJECT
-		SET CTGRY_NO = #{ctgryNo},
-			PRJCT_NM = #{prjctNm},
-			PRJCT_CN = #{prjctCn},
-			PRJCT_STTUS = #{prjctSttus},
-			PRJCT_GRAD = #{prjctGrad},
-			PRJCT_ADRES = #{prjctAdres},
-			PRJCT_URL = #{prjctUrl},
-			PRJCT_RCVORD_AMOUNT = #{prjctRcvordAmount},
-			PRJCT_BEGIN_DATE = #{prjctBeginDate},
-			PRJCT_END_DATE = #{prjctEndDate},
-			ATCH_FILE_NO = #{atchFileNo}
-		WHERE PRJCT_NO = #{prjctNo}
+	<update id="updateProject" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
+			UPDATE PROJECT
+			SET CTGRY_NO = #{ctgryNo},
+			   PRJCT_NM = #{prjctNm},
+			   PRJCT_CN = #{prjctCn},
+			   PRJCT_STTUS = #{prjctSttus},
+			   PRJCT_GRAD = #{prjctGrad},
+			   PRJCT_ADRES = #{prjctAdres},
+			   PRJCT_URL = #{prjctUrl},
+			   PRJCT_RCVORD_AMOUNT = #{prjctRcvordAmount},
+			   PRJCT_BEGIN_DATE = #{prjctBeginDate},
+			   PRJCT_END_DATE = #{prjctEndDate}
+			WHERE PRJCT_NO = #{prjctNo}
 	</update>
 	
 	<!-- 프로젝트 삭제 -->
@@ -260,4 +250,9 @@
 		DELETE FROM PROJECT
 		WHERE PRJCT_NO = #{prjctNo}
 	</delete>
+	
+	
+	
+	
+	
 </mapper>

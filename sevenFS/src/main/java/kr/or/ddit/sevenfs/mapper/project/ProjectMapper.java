@@ -18,5 +18,6 @@ public interface ProjectMapper {
 	public int getTotal(Map<String, Object> map);
 	public int projectInsert(ProjectVO projectVO);
 	public int insertProjectEmpBatch(List<ProjectEmpVO> projectEmps);
+	public ProjectVO projectDetail(int prjctNo);
 
 }

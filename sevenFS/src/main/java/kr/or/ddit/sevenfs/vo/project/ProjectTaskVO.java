@@ -1,6 +1,9 @@
 package kr.or.ddit.sevenfs.vo.project;
 
 import java.util.Date;
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
 
@@ -20,4 +23,8 @@ public class ProjectTaskVO {
 	private String taskCn;
 	private String priort;
 	private String taskGrad;
+	
+	private List<MultipartFile> files;
+
+
 }

@@ -41,6 +41,12 @@ public class ProjectServiceImpl implements ProjectService{
 		// TODO Auto-generated method stub
 		return projectMapper.insertProjectEmpBatch(projectEmpList);
 	}
+
+	@Override
+	public ProjectVO projectDetail(int prjctNo) {
+		// TODO Auto-generated method stub
+		return projectMapper.projectDetail(prjctNo);
+	}
 	
 	
 

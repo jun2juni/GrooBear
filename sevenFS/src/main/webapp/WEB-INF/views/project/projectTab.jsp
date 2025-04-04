@@ -56,24 +56,24 @@
                 </ul>
             </div>
 
-                <!-- 탭 콘텐츠 -->
-                <div class="tab-content text-center" id="pills-tabContent">
-                    <div class="tab-pane fade show active" id="dashBoard" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
-                        <!-- 대시보드 콘텐츠 -->
-                    </div>
-                    <div class="tab-pane fade" id="List" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
-                        <div id="projectListContent">프로젝트 목록을 불러오는 중...</div>
-                    </div>
-                    <div class="tab-pane fade" id="projectKanban" role="tabpanel" aria-labelledby="pills-project-tab" tabindex="0">
-                        <!-- 칸반보드 (프로젝트) -->
-                    </div>
-                    <div class="tab-pane fade" id="taskKanban" role="tabpanel" aria-labelledby="pills-task-tab" tabindex="0">
-                        <!-- 칸반보드 (업무) -->
-                    </div>
-                    <div class="tab-pane fade" id="gantt" role="tabpanel" aria-labelledby="pills-gantt-tab" tabindex="0">
-                        <!-- 간트차트 -->
-                    </div>
-                </div>
+            <!-- 탭 콘텐츠 -->
+	            <div class="tab-content text-center" id="pills-tabContent">
+	                <div class="tab-pane fade show active" id="dashBoard" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
+	                    <!-- 대시보드 콘텐츠 -->
+	                </div>
+	                <div class="tab-pane fade" id="List" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
+	                    <div id="projectListContent">프로젝트 목록을 불러오는 중...</div>
+	                </div>
+	                <div class="tab-pane fade" id="projectKanban" role="tabpanel" aria-labelledby="pills-project-tab" tabindex="0">
+	                    <!-- 칸반보드 (프로젝트) -->
+	                </div>
+	                <div class="tab-pane fade" id="taskKanban" role="tabpanel" aria-labelledby="pills-task-tab" tabindex="0">
+	                    <!-- 칸반보드 (업무) -->
+	                </div>
+	                <div class="tab-pane fade" id="gantt" role="tabpanel" aria-labelledby="pills-gantt-tab" tabindex="0">
+	                    <!-- 간트차트 -->
+	                </div>
+	            </div>
         </div>
     </section>
     <%@ include file="../layout/footer.jsp" %>
