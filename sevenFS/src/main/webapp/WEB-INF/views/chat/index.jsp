@@ -33,13 +33,30 @@
       }
 
       #chatList {
-          max-height: 60vh;
+          max-height: 62vh;
           overflow-x: hidden; /* 가로 스크롤 활성화 */
           overflow-y: scroll; /* 세로 스크롤 숨김 */
       }
+	  
+	  #chatRoomList {
+          max-height: 72vh;
+          overflow-x: hidden; /* 가로 스크롤 활성화 */
+          overflow-y: scroll; /* 세로 스크롤 숨김 */
+	  }
+	  
+	  #orgList {
+          max-height: 79vh;
+          overflow-x: hidden; /* 가로 스크롤 활성화 */
+          overflow-y: scroll; /* 세로 스크롤 숨김 */
+	  }
 
+      #chatRoomList::-webkit-scrollbar {
+		  display: none;
+	  }
+	  
       /* ( 크롬, 사파리, 오페라, 엣지 ) 동작 */
-      #chatList::-webkit-scrollbar-track-piece {
+      #chatList::-webkit-scrollbar-track-piece,
+      #chatRoomList::-webkit-scrollbar-track-piece {
           display: none;
       }
 
@@ -71,7 +88,7 @@
 				  <div class="p-3">
 					<div>
 					  <%--채팅방 목록--%>
-					  <ul class="list-unstyled mb-0">
+					  <ul id="chatRoomList" class="list-unstyled mb-0">
 						
 						<c:forEach var="chatRoom" items="${chatRoomVOList}">
 						  <li class="p-2 rounded border-bottom chatRoom" data-chtt-room-no="${chatRoom.chttRoomNo}">
@@ -82,6 +99,7 @@
 									<%--채팅방 이미지--%>
 								  <img src="/upload/${chatRoom.proflPhotoUrl}"
 									  alt="avatar" class="d-flex align-self-center me-3 rounded-circle chat-avatar"
+									  onerror="this.src='/assets/images/image-error.png'"
 								  >
 								  <span class="badge bg-success badge-dot"></span>
 								</div>
@@ -225,9 +243,11 @@
 		
 		<div class="col-3">
 		  <div class="card">
-			<div class="card-body">
+			<div id="orgList" class="card-body">
 			  <c:import url="../organization/orgList.jsp" />
 			</div>
+			
+			
 		  </div>
 		</div>
 	  </div>
@@ -239,6 +259,8 @@
 <c:import url="../layout/prescript.jsp" />
 
 <script>
+  let prevChatRoomNo = null;
+  
   window.onload = function(target) {
     // 채팅 무한 스크롤
     let chatList = document.querySelector("#chatList");
@@ -278,51 +300,121 @@
     intersectionObserver2.observe(document.querySelector("#alertObserverBlock"));
 
     // 채팅방 클릭
-    let prevChatRoomNo = null;
     document.querySelectorAll(".chatRoom").forEach(dom => {
-      dom.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const chttRoomNo = dom.dataset.chttRoomNo; // this는 li 요소를 가리킴
-        document.querySelector("#realChatList").innerHTML = ""; // 전에 보던 메세지 삭제
-        // 채팅방 커넥션 끊고
-        disconnectWebSocket({chttRoomNo: prevChatRoomNo}); // 나가는 채팅방 연결 끊기
-
-        // 채팅창 비 활성화
-        document.querySelectorAll(".chatRoom").forEach((dom) => {
-          dom.classList.remove("bg-body-secondary");
-        })
-
-        if(chttRoomNo === prevChatRoomNo) {
-          // 채팅창 비활성 화
-          document.querySelector("#chat").classList.add("d-none");
-
-          prevChatRoomNo = null;
-          return;
-        }
-
-        // 뱃지 데이터 초기화
-        dom.querySelector(".read-badge").innerHTML = "0";
-        dom.querySelector(".read-badge").classList.add("d-none");
-
-        getChatMessage({chttRoomNo}); // 이전 메세지 가져오기
-        chatWebSocketConnect({chttRoomNo}); // 들어가는 채팅방 연결
-
-        document.querySelector("#chat").classList.remove("d-none");
-        prevChatRoomNo = chttRoomNo; // 현재 채팅방 번호
-
-        dom.classList.add("bg-body-secondary");
-      })
+      dom.addEventListener("click", (e) => chatRoomClick(e, dom))
     })
   }
+  
+  function chatRoomClick(e, dom) {
+    e.stopPropagation();
+    const chttRoomNo = dom.dataset.chttRoomNo; // this는 li 요소를 가리킴
+    document.querySelector("#realChatList").innerHTML = ""; // 전에 보던 메세지 삭제
+    // 채팅방 커넥션 끊고
+    disconnectWebSocket({chttRoomNo: prevChatRoomNo}); // 나가는 채팅방 연결 끊기
 
-  function dbClickEmp(data) {
-    // 사원채팅방 만들기
-    console.log(data)
+    // 채팅창 비 활성화
+    document.querySelectorAll(".chatRoom").forEach((dom) => {
+      dom.classList.remove("bg-body-secondary");
+    })
+
+    if(chttRoomNo === prevChatRoomNo) {
+      // 채팅창 비활성 화
+      document.querySelector("#chat").classList.add("d-none");
+
+      prevChatRoomNo = null;
+      return;
+    }
+
+    // 뱃지 데이터 초기화
+    dom.querySelector(".read-badge").innerHTML = "0";
+    dom.querySelector(".read-badge").classList.add("d-none");
+
+    getChatMessage({chttRoomNo}); // 이전 메세지 가져오기
+    chatWebSocketConnect({chttRoomNo}); // 들어가는 채팅방 연결
+
+    document.querySelector("#chat").classList.remove("d-none");
+    prevChatRoomNo = chttRoomNo; // 현재 채팅방 번호
+
+    dom.classList.add("bg-body-secondary");
+	
   }
 
+  // 사원채팅방 클릭 시 만들기
+  function dbClickEmp(data) {
+	// 채팅방이 이미 있는 경우는 채팅방 열기
+	// 채팅 보내는 사원 넘버 넘기기
+	// 채팅방이 이미 있는지 확인
+    fetch("/chat/roomInsert?targetEmplNo=" + data.id)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data)
+		
+		if (data.invalidChatRoom !== 0) {
+      		// 채팅방 열기
+          document.querySelectorAll(".chatRoom").forEach((item) => {
+            let chttRoomNo = item.dataset.chttRoomNo;
+            if (chttRoomNo == data.invalidChatRoom) {
+              item.click();
+			}
+		  })
+		  
+		  return;
+		}
+
+    	// 채팅방 추가하기
+        console.log(data.chatRoom)
+		if (data.chatRoom) {
+      		let chatRoom = data.chatRoom;
+      		let html = `
+				<li class="p-2 rounded border-bottom chatRoom" data-chtt-room-no="\${chatRoom.chttRoomNo}">
+				  <div class="d-flex justify-content-between text-truncate" style="cursor: pointer">
+					<div class="d-flex flex-row">
+					  <%-- 채팅방 상대 이미지 --%>
+					  <div>
+						<%--채팅방 이미지--%>
+						<img src="/upload/\${chatRoom.proflPhotoUrl}"
+							 alt="avatar" class="d-flex align-self-center me-3 rounded-circle chat-avatar"
+							 onerror="this.src='/assets/images/image-error.png'"
+						>
+						<span class="badge bg-success badge-dot"></span>
+					  </div>
+					  
+					  <%-- 채티방 이름 마지막 메세지 --%>
+					  <div>
+						<p class="fw-bold mb-0">
+						  \${chatRoom.emplNm}
+						</p>
+						<p class="chat-last-msg small text-muted text-truncate-2">
+						  대화 내용 없음
+						</p>
+					  </div>
+					</div>
+					<div class="pt-1">
+					  <%-- 마지막 보낸 메세지 시간 --%>
+					  <p class="chat-create-date small text-muted mb-1">
+						\${formatDate(new Date(), "HH:mm")}
+					  </p>
+					  <%-- 채팅 안 읽은 카운트 --%>
+					  <span class="read-badge badge bg-danger rounded-pill float-end d-none">0</span>
+					</div>
+				  </div>
+				</li>
+      		`;
+            
+            document.querySelector("#chatRoomList").insertAdjacentHTML("afterbegin", html);
+            let dom = document.querySelector(".chatRoom");
+          	dom.addEventListener("click", (e) => chatRoomClick(e, dom))
+		}
+    
+      })
+  }
+
+
+  
   function dbClickDept(data) {
-    // 부서 채팅방???
-    console.log(data);
+    // 부서 채팅방
+	// 부서 채팅방은 없음
+    // console.log(data);
   }
 
   function getChatMessage({chttRoomNo}) {
@@ -341,10 +433,8 @@
         console.error(error);
       })
       .finally(() => {
-        setTimeout(() => {
-          let chatList = document.querySelector("#chatList");
-          chatList.scrollTop = chatList.scrollHeight; // 채팅 밑으로 내리기
-        }, 10)
+        let chatList = document.querySelector("#chatList");
+        chatList.scrollTop = chatList.scrollHeight; // 채팅 밑으로 내리기
       })
   }
 </script>

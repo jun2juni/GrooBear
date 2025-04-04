@@ -16,10 +16,12 @@ public class ChatRoomVO {
     private String chttRoomTy;
     private String mssageTy;
 
-    // 채팅방에 들어가 있는 사람들
-    private int[] emplNoList;
+
     private String proflPhotoUrl; // 상대방 프로필
     private String emplNm; // 채팅 상대방 이름
+
+    // 채팅방에 들어가 있는 사람들
+    private String[] emplNoList;
 
     private int chatLastRead;
 }

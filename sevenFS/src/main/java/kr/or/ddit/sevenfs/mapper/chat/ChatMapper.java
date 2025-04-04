@@ -6,17 +6,16 @@ import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Mapper
 public interface ChatMapper {
     // 내 채팅방 목록 불러오기
-    public List<ChatRoomVO> chatList(String emplNo);
+    public List<ChatRoomVO> chatList(Map<String, Object> param);
 
     int insertMessage(ChatVO chatRoomVO);
 
     List<ChatVO> selectChatList(Map<String, Object> queryMap);
-
-    int invalidChatRoom(int chttRoomNo);
 
     int readChatMsg(Map<String, Object> queryMap);
 
@@ -25,11 +24,9 @@ public interface ChatMapper {
     // 채팅창 들어가 있는 사람들 리스트
     int[] chatEmpNoList(ChatVO chatRoomVO);
 
-    // 메세지 저장하기
+    Optional<Integer> invalidChatRoom(Map<String, Object> map);
 
-    // 채팅방 메세지 불러오기
+    void createChatRoom(ChatRoomVO chatRoomVO);
 
-    // 채팅방 만들기
-
-    // 이미 있는 채팅방인지 확인하기
+    void insertChatEmps(ChatRoomVO chatRoomVO);
 }

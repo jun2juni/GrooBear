@@ -14,7 +14,7 @@ public class ChatVO {
 
     private int chttRoomNo;
     private int mssageSn;
-    private String mssageWritngEmpno;
+    private String mssageWritngEmpno; // 채팅 작성한 넘버
     private String mssageCn;
     private Date mssageCreatDt;
 
@@ -22,15 +22,11 @@ public class ChatVO {
     private Date creatDe; // 채팅 발송 시간
     private String mssageTy = "0"; // 0: 채팅 | 1: 이미지 | 2 파일
 
-    private Date partcptnDt;
+    private Date partcptnDt; // 참여 일시
     private Date outDt;
     private String useYn;
 
-    private String proflPhotoUrl;
-
-    // private String fileName; // 파일 저장 경로
-    // private String fileData; // Base64 인코딩된 파일 데이터
-    // private int targetEmpNo; // 받아야 하는 사람 정보
+    private String proflPhotoUrl; // 채팅방 대표 이미지
 
     public void setType(String type) {
         switch (type) {

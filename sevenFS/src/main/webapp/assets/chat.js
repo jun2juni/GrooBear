@@ -165,7 +165,7 @@ function connectWebSocket({roomPath = "chat/room", chttRoomNo, receiveMessage}) 
 
   const socket = new SockJS("http://localhost/ws");
   const client = Stomp.over(socket);
-  // client.debug = null;
+  client.debug = null;
 
   client.connect(
     {},
@@ -288,17 +288,18 @@ function buildChatMessage(dom, {message}) {
   const messageHTML = message.mssageWritngEmpno === emp.emplNo ? `
       <div class="d-flex flex-row justify-content-end">
           <div class="chat-message text-end d-flex flex-column align-items-end" style="width: 80%">
-              <p class="small me-4">${message.emplNm}</p>
+              <p class="small me-4" style="font-size: 0.5rem">${message.emplNm}</p>
               ${ message.type === TALK ? 
                 `<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary" style="width: fit-content">${message.mssageCn}</p>`
                 : message.type === FILE ?
                   `<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary" style="width: fit-content">
                      <a class="text-white" href="/download?fileName=${message.mssageCn}">${message.mssageCn}</a>  
                    </p>`
-                : `<img src="/upload/${message.mssageCn}" class="me-3 mb-1 rounded float-start w-50" alt="...">`}
-              <p class="small me-3 mb-3 rounded-3 text-muted">${formatDate(new Date(message.mssageCreatDt))}</p>
+                : `<img src="/upload/${message.mssageCn}" class="me-3 mb-1 rounded float-start w-50" alt"프로필 이미지" onerror="this.src='/assets/images/image-error.png'" >`}
+              <p class="small me-3 mb-3 rounded-3 text-muted" style="font-size: 0.5rem">${formatDate(new Date(message.mssageCreatDt))}</p>
           </div>
           <img src="/upload/${message.proflPhotoUrl}"
+               onerror="this.src='/assets/images/image-error.png'"
                alt="avatar 1" class="chat-avatar rounded-circle" style="height: 45px">
       </div>
   ` // 보낸 메세지
@@ -306,12 +307,17 @@ function buildChatMessage(dom, {message}) {
     `
       <div class="d-flex flex-row justify-content-start">
           <img src="/upload/${message.proflPhotoUrl}"
+               onerror="this.src='/assets/images/image-error.png'"
                alt="avatar 1" class="chat-avatar rounded-circle" style="height: 45px;">
           <div class="chat-message d-flex flex-column align-items-start" style="width: 80%">
-              <p class="ms-4" style="font-size: 0.5rem">${message.emplNm}</p>
+              <p class="small ms-4" style="font-size: 0.5rem">${message.emplNm}</p>
               ${ message.type === TALK ?
-              `<p class="small p-2 ms-3 mb-1 rounded-3 bg-body-secondary">${message.mssageCn}</p>`
-              : `<img src="/upload/${message.mssageCn}" class="ms-3 mb-1 rounded float-start w-50" alt="...">`}
+                `<p class="small p-2 ms-3 mb-1 rounded-3 bg-body-secondary">${message.mssageCn}</p>`
+              : message.type === FILE ?
+                `<p class="small p-2 ms-3 mb-1 rounded-3 bg-body-secondary">
+                    <a class="text-white" href="/download?fileName=${message.mssageCn}">${message.mssageCn}</a>
+                 </p>`
+              : `<img src="/upload/${message.mssageCn}" class="ms-3 mb-1 rounded float-start w-50" alt="프로필 이미지" onerror="this.src='/assets/images/image-error.png'">`}
               <p class="small ms-3 mb-3 rounded-3 text-muted float-end" style="font-size: 0.5rem">${formatDate(new Date(message.mssageCreatDt))}</p>
           </div>
       </div>

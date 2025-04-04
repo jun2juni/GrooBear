@@ -11,16 +11,18 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
 public class ChatServiceImpl implements ChatService {
+
     @Autowired
     ChatMapper chatMapper;
 
     // 내 채팅방 목록 불러오기
-    public List<ChatRoomVO> chatList(String emplNo) {
-        return this.chatMapper.chatList(emplNo);
+    public List<ChatRoomVO> chatList(Map<String, Object> param) {
+        return this.chatMapper.chatList(param);
     };
 
     // 메세지 저장하기
@@ -59,16 +61,34 @@ public class ChatServiceImpl implements ChatService {
         return chatVOList;
     }
 
-    // 채팅방 만들기
-
-    // 이미 있는 채팅방인지 확인하기
-    public int invalidChatRoom(int chttRoomNo) {
-        return this.chatMapper.invalidChatRoom(chttRoomNo);
-    }
-
     // 실시간 읽음 확인 기능
     public void readChatMsg(Map<String, Object> queryMap) {
         this.chatMapper.readChatMsg(queryMap);
+    }
+
+    // 이미 있는 채팅방인지 확인하기
+    public int invalidChatRoom(Map<String, Object> map) {
+        Optional<Integer> invalidChatRoom = this.chatMapper.invalidChatRoom(map);
+        // 채팅방이 없는 경우
+
+
+        return invalidChatRoom.orElse(0);
+    }
+
+    // 채팅방 만들기
+    public ChatRoomVO createChatRoom() {
+        ChatRoomVO chatRoomVO = new ChatRoomVO();
+        chatRoomVO.setChttRoomNm("채팅방구");
+        chatRoomVO.setChttRoomTy("0");
+        this.chatMapper.createChatRoom(chatRoomVO);
+
+
+        return chatRoomVO;
+    }
+
+    @Override
+    public void insertChatEmps(ChatRoomVO chatRoomVO) {
+        this.chatMapper.insertChatEmps(chatRoomVO);
     }
 
 
