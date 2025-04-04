@@ -23,7 +23,7 @@
   <section class="section">
     <div class="container-fluid">
       
-      <c:import url="./calendarMain.jsp"></c:import>
+      <c:import url="./scheduleMain.jsp"></c:import>
     
     </div>
   </section>

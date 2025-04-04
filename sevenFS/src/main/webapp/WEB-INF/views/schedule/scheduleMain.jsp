@@ -440,8 +440,8 @@
 </script>
 </head>
 <body>
-	<jsp:include page="calendarSidebar.jsp"></jsp:include>
-	<jsp:include page="calendarFormModal.jsp"></jsp:include>
+	<jsp:include page="scheduleSidebar.jsp"></jsp:include>
+	<jsp:include page="scheduleFormModal.jsp"></jsp:include>
 	<div id="contentContainer">
 		<div id='myCalendar'></div>
 	</div>

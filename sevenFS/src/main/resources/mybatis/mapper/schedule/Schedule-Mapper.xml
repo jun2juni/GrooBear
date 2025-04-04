@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="kr.or.ddit.sevenfs.mapper.ScheduleMapper.ScheduleMapper">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.scheduleMapper.ScheduleMapper">
 
-<select id="scheduleList" resultType="kr.or.ddit.sevenfs.vo.Schedule.ScheduleVO">
+<select id="scheduleList" resultType="kr.or.ddit.sevenfs.vo.schedule.ScheduleVO">
 	SELECT  SCHDUL_NO,
 			EMPL_NO,
 			LBL_NO,
@@ -16,7 +16,7 @@
 	FROM SCHEDULE
 	WHERE SCHDUL_TY = '0'
 </select>
-<insert id="scheduleInsert" parameterType="kr.or.ddit.sevenfs.vo.Schedule.ScheduleVO">
+<insert id="scheduleInsert" parameterType="kr.or.ddit.sevenfs.vo.schedule.ScheduleVO">
 	<selectKey resultType="int" order="BEFORE" keyProperty="schdulNo">
 		SELECT SEQ_SCHEDULE.NEXTVAL FROM DUAL  
 	</selectKey>
@@ -40,7 +40,7 @@ INSERT INTO SCHEDULE (SCHDUL_NO,
 				#{deptCode}
 			)
 </insert>
-<update id="scheduleUpdate" parameterType="kr.or.ddit.sevenfs.vo.Schedule.ScheduleVO">
+<update id="scheduleUpdate" parameterType="kr.or.ddit.sevenfs.vo.schedule.ScheduleVO">
 	UPDATE schedule
 	SET
 		<if test="lblNo!=null and lblNo!='' and lblNo!=0">
@@ -56,7 +56,7 @@ INSERT INTO SCHEDULE (SCHDUL_NO,
 	    schdul_no = #{schdulNo}
 </update>
 
-<delete id="delCalendar" parameterType="kr.or.ddit.sevenfs.vo.Schedule.ScheduleVO">
+<delete id="delCalendar" parameterType="kr.or.ddit.sevenfs.vo.schedule.ScheduleVO">
 DELETE FROM SCHEDULE
 WHERE SCHDUL_NO = #{schdulNo}
 </delete>

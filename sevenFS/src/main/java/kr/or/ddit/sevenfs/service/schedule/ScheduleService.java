@@ -1,11 +1,11 @@
-package kr.or.ddit.sevenfs.service.Schedule;
+package kr.or.ddit.sevenfs.service.schedule;
 
 import java.util.List;
 import java.util.Map;
 
-import kr.or.ddit.sevenfs.vo.Schedule.ScheduleVO;
+import kr.or.ddit.sevenfs.vo.schedule.ScheduleVO;
 
-public interface ScheduleSertvice {
+public interface ScheduleService {
 
 	int scheduleInsert(ScheduleVO scheduleVO);
 
