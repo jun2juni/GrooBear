@@ -178,6 +178,17 @@ public class BbsController {
         
         return "redirect:/bbs/bbsDetail?bbsSn=" + bbsVO.getBbsSn();
     }
+    
+    @PostMapping("/bbsDelete")
+    public String bbsDelete(@RequestParam(value = "bbsSn", required = false)int bbsSn) {
+    	log.info("삭제하는 게시글 번호 : " + bbsSn);
+    	
+    	int delete = bbsService.bbsDelete(bbsSn);
+    	
+    	log.info("삭제 댐? : " + delete);
+    	
+    	return "redirect:/bbs/bbsList";
+    }
 
     
     

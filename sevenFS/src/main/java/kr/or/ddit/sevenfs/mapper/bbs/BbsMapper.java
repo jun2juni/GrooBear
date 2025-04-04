@@ -19,4 +19,6 @@ public interface BbsMapper {
 
 	public int bbsUpdate(BbsVO bbsVO);
 
+	public int bbsDelete(int bbsSn);
+
 }

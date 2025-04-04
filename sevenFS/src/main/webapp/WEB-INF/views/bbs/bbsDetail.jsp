@@ -79,7 +79,7 @@
 									<div class="d-grid gap-2 d-md-flex justify-content-md-end">
 										<button type="submit" class="btn btn-outline-warning">수정</button>&nbsp;
 										<button type="button" class="btn btn-outline-danger"
-											onclick="boardDelete(${bbsVO.bbsSn})">삭제</button>&nbsp;
+											onclick="bbsDelete(${bbsVO.bbsSn})">삭제</button>&nbsp;
 									</div>
 								</div>
 							</form>
@@ -94,7 +94,7 @@
 	<c:import url="../layout/prescript.jsp" />
 
 	<script>
-    function boardDelete(bbsSn){
+    function bbsDelete(bbsSn){
         if(confirm("삭제하시겠습니까?")){
             $.ajax({
                 url: "/bbs/bbsDelete",

@@ -26,6 +26,7 @@
 		    F.FILE_NAMES
 		FROM BBS B
 		LEFT JOIN FILES F ON B.ATCH_FILE_NO = F.ATCH_FILE_NO
+		WHERE BBSCTT_USE_YN = 'Y'
 		ORDER BY B.BBSCTT_CREAT_DT DESC
     </select>
 
@@ -140,4 +141,12 @@
             WHERE BBS_SN = #{bbsSn}
         )
     </select>
+    
+    <update id="bbsDelete" parameterType="int">
+    	UPDATE BBS
+			SET
+			BBSCTT_USE_YN = 'N'
+			WHERE BBS_SN = #{bbsSn}
+    </update>
+    
 </mapper>

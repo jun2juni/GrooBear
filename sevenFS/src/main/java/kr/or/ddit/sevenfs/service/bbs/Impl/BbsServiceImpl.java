@@ -41,4 +41,10 @@ public class BbsServiceImpl implements BbsService{
 		return bbsMapper.bbsUpdate(bbsVO);
 	}
 
+	@Override
+	public int bbsDelete(int bbsSn) {
+		// TODO Auto-generated method stub
+		return bbsMapper.bbsDelete(bbsSn);
+	}
+
 }
