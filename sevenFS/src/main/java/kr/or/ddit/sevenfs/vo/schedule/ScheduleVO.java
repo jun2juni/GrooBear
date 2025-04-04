@@ -1,4 +1,4 @@
-package kr.or.ddit.sevenfs.vo.Schedule;
+package kr.or.ddit.sevenfs.vo.schedule;
 
 import java.util.Date;
 import java.util.List;

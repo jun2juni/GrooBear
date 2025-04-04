@@ -3,21 +3,21 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
+
+
+
+
 <div class="card-style chat-about h-100">
-   <h6 class="text-sm text-medium"></h6>
-   <div class="chat-about-profile">
-     <div class="image mx-auto" style="text-align:center;">
-     <form action="/fileUpload" method="post" enctype="multipart/form-data">
-		</form>
-       <img src="/" alt="이미지 넣어야됨"><br/>
-       <span class="text-medium text-dark">${empDetail.emplNm}</span>
-     </div>
-     <div class="content text-center">
-       <h5 class="text-bold mb-10"></h5>
-       <span class="status-btn info-btn">${empDetail.posNm}</span>
-       <span class="status-btn info-btn">${empDetail.deptNm}</span>
-     </div>
-   </div>
+  <h6 class="text-sm text-medium"></h6>
+  <div class="chat-about-profile">
+ 	<div class="image mx-auto chat-about chat-about-profile image">
+    <img src="/upload/${empDetail.proflPhotoUrl}" alt="" style="border-radius: 50%; width:150px; height: 150px; ">
+      </div> 
+      <div class="content text-center">
+		<span class="status-btn info-btn">${empDetail.posNm}</span>
+		<span class="status-btn info-btn">${empDetail.deptNm}</span>
+	</div>
+</div>
    <div class="activity-meta text-start" style="margin-top: 20px;">
      <ul>
        <li class="row">

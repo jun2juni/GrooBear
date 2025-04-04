@@ -43,6 +43,9 @@ public interface AtrzMapper {
 	public List<AtrzVO> selectBeforeDoc(int currentPage, int pageSize, AtrzVO atrzVO);
 	public int beforeTotalCnt(AtrzVO atrzVO);
 	
+	//문서양식- 연차신청서인경우
+	public int insertHoDoc();
+	
 
 	
 

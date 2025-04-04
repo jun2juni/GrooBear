@@ -49,5 +49,8 @@ public interface OrganizationMapper {
 		// 사원 삭제
 		public int emplDelete(String emplNo);
 
+		//해당 직원의 상세정보 목록을 select
+		public List<EmployeeVO> emplDetailList(List<String> list);
+
 	
 }

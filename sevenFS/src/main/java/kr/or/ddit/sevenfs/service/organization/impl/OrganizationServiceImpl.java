@@ -131,6 +131,12 @@ public class OrganizationServiceImpl implements OrganizationService {
 		return organizationMapper.emplDelete(emplNo);
 	}
 
+	//해당 직원의 상세정보 목록을 select
+	@Override
+	public List<EmployeeVO> emplDetailList(List<String> list) {
+		return this.organizationMapper.emplDetailList(list);
+	}
+
 
 	
 

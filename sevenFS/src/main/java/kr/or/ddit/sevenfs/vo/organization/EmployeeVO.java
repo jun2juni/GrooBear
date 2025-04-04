@@ -30,10 +30,11 @@ public class EmployeeVO implements UserDetails {
 	private String elctrnSignImageUrl; // 직인서명 이미지
 	private String ecnyDate;
 	private String detailAdres;
-	private String deptCode;
+	private String deptCode;//부서코드
+	private String deptCodeNm;//부서코드명
 	private String contdEmpno; // 부재시 대결자
 	private String clsfCode; // 직급코드
-	private String clsfCodeNm; // 직급코드
+	private String clsfCodeNm; // 직급코드명
 	private String brthdy;
 	private String bankNm;
 	private String adres;

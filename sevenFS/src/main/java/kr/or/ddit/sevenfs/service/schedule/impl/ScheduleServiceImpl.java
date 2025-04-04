@@ -1,4 +1,4 @@
-package kr.or.ddit.sevenfs.service.Schedule.impl;
+package kr.or.ddit.sevenfs.service.schedule.impl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,12 +8,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import kr.or.ddit.sevenfs.mapper.ScheduleMapper.ScheduleMapper;
-import kr.or.ddit.sevenfs.service.Schedule.ScheduleSertvice;
-import kr.or.ddit.sevenfs.vo.Schedule.ScheduleVO;
+import kr.or.ddit.sevenfs.mapper.scheduleMapper.ScheduleMapper;
+import kr.or.ddit.sevenfs.service.schedule.ScheduleService;
+import kr.or.ddit.sevenfs.vo.schedule.ScheduleVO;
 
 @Service
-public class ScheduleServiceImpl implements ScheduleSertvice{
+public class ScheduleServiceImpl implements ScheduleService{
 	
 	@Autowired
 	ScheduleMapper scheduleMapper;

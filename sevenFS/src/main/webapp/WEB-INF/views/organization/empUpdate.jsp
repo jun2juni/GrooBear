@@ -8,7 +8,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head> 
 	<meta charset="UTF-8" />
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
  	<meta name="viewport"
@@ -16,6 +16,8 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 	<title>${title}</title>
   <%@ include file="../layout/prestyle.jsp" %>
+</style>
+
 </head>
 <body>
 <!-- 관리자만 보는 부서 수정페이지 -->
@@ -24,24 +26,22 @@
   <%@ include file="../layout/header.jsp" %>
 	<section class="section">
 		<div class="container-fluid">
-			<form action="/emplUpdatePost" method="post" id="emplUpdateForm">
+			<form action="/emplUpdatePost" method="post" id="emplUpdateForm" enctype="multipart/form-data">
 				<div class="card-style chat-about h-100" style="justify-content: center;">
 				   <h6 class="text-sm text-medium"></h6>
-				   <div class="chat-about-profile">
-				     <div class="content text-center">
+				   <div class="chat-about-profile" style="justify-content: center;">
 				       <h5 class="text-bold mb-10"></h5>
-				       <sec:authorize access="hasRole('ROLE_MEMBER')">
-					       <div class="chat-about-profile">
-						     <div class="image mx-auto" style="text-align:center;">
-							 <div>
-						       <img src="/upload/{{fileStrePath}}" alt="이미지 넣어야됨"><br/>
-							 </div>
-						       <span class="text-medium text-dark"></span>
-						     </div>
-						   </div>
-				       </sec:authorize>
-				     </div>
+					     <div class="image" style="justify-content: center; margin-left: 15%">
+					        <file-upload
+				              label="프로필 이미지 수정"
+				              name="uploadFile"
+				              max-files="1"
+				              contextPath="${pageContext.request.contextPath  }"
+				          ></file-upload>
+					       <span class="text-medium text-dark"></span>
+					     </div>
 				   </div>
+				   
 				  <sec:authorize access="hasRole('ROLE_ADMIN')">
 				  <div class="input-style-1 form-group col-12" style="display: flex;">
 				  	<div class="input-style-1 form-group col-2" style="margin-left: 15%">
@@ -63,13 +63,23 @@
 				  </div>
 				  </sec:authorize>
 				   <c:set var="emp" value="${emplDetail.emplDet}"></c:set>
+				   <sec:authorize access="hasRole('ROLE_MEMBER')">
+					   <input type="hidden" name="emplNm" value="${emp.emplNm}"/>
+					   <input type="hidden" name="genderCode" value="${emp.genderCode}"/>
+					   <input type="hidden" name="clsfCode" value="${emp.clsfCode}"/>
+					   <input type="hidden" name="deptCode" value="${emp.deptCode}"/>
+					   <input type="hidden" name="ecnyDate" value="${emp.ecnyDate}"/>
+					   <input type="hidden" name="retireDate" value="${emp.retireDate}"/>
+					   <input type="hidden" name="anslry" value="${emp.anslry}"/>
+					   <input type="hidden" name="acnutno" value="${emp.acnutno}"/>
+					   <input type="hidden" name="bankNm" value="${emp.bankNm}"/>
+					   <input type="hidden" name="partclrMatter" value="${emp.partclrMatter}"/>
+				   </sec:authorize>
 				   <div class="activity-meta text-start" style="margin-top: 20px;">
 			 			<input type="hidden" name="emplNo" value="${emp.emplNo}">
-			   			<c:set var="emplDetail" value=""></c:set>
 			   	          <div class="input-style-1 form-group col-8" style="margin-left:15%;">
 				            <label for="password" class="form-label required">비밀번호<span class="text-danger">*</span></label>				            
-				            <input type="hidden" name="password" class="form-control" id="password" value="${emp.password}">
-				            <input type="text" name="password" class="form-control" id="password">
+				            <input type="text" name="password" class="form-control" value="${emp.password}">
 				           <div class="invalid-feedback"></div>
 			   	          </div>
 	   	            	<sec:authorize access="hasRole('ROLE_ADMIN')">
@@ -103,12 +113,12 @@
 				          </div>
 			           <div class="col-12" style="display: flex;">
 			           	<div class="input-style-1 form-group col-2" style="margin-left:15%;">
-				            <label for="brthdy" class="form-label required">생년월일 <span class="text-danger">*</span></label>
+				            <label for="brthdy" class="form-label required" maxlength="8">생년월일 <span class="text-danger">*</span></label>
 				            <input type="text" name="brthdy" class="form-control" id="brthdy" value="${emp.brthdy}" required>
 				            <div class="invalid-feedback"></div>
 			            </div>
 			            <div class="input-style-1 form-group col-3" style="margin-left:15%;">
-				            <label for="telno" class="form-label required">휴대폰번호 <span class="text-danger">*</span></label>
+				            <label for="telno" class="form-label required" maxlength="11">휴대폰번호 <span class="text-danger">*</span></label>
 				            <input type="text" name="telno" class="form-control" id="telno" value="${emp.telno}" required>
 				            <div class="invalid-feedback"></div>
 				          </div>

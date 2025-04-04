@@ -67,7 +67,7 @@
 	             </div>
 	             <div class="input-style-1 form-group col-8" style="margin-left:15%;">
 		             <label for="password" class="form-label required">비밀번호 <span class="text-danger">*초기 비밀번호는 java로 부여됩니다.</span></label>
-		             <input type="text" name="password" class="form-control" id="password" value="java" readonly="readonly">
+		             <input type="text" name="password" class="form-control" id="password" value="java">
 		             <div class="invalid-feedback"></div>
 	  	          </div>
 	  	          <div class="col-12" style="display: flex;">

@@ -40,6 +40,9 @@ public interface AtrzService {
 	public List<AtrzVO> selectBeforeDoc(int currentPage, int pageSize, AtrzVO atrzVO);
 	public int beforeTotalCnt(AtrzVO atrzVO);
 	
+	//문서양식- 연차신청서일때
+	public int insertHoDoc();
+	
 	
 	//비즈니스 로직 이란???
 	//컨드롤러에서는 화면에서 보여지는것만 

@@ -7,36 +7,43 @@
 		WHERE DRAFTER_EMPNO='20250004'
 	</select>
 	
-	<!-- DraftVO(title=sfadadfs, content=sadfsdafd, draftNo=null) -->
-	<insert id="draftInsert" parameterType="kr.or.ddit.sevenfs.vo.atrz.DraftVO">
-		<selectKey resultType="String" order="BEFORE" keyProperty="draftNo">
-			SELECT NVL(MAX(DRAFT_NO),0)+1 FROM DRAFT
-		</selectKey>
-		INSERT INTO 
-		DRAFT
-		(DRAFT_NO, DRAFT_TITLE, DRAFT_CONTENT)
-		VALUES
-		(#{draftNo},#{draftTitle},#{draftContent})
-	</insert>
-	<select id="draftDetail" resultType="kr.or.ddit.sevenfs.vo.atrz.DraftVO">
-		SELECT DRAFT_NO, DRAFT_TITLE, DRAFT_CONTENT
-		FROM DRAFT
-		WHERE DRAFT_NO = #{draftNo}
-	</select>
 	
-<!-- 	<select id="atrzDetail" resultMap="atrzMap" parameterType="string"> -->
-<!-- 		SELECT  -->
-<!-- 	        A.ATRZ_DOC_NO, A.DRAFTER_EMPNO, A.DRAFTER_CLSF, A.BKMK_YN, A.ATCH_FILE_NO,  -->
-<!-- 	        A.ATRZ_SJ, A.ATRZ_CN, A.ATRZ_OPINION, A.ATRZ_TMPR_STRE_DT, A.ATRZ_DRFT_DT,  -->
-<!-- 	        A.ATRZ_COMPT_DT, A.ATRZ_RTRVL_DT, A.ATRZ_STTUS_CODE, A.ELTSGN_IMAGE,  -->
-<!-- 	        A.DOC_FORM_NO, A.ATRZ_DELETE_YN, -->
-<!-- 	        D.DRAFT_NO, D.DRAFT_TITLE, D.DRAFT_CONTENT -->
-<!-- 	    FROM ATRZ A -->
-<!-- 	    LEFT JOIN DRAFT D  -->
-<!-- 	        ON A.ATRZ_DOC_NO = D.DRAFT_NO -->
-<!-- 	    WHERE A.ATRZ_DOC_NO = #{atrzDocNo} -->
+	
+	
+	
+	<!-- DraftVO(title=sfadadfs, content=sadfsdafd, draftNo=null) -->
+<!-- 	<insert id="draftInsert" parameterType="kr.or.ddit.sevenfs.vo.atrz.DraftVO"> -->
+<!-- 		<selectKey resultType="String" order="BEFORE" keyProperty="draftNo"> -->
+<!-- 			SELECT NVL(MAX(DRAFT_NO),0)+1 FROM DRAFT -->
+<!-- 		</selectKey> -->
+<!-- 		INSERT INTO  -->
+<!-- 		DRAFT -->
+<!-- 		(DRAFT_NO, DRAFT_TITLE, DRAFT_CONTENT) -->
+<!-- 		VALUES -->
+<!-- 		(#{draftNo},#{draftTitle},#{draftContent}) -->
+<!-- 	</insert> -->
+<!-- 	<select id="draftDetail" resultType="kr.or.ddit.sevenfs.vo.atrz.DraftVO"> -->
+<!-- 		SELECT DRAFT_NO, DRAFT_TITLE, DRAFT_CONTENT -->
+<!-- 		FROM DRAFT -->
+<!-- 		WHERE DRAFT_NO = #{draftNo} -->
 <!-- 	</select> -->
+	
+	<select id="atrzDetail" resultMap="atrzMap" parameterType="string">
+		SELECT 
+	        A.ATRZ_DOC_NO, A.DRAFTER_EMPNO, A.DRAFTER_CLSF, A.BKMK_YN, A.ATCH_FILE_NO, 
+	        A.ATRZ_SJ, A.ATRZ_CN, A.ATRZ_OPINION, A.ATRZ_TMPR_STRE_DT, A.ATRZ_DRFT_DT, 
+	        A.ATRZ_COMPT_DT, A.ATRZ_RTRVL_DT, A.ATRZ_STTUS_CODE, A.ELTSGN_IMAGE, 
+	        A.DOC_FORM_NO, A.ATRZ_DELETE_YN,
+	        D.DRAFT_NO, D.DRAFT_TITLE, D.DRAFT_CONTENT
+	    FROM ATRZ A
+	    LEFT JOIN DRAFT D 
+	        ON A.ATRZ_DOC_NO = D.DRAFT_NO
+	    WHERE A.ATRZ_DOC_NO = #{atrzDocNo}
+	</select>
 	<resultMap id="atrzMap" type="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+		<result property="schdulRegYn" column="SCHDUL_REG_YN"/>
+		<result property="drafterEmpnm" column="DRAFTER_EMPNM"/>
+		<result property="drafterDept" column="DRAFTER_DEPT"/>
 		<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
 		<result property="drafterEmpno" column="DRAFTER_EMPNO"/>
 		<result property="drafterClsf" column="DRAFTER_CLSF"/>
@@ -50,7 +57,8 @@
 		<result property="atrzComptDt" column="ATRZ_COMPT_DT"/>
 		<result property="atrzRtrvlDt" column="ATRZ_RTRVL_DT"/>
 		<result property="atrzSttusCode" column="ATRZ_STTUS_CODE"/>
-		
+		<result property="eltsgnImage" column="ELTSGN_IMAGE"/>
+		<result property="docFormNo" column="DOC_FORM_NO"/>
 	</resultMap>
 	
 	  <resultMap id="EmployeeResultMap" type="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
@@ -64,16 +72,18 @@
 
 
 	<!-- 전자결재 및 사원 정보 조회 SQL -->
-    <select id="atrzEmploInfo" resultMap="EmployeeResultMap">
-       SELECT 
-            E.EMPL_NO, E.EMPL_NM, E.DEPT_CODE, E.CLSF_CODE,
-            A.ATRZ_DOC_NO, A.DRAFTER_EMPNO, A.DRAFTER_CLSF, A.BKMK_YN, A.ATCH_FILE_NO, 
-            A.ATRZ_SJ, A.ATRZ_CN, A.ATRZ_OPINION, A.ATRZ_TMPR_STRE_DT, A.ATRZ_DRFT_DT, 
-            A.ATRZ_COMPT_DT, A.ATRZ_RTRVL_DT, A.ATRZ_STTUS_CODE
-        FROM EMPLOYEE E
-        LEFT JOIN ATRZ A ON E.EMPL_NO = A.DRAFTER_EMPNO
-<!--         WHERE E.EMPL_NO = #{emplNo} -->
-    </select>
+<!--     <select id="atrzEmploInfo" resultMap="EmployeeResultMap"> -->
+<!--        SELECT  -->
+<!--             E.EMPL_NO, E.EMPL_NM, E.DEPT_CODE, E.CLSF_CODE, -->
+<!--             A.ATRZ_DOC_NO, A.DRAFTER_EMPNO, A.DRAFTER_CLSF, A.DRAFTER_EMPNM,  -->
+<!--             A.DRAFTER_DEPT, A.BKMK_YN, A.ATCH_FILE_NO, A.ATRZ_SJ, A.ATRZ_CN,  -->
+<!--             A.ATRZ_OPINION, A.ATRZ_TMPR_STRE_DT, A.ATRZ_DRFT_DT, A.ATRZ_COMPT_DT,  -->
+<!--             A.ATRZ_RTRVL_DT, A.ATRZ_STTUS_CODE, A.ELTSGN_IMAGE, A.DOC_FORM_NO,  -->
+<!--             A.ATRZ_DELETE_YN, A.SCHDUL_REG_YN -->
+<!--         FROM EMPLOYEE E -->
+<!--         LEFT JOIN ATRZ A ON E.EMPL_NO = A.DRAFTER_EMPNO -->
+<!--          WHERE E.EMPL_NO = #{emplNo} -->
+<!--     </select> -->
 	
 	
 	<select id="selectBeforeDoc" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
@@ -153,75 +163,75 @@
 </select>
 
 <!-- 전자결재 홈 전자 결재 대기 -->
-<select id="selectHomeBeDoc" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
-    SELECT TO_CHAR(A.ATRZ_DRFT_DT, 'YYYY/MM/DD') AS ATRZ_DRFT_DT,
-           (SELECT CMMN_CODE_NM 
-              FROM COMMON_CODE 
-             WHERE CMMN_CODE_GROUP = 'DEPT' 
-               AND CMMN_CODE = E.DEPT_CODE) AS DEPT_NAME,
-           A.ATCH_FILE_NO,
-           E.EMPL_NM AS DRAFTER_NAME,
-           A.ATRZ_SJ,
-           A.ATRZ_CN,
-           A.DRAFTER_EMPNO,
-           A.ATRZ_DOC_NO,
-           CASE 
-               WHEN A.ATRZ_STTUS_CODE = '30' THEN '결재회수'
-               WHEN A.ATRZ_STTUS_CODE = '00' THEN '결재대기'
-               WHEN A.ATRZ_STTUS_CODE = '10' THEN '진행중'
-               WHEN A.ATRZ_STTUS_CODE = '20' THEN '결재완료'
-               WHEN A.ATRZ_STTUS_CODE = '40' THEN '취소'
-               WHEN A.ATRZ_STTUS_CODE = '99' THEN '임시저장'
-               ELSE '알 수 없음'
-           END AS ATRZ_STTUS,
-           A.DOC_FORM_NO
-    FROM ATRZ A
-    JOIN EMPLOYEE E ON A.DRAFTER_EMPNO = E.EMPL_NO
-    WHERE (A.ATRZ_STTUS_CODE = '00' OR A.ATRZ_STTUS_CODE = '10') 
-      AND A.DRAFTER_EMPNO = #{emp_no} 
-      AND A.ATRZ_SJ IS NOT NULL
-    ORDER BY A.ATRZ_DRFT_DT DESC, A.ATRZ_DOC_NO DESC
-</select>
+<!-- <select id="selectHomeBeDoc" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO"> -->
+<!--     SELECT TO_CHAR(A.ATRZ_DRFT_DT, 'YYYY/MM/DD') AS ATRZ_DRFT_DT, -->
+<!--            (SELECT CMMN_CODE_NM  -->
+<!--               FROM COMMON_CODE  -->
+<!--              WHERE CMMN_CODE_GROUP = 'DEPT'  -->
+<!--                AND CMMN_CODE = E.DEPT_CODE) AS DEPT_NAME, -->
+<!--            A.ATCH_FILE_NO, -->
+<!--            E.EMPL_NM AS DRAFTER_NAME, -->
+<!--            A.ATRZ_SJ, -->
+<!--            A.ATRZ_CN, -->
+<!--            A.DRAFTER_EMPNO, -->
+<!--            A.ATRZ_DOC_NO, -->
+<!--            CASE  -->
+<!--                WHEN A.ATRZ_STTUS_CODE = '30' THEN '결재회수' -->
+<!--                WHEN A.ATRZ_STTUS_CODE = '00' THEN '결재대기' -->
+<!--                WHEN A.ATRZ_STTUS_CODE = '10' THEN '진행중' -->
+<!--                WHEN A.ATRZ_STTUS_CODE = '20' THEN '결재완료' -->
+<!--                WHEN A.ATRZ_STTUS_CODE = '40' THEN '취소' -->
+<!--                WHEN A.ATRZ_STTUS_CODE = '99' THEN '임시저장' -->
+<!--                ELSE '알 수 없음' -->
+<!--            END AS ATRZ_STTUS, -->
+<!--            A.DOC_FORM_NO -->
+<!--     FROM ATRZ A -->
+<!--     JOIN EMPLOYEE E ON A.DRAFTER_EMPNO = E.EMPL_NO -->
+<!--     WHERE (A.ATRZ_STTUS_CODE = '00' OR A.ATRZ_STTUS_CODE = '10')  -->
+<!--       AND A.DRAFTER_EMPNO = #{emp_no}  -->
+<!--       AND A.ATRZ_SJ IS NOT NULL -->
+<!--     ORDER BY A.ATRZ_DRFT_DT DESC, A.ATRZ_DOC_NO DESC -->
+<!-- </select> -->
 
 <!-- 전자결재 홈 기안 진행 문서 -->
-<select id="selectHomeReqDoc" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
-    SELECT A.*, B.DEPT_NAME 
-    FROM (
-        SELECT TO_CHAR(A.ATRZ_DRFT_DT, 'YYYY/MM/DD') AS ATRZ_DRFT_DT,
-               A.ATCH_FILE_NO,
-               E.EMPL_NM AS DRAFTER_NAME,
-               A.ATRZ_SJ,
-               A.ATRZ_CN,
-               A.DRAFTER_EMPNO,
-               A.ATRZ_DOC_NO,
-               CASE 
-                   WHEN A.ATRZ_STTUS_CODE = '30' THEN '결재회수'
-                   WHEN A.ATRZ_STTUS_CODE = '00' THEN '결재대기'
-                   WHEN A.ATRZ_STTUS_CODE = '10' THEN '진행중'
-                   WHEN A.ATRZ_STTUS_CODE = '20' THEN '결재완료'
-                   WHEN A.ATRZ_STTUS_CODE = '40' THEN '취소'
-                   WHEN A.ATRZ_STTUS_CODE = '99' THEN '임시저장'
-                   ELSE '알 수 없음'
-               END AS ATRZ_STTUS,
-               A.DOC_FORM_NO
-        FROM ATRZ A
-        JOIN EMPLOYEE E ON A.DRAFTER_EMPNO = E.EMPL_NO
-        WHERE A.ATRZ_SJ IS NOT NULL 
-          AND (
-               (A.ATRZ_STTUS_CODE = '00' AND A.DRAFTER_EMPNO = #{emp_no}) 
-               OR (A.ATRZ_STTUS_CODE = '10' AND A.DRAFTER_EMPNO = #{emp_no})
-          )
-        ORDER BY A.ATRZ_DRFT_DT DESC, A.ATRZ_DOC_NO DESC
-    ) A,
-    (SELECT EMPL_NO, 
-            (SELECT CMMN_CODE_NM 
-             FROM COMMON_CODE 
-             WHERE CMMN_CODE_GROUP = 'DEPT' 
-               AND CMMN_CODE = E.DEPT_CODE) AS DEPT_NAME
-     FROM EMPLOYEE E
-    ) B
-    WHERE A.DRAFTER_EMPNO = B.EMPL_NO
-</select>
+<!-- <select id="selectHomeReqDoc" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO"> -->
+<!--     SELECT A.*, B.DEPT_NAME  -->
+<!--     FROM ( -->
+<!--         SELECT TO_CHAR(A.ATRZ_DRFT_DT, 'YYYY/MM/DD') AS ATRZ_DRFT_DT, -->
+<!--                A.ATCH_FILE_NO, -->
+<!--                E.EMPL_NM AS DRAFTER_NAME, -->
+<!--                A.ATRZ_SJ, -->
+<!--                A.ATRZ_CN, -->
+<!--                A.DRAFTER_EMPNO, -->
+<!--                A.ATRZ_DOC_NO, -->
+<!--                CASE  -->
+<!--                    WHEN A.ATRZ_STTUS_CODE = '30' THEN '결재회수' -->
+<!--                    WHEN A.ATRZ_STTUS_CODE = '00' THEN '결재대기' -->
+<!--                    WHEN A.ATRZ_STTUS_CODE = '10' THEN '진행중' -->
+<!--                    WHEN A.ATRZ_STTUS_CODE = '20' THEN '결재완료' -->
+<!--                    WHEN A.ATRZ_STTUS_CODE = '40' THEN '취소' -->
+<!--                    WHEN A.ATRZ_STTUS_CODE = '99' THEN '임시저장' -->
+<!--                    ELSE '알 수 없음' -->
+<!--                END AS ATRZ_STTUS, -->
+<!--                A.DOC_FORM_NO -->
+<!--         FROM ATRZ A -->
+<!--         JOIN EMPLOYEE E ON A.DRAFTER_EMPNO = E.EMPL_NO -->
+<!--         WHERE A.ATRZ_SJ IS NOT NULL  -->
+<!--           AND ( -->
+<!--                (A.ATRZ_STTUS_CODE = '00' AND A.DRAFTER_EMPNO = #{emp_no})  -->
+<!--                OR (A.ATRZ_STTUS_CODE = '10' AND A.DRAFTER_EMPNO = #{emp_no}) -->
+<!--           ) -->
+<!--         ORDER BY A.ATRZ_DRFT_DT DESC, A.ATRZ_DOC_NO DESC -->
+<!--     ) A, -->
+<!--     (SELECT EMPL_NO,  -->
+<!--             (SELECT CMMN_CODE_NM  -->
+<!--              FROM COMMON_CODE  -->
+<!--              WHERE CMMN_CODE_GROUP = 'DEPT'  -->
+<!--                AND CMMN_CODE = E.DEPT_CODE) AS DEPT_NAME -->
+<!--      FROM EMPLOYEE E -->
+<!--     ) B -->
+<!--     WHERE A.DRAFTER_EMPNO = B.EMPL_NO -->
+<!-- </select> -->
 
 <!-- 서브 메뉴에 띄울 결재 수신 문서 개수 -->
 <select id="recDocCnt" parameterType="string" resultType="int">

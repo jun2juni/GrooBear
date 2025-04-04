@@ -162,7 +162,7 @@ function clickDept(data) {
                 icon: "success",
               })
                 .then((res)=>{
-                  location.href = "/orglist";
+                  location.href = "/orglistAdmin";
                 })
             } else {
               swal("취소되었습니다.");

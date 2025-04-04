@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,13 +16,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.gson.Gson;
 
+import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.utils.CommonCode;
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
+import kr.or.ddit.sevenfs.vo.CustomUser;
+import kr.or.ddit.sevenfs.vo.auth.EmpAuthVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.organization.OrganizationVO;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +42,9 @@ public class OrganizationController {
 	OrganizationService organizationService;
 	@Autowired
 	BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	@Autowired
+	AttachFileService attachFileService;
 	
 	// 조직도 목록 조회
 	@GetMapping("/orglist")
@@ -100,7 +110,7 @@ public class OrganizationController {
 		return "organization/depUpdate";
 	}
 	
-	// 수정확인 눌렀을때 이동
+	// 부서수정확인 눌렀을때 이동
 	@PostMapping("/depUpdatePost")
 	public String depUpdatePost(CommonCodeVO commonCodeVO) {
 		
@@ -155,6 +165,19 @@ public class OrganizationController {
 		//log.info("사원번호 와라와라 : " + emplNo);
 		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
 		log.info("사원상세 : " + empDetail);
+		
+		// 사원 파일 번호 가져오기
+		int fileNo = empDetail.getAtchFileNo();
+		
+		AttachFileVO attachFileVO = new AttachFileVO();
+		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
+		String empFileName = fileAttachList.get(0).getFileStrePath();
+
+		// 사원 프로필 url가져오기
+		empDetail.setProflPhotoUrl(empFileName);
+		log.info("사원상세 프로필 url : " + empFileName);
+		
+		//model.addAttribute("empFileName" , empFileName);
 		
 		model.addAttribute("title" , "사원 정보");
 //		String maleCode = CommonCode.GenderEnum.MALE.getCode();
@@ -239,6 +262,8 @@ public class OrganizationController {
 	@PostMapping("/emplInsertPost")
 	public String emplInsertPost(EmployeeVO employeeVO) {
 		
+		log.info("암호화 전 데이터 : " + employeeVO);
+		
 		// 비밀번호 암호화
 		String encode = bCryptPasswordEncoder.encode(employeeVO.getPassword());
 		employeeVO.setPassword(encode);
@@ -247,14 +272,14 @@ public class OrganizationController {
 		
 		organizationService.emplInsert(employeeVO);
 		
-		return "redirect:/orglist";
+		return "redirect:/orglistAdmin";
 	}
 	
 	
 	// 사원 수정 페이지
 	@GetMapping("/emplUpdate")
 	public String emplUpdate(String emplNo, Model model) {
-		
+
 		model.addAttribute("title" , "사원 수정");
 		
 		EmployeeVO emplDetail = organizationService.emplDetail(emplNo);
@@ -274,19 +299,76 @@ public class OrganizationController {
 		
 		model.addAttribute("emplDetail", emplDetailData);
 		
+		
 		return "organization/empUpdate";
 	}
 	
 	// 사원 수정 확인 눌렀을때 이동
 	@PostMapping("/emplUpdatePost")
-	public String emplUpdatePost(EmployeeVO employeeVO) {
+	public String emplUpdatePost(EmployeeVO employeeVO, MultipartFile[] uploadFile, AttachFileVO attachFileVO) {
+		
+//		String emplNo = employeeVO.getEmplNo();
+//		 
+		
+//		// 비밀번호를 수정하지 않았다면 원래 비밀번호로 등록해주기
+//		EmployeeVO emplDetail = organizationService.emplDetail(emplNo);
+//		String password = emplDetail.getPassword();
+//		
+//		
+//		if(employeeVO.getPassword().equals(null)) {
+//			bCryptPasswordEncoder.encode(password);
+//		}else {
+//			String encode = bCryptPasswordEncoder.encode(employeeVO.getPassword());
+//		}
+		
 		
 		// 비밀번호 암호화
 		String encode = bCryptPasswordEncoder.encode(employeeVO.getPassword());
 		employeeVO.setPassword(encode);
 		
+		int fileNo = employeeVO.getAtchFileNo();
+		
+		log.info("jsp에서 넘긴 수정 정보 : " + employeeVO);
+		
+		// 프로필사진 수정
+		//attachFileService.updateFileList("organization", uploadFile, attachFileVO);
+		AttachFileVO insertFile = attachFileService.insertFile("organization", uploadFile);
+		log.info("수정시 등록된파일 : " + insertFile);
+		
+		// 파일 실제저장경로 set해주기
+		employeeVO.setProflPhotoUrl(insertFile.getFileStrePath());
+		
+		// 수정시 등록된 파일넘버 set해주기
+		long insertFileNo = insertFile.getAtchFileNo();
+		log.info("long insertFileNo" + insertFileNo);
+		
+		int updateFileNo = (int)insertFileNo;
+		log.info("int insertFileNo" + insertFileNo);
+		employeeVO.setAtchFileNo(updateFileNo);
+		
 		organizationService.emplUpdatePost(employeeVO);
 		
+		log.info("파일까지 수정된 사원 정보 : " + employeeVO);
+		
+		// 사원번호 꺼내기
+		String emplNoParam = employeeVO.getEmplNo();
+		
+		// 수정 요청한 사원과 같으면 페이지 이동
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null && auth.getPrincipal() instanceof CustomUser) {
+		    CustomUser customUser = (CustomUser) auth.getPrincipal();
+		    EmployeeVO empVO = customUser.getEmpVO();
+		    // empVO 사용
+		    if(empVO.getEmplNo().equals(emplNoParam)) {
+		    	return "redirect:/orglist";
+		    }
+		}
+		
+//		List<EmpAuthVO> empAuthVOList = employeeVO.getEmpAuthVOList();
+//		if (empAuthVOList.contains("ROLE_ADMIN")) {
+//			return "redirect:/orglistAdmin";
+//           
+//		}
 		return "redirect:/orglistAdmin";
 	}
 	

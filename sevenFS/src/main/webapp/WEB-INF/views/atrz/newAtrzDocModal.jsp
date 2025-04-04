@@ -19,7 +19,7 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 				name="s_document_form_select" class="form-select"F
 				aria-label="Default select example">
 				<option selected="selected">양식을 선택해주세요</option>
-				<option id="s_holiday_form" value="s_holiday_form">휴가신청서</option>
+				<option id="s_holiday_form" value="s_holiday_form">연차신청서</option>
 				<option id="s_spending_form" value="s_spending_form">지출결의서</option>
 				<option id="s_draft_form" value="s_draft_form">기안서</option>
 				<!-- 			            <option id="s_test_form" value="s_test_form">테스트</option> -->
@@ -53,7 +53,7 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 						
 	
 						//선택한 값에 따라 url설정
-						if(selectValue=="s_holiday_form"){  //휴가신청서
+						if(selectValue=="s_holiday_form"){  //연차신청서
 							$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/holidayForm");
 							$("#s_document_form").html('');
 	
@@ -61,8 +61,23 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 							$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/spendingForm");
 							$("#s_document_form").html('');
 							
-						}else if(selectValue=="s_draft_form"){  //기안서의경우
+						}else if(selectValue=="s_draft_form"){  //기안서
 							$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/draftForm");
+							$("#s_document_form").html('');
+						}else if(selectValue=="s_draft_form"){  //급여명세서
+							$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/salaryForm");
+							$("#s_document_form").html('');
+						}
+						else if(selectValue=="s_draft_form"){  //급여계좌변경서
+							$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/bankAccountForm");
+							$("#s_document_form").html('');
+						}
+						else if(selectValue=="s_draft_form"){  //재직증명서
+							$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/certificationForm");
+							$("#s_document_form").html('');
+						}
+						else if(selectValue=="s_draft_form"){  //퇴사신청서
+							$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/resignationForm");
 							$("#s_document_form").html('');
 						}else{   //양식을 선택하지않았다면
 							$("#s_document_form").html("<div>양식을 선택해주세요.</div>");		
@@ -71,8 +86,6 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 					
 					//양식선택후 확인버튼 클릭시(입력폼으로이동)
 					$("#liveAlertBtn").click(function(){
-						console.log("?? 길준 여기 안오냐ㅐ?");
-						
 						var form  = $('#s_document_form_select').val();
 						if(form =="s_holiday_form"){
 							//강제로 닫기 버튼 클릭
@@ -91,7 +104,7 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 						
 						//결재양식선택에 있는 option의 text를 form변수에 담아줌
 						var form  = $("#s_document_form_select option:selected").text();
-						//휴가신청서
+						//연차신청서
 						console.log("form(후) : ", form);
 						
 						if(form == "양식을 선택해주세요"){
@@ -99,24 +112,30 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 							$.ajax({
 								url:"<%=request.getContextPath()%>/atrz/insertDoc"
 // 								url:"/selectform/spending"
-								//ajax data로 보냄(form : 휴가신청서)
+								//ajax data로 보냄(form : 연차신청서)
 								,data:{"form" : form}
 								,type:"POST"
 								,dataType:"text"
 								,success: function(result){
-									//result :  휴가신청서
+									//result :  연차신청서
 									console.log("result : " , result);
-									// 선택한 문서 양식이 "휴가신청서"일 경우
-								    if (result == "휴가신청서") {
-											// 페이지 이동
-											location.href="selectForm/holiday";
-								    } else if(result == "지출결의서"){
+									// 선택한 문서 양식이 "연차신청서"일 경우
+								    if (result == "연차신청서") {
+										// 페이지 이동
+										location.href="selectForm/holiday";
+								    }else if(result == "지출결의서"){
 								    	location.href="selectForm/spending";
+								    }else if(result == "기안서"){
+								    	location.href="selectForm/draft";
+								    }else if(result == "급여명세서"){
+								    	location.href="selectForm/salary";
+								    }else if(result == "급여계좌변경신청서"){
+								    	location.href="selectForm/bankAccount";
+								    }else if(result == "재직증명서"){
+								    	location.href="selectForm/certification";
+								    }else {
+										location.href="selectForm/resignation";
 								    }
-								    else {
-										location.href="selectForm/draft";
-								    }
-								
 									//받아온 결과가 jsp라서 그자리 html을 result로 넣어즘
 // 									$("#home-tab-pane").html(result);
 								}//ajax success End 

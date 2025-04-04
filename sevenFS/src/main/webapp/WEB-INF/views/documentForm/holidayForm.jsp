@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<!-- <title>휴가신청서 양식</title> -->
+<!-- <title>연차신청서 양식</title> -->
 <style>
 	.s_frm_title {
 	    font-size: 1em;
@@ -51,7 +51,7 @@
 <body>
 
 	<div class="s_div_container" style="height: 800px;">
-		<div style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">휴가신청서</div>
+		<div style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">연차신청서</div>
 			<div style="padding: 50px 10px 20px; clear: both;">
 				<div style="display: inline-block; font-size: 1.2em; font-weight: bold;"  >제목 : </div> 
 				<input type="text" class="form-control" style="display: inline-block; width: 583px; margin-left: 5px;" />

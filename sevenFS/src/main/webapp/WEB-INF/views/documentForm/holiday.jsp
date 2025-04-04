@@ -14,6 +14,32 @@
 <meta name="viewport"
 	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
 <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<style type="text/css">
+#s_eap_draft_info tr th {
+	width: 100px;
+}
+
+#s_eap_draft_info tr th, #s_eap_draft_info tr td,
+#s_eap_draft tr th, #s_eap_draft tr td,
+.s_eap_draft_app tr th, .s_eap_draft_app tr td
+ {
+	padding: 5px;
+	border: 1px solid;
+	font-size: .9em;
+}
+#s_eap_draft_info tr th,
+#s_eap_draft tr th,
+.s_eap_draft_app tr th {
+	background-color: gainsboro;
+	text-align: center;
+	
+}
+	#s_eap_draft td, .s_eap_draft_app td {
+	width: 100px;
+	text-align: center;
+}
+
+</style>
 <title>${title}</title>
 <%@ include file="../layout/prestyle.jsp"%>
 </head>
@@ -34,11 +60,11 @@
 							<div class="tool_bar">
 								<div class="critical d-flex gap-2 mb-3">
 									<!--성진스 버튼-->
-									<a id="s_eap_app" type="button"
+									<button id="s_eap_app" type="submit"
 										class="btn btn-outline-primary d-flex align-items-center gap-1">
-										<span class="material-symbols-outlined fs-5">cancel</span>
-										결재요청
-									</a> <a id="s_eap_stor" type="button"
+										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
+									</button>
+									 <a id="s_eap_stor" type="button"
 										class="btn btn-outline-success d-flex align-items-center gap-1"
 										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
 										class="material-symbols-outlined fs-5">error</span> 임시저장
@@ -74,242 +100,211 @@
 						</div>
 						<!-- 모달창 인포트 -->
 						<c:import url="../documentForm/approvalLineModal.jsp" />
-						<div class="card">
-							<div class="card-body">
-								<!-- 여기다가 작성해주세요(준희) -->
-								<!-- 기능 시작 -->
-								<!-- 전자결재 양식 수정도 가능 시작 -->
-								<div id="s_eap_content_box_left" class="s_scroll">
-									<div class="s_div_container s_scroll">
-										<div
-											style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">휴가신청서</div>
+						<form id="atrz_ho_form" action="/atrz/appLineList" method="post"></form>
+							<div class="card">
+								<div class="card-body">
+									<!-- 여기다가 작성해주세요(준희) -->
+									<!-- 기능 시작 -->
+									<!-- 전자결재 양식 수정도 가능 시작 -->
+									
+									<div id="s_eap_content_box_left" class="s_scroll">
+										<div class="s_div_container s_scroll">
+											<div
+												style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">연차신청서</div>
 
-										<div style="float: left; width: 230px; margin: 0 30px;">
-											<table border="1" id="s_eap_draft_info">
-												<tr>
-													<th>기안자</th>
-													<td>${eap.emp_name }</td>
-												</tr>
-												<tr>
-													<th>기안부서</th>
-													<td>${eap.dept_name }</td>
-												</tr>
-												<tr>
-													<th>기안일</th>
-													<td>${eap.eap_draft_date }</td>
-												</tr>
-												<tr>
-													<th>문서번호</th>
-													<td id="s_dfNo">${resultDoc.df_no }</td>
-												</tr>
-											</table>
-										</div>
-
-										<div style="float: left; width: 130px; margin-right: 10px;">
-											<table border="1" id="s_eap_draft">
-												<tr>
-													<th rowspan="2">신청</th>
-													<td>${eap.job_title }</td>
-												</tr>
-												<tr>
-													<td>${eap.emp_name }</td>
-												</tr>
-											</table>
-										</div>
-
-										<c:forEach items="${info }" var="i">
-											<div style="float: left; width: 130px; margin-right: 5px;">
-												<table border="1" class="s_eap_draft_app">
+											<div style="float: left; width: 230px; margin: 0 30px;">
+												<table border="1" id="s_eap_draft_info">
 													<tr>
-														<th rowspan="3">승인</th>
-														<td>${i.job_title }</td>
+	<%-- 													<p>${empVO}</p> --%>
+														<th>기안자</th>
+														<td>${empVO.emplNm}</td>
 													</tr>
 													<tr>
-														<td>${i.emp_name }</td>
+														<th>기안부서</th>
+														<td>${empVO.deptNm}</td>
 													</tr>
 													<tr>
-														<td><c:if test="${empty i.df_no }">
-																<img
-																	src="https://media.discordapp.net/attachments/692994434526085184/988792844099678208/stamp_6.png"
-																	style="width: 50px;">
-															</c:if></td>
+														<th>기안일</th>
+														<td>SYSDATE</td>
+													</tr>
+													<tr>
+														<th>문서번호</th>
+														<td id="s_dfNo">${resultDoc.df_no}</td>
 													</tr>
 												</table>
 											</div>
-										</c:forEach>
 
-										<div style="float: left; width: 130px; margin-right: 5px;"
-											id="s_eap_final"></div>
-
-										<div style="padding: 50px 10px 20px; clear: both;">
-											<div
-												style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목
-												:</div>
-											<input type="text" class="form-control"
-												style="display: inline-block; width: 90%; margin-left: 5px;"
-												id="s_ho_tt" required="required">
-										</div>
-
-										<div style="border: 1px solid lightgray; margin: 10px;"></div>
-										<div style="margin: 0 10px;">
-
-											<div style="padding: 10px 0;">
-												<div class="s_frm_title">1. 종류</div>
-												<div class="form-check" style="display: inline-block;">
-													<input class="form-check-input" type="radio"
-														name="flexRadioDefault" id="flexRadioDefault1" checked
-														value="A"> <label class="form-check-label"
-														for="flexRadioDefault1"> 연차 </label>
-												</div>
-												<div class="form-check" style="display: inline-block;">
-													<input class="form-check-input" type="radio"
-														name="flexRadioDefault" id="flexRadioDefault2" value="H">
-													<label class="form-check-label" for="flexRadioDefault2">
-														반차 </label>
-												</div>
-												<div class="form-check" style="display: inline-block;">
-													<input class="form-check-input" type="radio"
-														name="flexRadioDefault" id="flexRadioDefault3" value="B">
-													<label class="form-check-label" for="flexRadioDefault3">
-														병가 </label>
-												</div>
-												<div class="form-check" style="display: inline-block;">
-													<input class="form-check-input" type="radio"
-														name="flexRadioDefault" id="flexRadioDefault4" value="C">
-													<label class="form-check-label" for="flexRadioDefault4">
-														공가 </label>
-												</div>
+											<div style="float: left; width: 130px; margin-right: 10px;">
+												<table border="1" id="s_eap_draft">
+													<tr>
+														<th rowspan="2">신청</th>
+														<td>${empVO.clsfCodeNm}</td>
+													</tr>
+													<tr>
+														<td>${empVO.emplNm}</td>
+													</tr>
+												</table>
 											</div>
 
-											<div style="padding: 10px 0;">
-												<div class="s_frm_title">2. 내용</div>
-												<textarea class="form-control s_scroll"
-													style="resize: none; height: 150px;" id="s_ho_co"
-													required="required" rows="2" cols="20" wrap="hard"></textarea>
+
+											<div style="float: left; width: 200px; margin-right: 5px;"
+												id=s_eap_draft_app>
+												
+												</div>
+
+											<div style="padding: 50px 10px 20px; clear: both;">
+												<div
+													style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목
+													:</div>
+												<input type="text" class="form-control"
+													style="display: inline-block; width: 90%; margin-left: 5px;"
+													id="s_ho_tt" required="required">
 											</div>
 
-											<div style="padding: 10px 0;">
-												<div class="s_frm_title">3. 신청기간</div>
-												<div style="margin: 5px 0;">
-													사용 가능한 휴가일수는 <span id="s_ho_use">${checkHo }</span>일 입니다.
-												</div>
-												<div>
-													<input type="text" placeholder="신청 시작 기간을 선택해주세요"
-														class="form-control s_ho_start"
-														style="width: 250px; display: inline-block; cursor: context-menu;"
-														id="s_ho_start" required="required" onchange="dateCnt();">
-													<input type="time" class="form-control"
-														style="width: 150px; display: inline-block;"
-														id="s_start_time" min="09:00:00" max="22:00:00"
-														required="required" onchange="dateCnt();"> 부터
-												</div>
-												<div>
-													<input type="text" placeholder="신청 종료 기간을 선택해주세요"
-														class="form-control s_ho_end"
-														style="width: 250px; display: inline-block; cursor: context-menu; margin-top: 10px;"
-														id="s_ho_end" required="required" onchange="dateCnt();">
-													<input type="time" class="form-control"
-														style="width: 150px; display: inline-block;"
-														id="s_end_time" min="09:00:00" max="22:00:00"
-														required="required" onchange="dateCnt();"> 까지
-													<div style="display: inline-block;">
-														(총 <span id="s_date_cal">0</span>일)
+											<div style="border: 1px solid lightgray; margin: 10px;"></div>
+											<div style="margin: 0 10px;">
+
+												<div style="padding: 10px 0;">
+													<div class="s_frm_title">1. 종류</div>
+													<div class="form-check" style="display: inline-block;">
+														<input class="form-check-input" type="radio"
+															name="flexRadioDefault" id="flexRadioDefault1" checked
+															value="A"> <label class="form-check-label"
+															for="flexRadioDefault1"> 연차 </label>
+													</div>
+													<div class="form-check" style="display: inline-block;">
+														<input class="form-check-input" type="radio"
+															name="flexRadioDefault" id="flexRadioDefault2" value="H">
+														<label class="form-check-label" for="flexRadioDefault2">
+															반차 </label>
+													</div>
+													<div class="form-check" style="display: inline-block;">
+														<input class="form-check-input" type="radio"
+															name="flexRadioDefault" id="flexRadioDefault3" value="B">
+														<label class="form-check-label" for="flexRadioDefault3">
+															병가 </label>
+													</div>
+													<div class="form-check" style="display: inline-block;">
+														<input class="form-check-input" type="radio"
+															name="flexRadioDefault" id="flexRadioDefault4" value="C">
+														<label class="form-check-label" for="flexRadioDefault4">
+															공가 </label>
 													</div>
 												</div>
-											</div>
 
-											<div style="padding: 10px 0;">
-												<div class="s_frm_title">4. 기타</div>
-												<div>문의사항은 BAB ${eap.emp_name }(${eap.emp_phone })에게
-													연락바랍니다. 끝.</div>
-											</div>
-
-											<div style="padding: 10px 0;">
-												<div class="s_frm_title">파일첨부</div>
-												<div id="s_file_upload">
-													<input type="file" id="eap_file_path" />
+												<div style="padding: 10px 0;">
+													<div class="s_frm_title">2. 내용</div>
+													<textarea class="form-control s_scroll"
+														style="resize: none; height: 150px;" id="s_ho_co"
+														required="required" rows="2" cols="20" wrap="hard"></textarea>
 												</div>
-												<input type="hidden" name="fileUrl" id="fileUrl">
+
+												<div style="padding: 10px 0;">
+													<div class="s_frm_title">3. 신청기간</div>
+													<div style="margin: 5px 0;">
+														사용 가능한 휴가일수는 <span id="s_ho_use">${checkHo }</span>일 입니다.
+													</div>
+													<div>
+														<input type="text" placeholder="신청 시작 기간을 선택해주세요"
+															class="form-control s_ho_start"
+															style="width: 250px; display: inline-block; cursor: context-menu;"
+															id="s_ho_start" required="required" onchange="dateCnt();">
+														<input type="time" class="form-control"
+															style="width: 150px; display: inline-block;"
+															id="s_start_time" min="09:00:00" max="22:00:00"
+															required="required" onchange="dateCnt();"> 부터
+													</div>
+													<div>
+														<input type="text" placeholder="신청 종료 기간을 선택해주세요"
+															class="form-control s_ho_end"
+															style="width: 250px; display: inline-block; cursor: context-menu; margin-top: 10px;"
+															id="s_ho_end" required="required" onchange="dateCnt();">
+														<input type="time" class="form-control"
+															style="width: 150px; display: inline-block;"
+															id="s_end_time" min="09:00:00" max="22:00:00"
+															required="required" onchange="dateCnt();"> 까지
+														<div style="display: inline-block;">
+															(총 <span id="s_date_cal">0</span>일)
+														</div>
+													</div>
+												</div>
+
+												<div style="padding: 10px 0;">
+													<div class="s_frm_title">4. 기타</div>
+													<div>문의사항은 BAB ${eap.emp_name }(${eap.emp_phone })에게
+														연락바랍니다. 끝.</div>
+												</div>
+
+												<div style="padding: 10px 0;">
+													<div class="s_frm_title">파일첨부</div>
+													<div id="s_file_upload">
+														<input type="file" id="eap_file_path" />
+													</div>
+													<input type="hidden" name="fileUrl" id="fileUrl">
+												</div>
+
+
 											</div>
-
-
 										</div>
 									</div>
+									
+									<!-- 전자결재 양식 수정도 가능 끝 -->
+
+									<!-- 기능 끝 -->
+									<!-- 여기다가 작성해주세요(준희) -->
 								</div>
-								<!-- 전자결재 양식 수정도 가능 끝 -->
-
-								<!-- 기능 끝 -->
-								<!-- 여기다가 작성해주세요(준희) -->
 							</div>
-						</div>
-						<!-- 상하 버튼 추가 -->
-						<div class="tool_bar">
-							<div class="critical d-flex gap-2 mt-3">
-								<!--성진스 버튼-->
-								<a id="s_eap_app" type="button"
-									class="btn btn-outline-primary d-flex align-items-center gap-1">
-									<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
-								</a> <a id="s_eap_stor" type="button"
-									class="btn btn-outline-success d-flex align-items-center gap-1"
-									data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
-									class="material-symbols-outlined fs-5">error</span> 임시저장
-								</a> <a id="s_appLine_btn" type="button"
-									class="btn btn-outline-info d-flex align-items-center gap-1"
-									data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
-									class="material-symbols-outlined fs-5">error</span> 결재선 지정
-								</a> <a type="button"
-									class="btn btn-outline-danger d-flex align-items-center gap-1"
-									href="/atrz/home"> <span
-									class="material-symbols-outlined fs-5">cancel</span> 취소
-								</a>
-								<!-- 										<a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="/atrz/approval"> -->
-								<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
-								<!-- 											목록으로</a> -->
+							<!-- 상하 버튼 추가 -->
+							<div class="tool_bar">
+								<div class="critical d-flex gap-2 mt-3">
+									<!--성진스 버튼-->
+									<button id="s_eap_app" type="submit"
+										class="btn btn-outline-primary d-flex align-items-center gap-1">
+										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
+									</button>
+									<a id="s_eap_stor" type="button"
+										class="btn btn-outline-success d-flex align-items-center gap-1"
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
+										class="material-symbols-outlined fs-5">error</span> 임시저장
+									</a> <a id="s_appLine_btn" type="button"
+									
+										class="btn btn-outline-info d-flex align-items-center gap-1"
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
+										class="material-symbols-outlined fs-5">error</span> 결재선 지정
+									</a> <a type="button"
+										class="btn btn-outline-danger d-flex align-items-center gap-1"
+										href="/atrz/home"> <span
+										class="material-symbols-outlined fs-5">cancel</span> 취소
+									</a>
+									<!-- 										<a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="/atrz/approval"> -->
+									<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
+									<!-- 											목록으로</a> -->
 
-								<!-- 										<a id="act_draft_withdrawal" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-								<!-- 											<span class="material-symbols-outlined fs-5">cancel</span>  -->
-								<!-- 											<span class="txt">상신취소</span> -->
-								<!-- 										</a> -->
-								<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-								<!-- 											<span class="material-symbols-outlined fs-5">error</span>  -->
-								<!-- 											<span class="txt">결재선 정보</span> -->
-								<!-- 										</a> -->
-								<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-								<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
-								<!-- 											<span class="txt">목록</span> -->
-								<!-- 										</a> -->
+									<!-- 										<a id="act_draft_withdrawal" class="btn d-flex align-items-center gap-1" data-role="button"> -->
+									<!-- 											<span class="material-symbols-outlined fs-5">cancel</span>  -->
+									<!-- 											<span class="txt">상신취소</span> -->
+									<!-- 										</a> -->
+									<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
+									<!-- 											<span class="material-symbols-outlined fs-5">error</span>  -->
+									<!-- 											<span class="txt">결재선 정보</span> -->
+									<!-- 										</a> -->
+									<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
+									<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
+									<!-- 											<span class="txt">목록</span> -->
+									<!-- 										</a> -->
+								</div>
 							</div>
-						</div>
 						<!-- 상하 버튼 추가 -->
-
+						</form>
 					</div>
 				</div>
 				<!-- 여기서 작업 끝 -->
-
-
 			</div>
 		</section>
 		<%@ include file="../layout/footer.jsp"%>
 	</main>
 	<%@ include file="../layout/prescript.jsp"%>
 	<!-- 제이쿼리사용시 여기다 인포트 -->
-	<c:import url="../documentForm/approvalLineModal.jsp" />
-	<!-- 결재선지정하는 관련 스크립트 시작-->
-	<script>
-
-// 결재선 지정 시 결재상태에 따라 글씨색 변경
-for(var i = 0; i < 3; i++) {
-	if($(".s_span_fw").eq(i).text() == '결재') {
-		$(".s_span_fw").eq(i).css('color', 'rgb(5, 131, 242)');
-	} else if($(".s_span_fw").eq(i).text() == '대기') {
-		$(".s_span_fw").eq(i).css('color', 'gray');
-	} else if($(".s_span_fw").eq(i).text() == '반려') {
-		$(".s_span_fw").eq(i).css('color', 'green');
-	}
-}
-</script>
-
-
 
 
 <script>
@@ -425,7 +420,6 @@ $("#s_eap_app").click(function() {
 // <!-- 결재선지정하는 관련 스크립트 끝 -->
 
 
-// <!-- 주니가 입력한 스크립트 시작 -->
 // 총 일수 계산 함수
 function dateCnt() {
 	// 날짜 계산
@@ -553,8 +547,6 @@ $(document).ready(function() {
 			}
 		}
 		 //여기서 전결여부는 장급만 되어야함
-		
-		
 		$.ajax({
 				url:"/atrz/appLineEmp",
 				data:{"emplNo":emplNo},
@@ -568,41 +560,40 @@ $(document).ready(function() {
 					
 					//중복으로는 못들어가게 만들기
 					
-					
-					
 					//NO처리하기
 					let noLen = $(".clsTr").length;
 					console.log("noLen : ", noLen);
 					//여기서는 jsp언어는 java에서 처리 못하도록 역슬래시를 사용해서 막아야한다.
 					let str = `
 						<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
-							<th>\${(noLen/2)+1}</th>
+							<th>\${noLen+1}</th>
 							<th style="display: none;" class="s_td_no">\${result.emplNo}</th>
 							<th class="s_td_name">\${result.emplNm}</th>
 							<th>\${result.deptNm}</th>
 							<th>\${result.posNm}</th>
 							<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
 							<th>
-								<select class="form-select" aria-label="Default select example">
-									<option selected="">결재</option>
+								<select class="form-select selAuth" aria-label="Default select example">
+									<option value="0" selected>결재</option>
 									<option value="1">참조</option>
 								</select>
 							</th>
 							<th>
-								<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+								<input class="form-check-input flexCheckDefault" type="checkbox" value="Y" />
 							</th>
 						</tr>
 						`;
-					$(".s_appLine_tbody_cl").append(str);
+					$(".s_appLine_tbody_new").append(str);    
+					
 				}//end success
 			});//end ajax
 	
 	})//결재선선택후에 결재선리스트로 가는버튼 
 	
-	//d왼쪽버튼의 경우에는 결재선선택과는 거리가 멀기 때문에 필요없음
+	//왼쪽버튼의 경우에는 결재선선택과는 거리가 멀기 때문에 필요없음
 	//왼쪽 버튼을 눌렀을때 삭제처리되어야함
 	$(document).on("click", "#remo_appLine",function(){
-		let lastRow = $(".s_appLine_tbody_cl .clsTr").last();   //가장마지막에 추가된 tr
+		let lastRow = $(".s_appLine_tbody_new .clsTr").last();   //가장마지막에 추가된 tr
 		//삭제대상확인 
 		// console.log("삭제대상 :", lastRow.prop("outerHTML"));
 		
@@ -612,7 +603,7 @@ $(document).ready(function() {
 				// console.log("lastRow : ",lastRow);
 				
 				// lastRow.remove();
-				// console.log("삭제후 남은 행의갯수 : ",$(".s_appLine_tbody_cl .clsTr").length);
+				// console.log("삭제후 남은 행의갯수 : ",$(".s_appLine_tbody_new .clsTr").length);
 				// lastRow.children().last().remove();
 			}else{
 				swal({
@@ -628,7 +619,7 @@ $(document).ready(function() {
 	
 	//결재선지정에서 확인버튼 눌렀을때
 	$("#s_add_appLine_list").click(function(){
-		if($(".s_appLine_tbody_cl .clsTr").length==0){
+		if($(".s_appLine_tbody_new .clsTr").length==0){
 			swal({
 				title: "결재선이 지정되어있지 않습니다.",
 				text: "결재할 사원을 추가해주세요!",
@@ -639,23 +630,179 @@ $(document).ready(function() {
 			return;
 		}
 		var appLineArr = [];
+		
+		//1)
+		let formData = new FormData();
+		
+		//I. 결재자 정보
 		for(let i= 0; i<$(".s_td_no").length; i++){
+			let sTdNo = $(".s_td_no").eq(i).text();
+			console.log("sTdNo : ",sTdNo);
+			
 			appLineArr.push($(".s_td_no").eq(i).text());
 			console.log("appLineArr : ",appLineArr);
+			//위의 코드까지는 찍힘
 			
+			//2) 
+			formData.append("emplNoArr",sTdNo);
 		}
 		var obj = {"emplNo" : appLineArr};
+		
+		//JSON Object List
+		let authList = [];
+		//JSON Object
+		let data = {};
+		//II. 권한 정보(.selAuth)
+		$(".selAuth").each(function(idx,auth){
+			data = {
+				"emplNo":$(this).parent().parent().children("th").eq(1).html(),
+				"auth":$(this).val(),
+				"flex":$(this).parent().next().children().eq(0).is(":checked")
+			};
+			
+			authList.push(data);
+		});	
+		
+		//*******
+		/*
+		[
+		    {
+		        "emplNo": "20250008",
+		        "auth": "0",
+		        "flex": true
+		    },
+		    {
+		        "emplNo": "20250010",
+		        "auth": "1",
+		        "flex": false
+		    }
+		]
+		*/
+		console.log("authList : ", authList);
+		
+// 		let flexList = [];
+		
+		//III. 전결여부(.flexCheckDefault)
+// 		$(".flexCheckDefault").each(function(idx,flex){
+// 			console.log("flex : ", $(this).is(":checked"));
+			
+// 			if($(this).is(":checked")){
+// 				flexList.push("Y");
+// 			}else{
+// 				flexList.push("N");
+// 			}
+			
+// 		});
+		
 
+		/*
+		["20250008","20250010"]
+		*/
+		console.log("obj.emplNo : ",obj.emplNo);
 		//결재선 리스트에 있는 사원번호를 가져와 결재선 jsp에 이름 부서 직책 찍기
 		$.ajax({
-			url:"/atrz/appLineEmp",
+			url:"/atrz/appLineList",
+			processData:false,
+			contentType:false,
 			type:"post",
-			data: obj,
+			data: formData,
+			dataType:"json",
 			success : function(result){
-				$(".btn-close").trigger('click');
+// 				$(".btn-close").trigger('click');
 				//결과까지는 찍힘.... 이제 이것을 다시 번호를 통해서 다시 이름이랑 직책을 찍어줘야함
 				console.log("result : ",result);
-				$("#s_eap_content_box").html(result);
+				//여기서 배열로 담긴 애들을 하나씩 꺼내서 결재선  목록으로 출력해서 입력해야한다.
+				
+// 				$("#s_eap_draft_app").append(obj);
+				
+			
+				let tableHtml = `
+					<table border="1" class="s_eap_draft_app">
+						<tbody>
+				`;
+				
+				/*authList : 
+				[
+				    {
+				        "emplNo": "20250008",
+				        "auth": "0",
+				        "flex": true
+				    },
+				    {
+				        "emplNo": "20250010",
+				        "auth": "1",
+				        "flex": false
+				    }
+				]
+				*/
+				//result : List<EmployeeVO> emplDetailList
+				//employeeVO.clsfCodeNm
+				//employeeVO.emplNm
+				//가. 결재파트 시작//////////////////////
+				tableHtml+= `<tr><th rowspan="3">결재</th>`;
+				
+				// 결재 직급 정보
+				$.each(result,function(i,employeeVO){
+					$("#atrz_ho_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
+					tableHtml+= `<td>\${employeeVO.clsfCodeNm}</td>`;
+				});	
+				
+				tableHtml+= `</tr><tr>`;
+				// 결제 사원 이름
+				$.each(result,function(i,employeeVO){
+					tableHtml+= `<td>\${employeeVO.emplNm}</td>`;
+				});
+				
+				tableHtml+= `</tr><tr>`;
+				// 결재 도장
+				$.each(result,function(i,employeeVO){
+					tableHtml+= `<td>이미지</td>`;
+				});
+				
+				tableHtml+= `</tr>`;
+				
+//                     <input type="text" value="\${employeeVO.emplNo}"/>
+//                         <input type="text" value="\${employeeVO.deptCodeNm}"/>
+				tableHtml += `</tbody></table>`;	
+				
+				console.log("tableHtml : ", tableHtml);
+				
+				 // holiday.jsp의 특정 영역에 추가
+                $("#s_eap_draft_app").html(tableHtml);
+              	//가. 결재파트 끝//////////////////////
+              	
+              	//나. 참조파트 시작//////////////////////
+					tableHtml+= `<tr><th rowspan="3">참조</th>`;
+				$.each(result,function(i,employeeVO){
+					// 참조 사원 no
+					$("#atrz_ho_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
+					
+					tableHtml+= `<td>\${employeeVO.clsfCodeNm}</td>`;
+				});	
+				
+				tableHtml+= `</tr><tr>`;
+				
+				$.each(result,function(i,employeeVO){
+					tableHtml+= `<td>\${employeeVO.emplNm}</td>`;
+				});
+				
+				tableHtml+= `</tr><tr>`;
+				
+				$.each(result,function(i,employeeVO){
+					tableHtml+= `<td>이미지</td>`;
+				});
+				
+				tableHtml+= `</tr>`;
+				
+//                     <input type="text" value="\${employeeVO.emplNo}"/>
+//                         <input type="text" value="\${employeeVO.deptCodeNm}"/>
+				tableHtml += `</tbody></table>`;	
+				
+				console.log("tableHtml : ", tableHtml);
+				
+				 // holiday.jsp의 특정 영역에 추가
+                //$("#s_eap_draft_app").html(tableHtml);
+              	//나. 참조파트 끝//////////////////////
 			}
 		});
 

@@ -1,4 +1,4 @@
-package kr.or.ddit.sevenfs.controller.Schedule;
+package kr.or.ddit.sevenfs.controller.schedule;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,43 +19,62 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.annotation.RequestScope;
 
-import kr.or.ddit.sevenfs.service.Schedule.ScheduleSertvice;
-import kr.or.ddit.sevenfs.vo.Schedule.ScheduleVO;
+import kr.or.ddit.sevenfs.service.schedule.ScheduleService;
+import kr.or.ddit.sevenfs.vo.schedule.ScheduleVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/myCalendar")
 @Slf4j
-public class CalendarController {
-	// I'm fucking coder I'm not a developer 
+public class ScheduleController {
 	@Autowired
-	ScheduleSertvice scheduleSertvice;
+	ScheduleService scheduleService;
 	// 드래그나 리사이즈로 변경하는건 map으로 담아서 로그아웃이나 페이지 벗아날시 한번에 db에 update한다.
 	// 
 	
 	private Map<String, Object> uptMap = new HashMap<>();  
 	
+//	@Scheduled(fixedRate = 1000) // 60000밀리초 = 1분
+	@Scheduled(fixedRate = 60000) // 60000밀리초 = 1분
+	public void scheduledCalendarList() {
+	    int size = uptMap.size();
+	    log.info("");
+	    if(size>0) {
+	    	uptMapUpdate(size);
+	    }
+	}
+	
+	public void batchUpdate() {
+		
+	}
+	
+	public void uptMapUpdate(int size) {
+		log.info("업데이트 항목 개수 : "+size);
+		if(size>0) {
+			log.info("업데이트 항목 : "+uptMap);
+			int result = scheduleService.scheduleUpdateMap(uptMap);
+			log.info("업데이트 실행 -> 결과 : "+result);
+			if(result!=0) {
+				uptMap.clear();
+			}
+		}
+	}
+	
 	@GetMapping("")
 	public String calendarMain() {
 		log.info("calendarMain 실행");
-//		return "calendar/calendarMain";
-		return "home";
+		return "schedule/scheduleHome";
 	}
 	
 	@GetMapping("/calendarList")
 	@ResponseBody
 	public List<ScheduleVO> calendarList(){
 		log.info("calendarList 실행");
-		log.info("업데이트 항목 개수 : "+uptMap.size());
-		if(uptMap.size()!=0) {
-			log.info("업데이트 항목 : "+uptMap);
-			int result = scheduleSertvice.scheduleUpdateMap(uptMap);
-			log.info("업데이트 실행 -> 결과 : "+result);
-			if(result!=0) {
-				uptMap.clear();
-			}
-		}
-		List<ScheduleVO> scheduleList = scheduleSertvice.scheduleList();
+		int size = uptMap.size();
+		if(size>0) {
+	    	uptMapUpdate(size);
+	    }
+		List<ScheduleVO> scheduleList = scheduleService.scheduleList();
 		log.info("calendarList -> scheduleList : "+scheduleList);
 		return scheduleList;
 	}
@@ -63,8 +83,12 @@ public class CalendarController {
 	@ResponseBody
 	public List<ScheduleVO> addCalendar(@ModelAttribute  ScheduleVO scheduleVO){
 		log.info("addCalendar -> scheduleVO : "+scheduleVO);
-		int result = scheduleSertvice.scheduleInsert(scheduleVO);
-		List<ScheduleVO> scheduleList = scheduleSertvice.scheduleList();
+		int result = scheduleService.scheduleInsert(scheduleVO);
+		int size = uptMap.size();
+		if(size>0) {
+	    	uptMapUpdate(size);
+	    }
+		List<ScheduleVO> scheduleList = scheduleService.scheduleList();
 		return scheduleList;
 	}
 	
@@ -72,8 +96,12 @@ public class CalendarController {
 	@PostMapping("/uptCalendar")
 	public List<ScheduleVO> uptCalendar(@ModelAttribute  ScheduleVO scheduleVO){
 		log.info("uptCalendar -> scheduleVO : "+scheduleVO);
-		int result = scheduleSertvice.scheduleUpdate(scheduleVO);
-		List<ScheduleVO> scheduleList = scheduleSertvice.scheduleList();
+		int result = scheduleService.scheduleUpdate(scheduleVO);
+		int size = uptMap.size();
+		if(size>0) {
+	    	uptMapUpdate(size);
+	    }
+		List<ScheduleVO> scheduleList = scheduleService.scheduleList();
 		return scheduleList;
 	}
 	
@@ -83,8 +111,12 @@ public class CalendarController {
 		int schdulNo = scheduleVO.getSchdulNo();
 		uptMap.remove(schdulNo+"");
 		log.info("delCalendar -> schdulNo : "+schdulNo);
-		int result = scheduleSertvice.delCalendar(schdulNo);
-		List<ScheduleVO> scheduleList = scheduleSertvice.scheduleList();
+		int result = scheduleService.delCalendar(schdulNo);
+		int size = uptMap.size();
+		if(size>0) {
+	    	uptMapUpdate(size);
+	    }
+		List<ScheduleVO> scheduleList = scheduleService.scheduleList();
 		return scheduleList;
 	}
 	
