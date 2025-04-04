@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.annotation.RequestScope;
 
+import jakarta.servlet.http.HttpSession;
 import kr.or.ddit.sevenfs.service.schedule.ScheduleService;
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.schedule.ScheduleVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,14 +40,9 @@ public class ScheduleController {
 	@Scheduled(fixedRate = 60000) // 60000밀리초 = 1분
 	public void scheduledCalendarList() {
 	    int size = uptMap.size();
-	    log.info("");
 	    if(size>0) {
 	    	uptMapUpdate(size);
 	    }
-	}
-	
-	public void batchUpdate() {
-		
 	}
 	
 	public void uptMapUpdate(int size) {
@@ -54,10 +51,13 @@ public class ScheduleController {
 			log.info("업데이트 항목 : "+uptMap);
 			int result = scheduleService.scheduleUpdateMap(uptMap);
 			log.info("업데이트 실행 -> 결과 : "+result);
+			//  공통 함수로 두지 않은 이유는 일단 
 			if(result!=0) {
 				uptMap.clear();
+				return;
 			}
 		}
+		return;
 	}
 	
 	@GetMapping("")
@@ -65,49 +65,55 @@ public class ScheduleController {
 		log.info("calendarMain 실행");
 		return "schedule/scheduleHome";
 	}
+	/*
+	 myCalendar.put("scheduleList", scheduleList);
+	 myCalendar.put("labelList", labelList);
+	*/
 	
-	@GetMapping("/calendarList")
+	@RequestMapping("/calendarList")
 	@ResponseBody
-	public List<ScheduleVO> calendarList(){
+	public Map<String,Object> calendarList(@RequestBody ScheduleVO scheduleVO){
 		log.info("calendarList 실행");
+		log.info("calendarList -> emplNO : "+scheduleVO.getEmplNo());
 		int size = uptMap.size();
 		if(size>0) {
 	    	uptMapUpdate(size);
 	    }
-		List<ScheduleVO> scheduleList = scheduleService.scheduleList();
-		log.info("calendarList -> scheduleList : "+scheduleList);
-		return scheduleList;
+		Map<String,Object> myCalendar = scheduleService.scheduleList(scheduleVO);
+		log.info("calendarList -> scheduleList : "+myCalendar.get("scheduleList"));
+		log.info("calendarList -> labelList : "+myCalendar.get("labelList"));
+		return myCalendar;
 	}
 	
 	@PostMapping("/addCalendar")
 	@ResponseBody
-	public List<ScheduleVO> addCalendar(@ModelAttribute  ScheduleVO scheduleVO){
+	public Map<String,Object> addCalendar(@ModelAttribute  ScheduleVO scheduleVO){
 		log.info("addCalendar -> scheduleVO : "+scheduleVO);
 		int result = scheduleService.scheduleInsert(scheduleVO);
 		int size = uptMap.size();
 		if(size>0) {
 	    	uptMapUpdate(size);
 	    }
-		List<ScheduleVO> scheduleList = scheduleService.scheduleList();
-		return scheduleList;
+		Map<String,Object> myCalendar = scheduleService.scheduleList(scheduleVO);
+		return myCalendar;
 	}
 	
 	@ResponseBody
 	@PostMapping("/uptCalendar")
-	public List<ScheduleVO> uptCalendar(@ModelAttribute  ScheduleVO scheduleVO){
+	public Map<String,Object> uptCalendar(@ModelAttribute  ScheduleVO scheduleVO){
 		log.info("uptCalendar -> scheduleVO : "+scheduleVO);
 		int result = scheduleService.scheduleUpdate(scheduleVO);
 		int size = uptMap.size();
 		if(size>0) {
 	    	uptMapUpdate(size);
 	    }
-		List<ScheduleVO> scheduleList = scheduleService.scheduleList();
-		return scheduleList;
+		Map<String,Object> myCalendar = scheduleService.scheduleList(scheduleVO);
+		return myCalendar;
 	}
 	
 	@ResponseBody
 	@PostMapping("/delCalendar")
-	public List<ScheduleVO> delCalendar(@RequestBody ScheduleVO scheduleVO){
+	public Map<String,Object> delCalendar(@RequestBody ScheduleVO scheduleVO){
 		int schdulNo = scheduleVO.getSchdulNo();
 		uptMap.remove(schdulNo+"");
 		log.info("delCalendar -> schdulNo : "+schdulNo);
@@ -116,8 +122,8 @@ public class ScheduleController {
 		if(size>0) {
 	    	uptMapUpdate(size);
 	    }
-		List<ScheduleVO> scheduleList = scheduleService.scheduleList();
-		return scheduleList;
+		Map<String,Object> myCalendar = scheduleService.scheduleList(scheduleVO);
+		return myCalendar;
 	}
 	
 	@ResponseBody
