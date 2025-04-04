@@ -69,6 +69,7 @@
             FILE_CREAT_DT
         FROM ATTATCH_FILE
         WHERE ATCH_FILE_NO = #{atchFileNo}
+        AND FILE_USE_YN = 'Y'
     </select>
 
     <!-- 게시글 상세 조회 -->

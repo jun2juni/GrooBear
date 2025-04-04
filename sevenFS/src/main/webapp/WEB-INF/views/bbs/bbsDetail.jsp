@@ -64,7 +64,7 @@
 									<div>파일
 										<c:if test="${not empty Efile}">
 											<c:forEach var="file" items="${bbsVO.files}">
-												<a href="/upload/${file.fileStreNm}" target="_blank">${file.fileStreNm}</a>
+												<a href="http://localhost/download?fileName=test/34e5c6bb8bd34d62a8eae92ef506005e_carnation-g75dae9d9b_1280.jpg"" target="_blank">${file.fileStreNm}</a>
 											</c:forEach>
 										</c:if>
 										<c:if test="${empty Efile}">

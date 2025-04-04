@@ -136,6 +136,8 @@ public class BbsController {
         List<AttachFileVO> FileList = attachFileService.getFileAttachList(bbsVO.getAtchFileNo());
         model.addAttribute("bbsVO", bbsVO);
         model.addAttribute("fileList", FileList);
+        
+        attachFileService.downloadFile("파일 경로를 넘겨줘야함");
 
         return "bbs/bbsDetail";
     }
@@ -157,18 +159,22 @@ public class BbsController {
      * 게시글 수정 처리
      */
     @PostMapping("/bbsUpdate")
-    public String bbsUpdate(@ModelAttribute BbsVO bbsVO,MultipartFile[] updateFile, AttachFileVO attachFileVO) {
+    public String bbsUpdate(@ModelAttribute BbsVO bbsVO,MultipartFile[] updateFile,AttachFileVO attachFileVO) {
         log.info("게시글 수정 요청: " + bbsVO);
         
         attachFileVO.setAtchFileNo(bbsVO.getAtchFileNo());
         
         log.info("업데이트 파일 : " + updateFile);
         
+        log.info("삭제 파일 테스트 : " + attachFileVO);
+        
         long attachFileNm = attachFileService.updateFileList("updateFile", updateFile, attachFileVO);
         log.info("어테치파일 넘버 : " + attachFileNm);
         
         int update = bbsService.bbsUpdate(bbsVO);
         log.info("업데이트 : " + update);
+        
+        
         
         return "redirect:/bbs/bbsDetail?bbsSn=" + bbsVO.getBbsSn();
     }

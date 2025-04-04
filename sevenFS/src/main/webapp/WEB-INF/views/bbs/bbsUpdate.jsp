@@ -34,7 +34,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card-style">
-                            <h2 class="text-primary text-center">(🌸◔ ω ◔)</h2>
+                            <h2 class="text-primary text-center">(🌸◔ ω ◔)${attachFileVO}</h2>
                             <form action="/bbs/bbsUpdate" method="post" enctype="multipart/form-data">
                             	<input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
                                 <input type="hidden" name="bbsSn" value="${bbsVO.bbsSn}">
@@ -46,7 +46,7 @@
                                 <div class="col-sm-12">
                                     내용
                                     <div id="descriptionTemp">${bbsVO.bbscttCn}</div>
-                                    <textarea id="content" name="bbscttCn" rows="3" cols="30" class="form-control" hidden></textarea>
+                                    <textarea id="content" name="bbscttCn" rows="3" cols="30" class="form-control" hidden>${bbsVO.bbscttCn}</textarea>
                                 </div>
                                 <br>
                                 <div>
@@ -55,19 +55,31 @@
                                 </div>
                                 <br>
                                 <div>
-                                    파일${bbsVO.files}
+                                    파일
+                                    <c:choose>
+    								<c:when test="${not empty bbsVO.files}">
                                         <c:forEach var="file" items="${bbsVO.files}">
-                                        	<c:if test="${not empty file}">
 											<file-upload
 													label="${file.fileStreNm}"
 													name="updateFile"
 													max-files="5"	
-													contextPath="${pageContext.request.contextPath  }"
+													contextPath="${pageContext.request.contextPath}"
 													uploaded-file="${file}"
 													atch-file-no="${bbsVO.atchFileNo}"
 											></file-upload>
-											</c:if>
 										</c:forEach>
+									</c:when>
+									<c:otherwise>
+								        <!-- 파일이 없을 때 기본 UI -->
+								        <file-upload
+								            label="파일 추가"
+								            name="updateFile"
+								            max-files="5"
+								            contextPath="${pageContext.request.contextPath}"
+								            atch-file-no="${bbsVO.atchFileNo}">
+								        </file-upload>
+								    </c:otherwise>
+									</c:choose>
                                 </div>
                                 <br>
                                 <div>
