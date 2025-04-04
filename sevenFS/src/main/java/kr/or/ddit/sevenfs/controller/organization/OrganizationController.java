@@ -180,16 +180,7 @@ public class OrganizationController {
 		//model.addAttribute("empFileName" , empFileName);
 		
 		model.addAttribute("title" , "사원 정보");
-//		String maleCode = CommonCode.GenderEnum.MALE.getCode();
-//		String femaleCode = CommonCode.GenderEnum.FEMALE.getCode();
-//		String mailLabel = CommonCode.GenderEnum.MALE.getLabel();
-//		String femailLabel = CommonCode.GenderEnum.FEMALE.getLabel();
-//		
-//		if(empDetail.getGenderCode().equals(maleCode)) {
-//			empDetail.setGenderCode(mailLabel);
-//		}else {
-//			empDetail.setGenderCode(femailLabel);
-//		}
+
 		model.addAttribute("empDetail", empDetail);
 		
 		return "organization/employeeDetail";
@@ -204,18 +195,6 @@ public class OrganizationController {
 		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
 		log.info("사원상세 : " + empDetail);
 		
-//		model.addAttribute("title" , "사원 정보");
-//		String maleCode = CommonCode.GenderEnum.MALE.getCode();
-//		String femaleCode = CommonCode.GenderEnum.FEMALE.getCode();
-//		String mailLabel = CommonCode.GenderEnum.MALE.getLabel();
-//		String femailLabel = CommonCode.GenderEnum.FEMALE.getLabel();
-//		
-//		if(empDetail.getGenderCode().equals(maleCode)) {
-//			empDetail.setGenderCode(mailLabel);
-//		}else {
-//			empDetail.setGenderCode(femailLabel);
-//		}
-		
 		model.addAttribute("empDetail", empDetail);
 		
 		return "organization/employeeDetail";
@@ -227,29 +206,12 @@ public class OrganizationController {
 		
 		model.addAttribute("title" , "사원 등록");
 		
-//		String maleCode = CommonCode.GenderEnum.MALE.getCode();
-//		String femaleCode = CommonCode.GenderEnum.FEMALE.getCode();
-//		String mailLabel = CommonCode.GenderEnum.MALE.getLabel();
-//		String femailLabel = CommonCode.GenderEnum.FEMALE.getLabel();
-		
 		List<CommonCodeVO> depList = organizationService.depList();
 		List<CommonCodeVO> posList = organizationService.posList();
-		
-//		// 성별 코드 담기
-//		Map<String, Object> genderCode = new HashMap<>();
-//		genderCode.put("maleCode" , maleCode);
-//		genderCode.put("femailCode", femaleCode);
-//
-//		// 성별 라벨 담기
-//		Map<String, Object> genderLabel = new HashMap<>();
-//		genderCode.put("mailLabel" , mailLabel);
-//		genderCode.put("femailLabel", femailLabel);
 
 		Map<String, Object> cmmnList = new HashMap<String, Object>();
 		cmmnList.put("depList", depList);
 		cmmnList.put("posList", posList);
-//		cmmnList.put("genderCode", genderCode);
-//		cmmnList.put("genderLabel", genderLabel);
 		
 		// 전체 부서, 직급. 성별 목록 보내주기
 		model.addAttribute("cmmnList", cmmnList);
@@ -307,44 +269,53 @@ public class OrganizationController {
 	@PostMapping("/emplUpdatePost")
 	public String emplUpdatePost(EmployeeVO employeeVO, MultipartFile[] uploadFile, AttachFileVO attachFileVO) {
 		
-//		String emplNo = employeeVO.getEmplNo();
-//		 
-		
-//		// 비밀번호를 수정하지 않았다면 원래 비밀번호로 등록해주기
-//		EmployeeVO emplDetail = organizationService.emplDetail(emplNo);
-//		String password = emplDetail.getPassword();
-//		
-//		
-//		if(employeeVO.getPassword().equals(null)) {
-//			bCryptPasswordEncoder.encode(password);
-//		}else {
-//			String encode = bCryptPasswordEncoder.encode(employeeVO.getPassword());
-//		}
-		
-		
+		String emplNo = employeeVO.getEmplNo();
+	
 		// 비밀번호 암호화
 		String encode = bCryptPasswordEncoder.encode(employeeVO.getPassword());
 		employeeVO.setPassword(encode);
 		
-		int fileNo = employeeVO.getAtchFileNo();
+		//int fileNo = employeeVO.getAtchFileNo();
 		
-		log.info("jsp에서 넘긴 수정 정보 : " + employeeVO);
+		// 원래있던 사원 조회
+		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
+		int fileNo = empDetail.getAtchFileNo();
 		
-		// 프로필사진 수정
-		//attachFileService.updateFileList("organization", uploadFile, attachFileVO);
-		AttachFileVO insertFile = attachFileService.insertFile("organization", uploadFile);
-		log.info("수정시 등록된파일 : " + insertFile);
+		// 기존 등록된 파일 정보 가져오기
+		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
+		log.info("수정!! fileAttachList : " + fileAttachList);
 		
-		// 파일 실제저장경로 set해주기
-		employeeVO.setProflPhotoUrl(insertFile.getFileStrePath());
+		// 기존 파일 No 가져오기
+		long fileNoL = fileAttachList.get(0).getAtchFileNo();
+		int fileNoI = (int)fileNoL;
+		log.info("기존 fileNo" + fileNoI);
 		
-		// 수정시 등록된 파일넘버 set해주기
-		long insertFileNo = insertFile.getAtchFileNo();
-		log.info("long insertFileNo" + insertFileNo);
+		// 기존 프로필사진 파일 경로가져오기
+		String filePath = fileAttachList.get(0).getFileStrePath();
 		
-		int updateFileNo = (int)insertFileNo;
-		log.info("int insertFileNo" + insertFileNo);
-		employeeVO.setAtchFileNo(updateFileNo);
+		// 수정된 파일이 없으면 기존 AttachNo와 프로필 URL로 등록해주기
+		if(employeeVO.getAtchFileNo()==0) {
+			employeeVO.setAtchFileNo(fileNoI);
+			employeeVO.setProflPhotoUrl(filePath);
+		}else {
+			// 프로필사진 수정
+			//attachFileService.updateFileList("organization", uploadFile, attachFileVO);
+			AttachFileVO insertFile = attachFileService.insertFile("organization", uploadFile);
+			log.info("수정시 등록된파일 : " + insertFile);
+			
+			// 파일 실제저장경로 set해주기
+			employeeVO.setProflPhotoUrl(insertFile.getFileStrePath());
+			
+			// 수정시 등록된 파일넘버 set해주기
+			long insertFileNo = insertFile.getAtchFileNo();
+			log.info("long insertFileNo" + insertFileNo);
+			
+			int updateFileNo = (int)insertFileNo;
+			log.info("int insertFileNo" + insertFileNo);
+			employeeVO.setAtchFileNo(updateFileNo);
+		}
+		
+		//log.info("jsp에서 넘긴 수정 정보 : " + employeeVO);
 		
 		organizationService.emplUpdatePost(employeeVO);
 		
@@ -363,12 +334,7 @@ public class OrganizationController {
 		    	return "redirect:/orglist";
 		    }
 		}
-		
-//		List<EmpAuthVO> empAuthVOList = employeeVO.getEmpAuthVOList();
-//		if (empAuthVOList.contains("ROLE_ADMIN")) {
-//			return "redirect:/orglistAdmin";
-//           
-//		}
+
 		return "redirect:/orglistAdmin";
 	}
 	
