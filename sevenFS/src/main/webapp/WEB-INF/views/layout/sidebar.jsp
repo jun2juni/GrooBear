@@ -155,21 +155,11 @@
         <%-- 채팅 --%>
         
         <%--알림 사이드 바 --%>
-        <li class="nav-item nav-item-has-children">
-          <a href="#6" class="${fn:contains(currentURL, '/notification') ? '' : 'collapsed'}"
-             data-bs-toggle="collapse" data-bs-target="#notification"
-             aria-controls="notification" aria-expanded="false" aria-label="Toggle navigation">
+        <li class="nav-item ${fn:contains(currentURL, '/notification') ? 'active' : ''}">
+          <a href="/notification/list">
             <span class="icon material-symbols-outlined">notifications</span>
             <span class="text">알림</span>
           </a>
-          <ul id="notification" class="dropdown-nav collapse" style="">
-            <li>
-              <a href="/notification"> 1뎁스 </a>
-            </li>
-            <li>
-              <a href="/notification"> 2뎁스 </a>
-            </li>
-          </ul>
         </li>
         <%--알림 사이드 바 --%>
         
