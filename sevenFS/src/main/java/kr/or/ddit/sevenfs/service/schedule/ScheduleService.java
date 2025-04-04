@@ -6,7 +6,7 @@ import java.util.Map;
 import kr.or.ddit.sevenfs.vo.schedule.ScheduleVO;
 
 public interface ScheduleService {
-
+	// 서비스
 	int scheduleInsert(ScheduleVO scheduleVO);
 
 	List<ScheduleVO> scheduleList();
