@@ -9,7 +9,7 @@ public interface ScheduleService {
 	// 서비스
 	int scheduleInsert(ScheduleVO scheduleVO);
 
-	List<ScheduleVO> scheduleList();
+	Map<String,Object> scheduleList(ScheduleVO scheduleVO);
 
 	int scheduleUpdate(ScheduleVO scheduleVO);
 

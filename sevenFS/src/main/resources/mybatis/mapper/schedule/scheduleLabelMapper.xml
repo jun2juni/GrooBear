@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.schedule.ScheduleLabelMapper">
+<select id="getLabel" parameterType="kr.or.ddit.sevenfs.vo.schedule.ScheduleVO"
+					  resultType="kr.or.ddit.sevenfs.vo.schedule.ScheduleLabelVO">
+SELECT
+	LBL_NO,
+	LBL_COLOR,
+    LBL_NM,
+    EMPL_NO
+FROM
+	SCHEDULE_LABEL
+WHERE EMPL_NO = #{emplNo}
+</select>
+
+</mapper>

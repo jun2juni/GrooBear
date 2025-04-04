@@ -48,6 +48,7 @@ public class ScheduleVO {
 	// 부서번호
 	private String deptCode;
 	
-	private List<ScheduleLabelVO> labelList;
+	// 1대다관계가 아니기 때문에 주석처리함.
+//	private List<ScheduleLabelVO> labelList;
 	
 }

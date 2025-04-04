@@ -7,6 +7,8 @@
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 <script type="text/javascript">
 	document.addEventListener('DOMContentLoaded', function() {
+		let myEmpInfo = "${myEmpInfo}"
+		console.log("myEmpInfo : ",myEmpInfo);
 		let emplNo = "${myEmpInfo.emplNo}";
    		console.log("직원 이름:", emplNo);
 		console.log("FullCalendar 버전:", FullCalendar.version);
@@ -69,9 +71,13 @@
 		refresh = function() {
 			return $.ajax({
 				url: "/myCalendar/calendarList",
-				method: 'get',
+				data:JSON.stringify({emplNo:emplNo, dept:myEmpInfo.deptCode}),
+				method: 'post',
+				contentType:'application/json',
 				success: function(data) {
+					// console.log("refresh -> data : ",data);
 					let clndr = chngData(data);
+					labelSideBar(data.labelList);
 					console.log("refresh : ",clndr);
 					window.globalCalendar.setOption('events', clndr);
 				}
@@ -81,9 +87,20 @@
 			let differenceInDays = Math.abs((date2 - date1) / (1000 * 60 * 60 * 24));
 			return differenceInDays>=num?true:false;
 		}
-		const chngData = function(dataList){
-			let returnData=[]
-			dataList.forEach(data=>{
+		const labelSideBar = function(labelList){
+			let labelSection = $('#labelSection');
+			console.log('labelSideBar -> labelList',labelList);
+			console.log('labelSideBar -> labelSection : ',labelSection);
+			labelList.forEach(label=>{
+				console.log('labelSideBar -> label : ',label);
+				console.log('dwadadwsa  ',"${label.lblNo} ${label.lblNm}");
+				let checkboxHtml = '<label><input type="checkbox" class="event-filter" value='+label.lblNo+'>'+label.lblNm+'</label><br>';
+				labelSection.append(checkboxHtml);
+			})
+		}
+		const chngData = function(dataMap){
+			let returnData=[];
+			dataMap.scheduleList.forEach(data=>{
 				let startDate = new Date(data.schdulBeginDt);
 				let endDate = new Date(data.schdulEndDt);
 				let chk = overChk(startDate,endDate,1);

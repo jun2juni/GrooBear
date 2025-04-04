@@ -20,12 +20,9 @@
             <label><input type="checkbox" class="event-filter" value="task"> 부서 일정</label><br>
             <label><input type="checkbox" class="event-filter" value="personal"> 개인 일정</label>
         </div>
-        <div class="filter-section">
+        <div class="label-section" id="labelSection">
             <h3>라벨</h3>
-            <label><input type="checkbox" id="filter-all" checked> 전체 보기</label><br>
-            <label><input type="checkbox" class="event-filter" value="meeting"> 전체일정</label><br>
-            <label><input type="checkbox" class="event-filter" value="task"> 부서 일정</label><br>
-            <label><input type="checkbox" class="event-filter" value="personal"> 개인 일정</label>
+            <label><input type="checkbox" id="label-all" checked> 전체 보기</label><br>
         </div>
 
     </div>

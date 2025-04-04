@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="kr.or.ddit.sevenfs.mapper.scheduleMapper.ScheduleMapper">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.schedule.ScheduleMapper">
 
-<select id="scheduleList" resultType="kr.or.ddit.sevenfs.vo.schedule.ScheduleVO">
+<select id="scheduleList" parameterType="kr.or.ddit.sevenfs.vo.schedule.ScheduleVO"
+						  resultType="kr.or.ddit.sevenfs.vo.schedule.ScheduleVO">
 	SELECT  SCHDUL_NO,
 			EMPL_NO,
 			LBL_NO,
@@ -14,7 +15,9 @@
 			SCHDUL_PLACE,
 			DEPT_CODE
 	FROM SCHEDULE
-	WHERE SCHDUL_TY = '0'
+	WHERE SCHDUL_TY = '0' AND EMPL_NO = #{emplNo}
+	   OR SCHDUL_TY = '1' AND DEPT_CODE = #{deptCode}
+	   OR SCHDUL_TY = '2'
 </select>
 <insert id="scheduleInsert" parameterType="kr.or.ddit.sevenfs.vo.schedule.ScheduleVO">
 	<selectKey resultType="int" order="BEFORE" keyProperty="schdulNo">
