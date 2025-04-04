@@ -53,37 +53,29 @@ public class BbsController {
     }
     
     @GetMapping("/bbsList")
-    public String bbsList(Model model, BbsVO bbsVO,
-    		@RequestParam(defaultValue = "1") int total,
-			@RequestParam(defaultValue = "1") int currentPage, 
-			@RequestParam(defaultValue = "5") int size) {
-    	
-    	ArticlePage<AttachFileVO> articlePage = new ArticlePage<>(total, currentPage, size);
-    	
-    	List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(1);
+    public String bbsList(Model model, 
+    					  @ModelAttribute BbsVO bbsVO,
+                          @RequestParam(defaultValue = "1") int total,
+                          @RequestParam(defaultValue = "1") int currentPage,
+                          @RequestParam(defaultValue = "10") int size) {
 
-		model.addAttribute("fileAttachList", fileAttachList);
+        log.info("📌 서치키워드 확인: " + bbsVO.getSearchKeyword());
 
-		AttachFileVO attachFileVO = new AttachFileVO();
-		attachFileVO.setFileNm("파일이름");
-		attachFileVO.setFileExtsn("파일확장자");
-		attachFileVO.setFileStreNm("저장이름");
-		articlePage.setSearchVo(attachFileVO);
+        // ✅ 페이징 처리할 객체 생성
+        ArticlePage<BbsVO> articlePage = new ArticlePage<>(total, currentPage, size);
+        articlePage.setSearchVo(bbsVO);  // BbsVO를 그대로 사용
 
-		articlePage.setTotal(total);
-		articlePage.setCurrentPage(currentPage);
+        // ✅ 페이징 처리된 게시글 목록 가져오기
+        List<BbsVO> bbsList = bbsService.bbsList(articlePage);
 
-		log.info("페이지" + articlePage);
+        // ✅ 뷰로 데이터 전달
+        model.addAttribute("articlePage", articlePage);
+        model.addAttribute("bbsList", bbsList);
 
-		model.addAttribute("articlePage", articlePage);
-    	
-    	List<BbsVO> bbsList = bbsService.bbsList(articlePage);
-    	log.info("리스트 출력 : " + bbsList);
-    	
-    	model.addAttribute("bbsList", bbsList);
-    	
-    	return "bbs/bbsList";
+        return "bbs/bbsList";
     }
+
+
     
     
     /**

@@ -17,9 +17,11 @@ public class BbsVO {
 	private String bbscttUpdtDt;
 	private int rdcnt;
 	private String bbscttUseYn;
-	private String bbscttDeleteYn;
 	private String upendFixingYn;
 	private long atchFileNo;
 	
 	private List<MultipartFile> files;
+
+	private String searchKeyword;
+
 }

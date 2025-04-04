@@ -78,7 +78,7 @@ table.table-hover.align-middle.text-center tbody tr td {
                 </select>
                 
                 <!-- 검색어 입력 필드 -->
-                <input type="text" name="keyword" value="${bbsPage.keyword}" class="form-control me-2" placeholder="검색어 입력">
+                <input type="text" name="searchKeyword" value="" class="form-control me-2" placeholder="검색어 입력">
                 
                 <!-- 검색 버튼 -->
                 <button style="white-space: nowrap;" type="submit" class="btn btn-outline-primary">검색</button>

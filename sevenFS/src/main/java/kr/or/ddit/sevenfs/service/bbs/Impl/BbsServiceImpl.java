@@ -10,16 +10,19 @@ import kr.or.ddit.sevenfs.service.bbs.BbsService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class BbsServiceImpl implements BbsService{
 
 	@Autowired
 	BbsMapper bbsMapper;
 	
 	@Override
-	public List<BbsVO> bbsList(ArticlePage<AttachFileVO> articlePage) {
+	public List<BbsVO> bbsList(ArticlePage<BbsVO> articlePage) {
 		// TODO Auto-generated method stub
+		log.info("아티클페이지 : " + articlePage);
 		return bbsMapper.bbsList(articlePage);
 	}
 
