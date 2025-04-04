@@ -239,7 +239,7 @@
 			</div>
 		  </div>
 		</div>
-		
+
 		
 		<div class="col-3">
 		  <div class="card">
@@ -320,7 +320,6 @@
     if(chttRoomNo === prevChatRoomNo) {
       // 채팅창 비활성 화
       document.querySelector("#chat").classList.add("d-none");
-
       prevChatRoomNo = null;
       return;
     }

@@ -101,6 +101,7 @@ document.addEventListener("DOMContentLoaded", function() {
       messageInput.value = "";
     });
 
+    // #기능
     let prevKey = null;
     messageInput.addEventListener("keydown", (e) => {
       // 15 => shift 51 => #
@@ -138,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function() {
         submitMessage({
           messageValue: data.attachFileVO.fileStrePath,
           chttRoomNo,
-          type: IMAGE,
+          type: data.attachFileVO.fileMime.includes("image") ? IMAGE : FILE,
           emplNo: emp.emplNo
         });
 
@@ -293,7 +294,12 @@ function buildChatMessage(dom, {message}) {
                 `<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary" style="width: fit-content">${message.mssageCn}</p>`
                 : message.type === FILE ?
                   `<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary" style="width: fit-content">
-                     <a class="text-white" href="/download?fileName=${message.mssageCn}">${message.mssageCn}</a>  
+                      <span>${message.mssageCn}</span>
+                      <a class="float-end mt-2 text-white p-1 rounded d-flex align-items-center justify-content-center" href="/download?fileName=${message.mssageCn}" style="background: rgba(255, 255, 255, 0.2); transition: background 0.2s; width: 32px; height: 32px;">
+                        <span class="material-symbols-outlined" style="font-size: 1.2rem;">
+                          download
+                        </span>
+                      </a>  
                    </p>`
                 : `<img src="/upload/${message.mssageCn}" class="me-3 mb-1 rounded float-start w-50" alt"프로필 이미지" onerror="this.src='/assets/images/image-error.png'" >`}
               <p class="small me-3 mb-3 rounded-3 text-muted" style="font-size: 0.5rem">${formatDate(new Date(message.mssageCreatDt))}</p>
@@ -315,7 +321,12 @@ function buildChatMessage(dom, {message}) {
                 `<p class="small p-2 ms-3 mb-1 rounded-3 bg-body-secondary">${message.mssageCn}</p>`
               : message.type === FILE ?
                 `<p class="small p-2 ms-3 mb-1 rounded-3 bg-body-secondary">
-                    <a class="text-white" href="/download?fileName=${message.mssageCn}">${message.mssageCn}</a>
+                    <span>${message.mssageCn}</span>
+                      <a class="float-left mt-2 text-black p-1 rounded d-flex align-items-center justify-content-center" href="/download?fileName=${message.mssageCn}" style="background: rgba(0, 0, 0, 0.2); transition: background 0.2s; width: 32px; height: 32px;">
+                        <span class="material-symbols-outlined" style="font-size: 1.2rem;">
+                          download
+                        </span>
+                      </a>  
                  </p>`
               : `<img src="/upload/${message.mssageCn}" class="ms-3 mb-1 rounded float-start w-50" alt="프로필 이미지" onerror="this.src='/assets/images/image-error.png'">`}
               <p class="small ms-3 mb-3 rounded-3 text-muted float-end" style="font-size: 0.5rem">${formatDate(new Date(message.mssageCreatDt))}</p>
