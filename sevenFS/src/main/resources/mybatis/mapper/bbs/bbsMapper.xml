@@ -3,14 +3,7 @@
 <mapper namespace="kr.or.ddit.sevenfs.mapper.bbs.BbsMapper">
 
     <select id="bbsList" parameterType="kr.or.ddit.sevenfs.utils.ArticlePage" resultMap="BbsResultMap">
-	    WITH FILES AS (
-	        SELECT 
-	            ATCH_FILE_NO, 
-	            LISTAGG(FILE_NM, ', ') WITHIN GROUP (ORDER BY FILE_SN) AS FILE_NAMES
-	        FROM ATTATCH_FILE
-	        GROUP BY ATCH_FILE_NO
-	    )
-	    SELECT 
+	    SELECT
 	        B.BBS_SN,
 	        B.BBS_CTGRY_NO,
 	        B.EMPL_NO,
@@ -22,9 +15,8 @@
 	        B.BBSCTT_USE_YN,
 	        B.UPEND_FIXING_YN,
 	        B.ATCH_FILE_NO,
-	        F.FILE_NAMES
-	    FROM BBS B
-	    LEFT JOIN FILES F ON B.ATCH_FILE_NO = F.ATCH_FILE_NO
+		(SELECT COUNT(1) FROM ATTATCH_FILE F WHERE B.ATCH_FILE_NO = F.ATCH_FILE_NO) AS ATCH_CNT
+		FROM BBS B
 	
 	    <where>
 	        B.BBSCTT_USE_YN = 'Y'
@@ -36,9 +28,9 @@
 	        </if>
 	
 	        <!-- 카테고리 필터링 -->
-	        <!-- <if test="articlePage.searchVo.bbsCtgryNo != null">
+	        <if test="articlePage.searchVo.bbsCtgryNo != null and articlePage.searchVo.bbsCtgryNo != 0">
 	            AND B.BBS_CTGRY_NO = #{articlePage.searchVo.bbsCtgryNo}
-	        </if> -->
+	        </if>
 	
 	        <!-- 작성자 필터링 -->
 	        <if test="articlePage.searchVo.emplNo != null and articlePage.searchVo.emplNo != ''">
@@ -89,7 +81,7 @@
     <!-- 첨부 파일 조회를 위한 쿼리 -->
     <select id="selectAttachFiles" resultType="kr.or.ddit.sevenfs.vo.AttachFileVO">
         SELECT 
-            ATCH_FILE_NO,
+            ATCH_FILE_NO,       
             FILE_SN,
             FILE_STRE_PATH,
             FILE_NM,

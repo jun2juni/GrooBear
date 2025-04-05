@@ -69,10 +69,11 @@ table.table-hover.align-middle.text-center tbody tr td {
           <nav class="navbar navbar-light">
             <div class="container-fluid" style="padding-left:0px;">
               <form action="/bbs/bbsList" method="get" class="d-flex">
+              	<input type="hidden" name="bbsCtgryNo" value="1">
                 <!-- 카테고리 선택 드롭다운 -->
                 <select name="category" class="form-select me-2">
-                  <option value="title" ${selectedCategory == 'title' ? 'selected' : ''}>제목</option>
-                  <option value="content" ${selectedCategory == 'content' ? 'selected' : ''}>내용</option>
+                  <option value="bbscttSj" ${selectedCategory == 'bbscttSj' ? 'selected' : ''}>제목</option>
+                  <option value="bbscttCn" ${selectedCategory == 'bbscttCn' ? 'selected' : ''}>내용</option>
                   <option value="emplNo" ${selectedCategory == 'emplNo' ? 'selected' : ''}>작성자</option>
                 </select>
                 
