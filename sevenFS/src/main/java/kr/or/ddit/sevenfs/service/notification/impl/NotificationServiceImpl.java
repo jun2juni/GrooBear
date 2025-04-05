@@ -55,6 +55,7 @@ public class NotificationServiceImpl implements NotificationService {
         return notificationMapper.updateNotificationAllRead(emplNo);
     }
 
+
     @Override
     public List<NotificationVO> getUnreadNotifications(EmployeeVO employeeVO) {
         return  notificationMapper.getUnreadNotifications(employeeVO);

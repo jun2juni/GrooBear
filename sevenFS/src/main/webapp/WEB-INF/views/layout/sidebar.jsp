@@ -13,7 +13,7 @@
 <!-- ======== sidebar-nav start =========== -->
 <aside class="sidebar-nav-wrapper">
   <div class="navbar-logo">
-    <a href="index.html">
+    <a href="/">
       <img src="/assets/images/logo/logo.svg" alt="logo" />
     </a>
   </div>
