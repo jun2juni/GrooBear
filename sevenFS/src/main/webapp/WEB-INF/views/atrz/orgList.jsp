@@ -18,7 +18,7 @@
     </div>
     
     <div class="d-flex justify-content-between">
-        <button id="allBtn" class="main-btn dark-btn rounded-full btn-hover btn-xs"
+        <button type="button" id="allBtn" class="main-btn dark-btn rounded-full btn-hover btn-xs"
          onclick="openTree();">전체</button>
         
         <c:if test="${fn:contains(pageContext.request.requestURL, 'orglistAdmin')}" >

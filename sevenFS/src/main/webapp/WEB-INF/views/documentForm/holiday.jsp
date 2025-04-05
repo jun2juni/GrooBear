@@ -2,8 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ taglib prefix="sec"
-	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
 <c:set var="title" scope="application" value="메인" />
 
@@ -38,6 +37,243 @@
 	width: 100px;
 	text-align: center;
 }
+/* sweetalert스타일 */
+/*모달창  */
+.swal-modal {
+	background-color: white;
+	border: 3px solid white;
+}
+/*ok버튼  */
+.swal-button--danger {
+	background-color: #0583F2;
+	color: white;
+}
+/*cancel버튼  */
+.swal-button--cancel {
+	background-color: red;
+	color: white;
+}
+/*ok버튼  */
+.swal-button--confirm {
+	background-color: #0583F2;
+	color: white;
+}
+/*아이콘 테두리  */
+.swal-icon--info {
+	border-color: #0583F2;
+}
+/*아이콘 i 윗부분  */
+.swal-icon--info:after {
+	background-color: #0583F2;
+}
+/*아이콘 i 아랫부분  */
+.swal-icon--info:before {
+	background-color: #0583F2;
+}
+/*타이틀  */
+.swal-title {
+	font-size: 20px;
+	color: black;
+}
+/*텍스트  */
+.swal-text {
+	color: black;
+}
+/* datepicker css */
+.ui-widget-header {
+	border: 0px solid #dddddd;
+	background: #fff;
+}
+
+.ui-datepicker-calendar>thead>tr>th {
+	font-size: 14px !important;
+}
+
+.ui-datepicker .ui-datepicker-header {
+	position: relative;
+	padding: 10px 0;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover,
+	html .ui-button.ui-state-disabled:active {
+	border: 0px solid #c5c5c5;
+	background-color: transparent;
+	font-weight: normal;
+	color: #454545;
+	text-align: center;
+}
+
+.ui-datepicker .ui-datepicker-title {
+	margin: 0 0em;
+	line-height: 16px;
+	text-align: center;
+	font-size: 14px;
+	padding: 0px;
+	font-weight: bold;
+}
+
+.ui-datepicker {
+	display: none;
+	background-color: #fff;
+	border-radius: 4px;
+	margin-top: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding: 20px;
+	padding-bottom: 10px;
+	width: 300px;
+	box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.ui-widget.ui-widget-content {
+	border: 1px solid #eee;
+}
+
+#datepicker:focus>.ui-datepicker {
+	display: block;
+}
+
+.ui-datepicker-prev, .ui-datepicker-next {
+	cursor: pointer;
+}
+
+.ui-datepicker-next {
+	float: right;
+}
+
+.ui-state-disabled {
+	cursor: auto;
+	color: hsla(0, 0%, 80%, 1);
+}
+
+.ui-datepicker-title {
+	text-align: center;
+	padding: 10px;
+	font-weight: 100;
+	font-size: 20px;
+}
+
+.ui-datepicker-calendar {
+	width: 100%;
+}
+
+.ui-datepicker-calendar>thead>tr>th {
+	padding: 5px;
+	font-size: 20px;
+	font-weight: 400;
+}
+
+.ui-datepicker-calendar>tbody>tr>td>a {
+	color: #000;
+	font-size: 12px !important;
+	font-weight: bold !important;
+	text-decoration: none;
+}
+
+.ui-datepicker-calendar>tbody>tr>.ui-state-disabled:hover {
+	cursor: auto;
+	background-color: #fff;
+}
+
+.ui-datepicker-calendar>tbody>tr>td {
+	border-radius: 100%;
+	width: 44px;
+	height: 30px;
+	cursor: pointer;
+	padding: 5px;
+	font-weight: 100;
+	text-align: center;
+	font-size: 12px;
+}
+
+.ui-datepicker-calendar>tbody>tr>td:hover {
+	background-color: transparent;
+	opacity: 0.6;
+}
+
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover,
+	.ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus,
+	.ui-button:hover, .ui-button:focus {
+	border: 0px solid #cccccc;
+	background-color: transparent;
+	font-weight: normal;
+	color: #2b2b2b;
+}
+
+.ui-widget-header .ui-icon {
+	background-image: url('https://media.discordapp.net/attachments/692994434526085184/995979886768439306/btns.png');
+}
+
+.ui-icon-circle-triangle-e {
+	background-position: -20px 0px;
+	background-size: 36px;
+}
+
+.ui-icon-circle-triangle-w {
+	background-position: -0px -0px;
+	background-size: 36px;
+}
+
+.ui-datepicker-calendar>tbody>tr>td:first-child a {
+	color: red !important;
+}
+
+.ui-datepicker-calendar>tbody>tr>td:last-child a {
+	color: #0099ff !important;
+}
+
+.ui-datepicker-calendar>thead>tr>th:first-child {
+	color: red !important;
+}
+
+.ui-datepicker-calendar>thead>tr>th:last-child {
+	color: #0099ff !important;
+}
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight,
+	.ui-widget-header .ui-state-highlight {
+	border: 0px;
+	background: #f1f1f1;
+	border-radius: 50%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.inp {
+	padding: 10px 10px;
+	background-color: #f1f1f1;
+	border-radius: 4px;
+	border: 0px;
+}
+
+.inp:focus {
+	outline: none;
+	background-color: #eee;
+}
+
+select.ui-datepicker-month {
+	border-radius: 5px;
+	padding: 5px;
+	width: 80px !important;
+}
+
+select.ui-datepicker-year {
+	border-radius: 5px;
+	padding: 5px;
+	margin-left: 10px !important;
+	width: 80px !important;
+}
+
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+	top: 9px !important;
+}
+/* 달력이전다음버튼 변경하는 클래스 */
+/* .ui-icon ui-icon-circle-triangle-e{ */
+	
+/* } */
+
+
 
 </style>
 <title>${title}</title>
@@ -50,21 +286,22 @@
 	<main class="main-wrapper">
 		<%@ include file="../layout/header.jsp"%>
 		<section class="section">
+		<form id="atrz_ho_form" action="/atrz/appLineList" method="post" enctype="multipart/form-data">
 			<div class="container-fluid">
 				<!-- 여기서 작업 시작 -->
 				<div class="row">
-					<div class="col-sm-10 mb-3 mb-sm-0">
+					<div class="col-sm-12 mb-3 mb-sm-0">
 						<!-- 결재요청 | 임시저장 | 결재선지정 | 취소  -->
 						<div class="col card-body" id="approvalBtn">
 							<!-- 새로운 버튼 -->
 							<div class="tool_bar">
 								<div class="critical d-flex gap-2 mb-3">
 									<!--성진스 버튼-->
-									<button id="s_eap_app" type="submit"
+									<button id="s_eap_app_top" type="button" 
 										class="btn btn-outline-primary d-flex align-items-center gap-1">
 										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
 									</button>
-									 <a id="s_eap_stor" type="button"
+									<a id="s_eap_stor" type="button"
 										class="btn btn-outline-success d-flex align-items-center gap-1"
 										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
 										class="material-symbols-outlined fs-5">error</span> 임시저장
@@ -100,7 +337,6 @@
 						</div>
 						<!-- 모달창 인포트 -->
 						<c:import url="../documentForm/approvalLineModal.jsp" />
-						<form id="atrz_ho_form" action="/atrz/appLineList" method="post"></form>
 							<div class="card">
 								<div class="card-body">
 									<!-- 여기다가 작성해주세요(준희) -->
@@ -115,7 +351,8 @@
 											<div style="float: left; width: 230px; margin: 0 30px;">
 												<table border="1" id="s_eap_draft_info">
 													<tr>
-	<%-- 													<p>${empVO}</p> --%>
+														<!-- 기안자 정보가져오기 -->
+<%-- 													<p>${empVO}</p>  --%>
 														<th>기안자</th>
 														<td>${empVO.emplNm}</td>
 													</tr>
@@ -147,7 +384,7 @@
 											</div>
 
 
-											<div style="float: left; width: 200px; margin-right: 5px;"
+											<div style="float: left; width: 800px; margin-right: 5px;"
 												id=s_eap_draft_app>
 												
 												</div>
@@ -158,7 +395,7 @@
 													:</div>
 												<input type="text" class="form-control"
 													style="display: inline-block; width: 90%; margin-left: 5px;"
-													id="s_ho_tt" required="required">
+													id="s_ho_tt" name="atrzSj" required="required">
 											</div>
 
 											<div style="border: 1px solid lightgray; margin: 10px;"></div>
@@ -168,25 +405,25 @@
 													<div class="s_frm_title">1. 종류</div>
 													<div class="form-check" style="display: inline-block;">
 														<input class="form-check-input" type="radio"
-															name="flexRadioDefault" id="flexRadioDefault1" checked
+															name="holiCode" id="flexRadioDefault1" checked
 															value="A"> <label class="form-check-label"
 															for="flexRadioDefault1"> 연차 </label>
 													</div>
 													<div class="form-check" style="display: inline-block;">
 														<input class="form-check-input" type="radio"
-															name="flexRadioDefault" id="flexRadioDefault2" value="H">
+															name="holiCode" id="flexRadioDefault2" value="B">
 														<label class="form-check-label" for="flexRadioDefault2">
 															반차 </label>
 													</div>
 													<div class="form-check" style="display: inline-block;">
 														<input class="form-check-input" type="radio"
-															name="flexRadioDefault" id="flexRadioDefault3" value="B">
+															name="holiCode" id="flexRadioDefault3" value="C">
 														<label class="form-check-label" for="flexRadioDefault3">
 															병가 </label>
 													</div>
 													<div class="form-check" style="display: inline-block;">
 														<input class="form-check-input" type="radio"
-															name="flexRadioDefault" id="flexRadioDefault4" value="C">
+															name="holiCode" id="flexRadioDefault4" value="D">
 														<label class="form-check-label" for="flexRadioDefault4">
 															공가 </label>
 													</div>
@@ -195,7 +432,7 @@
 												<div style="padding: 10px 0;">
 													<div class="s_frm_title">2. 내용</div>
 													<textarea class="form-control s_scroll"
-														style="resize: none; height: 150px;" id="s_ho_co"
+														style="resize: none; height: 150px;" id="s_ho_co" name="atrzCn" 
 														required="required" rows="2" cols="20" wrap="hard"></textarea>
 												</div>
 
@@ -208,21 +445,21 @@
 														<input type="text" placeholder="신청 시작 기간을 선택해주세요"
 															class="form-control s_ho_start"
 															style="width: 250px; display: inline-block; cursor: context-menu;"
-															id="s_ho_start" required="required" onchange="dateCnt();">
+															id="s_ho_start" required="required" onchange="dateCnt();" name="holiStartArr">
 														<input type="time" class="form-control"
 															style="width: 150px; display: inline-block;"
-															id="s_start_time" min="09:00:00" max="22:00:00"
-															required="required" onchange="dateCnt();"> 부터
+															id="s_start_time" min="09:00:00" max="18:00:00"
+															required="required" onchange="dateCnt();" name="holiStartArr"> 부터
 													</div>
 													<div>
 														<input type="text" placeholder="신청 종료 기간을 선택해주세요"
 															class="form-control s_ho_end"
 															style="width: 250px; display: inline-block; cursor: context-menu; margin-top: 10px;"
-															id="s_ho_end" required="required" onchange="dateCnt();">
+															id="s_ho_end" required="required" onchange="dateCnt();" name="holiEndArr" />
 														<input type="time" class="form-control"
 															style="width: 150px; display: inline-block;"
-															id="s_end_time" min="09:00:00" max="22:00:00"
-															required="required" onchange="dateCnt();"> 까지
+															id="s_end_time" min="09:00:00" max="18:00:00"
+															required="required" onchange="dateCnt();" name="holiEndArr" /> 까지
 														<div style="display: inline-block;">
 															(총 <span id="s_date_cal">0</span>일)
 														</div>
@@ -230,15 +467,9 @@
 												</div>
 
 												<div style="padding: 10px 0;">
-													<div class="s_frm_title">4. 기타</div>
-													<div>문의사항은 BAB ${eap.emp_name }(${eap.emp_phone })에게
-														연락바랍니다. 끝.</div>
-												</div>
-
-												<div style="padding: 10px 0;">
 													<div class="s_frm_title">파일첨부</div>
 													<div id="s_file_upload">
-														<input type="file" id="eap_file_path" />
+														<input type="file" name="uploadFile" id="eap_file_path" multiple />
 													</div>
 													<input type="hidden" name="fileUrl" id="fileUrl">
 												</div>
@@ -249,7 +480,6 @@
 									</div>
 									
 									<!-- 전자결재 양식 수정도 가능 끝 -->
-
 									<!-- 기능 끝 -->
 									<!-- 여기다가 작성해주세요(준희) -->
 								</div>
@@ -258,7 +488,7 @@
 							<div class="tool_bar">
 								<div class="critical d-flex gap-2 mt-3">
 									<!--성진스 버튼-->
-									<button id="s_eap_app" type="submit"
+									<button id="s_eap_app_bottom" type="button" 
 										class="btn btn-outline-primary d-flex align-items-center gap-1">
 										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
 									</button>
@@ -276,22 +506,6 @@
 										href="/atrz/home"> <span
 										class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
-									<!-- 										<a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="/atrz/approval"> -->
-									<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
-									<!-- 											목록으로</a> -->
-
-									<!-- 										<a id="act_draft_withdrawal" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-									<!-- 											<span class="material-symbols-outlined fs-5">cancel</span>  -->
-									<!-- 											<span class="txt">상신취소</span> -->
-									<!-- 										</a> -->
-									<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-									<!-- 											<span class="material-symbols-outlined fs-5">error</span>  -->
-									<!-- 											<span class="txt">결재선 정보</span> -->
-									<!-- 										</a> -->
-									<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-									<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
-									<!-- 											<span class="txt">목록</span> -->
-									<!-- 										</a> -->
 								</div>
 							</div>
 						<!-- 상하 버튼 추가 -->
@@ -300,6 +514,7 @@
 				</div>
 				<!-- 여기서 작업 끝 -->
 			</div>
+		</form>
 		</section>
 		<%@ include file="../layout/footer.jsp"%>
 	</main>
@@ -373,49 +588,6 @@ $("#s_eap_app").click(function() {
 			});
 		return;
 	}
-
-	// ajax에 보낼 obj
-	var dataObj = {
-		"df_no" : $("#s_dfNo").text(),
-		"eap_title" : eap_title,
-		"eap_content" : eap_content,
-		"ho_code" : ho_code,
-		"ho_start" : ho_start,
-		"ho_end" : ho_end,
-		"ho_use_count" : ho_use_count,
-		"eap_file_path": $("#fileUrl").val()
-	}
-
-	$.ajax({
-		url: "<%=request.getContextPath()%>/eap/inserteap"
-		, type: "post"
-		, data: dataObj
-		, success: function(result) {
-			if(result.includes('다시')) {
-				swal({
-                    title: "",
-                    text: result,
-                    icon: "error",
-                    closeOnClickOutside: false,
-                    closeOnEsc: false
-                })
-			.then((ok) => {
-				$("#menu_eap").get(0).click();
-				})
-			} else {
-				swal({
-                    title: "",
-                    text: result,
-                    icon: "success",
-                    closeOnClickOutside: false,
-                    closeOnEsc: false
-                })
-			.then((ok) => {
-				$("#menu_eap").get(0).click();
-				})
-			}
-		}
-	})
 });
 // <!-- 결재선지정하는 관련 스크립트 끝 -->
 
@@ -478,7 +650,114 @@ function dateCnt() {
 </script>
 
 <script>
+//JSON Object List
+let authList = [];
+
 $(document).ready(function() {
+	//******* 폼 전송 *******
+	$("#s_eap_app_bottom").on("click",function(){
+		event.preventDefault();
+// 		alert("체킁");
+		console.log("전송하기 체킁 확인");
+		console.log("s_eap_app_bottom->authList : ", authList);
+		
+		let jnForm = document.querySelector("#atrz_ho_form");
+		// console.log("${empVO}" + empVO);
+		
+		
+	
+
+		
+		let formData = new FormData();
+		formData.append("atrzSj",jnForm.atrzSj.value);
+		formData.append("atrzCn",jnForm.atrzCn.value);
+		if(jnForm.uploadFile.files.length){
+			for(let i=0; i< jnForm.uploadFile.files.length; i++)
+			formData.append("uploadFile",jnForm.uploadFile.files[i]);
+		}
+	
+		/* 값 체킁
+		for(let [name,value] of formData.entries()){
+			console.log("주니체킁:",name,value);
+		}
+		*/
+		
+		let atrzLineList = [];
+		for(let i=0; i< authList.length; i++){
+			let auth = authList[i];
+			let atrzLine = {
+				atrzLnSn: auth.atrzLnSn ,
+				sanctnerEmpno: auth.emplNo,
+			    atrzTy: auth.flex,
+			    dcrbAuthorYn: auth.auth
+			}
+			atrzLineList.push(atrzLine);			
+		}
+		console.log("atrzLineList",atrzLineList);
+
+			
+		let docHoliday = {
+				holiStartArr:[jnForm.holiStartArr[0].value,jnForm.holiStartArr[1].value],   
+				holiEndArr:[jnForm.holiEndArr[0].value,jnForm.holiEndArr[1].value],
+				holiCode:jnForm.holiCode.value
+
+		}
+		console.log("docHoliday",docHoliday);
+		
+		// 가끔 VO가 depth가 깊어 복잡할 땡!, 파일과 별개로
+		// BACKEND에서 @RequestPart("test")로 받아 버리장
+		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
+		formData.append("docHoliday",new Blob([JSON.stringify(docHoliday)],{type:"application/json"}));
+		
+		formData.append("emplNo",secEmplNo);
+		formData.append("emplNm",secEmplNm);
+		
+		const junyError = (request, status, error) => {
+       				 console.log("code: " + request.status)
+        			 console.log("message: " + request.responseText)
+        			 console.log("error: " + error);
+            }
+
+		$.ajax({
+			url:"/atrz/atrzInsert",
+			processData:false,
+			contentType:false,
+			type:"post",
+			data: formData,
+			dataType:"text",
+			success : function(result){
+				console.log("체킁:",result);
+				if(result=="쭈니성공"){
+					//location.href = "컨트롤러주소";  //  .href 브라우져 성능 향상을 위해서 캐쉬가 적용 될 수도 있고, 안 될 수도 있어
+					location.replace("/atrz/home")
+				}
+			},
+			error: junyError
+		})
+		
+		//<form
+		//여기서 for문을돌려서 하나씩 담아줘야한다.
+		/*
+		let str ="";
+		$.each(authList, function(i,emp){
+			str +=`
+				<input type="hidden" name="documHolidayVO.atrzLineVOList[${i}].atrzLnSn" value="\${emp.atrzLnSn}" /><br>
+				<input type="hidden" name="documHolidayVO.atrzLineVOList[${i}].sanctnerEmpno" value="\${emp.auth}" /><br>
+				<input type="hidden" name="documHolidayVO.atrzLineVOList[${i}].atrzTy" value="\${emp.emplNo}" /><br>
+				<input type="hidden" name="documHolidayVO.atrzLineVOList[${i}].dcrbAuthorYn" value="\${emp.flex}" /><br>
+			`;
+		})
+		
+		// console.log("str : "+str);
+		$("#atrz_ho_form").append(str);
+		*/
+		
+		
+		//폼제출
+		//$("#atrz_ho_form").submit();	
+
+	});
+	
 	//버튼눌렀을때 작동되게 하기 위해서 변수에 담아준다.
 	let emplNo = null;  //선택된 사원 번호 저장
 	//숫자만 있는경우에는 
@@ -486,21 +765,21 @@ $(document).ready(function() {
 	//jsp에서 선언한 변수와 jsp에서 사용했던것은 자바에서 사용하지 못하도록 역슬래시(이스케이프문자)를 사용해서 달러중괄호 를 모두 그대로담아가게 한다.
 	//그리고 순서는 자바언어 -> jsp 이렇게 순서로 진행된다. 
 	//숫자만 있는경우에는 작은따옴표 사이에 넣지 않아도되지만, 만약의 사태를 대비해서 그냥 작은 따옴표로 묶어서 사용하도록!!
-	<%--
+	/*
 	jsp주석은 이것이다.	
 	아니면 역슬레시를 사용해서 jsp언어라는것을 말해줘야한다.
-	--%>
+	*/
 	
 // 	let secEMPL = '\${customUser.userName}';
 
- 	let secEmplNo = '${empVO.emplNo}';
- 	let secEmplNm = '${empVO.emplNm}';
+	let secEmplNo = '${empVO.emplNo}';
+	let secEmplNm = '${empVO.emplNm}';
 
 	console.log("secEmplNo번호 : ",secEmplNo);
 	console.log("secEmplNm이름 : ",secEmplNm);
 	
 // 	여기 중호쌤이랑 같이했던거 해보기
-	 $(document).on("click",".jstree-anchor",function(){
+	$(document).on("click",".jstree-anchor",function(){
 		let idStr = $(this).prop("id");//20250008_anchor
 // 		console.log("개똥이->idStr : ",idStr);
 		emplNo = idStr.split("_")[0];//20250008
@@ -643,21 +922,30 @@ $(document).ready(function() {
 			console.log("appLineArr : ",appLineArr);
 			//위의 코드까지는 찍힘
 			
-			//2) 
+			//2) 결재자 번호 입력
 			formData.append("emplNoArr",sTdNo);
 		}
 		var obj = {"emplNo" : appLineArr};
 		
-		//JSON Object List
-		let authList = [];
+		
 		//JSON Object
 		let data = {};
 		//II. 권한 정보(.selAuth)
 		$(".selAuth").each(function(idx,auth){
+			//전결여부 기본 N
+			let dcrbAuthorYn = "N";
+			
+			if($(this).parent().next().children().eq(0).is(":checked")){//true
+				dcrbAuthorYn = "Y";
+			}else{
+				dcrbAuthorYn = "N";
+			}
+			
 			data = {
 				"emplNo":$(this).parent().parent().children("th").eq(1).html(),
 				"auth":$(this).val(),
-				"flex":$(this).parent().next().children().eq(0).is(":checked")
+				"flex":dcrbAuthorYn,
+				"atrzLnSn":(idx+1)
 			};
 			
 			authList.push(data);
@@ -678,7 +966,7 @@ $(document).ready(function() {
 		    }
 		]
 		*/
-		console.log("authList : ", authList);
+		console.log("순번권한전결여부authList : ", authList);
 		
 // 		let flexList = [];
 		
@@ -699,7 +987,10 @@ $(document).ready(function() {
 		["20250008","20250010"]
 		*/
 		console.log("obj.emplNo : ",obj.emplNo);
+		//이게 굳이 필요있나 싶음
 		//결재선 리스트에 있는 사원번호를 가져와 결재선 jsp에 이름 부서 직책 찍기
+
+//asnyc를 써서 
 		$.ajax({
 			url:"/atrz/appLineList",
 			processData:false,
@@ -708,111 +999,73 @@ $(document).ready(function() {
 			data: formData,
 			dataType:"json",
 			success : function(result){
-// 				$(".btn-close").trigger('click');
-				//결과까지는 찍힘.... 이제 이것을 다시 번호를 통해서 다시 이름이랑 직책을 찍어줘야함
-				console.log("result : ",result);
-				//여기서 배열로 담긴 애들을 하나씩 꺼내서 결재선  목록으로 출력해서 입력해야한다.
-				
-// 				$("#s_eap_draft_app").append(obj);
-				
-			
-				let tableHtml = `
-					<table border="1" class="s_eap_draft_app">
-						<tbody>
-				`;
-				
-				/*authList : 
-				[
-				    {
-				        "emplNo": "20250008",
-				        "auth": "0",
-				        "flex": true
-				    },
-				    {
-				        "emplNo": "20250010",
-				        "auth": "1",
-				        "flex": false
-				    }
-				]
-				*/
-				//result : List<EmployeeVO> emplDetailList
-				//employeeVO.clsfCodeNm
-				//employeeVO.emplNm
-				//가. 결재파트 시작//////////////////////
-				tableHtml+= `<tr><th rowspan="3">결재</th>`;
-				
-				// 결재 직급 정보
-				$.each(result,function(i,employeeVO){
-					$("#atrz_ho_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
-					tableHtml+= `<td>\${employeeVO.clsfCodeNm}</td>`;
-				});	
-				
-				tableHtml+= `</tr><tr>`;
-				// 결제 사원 이름
-				$.each(result,function(i,employeeVO){
-					tableHtml+= `<td>\${employeeVO.emplNm}</td>`;
-				});
-				
-				tableHtml+= `</tr><tr>`;
-				// 결재 도장
-				$.each(result,function(i,employeeVO){
-					tableHtml+= `<td>이미지</td>`;
-				});
-				
-				tableHtml+= `</tr>`;
-				
-//                     <input type="text" value="\${employeeVO.emplNo}"/>
-//                         <input type="text" value="\${employeeVO.deptCodeNm}"/>
-				tableHtml += `</tbody></table>`;	
-				
-				console.log("tableHtml : ", tableHtml);
-				
-				 // holiday.jsp의 특정 영역에 추가
-                $("#s_eap_draft_app").html(tableHtml);
-              	//가. 결재파트 끝//////////////////////
-              	
-              	//나. 참조파트 시작//////////////////////
-					tableHtml+= `<tr><th rowspan="3">참조</th>`;
-				$.each(result,function(i,employeeVO){
-					// 참조 사원 no
-					$("#atrz_ho_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
-					
-					tableHtml+= `<td>\${employeeVO.clsfCodeNm}</td>`;
-				});	
-				
-				tableHtml+= `</tr><tr>`;
-				
-				$.each(result,function(i,employeeVO){
-					tableHtml+= `<td>\${employeeVO.emplNm}</td>`;
-				});
-				
-				tableHtml+= `</tr><tr>`;
-				
-				$.each(result,function(i,employeeVO){
-					tableHtml+= `<td>이미지</td>`;
-				});
-				
-				tableHtml+= `</tr>`;
-				
-//                     <input type="text" value="\${employeeVO.emplNo}"/>
-//                         <input type="text" value="\${employeeVO.deptCodeNm}"/>
-				tableHtml += `</tbody></table>`;	
-				
-				console.log("tableHtml : ", tableHtml);
-				
-				 // holiday.jsp의 특정 영역에 추가
-                //$("#s_eap_draft_app").html(tableHtml);
-              	//나. 참조파트 끝//////////////////////
+		$(".btn-close").trigger('click');
+		console.log("result : ", result);
+
+		let tableHtml = `<table border="1" class="s_eap_draft_app"><tbody>`;
+
+		// authList를 기반으로 분리
+		const approvalList = [];
+		const referenceList = [];
+
+		$.each(authList, function(i, authItem) {
+			const matched = result.find(emp => emp.emplNo === authItem.emplNo);
+			if (matched) {
+				matched.flex = authItem.flex; // flex 정보도 보존
+				if (authItem.auth === "0") {
+					approvalList.push(matched);
+				} else if (authItem.auth === "1") {
+					referenceList.push(matched);
+				}
 			}
 		});
 
+		// 가. 결재파트 시작
+		if (approvalList.length > 0) {
+			tableHtml += `<tr><th rowspan="3">결재</th>`;
+			$.each(approvalList, function(i, employeeVO){
+				$("#atrz_ho_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
+				tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
+			});
 
+			tableHtml += `</tr><tr>`;
+			$.each(approvalList, function(i, employeeVO){
+				tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
+			});
 
+			tableHtml += `</tr><tr>`;
+			$.each(approvalList, function(i, employeeVO){
+				tableHtml += `<td><img
+					src="/assets/images/atrz/beforGR.png"
+					style="width: 50px;"></td>`;
+			});
 
+			tableHtml += `</tr>`;
+		}
 
-		//여기서 결재선에 담긴 애들을 다 하나씩 담아서 post로
-	})
+		// 나. 참조파트 시작
+		if (referenceList.length > 0) {
+			tableHtml += `<tr><th rowspan="2">참조</th>`;
+			$.each(referenceList, function(i, employeeVO){
+				$("#atrz_ho_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
+				tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
+			});
 
+			tableHtml += `</tr><tr>`;
+			$.each(referenceList, function(i, employeeVO){
+				tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
+			});
+
+			tableHtml += `</tr>`;
+		}
+
+		tableHtml += `</tbody></table>`;
+
+		$("#s_eap_draft_app").html(tableHtml);
+		}
+	});//ajax
+	//여기서 결재선에 담긴 애들을 다 하나씩 담아서 post로
+})
 
 
 	// datepicker위젯
@@ -823,15 +1076,15 @@ $(document).ready(function() {
 			controlType: 'select',
 			timeFormat: 'HH:mm',
 			dateFormat: 'yy-mm-dd',
-			yearRange: '1930:2024',
-              minDate: 0, // 오늘 날짜 이전 선택 불가
+			yearRange: '1930:2025',
+            minDate: 0, // 오늘 날짜 이전 선택 불가
 			dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
 			dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
 			monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
 			monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
 			beforeShowDay: disableAllTheseDays2,
 			onSelect: function(dateText, inst) {
-				
+			
 			var date1 = new Date($("#s_ho_end").val()).getTime();
 			var date2 = new Date(dateText).getTime();
 			
@@ -858,48 +1111,48 @@ $(document).ready(function() {
 	$("#s_ho_end").datepicker({
 		timepicker: true,
 		changeMonth: true,
-              changeYear: true,
-              controlType: 'select',
-              timeFormat: 'HH:mm',
-              dateFormat: 'yy-mm-dd',
-              yearRange: '1930:2024',
-              minDate: 0, // 오늘 날짜 이전 선택 불가
-              dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
-              dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
-              monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-              monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-              beforeShowDay: disableAllTheseDays2,
-              onSelect: function(dateText, inst) {
-              	var date1 = new Date($("#s_ho_start").val()).getTime();
-              	var date2 = new Date(dateText).getTime();
-              	
+			changeYear: true,
+			controlType: 'select',
+			timeFormat: 'HH:mm',
+			dateFormat: 'yy-mm-dd',
+			yearRange: '1930:2025',
+			minDate: 0, // 오늘 날짜 이전 선택 불가
+			dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
+			dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+			monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+			monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+			beforeShowDay: disableAllTheseDays2,
+			onSelect: function(dateText, inst) {
+					var date1 = new Date($("#s_ho_start").val()).getTime();
+					var date2 = new Date(dateText).getTime();
+            
               	// 시작 날짜와 끝나는 날짜 비교하여 시작하는 날짜보다 끝나는 날짜가 앞이면 경고창으로 안내
-              	if(date1 > date2 == true) {
-              		swal({
-  	                    title: "신청 종료 기간을 다시 선택해주세요.",
-  	                    text: "",
-  	                    icon: "error",
-  	                    closeOnClickOutside: false,
-  	                    closeOnEsc: false
-  	                });
-      				$("#s_ho_end").val("");
-      			}
-              	dateCnt();
-              },
-              beforeShow: function() {
-                  setTimeout(function(){
-                      $('.ui-datepicker').css('z-index', 99999999999999);
-                  }, 0);
-              }
+			if(date1 > date2 == true) {
+				swal({
+					title: "신청 종료 기간을 다시 선택해주세요.",
+					text: "",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
+				$("#s_ho_end").val("");
+			}
+			dateCnt();
+			},
+			beforeShow: function() {
+				setTimeout(function(){
+					$('.ui-datepicker').css('z-index', 99999999999999);
+				}, 0);
+			}
 	});
 });
 
-  function disableAllTheseDays2(date) {
-          var day = date.getDay();
-          return [(day != 0 && day != 6)];
+function disableAllTheseDays2(date) {
+		var day = date.getDay();
+		return [(day != 0 && day != 6)];
 	// 0=일, 6=토 => 안나오게 할 것 
-      }
-  </script>
+    }
+</script>
 	<!-- 주니가 입력한 스크립트 끝 -->
 	<p></p>
 	<p>

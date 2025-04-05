@@ -98,11 +98,6 @@
 					<input type="datetime-local" class="form-control" style="width: 250px; display: inline-block; margin-left: 10px;" readonly> 까지
 					<div style="display: inline-block;">(총 0일)</div>
 				</div>
-				
-				<div style="padding: 10px 0;">
-					<div class="s_frm_title">4. 기타</div>
-					<div>문의사항은 길준희(010-1234-5678)에게 연락바랍니다. 끝.</div>
-				</div>
 			</div>
 		</div>
 </body>

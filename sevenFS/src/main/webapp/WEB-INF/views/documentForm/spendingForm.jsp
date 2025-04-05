@@ -103,11 +103,6 @@
 				<!-- <button id="s_add_sp_detail" class="btn btn-success" onclick="addTr()">내역 추가</button> -->
 			</div>
 			
-			<div style="padding: 10px 0;">
-				<div class="s_frm_title">3. 기타</div>
-				<div>문의사항은 BAB 길준희(010-1234-5678)에게 연락바랍니다. 끝.</div>
-			</div>
-			
 		</div>
 	</div>
     <script>

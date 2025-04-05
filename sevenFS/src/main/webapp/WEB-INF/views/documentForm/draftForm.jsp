@@ -27,11 +27,6 @@
                 <div>상세내용</div>
                 <textarea class="form-control s_scroll" style="resize: none; height: 250px;" id="s_dr_co" required></textarea>
             </div>
-
-            <div style="padding: 10px 0;">
-				<div class="s_frm_title">4. 기타</div>
-				<div>문의사항은 길준희(010-1234-5678)에게 연락바랍니다. 끝.</div>
-			</div>
         </div>
     </div>
 </div>

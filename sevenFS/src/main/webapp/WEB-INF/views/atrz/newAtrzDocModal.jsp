@@ -22,6 +22,10 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 				<option id="s_holiday_form" value="s_holiday_form">연차신청서</option>
 				<option id="s_spending_form" value="s_spending_form">지출결의서</option>
 				<option id="s_draft_form" value="s_draft_form">기안서</option>
+				<option id="s_salary_form" value="s_salary_form">급여명세서</option>
+				<option id="s_account_form" value="s_account_form">급여계좌변경 신청서</option>
+				<option id="s_certifi_form" value="s_certifi_form">재직증명서</option>
+				<option id="s_resign_form" value="s_resign_form">퇴사신청서</option>
 				<!-- 			            <option id="s_test_form" value="s_test_form">테스트</option> -->
 			</select>
 			<!-- 여기에 양식 미리보기라고 알려줘야됨 -->
@@ -145,6 +149,4 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 					})//결재양식선택확인btn End
 					
 			})//end 달러function
-
-
 </script>

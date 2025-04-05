@@ -276,6 +276,46 @@
         WHERE A.DRAFTER_EMPNO = B.EMPL_NO
     )
 </select>
+	<insert id="insertAtrz" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+		<selectKey resultType="string" order="BEFORE" keyProperty="atrzDocNo">
+			SELECT CREATE_DOC_NO('H') AS CREATE_DOC_NO FROM DUAL
+		</selectKey>
+
+	INSERT INTO ATRZ
+<!-- 	전자결재번호,기안자사번, 직급, 이름,부서,  -->
+	(ATRZ_DOC_NO, DRAFTER_EMPNO, DRAFTER_CLSF, DRAFTER_EMPNM, DRAFTER_DEPT, 
+	BKMK_YN, ATCH_FILE_NO, ATRZ_SJ, ATRZ_CN, ATRZ_STTUS_CODE, DOC_FORM_NO)
+	VALUES(
+	#{atrzDocNo},#{emplNo},#{clsfCode},#{emplNm},#{deptCode}
+	,'N',null,#{atrzSj},#{atrzCn},'00',1)
+	<!-- 번호 함수로 넣기  -->
+	<!-- 만약에 이게   -->
+	</insert>
+	
+	<insert id="insertAtrzLine" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
+		INSERT INTO ATRZ_LINE 
+			(ATRZ_DOC_NO, ATRZ_LN_SN, SANCTNER_EMPNO, 
+			ATRZ_TY, SANCTN_PROGRS_STTUS_CODE, DCRB_AUTHOR_YN)
+		VALUES
+			(
+			#{atrzDocNo}, #{atrzLnSn}, #{sanctnerEmpno}, 
+			#{atrzTy}, '00', #{dcrbAuthorYn}
+			)	
+	</insert>
+	
+	<insert id="insertHoliday" parameterType="kr.or.ddit.sevenfs.vo.atrz.DocumHolidayVO">
+		<selectKey resultType="int" order="BEFORE" keyProperty="holiActplnNo">
+			SELECT NVL(MAX(HOLI_ACTPLN_NO),0)+1 FROM DOCUM_HOLIDAY
+		</selectKey>
+		INSERT INTO DOCUM_HOLIDAY
+			(HOLI_ACTPLN_NO, ATRZ_DOC_NO, HOLI_CODE
+			, HOLI_START, HOLI_END)
+			VALUES(
+			#{holiActplnNo}, #{atrzDocNo}, #{holiCode}
+			, #{holiStart}
+			, #{holiEnd}
+			)
+	</insert>
 
 	
 </mapper>

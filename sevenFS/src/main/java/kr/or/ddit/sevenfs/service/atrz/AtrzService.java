@@ -2,7 +2,9 @@ package kr.or.ddit.sevenfs.service.atrz;
 
 import java.util.List;
 
+import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
+import kr.or.ddit.sevenfs.vo.atrz.DocumHolidayVO;
 import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 
 public interface AtrzService {
@@ -42,6 +44,13 @@ public interface AtrzService {
 	
 	//문서양식- 연차신청서일때
 	public int insertHoDoc();
+	
+	//전자결재 테이블 인서트
+	public int insertAtrz(AtrzVO atrzVO);
+	//전자결재선 인서트
+	public int insertAtrzLine(AtrzLineVO atrzLineVO);
+	//연차신청서 인서트
+	public int insertHoliday(DocumHolidayVO documHolidayVO);
 	
 	
 	//비즈니스 로직 이란???

@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
+import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
+import kr.or.ddit.sevenfs.vo.atrz.DocumHolidayVO;
 import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 @Service
 public class AtrzServiceImpl implements AtrzService {
@@ -84,6 +86,22 @@ public class AtrzServiceImpl implements AtrzService {
 	@Override
 	public int insertHoDoc() {
 		return this.atrzMapper.insertHoDoc();
+	}
+	
+	//전자결재테이블 인서트
+	@Override
+	public int insertAtrz(AtrzVO atrzVO) {
+		return this.atrzMapper.insertAtrz(atrzVO);
+	}
+	//전자결재선 인서트
+	@Override
+	public int insertAtrzLine(AtrzLineVO atrzLineVO) {
+		return this.atrzMapper.insertAtrzLine(atrzLineVO);
+	}
+	//연차신청서 인서트
+	@Override
+	public int insertHoliday(DocumHolidayVO documHolidayVO) {
+		return this.atrzMapper.insertHoliday(documHolidayVO);
 	}
 	
 	

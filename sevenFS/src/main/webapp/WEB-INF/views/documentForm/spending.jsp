@@ -2,24 +2,284 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
+<%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
 <c:set var="title" scope="application" value="메인" />
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8" />
- 	<meta name="viewport"
-		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
-	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-	<title>${title}</title>
-  <%@ include file="../layout/prestyle.jsp" %>
+<meta charset="UTF-8" />
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<style type="text/css">
+
+#s_eap_draft_info tr th {
+	width: 100px;
+}
+
+#s_eap_draft_info tr th, #s_eap_draft_info tr td,
+#s_eap_draft tr th, #s_eap_draft tr td,
+.s_eap_draft_app tr th, .s_eap_draft_app tr td
+ {
+	padding: 5px;
+	border: 1px solid;
+	font-size: .9em;
+}
+#s_eap_draft_info tr th,
+#s_eap_draft tr th,
+.s_eap_draft_app tr th {
+	background-color: gainsboro;
+	text-align: center;
+	
+}
+	#s_eap_draft td, .s_eap_draft_app td {
+	width: 100px;
+	text-align: center;
+}
+/* sweetalert스타일 */
+/*모달창  */
+.swal-modal {
+	background-color: white;
+	border: 3px solid white;
+}
+/*ok버튼  */
+.swal-button--danger {
+	background-color: #0583F2;
+	color: white;
+}
+/*cancel버튼  */
+.swal-button--cancel {
+	background-color: red;
+	color: white;
+}
+/*ok버튼  */
+.swal-button--confirm {
+	background-color: #0583F2;
+	color: white;
+}
+/*아이콘 테두리  */
+.swal-icon--info {
+	border-color: #0583F2;
+}
+/*아이콘 i 윗부분  */
+.swal-icon--info:after {
+	background-color: #0583F2;
+}
+/*아이콘 i 아랫부분  */
+.swal-icon--info:before {
+	background-color: #0583F2;
+}
+/*타이틀  */
+.swal-title {
+	font-size: 20px;
+	color: black;
+}
+/*텍스트  */
+.swal-text {
+	color: black;
+}
+/* datepicker css */
+.ui-widget-header {
+	border: 0px solid #dddddd;
+	background: #fff;
+}
+
+.ui-datepicker-calendar>thead>tr>th {
+	font-size: 14px !important;
+}
+
+.ui-datepicker .ui-datepicker-header {
+	position: relative;
+	padding: 10px 0;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover,
+	html .ui-button.ui-state-disabled:active {
+	border: 0px solid #c5c5c5;
+	background-color: transparent;
+	font-weight: normal;
+	color: #454545;
+	text-align: center;
+}
+
+.ui-datepicker .ui-datepicker-title {
+	margin: 0 0em;
+	line-height: 16px;
+	text-align: center;
+	font-size: 14px;
+	padding: 0px;
+	font-weight: bold;
+}
+
+.ui-datepicker {
+	display: none;
+	background-color: #fff;
+	border-radius: 4px;
+	margin-top: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding: 20px;
+	padding-bottom: 10px;
+	width: 300px;
+	box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.ui-widget.ui-widget-content {
+	border: 1px solid #eee;
+}
+
+#datepicker:focus>.ui-datepicker {
+	display: block;
+}
+
+.ui-datepicker-prev, .ui-datepicker-next {
+	cursor: pointer;
+}
+
+.ui-datepicker-next {
+	float: right;
+}
+
+.ui-state-disabled {
+	cursor: auto;
+	color: hsla(0, 0%, 80%, 1);
+}
+
+.ui-datepicker-title {
+	text-align: center;
+	padding: 10px;
+	font-weight: 100;
+	font-size: 20px;
+}
+
+.ui-datepicker-calendar {
+	width: 100%;
+}
+
+.ui-datepicker-calendar>thead>tr>th {
+	padding: 5px;
+	font-size: 20px;
+	font-weight: 400;
+}
+
+.ui-datepicker-calendar>tbody>tr>td>a {
+	color: #000;
+	font-size: 12px !important;
+	font-weight: bold !important;
+	text-decoration: none;
+}
+
+.ui-datepicker-calendar>tbody>tr>.ui-state-disabled:hover {
+	cursor: auto;
+	background-color: #fff;
+}
+
+.ui-datepicker-calendar>tbody>tr>td {
+	border-radius: 100%;
+	width: 44px;
+	height: 30px;
+	cursor: pointer;
+	padding: 5px;
+	font-weight: 100;
+	text-align: center;
+	font-size: 12px;
+}
+
+.ui-datepicker-calendar>tbody>tr>td:hover {
+	background-color: transparent;
+	opacity: 0.6;
+}
+
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover,
+	.ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus,
+	.ui-button:hover, .ui-button:focus {
+	border: 0px solid #cccccc;
+	background-color: transparent;
+	font-weight: normal;
+	color: #2b2b2b;
+}
+
+.ui-widget-header .ui-icon {
+	background-image: url('https://media.discordapp.net/attachments/692994434526085184/995979886768439306/btns.png');
+}
+
+.ui-icon-circle-triangle-e {
+	background-position: -20px 0px;
+	background-size: 36px;
+}
+
+.ui-icon-circle-triangle-w {
+	background-position: -0px -0px;
+	background-size: 36px;
+}
+
+.ui-datepicker-calendar>tbody>tr>td:first-child a {
+	color: red !important;
+}
+
+.ui-datepicker-calendar>tbody>tr>td:last-child a {
+	color: #0099ff !important;
+}
+
+.ui-datepicker-calendar>thead>tr>th:first-child {
+	color: red !important;
+}
+
+.ui-datepicker-calendar>thead>tr>th:last-child {
+	color: #0099ff !important;
+}
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight,
+	.ui-widget-header .ui-state-highlight {
+	border: 0px;
+	background: #f1f1f1;
+	border-radius: 50%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.inp {
+	padding: 10px 10px;
+	background-color: #f1f1f1;
+	border-radius: 4px;
+	border: 0px;
+}
+
+.inp:focus {
+	outline: none;
+	background-color: #eee;
+}
+
+select.ui-datepicker-month {
+	border-radius: 5px;
+	padding: 5px;
+	width: 80px !important;
+}
+
+select.ui-datepicker-year {
+	border-radius: 5px;
+	padding: 5px;
+	margin-left: 10px !important;
+	width: 80px !important;
+}
+
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+	top: 9px !important;
+}
+
+</style>
+<title>${title}</title>
+<%@ include file="../layout/prestyle.jsp" %>
 </head>
 <body>
+<!-- 로그인한 정보 가져오기 위한 시큐리티 -->
+<sec:authentication property="principal.empVO" var="empVO" />
 <%@ include file="../layout/sidebar.jsp" %>
 <main class="main-wrapper">
-  <%@ include file="../layout/header.jsp" %>
+<%@ include file="../layout/header.jsp" %>
 	<section class="section">
 		<div class="container-fluid">
 			<!-- 여기서 작업 시작 -->
@@ -79,20 +339,21 @@
 										<div style="float: left; width: 230px; margin: 0 30px;">
 											<table border="1" id="s_eap_draft_info">
 												<tr>
+<%-- 												<p>${empVO}</p> --%>
 													<th>기안자</th>
-													<td>${eap.emp_name }</td>
+													<td>${empVO.emplNm}</td>
 												</tr>
 												<tr>
 													<th>기안부서</th>
-													<td>${eap.dept_name }</td>
+													<td>${empVO.deptNm}</td>
 												</tr>
 												<tr>
 													<th>기안일</th>
-													<td>${eap.eap_draft_date }</td>
+													<td>SYSDATE</td>
 												</tr>
 												<tr>
 													<th>문서번호</th>
-													<td id="s_dfNo">${resultDoc.df_no }</td>
+													<td id="s_dfNo">${resultDoc.df_no}</td>
 												</tr>
 											</table>
 										</div>
@@ -101,44 +362,26 @@
 											<table border="1" id="s_eap_draft">
 												<tr>
 													<th rowspan="2">신청</th>
-													<td>${eap.job_title }</td>
+													<td>${empVO.clsfCodeNm}</td>
 												</tr>
 												<tr>
-													<td>${eap.emp_name }</td>
+													<td>${empVO.emplNm}</td>
 												</tr>
 											</table>
 										</div>
 
-										<c:forEach items="${info }" var="i">
-											<div style="float: left; width: 130px; margin-right: 5px;">
-												<table border="1" class="s_eap_draft_app">
-													<tr>
-														<th rowspan="3">승인</th>
-														<td>${i.job_title }</td>
-													</tr>
-													<tr>
-														<td>${i.emp_name }</td>
-													</tr>
-													<tr>
-														<td><c:if test="${empty i.df_no }">
-																<img
-																	src="https://media.discordapp.net/attachments/692994434526085184/988792844099678208/stamp_6.png"
-																	style="width: 50px;">
-															</c:if></td>
-													</tr>
-												</table>
-											</div>
-										</c:forEach>
-
+										<div style="float: left; width: 800px; margin-right: 5px;"
+												id="s_eap_draft_app" class="s_div">
+												
+										</div>
 										<div id="s_eap_final">
 											<div>
-
 												<div style="padding: 50px 10px 20px; clear: both;">
 													<div
 														style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목
 														:</div>
 													<input type="text" class="form-control"
-														style="display: inline-block; width: 583px; margin-left: 5px;"
+														style="display: inline-block; width: 90%; margin-left: 5px;"
 														id="s_sp_tt">
 												</div>
 
@@ -151,7 +394,6 @@
 															style="resize: none; height: 150px;" id="s_sp_co"
 															required="required" rows="2" cols="20" wrap="hard"></textarea>
 													</div>
-
 													<div style="padding: 10px 0;">
 														<div class="s_frm_title">2. 지출 내역</div>
 														<table class="table" style="text-align: center;">
@@ -197,12 +439,7 @@
 																</tr>
 															</tfoot>
 														</table>
-													</div>
-
-													<div style="padding: 10px 0;">
-														<div class="s_frm_title">3. 기타</div>
-														<div>문의사항은 BAB ${eap.emp_name }(${eap.emp_phone })에게
-															연락바랍니다. 끝.</div>
+														<!-- <button id="s_add_sp_detail" class="btn btn-success" onclick="addTr()">내역 추가</button> -->
 													</div>
 
 													<div style="padding: 10px 0;">
@@ -229,9 +466,9 @@
 							<div class="tool_bar">
 									<div class="critical d-flex gap-2 mt-3">
 										<!--성진스 버튼-->
-										<a id="s_eap_app" type="button" class="btn btn-outline-primary d-flex align-items-center gap-1">
+										<button id="s_eap_app" type="submit" class="btn btn-outline-primary d-flex align-items-center gap-1">
 											<span class="material-symbols-outlined fs-5">cancel</span> 
-											결재요청</a>
+											결재요청</button>
 										<a id="s_eap_stor" type="button" class="btn btn-outline-success d-flex align-items-center gap-1"
 										data-bs-toggle="modal" data-bs-target="#atrzLineModal">
 											<span class="material-symbols-outlined fs-5">error</span> 
@@ -266,8 +503,6 @@
 				</div>
 			
 			<!-- 여기서 작업 끝 -->
-			
-		 
 		</div>
 	</section>
   <%@ include file="../layout/footer.jsp" %>
@@ -277,41 +512,22 @@
 <c:import url="../documentForm/approvalLineModal.jsp" />
 <!-- 스크립트 입력 -->
 <script>
-// 전자결재 홈 클릭
-function eapHome() {
-	$("#menu_eap").get(0).click();
+function addTr() {
+	$(".s_default_tbody_cl").append(
+		'<tr>'
+			+ '<th scope="row"><input type="date" class="form-control s_sp_date" id="s_sp_date" name="sp_date"></th>'
+			+ '<td><input type="text" class="form-control s_sp_detail" name="sp_detail"></td>'
+			+ '<td><input type="number" id="sp_count" class="form-control s_sp_count" name="sp_count" onblur="total()"></td>'
+			+ '<td><input type="text" class="form-control s_sp_amount" id="sp_amount" name="sp_amount" onkeyup="commas(this)" onblur="total()"></td>'
+			+ '<td>'
+			+ '<select class="form-select s_select" aria-label="Default select example">'
+				+ '<option value="C">신용카드</option>'
+				+ '<option value="A">가상계좌</option>'
+			+ '</select>'
+			+ '</td>'
+		+ '</tr>'	
+	);
 }
-
-// 결재선 지정 시 결재상태에 따라 글씨색 변경
-for(var i = 0; i < 3; i++) {
-	if($(".s_span_fw").eq(i).text() == '결재') {
-		$(".s_span_fw").eq(i).css('color', 'rgb(5, 131, 242)');
-	} else if($(".s_span_fw").eq(i).text() == '대기') {
-		$(".s_span_fw").eq(i).css('color', 'gray');
-	} else if($(".s_span_fw").eq(i).text() == '반려') {
-		$(".s_span_fw").eq(i).css('color', 'green');
-	}
-}
-
-</script>
-
-	<script>
-  	function addTr() {
-  		$(".s_default_tbody_cl").append(
-			'<tr>'
-		      + '<th scope="row"><input type="date" class="form-control s_sp_date" id="s_sp_date" name="sp_date"></th>'
-		      + '<td><input type="text" class="form-control s_sp_detail" name="sp_detail"></td>'
-		      + '<td><input type="number" id="sp_count" class="form-control s_sp_count" name="sp_count" onblur="total()"></td>'
-		      + '<td><input type="text" class="form-control s_sp_amount" id="sp_amount" name="sp_amount" onkeyup="commas(this)" onblur="total()"></td>'
-		      + '<td>'
-		      + '<select class="form-select s_select" aria-label="Default select example">'
-		      		+ '<option value="C">신용카드</option>'
-		      		+ '<option value="A">가상계좌</option>'
-	      	  + '</select>'
-		      + '</td>'
-		    + '</tr>'	
-		);
-  	}
 </script>
 
 <script>
@@ -341,270 +557,6 @@ function total() {
 
 </script>
 
-<script>
-        var deptCnt = 1;
-        var arr = [];
-        // 결재선에서 '->' 클릭 시
-		$("#s_add_appLine").click(function() {
-			var empNo = $(".jstree-clicked").text().slice(-8, $(".jstree-clicked").text().length-1);
-			var text = $(".jstree-clicked").text();
-            var name = $('.jstree-clicked').text().substr(0,3);
-            var job = $('.jstree-clicked').text().substr(4,2); // 부사장 '부사'로 되어 수정
-            var result = $('.jstree-clicked').text().substr(4,2).match("^부사") // 부사로 시작하지 않으면 null 리턴
-            if(result != null) {
-            	job = $('.jstree-clicked').text().substr(4,3);
-            }
-            
-            var deptText = $('.jstree-clicked').parent().parent().parent().text().substr(0,3);
-            // 임원 부서가 '임원이'로 되어 수정
-            if($('.jstree-clicked').parent().parent().parent().text().substr(0,3).length <= 3) {
-         	    deptText = $('.jstree-clicked').parent().parent().parent().text().substr(0,2);
-         	}
-           var deptName = $(".jstree-clicked").text();
-             
-             
-           for(var i = 0; i < $('.s_td_name').length; i++) {
-        	   if($(".s_td_name").eq(i).text() == name) {
-        		   swal({
-                       title: "",
-                       text: "결재선에 이미 선택되어 있습니다.",
-                       icon: "error",
-                       closeOnClickOutside: false,
-                       closeOnEsc: false
-                   });
-					return;
-				}
-			}
-			for(var i = 0; i < $('.s_td_deptName').length; i++) {
-				if($('.s_td_deptName').eq(i).text() == deptName) {
-					swal({
-	                       title: "",
-	                       text: "참조처에 이미 선택되어 있습니다.",
-	                       icon: "error",
-	                       closeOnClickOutside: false,
-	                       closeOnEsc: false
-	                   });
-					return;
-				}
-			}
-			
-// 			// 본인을 결재선 리스트에 추가할 때 alert
-<%-- 			var checkEmpName = "<%=empName%>"; --%>
-// 			if(name == checkEmpName) {
-// 				swal({
-//                     title: "",
-//                     text: "본인은 결재선 리스트에 추가할 수 없습니다.",
-//                     icon: "error",
-//                     closeOnClickOutside: false,
-//                     closeOnEsc: false
-//                 });
-// 				return;
-// 			}
-			
-			// 결재선 리스트 추가
-             if($('.jstree-clicked').text().length > 3) {
-              if($(".s_appLine_tbody_cl tr").length < 3) {
-            	  arr.push({"name":name,"deptText":deptText,"job":job,"empNo":empNo})
-	              fn_arr(arr);
-              } else {
-            	  swal({
-                      title: "",
-                      text: "결재선은 최대 3명까지 추가가 가능합니다.",
-                      icon: "error",
-                      closeOnClickOutside: false,
-                      closeOnEsc: false
-                  });
-              }
-             } else if($('.jstree-clicked').text().length <= 3) {
-            	// 참조처 리스트 추가
-          	   if ($(".s_appDept_tbody_cl tr").length < 2) {
-           	  $('.s_appDept_tbody_cl').append(
-           			'<tr>'
-           			+ '<td>' + deptCnt + '</td>'
-           			+ '<td class="s_td_deptName">' + deptName + '</td>'
-           			+ '</tr>'
-           	  );
-           	  	deptCnt++;
-          	   } else {
-          		 swal({
-                     title: "",
-                     text: "참조처는 최대 2개 부서까지 추가가 가능합니다.",
-                     icon: "error",
-                     closeOnClickOutside: false,
-                     closeOnEsc: false
-                 });
-          	   }
-             }
-			
-		});
-        
-        // 직책 순으로 정렬하는 함수
-		function fn_arr(arr){
-        	var cnt = 1;
-        	var aprvList ="";
-        	$(".s_appLine_tbody_cl").empty();
-        	var jobArr = ['사원','대리','과장','차장','부장','이사','부사장','사장'];
-			var numArr = [];
-			var nArr = arr.slice();
-			
-			for(var i = 0; i < nArr.length; i++) { // 부장, 차장, 대리 순이라면
-				numArr.push(jobArr.indexOf(nArr[i].job)); // 4,3,1이 들어감
-			}
-			
-			numArr.sort();  // 1,3,4
-			for(var i=0; i<numArr.length; i++){
-				for(var j=0; j<arr.length; j++){
-					if(nArr[j].job==jobArr[numArr[i]]){
-						aprvList += '<tr>'
-  	               				 + '<td>' + cnt + '</td>'
-  	               				 + '<td class="s_td_name">' + nArr[j].name + '</td>'
-  	               			 	 + '<td>' + nArr[j].deptText + '</td>'
-  	               			     + '<td class="s_td_job">' + nArr[j].job + '</td>'
-  	               			     + '</tr>'
-  	               				 + '<input type="hidden" name="emp_no" class="emp_no" value="' + nArr[j].empNo + '">'
-  	               				 cnt++;
-  	               				 // 직급이 같을 때 for문 여러번 도는 것 막기
-  	               				 nArr.splice(j,1);
-  	               				 break;
-					}	
-				}
-			}
-			$(".s_appLine_tbody_cl").append(aprvList);
-        }
-        
-        function fn_remove(arr) {
-        	arr.splice(0); // arr 모두 삭제
-        	$(".s_appLine_tbody_cl").children().remove(); // 테이블에 생성된 자식들 모두 삭제
-        }
-		
-        // 결재선 쪽 <- 눌렀을 때
-		$("#s_remove_appLine").click(function() {
-			fn_remove(arr);
-		});
-		
-		// 참조처 쪽 <- 눌렀을 때
-		$("#s_remove_appDept").click(function() {
-			$(".s_appDept_tbody_cl").children().last().remove();
-			if(deptCnt == 1) {
-				return;
-			}
-			deptCnt--;
-		});
-		
-		// 모달에서 확인 클릭 시 
-		$("#s_add_appLine_list").click(function() {
-			
-			if($(".s_td_name").length == 0) {
-				swal({
-                    title: "결재선이 지정되어있지 않습니다.",
-                    text: "결재할 사원을 추가해주세요!",
-                    icon: "error",
-                    closeOnClickOutside: false,
-                    closeOnEsc: false
-                });
-				return;
-			}
-			
-			var empNoArr = [];
-			for(var i = 0; i < $(".emp_no").length; i++) {
-				empNoArr.push($(".emp_no").eq(i).val());
-			}
-			
-		var obj = {"emp_no" : empNoArr};
-
-			// 결재선 리스트에 있는 사원 번호를 가져와 결재선jsp에 이름, 부서, 직책 띄우기(ajax)
-			$.ajax({
-				url : "<%=request.getContextPath()%>/organ/applinelistsp"
-		, type: "post"
-		, data: obj
-		, success: function(result) {
-			$(".btn-close").trigger('click');
-			$("#s_eap_content_box").html(result);
-		}
-	});
-	
-	var arr = [];
-	for(var i = 0; i < $('.s_td_name').length; i++) {
-		var tdName = $('.s_td_name').eq(i).text();
-		arr.push(tdName);
-	}
-	var str1 = arr[0];
-	var str2 = arr[1];
-	var str3 = arr[2];
-	
-	if(str1 == undefined) {
-		swal({
-                  title: "",
-                  text: "결재선에 1명 이상 선택해주세요.",
-                  icon: "error",
-                  closeOnClickOutside: false,
-                  closeOnEsc: false
-              });
-	}
-	if(str2 == undefined) {
-		str2 = null;
-	} 
-	if(str3 == undefined) {
-		str3 = null;
-	} 
-	// str1 => eap_first_ap에 저장
-	// str2 => eap_mid_ap에 저장
-	// str3 => eap_final_ap에 저장
-	
-	var arrDept = [];
-	for(var i = 0; i < $('.s_td_deptName').length; i++) {
-		var tdDeptName = $('.s_td_deptName').eq(i).text();
-		arrDept.push(tdDeptName);
-	}
-	var deptStr1 = arrDept[0];
-	var deptStr2 = arrDept[1];
-	
-	if(deptStr1 == undefined) {
-		deptStr1 = null;
-	}
-	if(deptStr2 == undefined) {
-		deptStr2 = null;
-	}
-	
-	// deptStr1 => eap_first_dept에 저장
-	// deptStr2 => eap_final_dept에 저장
-	
-	// ajax에 보낼 obj
-	var dataObj = {
-			"eap_first_ap" : str1,
-			"eap_mid_ap" : str2,
-			"eap_final_ap" : str3,
-			"eap_first_dept" : deptStr1,
-			"eap_final_dept" : deptStr2,
-			"df_no" : $("#s_dfNo").text(),
-	}
-	
-	$.ajax({
-		url : "<%=request.getContextPath()%>/eap/updateappsp"
-			, type: "post"
-			, data: dataObj
-			, success: function(result) {
-				if(result.includes('실패')) {
-					swal({
-	                    title: "",
-	                    text: result,
-	                    icon: "error",
-	                    closeOnClickOutside: false,
-	                    closeOnEsc: false
-	                });
-				} else {
-					swal({
-	                    title: "",
-	                    text: result,
-	                    icon: "success",
-	                    closeOnClickOutside: false,
-	                    closeOnEsc: false
-	                });
-				}
-			}
-	});
-});
-</script>
 
 <script>
 // 결재 요청 클릭 시
@@ -620,36 +572,36 @@ $("#s_eap_app").click(function() {
 	// 제목, 내용이 비어있을 때
 	if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
 		swal({
-                  title: "제목 또는 내용이 비어있습니다.",
-                  text: "다시 확인해주세요.",
-                  icon: "error",
-                  closeOnClickOutside: false,
-                  closeOnEsc: false
-              });
+				title: "제목 또는 내용이 비어있습니다.",
+				text: "다시 확인해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
 		return;
 	}
 	
 	// 지출 내역이 비어있을 때
 	if($('.s_sp_date').val() == "" || $('.s_sp_detail').val() == "" || $('.s_sp_count').val() == "" || $('.s_sp_amount').val() == "") {
 		swal({
-                  title: "지출 내역을 다시 확인하여 입력해주세요.",
-                  text: "",
-                  icon: "error",
-                  closeOnClickOutside: false,
-                  closeOnEsc: false
-              });
+				title: "지출 내역을 다시 확인하여 입력해주세요.",
+				text: "",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
 		return;
 	}
 	
 	// 지출 날짜가 'YYYY-MM-DD'형태로 입력이 되지 않았을 때
 	if($('.s_sp_date').val().length != 10) {
 		swal({
-                  title: "날짜를 'YYYY-MM-DD'형태로 입력해주세요.",
-                  text: "",
-                  icon: "error",
-                  closeOnClickOutside: false,
-                  closeOnEsc: false
-              });
+				title: "날짜를 'YYYY-MM-DD'형태로 입력해주세요.",
+				text: "",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
 		return;
 	}
 	
@@ -686,7 +638,7 @@ $("#s_eap_app").click(function() {
                 })
                 .then((ok) => {
 					$("#menu_eap").get(0).click();
-              		})
+            	})
 			} else {
 				swal({
                     title: "",
@@ -697,7 +649,7 @@ $("#s_eap_app").click(function() {
                 })
                 .then((ok) => {
 					$("#menu_eap").get(0).click();
-              		})
+            	})
 			}
 		}
 	});
@@ -736,12 +688,12 @@ $('#s_sp_tt').keyup(function() {
 	// 결재선 지정이 안되어 있다면
 	if($('div').hasClass('s_div') == false) {
 		swal({
-                  title: "",
-                  text: "결재선 지정을 먼저 해주세요",
-                  icon: "error",
-                  closeOnClickOutside: false,
-                  closeOnEsc: false
-              });
+				title: "",
+				text: "결재선 지정을 먼저 해주세요",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
 		// 입력한 내용 지우기
 		$('#s_sp_tt').val("");
 	}
@@ -752,12 +704,12 @@ $('#s_sp_co').keyup(function() {
 	// 결재선 지정이 안되어 있다면
 	if($('div').hasClass('s_div') == false) {
 		swal({
-                  title: "",
-                  text: "결재선 지정을 먼저 해주세요",
-                  icon: "error",
-                  closeOnClickOutside: false,
-                  closeOnEsc: false
-              });
+				title: "",
+				text: "결재선 지정을 먼저 해주세요",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
 		// 입력한 내용 지우기
 		$('#s_sp_co').val("");
 	}
@@ -767,12 +719,12 @@ $('#s_sp_co').keyup(function() {
 $(".s_sp_date").change(function() {
 	if($('div').hasClass('s_div') == false) {
 		swal({
-                  title: "",
-                  text: "결재선 지정을 먼저 해주세요",
-                  icon: "error",
-                  closeOnClickOutside: false,
-                  closeOnEsc: false
-              });
+				title: "",
+				text: "결재선 지정을 먼저 해주세요",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
 		// 입력한 내용 지우기
 		$('.s_sp_date').val("");
 	}
@@ -783,12 +735,12 @@ $(".s_sp_detail").keyup(function() {
 	// 결재선 지정이 안되어 있다면
 	if($('div').hasClass('s_div') == false) {
 		swal({
-                  title: "",
-                  text: "결재선 지정을 먼저 해주세요",
-                  icon: "error",
-                  closeOnClickOutside: false,
-                  closeOnEsc: false
-              });
+				title: "",
+				text: "결재선 지정을 먼저 해주세요",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
 		// 입력한 내용 지우기
 		$('.s_sp_detail').val("");
 	}
@@ -799,12 +751,12 @@ $(".s_sp_count").keyup(function() {
 	// 결재선 지정이 안되어 있다면
 	if($('div').hasClass('s_div') == false) {
 		swal({
-                  title: "",
-                  text: "결재선 지정을 먼저 해주세요",
-                  icon: "error",
-                  closeOnClickOutside: false,
-                  closeOnEsc: false
-              });
+				title: "",
+				text: "결재선 지정을 먼저 해주세요",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
 		// 입력한 내용 지우기
 		$('.s_sp_count').val("");
 	}
@@ -815,41 +767,301 @@ $(".s_sp_amount").keyup(function() {
 	// 결재선 지정이 안되어 있다면
 	if($('div').hasClass('s_div') == false) {
 		swal({
-                  title: "",
-                  text: "결재선 지정을 먼저 해주세요",
-                  icon: "error",
-                  closeOnClickOutside: false,
-                  closeOnEsc: false
-              });
+				title: "",
+				text: "결재선 지정을 먼저 해주세요",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
 		// 입력한 내용 지우기
 		$('.s_sp_amount').val("");
 	}
 })
 </script>
 
+<!-- 결재선 지정스크립트 -->
 <script>
-// datepicker위젯
 $(document).ready(function() {
+	let emplNo = null;  //선택된 사원 번호 저장
+	
+	let secEmplNo = '${empVO.emplNo}';
+	let secEmplNm = '${empVO.emplNm}';
+	
+	console.log("secEmplNo번호 : ",secEmplNo);
+	console.log("secEmplNm이름 : ",secEmplNm);
+	
+	$(document).on("click",".jstree-anchor",function(){
+	let idStr = $(this).prop("id");//20250008_anchor
+	// 		console.log("개똥이->idStr : ",idStr);
+	emplNo = idStr.split("_")[0];//20250008
+	console.log("결재선지정->emplNo : ",emplNo);
+
+	});//end jstree-anchor
+	$(document).on("click", "#add_appLine",function(){
+		//사원선택안하고 화살표로 추가 했을때
+		if(!emplNo){
+			swal({
+				title: "",
+				text: "선택한 사원이 없습니다.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
+			return;
+		}
+		
+		//여기에선 본인을 선택하면 본인은 추가 안되게 만들어야함(완료)
+		if(secEmplNo==emplNo){
+			swal({
+				title: "",
+				text: "본인은 결재선 리스트에 추가할 수 없습니다.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
+			return;
+		}
+		
+		//여기서 이미 결재선 넣어준 사람은 다시 들어지 않게 해야함
+		for(let i = 0; i< $('.s_td_no').length; i++){
+			if($('.s_td_no').eq(i).text()== emplNo){
+				swal({
+					title: "",
+					text: "결재선에 이미 선택되어 있습니다.",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
+				
+				return;
+			}
+		}
+			//여기서 전결여부는 장급만 되어야함
+		$.ajax({
+				url:"/atrz/appLineEmp",
+				data:{"emplNo":emplNo},
+				type:"post",
+				dataType:"json",
+				success:function(result){
+					let resultObj = result;
+					console.log("result : ", result);
+					console.log("result.emplNm : ",result.emplNm);
+					console.log("result.posNm : ",result.posNm);
+					
+					//중복으로는 못들어가게 만들기
+					
+					//NO처리하기
+					let noLen = $(".clsTr").length;
+					console.log("noLen : ", noLen);
+					//여기서는 jsp언어는 java에서 처리 못하도록 역슬래시를 사용해서 막아야한다.
+					let str = `
+						<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
+							<th>\${noLen+1}</th>
+							<th style="display: none;" class="s_td_no">\${result.emplNo}</th>
+							<th class="s_td_name">\${result.emplNm}</th>
+							<th>\${result.deptNm}</th>
+							<th>\${result.posNm}</th>
+							<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
+							<th>
+								<select class="form-select selAuth" aria-label="Default select example">
+									<option value="0" selected>결재</option>
+									<option value="1">참조</option>
+								</select>
+							</th>
+							<th>
+								<input class="form-check-input flexCheckDefault" type="checkbox" value="Y" />
+							</th>
+						</tr>
+						`;
+					$(".s_appLine_tbody_new").append(str);    
+					
+				}//end success
+			});//end ajax
+		
+		})//결재선선택후에 결재선리스트로 가는버튼 
+	
+	//왼쪽버튼의 경우에는 결재선선택과는 거리가 멀기 때문에 필요없음
+	//왼쪽 버튼을 눌렀을때 삭제처리되어야함
+	$(document).on("click", "#remo_appLine",function(){
+		let lastRow = $(".s_appLine_tbody_new .clsTr").last();   //가장마지막에 추가된 tr
+		//삭제대상확인 
+		// console.log("삭제대상 :", lastRow.prop("outerHTML"));
+		
+		if(lastRow.length > 0){
+			$('tr:last-child').remove(); 
+				// console.log("개똥이장군");
+				// console.log("lastRow : ",lastRow);
+				
+				// lastRow.remove();
+				// console.log("삭제후 남은 행의갯수 : ",$(".s_appLine_tbody_new .clsTr").length);
+				// lastRow.children().last().remove();
+			}else{
+				swal({
+					title: "",
+					text: "삭제할 사원이 없습니다.",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
+					return;
+			}
+		});
+		
+		//결재선지정에서 확인버튼 눌렀을때
+	$("#s_add_appLine_list").click(function(){
+		if($(".s_appLine_tbody_new .clsTr").length==0){
+			swal({
+				title: "결재선이 지정되어있지 않습니다.",
+				text: "결재할 사원을 추가해주세요!",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
+			return;
+		}
+		var appLineArr = [];
+		
+		//1)
+		let formData = new FormData();
+		
+		//I. 결재자 정보
+		for(let i= 0; i<$(".s_td_no").length; i++){
+			let sTdNo = $(".s_td_no").eq(i).text();
+			console.log("sTdNo : ",sTdNo);
+			
+			appLineArr.push($(".s_td_no").eq(i).text());
+			console.log("appLineArr : ",appLineArr);
+			//위의 코드까지는 찍힘
+			
+			//2) 결재자 번호 입력
+			formData.append("emplNoArr",sTdNo);
+		}
+		var obj = {"emplNo" : appLineArr};
+		
+		//JSON Object List
+		let authList = [];
+		//JSON Object
+		let data = {};
+		//II. 권한 정보(.selAuth)
+		$(".selAuth").each(function(idx,auth){
+			data = {
+				"emplNo":$(this).parent().parent().children("th").eq(1).html(),
+				"auth":$(this).val(),
+				"flex":$(this).parent().next().children().eq(0).is(":checked")
+			};
+			
+			authList.push(data);
+		});	
+		console.log("authList : ", authList);
+		
+
+		/*
+		["20250008","20250010"]
+		*/
+		console.log("obj.emplNo : ",obj.emplNo);
+		//결재선 리스트에 있는 사원번호를 가져와 결재선 jsp에 이름 부서 직책 찍기
+		$.ajax({
+			url:"/atrz/appLineList",
+			processData:false,
+			contentType:false,
+			type:"post",
+			data: formData,
+			dataType:"json",
+			success : function(result){
+		$(".btn-close").trigger('click');
+		console.log("result : ", result);
+
+		let tableHtml = `<div><table border="1" class="s_eap_draft_app"><tbody>`;
+
+		// authList를 기반으로 분리
+		const approvalList = [];
+		const referenceList = [];
+
+		$.each(authList, function(i, authItem) {
+			const matched = result.find(emp => emp.emplNo === authItem.emplNo);
+			if (matched) {
+				matched.flex = authItem.flex; // flex 정보도 보존
+				if (authItem.auth === "0") {
+					approvalList.push(matched);
+				} else if (authItem.auth === "1") {
+					referenceList.push(matched);
+				}
+			}
+		});
+
+		// 가. 결재파트 시작
+		if (approvalList.length > 0) {
+			tableHtml += `<tr><th rowspan="3">결재</th>`;
+			$.each(approvalList, function(i, employeeVO){
+				$("#atrz_ho_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
+				tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
+			});
+
+			tableHtml += `</tr><tr>`;
+			$.each(approvalList, function(i, employeeVO){
+				tableHtml += `<td>\${employeeVO.emplNm}</td>`;
+			});
+
+			tableHtml += `</tr><tr>`;
+			$.each(approvalList, function(i, employeeVO){
+				tableHtml += `<td>이미지</td>`;
+			});
+
+			tableHtml += `</tr>`;
+		}
+
+		// 나. 참조파트 시작
+		if (referenceList.length > 0) {
+			tableHtml += `<tr><th rowspan="3">참조</th>`;
+			$.each(referenceList, function(i, employeeVO){
+				$("#atrz_ho_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
+				tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
+			});
+
+			tableHtml += `</tr><tr>`;
+			$.each(referenceList, function(i, employeeVO){
+				tableHtml += `<td>\${employeeVO.emplNm}</td>`;
+			});
+
+			tableHtml += `</tr><tr>`;
+			$.each(referenceList, function(i, employeeVO){
+				tableHtml += `<td>이미지</td>`;
+			});
+
+			tableHtml += `</tr>`;
+		}
+
+		tableHtml += `</tbody></table></div>`;
+
+		$("#s_eap_draft_app").html(tableHtml);
+		}
+	});//ajax
+	//여기서 결재선에 담긴 애들을 다 하나씩 담아서 post로
+})
+
+	// datepicker위젯
 	$("#s_sp_date").datepicker({
 		timepicker: true,
 		changeMonth: true,
-           changeYear: true,
-           controlType: 'select',
-           timeFormat: 'HH:mm',
-           dateFormat: 'yy-mm-dd',
-           yearRange: '1930:2024',
-           dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
-           dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
-           monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-           monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-           beforeShow: function() {
-               setTimeout(function(){
-                   $('.ui-datepicker').css('z-index', 99999999999999);
-               }, 0);
-           }
+		changeYear: true,
+		controlType: 'select',
+		timeFormat: 'HH:mm',
+		dateFormat: 'yy-mm-dd',
+		yearRange: '1930:2025',
+		dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
+		dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+		monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+		monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+		beforeShow: function() {
+			setTimeout(function(){
+				$('.ui-datepicker').css('z-index', 99999999999999);
+			}, 0);
+		}
 	});
 });
 </script>
-<!-- 스크립트 입력 -->
+<!-- 로그인한 정보 가져오기 위한 시큐리티 -->
+<!-- <p><sec:authentication property="principal.Username"/></p> -->
+
 </body>
 </html>

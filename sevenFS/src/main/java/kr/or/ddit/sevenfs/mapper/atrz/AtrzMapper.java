@@ -5,7 +5,9 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
+import kr.or.ddit.sevenfs.vo.atrz.DocumHolidayVO;
 import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 
 @Mapper
@@ -46,7 +48,14 @@ public interface AtrzMapper {
 	//문서양식- 연차신청서인경우
 	public int insertHoDoc();
 	
-
+	//전자결재테이블 인서트
+	public int insertAtrz(AtrzVO atrzVO);
+	//전자결재선 테이블 인서트
+	public int insertAtrzLine(AtrzLineVO atrzLineVO);
+	//연차신청서 테이블 인서트
+	public int insertHoliday(DocumHolidayVO documHolidayVO);
+	
+	
 	
 
 	

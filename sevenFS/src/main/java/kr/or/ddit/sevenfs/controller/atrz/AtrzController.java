@@ -1,7 +1,10 @@
 package kr.or.ddit.sevenfs.controller.atrz;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -13,15 +16,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
+import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.utils.CommonCode;
 import kr.or.ddit.sevenfs.vo.CustomUser;
+import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
+import kr.or.ddit.sevenfs.vo.atrz.DocumHolidayVO;
 import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
@@ -32,15 +39,19 @@ import lombok.extern.slf4j.Slf4j;
 public class AtrzController {
 
 	@Autowired
-	AtrzService atrzService;
+	private AtrzService atrzService;
 
 	// 사원 정보를 위해 가져온것
 	@Autowired
-	OrganizationService organizationService;
+	private OrganizationService organizationService;
 
 	// 공통코드 텍스트를 가져오기위한것
 	@Autowired
 	CommonCode commonCode;
+	
+	//파일 전송을 위한 방법
+	@Autowired
+	private AttachFileService attachFileService;
 
 	
 	//그냥 전역변수로 시큐리티를 만들어놓는다.
@@ -390,15 +401,101 @@ public class AtrzController {
 
 		return emplDetail;
 	}
+
+	@ResponseBody
+	@PostMapping(value = "atrzInsert")
+	public String insertAppLineList(AtrzVO atrzVO,
+			     @RequestPart("atrzLineList")List<AtrzLineVO> atrzLineList, 
+			     @RequestPart("docHoliday") DocumHolidayVO documHolidayVO,
+			     @RequestParam(name = "emplNo", required = false) String emplNo){
+		
+		log.info("atrz {}",atrzVO);
+		log.info("atrzLineList {}",atrzLineList);
+		log.info("documHolidayVO {}",documHolidayVO);
+		log.info("emplNo {}",emplNo);
+		
+		//여기서 담기지 않았음.. 사원정보가 오지 않음
+		
+		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
+		//여기서 VO를 하나 씩 담아야 하는건가...싶다. 
+		String clsfCode = emplDetail.getClsfCode();
+		String deptCode = emplDetail.getDeptCode();
+		atrzVO.setClsfCode(clsfCode);
+		atrzVO.setDeptCode(deptCode);
+//		atrzVO.setDrafterClsf(emplDetail.get);
+		
+		log.info("insertAppLineList-> atrzVO(사원추가후) : "+atrzVO);
+//			organizationService.emplDetail(atrzVO.get)
+		//전자결재 테이블 인서트
+		int atrzResult = atrzService.insertAtrz(atrzVO);
+		
+		//문서번호등록
+		String atrzDocNo = atrzVO.getAtrzDocNo();
+		log.info("atrzDocNo :  문서번호 등록 : "+atrzDocNo);
+		//변수에 있는 문서번호를 넣어주기 atrzLineVO에 넣어주기
+		for(AtrzLineVO atrzLineVO : atrzLineList) {
+			atrzLineVO.setAtrzDocNo(atrzDocNo);
+			log.info("atrzLineVO :  문서번호 등록후 : "+atrzLineVO);	
+			atrzService.insertAtrzLine(atrzLineVO);
+
+		}
+		
+		
+		
+		//문서번호등록
+		documHolidayVO.setAtrzDocNo(atrzDocNo);
+		log.info("documHolidayVO :  문서번호 등록후 : "+documHolidayVO);	
+		
+		//시간배열 다시 하나로 합치기
+		String[] holiStartArr = documHolidayVO.getHoliStartArr(); // ["2025-04-11", "09:00:00"]
+	    String[] holiEndArr = documHolidayVO.getHoliEndArr();     // ["2025-04-11", "18:00:00"]
+
+	    // 하나의 문자열로 합치기
+	    String holiStartStr = holiStartArr[0] + " " + holiStartArr[1]+":00"; // "2025-04-11 09:00:00"
+	    String holiEndStr = holiEndArr[0] + " " + holiEndArr[1]+":00";       // "2025-04-11 18:00:00"
+	    
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	    
+	    Date holiStartDate;
+		try {
+			holiStartDate = sdf.parse(holiStartStr);
+			// VO에 다시 세팅
+			documHolidayVO.setHoliStart(holiStartDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	    Date holiEndDate;
+		try {
+			holiEndDate = sdf.parse(holiEndStr);
+			// VO에 다시 세팅
+			documHolidayVO.setHoliEnd(holiEndDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	    
+//		//연차신청서 인서트
+		int documHolidayResult = atrzService.insertHoliday(documHolidayVO);
+		
+		
+		
+		
+		return "쭈니성공";
+	}
+
+	
 	//모달에서 선택한 결재선이 비동기로 담아서 보내서 확인해야함
 	@ResponseBody
 	@PostMapping(value = "appLineList")
-	public List<EmployeeVO> selectAppLineList(String[] emplNoArr
-			,HttpServletRequest req
-			, Model model,
+	public List<EmployeeVO> selectAppLineList(
+			String[] emplNoArr,
+			HttpServletRequest req,
+			 Model model,
 			String[] empNoList,
-			String[] empAttNoList
+			String[] empAttNoList,
+			String[] authList
 			) {
+		
+//		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(1);
 		
 		List<String> list = new ArrayList<String>();
 		
@@ -411,11 +508,17 @@ public class AtrzController {
 			log.info("selectAppLineList->emplNo : " + emplNo);
 			
 			
-			
 			list.add(emplNo);
 		}
-		for(String emplCerNo : empNoList) {
-		}
+		
+		//여기서 결재자와 참조자를 나눠야 한다.
+		log.info("empNoList: " +Arrays.toString(empNoList));
+		log.info("empAttNoList : " +Arrays.toString(empAttNoList));
+//		for(String empAttNo : empNoList) {
+//			log.info("selectAppLineList-> empAttNo : "+empAttNo);
+//			
+//		}
+	
 		
 //		해당 직원의 상세정보 목록을 select
 		List<EmployeeVO> emplDetailList = organizationService.emplDetailList(list);
