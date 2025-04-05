@@ -242,16 +242,19 @@
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
 																	<!--글씨체 두껍게 b태그 사용하기-->
-																	<p class="text-sm fw-bolder">${fn:substring(atrzVO.atrzDocNo, 2, 12)}</p>
+																	<p class="text-sm fw-bolder">
+																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																		<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p></p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
 																	<a href="#" class="fw-bolder">${atrzVO.atrzSj}</a>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
-																	<p class="fw-bolder">인사부</p>
+																	<p class="fw-bolder">${atrzVO.deptCodeNm}</p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
-																	<p class="fw-bolder">김은대</p>
+																	<p class="fw-bolder">${atrzVO.drafterEmpnm}</p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
 																	<p>
@@ -342,16 +345,19 @@
 															<tr>
 																<td class="text-center"
 																	style="padding-top: 10px; padding-bottom: 10px;">
-																	<p class="text-sm fw-bolder">${fn:substring(atrzVO.atrzDocNo, 2, 12)}</p>
+																	<p class="text-sm fw-bolder">
+																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																		<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p></p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
 																	<a href="#" class="text-sm fw-bolder">${atrzVO.atrzSj}</a>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
-																	<p class="text-sm fw-bolder">기안부서</p>
+																	<p class="text-sm fw-bolder">${atrzVO.deptCodeNm}</p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
-																	<p class="text-sm fw-bolder">기안자</p>
+																	<p class="text-sm fw-bolder">${atrzVO.drafterEmpnm}</p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
 																	<p class="text-sm fw-bolder">
@@ -426,6 +432,9 @@
 																<h6 class="fw-bolder">제목</h6>
 															</th>
 															<th class="text-center">
+																<h6 class="fw-bolder">기안부서</h6>
+															</th>
+															<th class="text-center">
 																<h6 class="fw-bolder">기안자</h6>
 															</th>
 															<th class="text-center">
@@ -438,7 +447,10 @@
 															<tr>
 																<td class="text-center"
 																	style="padding-top: 10px; padding-bottom: 10px;">
-																	<p class="text-sm fw-bolder">${fn:substring(atrzVO.atrzDocNo, 2, 12)}</p>
+																	<p class="text-sm fw-bolder">
+																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																		<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p></p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
 																	<p class="text-sm fw-bolder">결재양식</p>
@@ -447,7 +459,10 @@
 																	<a href="#" class="text-sm fw-bolder">${atrzVO.atrzSj}</a>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
-																	<p class="text-sm fw-bolder">기안자</p>
+																	<p class="text-sm fw-bolder">${atrzVO.deptCodeNm}</p>
+																</td>
+																<td class="text-center" style="padding-top: 0px;">
+																	<p class="text-sm fw-bolder">${atrzVO.drafterEmpnm}</p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
 																	<p class="text-sm fw-bolder">

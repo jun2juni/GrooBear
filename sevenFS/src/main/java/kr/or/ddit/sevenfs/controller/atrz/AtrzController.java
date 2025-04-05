@@ -55,24 +55,56 @@ public class AtrzController {
 
 	
 	//그냥 전역변수로 시큐리티를 만들어놓는다.
-	//?? 이건 어디서 튀어나온것??
-	// 로그인한 정보 가져오기
-	@GetMapping("/some-path")
-	public String someMethod(@AuthenticationPrincipal CustomUser customUser) {
-		EmployeeVO empVO = customUser.getEmpVO();
-		String emplNo = empVO.getEmplNo();
-		// empVO 사용
-		return "view";
-	}
 
 	@GetMapping("/home")
-	public String home(Model model, HttpServletRequest req, @AuthenticationPrincipal CustomUser customUser) {
+	public String homeList(Model model, HttpServletRequest req, @AuthenticationPrincipal CustomUser customUser) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
+		log.info("empVO : ", empVO);
+		
 		String emplNo = empVO.getEmplNo();
 		log.info("emplNo : ", emplNo);
-//		String emplNm = employeeVO.getEmplNm();
-
+			
+		//공통코드로 사원 정보가져오기
+		//로그인한 사원의 정보를 다 가져온다.
+		List<AtrzVO> atrzVOList = this.atrzService.homeList(emplNo);
+		//로그인한 사람이 결재자 인경우 결재 대기문서에 가져온다.
+		//기안자의 정보를 가지고 기안자의 부서, 기안자의 직급 등 상세정보를 가져옴
+		EmployeeVO employeeVO;
+		for(AtrzVO atrzVO : atrzVOList) {
+			employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
+			
+			log.info("homeList-> employeeVO(기안자의상세정보) :"+employeeVO);
+//			private String emplNo; 
+//			private String emplNm;
+//			private String clsfCode; // 직급코드
+//			private String clsfCodeNm; // 직급코드명 
+//			private String deptCode;//부서코드
+//			private String deptCodeNm;//부서코드명
+			
+			atrzVO.setClsfCodeNm(employeeVO.getPosNm());
+			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+			
+			log.info("homeList-> atrzVO(기안자의정보를 atrz에 넣어줌) :"+atrzVO);
+			
+		}
+		
+		//로그인한 사람이 기안자인경우 대기문서를 가져온다.
+		
+		//로그인한 사람이 기안자 이며 , 완료 된 문서를 가져온다.
+		for(AtrzVO atrzVO : atrzVOList) {
+			organizationService.emplDetail(atrzVO.getDrafterEmpno()); 
+			model.addAttribute("atrzVO", atrzVO);
+			log.info("homeList -> atrzVO : "+ atrzVO);
+		}
+		log.info("homeList -> atrzVOList : "+ atrzVOList);
+		model.addAttribute("atrzVOList", atrzVOList);
+		
+		
+		//여기서 상태 코드에 따라 리스트가 출력되어야 한다.
+		
+		
+		
 		// 결재대기문서 갯수
 		int beDocCnt = atrzService.beDocCnt(emplNo);
 		model.addAttribute("beDocCnt", beDocCnt);
@@ -88,14 +120,13 @@ public class AtrzController {
 		// 결재수신문서갯수
 		int recDocCnt = atrzService.recDocCnt(emplNo);
 		model.addAttribute("recDocCnt", recDocCnt);
+		
 
-		List<AtrzVO> atrzVOList = this.atrzService.list();
-		model.addAttribute("atrzVOList", atrzVOList);
 
 //		// 사원정보 가져오는것 산나님 EmployeeVO에 추가한것있음 나중에 첫글자 소문자로 변경해야함
 //		List<AtrzVO> atrzEmploInfo = this.atrzService.atrzEmploInfo();
 //		model.addAttribute("atrzEmploInfo", atrzEmploInfo);
-
+		model.addAttribute("title","전자결재");
 		log.info("전자결재홈");
 		return "atrz/home";
 	}
@@ -177,20 +208,65 @@ public class AtrzController {
 	}
 
 	@GetMapping("/approval")
-	public String approvalList(Model model) {
-		List<AtrzVO> atrzVOList = this.atrzService.list();
-		model.addAttribute("title", "목록출력");
+	public String approvalList(Model model,@AuthenticationPrincipal CustomUser customUser) {
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String emplNo = empVO.getEmplNo();
+		
+		List<AtrzVO> atrzVOList = this.atrzService.homeList(emplNo);
+		
+		
+		EmployeeVO employeeVO;
+		for(AtrzVO atrzVO : atrzVOList) {
+			employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
+			atrzVO.setClsfCodeNm(employeeVO.getPosNm());
+			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+		}
+		
+		//로그인한 사람이 기안자 이며 , 완료 된 문서를 가져온다.
+		for(AtrzVO atrzVO : atrzVOList) {
+			organizationService.emplDetail(atrzVO.getDrafterEmpno()); 
+			model.addAttribute("atrzVO", atrzVO);
+			log.info("homeList -> atrzVO : "+ atrzVO);
+		}
+		log.info("homeList -> atrzVOList : "+ atrzVOList);
+		model.addAttribute("atrzVOList", atrzVOList);
+		
+		
+		
+		model.addAttribute("title", "결재하기");
 		model.addAttribute("atrzVOList", atrzVOList);
 		log.info("결재하기 출력되낭?");
+		
 		return "atrz/approval";
+		
 	}
 
 	@GetMapping("/document")
-	public String documentList(Model model) {
-		List<AtrzVO> atrzVOList = this.atrzService.list();
-		model.addAttribute("title", "목록출력");
+	public String documentList(Model model ,HttpServletRequest req ,@AuthenticationPrincipal CustomUser customUser) {
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String emplNo = empVO.getEmplNo();
+		
+		
+		List<AtrzVO> atrzVOList = this.atrzService.homeList(emplNo);
+		
+		EmployeeVO employeeVO;
+		for(AtrzVO atrzVO : atrzVOList) {
+			employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
+			atrzVO.setClsfCodeNm(employeeVO.getPosNm());
+			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+		}
+		
+		//로그인한 사람이 기안자 이며 , 완료 된 문서를 가져온다.
+		for(AtrzVO atrzVO : atrzVOList) {
+			organizationService.emplDetail(atrzVO.getDrafterEmpno()); 
+			model.addAttribute("atrzVO", atrzVO);
+			log.info("homeList -> atrzVO : "+ atrzVO);
+		}
+		log.info("homeList -> atrzVOList : "+ atrzVOList);
 		model.addAttribute("atrzVOList", atrzVOList);
-		log.info("개인문서함출력되낭?");
+		model.addAttribute("title", "전자결재문서함");
 		return "atrz/documentBox";
 	}
 
@@ -528,20 +604,21 @@ public class AtrzController {
 		return emplDetailList;
 		
 	}
-
-//	@GetMapping("/{atrzDocNo}")
-//	public String atrzDetail(
-//			@PathVariable String atrzDocNo, Model model
-//			) {
-//		AtrzVO atrzVO = atrzService.atrzDetail(atrzDocNo);
-//		
-//		if(atrzVO != null) {
-//			model.addAttribute("atrzVO",atrzVO);
-//			return "documentForm/draftDetail";
-//		}else {
-//			return "errer/404";
-//		}
-//	}
+	//연차신청서 상세보기
+	@GetMapping("selectForm/holidayDetail")
+	public String holidayDetail(Model model, @RequestParam(value = "holiActplnNo", required = true) int holiActplnNo,
+			DocumHolidayVO documHolidayVO) {
+		log.info("holidayDetail-> holiActplnNo :"+holiActplnNo);
+		
+		documHolidayVO = this.atrzService.holidayDetail(holiActplnNo);
+		
+		model.addAttribute("title", "연차신청서 상세보기");
+		model.addAttribute("documHolidayVO",documHolidayVO);
+		log.info("selectHolidayDetail-> documHolidayVO : "+documHolidayVO);
+		return "documentForm/holidayDetail";
+		
+		
+	}
 
 //	public String insert() {
 //	atrzService.insertFrom() ///xml

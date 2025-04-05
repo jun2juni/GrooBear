@@ -4,7 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
-<c:set var="title" scope="application" value="메인" />
+<c:set var="title" scope="application" value="title" />
 
 <!DOCTYPE html>
 <html lang="en">
@@ -17,12 +17,20 @@
   <%@ include file="../layout/prestyle.jsp" %>
 </head>
 <style>
+.homeContainer{
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-bottom: 8px;
+							
+}
 .wdBtn {
-	--bs-btn-padding-y: .25rem;
+	--bs-btn-padding-y: .40rem;
 	--bs-btn-padding-x: 4rem;
-	--bs-btn-font-size: .75rem;
-	background-color: pink;
+	--bs-btn-font-size: 1rem;
+	background-color: #00bfff ;
 	color: white;
+	border-radius: 0 0 5px 5px;
+	width: 100%;
 }
 
 .actBtn {
@@ -52,6 +60,7 @@
 	margin-left: 10px;
 	margin-right: 10px;
 	margin-bottom: 10px;
+	
 }
 
 .docList {
@@ -74,6 +83,7 @@
 	white-space: nowrap;
 	
 }
+
 </style>
 <body>
 <%@ include file="../layout/sidebar.jsp" %>
@@ -136,7 +146,6 @@
 																	.remove("d-flex");
 															durationPeriod.classList
 																	.add("d-none");
-
 														}
 													})
 								</script>
@@ -169,19 +178,19 @@
 					<div class="tab-content" id="myTabContent">
 						<div class="tab-pane fade show active" id="contact1-tab-pane"
 							role="tabpanel" aria-labelledby="contact1-tab" tabindex="0">
-										<p>${myEmpInfo}</p>
+										<!-- <p>${myEmpInfo}</p> -->
 							<div class="atrzTabCont" style="margin-top: 0px;">
-								<div class="container mt-2">
+								<div class="container mt-2 homeContainer">
 									<div class="row flex-nowrap overflow-auto">
-										<p>${beDocCnt}</p>
-										<p>${homeBeDoc}</p>
+										<!-- <p>${beDocCnt}</p> -->
+										<!-- <p>${homeBeDoc}</p> -->
 <%-- 										<p>${homeReqDoc}</p> --%>
 <%-- 										<p>${recDocCnt}</p> --%>
 <%-- 										<p>${atrzEmploInfo}</p> --%>
 										<input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
 										<c:forEach var="atrzVO" items="${atrzVOList}">
 											<div class="col-sm-3">
-												<div class="card">
+												<div class="card" >
 													<div class="card-header" style="height: 36px;">
 														<div class="row g-0 text-center">
 															<!-- 진행 반려 완료 회수 취소 -->
@@ -211,21 +220,24 @@
 																</c:otherwise>
 															</c:choose>
 															<!--결재상태코드에 따른 조건 끝-->
-															<a href="#" class="col-6 col-md-8">
-															
+															<!-- <p>${documHolidayVO}</p> -->
+															<a href="/atrz/selectForm/holidayDetail?holiActplnNo=${documHolidayVO.holiActplnNo}" class="col-6 col-md-8">
 																<h5 class="homeFr">${atrzVO.atrzSj}</h5>
 															</a>
 														</div>
 													</div>
 													<div class="card-body">
-														<p class="card-text">기안자 : ${myEmpInfo.emplNm}</p>
-														<p class="card-text">기안일 :
-															${fn:substring(atrzVO.atrzDocNo, 2,
-																				12)}</p>
+														<!-- <p>${atrzVO}</p> -->
+														<p class="card-text">기안자&nbsp;&nbsp; :&nbsp;&nbsp;  ${atrzVO.drafterEmpnm}
+																					&nbsp;&nbsp;[${atrzVO.deptCodeNm}]</p>
+														<p class="card-text">기안일시&nbsp;&nbsp; :&nbsp;&nbsp; 
+															<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+															<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+															<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
+														</div>
 														<div class="col text-center">
 															<a href="#" class="btn btn-default wdBtn">결재하기</a>
 														</div>
-													</div>
 												</div>
 											</div>
 										</c:forEach>
@@ -244,7 +256,7 @@
 												<thead>
 													<tr>
 														<th>
-															<h6 class="fw-bolder">기안일</h6>
+															<h6 class="fw-bolder">기안일시</h6>
 														</th>
 														<th>
 															<h6 class="fw-bolder">제목</h6>
@@ -263,24 +275,24 @@
 														</th>
 													</tr>
 												</thead>
-												<p>${atrzVOList}</p>
+												<!-- <p>${atrzVOList}</p> -->
 												<c:forEach var="atrzVO" items="${atrzVOList}">
 													<tbody>
 														<tr>
-															<td 
-																style="padding-top: 10px; padding-bottom: 10px;">
+															<td style="padding-top: 10px; padding-bottom: 10px;">
 																<p class="text-sm">
-																	${fn:substring(atrzVO.atrzDocNo,
-																						2, 12)}</p>
+																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																	<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
 															</td>
 															<td  style="padding-top: 0px;">
 																<a href="#" class="text-sm fw-bolder listCont">${atrzVO.atrzSj}</a>
 															</td>
 															<td  style="padding-top: 0px;">
-																<p class="fw-bolder">기안부서</p>
+																<p class="fw-bolder">${atrzVO.deptCodeNm}</p>
 															</td>
 															<td style="padding-top: 0px;">
-																<p class="fw-bolder">${atrzVO.atrzSj}</p>
+																<p class="fw-bolder">${atrzVO.drafterEmpnm}</p>
 															</td>
 															<td style="padding-top: 0px;">
 																<p class="fw-bolder">
@@ -339,7 +351,7 @@
 												<thead>
 													<tr>
 														<th>
-															<h6 class="fw-bolder">기안일</h6>
+															<h6 class="fw-bolder">기안일시</h6>
 														</th>
 														<th>
 															<h6 class="fw-bolder">제목</h6>
@@ -362,28 +374,28 @@
 												<c:forEach var="atrzVO" items="${atrzVOList}">
 													<tbody>
 														<tr>
-															<td
-																style="padding-top: 10px; padding-bottom: 10px;">
+															<td style="padding-top: 10px; padding-bottom: 10px;">
 																<p class="text-sm">
-																	${fn:substring(atrzVO.atrzDocNo,
-																						2, 12)}</p>
+																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																	<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
 															</td>
-															<td class="pt-1 listCont" style="padding-top: 0px;">
-																<a href="#" class="text-sm fw-bolder">${atrzVO.atrzSj}</a>
+															<td  style="padding-top: 0px;">
+																<a href="#" class="text-sm fw-bolder listCont">${atrzVO.atrzSj}</a>
 															</td>
-															<td class="pt-0" style="padding-top: 0px;">
-																<p class="text-sm fw-bolder">기안부서</p>
+															<td  style="padding-top: 0px;">
+																<p class="fw-bolder">${atrzVO.deptCodeNm}</p>
 															</td>
-															<td class="pt-0" style="padding-top: 0px;">
-																<p class="text-sm fw-bolder">기안자</p>
+															<td style="padding-top: 0px;">
+																<p class="fw-bolder">${atrzVO.drafterEmpnm}</p>
 															</td>
-															<td class="pt-0" style="padding-top: 0px;">
-																<p class="text-sm fw-bolder">
+															<td style="padding-top: 0px;">
+																<p class="fw-bolder">
 																	<span class="material-symbols-outlined">
 																		attach_file </span>
 																</p>
 															</td>
-															<td class="pt-0">
+															<td  style="padding-top: 0px;">
 																<h6 class="text-sm">
 																	<p>
 																		<c:choose>

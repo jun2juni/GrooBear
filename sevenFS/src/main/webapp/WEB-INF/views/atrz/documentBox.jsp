@@ -161,7 +161,7 @@
 															<!-- select박스 -->
 															<th></th>
 															<th class="text-center">
-																<h6 class="fw-bolder">기안일</h6>
+																<h6 class="fw-bolder">기안일시</h6>
 															</th>
 															<th class="text-center">
 																<h6 class="fw-bolder">제목</h6>
@@ -191,16 +191,18 @@
 																	</div>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
-																	<p>${fn:substring(atrzVO.atrzDocNo, 2, 12)}</p>
+																	<p><fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																		<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
 																	<a href="#" class="">${atrzVO.atrzSj}</a>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
-																	<p>부서</p>
+																	<p>${atrzVO.deptCodeNm}</p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
-																	<p>기안자</p>
+																	<p>${atrzVO.drafterEmpnm}</p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
 																	<p>
@@ -267,7 +269,7 @@
 															<!-- select박스 -->
 															<th></th>
 															<th class="text-center">
-																<h6 class="fw-bolder">기안일</h6>
+																<h6 class="fw-bolder">기안일시</h6>
 															</th>
 															<th class="text-center">
 																<h6 class="fw-bolder">제목</h6>
@@ -297,13 +299,17 @@
 																	</div>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
-																	<p>${fn:substring(atrzVO.atrzDocNo, 2, 12)}</p>
+																	<p>
+																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																		<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}
+																	</p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
 																	<a href="#" class="">${atrzVO.atrzSj}</a>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
-																	<p>부서</p>
+																	<p>${atrzVO.deptCodeNm}</p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
 																	<p>기안</p>
@@ -375,13 +381,19 @@
 																<h6 class="fw-bolder">기안일</h6>
 															</th>
 															<th class="text-center">
+																<h6 class="fw-bolder">완료일</h6>
+															</th>
+															<th class="text-center">
+																<h6 class="fw-bolder">결재양식</h6>
+															</th>
+															<th class="text-center">
 																<h6 class="fw-bolder">제목</h6>
 															</th>
 															<th class="text-center">
-																<h6 class="fw-bolder">기안부서</h6>
+																<h6 class="fw-bolder">기안자</h6>
 															</th>
 															<th class="text-center">
-																<h6 class="fw-bolder">기안자</h6>
+																<h6 class="fw-bolder">문서번호</h6>
 															</th>
 															<th class="text-center">
 																<h6 class="fw-bolder">첨부</h6>
@@ -405,13 +417,19 @@
 																	<p>${fn:substring(atrzVO.atrzDocNo, 2, 12)}</p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
+																	<p>완료일</p>
+																</td>
+																<td class="text-center" style="padding-top: 0px;">
+																	<a class="">양식</a>
+																</td>
+																<td class="text-center" style="padding-top: 0px;">
 																	<a class="">${atrzVO.atrzSj}</a>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
-																	<p>부서</p>
+																	<p>기안자</p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
-																	<p>기안자</p>
+																	<p>문서번호</p>
 																</td>
 																<td class="text-center" style="padding-top: 0px;">
 																	<p>

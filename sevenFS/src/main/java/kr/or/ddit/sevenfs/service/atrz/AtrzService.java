@@ -12,7 +12,7 @@ public interface AtrzService {
 	public List<AtrzVO> atrzEmploInfo();
 	
 	//목록 출력
-	public List<AtrzVO> list();
+	public List<AtrzVO> homeList(String emplNo);
 	
 	//기안문서 post
 	public int draftInsert(DraftVO draftVO);
@@ -51,6 +51,9 @@ public interface AtrzService {
 	public int insertAtrzLine(AtrzLineVO atrzLineVO);
 	//연차신청서 인서트
 	public int insertHoliday(DocumHolidayVO documHolidayVO);
+	
+	//연차신청서 상세보기
+	public DocumHolidayVO holidayDetail(int holiActplnNo);
 	
 	
 	//비즈니스 로직 이란???
