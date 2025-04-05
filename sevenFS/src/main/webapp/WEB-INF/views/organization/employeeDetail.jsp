@@ -5,9 +5,10 @@
 <div class="card-style chat-about h-100">
   <h6 class="text-sm text-medium"></h6>
   <div class="chat-about-profile">
- 	<div class="image mx-auto chat-about chat-about-profile image">
-    <img src="/upload/${empDetail.proflPhotoUrl}" alt="" style="border-radius: 50%; width:150px; height: 150px; ">
+	  <div class="image mx-auto chat-about chat-about-profile image">
+    	<img src="/upload/${empDetail.proflPhotoUrl}" alt="" style="border-radius: 50%; width:150px; height: 150px; ">
       </div> 
+      <span class="text-medium text-dark">${empDetail.emplNm}</span>
       <div class="content text-center">
 		<span class="status-btn main-btn deactive-btn rounded-full btn-hover mr-5">${empDetail.posNm}</span>
 		<span class="status-btn main-btn deactive-btn rounded-full btn-hover">${empDetail.deptNm}</span>

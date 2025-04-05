@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.organization.DclztypeMapper">
+
+<!-- 사원의 근태현황 대분류로 조회  -->
+<select id="dclzCnt" parameterType="String" resultMap="commonMap">
+	SELECT 
+	    DT.EMPL_NO,
+	    SUM(CASE WHEN CC.UPPER_CMMN_CODE = '00' THEN 1 ELSE 0 END),
+	    SUM(CASE WHEN CC.UPPER_CMMN_CODE = '10' THEN 1 ELSE 0 END),
+	    SUM(CASE WHEN CC.UPPER_CMMN_CODE = '20' THEN 1 ELSE 0 END),
+	    SUM(CASE WHEN CC.UPPER_CMMN_CODE = '30' THEN 1 ELSE 0 END)
+	FROM  COMMON_CODE CC
+	    LEFT JOIN DCLZ_TYPE DT ON DT.DCLZ_CODE = CC.CMMN_CODE
+	    WHERE DT.EMPL_NO = #{emplNo}
+	    GROUP BY DT.EMPL_NO
+</select>
+
+<resultMap type="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO" id="dclztypeMap">
+	<result property="dclzNo" column="DCLZ_NO"/>
+	<result property="dclzCode" column="DCLZ_CODE"/>
+	<result property="dclzBeginDt" column="DCLZ_BEGIN_DT"/>
+	<result property="dclzEndDt" column="DCLZ_END_DT"/>
+	<result property="emplNo" column="EMPL_NO"/>
+	<association property="cmmnCodeList" resultMap="commonMap"></association>
+</resultMap>
+
+<resultMap type="kr.or.ddit.sevenfs.vo.CommonCodeVO" id="commonMap">
+		<result property="cmmnCodeSn" column="CMMN_CODE_SN"/>
+		<result property="cmmnCodeGroup" column="CMMN_CODE_GROUP"/>
+		<result property="cmmnCode" column="CMMN_CODE"/>
+		<result property="cmmnCodeNm" column="CMMN_CODE_NM"/>
+		<result property="cmmnCodeDc" column="CMMN_CODE_DC"/>
+		<result property="useYn" column="USE_YN"/>
+		<result property="upperCmmnCode" column="UPPER_CMMN_CODE"/>
+</resultMap>
+
+
+</mapper>

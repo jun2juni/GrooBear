@@ -275,6 +275,9 @@ public class OrganizationController {
 		// 전체 부서 가져오기
 		List<CommonCodeVO> depList = organizationService.depList();
 		
+		// 상위 부서만 가져오기
+		List<CommonCodeVO> upperDepList = organizationService.upperDepList();
+		
 		// 사원의 파일넘버 가져오기
 		int fileNo = emplDetail.getAtchFileNo();
 		
@@ -286,6 +289,7 @@ public class OrganizationController {
 		emplDetailData.put("emplDet", emplDetail);
 		emplDetailData.put("posList", posList);
 		emplDetailData.put("depList", depList);
+		emplDetailData.put("upperDepList", upperDepList);
 		//emplDetailData.put("fileAttachList", fileAttachList);
 		log.info("emplDetailData : " + emplDetailData);
 		

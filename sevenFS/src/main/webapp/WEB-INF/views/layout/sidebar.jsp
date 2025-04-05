@@ -215,7 +215,7 @@
           </a>
           <ul id="dclzType" class="dropdown-nav collapse" style="">
             <li>
-              <a href="/dclzType"> 근태현황</a>
+              <a href="/dclz/dclzType"> 근태현황</a>
             </li>
             <li>
               <a href="/vacation"> 연차 </a>

@@ -25,7 +25,7 @@
 	<section class="section">
 		<div class="container-fluid">
 			<form action="/emplUpdatePost" method="post" class="needs-validation" novalidate id="emplUpdateForm" enctype="multipart/form-data">
-				<div class="card-style chat-about h-100" style="justify-content: center;">
+				<div class="card-style chat-about h-100 " style="justify-content: center;">
 				   <h6 class="text-sm text-medium"></h6>
 				   <c:set var="emplDet" value="${emplDetail.emplDet}"></c:set>
 				   <div class="chat-about-profile" style="justify-content: center;">
@@ -53,14 +53,34 @@
 							</c:forEach>
 						 </select>
 				 	 </div>
-				  	<div class="input-style-1 form-group col-6">
+				  	<%-- <div class="input-style-1 form-group col-6">
 		         	 <label for="deptCode" class="form-label required">부서<span class="text-danger">*</span></label>
 		     	     <select id="duration" class="form-select w-auto" name="deptCode">
 						<c:forEach var="depList" items="${emplDetail.depList}">
 							<option value="${depList.cmmnCode}">${depList.cmmnCodeNm}</option>
 						</c:forEach>
 					 </select>
+				  	</div> --%>
+				  	
+				  	<div class="input-style-1 form-group col-2">
+		         	 <label for=upperDept class="form-label required">소속부서<span class="text-danger">*</span></label>
+		     	     <select id="upperDept" class="form-select w-auto" required="required">
+						<c:forEach var="upperDepList" items="${emplDetail.upperDepList}">
+							<option value="${upperDepList.cmmnCode}">${upperDepList.cmmnCodeNm}</option>
+						</c:forEach>
+					 </select>
 				  	</div>
+				  	<%-- 부서 선택하면 소속팀 출력 --%>
+					<div>
+						<label class="form-label required">소속팀
+								<span class="text-danger">*</span>
+						</label> 
+					    <div class="" id="lowerDepartment">
+					    
+					    </div>
+					</div>				  	
+				  	
+				  	
 				  </div>
 				  </sec:authorize>
 				   <c:set var="emp" value="${emplDetail.emplDet}"></c:set>
@@ -209,7 +229,44 @@ $(function(){
 				}
 			});
 		});
-	});
+
+$("#upperDept").on("change", function(){
+	const upperCmmnCode = this.value;
+	console.log("선택한 상위부서 : " , upperCmmnCode);
+	
+	// 상위코드 보내서 비동기로 보내기
+	fetch("/getLowerdeptList?upperCmmnCode="+upperCmmnCode, {
+		method : "get",
+	    headers : {
+	        "Content-Type": "application/json"
+       }
+	}) // end fetch
+	.then(resp => resp.json())
+	.then(res => {
+		console.log("선택한 부서의 하위부서 리스트 : ", res);
+		 // 여기서 $("#lowerDepartment") 내부 비우기
+		  $("#lowerDepartment").html("");
+		 res.map((lowerDep, idx) => {
+				//console.log("lowerDep : " , lowerDep.cmmnCodeNm);
+				const id = idx;
+				//console.log("id" , id);
+					
+				 $("#lowerDepartment").append(
+					`
+					 <div>
+					 <input type="radio" value="\${lowerDep.cmmnCode}" id="\${id}" name="deptCode">
+		      		 <label for="\${id}">\${lowerDep.cmmnCodeNm}</label>
+					</div>
+					`
+				); 
+ 			 }) // end map   
+ 			
+	})// end result
+}) // end click event	
+
+});
+	
+	
 
 </script>
   
