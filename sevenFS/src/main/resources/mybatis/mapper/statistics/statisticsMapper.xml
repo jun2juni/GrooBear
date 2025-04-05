@@ -39,6 +39,11 @@
 <!--    			</where> -->
 <!--     </select> -->
 
+<!-- 		할수있다 백현명 -->
+<!-- 		잘하면서 못하는척한다 백현명 -->
+<!-- 		자신감 만땅 백현명이되어라 -->
+<!-- 		당신을잘하고 있으니 더 잘해야한다 ㅜㅜ -->
+
 	<!-- 특정 년도 특정 년 조회 쿼리 :  입력년도(-1) - 입력 월 (시작시점) / 입력년도(+1) -입력(종료시점)/ 근태코드가 지각 01 조퇴 03     -->
     <!-- 특정 년도 특정 월 조회 쿼리 :  
     AWOL 근태 지각 조퇴 통계
@@ -74,10 +79,7 @@ StatisticsVO(interval=day, chartType=area, startYearsY=null, endYearsY=null, dep
 		LEFT JOIN EMPLOYEE EMP 
 		ON DCLZ.EMPL_NO = EMP.EMPL_NO
 		<where> 
-<!-- 		할수있다 백현명 -->
-<!-- 		잘하면서 못하는척한다 백현명 -->
-<!-- 		자신감 만땅 백현명이되어라 -->
-<!-- 		당신을잘하고 있으니 더 잘해야한다 ㅜㅜ -->
+
 			<if test="interval!=null and interval=='year'">
 				<![CDATA[
 	 		    DCLZ.DCLZ_BEGIN_DT >= TO_DATE(#{startYearsY}, 'YYYY')

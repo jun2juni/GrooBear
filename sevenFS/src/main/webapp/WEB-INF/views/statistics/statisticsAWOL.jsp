@@ -35,29 +35,34 @@
 	
 	
 	// 차트 변경
-	function updateChartType(){
-		
-	}
-	
 	/* 차트 기본형태 : line */
     let comboChartType = 'line';
-	function drawVisualization() {
+	function onChartTypeChange() {
+        const selectBox = document.getElementById('chartTypeSelect');
+        comboChartType = selectBox.value;
+//         drawVisualization();
+	console.log()
+     }
+// 	차트그려주는 drawVisualization
+	function drawVisualization(AWOL) {
     // Some raw data (not necessarily accurate)
-    	var data = google.visualization.arrayToDataTable([
-          ['Month', 'Bolivia', 'Ecuador', 'Madagascar', 'Papua New Guinea', 'Rwanda', 'Average'],
-          ['2004/05',  165,      938,         522,             998,           450,      614.6],
-          ['2005/06',  135,      1120,        599,             1268,          288,      682],
-          ['2006/07',  157,      1167,        587,             807,           397,      623],
-          ['2007/08',  139,      1110,        615,             968,           215,      609.4],
-          ['2008/09',  136,      691,         629,             1026,          366,      569.6]
-        ]);
+    	var data = new google.visualization.arrayToDataTable(AWOL.map(([key, value], idx) => idx== 0 ? [key, value] : [key, +value]));
+    	console.log("데이타",data);
+		console.log("했어용!!!!!!!!",AWOL);
+//     	var data = google.visualization.arrayToDataTable([
+//     		 ['Month', 'Bolivia', 'Ecuador', 'Madagascar', 'Papua New Guinea', 'Rwanda', 'Average'],
+//              ['2004/05',  165,      938,         522,             998,           450,      614.6],
+//              ['2005/06',  135,      1120,        599,             1268,          288,      682],
+//              ['2006/07',  157,      1167,        587,             807,           397,      623],
+//              ['2007/08',  139,      1110,        615,             968,           215,      609.4],
+//              ['2008/09',  136,      691,         629,             1026,          366,      569.6]
+//         ]);
 
         var options = {
-//           title : ,
-//           vAxis: {title: 'Cups'},
-//           hAxis: {title: 'Month'},
-          seriesType: 'bars'
-//           series: {5: {type: 'line'}} 특정 타입만 바꿔줄 수 있음 
+          title : '',
+          vAxis: {title: 'Cups'},
+          hAxis: {title: 'Month'},
+          seriesType: comboChartType
         };
 
         var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
@@ -88,12 +93,12 @@
     		 type:"post",
     		 dataType:"json",
     		 success:function(result){
-    			 console.log("result : ", result);
+    		 console.log("result : ", result);
     			 //매개
     			 
-//     			 let maereok = result;
+    			 let AWOL = result;
     			 
-    			 google.charts.setOnLoadCallback(drawStuff());
+    			 google.charts.setOnLoadCallback(drawStuff(AWOL)));
     		 }
     	  });		
 		});//end btnSubmit
@@ -383,7 +388,7 @@
 										<!-- 전체 폼태그 끝 form  -->
 										<div class="select-style-1 form-group w-fit">
 											<select name="chartType" class="form-select" id="chartType"
-												onchange="updateChartType()">
+												onchange="onChartTypeChange()">
 												<label for="chartType" class="form-label">차트 유형 선택:</label>
 												<option selected="" disabled="" readonly="" value="">그래프
 													유형을	 선택해주세요</option>
@@ -499,7 +504,7 @@ function handleIntervalChange(event) {
 			handleIntervalChange(e);
 		});
 	});
-
+	//전체 체크 해제 
 	function selectAll(selectAll)  {
 		  const checkboxes 
 		     = document.querySelectorAll('input[type="checkbox"]');

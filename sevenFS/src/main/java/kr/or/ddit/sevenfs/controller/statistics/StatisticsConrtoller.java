@@ -65,7 +65,7 @@ public class StatisticsConrtoller {
 	 */
 	@ResponseBody
 	@PostMapping("/statistics/statisticsAWOL/AWOLAjax")
-	public List<Map<String,Object>> statisticsAWOLAjax(StatisticsVO statisticsVO) {
+	public List<String[]> statisticsAWOLAjax(StatisticsVO statisticsVO) {
 		/*1. 연간
 		StatisticsVO(interval=year, chartType=line, startYearsY=2024, endYearsY=2025, dept=[인사부, 영업부], startYearsM=, startMonths=null, endMonths=null, startDays=, endDays=)
 		StatisticsVO(interval=year, chartType=null, startYearsY=2024, endYearsY=2025, dept=[10, 30, 40], startYearsM=, startMonths=null, endMonths=null, startDays=, endDays=, deptCodelength=0)
@@ -98,23 +98,13 @@ public class StatisticsConrtoller {
 		
 		List<String[]> arrList = new ArrayList<String[]>();
 		
-//		String[] arr = new String[2];
-//		arr[0] = "";
-//		arr[1] = "";
-//		arrList.add(arr);
-//		
-//		//반복
-//		for(Map<String,Object> map : mapList) {
-//		arr = new String[2];
-//		arr[0] = map.get("").toString();
-//		arr[1] = map.get("").toString();
-//		arrList.add(arr);			
-//				}
-//				
-//		log.info("AWOLAjax->arrList : " + arrList);
+		String[] arr = new String[2];
+		arr[0] = "";
+		arr[1] = "";
+		arrList.add(arr);
 		
 		
-		return mapList;
+		return null;
 	}
 	
 
