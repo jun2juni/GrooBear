@@ -68,6 +68,10 @@
           overflow: hidden;
           display: -webkit-box;
       }
+	  
+	  #chat .chat-message img {
+		  min-height: 140px;
+	  }
   </style>
 </head>
 <body>
@@ -261,7 +265,8 @@
 <script>
   let prevChatRoomNo = null;
   
-  window.onload = function(target) {
+  window.onload = function() {
+	let chatRoomNo = "${param.get("chatRoomNo")}"
     // 채팅 무한 스크롤
     let chatList = document.querySelector("#chatList");
     let observerBlock = document.querySelector("#observerBlock");
@@ -300,12 +305,17 @@
     intersectionObserver2.observe(document.querySelector("#alertObserverBlock"));
 
     // 채팅방 클릭
+	
     document.querySelectorAll(".chatRoom").forEach(dom => {
       dom.addEventListener("click", (e) => chatRoomClick(e, dom))
+      
+	  if (dom.dataset.chttRoomNo == chatRoomNo) {
+      	dom.click()
+	  }
     })
   }
   
-  function chatRoomClick(e, dom) {
+  async function chatRoomClick(e, dom) {
     e.stopPropagation();
     const chttRoomNo = dom.dataset.chttRoomNo; // this는 li 요소를 가리킴
     document.querySelector("#realChatList").innerHTML = ""; // 전에 보던 메세지 삭제
@@ -328,14 +338,13 @@
     dom.querySelector(".read-badge").innerHTML = "0";
     dom.querySelector(".read-badge").classList.add("d-none");
 
-    getChatMessage({chttRoomNo}); // 이전 메세지 가져오기
+    await getChatMessage({chttRoomNo}); // 이전 메세지 가져오기
     chatWebSocketConnect({chttRoomNo}); // 들어가는 채팅방 연결
 
     document.querySelector("#chat").classList.remove("d-none");
     prevChatRoomNo = chttRoomNo; // 현재 채팅방 번호
 
     dom.classList.add("bg-body-secondary");
-	
   }
 
   // 사원채팅방 클릭 시 만들기
@@ -349,19 +358,16 @@
         console.log(data)
 		
 		if (data.invalidChatRoom !== 0) {
-      		// 채팅방 열기
+		  // 채팅방 열기
           document.querySelectorAll(".chatRoom").forEach((item) => {
             let chttRoomNo = item.dataset.chttRoomNo;
             if (chttRoomNo == data.invalidChatRoom) {
               item.click();
-			}
-		  })
-		  
-		  return;
+            }
+          })
 		}
 
     	// 채팅방 추가하기
-        console.log(data.chatRoom)
 		if (data.chatRoom) {
       		let chatRoom = data.chatRoom;
       		let html = `
@@ -403,11 +409,13 @@
             document.querySelector("#chatRoomList").insertAdjacentHTML("afterbegin", html);
             let dom = document.querySelector(".chatRoom");
           	dom.addEventListener("click", (e) => chatRoomClick(e, dom))
+          	dom.click();
 		}
+
+
     
       })
   }
-
 
   
   function dbClickDept(data) {
@@ -432,8 +440,10 @@
         console.error(error);
       })
       .finally(() => {
-        let chatList = document.querySelector("#chatList");
-        chatList.scrollTop = chatList.scrollHeight; // 채팅 밑으로 내리기
+        setTimeout(() => {
+          let chatList = document.querySelector("#chatList");
+          chatList.scrollTop = chatList.scrollHeight; // 채팅 밑으로 내리기
+		}, 1)
       })
   }
 </script>

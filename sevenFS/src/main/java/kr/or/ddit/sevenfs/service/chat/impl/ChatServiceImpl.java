@@ -35,9 +35,11 @@ public class ChatServiceImpl implements ChatService {
         // 내가 쓴경우도 CHAT테이블 메세지 순번 바꿔주기
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put("chttRoomNo", chatRoomVO.getChttRoomNo());
-        queryMap.put("emplNo", chatRoomVO.getMssageWritngEmpno());
         queryMap.put("mssageSn", chatRoomVO.getMssageSn());
+        queryMap.put("emplNo", chatRoomVO.getMssageWritngEmpno());
         readChatMsg(queryMap);
+//        queryMap.put("emplNo", chatRoomVO.getRecipient());
+//        readChatMsg(queryMap);
 
         return this.chatMapper.chatEmpNoList(chatRoomVO);
     }

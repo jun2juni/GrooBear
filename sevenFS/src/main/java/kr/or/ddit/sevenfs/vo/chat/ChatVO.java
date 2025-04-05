@@ -27,6 +27,7 @@ public class ChatVO {
     private String useYn;
 
     private String proflPhotoUrl; // 채팅방 대표 이미지
+    private String recipient; // 채팅 받는 사원 번호
 
     public void setType(String type) {
         switch (type) {

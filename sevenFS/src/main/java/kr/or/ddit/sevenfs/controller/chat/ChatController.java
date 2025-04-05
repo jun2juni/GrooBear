@@ -140,7 +140,6 @@ public class ChatController {
         queryMap.put("emplNo", emplNo);
 
         List<ChatVO> chatVOList = this.chatService.selectChatList(queryMap);
-        log.debug("chatVOList = {}", chatVOList);
 
         return chatVOList;
     }

@@ -41,7 +41,7 @@
               </c:if>
               <c:forEach var="hNotice" items="${myEmpInfo.notificationVOList}">
                 <li>
-                  <a href="#0">
+                  <a href="${hNotice.originPath}">
                     <div class="image">
                       <%-- 알림 별 아이콘 --%>
                         ${hNotice.notificationIcon}
@@ -63,6 +63,7 @@
           <!-- notification end -->
           
           <!-- message start -->
+          
           <div class="header-message-box ml-15 d-none d-md-flex">
             <button class="dropdown-toggle" type="button" id="message" data-bs-toggle="dropdown"
                     aria-expanded="false">
@@ -74,21 +75,33 @@
                   d="M14.6667 13.75C14.6667 17.2938 11.7939 20.1667 8.25004 20.1667C7.11011 20.1667 6.03962 19.8694 5.11182 19.3482L2.76946 20.129C2.21421 20.3141 1.68597 19.7858 1.87105 19.2306L2.65184 16.8882C2.13062 15.9604 1.83338 14.89 1.83338 13.75C1.83338 10.2062 4.70622 7.33333 8.25004 7.33333C11.7939 7.33333 14.6667 10.2062 14.6667 13.75ZM5.95838 13.75C5.95838 13.2437 5.54797 12.8333 5.04171 12.8333C4.53545 12.8333 4.12504 13.2437 4.12504 13.75C4.12504 14.2563 4.53545 14.6667 5.04171 14.6667C5.54797 14.6667 5.95838 14.2563 5.95838 13.75ZM9.16671 13.75C9.16671 13.2437 8.7563 12.8333 8.25004 12.8333C7.74379 12.8333 7.33338 13.2437 7.33338 13.75C7.33338 14.2563 7.74379 14.6667 8.25004 14.6667C8.7563 14.6667 9.16671 14.2563 9.16671 13.75ZM11.4584 14.6667C11.9647 14.6667 12.375 14.2563 12.375 13.75C12.375 13.2437 11.9647 12.8333 11.4584 12.8333C10.9521 12.8333 10.5417 13.2437 10.5417 13.75C10.5417 14.2563 10.9521 14.6667 11.4584 14.6667Z"
                   fill="" ></path>
               </svg>
-              <span></span>
+              
+              <c:if test="${myEmpInfo.chatRoomVOList.size() > 0}">
+                <span></span>
+              </c:if>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="message">
-              <li>
-                <a href="#0">
-                  <div class="image">
-                    <img src="" alt="" />
-                  </div>
-                  <div class="content">
-                    <h6>Jacob Jones</h6>
-                    <p>Hey!I can across your profile and ...</p>
-                    <span>10 mins ago</span>
-                  </div>
-                </a>
-              </li>
+              <c:if test="${myEmpInfo.chatRoomVOList.size() == 0}">
+                <div class="alert alert-light m-2 text-center" role="alert">
+                  새로운 채팅이 없습니다.
+                </div>
+              </c:if>
+              
+              <c:forEach var="hChat" items="${myEmpInfo.chatRoomVOList}">
+                <li>
+                  <a href="/chat/list?chatRoomNo=${hChat.chttRoomNo}">
+                    <div class="image">
+                      <img class="rounded-circle" src="${hChat.proflPhotoUrl}" alt="채팅방 메인 이미지" onerror="this.src='/assets/images/image-error.png'" />
+                    </div>
+                    <div class="content">
+                      <h6>${hChat.emplNm}</h6>
+                      <p>${hChat.lastMsg}</p>
+                      <span><fmt:formatDate value="${hChat.chttCreatDt}" pattern="MM.dd. HH:mm"/></span>
+                      
+                    </div>
+                  </a>
+                </li>
+              </c:forEach>
             </ul>
           </div>
           <!-- message end -->
