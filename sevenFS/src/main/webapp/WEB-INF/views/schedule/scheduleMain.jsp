@@ -4,13 +4,15 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 <script type="text/javascript">
 	document.addEventListener('DOMContentLoaded', function() {
-		let myEmpInfo = "EmpVO(emplNo:"20252023")";
-		console.log("myEmpInfo : ",myEmpInfo);
+		// let myEmpInfo = "${myEmpInfo}"
+		// console.log("myEmpInfo : ",myEmpInfo);
+		let myEmpInfo = 'EmpVO(emplNo:"20252023")';
 		let emplNo = "${myEmpInfo.emplNo}";
+		let deptCode = "${myEmpInfo.deptCode}"
    		console.log("직원 이름:", emplNo);
+   		console.log("직원 부서:", deptCode);
 		console.log("FullCalendar 버전:", FullCalendar.version);
 
 		// bootstrap 시작
@@ -31,8 +33,9 @@
 		const headerToolbar = {
 			left : 'prevYear,prev,next,nextYear today',
 			center : 'title',
-			right : 'dayGridMonth,timeGridWeek,listWeek,timeGridDay'
+			right : 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
 		};
+	
 
 		const calendarOption = {
 			handleWindowResize:true,
@@ -69,44 +72,89 @@
 		window.globalCalendar = calendar;
 
 		refresh = function() {
+			// console.log("refresh================={emplNo:emplNo, dept:myEmpInfo.deptCode} : ",{emplNo:emplNo, deptCode:deptCode});
 			return $.ajax({
 				url: "/myCalendar/calendarList",
-				data:JSON.stringify({emplNo:emplNo, dept:myEmpInfo.deptCode}),
+				data:JSON.stringify({emplNo:emplNo, deptCode:deptCode}),
 				method: 'post',
 				contentType:'application/json',
 				success: function(data) {
 					// console.log("refresh -> data : ",data);
 					let clndr = chngData(data);
-					labelSideBar(data.labelList);
-					console.log("refresh : ",clndr);
 					window.globalCalendar.setOption('events', clndr);
+					// console.log("==================refresh : ",clndr);
 				}
 			});
 		};
-		const overChk = function(date1,date2,num){
-			let differenceInDays = Math.abs((date2 - date1) / (1000 * 60 * 60 * 24));
+
+		const overChk = function(date1,date2,time,num){
+			let differenceInDays
+			if(time=="date"){
+				differenceInDays = Math.abs((date2 - date1) / (1000 * 60 * 60 * 24));
+			}else if(time=="minute"){
+				differenceInDays = Math.abs((date2 - date1) / (1000 * 60 ));
+			}
 			return differenceInDays>=num?true:false;
+		}
+		createIcon = function(type, color) {
+			// console.log("createIcon 실행 됨");
+			let style = 'display: inline-block; width: 12px; height: 12px; margin-right: 8px;';
+			
+			if (type === 'circle') {
+				style += 'border-radius: 50%;';
+			} else {
+				style += 'border-radius: 0;';
+			}
+			
+			style += 'background-color: ' + color + ';';
+			
+			return '<span style="' + style + '"></span>';
 		}
 		const labelSideBar = function(labelList){
 			let labelSection = $('#labelSection');
-			console.log('labelSideBar -> labelList',labelList);
-			console.log('labelSideBar -> labelSection : ',labelSection);
+			// console.log('labelSideBar -> labelList',labelList);
+			// console.log('labelSideBar -> labelSection : ',labelSection);
+			
+			labelSection.empty();
+			// $('.label-filter').remove();
+			let checkboxHtml = '';
+			
 			labelList.forEach(label=>{
-				console.log('labelSideBar -> label : ',label);
-				console.log('dwadadwsa  ',"${label.lblNo} ${label.lblNm}");
-				let checkboxHtml = '<label><input type="checkbox" class="event-filter" value='+label.lblNo+'>'+label.lblNm+'</label><br>';
-				labelSection.append(checkboxHtml);
+				// console.log('labelSideBar -> label : ',label);
+				let icon = createIcon('circle',label.lblColor);
+				checkboxHtml += icon+ '<label>'+label.lblNm+'<input type="checkbox" class="label-filter" value='+label.lblNo+'></label><br>';
 			})
+			labelSection.append(checkboxHtml);
+		}
+		const modalLblSel = function(labelList){
+			let labelSection = $('#scheduleLabel');
+			console.log('modalLblSel -> labelList',labelList);
+			console.log('modalLblSel -> labelSection : ',labelSection);
+			labelSection.empty();
+			let checkboxHtml = '<option value="0">[기본] 나의 일정</option>';
+			labelList.forEach(label=>{
+				// console.log('modalLblSel -> label : ',label);
+				let icon = createIcon('circle',label.lblColor);
+				checkboxHtml += '<option type="checkbox" value='+label.lblNo+'>'+label.lblNm+'</option>';
+			})
+			labelSection.append(checkboxHtml);
 		}
 		const chngData = function(dataMap){
+			labelSideBar(dataMap.labelList);
+			modalLblSel(dataMap.labelList);
 			let returnData=[];
 			dataMap.scheduleList.forEach(data=>{
 				let startDate = new Date(data.schdulBeginDt);
 				let endDate = new Date(data.schdulEndDt);
-				let chk = overChk(startDate,endDate,1);
-				
-				// console.log("check : ",data.schdulNo,chk);
-
+				let chk = overChk(startDate,endDate,'date',1);
+				// console.log("dataMap.data : " , data);
+				// console.log("dataMap.labelList : ",dataMap.labelList);
+				let selLabel = dataMap.labelList.filter(labeObj=> labeObj.lblNo == data.lblNo)[0];
+				let lblColor='';
+				if(selLabel){
+					lblColor = selLabel.lblColor;
+				}
+				// console.log("selLabel",selLabel);
 				returnData.push({
 				   "emplNo":data.emplNo,
 				   "id":data.schdulNo,
@@ -119,7 +167,8 @@
 				   "schdulPlace":data.schdulPlace,
 				   "deptCode":data.deptCode,
 				   "allDay":chk,
-				   "durationEditable": true
+				   "durationEditable": true,
+				   "backgroundColor":lblColor,
 				})
 			});
 			return returnData;
@@ -163,20 +212,41 @@
 			if($("#deleteBtn").length){
 				$("#deleteBtn").remove();
 			}
-			console.log("Selected date" + info.startStr + " to " + info.endStr);
+			// console.log("Selected date" + info.startStr + " to " + info.endStr);
 			console.log("select -> info : ", info);
+			let startDate;
+			let endDate;
+			if(info.date){
+				// console.log("aaaaa",typeof(info.date));
+				startDate = info.date;
+				endDate = new Date(info.date);
+    			endDate.setDate(endDate.getDate() + 1); // 날짜를 1일 증가시킴
+				console.log('startDate',startDate);
+				console.log('endDate',endDate);
+				
+			}else{
+				startDate = info.start;
+				endDate = info.end;
+			}
+
+			console.log('startDate : ',startDate,'  endDate : ',endDate);
+			
 
 			$("#allDay").prop("checked",false);
 
-			if(info.view.type=='timeGridDay'){
-				let selectStartDay = date2Str(info.start);
-				let selectEndDay = date2Str(info.end);
-				let selectStartTime = time2Str(info.start);
-				let selectEndTime = time2Str(info.end);
+			if(info.view.type=='timeGridDay'||info.view.type=='timeGridWeek'){
+				let selectStartDay = date2Str(startDate);
+				let selectEndDay = date2Str(endDate);
+				let selectStartTime = time2Str(startDate);
+				let selectEndTime = time2Str(endDate);
+				console.log("selectStartTime",selectStartTime)
+				console.log("selectEndTime",selectEndTime)
 				$("#schStart").val(selectStartDay);
 				$("#schEnd").val(selectEndDay);
 				$("#schStartTime").val(selectStartTime);
 				$("#schEndTime").val(selectEndTime);
+			}else if(info.view.type=='timeGridWeek'){
+
 			}else{
 				let now = new Date();
 				let hours = now.getHours().toString().padStart(2,'0');
@@ -184,13 +254,13 @@
 				let currentTime = hours+":"+minutes;
 				// 선택한 날짜 범위를 폼에 설정
 				// console.log("info.start",info.start);
-				let startStr = date2Str(info.start);
-				let endStr = date2Str(info.end);
-				console.log("startStr",startStr);
-				console.log("endStr",endStr);
+				let startStr = date2Str(startDate);
+				let endStr = date2Str(endDate);
+				console.log("startStr",startDate);
+				console.log("endStr",endDate);
 
-				$("#schStart").val(info.startStr);
-				$("#schEnd").val(info.endStr);
+				$("#schStart").val(startStr);
+				$("#schEnd").val(endStr);
 				$("#schStartTime").val(currentTime);
 				$("#schEndTime").val("00:00");
 				// console.log('start : ',$('#calAddFrm').find('[name="start"]').val());
@@ -200,7 +270,7 @@
 	// 클릭 및 드래그 선택 이벤트 끝
 		let clickTimeout = null;
 		let lastClickTime = 0;
-		const doubleClickDelay = 300; // 밀리초
+		const doubleClickDelay = 500; // 밀리초
 		function checkDblClk(){
 			// console.log("클릭");
 			const currentTime = new Date().getTime();
@@ -231,11 +301,46 @@
 				return false;
 			}
 		}
+		let clickTimeoutSel = null;
+		let lastClickTimeSel = 0;
+		const doubleClickDelaySel = 500; // 밀리초
+		function checkDblClkSel(){
+			// console.log("클릭");
+			const currentTime = new Date().getTime();
+			const timeSinceLastClick = currentTime - lastClickTimeSel;
+			
+			// 이미 존재하는 타임아웃 제거
+			if (clickTimeoutSel) {
+				clearTimeout(clickTimeoutSel);
+				clickTimeoutSel = null;
+  			}
+			if(timeSinceLastClick < doubleClickDelay){
+				// 다음 시퀀스를 위해 초기화
+				lastClickTimeSel = 0;
+				return true;
+			}else{
+				// 첫 번째 클릭 - 잠재적인 두 번째 클릭을 위한 타이머 설정
+				lastClickTimeSel = currentTime;
+				clickTimeoutSel = setTimeout(function() {
+					// console.log("clickTimeout",clickTimeout);
+					// 지정된 시간 내에 두 번째 클릭이 없으면 실행
+					
+					// 싱글클릭 시 실행할 동작 (필요한 경우)
+					
+					// 다음 시퀀스를 위해 초기화
+					clickTimeoutSel = null;
+					lastClickTimeSel = 0;
+				}, doubleClickDelay);
+				return false;
+			}
+		}
+
 		calendar.on("dateClick",function(info){
 			let chk = checkDblClk();
-			if(chk){
+			if(chk&&(info.view.type!='timeGridDay'&&info.view.type!='timeGridWeek')){
 				console.log('날짜 더블클릭:', info);
-				insModal.show();
+				// insModal.show();
+				selectEvent(info);
 				$('.modal-title').text("일정 등록");
 				$("#modalSubmit").text("등록");
 				if($("#deleteBtn").length){
@@ -248,12 +353,22 @@
 
 		// 일자 선택 이벤트
 		calendar.on("select", function(info) {
-			if(!lastClickTime){
-				// console.log("select -> lastClickTime 싱글클릭 : ",lastClickTime);
-				let startDate = new Date(info.start);
-				let endDate = new Date(info.end);
-				
-				if(overChk(startDate,endDate,2)){
+			let chk = checkDblClkSel();
+			let startDate = new Date(info.start);
+			let endDate = new Date(info.end);
+			if(info.view.type=='timeGridDay'||info.view.type=='timeGridWeek'){
+				console.log("dragSel : ",info.view.type,info);
+				selectEvent(info);
+				$('.modal-title').text("일정 등록");
+				$("#modalSubmit").text("등록");
+				if($("#deleteBtn").length){
+					$("#deleteBtn").remove();
+				}
+			}
+			// 더블 클릭 아닌 것(드래그)
+			if(!chk){
+				// 드래그 선택
+				if(overChk(startDate,endDate,'date',2)){
 					selectEvent(info);
 					$('.modal-title').text("일정 등록");
 					$("#modalSubmit").text("등록");
@@ -261,9 +376,9 @@
 						$("#deleteBtn").remove();
 					}
 				}
-				return;
 			}
 		})
+
 	// 클릭 및 드래그 선택 이벤트 끝
 
 		// 등록된 일정 클릭시 이벤트
@@ -313,7 +428,6 @@
 				$("#schStartTime").val("00:00");
 				$("#schEndTime").val("00:00");
 			}
-
 		});
 		document.querySelectorAll('.dateInput').forEach(input=>{
 			input.addEventListener('change',function(){
@@ -326,6 +440,8 @@
 			})
 		})
 		// allDay 관련 함수들 끝
+
+
 		
 // 함수들
 		const date2Str = function(date){
@@ -334,9 +450,9 @@
 			let yearStr = newDate.getFullYear().toString();
 			let monthStr = (newDate.getMonth()+1).toString().padStart(2,'0');
 			let dateStr = newDate.getDate().toString().padStart(2,'0');
-			// console.log("yearStr",yearStr);
-			// console.log("monthStr",monthStr);
-			// console.log("dateStr",dateStr);
+			console.log("yearStr",yearStr);
+			console.log("monthStr",monthStr);
+			console.log("dateStr",dateStr);
 			return yearStr+'-'+monthStr+'-'+dateStr;
 		}
 		const time2Str = function(time){
@@ -362,7 +478,7 @@
 		window.fCalAdd= function(e){
 			e.preventDefault();
 			let status = $('#addUpt').val();
-			let postUrl
+			let postUrl = '';
 			
 			// console.log("event : ",e);
 			// console.log("event -> form : ",e.target.form);
@@ -379,12 +495,14 @@
 			console.log("fCalAdd -> endDate : ",endDate);
 			let frmData = new FormData();
 			frmData.append("emplNo",emplNo);
+			frmData.append("deptCode",deptCode);
+			frmData.append("lblNo",e.target.form.lblNo.value);
 			frmData.append("schdulBeginDt",startDate);
 			frmData.append("schdulEndDt",endDate);
 			frmData.append("schdulTy",e.target.form.schdulTy.value);
 			frmData.append("schdulSj",e.target.form.schdulSj.value);
 			frmData.append("schdulCn",e.target.form.content.value);
-			// frmData.append("lblNo",e.target.form.category.value);
+			frmData.append("lblNo",e.target.form.lblNo.value);
 
 			if(status=="add"){
 				postUrl = "/myCalendar/addCalendar";
@@ -414,6 +532,7 @@
 				}
 			})
 		}
+
 		// 수정 데이터 만드는 함수
 		function mkUptData(info){
 			console.log("mkUptData -> info", info);
@@ -430,12 +549,14 @@
 			return uptData;
 		}
 		window.fCalDel = function(e){
+			if(!confirm('삭제하시겠습니까??')) { return; }
+			
 			let schdulNo = e.target.closest("form").schdulNo.value;
 			console.log("event check",schdulNo);
 			$.ajax({
 				url:"/myCalendar/delCalendar",
 				type:"post",
-				data:JSON.stringify({schdulNo:schdulNo}),
+				data:JSON.stringify({schdulNo : schdulNo, emplNo : emplNo, deptCode : deptCode}),
 				// data:schdulNo,
 				contentType:"application/json",
 				success:function(resp){
@@ -451,6 +572,8 @@
 		};
 
 		window.fMClose = function() {
+			$('#calAddFrm input').val('');
+			console.log("calAddFrm",calAddFrm);
 			insModal.hide();
 		};
 	})
