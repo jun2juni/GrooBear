@@ -154,7 +154,7 @@
 		) VALUES (
 		   #{prjctNo}, #{ctgryNo}, #{prjctNm}, #{prjctCn}, #{prjctSttus}, 
 		   #{prjctGrad}, #{prjctAdres}, #{prjctUrl}, #{prjctRcvordAmount}, 
-		   #{prjctBeginDate}, #{prjctEndDate}
+		   REPLACE(#{prjctBeginDate}, '-', ''), REPLACE(#{prjctEndDate}, '-', '')
 		)
 	</insert>
 	

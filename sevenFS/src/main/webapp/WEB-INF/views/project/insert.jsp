@@ -79,6 +79,13 @@ console.log("[script.js] 시작됨");
 let currentStep = 1;
 const totalSteps = 5;
 const taskList = [];
+let currentTarget = null; // 조직도 선택 대상
+
+const selectedMembers = {
+responsibleManager: [],
+participants: [],
+observers: []
+};
 
 document.addEventListener("DOMContentLoaded", function () {
 console.log("DOMContentLoaded 발생");
@@ -87,21 +94,18 @@ console.log("DOMContentLoaded 발생");
 document.querySelectorAll('.nav-link').forEach(link => {
  link.addEventListener('click', function (e) {
    e.preventDefault();
-   let step = parseInt(this.getAttribute('data-step'));
+   const step = parseInt(this.getAttribute('data-step'));
    goToStep(step);
  });
 });
 
-// 이전/다음/제출 버튼 이벤트 리스너
 document.getElementById('prevBtn').addEventListener('click', prevStep);
 document.getElementById('nextBtn').addEventListener('click', nextStep);
 
-// 업무 추가 버튼
-let addTaskBtn = document.getElementById('addTaskBtn');
+const addTaskBtn = document.getElementById('addTaskBtn');
 if (addTaskBtn) {
  addTaskBtn.addEventListener('click', function () {
-   console.log("[Click] addTaskBtn 클릭됨");
-   let task = {
+   const task = {
      taskNm: document.getElementById('taskNm').value,
      chargerEmpNm: document.getElementById('chargerEmpNm').value,
      chargerEmpno: document.getElementById('chargerEmpno').value,
@@ -116,72 +120,66 @@ if (addTaskBtn) {
      return;
    }
    taskList.push(task);
-   console.log("업무 추가됨:", task);
    updateTaskList();
  });
 }
 
-// 폼 제출 시 업무 목록 JSON으로 변환
-let projectForm = document.getElementById('projectForm');
-projectForm.addEventListener('submit', function (e) {
+const projectForm = document.getElementById('projectForm');
+projectForm.addEventListener('submit', function () {
  document.getElementById('taskListJson').value = JSON.stringify(taskList);
 });
 
-// 초기 버튼 상태 설정
+document.querySelectorAll('.open-org-chart').forEach(btn => {
+ btn.addEventListener('click', function () {
+   currentTarget = this.dataset.target;
+
+   document.querySelectorAll('.open-org-chart').forEach(b => {
+     b.classList.remove('btn-primary');
+     b.classList.add('btn-outline-secondary');
+   });
+   this.classList.remove('btn-outline-secondary');
+   this.classList.add('btn-primary');
+ });
+});
+
 goToStep(currentStep);
+loadOrgTree();
 });
 
 function goToStep(step) {
-	  if (step < 1 || step > totalSteps) return;
-	  currentStep = step;
+if (step < 1 || step > totalSteps) return;
+currentStep = step;
 
-	  for (let i = 1; i <= totalSteps; i++) {
-	    const stepDiv = document.getElementById('step' + i);
-	    const tabLink = document.querySelector(`.nav-link[data-step="${i}"]`);
+for (let i = 1; i <= totalSteps; i++) {
+ const stepDiv = document.getElementById('step' + i);
+ const tabLink = document.querySelector(`a[data-step="${i}"]`);
 
-	    if (stepDiv) {
-	      if (i === step) {
-	        stepDiv.classList.add('active');
-	        stepDiv.style.display = 'block';
-	      } else {
-	        stepDiv.classList.remove('active');
-	        stepDiv.style.display = 'none';
-	      }
-	    }
+ if (stepDiv) {
+   stepDiv.style.display = (i === step) ? 'block' : 'none';
+   stepDiv.classList.toggle('active', i === step);
+ }
 
-	    if (tabLink) {
-	      if (i === step) {
-	        tabLink.classList.add('active');
-	      } else {
-	        tabLink.classList.remove('active');
-	      }
-	    }
-	  }
+ if (tabLink) {
+   tabLink.classList.toggle('active', i === step);
+ }
+}
 
-	  updateButtonState();
-
-	  if (step === totalSteps) {
-	    updateConfirmation();
-	  }
-	}
-
+updateButtonState();
+if (step === totalSteps) updateConfirmation();
+}
 
 function nextStep() {
-if (currentStep < totalSteps) {
- goToStep(currentStep + 1);
-}
+if (currentStep < totalSteps) goToStep(currentStep + 1);
 }
 
 function prevStep() {
-if (currentStep > 1) {
- goToStep(currentStep - 1);
-}
+if (currentStep > 1) goToStep(currentStep - 1);
 }
 
 function updateButtonState() {
-	let prevBtn = document.getElementById('prevBtn');
-	let nextBtn = document.getElementById('nextBtn');
-	let submitBtn = document.getElementById('submitBtn');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const submitBtn = document.getElementById('submitBtn');
 
 prevBtn.disabled = (currentStep === 1);
 if (currentStep === totalSteps) {
@@ -194,79 +192,119 @@ if (currentStep === totalSteps) {
 }
 
 function updateTaskList() {
-	let taskListUl = document.getElementById('taskList');
+const taskListUl = document.getElementById('taskList');
 taskListUl.innerHTML = '';
-
 if (taskList.length === 0) {
-	let li = document.createElement('li');
+ const li = document.createElement('li');
  li.className = 'list-group-item text-muted';
  li.innerText = '등록된 업무가 없습니다.';
  taskListUl.appendChild(li);
  return;
 }
-
 taskList.forEach((task, index) => {
-	let li = document.createElement('li');
+ const li = document.createElement('li');
  li.className = 'list-group-item';
- li.innerHTML = `
-   <div class="d-flex justify-content-between align-items-center">
-     <div>
-       <strong>${task.taskNm}</strong> - ${task.chargerEmpNm}
-       (${task.taskBeginDt || '날짜 미지정'} ~ ${task.taskEndDt || '날짜 미지정'})
-     </div>
-     <button type="button" class="btn btn-sm btn-outline-danger delete-task" data-index="${index}">
-       <i class="fas fa-trash"></i>
-     </button>
-   </div>
- `;
+ li.innerHTML = `<strong>${task.taskNm}</strong> - ${task.chargerEmpNm} (${task.taskBeginDt || '미정'} ~ ${task.taskEndDt || '미정'})`;
  taskListUl.appendChild(li);
-});
-
-document.querySelectorAll('.delete-task').forEach(btn => {
- btn.addEventListener('click', function () {
-	 let index = parseInt(this.getAttribute('data-index'));
-   taskList.splice(index, 1);
-   updateTaskList();
- });
 });
 }
 
 function updateConfirmation() {
 document.getElementById('confirmPrjctNm').textContent = document.querySelector('[name="prjctNm"]').value || '미입력';
-let ctgryText = document.querySelector('[name="ctgryNo"] option:checked')?.textContent || '미선택';
-document.getElementById('confirmCtgry').textContent = ctgryText;
+document.getElementById('confirmCtgry').textContent = document.querySelector('[name="ctgryNo"] option:checked')?.textContent || '미선택';
 document.getElementById('confirmPrjctCn').textContent = document.querySelector('[name="prjctCn"]').value || '미입력';
-let begin = document.querySelector('[name="prjctBeginDate"]').value || '미지정';
-let end = document.querySelector('[name="prjctEndDate"]').value || '미지정';
-document.getElementById('confirmPeriod').textContent = `${begin} ~ ${end}`;
+document.getElementById('confirmPeriod').textContent = `${document.querySelector('[name="prjctBeginDate"]').value} ~ ${document.querySelector('[name="prjctEndDate"]').value}`;
 document.getElementById('confirmPrjctSttus').textContent = document.querySelector('[name="prjctSttus"] option:checked')?.textContent || '미선택';
 document.getElementById('confirmPrjctGrad').textContent = document.querySelector('[name="prjctGrad"] option:checked')?.textContent || '미선택';
-
-let amount = document.querySelector('[name="prjctRcvordAmount"]').value || '0';
-document.getElementById('confirmAmount').textContent = `${amount} 원`;
+document.getElementById('confirmAmount').textContent = `${document.querySelector('[name="prjctRcvordAmount"]').value || '0'} 원`;
 document.getElementById('confirmAdres').textContent = document.getElementById('fullAddress').value || '미입력';
 document.getElementById('confirmUrl').textContent = document.querySelector('[name="prjctUrl"]').value || '미입력';
-document.getElementById('confirmMemberList').textContent = '조직도 연동 후 구현 예정';
 
-let confirmTaskList = document.getElementById('confirmTaskList');
+const confirmTaskList = document.getElementById('confirmTaskList');
 confirmTaskList.innerHTML = '';
-
 if (taskList.length === 0) {
  confirmTaskList.textContent = '등록된 업무가 없습니다.';
 } else {
  taskList.forEach(task => {
-	 let div = document.createElement('div');
+   const div = document.createElement('div');
    div.className = 'mb-2';
-   div.innerHTML = `
-     <strong>${task.taskNm}</strong> - ${task.chargerEmpNm}
-     (${task.taskBeginDt || '날짜 미지정'} ~ ${task.taskEndDt || '날짜 미지정'})
-     ${task.taskCn ? '<br><small class="text-muted">' + task.taskCn + '</small>' : ''}
-   `;
+   div.innerHTML = `<strong>${task.taskNm}</strong> - ${task.chargerEmpNm} (${task.taskBeginDt || '미정'} ~ ${task.taskEndDt || '미정'})`;
    confirmTaskList.appendChild(div);
  });
 }
 
-console.log("최종 확인 데이터 업데이트 완료");
+const memberInfo = [];
+if (selectedMembers.responsibleManager.length > 0) {
+ memberInfo.push("책임자: " + selectedMembers.responsibleManager.map(p => p.name).join(', '));
+}
+if (selectedMembers.participants.length > 0) {
+ memberInfo.push("참여자: " + selectedMembers.participants.map(p => p.name).join(', '));
+}
+if (selectedMembers.observers.length > 0) {
+ memberInfo.push("참조자: " + selectedMembers.observers.map(p => p.name).join(', '));
+}
+document.getElementById('confirmMemberList').textContent = memberInfo.join(' | ') || '선택된 인원이 없습니다.';
+}
+
+function loadOrgTree() {
+fetch("/organization")
+ .then(resp => resp.json())
+ .then(res => {
+   const json = [];
+   res.deptList.forEach(dep => {
+     json.push({ id: dep.cmmnCode, parent: dep.upperCmmnCode, text: dep.cmmnCodeNm, deptYn: true });
+   });
+   res.empList.forEach(emp => {
+     json.push({ id: emp.emplNo, parent: emp.deptCode, text: emp.emplNm, deptYn: false });
+   });
+
+   $('#jstree').jstree({ core: { data: json, check_callback: true }, plugins: ["search"] });
+
+   $('#jstree').on("select_node.jstree", function (e, data) {
+     if (data.node.original.deptYn === false) {
+       const emp = {
+         name: data.node.text,
+         id: data.node.id,
+         dept: data.node.original.deptName || '-',
+         position: data.node.original.position || '-',
+         phone: data.node.original.phone || '-',
+         email: data.node.original.email || '-'
+       };
+	console.log("emp", emp);
+       const tableBody = document.querySelector("#selectedMembersTable tbody");
+       const exists = Array.from(tableBody.children).some(row => row.dataset.empId === emp.id && row.dataset.role === currentTarget);
+       if (exists) return;
+
+       const row = document.createElement("tr");
+       row.dataset.empId = emp.id;
+       row.dataset.role = currentTarget;
+       row.innerHTML = `
+         <td>${currentTarget}</td>
+         <td>${emp.name}</td>
+         <td>${emp.dept}</td>
+         <td>${emp.position}</td>
+         <td>${emp.phone}</td>
+         <td>${emp.email}</td>
+         <td><button type="button" class="btn btn-sm btn-outline-danger remove-member">삭제</button></td>
+       `;
+       tableBody.appendChild(row);
+
+       row.querySelector(".remove-member").addEventListener("click", function () {
+         row.remove();
+         const list = selectedMembers[currentTarget];
+         selectedMembers[currentTarget] = list.filter(p => p.id !== emp.id);
+         document.getElementById(currentTarget).value = selectedMembers[currentTarget].map(p => p.name).join(', ');
+         document.getElementById(currentTarget + "Empno").value = selectedMembers[currentTarget].map(p => p.id).join(',');
+       });
+
+       if (!selectedMembers[currentTarget].some(p => p.id === emp.id)) {
+         selectedMembers[currentTarget].push(emp);
+         document.getElementById(currentTarget).value = selectedMembers[currentTarget].map(p => p.name).join(', ');
+         document.getElementById(currentTarget + "Empno").value = selectedMembers[currentTarget].map(p => p.id).join(',');
+       }
+     }
+   });
+ });
 }
 
 </script>

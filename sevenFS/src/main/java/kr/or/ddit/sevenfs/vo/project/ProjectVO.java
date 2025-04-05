@@ -16,7 +16,7 @@ public class ProjectVO {
     private String prjctGrad;
     private String prjctAdres;
     private String prjctUrl;
-    private int prjctRcvordAmount;
+    private String prjctRcvordAmount;
     private String prjctBeginDate;  
     private String prjctEndDate;    
     

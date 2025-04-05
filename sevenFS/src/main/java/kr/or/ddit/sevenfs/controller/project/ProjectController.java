@@ -100,18 +100,25 @@ public class ProjectController {
     		@RequestParam("taskListJson") String taskListJson) {
         // 1. 프로젝트 정보 저장 
     	log.info("insertProject -> projectVO(전) {} :" ,projectVO);
-        int newPrjctId = projectVO.getPrjctNo();
+        // 프로젝트 아이디 가져옴
+    	
+        
         ObjectMapper mapper = new ObjectMapper();
         List<ProjectTaskVO> taskList;
 		try {
 			taskList = mapper.readValue(taskListJson, new TypeReference<List<ProjectTaskVO>>() {});
+			// 프로젝트 추가
 			projectService.createProject(projectVO, taskList);
+			
 		} catch (JsonMappingException e) {
 			e.printStackTrace();
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-
+		
+		int newPrjctId = projectVO.getPrjctNo();
+		
+		
         // 2. 리다이렉트로 업무 등록 페이지로 이동
         return "redirect:/project/" + newPrjctId + "/taskForm";
     }
