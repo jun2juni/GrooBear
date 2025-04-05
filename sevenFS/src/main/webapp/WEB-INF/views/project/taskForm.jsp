@@ -1,35 +1,63 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-
-<%--해당 파일에 타이틀 정보를 넣어준다--%>
-<c:set var="title" scope="application" value="메인" />
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-	<meta charset="UTF-8" />
- 	<meta name="viewport"
-		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
-	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-	<title>${title}</title>
-  <%@ include file="../layout/prestyle.jsp" %>
+  <title>업무 등록</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<%@ include file="../layout/sidebar.jsp" %>
-<main class="main-wrapper">
-  <%@ include file="../layout/header.jsp" %>
-	<section class="section">
-		<div class="container-fluid">
-			
-			여기 안에서 작업을 진행하면 됩니다~~~~
-		 
-		</div>
-	</section>
-  <%@ include file="../layout/footer.jsp" %>
-</main>
-<%@ include file="../layout/prescript.jsp" %>
+  <h2>업무 등록</h2>
+  <form id="taskForm" enctype="multipart/form-data">
+    <input type="text" name="taskName" placeholder="업무명" required />
+    <textarea name="taskDescription" placeholder="업무 설명"></textarea>
+
+    <label>상위 업무:</label>
+    <select name="parentTaskId">
+      <option value="">(없음)</option>
+      <c:forEach items="${parentTasks}" var="pt">
+        <option value="${pt.taskNo}">${pt.taskNm}</option>
+      </c:forEach>
+    </select>
+
+    <label>담당자:</label>
+    <input type="text" name="chargerEmpno" placeholder="사원번호" />
+
+    <!-- 첨부파일 -->
+    <file-upload
+      label="업무 파일"
+      name="uploadFile"
+      max-files="5"
+      contextPath="${pageContext.request.contextPath}"
+    ></file-upload>
+
+    <button type="submit">등록</button>
+  </form>
+
+  <ul id="taskList"></ul>
+
+  <script>
+  $(function() {
+    $('#taskForm').submit(function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      $.ajax({
+        url: '<c:url value="/project/${prjctNo}/task"/>',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(res) {
+          const task = res.data;
+          $('#taskList').append(`<li>${task.taskNm}</li>`);
+          alert("등록 성공");
+        },
+        error: function() {
+          alert("등록 실패");
+        }
+      });
+    });
+  });
+  </script>
 </body>
 </html>

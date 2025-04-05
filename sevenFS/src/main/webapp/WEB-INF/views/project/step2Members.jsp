@@ -11,10 +11,10 @@
         <div class="row g-3">
           <div class="col-md-12">
             <div class="input-style-1 mb-2">
-              <label>책임자 <span class="text-danger">*</span></label> 
+              <label>책임자 <span class="text-danger">*</span></label>
               <div class="input-group">
-                <input type="text" id="responsibleManager" class="bg-transparent" placeholder="책임자 명" readonly>
-                <input type="hidden" id="responsibleManagerEmpno" name="responsibleManagerEmpno">
+                <input type="text" id="responsibleManager" class="bg-transparent" placeholder="책임자 명" readonly />
+                <input type="hidden" id="responsibleManagerEmpno" name="responsibleManagerEmpno" />
                 <button type="button" class="btn btn-outline-secondary open-org-chart" data-target="responsibleManager">
                   <i class="fas fa-search me-1"></i> 조직도
                 </button>
@@ -25,8 +25,8 @@
             <div class="input-style-1 mb-2">
               <label>참여자 <span class="text-danger">*</span></label>
               <div class="input-group">
-                <input type="text" id="participants" class="bg-transparent" placeholder="참여자 명" readonly>
-                <input type="hidden" id="participantsEmpno" name="participantsEmpno">
+                <input type="text" id="participants" class="bg-transparent" placeholder="참여자 명" readonly />
+                <input type="hidden" id="participantsEmpno" name="participantsEmpno" />
                 <button type="button" class="btn btn-outline-secondary open-org-chart" data-target="participants">
                   <i class="fas fa-search me-1"></i> 조직도
                 </button>
@@ -37,8 +37,8 @@
             <div class="input-style-1 mb-2">
               <label>참조자</label>
               <div class="input-group">
-                <input type="text" id="observers" class="bg-transparent" placeholder="참조자 명" readonly>
-                <input type="hidden" id="observersEmpno" name="observersEmpno">
+                <input type="text" id="observers" class="bg-transparent" placeholder="참조자 명" readonly />
+                <input type="hidden" id="observersEmpno" name="observersEmpno" />
                 <button type="button" class="btn btn-outline-secondary open-org-chart" data-target="observers">
                   <i class="fas fa-search me-1"></i> 조직도
                 </button>
@@ -47,7 +47,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- 선택된 인원 리스트 -->
       <div class="mt-4">
         <h6 class="mb-3">선택된 프로젝트 참여자</h6>
@@ -61,40 +61,18 @@
                 <th>직위</th>
                 <th>연락처</th>
                 <th>이메일</th>
+                <th>작업</th>
               </tr>
             </thead>
             <tbody>
               <!-- 선택된 인원 목록이 여기에 표시됩니다 -->
               <tr class="empty-row">
-                <td colspan="6" class="text-center text-muted">선택된 인원이 없습니다.</td>
+                <td colspan="7" class="text-center text-muted">선택된 인원이 없습니다.</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
-    
-    <div class="col-12 mt-4 d-flex justify-content-between">
-      <button type="button" class="btn btn-light prev-step" onclick="goToPrevStep()">
-        <i class="fas fa-arrow-left me-1"></i> 이전 단계
-      </button>
-      <button type="button" class="btn btn-primary next-step" onclick="goToNextStep()">
-        다음 단계 <i class="fas fa-arrow-right ms-1"></i>
-      </button>
-    </div>
   </div>
 </div>
-
-<script>
-  $(document).ready(function() {
-    // 조직도 버튼 클릭 이벤트
-    $(".open-org-chart").click(function() {
-      const target = $(this).data("target");
-      if (typeof window.showOrgChart === "function") {
-        window.showOrgChart(target);
-      } else {
-        console.error("showOrgChart 함수를 찾을 수 없습니다.");
-      }
-    });
-  });
-</script>

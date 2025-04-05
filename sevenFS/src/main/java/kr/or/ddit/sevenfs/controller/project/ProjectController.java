@@ -17,6 +17,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.project.ProjectService;
@@ -82,21 +88,36 @@ public class ProjectController {
 	}
 	
 
-
-	@GetMapping("/taskList")
-	public String taskList() {
-		return "project/taskList";
-	}
-
-
-
 	@GetMapping("/insert")
 	 public String projectInsertForm() {
 		
 		 return "project/insert";
 	 }
 
+	
+    @PostMapping("/insert")
+    public String insertProject(@ModelAttribute ProjectVO projectVO, RedirectAttributes redirectAttrs,
+    		@RequestParam("taskListJson") String taskListJson) {
+        // 1. 프로젝트 정보 저장 
+    	log.info("insertProject -> projectVO(전) {} :" ,projectVO);
+        int newPrjctId = projectVO.getPrjctNo();
+        ObjectMapper mapper = new ObjectMapper();
+        List<ProjectTaskVO> taskList;
+		try {
+			taskList = mapper.readValue(taskListJson, new TypeReference<List<ProjectTaskVO>>() {});
+			projectService.createProject(projectVO, taskList);
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 
+        // 2. 리다이렉트로 업무 등록 페이지로 이동
+        return "redirect:/project/" + newPrjctId + "/taskForm";
+    }
+	
+	
+/*
 	@PostMapping("/insert")
 	public String projectInsert(ProjectVO projectVO,
 	        List<ProjectEmpVO> projectEmpVOList,
@@ -136,7 +157,7 @@ public class ProjectController {
 	        return "project/insert";
 	    }
 	}
-	
+*/	
     
     @GetMapping("/projectDetail")
     public String projectDetail(Model model, 

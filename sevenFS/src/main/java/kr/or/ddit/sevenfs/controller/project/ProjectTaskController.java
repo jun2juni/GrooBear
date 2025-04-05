@@ -1,6 +1,9 @@
 package kr.or.ddit.sevenfs.controller.project;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.or.ddit.sevenfs.mapper.project.ProjectTaskMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.project.ProjectService;
 import kr.or.ddit.sevenfs.service.project.ProjectTaskService;
@@ -33,31 +37,31 @@ public class ProjectTaskController {
 	@Autowired
 	private AttachFileService attachFileService;
 	
-	// 단일 업무 등록
+	
+    // 단일 업무 등록 폼
     @GetMapping("/insert/{prjctNo}")
     public String insertProjectTaskForm(@PathVariable("prjctNo") int prjctNo, Model model) {
         model.addAttribute("prjctNo", prjctNo);
-        return "project/insert";
+        model.addAttribute("projectTaskVO", new ProjectTaskVO());
+        return "project/taskForm";
     }
 	
-    // 단일업무 등록
+ // 단일 업무 등록 처리
     @PostMapping("/insert")
-    public String insertProjectTask(ProjectTaskVO taskVO, 
-                            @RequestParam(value="uploadFile", required=false) MultipartFile[] uploadFile) {
+    public String insertProjectTask(@ModelAttribute ProjectTaskVO taskVO,
+                                    @RequestParam(value="uploadFile", required=false) MultipartFile[] uploadFiles) {
         log.info("업무 등록 요청: {}", taskVO);
-        
-      
-            // 파일 업로드 처리
-            if (uploadFile != null && uploadFile.length > 0 && !uploadFile[0].isEmpty()) {
-                long attachFileNo = attachFileService.insertFileList("projectTask", uploadFile);
-                taskVO.setAtchFileNo((int)attachFileNo);
-            }
-            
-            // 업무 등록
-            projectTaskService.insertProjectTask(taskVO);
-            
-            return "redirect:/project/projectDetail/" + taskVO.getPrjctNo();
-        
+
+        // 파일 업로드 처리
+        if (uploadFiles != null && uploadFiles.length > 0 && !uploadFiles[0].isEmpty()) {
+            long attachFileNo = attachFileService.insertFileList("projectTask", uploadFiles);
+            taskVO.setAtchFileNo((int)attachFileNo);
+        }
+
+        // 업무 등록
+        projectTaskService.insertProjectTask(taskVO);
+
+        return "redirect:/project/projectDetail/" + taskVO.getPrjctNo();
     }
     
     
@@ -70,26 +74,40 @@ public class ProjectTaskController {
         return projectTaskService.getParentTasks(prjctNo);
     }
     
-    // 복수 업무 입력 폼
+ // 복수 업무 입력 폼
     @GetMapping("/batchTaskInsert/{prjctNo}")
     public String batchTaskInsertForm(@PathVariable("prjctNo") int prjctNo, Model model) {
         model.addAttribute("prjctNo", prjctNo);
-        return "project/batchTaskInsert"; 
+        model.addAttribute("projectTaskVOList", new ArrayList<ProjectTaskVO>());
+        return "project/batchTaskInsert";
     }
 
+    // 복수 업무 등록 처리
     @PostMapping("/batchInsert")
-    public String batchTaskInsert(
-        @RequestParam("prjctNo") int prjctNo,
-        @ModelAttribute("projectTaskVOList") List<ProjectTaskVO> projectTaskVOList,
-        @RequestParam(value="uploadFile", required=false) MultipartFile[] uploadFiles) {
-        
-            for (ProjectTaskVO taskVO : projectTaskVOList) {
-                taskVO.setPrjctNo(prjctNo);
-                projectTaskService.insertProjectTaskBatch(projectTaskVOList);
-            }
+    public String batchTaskInsert(@PathVariable("prjctNo") int prjctNo,
+                                  @ModelAttribute("projectTaskVOList") List<ProjectTaskVO> projectTaskVOList,
+                                  @RequestParam(value="uploadFile", required=false) MultipartFile[] uploadFiles) {
+        for (ProjectTaskVO taskVO : projectTaskVOList) {
+            taskVO.setPrjctNo(prjctNo);
+            projectTaskService.insertProjectTask(taskVO);
+        }
+        return "redirect:/project/projectDetail/" + prjctNo;
+    }
+    
+    
+    @PostMapping("/ajax/insert")
+    @ResponseBody
+    public ProjectTaskVO ajaxInsertProjectTask(ProjectTaskVO taskVO,
+                                               @RequestParam(value = "uploadFile", required = false) MultipartFile[] uploadFiles) {
+        // 첨부파일 처리
+        if (uploadFiles != null && uploadFiles.length > 0 && !uploadFiles[0].isEmpty()) {
+            long attachFileNo = attachFileService.insertFileList("projectTask", uploadFiles);
+            taskVO.setAtchFileNo((int) attachFileNo);
+        }
 
-            return "redirect:/project/projectDetail/" + prjctNo;
-
+        projectTaskService.insertProjectTask(taskVO);
+        return taskVO; // JSON 형태로 반환
     }
 
 }
+

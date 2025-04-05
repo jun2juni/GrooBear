@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.or.ddit.sevenfs.mapper.project.ProjectMapper;
+import kr.or.ddit.sevenfs.mapper.project.ProjectTaskMapper;
 import kr.or.ddit.sevenfs.service.project.ProjectService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectEmpVO;
+import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,6 +22,9 @@ public class ProjectServiceImpl implements ProjectService{
 
 	@Autowired
 	ProjectMapper projectMapper;
+	
+	@Autowired
+	ProjectTaskMapper projectTaskMapper;
 	
 	@Override
 	public List<ProjectVO> projectList(Map<String, Object> map) {
@@ -32,8 +37,8 @@ public class ProjectServiceImpl implements ProjectService{
 	}
 
 	@Override
-	public int projectInsert(ProjectVO projectVO) {
-		return projectMapper.projectInsert(projectVO);
+	public int insertProject(ProjectVO projectVO) {
+		return projectMapper.insertProject(projectVO);
 	}
 
 	@Override
@@ -47,6 +52,16 @@ public class ProjectServiceImpl implements ProjectService{
 		// TODO Auto-generated method stub
 		return projectMapper.projectDetail(prjctNo);
 	}
+
+	@Override
+	public void createProject(ProjectVO projectVO, List<ProjectTaskVO> taskList) {
+	    projectMapper.insertProject(projectVO); // prjct_no 채번 포함
+	    for (ProjectTaskVO task : taskList) {
+	        task.setPrjctNo(projectVO.getPrjctNo());
+	        projectTaskMapper.insertProjectTask(task);
+	    }
+	}
+
 	
 	
 

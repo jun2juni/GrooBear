@@ -143,7 +143,7 @@
 	</select>
     
   	<!-- 프로젝트 등록 -->
-	<insert id="projectInsert" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
+	<insert id="insertProject" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
 		<selectKey resultType="int" order="BEFORE" keyProperty="prjctNo">
 			SELECT SEQ_PROJECT.NEXTVAL FROM DUAL
 		</selectKey>	
@@ -157,6 +157,22 @@
 		   #{prjctBeginDate}, #{prjctEndDate}
 		)
 	</insert>
+	
+	
+	<insert id="createProject" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
+    <selectKey keyProperty="prjctNo" resultType="int" order="BEFORE">
+        SELECT SEQ_PROJECT.NEXTVAL FROM DUAL
+    </selectKey>
+
+    INSERT INTO PROJECT (
+        PRJCT_NO, CTGRY_NO, PRJCT_NM, PRJCT_CN, PRJCT_STTUS, PRJCT_GRAD,
+        PRJCT_ADRES, PRJCT_URL, PRJCT_RCVORD_AMOUNT, PRJCT_BEGIN_DATE, PRJCT_END_DATE
+    ) VALUES (
+        #{prjctNo}, #{ctgryNo}, #{prjctNm}, #{prjctCn}, #{prjctSttus},
+        #{prjctGrad}, #{prjctAdres}, #{prjctUrl}, #{prjctRcvordAmount},
+        #{prjctBeginDate}, #{prjctEndDate}
+    )
+</insert>
 	
 	
 <!-- 	

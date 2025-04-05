@@ -42,6 +42,11 @@
         )
     </foreach>
 </insert>
+
+<insert id="insertTask" parameterType="ProjectTaskVO">
+  INSERT INTO PROJECT_TASK (...) VALUES (...)
+</insert>
+
    
    
 </mapper>
