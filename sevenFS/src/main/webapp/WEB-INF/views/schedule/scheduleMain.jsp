@@ -7,7 +7,7 @@
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 <script type="text/javascript">
 	document.addEventListener('DOMContentLoaded', function() {
-		let myEmpInfo = "${myEmpInfo}"
+		let myEmpInfo = "EmpVO(emplNo:"20252023")";
 		console.log("myEmpInfo : ",myEmpInfo);
 		let emplNo = "${myEmpInfo.emplNo}";
    		console.log("직원 이름:", emplNo);

@@ -1,11 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.notification.NotificationMapper">
-    <select id="notificationList" resultType="kr.or.ddit.sevenfs.vo.notification.NotificationVO">
-
+    <select id="notificationList" resultType="notificationVO">
+        SELECT ROWNUM AS r_num
+             , COUNT(1) OVER() AS total_count
+             , ntcn_sn
+             , empl_no
+             , ntcn_sj
+             , ntcn_cn
+             , origin_path
+             , skill_code
+             , ntcn_creat_dt
+        FROM NOTIFICATION
+        WHERE EMPL_NO = #{emp.emplNo}
+        ORDER BY ntcn_creat_dt
+        OFFSET (#{currentPage} - 1) * 10 ROWS
+        FETCH FIRST 10 ROWS ONLY
     </select>
 
-    <insert id="insertNotification"></insert>
+    <select id="getUnreadNotifications" parameterType="employeeVO" resultType="notificationVO">
+        SELECT ntcn_sn
+             , empl_no
+             , ntcn_sj
+             , ntcn_cn
+             , origin_path
+             , skill_code
+             , ntcn_creat_dt
+        FROM NOTIFICATION
+        WHERE empl_no = #{emplNo}
+          AND ntcn_read_yn = 'N'
+    </select>
 
-    <delete id="deleteNotification"></delete>
+    <insert id="insertNotification" parameterType="notificationVO">
+        INSERT ALL
+        <foreach collection="employeeVOList" item="emplVO">
+            INTO NOTIFICATION(
+                NTCN_SN
+                , EMPL_NO
+                , NTCN_SJ
+                , NTCN_CN
+                , ORIGIN_PATH
+                , SKILL_CODE
+                , NTCN_CREAT_DT
+            )
+            VALUES (
+                SEQ_NOTIFICATION.NEXTVAL
+                , #{emplVO.emplNo}
+                , #{ntcnSj}
+                , #{ntcnCn}
+                , #{originPath}
+                , #{skillCode}
+                ,SYSDATE
+            )
+        </foreach>
+        SELECT 1 FROM DUAL
+
+    </insert>
+
+    <delete id="deleteNotification" parameterType="notificationVO">
+        DELETE
+        FROM NOTIFICATION
+        WHERE EMPL_NO = #{emplNo}
+          AND NTCN_SN = #{ntcnSn}
+    </delete>
+
+    <update id="updateNotificationAllRead">
+        UPDATE NOTIFICATION
+        SET NTCN_READ_YN = 'Y'
+        WHERE EMPL_NO = #{emplNo}
+    </update>
 </mapper>
+

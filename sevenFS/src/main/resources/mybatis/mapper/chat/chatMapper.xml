@@ -29,10 +29,13 @@
               FROM CHAT_EMP A
               LEFT JOIN CHAT_ROOM B ON (A.CHTT_ROOM_NO = B.CHTT_ROOM_NO)
               WHERE EMPL_NO = #{emplNo}
+                /* 채팅방이 존재하는지 확인? */
                 <if test="chttRoomNo != null and chttRoomNo != 0">
                     AND B.CHTT_ROOM_NO = #{chttRoomNo}
                 </if>
-
+                <if test="bUnRead != null and bUnRead == true">
+                    AND NVL(B.LAST_MSSAGE_NO - A.LAST_CNFIRM_NO, 0) > 0
+                </if>
              ) CR
         LEFT JOIN CHAT_EMP CE ON(CE.CHTT_ROOM_NO = CR.CHTT_ROOM_NO AND CE.EMPL_NO != #{emplNo})
         LEFT JOIN EMPLOYEE E ON (E.EMPL_NO = CE.EMPL_NO)
