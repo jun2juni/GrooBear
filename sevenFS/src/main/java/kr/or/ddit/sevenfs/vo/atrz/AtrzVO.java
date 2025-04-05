@@ -32,10 +32,12 @@ public class AtrzVO {
 	
 	
 	//전자결재 사원정보를 위한것
-	private String emplNo;
-	private String clsfCode;
+	private String emplNo; 
 	private String emplNm;
-	private String deptCode;
+	private String clsfCode; // 직급코드
+	private String clsfCodeNm; // 직급코드명 
+	private String deptCode;//부서코드
+	private String deptCodeNm;//부서코드명
 	
 	
 	

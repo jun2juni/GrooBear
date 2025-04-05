@@ -2,6 +2,8 @@ const RECONNECT_INTERVAL = 5000; // 5초 후 재연결 시도
 const TALK = "TALK";
 const FILE = "FILE";
 const IMAGE = "IMAGE";
+const NOTIFICATION = "NOTIFICATION";
+
 let stompClientMap = {}; //
 let isSubscribedMap = {}; // 구독 중인지 확인
 // let emp = null; // 이거 바꿔야 함 (진짜 empNo로)
@@ -14,10 +16,10 @@ class Alert {
       this.dom = dom;
   }
 
-  setMessage(message) {
-    this.dom.querySelector(".toast-header span").textContent = message.title;
-    this.dom.querySelector(".toast-header small").textContent = message.empName;
-    this.dom.querySelector(".toast-body").textContent = message.mssageCn;
+  setMessage({title, sender, content}) {
+    this.dom.querySelector(".toast-header .alert-title").textContent = title;
+    this.dom.querySelector(".toast-header .alert-sender").textContent = sender ?? "";
+    this.dom.querySelector(".toast-body").textContent = content;
   }
 
   show() {
@@ -27,12 +29,11 @@ class Alert {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-  let infoAlert = new Alert(document.getElementById('infoSuccess'));
-
   // 내 계정 알림 구독
   connectWebSocket({
     roomPath: "alert/room",
-    chttRoomNo: emp.emplNo, receiveMessage: (message) => {
+    chttRoomNo: emp.emplNo,
+    receiveMessage: (message) => {
       console.log(message, "alert" + message);
 
       if (message.type === TALK) {
@@ -51,13 +52,26 @@ document.addEventListener("DOMContentLoaded", function() {
             // 채팅 받은 시간
             chatCreateDateDom.innerHTML = formatDate(message?.createDate ?? new Date(), "HH:mm");
 
-            message.title = "메시지 알림";
-            infoAlert.setMessage(message);
+
+            infoAlert.setMessage({
+              title: "[메시지 알림]",
+              content: message.messageCn,
+              sender: message.empName
+            });
             // 내가 보낸 메세지는 안받기
             infoAlert.show();
             break; // 루프 중단
           }
         }
+      }
+
+      if (message.type === NOTIFICATION) {
+        console.log("알림 확인 하기", message)
+        infoAlert.setMessage({
+          title: message.ntcnSj,
+          content: message.ntcnCn
+        })
+        infoAlert.show();
       }
     }
   });
@@ -173,11 +187,10 @@ function connectWebSocket({roomPath = "chat/room", chttRoomNo, receiveMessage}) 
     () => {
       stompClientMap[chttRoomNo] = client;
       if(!isSubscribed) {
-        console.log("웹소켓 연결 성공! => " + roomPath + chttRoomNo);
+        console.log("웹소켓 연결 성공! => " + roomPath + "/" + chttRoomNo);
 
         client.subscribe(`/sub/${roomPath}/${chttRoomNo}`, (message) => {
           const newMessage = JSON.parse(message.body);
-          console.log(newMessage, "받은 메시지");
           receiveMessage(newMessage);
         });
 

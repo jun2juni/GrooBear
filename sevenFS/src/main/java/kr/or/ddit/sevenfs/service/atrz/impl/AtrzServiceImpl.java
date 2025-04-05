@@ -24,8 +24,8 @@ public class AtrzServiceImpl implements AtrzService {
 	}
 	
 	//목록 출력
-	public List<AtrzVO> list() {
-		return this.atrzMapper.list();
+	public List<AtrzVO> homeList(String emplNo) {
+		return this.atrzMapper.homeList(emplNo);
 	}
 	//문서양식 post
 	@Override
@@ -102,6 +102,12 @@ public class AtrzServiceImpl implements AtrzService {
 	@Override
 	public int insertHoliday(DocumHolidayVO documHolidayVO) {
 		return this.atrzMapper.insertHoliday(documHolidayVO);
+	}
+	
+	//연차신청서 상세보기
+	@Override
+	public DocumHolidayVO holidayDetail(int holiActplnNo) {
+		return this.atrzMapper.holidayDetail(holiActplnNo);
 	}
 	
 	

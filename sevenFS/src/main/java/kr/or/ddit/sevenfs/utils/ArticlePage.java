@@ -14,7 +14,7 @@ public class ArticlePage<T> {
 	// 전체 페이지수
 	private int totalPages = 0;
 	// 블록의 크기
-	private int blockSize = 5;
+	private int blockSize = 10;
 	// 블록의 시작 페이지 번호
 	private int startPage;
 	// 블록의 종료 페이지 번호

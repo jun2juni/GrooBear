@@ -17,4 +17,11 @@ public class DocumHolidayVO {
 	
 	//DOCUM_HOLIDAY : ATRZ_LINE = 1 : N
 	private List<AtrzLineVO> atrzLineVOList;
+	
+	
+	// 연차신청서 상세출력을 위한것
+	// 1:1 인경우
+	private AtrzVO atrzVO;
+	// 1 : N 인경우	
+	private List<AtrzLineVO> atrzLineList;
 }

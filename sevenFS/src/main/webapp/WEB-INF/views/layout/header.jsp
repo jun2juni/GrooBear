@@ -30,31 +30,36 @@
               </svg>
               <span></span>
             </button>
+            
+            
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notification">
-              <li>
-                <a href="#0">
-                  <div class="image">
-                    <%-- 알림 별 아이콘 --%>
-                      <span class="material-symbols-outlined">favorite</span>
-                  </div>
-                  <div class="content">
-                    <h6>
-                      알림 제목
-                      <span class="text-regular">
-                        음..
-                      </span>
-                    </h6>
-                    <p>
-                      알림 내용
-                    </p>
-                    <span>10 분전</span>
-                  </div>
-                </a>
-              </li>
+              <c:forEach var="hNotice" items="${myEmpInfo.notificationVOList}">
+                <li>
+                  <a href="#0">
+                    <div class="image">
+                      <%-- 알림 별 아이콘 --%>
+                        <span class="material-symbols-outlined">favorite</span>
+                    </div>
+                    <div class="content">
+                      <h6>
+                        알림 제목
+                        <span class="text-regular">
+                          음..
+                        </span>
+                      </h6>
+                      <p>
+                        알림 내용
+                      </p>
+                      <span>10 분전</span>
+                    </div>
+                  </a>
+                </li>
+              </c:forEach>
             </ul>
           </div>
           <!-- notification end -->
           <!-- message start -->
+          ${myEmpInfo.chatRoomVOList}
           <div class="header-message-box ml-15 d-none d-md-flex">
             <button class="dropdown-toggle" type="button" id="message" data-bs-toggle="dropdown"
                     aria-expanded="false">

@@ -1,32 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper">
-	<select id="list" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
-		SELECT * 
+	<select id="homeList" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+		SELECT *  /* AtrzMapper.homeList */
 		FROM ATRZ
-		WHERE DRAFTER_EMPNO='20250004'
+		WHERE DRAFTER_EMPNO=#{drafterEmpno}
+		ORDER BY atrz_drft_dt
 	</select>
 	
-	
-	
-	
-	
-	<!-- DraftVO(title=sfadadfs, content=sadfsdafd, draftNo=null) -->
-<!-- 	<insert id="draftInsert" parameterType="kr.or.ddit.sevenfs.vo.atrz.DraftVO"> -->
-<!-- 		<selectKey resultType="String" order="BEFORE" keyProperty="draftNo"> -->
-<!-- 			SELECT NVL(MAX(DRAFT_NO),0)+1 FROM DRAFT -->
-<!-- 		</selectKey> -->
-<!-- 		INSERT INTO  -->
-<!-- 		DRAFT -->
-<!-- 		(DRAFT_NO, DRAFT_TITLE, DRAFT_CONTENT) -->
-<!-- 		VALUES -->
-<!-- 		(#{draftNo},#{draftTitle},#{draftContent}) -->
-<!-- 	</insert> -->
-<!-- 	<select id="draftDetail" resultType="kr.or.ddit.sevenfs.vo.atrz.DraftVO"> -->
-<!-- 		SELECT DRAFT_NO, DRAFT_TITLE, DRAFT_CONTENT -->
-<!-- 		FROM DRAFT -->
-<!-- 		WHERE DRAFT_NO = #{draftNo} -->
-<!-- 	</select> -->
 	
 	<select id="atrzDetail" resultMap="atrzMap" parameterType="string">
 		SELECT 
@@ -280,26 +261,61 @@
 		<selectKey resultType="string" order="BEFORE" keyProperty="atrzDocNo">
 			SELECT CREATE_DOC_NO('H') AS CREATE_DOC_NO FROM DUAL
 		</selectKey>
-
-	INSERT INTO ATRZ
-<!-- 	전자결재번호,기안자사번, 직급, 이름,부서,  -->
-	(ATRZ_DOC_NO, DRAFTER_EMPNO, DRAFTER_CLSF, DRAFTER_EMPNM, DRAFTER_DEPT, 
-	BKMK_YN, ATCH_FILE_NO, ATRZ_SJ, ATRZ_CN, ATRZ_STTUS_CODE, DOC_FORM_NO)
-	VALUES(
-	#{atrzDocNo},#{emplNo},#{clsfCode},#{emplNm},#{deptCode}
-	,'N',null,#{atrzSj},#{atrzCn},'00',1)
+		INSERT INTO     /* AtrzMapper.insertAtrz */
+	<!-- 	전자결재번호,기안자사번, 직급, 이름,부서,  -->
+			 atrz
+		(
+			  ATRZ_DOC_NO
+			, drafter_empno
+			, drafter_clsf
+			, drafter_empnm
+			, drafter_dept
+			, bkmk_yn
+			, atch_file_no
+			, atrz_sj
+			, atrz_cn
+			, atrz_drft_dt
+			, atrz_sttus_code
+			, doc_form_no
+		)
+		VALUES
+		(
+			#{atrzDocNo}
+			,#{emplNo}
+			,#{clsfCode}
+			,#{emplNm}
+			,#{deptCode}
+			,'N'
+			,null
+			,#{atrzSj}
+			,#{atrzCn}
+			,SYSDATE
+			,'00'
+			,1
+		)
 	<!-- 번호 함수로 넣기  -->
 	<!-- 만약에 이게   -->
 	</insert>
 	
 	<insert id="insertAtrzLine" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
-		INSERT INTO ATRZ_LINE 
-			(ATRZ_DOC_NO, ATRZ_LN_SN, SANCTNER_EMPNO, 
-			ATRZ_TY, SANCTN_PROGRS_STTUS_CODE, DCRB_AUTHOR_YN)
+		INSERT INTO  /* AtrzMapper.insertAtrzLine */
+			atrz_line 
+			(
+			  atrz_doc_no
+			, atrz_ln_sn
+			, sanctner_empno
+			, atrz_ty
+			, sanctn_progrs_sttus_code
+			, dcrb_author_yn
+			)
 		VALUES
 			(
-			#{atrzDocNo}, #{atrzLnSn}, #{sanctnerEmpno}, 
-			#{atrzTy}, '00', #{dcrbAuthorYn}
+			#{atrzDocNo}
+			, #{atrzLnSn}
+			, #{sanctnerEmpno}
+			, #{atrzTy}
+			, '00'
+			, #{dcrbAuthorYn}
 			)	
 	</insert>
 	
@@ -307,15 +323,136 @@
 		<selectKey resultType="int" order="BEFORE" keyProperty="holiActplnNo">
 			SELECT NVL(MAX(HOLI_ACTPLN_NO),0)+1 FROM DOCUM_HOLIDAY
 		</selectKey>
-		INSERT INTO DOCUM_HOLIDAY
-			(HOLI_ACTPLN_NO, ATRZ_DOC_NO, HOLI_CODE
-			, HOLI_START, HOLI_END)
-			VALUES(
-			#{holiActplnNo}, #{atrzDocNo}, #{holiCode}
+		INSERT INTO /* AtrzMapper.insertHoliday */
+			docum_holiday    
+			(
+			  HOLI_ACTPLN_NO
+			, ATRZ_DOC_NO
+			, HOLI_CODE
+			, HOLI_START
+			, HOLI_END
+			)
+		VALUES
+			(
+			  #{holiActplnNo}
+			, #{atrzDocNo}
+			, #{holiCode}
 			, #{holiStart}
 			, #{holiEnd}
 			)
 	</insert>
-
+	
+	<!-- 상세보기를 위한 resultMap 사용 -->
+	<resultMap id="holidayDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.DocumHolidayVO" >
+		<!-- 연차신청서 -->
+		<id property="holiActplnNo" column="HOLI_ACTPLN_NO"/>
+		<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
+		<result property="holiCode" column="HOLI_CODE"/>
+		<result property="holiStart" column="HOLI_START"/>
+		<result property="holiEnd" column="HOLI_END"/>
+		
+		<!-- 전자결재 -->
+		<association property="atrzVO" javaType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+			<result property="atchFileNo" column="ATCH_FILE_NO"/>
+			<result property="atrzCn" column="ATRZ_CN"/>
+			<result property="atrzComptDt" column="ATRZ_COMPT_DT"/>
+			<result property="atrzDeleteYn" column="ATRZ_DELETE_YN"/>
+			<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
+			<result property="atrzDrftDt" column="ATRZ_DRFT_DT"/>
+			<result property="atrzOpinion" column="ATRZ_OPINION"/>
+			<result property="atrzRtrvlDt" column="ATRZ_RTRVL_DT"/>
+			<result property="atrzSj" column="ATRZ_SJ"/>
+			<result property="atrzSttusCode" column="ATRZ_STTUS_CODE"/>
+			<result property="atrzTmprStreDt" column="ATRZ_TMPR_STRE_DT"/>
+			<result property="bkmkYn" column="BKMK_YN"/>
+			<result property="docFormNo" column="DOC_FORM_NO"/>
+			<result property="drafterClsf" column="DRAFTER_CLSF"/>
+			<result property="drafterDept" column="DRAFTER_DEPT"/>
+			<result property="drafterEmpnm" column="DRAFTER_EMPNM"/>
+			<result property="drafterEmpno" column="DRAFTER_EMPNO"/>
+			<result property="eltsgnImage" column="ELTSGN_IMAGE"/>
+			<result property="schdulRegYn" column="SCHDUL_REG_YN"/>
+		</association>
+		
+		<!-- 전자결재선 -->
+		<collection property="atrzLineList" ofType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
+			<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
+			<result property="atrzLnSn" column="ATRZ_LN_SN"/>
+			<result property="sanctnerEmpno" column="SANCTNER_EMPNO"/>
+			<result property="sanctnerClsfCode" column="SANCTNER_CLSF_CODE"/>
+			<result property="contdEmpno" column="CONTD_EMPNO"/>
+			<result property="contdClsfCode" column="CONTD_CLSF_CODE"/>
+			<result property="dcrbManEmpno" column="DCRB_MAN_EMPNO"/>
+			<result property="dcrbManClsfCode" column="DCRB_MAN_CLSF_CODE"/>
+			<result property="atrzTy" column="ATRZ_TY"/>
+			<result property="sanctnProgrsSttusCode" column="SANCTN_PROGRS_STTUS_CODE"/>
+			<result property="dcrbAuthorYn" column="DCRB_AUTHOR_YN"/>
+			<result property="contdAuthorYn" column="CONTD_AUTHOR_YN"/>
+			<result property="sanctnOpinion" column="SANCTN_OPINION"/>
+			<result property="eltsgnImage" column="ELTSGN_IMAGE"/>
+			<result property="sanctnConfmDt" column="SANCTN_CONFM_DT"/>
+		</collection>
+	</resultMap>
+	
+	
+	<!-- 연차신청서 상세보기 -->
+	<select id="holidayDetail" parameterType="int" resultMap="holidayDetailMap" >
+		SELECT  /* DOCUM_HOLIDAY (연차신청서) */
+		     HO.holi_actpln_no
+		    ,HO.atrz_doc_no
+		    ,HO.holi_code
+		    ,HO.holi_start
+		    ,HO.holi_end
+		    
+		
+		    /* ATRZ (전자결재 기본 정보) */
+		    ,A.ATRZ_DOC_NO AS A_DOC_NO
+		    ,A.DRAFTER_EMPNO
+		    ,A.DRAFTER_CLSF
+		    ,A.DRAFTER_EMPNM
+		    ,A.DRAFTER_DEPT
+		    ,A.BKMK_YN
+		    ,A.ATCH_FILE_NO
+		    ,A.ATRZ_SJ
+		    ,A.ATRZ_CN
+		    ,A.ATRZ_OPINION
+		    ,A.ATRZ_TMPR_STRE_DT
+		    ,A.ATRZ_DRFT_DT
+		    ,A.ATRZ_COMPT_DT
+		    ,A.ATRZ_RTRVL_DT
+		    ,A.ATRZ_STTUS_CODE
+		    ,A.ELTSGN_IMAGE AS DRAFTER_ELTSGN
+		    ,A.DOC_FORM_NO
+		    ,A.ATRZ_DELETE_YN
+		    ,A.SCHDUL_REG_YN
+		    
+		
+		    /* ATRZ_LINE (결재선) */
+		    ,L.ATRZ_LN_SN
+		    ,L.SANCTNER_EMPNO
+		    ,L.SANCTNER_CLSF_CODE
+		    ,L.CONTD_EMPNO
+		    ,L.CONTD_CLSF_CODE
+		    ,L.DCRB_MAN_EMPNO
+		    ,L.DCRB_MAN_CLSF_CODE
+		    ,L.ATRZ_TY
+		    ,L.SANCTN_PROGRS_STTUS_CODE
+		    ,L.DCRB_AUTHOR_YN
+		    ,L.CONTD_AUTHOR_YN
+		    ,L.SANCTN_OPINION
+		    ,L.ELTSGN_IMAGE AS SANCTNER_ELTSGN
+		    ,L.SANCTN_CONFM_DT
+		
+		FROM 
+		    DOCUM_HOLIDAY HO
+		LEFT JOIN 
+		    ATRZ A ON HO.ATRZ_DOC_NO = A.ATRZ_DOC_NO
+		LEFT JOIN 
+		    ATRZ_LINE L ON HO.ATRZ_DOC_NO = L.ATRZ_DOC_NO
+		WHERE 
+		    HO.HOLI_ACTPLN_NO = #{holiActplnNo}
+		ORDER BY 
+		    L.ATRZ_LN_SN
+	</select>
 	
 </mapper>
