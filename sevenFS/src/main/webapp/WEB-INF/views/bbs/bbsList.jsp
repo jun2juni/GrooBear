@@ -74,11 +74,10 @@ table.table-hover.align-middle.text-center tbody tr td {
                   <option value="title" ${selectedCategory == 'title' ? 'selected' : ''}>제목</option>
                   <option value="content" ${selectedCategory == 'content' ? 'selected' : ''}>내용</option>
                   <option value="emplNo" ${selectedCategory == 'emplNo' ? 'selected' : ''}>작성자</option>
-                  <option value="file" ${selectedCategory == 'file' ? 'selected' : ''}>파일이름</option>
                 </select>
                 
                 <!-- 검색어 입력 필드 -->
-                <input type="text" name="searchKeyword" value="" class="form-control me-2" placeholder="검색어 입력">
+                <input type="text" name="searchKeyword" value="${SearchKeyword}" class="form-control me-2" placeholder="검색어 입력">
                 
                 <!-- 검색 버튼 -->
                 <button style="white-space: nowrap;" type="submit" class="btn btn-outline-primary">검색</button>

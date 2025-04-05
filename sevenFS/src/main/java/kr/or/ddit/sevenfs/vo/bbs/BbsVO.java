@@ -23,5 +23,5 @@ public class BbsVO {
 	private List<MultipartFile> files;
 
 	private String searchKeyword;
-
+	private String orderByDate;
 }

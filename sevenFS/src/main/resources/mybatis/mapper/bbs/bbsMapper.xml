@@ -25,41 +25,41 @@
 	        F.FILE_NAMES
 	    FROM BBS B
 	    LEFT JOIN FILES F ON B.ATCH_FILE_NO = F.ATCH_FILE_NO
-	    
+	
 	    <where>
 	        B.BBSCTT_USE_YN = 'Y'
 	
-	        <!-- 검색어 조건 (articlePage 내부에 있음) -->
-	        <if test="articlePage.searchVo != null and articlePage.searchVo != ''">
-	            AND (B.BBSCTT_SJ LIKE '%' || #{articlePage.searchVo} || '%' 
-	                 OR B.BBSCTT_CN LIKE '%' || #{articlePage.searchVo} || '%')
+	        <!-- 검색어 조건 -->
+	        <if test="articlePage.searchVo.searchKeyword != null and articlePage.searchVo.searchKeyword != ''">
+	            AND (B.BBSCTT_SJ LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%' 
+	                 OR B.BBSCTT_CN LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%')
 	        </if>
 	
-	        <!-- 카테고리 필터링 (BbsVO 값 사용) -->
-	        <if test="bbsCtgryNo != null">
-	            AND B.BBS_CTGRY_NO = #{bbsCtgryNo}
-	        </if>
+	        <!-- 카테고리 필터링 -->
+	        <!-- <if test="articlePage.searchVo.bbsCtgryNo != null">
+	            AND B.BBS_CTGRY_NO = #{articlePage.searchVo.bbsCtgryNo}
+	        </if> -->
 	
-	        <!-- 작성자 필터링 (BbsVO 값 사용) -->
-	        <if test="emplNo != null">
-	            AND B.EMPL_NO = #{emplNo}
+	        <!-- 작성자 필터링 -->
+	        <if test="articlePage.searchVo.emplNo != null and articlePage.searchVo.emplNo != ''">
+	            AND B.EMPL_NO = #{articlePage.searchVo.emplNo}
 	        </if>
 	    </where>
 	
 	    <!-- 정렬 -->
 	    ORDER BY
-	    <if test="orderByDate != null and orderByDate == 'desc'">
-	        B.BBSCTT_CREAT_DT DESC,
-	    </if>
-	    <if test="orderByDate != null and orderByDate == 'asc'">
-	        B.BBSCTT_CREAT_DT ASC,
-	    </if>
+	    <if test="articlePage.searchVo.orderByDate != null and articlePage.searchVo.orderByDate == 'desc'">
+		    B.BBSCTT_CREAT_DT DESC,
+		</if>
+		<if test="articlePage.searchVo.orderByDate != null and articlePage.searchVo.orderByDate == 'asc'">
+		    B.BBSCTT_CREAT_DT ASC,
+		</if>
 	    B.BBSCTT_CREAT_DT DESC
 	
 	    <!-- 페이징 처리 -->
-	    OFFSET (#{pageNo} - 1) * #{recordCountPerPage} ROWS 
-	    FETCH FIRST #{recordCountPerPage} ROWS ONLY
+	    OFFSET (#{articlePage.currentPage} - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY
 	</select>
+
 
 
 

@@ -54,26 +54,29 @@ public class BbsController {
     
     @GetMapping("/bbsList")
     public String bbsList(Model model, 
-    					  @ModelAttribute BbsVO bbsVO,
+                          @ModelAttribute BbsVO bbsVO,
                           @RequestParam(defaultValue = "1") int total,
                           @RequestParam(defaultValue = "1") int currentPage,
-                          @RequestParam(defaultValue = "10") int size) {
+                          @RequestParam(defaultValue = "5") int size) {
 
         log.info("📌 서치키워드 확인: " + bbsVO.getSearchKeyword());
+        model.addAttribute("SearchKeyword", bbsVO.getSearchKeyword());
 
-        // ✅ 페이징 처리할 객체 생성
+        // ✅ 페이징 처리 객체 생성
         ArticlePage<BbsVO> articlePage = new ArticlePage<>(total, currentPage, size);
-        articlePage.setSearchVo(bbsVO);  // BbsVO를 그대로 사용
+        
+        // 기존 bbsVO를 그대로 사용 (중요)
+        bbsVO.setOrderByDate("desc");  
+        articlePage.setSearchVo(bbsVO);  
 
-        // ✅ 페이징 처리된 게시글 목록 가져오기
         List<BbsVO> bbsList = bbsService.bbsList(articlePage);
 
-        // ✅ 뷰로 데이터 전달
         model.addAttribute("articlePage", articlePage);
         model.addAttribute("bbsList", bbsList);
 
         return "bbs/bbsList";
     }
+
 
 
     

@@ -16,5 +16,7 @@ public interface BbsService {
 	public int bbsUpdate(BbsVO bbsVO);
 
 	public int bbsDelete(int bbsSn);
+	
+	
 
 }
