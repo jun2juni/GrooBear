@@ -251,59 +251,89 @@ fetch("/organization")
  .then(resp => resp.json())
  .then(res => {
    const json = [];
+   
    res.deptList.forEach(dep => {
-     json.push({ id: dep.cmmnCode, parent: dep.upperCmmnCode, text: dep.cmmnCodeNm, deptYn: true });
+     json.push({ id: dep.cmmnCode,
+    	 	     parent: dep.upperCmmnCode,
+    	 	     text: dep.cmmnCodeNm, 
+    	 	     deptYn: true 
+    });
    });
    res.empList.forEach(emp => {
-     json.push({ id: emp.emplNo, parent: emp.deptCode, text: emp.emplNm, deptYn: false });
+     json.push({ 
+    	 id: emp.emplNo, 
+    	 parent: emp.deptCode, 
+    	 text: emp.emplNm, 
+    	 deptYn: false, 
+    	 icon: "/assets/images/organization/employeeImg.svg",
+   	     phone: emp.telno,         
+   	     email: emp.email           
+     });
    });
-
-   $('#jstree').jstree({ core: { data: json, check_callback: true }, plugins: ["search"] });
 
    $('#jstree').on("select_node.jstree", function (e, data) {
-     if (data.node.original.deptYn === false) {
-       const emp = {
-         name: data.node.text,
-         id: data.node.id,
-         dept: data.node.original.deptName || '-',
-         position: data.node.original.position || '-',
-         phone: data.node.original.phone || '-',
-         email: data.node.original.email || '-'
-       };
-	console.log("emp", emp);
-       const tableBody = document.querySelector("#selectedMembersTable tbody");
-       const exists = Array.from(tableBody.children).some(row => row.dataset.empId === emp.id && row.dataset.role === currentTarget);
-       if (exists) return;
+	   if (data.node.original.deptYn === false) {
+	     const matchedEmp = res.empList.find(emp => emp.emplNo === data.node.id);
 
-       const row = document.createElement("tr");
-       row.dataset.empId = emp.id;
-       row.dataset.role = currentTarget;
-       row.innerHTML = `
-         <td>${currentTarget}</td>
-         <td>${emp.name}</td>
-         <td>${emp.dept}</td>
-         <td>${emp.position}</td>
-         <td>${emp.phone}</td>
-         <td>${emp.email}</td>
-         <td><button type="button" class="btn btn-sm btn-outline-danger remove-member">삭제</button></td>
-       `;
-       tableBody.appendChild(row);
+	     if (!matchedEmp) {
+	       alert("사원 정보를 찾을 수 없습니다.");
+	       return;
+	     }
 
-       row.querySelector(".remove-member").addEventListener("click", function () {
-         row.remove();
-         const list = selectedMembers[currentTarget];
-         selectedMembers[currentTarget] = list.filter(p => p.id !== emp.id);
-         document.getElementById(currentTarget).value = selectedMembers[currentTarget].map(p => p.name).join(', ');
-         document.getElementById(currentTarget + "Empno").value = selectedMembers[currentTarget].map(p => p.id).join(',');
-       });
+	     const emp = {
+	       name: matchedEmp.emplNm,
+	       id: matchedEmp.emplNo,
+	       dept: matchedEmp.deptNm || '-',
+	       position: matchedEmp.posNm || '-',
+	       phone: matchedEmp.telno || '-',
+	       email: matchedEmp.email || '-'
+	     };
 
-       if (!selectedMembers[currentTarget].some(p => p.id === emp.id)) {
-         selectedMembers[currentTarget].push(emp);
-         document.getElementById(currentTarget).value = selectedMembers[currentTarget].map(p => p.name).join(', ');
-         document.getElementById(currentTarget + "Empno").value = selectedMembers[currentTarget].map(p => p.id).join(',');
-       }
-     }
-   });
+	     const tableBody = document.querySelector("#selectedMembersTable tbody");
+	     const exists = Array.from(tableBody.children).some(
+	       row => row.dataset.empId === emp.id && row.dataset.role === currentTarget
+	     );
+	     if (exists) return;
+
+	     // 기존 안내 문구 제거
+	     const emptyRow = tableBody.querySelector('.empty-row');
+	     if (emptyRow) emptyRow.remove();
+
+	     // 테이블 행 추가
+	     const row = document.createElement("tr");
+	     row.dataset.empId = emp.id;
+	     row.dataset.role = currentTarget;
+	     row.innerHTML = `
+	       <td>${currentTarget}</td>
+	       <td>${emp.name}</td>
+	       <td>${emp.dept}</td>
+	       <td>${emp.position}</td>
+	       <td>${emp.phone}</td>
+	       <td>${emp.email}</td>
+	       <td><button type="button" class="btn btn-sm btn-outline-danger remove-member">삭제</button></td>
+	     `;
+	     tableBody.appendChild(row);
+
+	     // 삭제 버튼
+	     row.querySelector(".remove-member").addEventListener("click", function () {
+	       row.remove();
+	       const list = selectedMembers[currentTarget];
+	       selectedMembers[currentTarget] = list.filter(p => p.id !== emp.id);
+	       document.getElementById(currentTarget).value = selectedMembers[currentTarget].map(p => p.name).join(', ');
+	       document.getElementById(currentTarget + "Empno").value = selectedMembers[currentTarget].map(p => p.id).join(',');
+	     });
+
+	     // 선택된 사원 상태 저장
+	     if (!selectedMembers[currentTarget].some(p => p.id === emp.id)) {
+	       selectedMembers[currentTarget].push(emp);
+	       document.getElementById(currentTarget).value = selectedMembers[currentTarget].map(p => p.name).join(', ');
+	       document.getElementById(currentTarget + "Empno").value = selectedMembers[currentTarget].map(p => p.id).join(',');
+	     }
+
+	     console.log("사원 추가됨:", emp);
+	   }
+	 });
+
  });
 }
 
