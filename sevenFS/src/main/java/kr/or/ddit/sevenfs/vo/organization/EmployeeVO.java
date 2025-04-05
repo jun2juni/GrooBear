@@ -2,6 +2,8 @@ package kr.or.ddit.sevenfs.vo.organization;
 
 import kr.or.ddit.sevenfs.utils.CommonCode;
 import kr.or.ddit.sevenfs.vo.auth.EmpAuthVO;
+import kr.or.ddit.sevenfs.vo.chat.ChatRoomVO;
+import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,6 +46,12 @@ public class EmployeeVO implements UserDetails {
 	private String posNm;  // 직급명
 
 	private List<EmpAuthVO> empAuthVOList;
+
+	// 읽지 않은 알림 목록
+	private List<NotificationVO> notificationVOList;
+
+	// 채팅창 목록 (읽지 않은 채팅 방들 만)
+	private List<ChatRoomVO> chatRoomVOList;
 	
 	// 성별코드에 맞는 성별 반환
 	public void setGenderCode(String genderCode) {

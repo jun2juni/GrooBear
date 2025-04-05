@@ -59,10 +59,10 @@ public class BbsController {
                           @RequestParam(defaultValue = "1") int currentPage,
                           @RequestParam(defaultValue = "5") int size) {
 
-        log.info("서치키워드 확인: " + bbsVO.getSearchKeyword());
+        log.info("📌 서치키워드 확인: " + bbsVO.getSearchKeyword());
         model.addAttribute("SearchKeyword", bbsVO.getSearchKeyword());
 
-        // 페이징 처리 객체 생성
+        // ✅ 페이징 처리 객체 생성
         ArticlePage<BbsVO> articlePage = new ArticlePage<>(total, currentPage, size);
         
         // 기존 bbsVO를 그대로 사용 (중요)

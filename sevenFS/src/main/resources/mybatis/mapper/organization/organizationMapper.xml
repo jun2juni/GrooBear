@@ -73,6 +73,7 @@
 		FROM EMPLOYEE e
 		LEFT JOIN AUTH a on(e.empl_no = a.empl_no)
 		WHERE e.EMPL_NO = #{emplNo}
+		  AND ENABLED = '1'
 	</select>
 	
 	<!-- 사원 상세부서 -->

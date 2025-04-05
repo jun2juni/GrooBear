@@ -7,11 +7,17 @@ import java.util.List;
 
 public interface NotificationService {
     // 알림 목록
-    public List<NotificationVO> notificationList(EmployeeVO employeeVO);
+    public List<NotificationVO> notificationList(int currentPage, EmployeeVO employeeVO);
 
     // 알림 추가 - 알림 추가되면 알림도 같이 보내기
-    public int insertNotification(List<NotificationVO> notificationVO, List<EmployeeVO> employeeVOList);
+    public int insertNotification(NotificationVO notificationVO, List<EmployeeVO> employeeVOList);
 
     // 알림 삭제
     public int deleteNotification(NotificationVO notificationVO);
+
+    // 알림 읽음 처리
+    public int updateNotificationAllRead(String emplNo);
+
+    // 읽지 않은 알림 가져오기
+    public List<NotificationVO> getUnreadNotifications(EmployeeVO employeeVO);
 }

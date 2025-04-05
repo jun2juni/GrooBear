@@ -64,7 +64,7 @@ class Pagination extends HTMLElement {
     let firstPage = (block - 1) * maxBlock + 1; //생성된 블럭에서 첫번째 페이지
     let lastPage = Math.min(maxPage, block * maxBlock); //생성된 블럭에서 마지막 페이지  //Math.min 주어진 숫자들 중 가장 작은 값을 반환합니다.
 
-    let pagingHtml = `<ul class="pagination">`; // 모달에서 페이지 2자리 넘어갈 경우 넘침 문제 때문에 small 적용 h.kang 21.04.13
+    let pagingHtml = `<ul class="pagination w-fit mx-auto">`;
     pagingHtml += `<li class="page-item"><button class="page-link" data-page="1">&laquo;</button></li>`; // 첫번째 페이지
     pagingHtml += `<li class="page-item"><button class="page-link" data-page="${prevPage}">&lt;</button></li>`; // 이전 페이지
     for (let i = firstPage; i <= lastPage; i++) {

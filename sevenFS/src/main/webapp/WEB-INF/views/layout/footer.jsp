@@ -33,9 +33,9 @@
 <div class="toast-container position-fixed end-0 p-3" style="top: 80px">
   <div class="toast fade hide p-2 bg-white" role="alert" aria-live="assertive" id="infoSuccess" aria-atomic="true">
     <div class="toast-header border-0">
-      <i class="lni lni-checkmark text-success"></i>
-      <span class="ms-2 me-auto text-bold">{{title}}</span>
-      <small class="text-body">{{sender}}</small>
+      <span class="material-symbols-outlined">notifications</span>
+      <span class="alert-title ms-2 me-auto text-bold">{{title}}</span>
+      <small class="alert-sender text-body">{{sender}}</small>
       <i class="fas fa-times text-md ms-3 cursor-pointer" data-bs-dismiss="toast" aria-label="Close"></i>
     </div>
     <hr class="horizontal dark m-0">

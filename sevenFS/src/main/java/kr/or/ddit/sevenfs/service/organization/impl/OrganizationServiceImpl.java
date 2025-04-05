@@ -1,8 +1,14 @@
 package kr.or.ddit.sevenfs.service.organization.impl;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import kr.or.ddit.sevenfs.service.chat.ChatService;
+import kr.or.ddit.sevenfs.service.notification.NotificationService;
+import kr.or.ddit.sevenfs.vo.chat.ChatRoomVO;
+import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,13 +19,19 @@ import kr.or.ddit.sevenfs.vo.CommonCodeVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.organization.OrganizationVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@Transactional
 public class OrganizationServiceImpl implements OrganizationService {
 
 	@Autowired
 	OrganizationMapper organizationMapper;
+	@Autowired
+	NotificationService notificationService;
+	@Autowired
+	ChatService chatService;
 
 	
 	@Override
@@ -73,17 +85,41 @@ public class OrganizationServiceImpl implements OrganizationService {
 	//사원 상세조회
 	public EmployeeVO emplDetail(String emplNo) {
 		EmployeeVO emplDetail = organizationMapper.emplDetail(emplNo);
-		
+		log.debug("emplDetail : " + emplDetail);
+
+		if (emplDetail == null) return null;
+
+
+
 		// 사원이 속한 부서
 		CommonCodeVO employeeDep = empDetailDep(emplNo);
-		log.info("사원속한부서 : " + employeeDep);
+		if (employeeDep != null) {
+			emplDetail.setDeptNm(employeeDep.getCmmnCodeNm());  // 사원 부서 이름
+		} else {
+			emplDetail.setDeptCode("01");  // 사원 부서 코드 임시로 추가
+			emplDetail.setDeptNm("기타");  // 사원 부서 이름 임시로 추가
+		}
 
 		// 사원의 직급
 		CommonCodeVO employeePos = empDetailPos(emplNo);
-		
-		emplDetail.setDeptNm(employeeDep.getCmmnCodeNm());
-		emplDetail.setPosNm(employeePos.getCmmnCodeNm());
-		
+		if (employeePos != null) {
+			emplDetail.setPosNm(employeePos.getCmmnCodeNm()); // 사원 직급 이름 추가
+		} else {
+			emplDetail.setClsfCode("01");  // 사원 부서 코드 임시로 추가
+			emplDetail.setClsfCodeNm("사원");  // 사원 부서 이름 임시로 추가
+		}
+
+		// 읽지 않은 알림
+		List<NotificationVO> unreadNotifications = notificationService.getUnreadNotifications(emplDetail);
+		emplDetail.setNotificationVOList(unreadNotifications);
+
+		// 읽지 않은 채팅
+		Map<String, Object> params = new HashMap<>();
+		params.put("emplNo", emplNo);
+		params.put("bUnRead", true);
+		List<ChatRoomVO> chatRoomVOList = chatService.chatList(params);
+		emplDetail.setChatRoomVOList(chatRoomVOList);
+
 		return emplDetail;
 	}
 	

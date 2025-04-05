@@ -91,7 +91,7 @@ table.table-hover.align-middle.text-center tbody tr td {
               <thead class="table-light">
                 <tr>
                   <th style="width: 10%;">게시글 번호</th>
-                  <th style="width: 60%; text-align: left;">제목</th>
+                  <th style="width: 60%;">제목</th>
                   <th style="width: 10%;">작성자</th>
                   <th style="width: 10%;">작성일</th>
                   <th style="width: 10%;">파일</th>
@@ -101,8 +101,8 @@ table.table-hover.align-middle.text-center tbody tr td {
                 <c:forEach var="bbsVO" items="${bbsList}">
                   <tr onClick="location.href='/bbs/bbsDetail?bbsSn=${bbsVO.bbsSn}'" style="cursor:pointer;">
                     <td>${bbsVO.bbsSn}</td>
-                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">${bbsVO.bbscttSj}</td>
-                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${myEmpInfo.emplNm}</td>
+                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${bbsVO.bbscttSj}</td>
+                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${bbsVO.emplNo}</td>
                     <td>${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}</td>
                     <td>
                       <c:choose>

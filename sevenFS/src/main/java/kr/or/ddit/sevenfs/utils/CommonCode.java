@@ -214,22 +214,24 @@ public class CommonCode {
 
     @Getter
     public enum SkillEnum {
-        PROJECT("00", "프로젝트"),
-        BOARD("01", "게시판"),
-        E_APPROVAL("02", "전자결재"),
-        DOCUMENTS("03", "문서함"),
-        SCHEDULE("04", "일정"),
-        EMAIL("05", "메일"),
-        MESSENGER("06", "메신저"),
-        NOTIFICATIONS("07", "알림"),
-        STATISTICS("08", "통계");
+        PROJECT("00", "프로젝트", "<span class=\"icon material-symbols-outlined\">tactic</span>"),
+        BOARD("01", "게시판", "<span class=\"icon material-symbols-outlined\">auto_stories</span>"),
+        E_APPROVAL("02", "전자결재", "<span class=\"icon material-symbols-outlined\">inventory</span>"),
+        DOCUMENTS("03", "문서함", "<span class=\"icon material-symbols-outlined\">create_new_folder</span>"),
+        SCHEDULE("04", "일정", "<span class=\"icon material-symbols-outlined\">today</span>"),
+        EMAIL("05", "메일", "<span class=\"icon material-symbols-outlined\">drafts</span>"),
+        MESSENGER("06", "메신저", "<span class=\"icon material-symbols-outlined\">mark_unread_chat_alt</span>"),
+        NOTIFICATIONS("07", "알림", "<span class=\"icon material-symbols-outlined\">notifications</span>"),
+        STATISTICS("08", "통계", "<span class=\"icon material-symbols-outlined\">monitoring</span>");
 
         private final String code;
         private final String label;
+        private final String icon;
 
-        SkillEnum(String code, String label) {
+        SkillEnum(String code, String label, String icon) {
             this.code = code;
             this.label = label;
+            this.icon = icon;
         }
 
         // 코드에 맞는 label을 반환하는 메서드
@@ -237,6 +239,16 @@ public class CommonCode {
             for (SkillEnum value : values()) {
                 if (value.code.equals(code)) {
                     return value.label;
+                }
+            }
+
+            return null;  // 코드가 일치하지 않으면 null 반환
+        }
+        // 코드에 맞는 label을 반환하는 메서드
+        public String getIconByCode(String code) {
+            for (SkillEnum value : values()) {
+                if (value.code.equals(code)) {
+                    return value.icon;
                 }
             }
 
