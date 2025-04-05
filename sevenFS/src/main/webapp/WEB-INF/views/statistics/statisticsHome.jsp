@@ -44,17 +44,18 @@
 	   /*  materialChart  - 세로막대그래프 시작 */
 	   var materialData = google.visualization.arrayToDataTable([
 	        ['Year', '매출목표', '매출실적', '실수익'],
-	        ['2014', 800, 400, 200],
-	        ['2015', 750, 460, 250],
-	        ['2016', 800, 1120, 300],
-	        ['2017', 1030, 540, 350]
+	        ['2014', 800, 400, 200,],
+	        ['2015', 800, 400, 200,],
+	        ['2016', 800, 400, 200,],
+	        ['2017', 800, 400, 200,],
+
 	    ]);
 	
 	   console.log("데이터 로딩 완료");
 	    var materialOptions = {
 	        chart: {
-	            title: 'Company Performance',
-	            subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+	            title: '',
+	            subtitle: '',
 	        }
 	    };
 	
@@ -81,17 +82,17 @@
 	    /* Donut chart = 도넛차트 - 도넛차트시작 */
         	}
 	
-	let comboChartType = 'line'; // 콤보차트 그래프 기본형태 -차 후 동적 변동 예정 
+	let comboChartType = 'bars'; // 콤보차트 그래프 기본형태 -차 후 동적 변동 예정 
 	// 콤보차트 예시 
 	function drawVisualization() {
         // Some raw data (not necessarily accurate)
         var data = google.visualization.arrayToDataTable([
-          ['2025매출실적', 'HJ건설', 'DH리테일', 'JH커피', 'SJ푸드', 'SS로지스', 'HSN아트'],
+          ['2025매출실적', 'HJ건설', 'DH리테일', 'JH커피', 'SJ푸드', 'SS로지스', 'HSN아트',],
           ['2025/01',  165,      938,         522,             998,           450,      614.6],
           ['2025/02',  135,      1120,        599,             1268,          288,      682],
           ['2025/03',  157,      1167,        587,             807,           397,      623],
           ['2025/04',  139,      1110,        615,             968,           215,      609.4],
-          ['2025/05',  136,      691,         629,             1026,          366,      569.6]
+          ['2025/05',  136,      691,         629,             1026,          366,      569.6],
         ]);
 
         var options = {

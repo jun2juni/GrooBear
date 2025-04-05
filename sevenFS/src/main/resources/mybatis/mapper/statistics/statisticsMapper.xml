@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.statistics.StatisticsMapper">
+    
+    
+    
+    
+    <!-- 특정 년도 특정 년 조회 쿼리 :  입력년도(-1) - 입력 월 (시작시점) / 입력년도(+1) -입력(종료시점)/ 근태코드가 지각 01 조퇴 03     -->
+    <!-- 특정 년도 특정 월 조회 쿼리 :  
+    AWOL 근태 지각 조퇴 통계
+	public List<Map<String,Object>> AWOLAjax(StatisticsVO statisticsVO)
+    -->
+<!--     <select id="AWOLAjax" resultType="hashMap" > -->
+<!--     SELECT EMP.EMPL_NO, DCLZ.DCLZ_NO, DCLZ.DCLZ_CODE, DCLZ.DCLZ_BEGIN_DT, EMP.DEPT_CODE -->
+<!-- 		FROM DCLZ_TYPE DCLZ -->
+<!-- 		LEFT JOIN EMPLOYEE EMP ON (DCLZ.EMPL_NO = EMP.EMPL_NO) -->
+<!-- 			<where> -->
+<!-- 				<if test=""> -->
+<!-- 				<![CDATA[ -->
+<!-- 		   		DCLZ.DCLZ_BEGIN_DT >= TO_DATE('2024', 'YYYY')  -->
+<!-- 		   		AND DCLZ.DCLZ_BEGIN_DT x<= TO_DATE('2026', 'YYYY') -->
+<!-- 		   		AND DCLZ.DCLZ_CODE IN ('01', '03') -->
+<!-- 		   		]]>  -->
+<!-- 		   		</if> -->
+<!-- 				<if test=""> -->
+<!-- 				<![CDATA[ -->
+<!-- 			    DCLZ.DCLZ_BEGIN_DT >= TO_DATE('2025-03', 'YYYY-MM')   -->
+<!-- 			    AND DCLZ.DCLZ_BEGIN_DT < TO_DATE('2025-04', 'YYYY-MM')  -->
+<!-- 			    AND DCLZ.DCLZ_CODE IN ('01', '03') -->
+<!-- 		   		]]>  -->
+<!-- 		   		</if> -->
+<!-- 				<if test=""> -->
+<!-- 				<![CDATA[ -->
+<!-- 				(DCLZ.DCLZ_BEGIN_DT BETWEEN TO_DATE('2025-03-01', 'YYYY-MM-DD') -->
+<!-- 	            AND TO_DATE('2025-03-16', 'YYYY-MM-DD'))  -->
+<!-- 	   			AND (DCLZ.DCLZ_CODE = '01' OR DCLZ.DCLZ_CODE = '03') -->
+<!-- 		   		]]>  -->
+<!-- 		   		</if> -->
+<!--    			</where> -->
+<!--     </select> -->
+
+	<!-- 특정 년도 특정 년 조회 쿼리 :  입력년도(-1) - 입력 월 (시작시점) / 입력년도(+1) -입력(종료시점)/ 근태코드가 지각 01 조퇴 03     -->
+    <!-- 특정 년도 특정 월 조회 쿼리 :  
+    AWOL 근태 지각 조퇴 통계
+	public List<Map<String,Object>> AWOLAjax(StatisticsVO statisticsVO)
+	
+1. 연간
+StatisticsVO(interval=year, chartType=line, startYearsY=2024, endYearsY=2025, dept=[인사부, 영업부], startYearsM=, startMonths=null, endMonths=null, startDays=, endDays=)
+	
+2. 월간
+StatisticsVO(interval=month, chartType=bars, startYearsY=null, endYearsY=null, dept=[경영지원부, 영업부, 구매부]
+	, startYearsM=2025, startMonths=03, endMonths=05, startDays=, endDays=)
+	
+3. 일간
+StatisticsVO(interval=day, chartType=area, startYearsY=null, endYearsY=null, dept=[구매부, 디자인부, 연구소], startYearsM=, startMonths=null, endMonths=null
+, startDays=2025-04-04, endDays=2025-04-30)
+-->
+    <select id="AWOLAjax" resultType="hashMap" parameterType="kr.or.ddit.sevenfs.vo.statistics.StatisticsVO">
+	    SELECT 
+		    CASE 
+		        WHEN EMP.DEPT_CODE BETWEEN 0 AND 9 THEN '임원진'
+		        WHEN EMP.DEPT_CODE BETWEEN 10 AND 19 THEN '인사부'
+		        WHEN EMP.DEPT_CODE BETWEEN 20 AND 29 THEN '경영지원부'
+		        WHEN EMP.DEPT_CODE BETWEEN 30 AND 39 THEN '영업부'
+		        WHEN EMP.DEPT_CODE BETWEEN 40 AND 49 THEN '생산부'
+		        WHEN EMP.DEPT_CODE BETWEEN 50 AND 59 THEN '구매부'
+		        WHEN EMP.DEPT_CODE BETWEEN 60 AND 69 THEN '품질부'
+		        WHEN EMP.DEPT_CODE BETWEEN 70 AND 79 THEN '디자인부'
+		        WHEN EMP.DEPT_CODE BETWEEN 80 AND 89 THEN '연구소'
+		        WHEN EMP.DEPT_CODE BETWEEN 90 AND 99 THEN '7FS'
+		    END AS DEPT_RANGE,
+		    COUNT(*) AS EMP_COUNT
+		 FROM DCLZ_TYPE DCLZ
+		LEFT JOIN EMPLOYEE EMP 
+		ON DCLZ.EMPL_NO = EMP.EMPL_NO
+		<where> 
+<!-- 		할수있다 백현명 -->
+<!-- 		잘하면서 못하는척한다 백현명 -->
+<!-- 		자신감 만땅 백현명이되어라 -->
+<!-- 		당신을잘하고 있으니 더 잘해야한다 ㅜㅜ -->
+			<if test="interval!=null and interval=='year'">
+				<![CDATA[
+	 		    DCLZ.DCLZ_BEGIN_DT >= TO_DATE(#{startYearsY}, 'YYYY')
+	 		    AND DCLZ.DCLZ_BEGIN_DT <= TO_DATE(#{endYearsY}, 'YYYY')
+	 		    ]]>
+	 		    AND DCLZ.DCLZ_CODE IN ('01', '03')
+	 		    <if test="deptList!=null and deptList!=''">
+		 		    AND TRUNC(EMP.DEPT_CODE/10)*10 IN	
+		 		    <foreach collection="deptList" open="(" close=")" separator="," item="item">			
+		 		    	#{item}
+		 		    </foreach>
+	 		    </if>
+ 		    </if> 		    
+			<if test="interval!=null and interval=='month'">
+				<![CDATA[
+	 		    DCLZ.DCLZ_BEGIN_DT >= TO_DATE(#{startYearsM}||#{startMonths}, 'YYYYMM')
+	 		    AND DCLZ.DCLZ_BEGIN_DT <= TO_DATE(#{startYearsM}||#{endMonths}, 'YYYYMM')
+	 		    ]]>
+	 		    AND DCLZ.DCLZ_CODE IN ('01', '03')
+	 		    <if test="deptList!=null and deptList!=''">
+		 		    AND TRUNC(EMP.DEPT_CODE/10)*10 IN	
+		 		    <foreach collection="deptList" open="(" close=")" separator="," item="item">			
+		 		    	#{item}
+		 		    </foreach>
+	 		    </if>
+ 		    </if>
+			<if test="interval!=null and interval=='day'">
+				<![CDATA[
+	 		    DCLZ.DCLZ_BEGIN_DT >= TO_DATE(#{startDays}, 'YYYY-MM-DD')
+	 		    AND DCLZ.DCLZ_BEGIN_DT <= TO_DATE(#{endDays}, 'YYYY-MM-DD')
+	 		    ]]>
+	 		    AND DCLZ.DCLZ_CODE IN ('01', '03')
+	 		    <if test="deptList!=null and deptList!=''">
+		 		    AND TRUNC(EMP.DEPT_CODE/10)*10 IN	
+		 		    <foreach collection="deptList" open="(" close=")" separator="," item="item">			
+		 		    	#{item}
+		 		    </foreach>
+	 		    </if>
+ 		    </if>
+		</where>
+		GROUP BY 
+		    CASE 
+		        WHEN EMP.DEPT_CODE BETWEEN 0 AND 9 THEN '임원진' 
+		        WHEN EMP.DEPT_CODE BETWEEN 10 AND 19 THEN '인사부'
+		        WHEN EMP.DEPT_CODE BETWEEN 20 AND 29 THEN '경영지원부'
+		        WHEN EMP.DEPT_CODE BETWEEN 30 AND 39 THEN '영업부'
+		        WHEN EMP.DEPT_CODE BETWEEN 40 AND 49 THEN '생산부'
+		        WHEN EMP.DEPT_CODE BETWEEN 50 AND 59 THEN '구매부'
+		        WHEN EMP.DEPT_CODE BETWEEN 60 AND 69 THEN '품질부'
+		        WHEN EMP.DEPT_CODE BETWEEN 70 AND 79 THEN '디자인부'
+		        WHEN EMP.DEPT_CODE BETWEEN 80 AND 89 THEN '연구소'
+		        WHEN EMP.DEPT_CODE BETWEEN 90 AND 99 THEN '7FS'
+		    END
+		ORDER BY DEPT_RANGE
+	</select>
+    
+    
+</mapper>
