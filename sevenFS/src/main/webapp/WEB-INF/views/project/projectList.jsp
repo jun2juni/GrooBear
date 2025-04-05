@@ -1,161 +1,256 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:set var="title" value="프로젝트 생성" />
+<%--해당 파일에 타이틀 정보를 넣어준다--%>
+<c:set var="title" scope="application" value="메인" />
+
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>${title}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <c:import url="../layout/prestyle.jsp" />
-<style>
-    .form-step { display: none; }
-    .form-step.active { display: block; }
-</style>
+<meta charset="UTF-8" />
+<meta
+name="viewport"
+content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+/>
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<title>${title}</title>
+
 </head>
 <body>
-  <c:import url="../layout/sidebar.jsp" />
-  <main class="main-wrapper">
-    <c:import url="../layout/header.jsp" />
+<main class="main-wrapper">
 
-    <section class="section">
-      <div class="container-fluid">
-        <h2 class="mb-4">프로젝트 생성</h2>
+<section class="section">
+<div class="container-fluid">
+    <!-- 검색 폼 추가 -->
+<div class="row mb-4">
+    <div class="col-md-8 col-lg-6 mx-auto">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-3">
+                <form id="searchForm" onsubmit="searchProjects(event)">
+                    <div class="input-group">
+                        <input type="text" name="keyword" id="keywordInput" value="${param.keyword}" class="form-control" placeholder="프로젝트명, 카테고리, 담당자 검색">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="material-icons-outlined" style="font-size: 16px; vertical-align: text-bottom;">search</i> 검색
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-        <form id="projectForm" action="/project/insert" method="post" enctype="multipart/form-data">
-
-          <ul class="nav nav-tabs" id="formTabs">
-            <li class="nav-item"><a class="nav-link active" data-step="1" href="#">기본정보</a></li>
-            <li class="nav-item"><a class="nav-link" data-step="2" href="#">인원등록</a></li>
-            <li class="nav-item"><a class="nav-link" data-step="3" href="#">업무관리</a></li>
-            <li class="nav-item"><a class="nav-link" data-step="4" href="#">세부정보</a></li>
-            <li class="nav-item"><a class="nav-link" data-step="5" href="#">최종확인</a></li>
-          </ul>
-
-
-          <div class="mt-4">
-            <div class="form-step active" id="step1"><c:import url="step1Basic.jsp" /></div>
-            <div class="form-step" id="step2"><c:import url="step2Members.jsp" /></div>
-            <div class="form-step" id="step3"><c:import url="step3Tasks.jsp" /></div>
-            <div class="form-step" id="step4"><c:import url="step4Details.jsp" /></div>
-            <div class="form-step" id="step5"><c:import url="step5Confirm.jsp" /></div>
-          </div>
-
-
-          <div class="mt-4 d-flex justify-content-between">
-            <button type="button" id="prevBtn" class="btn btn-secondary" disabled>이전</button>
-            <button type="button" id="nextBtn" class="btn btn-primary">다음</button>
-            <button type="submit" id="submitBtn" class="btn btn-success d-none">프로젝트 생성</button>
-          </div>
-        </form>
-      </div>
-    </section>
-
-    <c:import url="../layout/footer.jsp" />
-  </main>
-  <c:import url="../layout/prescript.jsp" />
+<!-- 프로젝트 목록 영역 -->
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0">프로젝트 목록</h5>
+                <a href="/project/insert" class="btn btn-sm btn-success">
+                    <i class="material-icons-outlined" style="font-size: 16px; vertical-align: text-bottom;">add</i> 신규 프로젝트
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th scope="col" class="fw-semibold">프로젝트명</th>
+                                <th scope="col" class="fw-semibold">카테고리</th>
+                                <th scope="col" class="fw-semibold">책임자</th>
+                                <th scope="col" class="fw-semibold">상태</th>
+                                <th scope="col" class="fw-semibold">등급</th>
+                                <th scope="col" class="fw-semibold text-center">기간</th>
+                                <th scope="col" class="fw-semibold">액션</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="project" items="${projectList}">
+                                <tr class="align-middle">
+                                    <td class="fw-medium">
+                                        <a href="/project/projectDetail/${project.prjctNo}" class="text-decoration-none text-primary">
+                                            ${project.prjctNm}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="badge rounded-pill bg-light text-dark">
+                                            ${project.ctgryNm}
+                                        </span>
+                                    </td>
+                                    <td>${project.prtcpntNm}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${project.prjctSttusNm eq '진행중'}">
+                                                <span class="badge bg-success">진행중</span>
+                                            </c:when>
+                                            <c:when test="${project.prjctSttusNm eq '대기중'}">
+                                                <span class="badge bg-warning text-dark">대기중</span>
+                                            </c:when>
+                                            <c:when test="${project.prjctSttusNm eq '완료'}">
+                                                <span class="badge bg-secondary">완료</span>
+                                            </c:when>
+                                            <c:when test="${project.prjctSttusNm eq '지연'}">
+                                                <span class="badge bg-danger">지연</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="badge bg-info">${project.prjctSttusNm}</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${project.prjctGrad eq 'A'}">
+                                                <span class="text-danger fw-bold">A</span>
+                                            </c:when>
+                                            <c:when test="${project.prjctGrad eq 'B'}">
+                                                <span class="text-primary fw-bold">B</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="text-muted">${project.prjctGrad}</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td class="text-center">
+                                        <small class="text-muted">
+                                            ${project.prjctBeginDateFormatted} ~ ${project.prjctEndDateFormatted}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-light border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="material-icons-outlined" style="font-size: 18px;">more_vert</i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="/project/detail/${project.prjctNo}">상세보기</a></li>
+                                                <li><a class="dropdown-item" href="/project/edit/${project.prjctNo}">수정</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" data-project-id="${project.prjctNo}">삭제</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            <!-- 데이터가 없을 경우 -->
+                            <c:if test="${empty projectList}">
+                                <tr>
+                                    <td colspan="7" class="text-center py-5">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <i class="material-icons-outlined text-muted" style="font-size: 48px;">search_off</i>
+                                            <p class="text-muted mt-3">검색 결과가 없습니다</p>
+                                            <button class="btn btn-sm btn-outline-primary mt-2" onclick="loadAllProjects()">전체 목록 보기</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:if>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+				<!-- 페이지 네비게이션 -->
+				<div class="row mb-4">
+				    <div class="col-12">
+				        <div class="card-style">
+				            <div style="display: flex; justify-content: center;">
+				                <page-navi
+				                    url="/project/projectList?keyword=${param.keyword}"
+				                    current="${articlePage.getCurrentPage()}"
+				                    show-max="5"
+				                    total="${articlePage.getTotalPages()}"
+				                ></page-navi>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 삭제 확인 모달 -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">프로젝트 삭제</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>정말로 이 프로젝트를 삭제하시겠습니까?</p>
+                <p class="text-danger small">이 작업은 되돌릴 수 없으며 모든 관련 데이터가 삭제됩니다.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">삭제</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
-  let currentStep = 1;
-  const totalSteps = 5;
+// 삭제 모달 처리
+let projectToDelete = 0;
 
-  const updateStepView = () => {
-    for (let i = 1; i <= totalSteps; i++) {
-      document.getElementById('step' + i).classList.remove('active');
+$('#deleteModal').on('show.bs.modal', function (event) {
+    const button = $(event.relatedTarget);
+    projectToDelete = button.data('project-id');
+});
+
+$('#confirmDelete').on('click', function() {
+    if (projectToDelete > 0) {
+        // AJAX로 삭제 요청
+        $.ajax({
+            url: '/project/delete',
+            type: 'POST',
+            data: { prjctNo: projectToDelete },
+            success: function(response) {
+                $('#deleteModal').modal('hide');
+                // 현재 페이지 다시 로드
+                loadPage(${articlePage.currentPage}, $('#keywordInput').val());
+            },
+            error: function(xhr, status, error) {
+                alert('프로젝트 삭제 중 오류가 발생했습니다.');
+            }
+        });
     }
-    document.getElementById('step' + currentStep).classList.add('active');
+});
 
-    document.getElementById('prevBtn').disabled = currentStep === 1;
-    document.getElementById('nextBtn').classList.toggle('d-none', currentStep === totalSteps);
-    document.getElementById('submitBtn').classList.toggle('d-none', currentStep !== totalSteps);
-  };
-
-  document.getElementById('nextBtn').addEventListener('click', () => {
-    if (currentStep < totalSteps) {
-      currentStep++;
-      if (currentStep === 5) updateConfirmation();
-      updateStepView();
-    }
-  });
-
-  document.getElementById('prevBtn').addEventListener('click', () => {
-    if (currentStep > 1) {
-      currentStep--;
-      updateStepView();
-    }
-  });
-
-  // 업무 추가
-  const taskList = [];
-  document.getElementById('addTaskBtn')?.addEventListener('click', () => {
-    const taskNm = document.getElementById('taskNm').value;
-    const chargerEmpNm = document.getElementById('chargerEmpNm').value;
-    const chargerEmpno = document.getElementById('chargerEmpno').value;
-    const taskBeginDt = document.getElementById('taskBeginDt').value;
-    const taskEndDt = document.getElementById('taskEndDt').value;
-    const taskPriort = document.getElementById('taskPriort').value;
-    const taskGrad = document.getElementById('taskGrad').value;
-    const taskCn = document.getElementById('taskCn').value;
-
-    if (!taskNm || !chargerEmpNm) {
-      alert('업무명과 담당자를 입력하세요.');
-      return;
-    }
-
-    const task = { taskNm, chargerEmpNm, chargerEmpno, taskBeginDt, taskEndDt, taskPriort, taskGrad, taskCn };
-    taskList.push(task);
-    updateTaskList();
-  });
-
-  const updateTaskList = () => {
-    const taskListUl = document.getElementById('taskList');
-    taskListUl.innerHTML = '';
-    if (taskList.length === 0) {
-      taskListUl.innerHTML = '<li class="list-group-item text-muted">등록된 업무가 없습니다.</li>';
-      return;
-    }
-
-    taskList.forEach((task, i) => {
-      const li = document.createElement('li');
-      li.className = 'list-group-item';
-      li.innerHTML = `<strong>${task.taskNm}</strong> - ${task.chargerEmpNm} (${task.taskBeginDt} ~ ${task.taskEndDt})`;
-      taskListUl.appendChild(li);
+// AJAX로 프로젝트 목록 로드
+function loadPage(page, keyword) {
+    $.ajax({
+        url: '/project/projectList',
+        type: 'GET',
+        data: {
+            currentPage: page,
+            keyword: keyword
+        },
+        success: function(response) {
+            $('#projectListContent').html(response);
+        },
+        error: function(xhr, status, error) {
+            console.error('페이지 로드 중 오류 발생:', error);
+        }
     });
-  };
+}
 
-  const updateConfirmation = () => {
-    document.getElementById('confirmPrjctNm').textContent = document.querySelector('[name="prjctNm"]').value;
-    document.getElementById('confirmCtgry').textContent = document.querySelector('[name="ctgryNo"] option:checked')?.textContent;
-    document.getElementById('confirmPrjctCn').textContent = document.querySelector('[name="prjctCn"]').value;
+// 검색 폼 제출 처리
+function searchProjects(event) {
+    event.preventDefault();
+    const keyword = $('#keywordInput').val();
+    loadPage(1, keyword);
+}
 
-    const begin = document.querySelector('[name="prjctBeginDate"]').value;
-    const end = document.querySelector('[name="prjctEndDate"]').value;
-    document.getElementById('confirmPeriod').textContent = `${begin} ~ ${end}`;
+// 전체 목록 보기
+function loadAllProjects() {
+    $('#keywordInput').val('');
+    loadPage(1, '');
+}
 
-    document.getElementById('confirmPrjctSttus').textContent = document.querySelector('[name="prjctSttus"] option:checked')?.textContent;
-    document.getElementById('confirmPrjctGrad').textContent = document.querySelector('[name="prjctGrad"] option:checked')?.textContent;
-
-    document.getElementById('confirmAmount').textContent = document.querySelector('[name="prjctRcvordAmount"]').value + ' 원';
-    document.getElementById('confirmAdres').textContent = document.getElementById('fullAddress').value;
-    document.getElementById('confirmUrl').textContent = document.querySelector('[name="prjctUrl"]').value;
-
-    document.getElementById('confirmMemberList').textContent = '조직도 연동 후 구현 예정';
-
-    const confirmTaskList = document.getElementById('confirmTaskList');
-    if (taskList.length === 0) {
-      confirmTaskList.textContent = '등록된 업무가 없습니다.';
-    } else {
-      confirmTaskList.innerHTML = '';
-      taskList.forEach(task => {
-        const div = document.createElement('div');
-        div.innerHTML = `<strong>${task.taskNm}</strong> - ${task.chargerEmpNm} (${task.taskBeginDt} ~ ${task.taskEndDt})`;
-        confirmTaskList.appendChild(div);
-      });
-    }
-  };
+// 초기 로드 후 이벤트 처리
+$(document).ready(function() {
+    // 이미 페이지가 로드된 상태이므로 추가 작업 필요 없음
+});
 </script>
+</section>
+</main>
 </body>
 </html>
