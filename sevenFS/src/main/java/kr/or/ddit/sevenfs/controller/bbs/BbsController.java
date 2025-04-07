@@ -53,9 +53,9 @@ public class BbsController {
     	return "bbs/bbs";
     }
     
-    @GetMapping("/bbsList/{ctgryNo}")
+    @GetMapping("/bbsList")
     public String bbsList(Model model, 
-    					  @PathVariable int ctgryNo,
+    					  @RequestParam("ctgryNo") int ctgryNo,
                           @ModelAttribute BbsVO bbsVO,
                           @RequestParam(defaultValue = "1") int currentPage,
                           @RequestParam(defaultValue = "10") int size) {
@@ -103,8 +103,8 @@ public class BbsController {
     /**
      * 게시글 작성 폼
      */
-    @GetMapping("/bbsInsert/{ctgryNo}")
-    public String bbsInsertForm(@ModelAttribute BbsVO bbsVO, @PathVariable int ctgryNo) {
+    @GetMapping("/bbsInsert")
+    public String bbsInsertForm(@ModelAttribute BbsVO bbsVO, @RequestParam("ctgryNo") int ctgryNo) {
     	
     	bbsVO.setBbsCtgryNo(ctgryNo);
     	
@@ -134,7 +134,7 @@ public class BbsController {
         
         
         
-        return "redirect:/bbs/bbsList/"+bbsVO.getBbsCtgryNo();
+        return "redirect:/bbs/bbsList?ctgryNo="+bbsVO.getBbsCtgryNo();
     }
 
 
@@ -193,14 +193,14 @@ public class BbsController {
     }
     
     @PostMapping("/bbsDelete")
-    public String bbsDelete(@RequestParam(value = "bbsSn", required = false)int bbsSn, Model model) {
+    public String bbsDelete(@RequestParam(value = "bbsSn", required = false)int bbsSn, Model model, BbsVO bbsVO) {
     	log.info("삭제하는 게시글 번호 : " + bbsSn);
     	
     	int delete = bbsService.bbsDelete(bbsSn);
     	
     	log.info("삭제 댐? : " + delete);
     	
-    	return "redirect:/bbs/bbsList";
+    	return "redirect:/bbs/bbsList?ctgryNo="+bbsVO.getBbsCtgryNo();
     }
     
     

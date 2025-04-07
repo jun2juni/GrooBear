@@ -83,7 +83,7 @@
 
 								<!-- 게시글 추가 버튼 -->
 								<button type="submit" class="btn btn-primary">추가</button>
-								<a href="/bbs/bbsList/${bbsVO.bbsCtgryNo}" class="btn btn-secondary">취소</a>
+								<a href="/bbs/bbsList?ctgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-secondary">취소</a>
 							</form>
 						</div>
 					</div>

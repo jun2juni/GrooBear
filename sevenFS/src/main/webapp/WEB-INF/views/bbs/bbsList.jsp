@@ -63,12 +63,13 @@ table.table-hover.align-middle.text-center tbody tr td {
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="text-dark">게시판</h3>
             <!-- 움직이는 태두리 없이 hover 효과만 적용 -->
-            <a href="/bbs/bbsInsert/${bbsVO.bbsCtgryNo}" class="btn btn-outline-primary">게시글 추가</a>
+            <a href="/bbs/bbsInsert?ctgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-primary">게시글 추가</a>
           </div>
           <!-- (나머지 게시판 및 테이블 내용) -->
           <nav class="navbar navbar-light">
             <div class="container-fluid" style="padding-left:0px;">
               <form action="/bbs/bbsList" method="get" class="d-flex">
+              <input type="hidden" value="${bbsVO.bbsCtgryNo}" name="ctgryNo">
               	<input type="hidden" name="bbsCtgryNo" value="1">
                 <!-- 카테고리 선택 드롭다운 -->
                 <select name="category" class="form-select me-2">
@@ -96,7 +97,7 @@ table.table-hover.align-middle.text-center tbody tr td {
             <table class="table table-hover align-middle text-center" style="table-layout: fixed; width: 100%;">
               <thead class="table-light">
                 <tr>
-                  <th style="width: 10%;">게시글 번호</th>
+                  <th style="width: 10%;">게시글 유형</th>
                   <th style="width: 60%; text-align: left;">제목</th>
                   <th style="width: 10%;">작성자</th>
                   <th style="width: 10%;">작성일</th>
@@ -106,7 +107,7 @@ table.table-hover.align-middle.text-center tbody tr td {
               <tbody>
                 <c:forEach var="bbsVO" items="${bbsList}">
                   <tr onClick="location.href='/bbs/bbsDetail?bbsSn=${bbsVO.bbsSn}'" style="cursor:pointer;">
-                    <td>${bbsVO.bbsSn}</td>
+                    <td>${bbsVO.bbsCtgryNo}</td>
                     <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">
                     	<c:if test="${bbsVO.upendFixingYn == 'Y'}">
 					        <span style="color: red; font-weight: bold;">[공지]</span>
