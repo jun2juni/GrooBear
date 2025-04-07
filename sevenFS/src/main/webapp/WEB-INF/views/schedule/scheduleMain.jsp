@@ -8,12 +8,21 @@
 	document.addEventListener('DOMContentLoaded', function() {
 		// let myEmpInfo = "${myEmpInfo}"
 		// console.log("myEmpInfo : ",myEmpInfo);
-		let myEmpInfo = 'EmpVO(emplNo:"20252023")';
+		// let myEmpInfo = 'EmpVO(emplNo:"20252023")';
 		let emplNo = "${myEmpInfo.emplNo}";
 		let deptCode = "${myEmpInfo.deptCode}"
+		let shceduleList = [];
+		let showList = [];
    		console.log("직원 이름:", emplNo);
    		console.log("직원 부서:", deptCode);
 		console.log("FullCalendar 버전:", FullCalendar.version);
+
+		// const fltrLbl = {
+		// 	'schdulTyList':$('.event-filter:checked').map(function(){return $(this).val()}).get(),
+		// 	'lblNoList':[]
+		// 	// 'lblNoList':[]
+		// }
+		// console.log('====================',fltrLbl);
 
 		// bootstrap 시작
 		var insModal = new bootstrap.Modal(document.getElementById('myModal'));
@@ -71,6 +80,7 @@
 		var calendar = new FullCalendar.Calendar(calendarEl, calendarOption);
 		window.globalCalendar = calendar;
 
+		// 이거 초기에만 실행
 		refresh = function() {
 			// console.log("refresh================={emplNo:emplNo, dept:myEmpInfo.deptCode} : ",{emplNo:emplNo, deptCode:deptCode});
 			return $.ajax({
@@ -81,11 +91,32 @@
 				success: function(data) {
 					// console.log("refresh -> data : ",data);
 					let clndr = chngData(data);
+					refreshSideBar(data.labelList);
 					window.globalCalendar.setOption('events', clndr);
 					// console.log("==================refresh : ",clndr);
+					// scheduleList = clndr;
 				}
 			});
 		};
+		refreshSideBar = function(labelList){
+			console.log('refreshSideBar : ',labelList);
+			let labelSection = $('#labelSection');
+			let defaultLabelHtml = '<label>[기본] 나의 일정<input type="checkbox" class="label-filter" id="def" value="0" checked></label><br>';
+			let checkboxHtml = '';
+			labelList.forEach(label => {
+            // 기본 라벨(0)은 건너뛰기 (이미 상단에 고정)
+            // if (label.lblNo == 0) return;
+            
+				let icon = window.createIcon('circle', label.lblColor);
+				// 이전에 저장된 상태가 있으면 그 상태를 사용, 없으면 기본적으로 체크
+				checkboxHtml += icon + '<label>' + label.lblNm + 
+							'<input type="checkbox" class="label-filter" value="' + 
+							label.lblNo + '"' + ' checked ></label><br>';
+        	});
+			labelSection.append(checkboxHtml);
+			fltrLbl.lblNoList = $('.label-filter:checked').map(function(){return $(this).val()}).get();
+			console.log('fltrLbl.lblNoList : ',fltrLbl.lblNoList);
+		}
 
 		const overChk = function(date1,date2,time,num){
 			let differenceInDays
@@ -96,36 +127,53 @@
 			}
 			return differenceInDays>=num?true:false;
 		}
-		createIcon = function(type, color) {
-			// console.log("createIcon 실행 됨");
-			let style = 'display: inline-block; width: 12px; height: 12px; margin-right: 8px;';
+		// createIcon = function(type, color) {
+		// 	// console.log("createIcon 실행 됨");
+		// 	let style = 'display: inline-block; width: 12px; height: 12px; margin-right: 8px;';
 			
-			if (type === 'circle') {
-				style += 'border-radius: 50%;';
-			} else {
-				style += 'border-radius: 0;';
-			}
+		// 	if (type === 'circle') {
+		// 		style += 'border-radius: 50%;';
+		// 	} else {
+		// 		style += 'border-radius: 0;';
+		// 	}
 			
-			style += 'background-color: ' + color + ';';
+		// 	style += 'background-color: ' + color + ';';
 			
-			return '<span style="' + style + '"></span>';
-		}
-		const labelSideBar = function(labelList){
-			let labelSection = $('#labelSection');
-			// console.log('labelSideBar -> labelList',labelList);
-			// console.log('labelSideBar -> labelSection : ',labelSection);
+		// 	return '<span style="' + style + '"></span>';
+		// }
+		// const labelSideBar = function(labelList) {
+		// 	let labelSection = $('#labelSection');
 			
-			labelSection.empty();
-			// $('.label-filter').remove();
-			let checkboxHtml = '';
+		// 	// 기존 체크박스의 상태를 저장
+		// 	let checkedLabels = {};
+		// 	$('.label-filter').each(function() {
+		// 		checkedLabels[$(this).val()] = $(this).prop('checked');
+		// 	});
 			
-			labelList.forEach(label=>{
-				// console.log('labelSideBar -> label : ',label);
-				let icon = createIcon('circle',label.lblColor);
-				checkboxHtml += icon+ '<label>'+label.lblNm+'<input type="checkbox" class="label-filter" value='+label.lblNo+'></label><br>';
-			})
-			labelSection.append(checkboxHtml);
-		}
+		// 	// fltrLbl.lblNoList에서 현재 선택된 라벨 정보도 사용
+		// 	if (fltrLbl && fltrLbl.lblNoList && fltrLbl.lblNoList.length > 0) {
+		// 		fltrLbl.lblNoList.forEach(lblNo => {
+		// 			checkedLabels[lblNo] = true;
+		// 		});
+    	// 	}
+    
+		// 	labelSection.empty();
+		// 	let checkboxHtml = '';
+			
+		// 	labelList.forEach(label => {
+		// 		let icon = createIcon('circle', label.lblColor);
+		// 		// 이전에 저장된 상태가 있으면 그 상태를 사용, 없으면 기본적으로 체크
+		// 		let isChecked = Object.keys(checkedLabels).length > 0 ? 
+		// 					(checkedLabels[label.lblNo] === true) : 
+		// 					true; // 초기 상태는 모두 체크
+				
+		// 		checkboxHtml += icon + '<label>' + label.lblNm + 
+		// 					'<input type="checkbox" class="label-filter" value="' + 
+		// 					label.lblNo + '"' + (isChecked ? ' checked' : '') + '></label><br>';
+		// 	});
+			
+		// 	labelSection.append(checkboxHtml);
+		// }
 		const modalLblSel = function(labelList){
 			let labelSection = $('#scheduleLabel');
 			console.log('modalLblSel -> labelList',labelList);
@@ -139,9 +187,10 @@
 			})
 			labelSection.append(checkboxHtml);
 		}
-		const chngData = function(dataMap){
-			labelSideBar(dataMap.labelList);
+		window.chngData = function(dataMap){
+			// labelSideBar(dataMap.labelList);
 			modalLblSel(dataMap.labelList);
+
 			let returnData=[];
 			dataMap.scheduleList.forEach(data=>{
 				let startDate = new Date(data.schdulBeginDt);
@@ -181,8 +230,6 @@
 		refresh();
 
 // 이벤트들
-		// 드래그로 일정 늘리거나 줄이는 이벤트	=> 이건 위에 있다. 등록되어있음
-
 		// 드래그 앤 드롭 이벤트
 		calendar.on("eventDrop", function(info) {
 			console.log("eventDrop : ",info);

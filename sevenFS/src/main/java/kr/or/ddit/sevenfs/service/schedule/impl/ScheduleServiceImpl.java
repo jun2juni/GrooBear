@@ -14,8 +14,10 @@ import kr.or.ddit.sevenfs.service.schedule.ScheduleLabelService;
 import kr.or.ddit.sevenfs.service.schedule.ScheduleService;
 import kr.or.ddit.sevenfs.vo.schedule.ScheduleLabelVO;
 import kr.or.ddit.sevenfs.vo.schedule.ScheduleVO;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class ScheduleServiceImpl implements ScheduleService{
 	
 	@Autowired
@@ -30,6 +32,21 @@ public class ScheduleServiceImpl implements ScheduleService{
 		Map<String,Object> myCalendar = new HashMap<String,Object>();
 		List<ScheduleVO> scheduleList = scheduleMapper.scheduleList(scheduleVO);
 		List<ScheduleLabelVO> labelList = labelService.getLabel(scheduleVO);
+		log.info("labelService -> scheduleList : "+scheduleList);
+		myCalendar.put("scheduleList", scheduleList);
+		myCalendar.put("labelList", labelList);
+		return myCalendar;
+	}
+	
+	@Override
+	public Map<String, Object> calendarLabeling(Map<String, Object> fltrLbl) {
+		Map<String,Object> myCalendar = new HashMap<String,Object>();
+		ScheduleVO scheduleVO = new ScheduleVO();
+		scheduleVO.setDeptCode((String)fltrLbl.get("deptCode"));
+		scheduleVO.setEmplNo((String)fltrLbl.get("emplNo"));
+		List<ScheduleLabelVO> labelList = labelService.getLabel(scheduleVO);
+		List<ScheduleVO> scheduleList = scheduleMapper.calendarLabeling(fltrLbl);
+		log.info("calendarLabeling -> scheduleList : " + scheduleList);
 		myCalendar.put("scheduleList", scheduleList);
 		myCalendar.put("labelList", labelList);
 		return myCalendar;
@@ -65,4 +82,6 @@ public class ScheduleServiceImpl implements ScheduleService{
 		}
 		return result;
 	}
+
+	
 }

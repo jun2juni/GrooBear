@@ -12,4 +12,6 @@ public interface ScheduleLabelMapper {
 
 	List<ScheduleLabelVO> getLabel(ScheduleVO scheduleVO);
 
+	int labelAdd(ScheduleLabelVO labelVO);
+
 }

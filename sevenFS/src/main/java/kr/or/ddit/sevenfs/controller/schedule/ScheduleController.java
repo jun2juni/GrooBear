@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.annotation.RequestScope;
 
 import jakarta.servlet.http.HttpSession;
+import kr.or.ddit.sevenfs.service.schedule.ScheduleLabelService;
 import kr.or.ddit.sevenfs.service.schedule.ScheduleService;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
+import kr.or.ddit.sevenfs.vo.schedule.ScheduleLabelVO;
 import kr.or.ddit.sevenfs.vo.schedule.ScheduleVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,6 +33,9 @@ import lombok.extern.slf4j.Slf4j;
 public class ScheduleController {
 	@Autowired
 	ScheduleService scheduleService;
+	
+	@Autowired
+	ScheduleLabelService labelService;
 	// 드래그나 리사이즈로 변경하는건 map으로 담아서 로그아웃이나 페이지 벗아날시 한번에 db에 update한다.
 	// 
 	
@@ -74,6 +79,7 @@ public class ScheduleController {
 	@ResponseBody
 	public Map<String,Object> calendarList(@RequestBody ScheduleVO scheduleVO){
 		log.info("calendarList 실행");
+		log.info("calendarList -> scheduleVO : "+scheduleVO);
 		log.info("calendarList -> emplNO : "+scheduleVO.getEmplNo());
 		int size = uptMap.size();
 		if(size>0) {
@@ -81,7 +87,21 @@ public class ScheduleController {
 	    }
 		Map<String,Object> myCalendar = scheduleService.scheduleList(scheduleVO);
 		log.info("calendarList -> scheduleList : "+myCalendar.get("scheduleList"));
+		List<ScheduleVO> list = (List<ScheduleVO>)myCalendar.get("scheduleList");
 		log.info("calendarList -> labelList : "+myCalendar.get("labelList"));
+		log.info("calendarList -> scheduleList 개수 : "+list.size() );
+		return myCalendar;
+	}
+	
+	@PostMapping("/labeling")
+	@ResponseBody
+	public Map<String,Object> calendarLabeling(@RequestBody Map<String, Object> fltrLbl){
+		log.info("calendarLabeling -> fltrLbl : " + fltrLbl);
+//		ScheduleVO scheduleVO = new ScheduleVO();
+//		scheduleVO.setDeptCode((String)fltrLbl.get("deptCode"));
+//		scheduleVO.setDeptCode((String)fltrLbl.get("emplNO"));
+		Map<String,Object> myCalendar = scheduleService.calendarLabeling(fltrLbl);
+		log.info("calendarLabeling -> myCalendar : " + myCalendar);
 		return myCalendar;
 	}
 	
@@ -123,6 +143,7 @@ public class ScheduleController {
 	    	uptMapUpdate(size);
 	    }
 		Map<String,Object> myCalendar = scheduleService.scheduleList(scheduleVO);
+		log.info("after delete -> myCalendar : "+myCalendar);
 		return myCalendar;
 	}
 	
@@ -137,4 +158,29 @@ public class ScheduleController {
 		return uptMap.size();
 	}
 	
+	
+	@PostMapping("/labelAdd")
+	@ResponseBody
+//	public Map<String, String> labelAdd(@RequestBody ScheduleLabelVO labelVO) {
+	public List<ScheduleLabelVO> labelAdd(@RequestBody ScheduleLabelVO labelVO) {
+		log.info("labelAdd -> labelVO : "+labelVO);
+		int result = labelService.labelAdd(labelVO);
+		
+		Map<String, String> response = new HashMap<>();
+	    response.put("redirectUrl", "/myCalendar"); // 클라이언트가 리다이렉트할 URL
+	    log.info("response : "+response);
+	    
+	    ScheduleVO scheduleVO = new ScheduleVO();
+	    scheduleVO.setEmplNo(labelVO.getEmplNo());
+	    List<ScheduleLabelVO> labelList = labelService.getLabel(scheduleVO);
+	    return labelList;
+	}
+	@PostMapping("/getLabels")
+	@ResponseBody
+	public List<ScheduleLabelVO> getLabels(ScheduleVO scheduleVO) {
+		log.info("getLabels -> scheduleVO : " + scheduleVO);
+		List<ScheduleLabelVO> labelList = labelService.getLabel(scheduleVO);
+		log.info("getLabels -> labelList : " + labelList);
+		return labelList;
+	}
 }

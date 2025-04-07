@@ -7,4 +7,6 @@ import kr.or.ddit.sevenfs.vo.schedule.ScheduleVO;
 
 public interface ScheduleLabelService {
 	List<ScheduleLabelVO> getLabel(ScheduleVO scheduleVO);
+
+	int labelAdd(ScheduleLabelVO labelVO);
 }

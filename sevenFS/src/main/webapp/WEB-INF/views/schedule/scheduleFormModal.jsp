@@ -46,7 +46,7 @@
 
 /* 입력 필드 스타일 */
 .input-style-1 {
-	margin-bottom: 20px;
+	margin-bottom: 1px;
 }
 
 .input-style-1 label {
@@ -243,8 +243,15 @@
                   <input type="checkbox" id="allDay" name="allDay" class="checkbox-style">
 								</div>
 							</div>
+							<div class="select-style-1 full-width">
+								<label>라벨 선택</label>
+								<div class="select-position">
+								  <select id="scheduleLabel" name="lblNo">
+								  </select>
+								</div>
+							  </div>
 						</div>
-						<div class="button-group">
+						<div class="button-group" style="margin-top: 1px;">
 							<button id="modalSubmit" type="button" class="main-btn primary-btn btn-hover"
 							onclick="fCalAdd(event)"></button>
 							<button type="button" class="main-btn danger-btn btn-hover"
