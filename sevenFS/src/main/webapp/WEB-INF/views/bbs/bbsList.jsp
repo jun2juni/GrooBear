@@ -72,10 +72,16 @@ table.table-hover.align-middle.text-center tbody tr td {
               	<input type="hidden" name="bbsCtgryNo" value="1">
                 <!-- 카테고리 선택 드롭다운 -->
                 <select name="category" class="form-select me-2">
-                  <option value="bbscttSj" ${selectedCategory == 'bbscttSj' ? 'selected' : ''}>제목</option>
-                  <option value="bbscttCn" ${selectedCategory == 'bbscttCn' ? 'selected' : ''}>내용</option>
-                  <option value="emplNo" ${selectedCategory == 'emplNo' ? 'selected' : ''}>작성자</option>
-                </select>
+				  <option value="bbscttSj"
+				    <c:if test="${selectedCategory == 'bbscttSj'}">selected</c:if>
+				  >제목</option>
+				
+				  <option value="bbscttCn"
+				    <c:if test="${selectedCategory == 'bbscttCn'}">selected</c:if>
+				  >내용</option>
+				</select>
+
+
                 
                 <!-- 검색어 입력 필드 -->
                 <input type="text" name="searchKeyword" value="${SearchKeyword}" class="form-control me-2" placeholder="검색어 입력">
@@ -94,25 +100,26 @@ table.table-hover.align-middle.text-center tbody tr td {
                   <th style="width: 60%; text-align: left;">제목</th>
                   <th style="width: 10%;">작성자</th>
                   <th style="width: 10%;">작성일</th>
-                  <th style="width: 10%;">파일</th>
+                  <th style="width: 10%;">조회수</th>
                 </tr>
               </thead>
               <tbody>
                 <c:forEach var="bbsVO" items="${bbsList}">
                   <tr onClick="location.href='/bbs/bbsDetail?bbsSn=${bbsVO.bbsSn}'" style="cursor:pointer;">
                     <td>${bbsVO.bbsSn}</td>
-                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">${bbsVO.bbscttSj}</td>
+                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">${bbsVO.bbscttSj}
+                    	<c:choose>
+                        <c:when test="${not empty bbsVO.files and bbsVO.files.size() > 0}">
+                          	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
+						  		<path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1M.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8z"/>
+							</svg>
+                        </c:when>
+                      </c:choose>
+                    </td>
                     <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${myEmpInfo.emplNm}</td>
                     <td>${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}</td>
                     <td>
-                      <c:choose>
-                        <c:when test="${not empty bbsVO.files and bbsVO.files.size() > 0}">
-                          파일 있음
-                        </c:when>
-                        <c:otherwise>
-                          <span class="text-muted">없음</span>
-                        </c:otherwise>
-                      </c:choose>
+                      ${bbsVO.rdcnt}
                     </td>
                   </tr>
                 </c:forEach>
@@ -125,7 +132,7 @@ table.table-hover.align-middle.text-center tbody tr td {
 						url="/bbs/bbsList?${articlePage.getSearchVo()}"
 						current="${articlePage.getCurrentPage()}"
 						show-max="5"
-						total="${articlePage.getTotal()}"
+						total="${articlePage.getTotalPages()}"
 					></page-navi>
 					</div>
 				</div>

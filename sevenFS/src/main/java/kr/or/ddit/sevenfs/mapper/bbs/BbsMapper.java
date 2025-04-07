@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.mapper.bbs;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -20,5 +21,10 @@ public interface BbsMapper {
 	public int bbsUpdate(BbsVO bbsVO);
 
 	public int bbsDelete(int bbsSn);
+
+	//글의 수 구하기->페이징 블록을 좌우함
+	public int getTotal(Map<String, Object> map);
+
+	public void increaseViewCount(int bbsSn);
 
 }

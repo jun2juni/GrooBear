@@ -2,177 +2,237 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.bbs.BbsMapper">
 
-    <select id="bbsList" parameterType="kr.or.ddit.sevenfs.utils.ArticlePage" resultMap="BbsResultMap">
-	    SELECT
-	        B.BBS_SN,
-	        B.BBS_CTGRY_NO,
-	        B.EMPL_NO,
-	        B.BBSCTT_SJ,
-	        B.BBSCTT_CN,
-	        B.BBSCTT_CREAT_DT,
-	        B.BBSCTT_UPDT_DT,
-	        B.RDCNT,
-	        B.BBSCTT_USE_YN,
-	        B.UPEND_FIXING_YN,
-	        B.ATCH_FILE_NO,
-		(SELECT COUNT(1) FROM ATTATCH_FILE F WHERE B.ATCH_FILE_NO = F.ATCH_FILE_NO) AS ATCH_CNT
+	<select id="bbsList"
+		parameterType="kr.or.ddit.sevenfs.utils.ArticlePage"
+		resultMap="BbsResultMap">
+		SELECT
+		B.BBS_SN,
+		B.BBS_CTGRY_NO,
+		B.EMPL_NO,
+		B.BBSCTT_SJ,
+		B.BBSCTT_CN,
+		B.BBSCTT_CREAT_DT,
+		B.BBSCTT_UPDT_DT,
+		B.RDCNT,
+		B.BBSCTT_USE_YN,
+		B.UPEND_FIXING_YN,
+		B.ATCH_FILE_NO,
+		(SELECT COUNT(1) FROM ATTATCH_FILE F WHERE B.ATCH_FILE_NO =
+		F.ATCH_FILE_NO) AS ATCH_CNT
 		FROM BBS B
-	
-	    <where>
-	        B.BBSCTT_USE_YN = 'Y'
-	
-	        <!-- 검색어 조건 -->
-	        <if test="articlePage.searchVo.searchKeyword != null and articlePage.searchVo.searchKeyword != ''">
-	            AND (B.BBSCTT_SJ LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%' 
-	                 OR B.BBSCTT_CN LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%')
-	        </if>
-	
-	        <!-- 카테고리 필터링 -->
-	        <if test="articlePage.searchVo.bbsCtgryNo != null and articlePage.searchVo.bbsCtgryNo != 0">
-	            AND B.BBS_CTGRY_NO = #{articlePage.searchVo.bbsCtgryNo}
-	        </if>
-	
-	        <!-- 작성자 필터링 -->
-	        <if test="articlePage.searchVo.emplNo != null and articlePage.searchVo.emplNo != ''">
-	            AND B.EMPL_NO = #{articlePage.searchVo.emplNo}
-	        </if>
-	    </where>
-	
-	    <!-- 정렬 -->
-	    ORDER BY
-	    <if test="articlePage.searchVo.orderByDate != null and articlePage.searchVo.orderByDate == 'desc'">
-		    B.BBSCTT_CREAT_DT DESC,
+
+		<where>
+			B.BBSCTT_USE_YN = 'Y'
+
+			<!-- 검색어 조건 -->
+<!-- 			<if -->
+<!-- 				test="articlePage.searchVo.searchKeyword != null and articlePage.searchVo.searchKeyword != ''"> -->
+<!-- 				AND (B.BBSCTT_SJ LIKE '%' || #{articlePage.searchVo.searchKeyword} || -->
+<!-- 				'%' -->
+<!-- 				OR B.BBSCTT_CN LIKE '%' || #{articlePage.searchVo.searchKeyword} || -->
+<!-- 				'%') -->
+<!-- 			</if> -->
+			<choose>
+					<when test="articlePage.searchVo.category == 'bbscttSj'">
+						AND B.BBSCTT_SJ LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
+					</when>
+					<when test="articlePage.searchVo.category == 'bbscttCn'">
+						AND B.BBSCTT_CN LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
+					</when>
+					<otherwise>
+						AND (
+						B.BBSCTT_SJ LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
+						OR B.BBSCTT_CN LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
+						)
+					</otherwise>
+				</choose>
+
+			<!-- 카테고리 필터링 -->
+			<if
+				test="articlePage.searchVo.bbsCtgryNo != null and articlePage.searchVo.bbsCtgryNo != 0">
+				AND B.BBS_CTGRY_NO = #{articlePage.searchVo.bbsCtgryNo}
+			</if>
+
+				
+
+		</where>
+
+		<!-- 정렬 -->
+		ORDER BY
+		<if
+			test="articlePage.searchVo.orderByDate != null and articlePage.searchVo.orderByDate == 'desc'">
+			B.BBSCTT_CREAT_DT DESC,
 		</if>
-		<if test="articlePage.searchVo.orderByDate != null and articlePage.searchVo.orderByDate == 'asc'">
-		    B.BBSCTT_CREAT_DT ASC,
+		<if
+			test="articlePage.searchVo.orderByDate != null and articlePage.searchVo.orderByDate == 'asc'">
+			B.BBSCTT_CREAT_DT ASC,
 		</if>
-	    B.BBSCTT_CREAT_DT DESC
-	
-	    <!-- 페이징 처리 -->
-	    OFFSET (#{articlePage.currentPage} - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY
+		B.BBSCTT_CREAT_DT DESC
+
+		<!-- 페이징 처리 -->
+		OFFSET (#{articlePage.currentPage} - 1) * 10 ROWS FETCH NEXT 10 ROWS
+		ONLY
 	</select>
 
 
 
 
 
-    <!-- 게시글 목록 및 상세 결과 매핑 -->
-    <resultMap type="kr.or.ddit.sevenfs.vo.bbs.BbsVO" id="BbsResultMap">
-        <!-- 게시글 정보 매핑 -->
-        <id property="bbsSn" column="BBS_SN"/>
-        <result property="bbsCtgryNo" column="BBS_CTGRY_NO"/>
-        <result property="emplNo" column="EMPL_NO"/>
-        <result property="bbscttSj" column="BBSCTT_SJ"/>
-        <result property="bbscttCn" column="BBSCTT_CN"/>
-        <result property="bbscttCreatDt" column="BBSCTT_CREAT_DT"/>
-        <result property="bbscttUpdtDt" column="BBSCTT_UPDT_DT"/>
-        <result property="rdcnt" column="RDCNT"/>
-        <result property="bbscttUseYn" column="BBSCTT_USE_YN"/>
-        <result property="upendFixingYn" column="UPEND_FIXING_YN"/>
-        <result property="atchFileNo" column="ATCH_FILE_NO"/>
+	<!-- 게시글 목록 및 상세 결과 매핑 -->
+	<resultMap type="kr.or.ddit.sevenfs.vo.bbs.BbsVO"
+		id="BbsResultMap">
+		<!-- 게시글 정보 매핑 -->
+		<id property="bbsSn" column="BBS_SN" />
+		<result property="bbsCtgryNo" column="BBS_CTGRY_NO" />
+		<result property="emplNo" column="EMPL_NO" />
+		<result property="bbscttSj" column="BBSCTT_SJ" />
+		<result property="bbscttCn" column="BBSCTT_CN" />
+		<result property="bbscttCreatDt" column="BBSCTT_CREAT_DT" />
+		<result property="bbscttUpdtDt" column="BBSCTT_UPDT_DT" />
+		<result property="rdcnt" column="RDCNT" />
+		<result property="bbscttUseYn" column="BBSCTT_USE_YN" />
+		<result property="upendFixingYn" column="UPEND_FIXING_YN" />
+		<result property="atchFileNo" column="ATCH_FILE_NO" />
 
-        <!-- 첨부 파일 정보 매핑 -->
-        <collection property="files" 
-                    ofType="kr.or.ddit.sevenfs.vo.AttachFileVO" 
-                    column="ATCH_FILE_NO"
-                    select="selectAttachFiles"/>
-    </resultMap>
+		<!-- 첨부 파일 정보 매핑 -->
+		<collection property="files"
+			ofType="kr.or.ddit.sevenfs.vo.AttachFileVO" column="ATCH_FILE_NO"
+			select="selectAttachFiles" />
+	</resultMap>
 
-    <!-- 첨부 파일 조회를 위한 쿼리 -->
-    <select id="selectAttachFiles" resultType="kr.or.ddit.sevenfs.vo.AttachFileVO">
-        SELECT 
-            ATCH_FILE_NO,       
-            FILE_SN,
-            FILE_STRE_PATH,
-            FILE_NM,
-            FILE_STRE_NM,
-            FILE_EXTSN,
-            FILE_MIME,
-            FILE_SIZE,
-            FILE_VIEW_SIZE,
-            DWLD_CO,
-            EMPL_NO,
-            FILE_USE_YN,
-            FILE_CREAT_DT
-        FROM ATTATCH_FILE
-        WHERE ATCH_FILE_NO = #{atchFileNo}
-        AND FILE_USE_YN = 'Y'
-    </select>
+	<!-- 첨부 파일 조회를 위한 쿼리 -->
+	<select id="selectAttachFiles"
+		resultType="kr.or.ddit.sevenfs.vo.AttachFileVO">
+		SELECT
+		ATCH_FILE_NO,
+		FILE_SN,
+		FILE_STRE_PATH,
+		FILE_NM,
+		FILE_STRE_NM,
+		FILE_EXTSN,
+		FILE_MIME,
+		FILE_SIZE,
+		FILE_VIEW_SIZE,
+		DWLD_CO,
+		EMPL_NO,
+		FILE_USE_YN,
+		FILE_CREAT_DT
+		FROM ATTATCH_FILE
+		WHERE ATCH_FILE_NO = #{atchFileNo}
+		AND FILE_USE_YN = 'Y'
+	</select>
 
-    <!-- 게시글 상세 조회 -->
-    <select id="bbsDetail" resultMap="BbsResultMap" parameterType="int">
-        SELECT 
-            B.BBS_SN,
-            B.BBS_CTGRY_NO,
-            B.EMPL_NO,
-            B.BBSCTT_SJ,
-            B.BBSCTT_CN,
-            B.BBSCTT_CREAT_DT,
-            B.BBSCTT_UPDT_DT,
-            B.RDCNT,
-            B.BBSCTT_USE_YN,
-            B.UPEND_FIXING_YN,
-            B.ATCH_FILE_NO
-        FROM BBS B
-        WHERE B.BBS_SN = #{bbsSn}
-    </select>
+	<!-- 게시글 상세 조회 -->
+	<select id="bbsDetail" resultMap="BbsResultMap"
+		parameterType="int">
+		SELECT
+		B.BBS_SN,
+		B.BBS_CTGRY_NO,
+		B.EMPL_NO,
+		B.BBSCTT_SJ,
+		B.BBSCTT_CN,
+		B.BBSCTT_CREAT_DT,
+		B.BBSCTT_UPDT_DT,
+		B.RDCNT,
+		B.BBSCTT_USE_YN,
+		B.UPEND_FIXING_YN,
+		B.ATCH_FILE_NO
+		FROM BBS B
+		WHERE B.BBS_SN = #{bbsSn}
+	</select>
+	
+	<!-- 게시글 조회수 추가 -->
+	<update id="increaseViewCount" parameterType="int">
+	    UPDATE BBS
+	    SET RDCNT = NVL(RDCNT, 0) + 1
+	    WHERE BBS_SN = #{bbsSn}
+	</update>
+		
 
-    <!-- 게시글 수정 -->
-    <update id="bbsUpdate" parameterType="kr.or.ddit.sevenfs.vo.bbs.BbsVO">
-        UPDATE BBS
-        SET
-            BBSCTT_SJ = #{bbscttSj},
-            BBSCTT_CN = #{bbscttCn},
-            EMPL_NO = #{emplNo},
-            BBSCTT_UPDT_DT = SYSDATE,
-            UPEND_FIXING_YN = 'N',
-            ATCH_FILE_NO = #{atchFileNo}
-        WHERE BBS_SN = #{bbsSn}
-    </update>
+	<!-- 게시글 수정 -->
+	<update id="bbsUpdate"
+		parameterType="kr.or.ddit.sevenfs.vo.bbs.BbsVO">
+		UPDATE BBS
+		SET
+		BBSCTT_SJ = #{bbscttSj},
+		BBSCTT_CN = #{bbscttCn},
+		EMPL_NO = #{emplNo},
+		BBSCTT_UPDT_DT = SYSDATE,
+		UPEND_FIXING_YN = 'N',
+		ATCH_FILE_NO = #{atchFileNo}
+		WHERE BBS_SN = #{bbsSn}
+	</update>
 
-    <!-- 게시글 등록 -->
-    <insert id="bbsInsert" parameterType="kr.or.ddit.sevenfs.vo.bbs.BbsVO" useGeneratedKeys="true">
-        <selectKey resultType="int" order="BEFORE" keyProperty="bbsSn">
-            SELECT SEQ_BBS.NEXTVAL FROM DUAL
-        </selectKey>
+	<!-- 게시글 등록 -->
+	<insert id="bbsInsert"
+		parameterType="kr.or.ddit.sevenfs.vo.bbs.BbsVO"
+		useGeneratedKeys="true">
+		<selectKey resultType="int" order="BEFORE"
+			keyProperty="bbsSn">
+			SELECT SEQ_BBS.NEXTVAL FROM DUAL
+		</selectKey>
 
-        INSERT INTO BBS 
-            (BBS_SN, BBS_CTGRY_NO, EMPL_NO, BBSCTT_SJ, BBSCTT_CN, 
-             BBSCTT_CREAT_DT, RDCNT, BBSCTT_USE_YN, UPEND_FIXING_YN, ATCH_FILE_NO)
-        VALUES 
-            (#{bbsSn}, '1', #{emplNo}, #{bbscttSj}, #{bbscttCn}, 
-             SYSDATE, 0, 'Y', 'N', #{atchFileNo})
-    </insert>
+		INSERT INTO BBS
+		(BBS_SN, BBS_CTGRY_NO, EMPL_NO, BBSCTT_SJ, BBSCTT_CN,
+		BBSCTT_CREAT_DT, RDCNT, BBSCTT_USE_YN, UPEND_FIXING_YN, ATCH_FILE_NO)
+		VALUES
+		(#{bbsSn}, '1', #{emplNo}, #{bbscttSj}, #{bbscttCn},
+		SYSDATE, 0, 'Y', 'N', #{atchFileNo})
+	</insert>
 
-    <!-- 게시글에 연결된 파일 조회 -->
-    <select id="getFilesByBbsSn" parameterType="int" resultType="kr.or.ddit.sevenfs.vo.AttachFileVO">
-        SELECT 
-            ATCH_FILE_NO, 
-            FILE_SN, 
-            FILE_STRE_PATH, 
-            FILE_NM, 
-            FILE_STRE_NM, 
-            FILE_EXTSN, 
-            FILE_MIME, 
-            FILE_SIZE, 
-            FILE_VIEW_SIZE, 
-            DWLD_CO, 
-            EMPL_NO, 
-            FILE_USE_YN, 
-            FILE_CREAT_DT
-        FROM ATTATCH_FILE
-        WHERE ATCH_FILE_NO IN (
-            SELECT ATCH_FILE_NO 
-            FROM BBS 
-            WHERE BBS_SN = #{bbsSn}
-        )
-    </select>
-    
-    <update id="bbsDelete" parameterType="int">
-    	UPDATE BBS
-			SET
-			BBSCTT_USE_YN = 'N'
-			WHERE BBS_SN = #{bbsSn}
-    </update>
-    
+	<!-- 게시글에 연결된 파일 조회 -->
+	<select id="getFilesByBbsSn" parameterType="int"
+		resultType="kr.or.ddit.sevenfs.vo.AttachFileVO">
+		SELECT
+		ATCH_FILE_NO,
+		FILE_SN,
+		FILE_STRE_PATH,
+		FILE_NM,
+		FILE_STRE_NM,
+		FILE_EXTSN,
+		FILE_MIME,
+		FILE_SIZE,
+		FILE_VIEW_SIZE,
+		DWLD_CO,
+		EMPL_NO,
+		FILE_USE_YN,
+		FILE_CREAT_DT
+		FROM ATTATCH_FILE
+		WHERE ATCH_FILE_NO IN (
+		SELECT ATCH_FILE_NO
+		FROM BBS
+		WHERE BBS_SN = #{bbsSn}
+		)
+	</select>
+
+	<update id="bbsDelete" parameterType="int">
+		UPDATE BBS
+		SET
+		BBSCTT_USE_YN = 'N'
+		WHERE BBS_SN = #{bbsSn}
+	</update>
+
+	<!-- 글의 수 구하기->페이징 블록을 좌우함 public int getTotal(Map<String, Object> map) -->
+	<select id="getTotal" parameterType="hashMap" resultType="int">
+		SELECT COUNT(*)
+		FROM BBS B
+		WHERE 1 = 1
+		AND B.BBSCTT_USE_YN = 'Y'
+		<if test="searchKeyword != null and searchKeyword != ''">
+			<choose>
+				<when test="category == 'bbscttSj'">
+					AND B.BBSCTT_SJ LIKE '%' || #{searchKeyword} || '%'
+				</when>
+				<when test="category == 'bbscttCn'">
+					AND B.BBSCTT_CN LIKE '%' || #{searchKeyword} || '%'
+				</when>
+				<otherwise>
+					AND (
+					B.BBSCTT_SJ LIKE '%' || #{searchKeyword} || '%'
+					OR B.BBSCTT_CN LIKE '%' || #{searchKeyword} || '%'
+					)
+				</otherwise>
+			</choose>
+		</if>
+	</select>
 </mapper>

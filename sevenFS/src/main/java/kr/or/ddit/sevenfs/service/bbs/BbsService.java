@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.service.bbs;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
@@ -16,6 +17,9 @@ public interface BbsService {
 	public int bbsUpdate(BbsVO bbsVO);
 
 	public int bbsDelete(int bbsSn);
+
+	//글의 수 구하기->페이징 블록을 좌우함
+	public int getTotal(Map<String, Object> map);
 	
 	
 

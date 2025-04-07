@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.service.bbs.Impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class BbsServiceImpl implements BbsService{
 	@Override
 	public BbsVO bbsDetail(int bbsSn) {
 		// TODO Auto-generated method stub
+		bbsMapper.increaseViewCount(bbsSn);
 		return bbsMapper.bbsDetail(bbsSn);
 	}
 
@@ -48,6 +50,13 @@ public class BbsServiceImpl implements BbsService{
 	public int bbsDelete(int bbsSn) {
 		// TODO Auto-generated method stub
 		return bbsMapper.bbsDelete(bbsSn);
+	}
+
+	//글의 수 구하기->페이징 블록을 좌우함
+	@Override
+	public int getTotal(Map<String, Object> map) {
+		log.info("BbsServiceImpl getTotal : "+map);
+		return bbsMapper.getTotal(map);
 	}
 
 }

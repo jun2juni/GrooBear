@@ -55,22 +55,36 @@ public class BbsController {
     @GetMapping("/bbsList")
     public String bbsList(Model model, 
                           @ModelAttribute BbsVO bbsVO,
-                          @RequestParam(defaultValue = "1") int total,
                           @RequestParam(defaultValue = "1") int currentPage,
-                          @RequestParam(defaultValue = "5") int size) {
+                          @RequestParam(defaultValue = "10") int size) {
 
-        log.info("📌 서치키워드 확인: " + bbsVO.getSearchKeyword());
+        log.info("서치키워드 확인: " + bbsVO.getSearchKeyword());
+        log.info("서치카테고리 확인: " + bbsVO.getCategory());
         model.addAttribute("SearchKeyword", bbsVO.getSearchKeyword());
 
-        // ✅ 페이징 처리 객체 생성
-        ArticlePage<BbsVO> articlePage = new ArticlePage<>(total, currentPage, size);
+        Map<String,Object> map = new HashMap<String,Object>();
+        
+        //글의 수 구하기->페이징 블록을 좌우함
+        map.put("searchKeyword", bbsVO.getSearchKeyword());
+        map.put("currentPage", currentPage);
+        map.put("size", size);
+        map.put("category", bbsVO.getCategory());
+        int total = this.bbsService.getTotal(map);
+        map.put("total", total);
+        log.info("맵 : " + map);
+        
+        // 페이징 처리 객체 생성
+        //total(글의 수) = 1
+        ArticlePage<BbsVO> articlePage = new ArticlePage<BbsVO>(total, currentPage, size);
+        bbsVO.setOrderByDate("desc");  
+        articlePage.setSearchVo(bbsVO);
+        articlePage.setTotal(total);
+        List<BbsVO> bbsList = bbsService.bbsList(articlePage);
         
         // 기존 bbsVO를 그대로 사용 (중요)
-        bbsVO.setOrderByDate("desc");  
-        articlePage.setSearchVo(bbsVO);  
+        //total(글의 수) = 1
 
-        List<BbsVO> bbsList = bbsService.bbsList(articlePage);
-
+        model.addAttribute("selectedCategory", bbsVO.getCategory());
         model.addAttribute("articlePage", articlePage);
         model.addAttribute("bbsList", bbsList);
 
@@ -125,7 +139,6 @@ public class BbsController {
     @GetMapping("/bbsDetail")
     public String bbsDetail(Model model, @RequestParam("bbsSn") int bbsSn) {
         log.info("게시글 상세 조회: " + bbsSn);
-
 		
         BbsVO bbsVO = bbsService.bbsDetail(bbsSn);
         List<AttachFileVO> FileList = attachFileService.getFileAttachList(bbsVO.getAtchFileNo());
@@ -175,7 +188,7 @@ public class BbsController {
     }
     
     @PostMapping("/bbsDelete")
-    public String bbsDelete(@RequestParam(value = "bbsSn", required = false)int bbsSn) {
+    public String bbsDelete(@RequestParam(value = "bbsSn", required = false)int bbsSn, Model model) {
     	log.info("삭제하는 게시글 번호 : " + bbsSn);
     	
     	int delete = bbsService.bbsDelete(bbsSn);
@@ -184,6 +197,9 @@ public class BbsController {
     	
     	return "redirect:/bbs/bbsList";
     }
+    
+    
+
 
     
     

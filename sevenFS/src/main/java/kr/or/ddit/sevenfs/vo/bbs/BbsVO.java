@@ -24,4 +24,6 @@ public class BbsVO {
 
 	private String searchKeyword; // 검색 키워드
 	private String orderByDate; // 오더바이데이트
+	private String category;  // bbscttSj 또는 bbscttCn
+
 }
