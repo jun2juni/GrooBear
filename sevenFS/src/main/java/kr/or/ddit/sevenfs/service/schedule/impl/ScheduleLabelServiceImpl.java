@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import kr.or.ddit.sevenfs.mapper.schedule.ScheduleLabelMapper;
 import kr.or.ddit.sevenfs.mapper.schedule.ScheduleMapper;
 import kr.or.ddit.sevenfs.service.schedule.ScheduleLabelService;
+import kr.or.ddit.sevenfs.service.schedule.ScheduleService;
 import kr.or.ddit.sevenfs.vo.schedule.ScheduleLabelVO;
 import kr.or.ddit.sevenfs.vo.schedule.ScheduleVO;
 
@@ -17,6 +18,12 @@ public class ScheduleLabelServiceImpl implements ScheduleLabelService {
 	@Autowired
 	ScheduleLabelMapper labelMapper;
 	
+	@Autowired
+	ScheduleMapper scheduleMapper;
+	
+//	@Autowired
+//	ScheduleService scheduleService;
+	
 	@Override
 	public List<ScheduleLabelVO> getLabel(ScheduleVO scheduleVO) {
 		return labelMapper.getLabel(scheduleVO);
@@ -25,6 +32,13 @@ public class ScheduleLabelServiceImpl implements ScheduleLabelService {
 	@Override
 	public int labelAdd(ScheduleLabelVO labelVO) {
 		return labelMapper.labelAdd(labelVO);
+	}
+
+	@Override
+	public int delLabel(ScheduleVO scheduleVO) {
+		int result = scheduleMapper.delLabelFromSchdule(scheduleVO);
+		result += labelMapper.delLabel(scheduleVO);
+		return result;
 	}
 
 }

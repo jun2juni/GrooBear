@@ -30,4 +30,9 @@
 	    #{emplNo}
 	)
 </insert>
+
+<delete id="delLabel" parameterType="kr.or.ddit.sevenfs.vo.schedule.ScheduleVO">
+	DELETE FROM schedule_label
+	WHERE lbl_no = #{lblNo}
+</delete>
 </mapper>

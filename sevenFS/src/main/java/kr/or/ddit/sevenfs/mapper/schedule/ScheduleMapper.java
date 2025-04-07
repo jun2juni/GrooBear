@@ -21,4 +21,6 @@ public interface ScheduleMapper {
 
 	List<ScheduleVO> calendarLabeling(Map<String, Object> fltrLbl);
 
+	int delLabelFromSchdule(ScheduleVO scheduleVO);
+
 }

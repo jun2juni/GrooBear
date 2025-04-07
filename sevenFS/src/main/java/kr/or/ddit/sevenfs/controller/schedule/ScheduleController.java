@@ -183,4 +183,13 @@ public class ScheduleController {
 		log.info("getLabels -> labelList : " + labelList);
 		return labelList;
 	}
+	@PostMapping("/delLabel")
+	@ResponseBody
+	public Map<String,Object> delLabel(@RequestBody ScheduleVO scheduleVO){
+		log.info("delLabel -> scheduleVO"+scheduleVO);
+		int result = labelService.delLabel(scheduleVO);
+		Map<String,Object> myCalendar = scheduleService.scheduleList(scheduleVO);
+		log.info("delLabel -> myCalendar : "+myCalendar);
+		return myCalendar;
+	}
 }

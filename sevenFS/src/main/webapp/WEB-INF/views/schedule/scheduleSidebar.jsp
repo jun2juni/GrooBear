@@ -35,6 +35,7 @@
                     </div>
                     <input type="text" class="input-style-1" id="newLabelName" placeholder="라벨 이름 입력" />
                     <button id="saveLabelBtn">저장</button>
+                    <button id="delLabelBtn" onclick="delLabel(event)" style="display: none;">삭제</button>
                 </div>
             </div>
             <br>
@@ -54,7 +55,7 @@
 <!-- 스타일 -->
 <style>
     .label-popup {
-        /* display: none; //처음엔 숨김 */
+        display: none; /*처음엔 숨김*/
         position: absolute;
         background: white;
         border: 1px solid #ccc;
@@ -205,33 +206,163 @@
         });
         
         // 라벨 추가 버튼 클릭 이벤트
-        addLabelBtn.addEventListener('click', function () {
-            labelPopup.style.display = (labelPopup.style.display === 'block') ? 'none' : 'block';
-        });
-        $(document).on('click','.lblIcon',function(e){
-            // e.stopPropagation(); // 이벤트 버블링 방지 (팝업이 바로 닫히는 문제 해결)
+        $(document).on('click', '#addLabelBtn', function(e) {
+            e.stopPropagation(); // 이벤트 버블링 방지
+            e.preventDefault(); // 기본 동작 방지
+            $('#delLabelBtn').css('display','none')
             const $popup = $('#labelPopup');
-            console.log('lblIcon 테스트',$popup);
-            console.log('lblIcon 테스트',$(this));
-            const offset = $(this).offset(); // 아이콘 위치 가져오기
-            // 팝업 위치를 아이콘 기준으로 설정
-            $popup.css({
-                top: offset.top + 25 + 'px',
-                left: offset.left + 'px',
-                display: 'block'
-            });
-            // 선택된 라벨 정보 저장 (필요시)
-            const labelValue = $(this).siblings('input.label-filter');
-            console.log('lblIcon 테스트 씨블링',labelValue);
-            $('#newLabelName').val($(this).parent().text().trim()); // 이름 자동 입력
-        })
-        
-        // 바깥 클릭 시 팝업 닫기
-        document.addEventListener('click', function (event) {
-            if (!labelPopup.contains(event.target) && event.target !== addLabelBtn) {
-                labelPopup.style.display = 'none';
+            const $icon = $(this);
+            const iconRect = this.getBoundingClientRect(); // 뷰포트 기준 위치 정보
+            const windowWidth = $(window).width();
+            
+            // 기존 팝업을 먼저 숨김
+            $popup.hide();
+            $('#newLabelName').val('');
+            
+            // 팝업 너비 계산 (실제 표시되는 크기)
+            const popupWidth = 200; // CSS에 정의된 너비와 일치시키기
+            
+            // 오른쪽 공간이 부족하면 왼쪽에 표시
+            let leftPosition = iconRect.left;
+            if (iconRect.left + popupWidth > windowWidth) {
+                leftPosition = iconRect.left - popupWidth;
             }
+            
+            // DOM에 강제로 표시 후 위치 조정 (fixed 사용하여 뷰포트 기준으로 배치)
+            $popup.css({
+                'position': 'fixed', // 스크롤 위치와 관계없이 뷰포트 기준으로 배치
+                'top': (iconRect.bottom + 5) + 'px', // 아이콘 바로 아래에 배치
+                'left': leftPosition + 'px',
+                'z-index': '9999',
+                'display': 'block'
+            });
+            // 기존 문서 클릭 이벤트 핸들러를 일시적으로 제거
+            $(document).off('click.labelPopup');
+            
+            // 문서 클릭 이벤트 다시 바인딩 (팝업 외부 클릭 시 닫기)
+            setTimeout(() => {
+                $(document).on('click.labelPopup', function(event) {
+                    if (!$(event.target).closest('#labelPopup').length && 
+                        !$(event.target).hasClass('lblIcon') && 
+                        !$(event.target).hasClass('color-cell')) {
+                        $popup.hide();
+                        $(document).off('click.labelPopup');
+                    }
+                });
+            }, 100);
         });
+
+        // 아이콘 클릭 시 팝업창 표시 로직
+        $(document).on('click', '.lblIcon', function(e) {
+            e.stopPropagation(); // 이벤트 버블링 방지
+            e.preventDefault(); // 기본 동작 방지
+            console.log('sssssssssssssssssssssssssssssssssssss',e.target.nextElementSibling.firstElementChild.value);            
+            let selLblNo = e.target.nextElementSibling.firstElementChild.value;
+            const $popup = $('#labelPopup');
+            const $icon = $(this);
+            const iconRect = this.getBoundingClientRect(); // 뷰포트 기준 위치 정보
+            const windowWidth = $(window).width();
+            
+            // 기존 팝업을 먼저 숨김
+            $popup.hide();
+            // if(!$('#delLabelBtn').length){
+            //     $('#labelPopup').append('<button id="delLabelBtn" onclick="delLabel(event)">삭제</button>');
+            // }
+            $('#delLabelBtn').css('display','inline-block');
+            $('#delLabelBtn').data('selLblNo',selLblNo);
+
+            console.log('data 확인 : ', $('#delLabelBtn').data());
+
+            // 팝업 너비 계산 (실제 표시되는 크기)
+            const popupWidth = 200; // CSS에 정의된 너비와 일치시키기
+            
+            // 오른쪽 공간이 부족하면 왼쪽에 표시
+            let leftPosition = iconRect.left;
+            if (iconRect.left + popupWidth > windowWidth) {
+                leftPosition = iconRect.left - popupWidth;
+            }
+            
+            // DOM에 강제로 표시 후 위치 조정 (fixed 사용하여 뷰포트 기준으로 배치)
+            $popup.css({
+                'position': 'fixed', // 스크롤 위치와 관계없이 뷰포트 기준으로 배치
+                'top': (iconRect.bottom + 5) + 'px', // 아이콘 바로 아래에 배치
+                'left': leftPosition + 'px',
+                'z-index': '9999',
+                'display': 'block'
+            });
+            
+            // 라벨 정보 가져오기 - 다양한 DOM 구조에 맞게 수정
+            let labelText = '';
+            if ($(this).next('label').length) {
+                labelText = $(this).next('label').clone().children().remove().end().text().trim();
+            } else if ($(this).parent().is('label')) {
+                labelText = $(this).parent().clone().children().remove().end().text().trim();
+            }
+            
+            $('#newLabelName').val(labelText);
+
+            
+            // 현재 아이콘의 배경색 가져오기
+            const currentBgColor = $(this).css('background-color');
+            
+            // 컬러피커 업데이트
+            $('.color-cell').removeClass('selected');
+            
+            // RGB 색상을 Hex로 변환하는 함수
+            const rgbToHex = (rgb) => {
+                if (!rgb) return '#000000';
+                
+                // RGB 문자열에서 숫자만 추출
+                const rgbArr = rgb.match(/\d+/g);
+                if (!rgbArr || rgbArr.length !== 3) return '#000000';
+                
+                return '#' + rgbArr.map(x => {
+                    const hex = parseInt(x).toString(16);
+                    return hex.length === 1 ? '0' + hex : hex;
+                }).join('');
+            };
+            
+            const hexColor = rgbToHex(currentBgColor);
+            
+            // 가장 비슷한 색상 선택
+            $('.color-cell').each(function() {
+                const cellColor = $(this).css('background-color');
+                const cellHex = rgbToHex(cellColor);
+                
+                if (cellHex.toLowerCase() === hexColor.toLowerCase()) {
+                    $(this).addClass('selected');
+                    selectedColor = cellHex;
+                }
+            });
+            
+            // 첫번째 셀을 기본 선택
+            if ($('.color-cell.selected').length === 0) {
+                $('.color-cell').first().addClass('selected');
+                selectedColor = colorOptions[0];
+            }
+            
+            // 기존 문서 클릭 이벤트 핸들러를 일시적으로 제거
+            $(document).off('click.labelPopup');
+            
+            // 문서 클릭 이벤트 다시 바인딩 (팝업 외부 클릭 시 닫기)
+            setTimeout(() => {
+                $(document).on('click.labelPopup', function(event) {
+                    if (!$(event.target).closest('#labelPopup').length && 
+                        !$(event.target).hasClass('lblIcon') && 
+                        !$(event.target).hasClass('color-cell')) {
+                        $popup.hide();
+                        $(document).off('click.labelPopup');
+                    }
+                });
+            }, 100);
+        });
+        
+        // // 바깥 클릭 시 팝업 닫기
+        // document.addEventListener('click', function (event) {
+        //     if (!labelPopup.contains(event.target) && event.target !== addLabelBtn) {
+        //         labelPopup.style.display = 'none';
+        //     }
+        // });
         
         // 저장 버튼 클릭 시 라벨 추가
         saveLabelBtn.addEventListener('click', function () {
@@ -352,7 +483,37 @@
                 }
             });
         };
-        
+        // 라벨 삭제
+        window.delLabel = function(e){
+            // console.log('delLabel',e.target);
+            // console.log('삭제 데이터 확인 : ','delLabel',$('#delLabelBtn').data().selLblNo);
+            let lblNo = $('#delLabelBtn').data().selLblNo;
+            $.ajax({
+                url:'/myCalendar/delLabel',
+                method:'post',
+                contentType:'application/json',
+                data: JSON.stringify({
+                        emplNo:emplNo,
+                        lblNo:lblNo,
+                        deptCode: deptCode
+                }),
+                success:function(resp){
+                    let clndr = chngData(resp);
+                    console.log('필터링된 일정',resp);
+                    window.globalCalendar.setOption('events', clndr);
+
+                    labelSideBar(resp.labelList);
+                    
+                    // 입력 필드 초기화 및 팝업 닫기
+                    document.getElementById('newLabelName').value = '';
+                    document.getElementById('labelPopup').style.display = 'none';
+                    
+                },
+                error: function(err) {
+                    console.error("필터링 실패:", err);
+                }
+            });
+        }
         // 기존 코드와 통합을 위한 함수들
         window.createIcon = function(type, color) {
             let style = 'display: inline-block; width: 12px; height: 12px; margin-right: 8px;';
