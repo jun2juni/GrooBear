@@ -77,10 +77,13 @@
 										<option value="N">고정 안함</option>
 									</select>
 								</div>
+								
+								<!-- 카테고리 번호 지정 -->
+								<input type="hidden" value="${bbsVO.bbsCtgryNo}" name="ctgryNo">
 
 								<!-- 게시글 추가 버튼 -->
 								<button type="submit" class="btn btn-primary">추가</button>
-								<a href="/bbs/bbsList" class="btn btn-secondary">취소</a>
+								<a href="/bbs/bbsList/${bbsVO.bbsCtgryNo}" class="btn btn-secondary">취소</a>
 							</form>
 						</div>
 					</div>

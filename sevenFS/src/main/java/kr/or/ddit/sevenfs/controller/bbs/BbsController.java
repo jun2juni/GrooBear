@@ -103,8 +103,11 @@ public class BbsController {
     /**
      * 게시글 작성 폼
      */
-    @GetMapping("/bbsInsert")
-    public String bbsInsertForm() {
+    @GetMapping("/bbsInsert/{ctgryNo}")
+    public String bbsInsertForm(@ModelAttribute BbsVO bbsVO, @PathVariable int ctgryNo) {
+    	
+    	bbsVO.setBbsCtgryNo(ctgryNo);
+    	
         return "bbs/bbsInsert";
     }
 
@@ -112,8 +115,10 @@ public class BbsController {
      * 게시글 작성 처리
      */
     @PostMapping("/bbsInsert")
-    public String bbsInsert(@ModelAttribute BbsVO bbsVO, Model model, MultipartFile[] uploadFile, @RequestParam("uploadFile") MultipartFile file) {
+    public String bbsInsert(@ModelAttribute BbsVO bbsVO, Model model,@RequestParam("ctgryNo") int ctgryNo, MultipartFile[] uploadFile, @RequestParam("uploadFile") MultipartFile file) {
         log.info("게시글 등록 요청");
+        
+        bbsVO.setBbsCtgryNo(ctgryNo);
 
         long attachFileNm = attachFileService.insertFileList("insertFile", uploadFile);
         bbsVO.setAtchFileNo(attachFileNm);
@@ -124,17 +129,12 @@ public class BbsController {
         log.info("게시글 등록 결과 -> " + result);
         log.info("생성된 게시글 ID: " + bbsSn);
 
-        if (bbsSn == 0) {
-            log.error("게시글 ID(bbsSn)가 0입니다. INSERT 후에도 값이 설정되지 않았습니다.");
-            return "redirect:/bbs/bbsList"; // 파일 업로드 진행하지 않음
-        }
-        
         String fileName = file.getOriginalFilename();
         log.info("파일이름 : " + fileName);
         
         
         
-        return "redirect:/bbs/bbsList";
+        return "redirect:/bbs/bbsList/"+bbsVO.getBbsCtgryNo();
     }
 
 

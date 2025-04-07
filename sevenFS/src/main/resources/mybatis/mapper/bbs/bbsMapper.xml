@@ -168,7 +168,7 @@
 		(BBS_SN, BBS_CTGRY_NO, EMPL_NO, BBSCTT_SJ, BBSCTT_CN,
 		BBSCTT_CREAT_DT, RDCNT, BBSCTT_USE_YN, UPEND_FIXING_YN, ATCH_FILE_NO)
 		VALUES
-		(#{bbsSn}, '1', #{emplNo}, #{bbscttSj}, #{bbscttCn},
+		(#{bbsSn}, #{bbsCtgryNo}, #{emplNo}, #{bbscttSj}, #{bbscttCn},
 		SYSDATE, 0, 'Y', #{upendFixingYn}, #{atchFileNo})
 	</insert>
 
