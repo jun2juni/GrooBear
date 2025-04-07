@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,11 +53,14 @@ public class BbsController {
     	return "bbs/bbs";
     }
     
-    @GetMapping("/bbsList")
+    @GetMapping("/bbsList/{ctgryNo}")
     public String bbsList(Model model, 
+    					  @PathVariable int ctgryNo,
                           @ModelAttribute BbsVO bbsVO,
                           @RequestParam(defaultValue = "1") int currentPage,
                           @RequestParam(defaultValue = "10") int size) {
+    	
+    	bbsVO.setBbsCtgryNo(ctgryNo);
 
         log.info("서치키워드 확인: " + bbsVO.getSearchKeyword());
         log.info("서치카테고리 확인: " + bbsVO.getCategory());
@@ -87,6 +91,7 @@ public class BbsController {
         model.addAttribute("selectedCategory", bbsVO.getCategory());
         model.addAttribute("articlePage", articlePage);
         model.addAttribute("bbsList", bbsList);
+        model.addAttribute("ctgryNo", ctgryNo);
 
         return "bbs/bbsList";
     }

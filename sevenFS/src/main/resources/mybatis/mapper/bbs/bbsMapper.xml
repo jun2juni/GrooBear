@@ -24,14 +24,6 @@
 		<where>
 			B.BBSCTT_USE_YN = 'Y'
 
-			<!-- 검색어 조건 -->
-<!-- 			<if -->
-<!-- 				test="articlePage.searchVo.searchKeyword != null and articlePage.searchVo.searchKeyword != ''"> -->
-<!-- 				AND (B.BBSCTT_SJ LIKE '%' || #{articlePage.searchVo.searchKeyword} || -->
-<!-- 				'%' -->
-<!-- 				OR B.BBSCTT_CN LIKE '%' || #{articlePage.searchVo.searchKeyword} || -->
-<!-- 				'%') -->
-<!-- 			</if> -->
 			<choose>
 					<when test="articlePage.searchVo.category == 'bbscttSj'">
 						AND B.BBSCTT_SJ LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
@@ -59,15 +51,15 @@
 
 		<!-- 정렬 -->
 		ORDER BY
-		<if
-			test="articlePage.searchVo.orderByDate != null and articlePage.searchVo.orderByDate == 'desc'">
-			B.BBSCTT_CREAT_DT DESC,
-		</if>
-		<if
-			test="articlePage.searchVo.orderByDate != null and articlePage.searchVo.orderByDate == 'asc'">
-			B.BBSCTT_CREAT_DT ASC,
-		</if>
-		B.BBSCTT_CREAT_DT DESC
+		  DECODE(B.UPEND_FIXING_YN, 'Y', 0, 1),  <!-- 상단 고정 먼저 -->
+		  <if test="articlePage.searchVo.orderByDate != null and articlePage.searchVo.orderByDate == 'desc'">
+		    B.BBSCTT_CREAT_DT DESC,
+		  </if>
+		  <if test="articlePage.searchVo.orderByDate != null and articlePage.searchVo.orderByDate == 'asc'">
+		    B.BBSCTT_CREAT_DT ASC,
+		  </if>
+		  B.BBSCTT_CREAT_DT DESC
+
 
 		<!-- 페이징 처리 -->
 		OFFSET (#{articlePage.currentPage} - 1) * 10 ROWS FETCH NEXT 10 ROWS
@@ -177,7 +169,7 @@
 		BBSCTT_CREAT_DT, RDCNT, BBSCTT_USE_YN, UPEND_FIXING_YN, ATCH_FILE_NO)
 		VALUES
 		(#{bbsSn}, '1', #{emplNo}, #{bbscttSj}, #{bbscttCn},
-		SYSDATE, 0, 'Y', 'N', #{atchFileNo})
+		SYSDATE, 0, 'Y', #{upendFixingYn}, #{atchFileNo})
 	</insert>
 
 	<!-- 게시글에 연결된 파일 조회 -->

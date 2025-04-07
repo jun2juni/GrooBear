@@ -107,7 +107,11 @@ table.table-hover.align-middle.text-center tbody tr td {
                 <c:forEach var="bbsVO" items="${bbsList}">
                   <tr onClick="location.href='/bbs/bbsDetail?bbsSn=${bbsVO.bbsSn}'" style="cursor:pointer;">
                     <td>${bbsVO.bbsSn}</td>
-                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">${bbsVO.bbscttSj}
+                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">
+                    	<c:if test="${bbsVO.upendFixingYn == 'Y'}">
+					        <span style="color: red; font-weight: bold;">[공지]</span>
+					    </c:if>
+                    	${bbsVO.bbscttSj}
                     	<c:choose>
                         <c:when test="${not empty bbsVO.files and bbsVO.files.size() > 0}">
                           	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">

@@ -194,10 +194,10 @@
           </a>
           <ul id="bbs" class="dropdown-nav collapse" style="">
             <li>
-              <a href="/bbs/bbsList"> 공지사항 </a>
+              <a href="/bbs/bbsList/1"> 게시판 1 </a>
             </li>
             <li>
-              <a href="/bbs"> 2뎁스 </a>
+              <a href="/bbs/bbsList/2"> 게시판 2 </a>
             </li>
           </ul>
         </li>
