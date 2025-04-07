@@ -11,4 +11,6 @@ public interface ScheduleLabelService {
 	int labelAdd(ScheduleLabelVO labelVO);
 
 	int delLabel(ScheduleVO scheduleVO);
+
+	int labelUpdate(ScheduleLabelVO labelVO);
 }

@@ -15,4 +15,6 @@ public interface ScheduleLabelMapper {
 	int labelAdd(ScheduleLabelVO labelVO);
 	int delLabel(ScheduleVO scheduleVO);
 
+	int labelUpdate(ScheduleLabelVO labelVO);
+
 }

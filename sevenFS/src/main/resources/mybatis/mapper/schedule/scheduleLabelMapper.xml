@@ -30,7 +30,15 @@
 	    #{emplNo}
 	)
 </insert>
-
+<update id="labelUpdate" parameterType="kr.or.ddit.sevenfs.vo.schedule.ScheduleLabelVO">
+	UPDATE schedule_label
+	SET
+		lbl_nm = #{lblNm},
+	    lbl_color = #{lblColor}
+	WHERE
+	    lbl_no = #{lblNo}
+		AND empl_no = #{emplNo}
+</update>
 <delete id="delLabel" parameterType="kr.or.ddit.sevenfs.vo.schedule.ScheduleVO">
 	DELETE FROM schedule_label
 	WHERE lbl_no = #{lblNo}

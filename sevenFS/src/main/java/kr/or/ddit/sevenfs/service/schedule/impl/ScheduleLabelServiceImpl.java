@@ -41,4 +41,9 @@ public class ScheduleLabelServiceImpl implements ScheduleLabelService {
 		return result;
 	}
 
+	@Override
+	public int labelUpdate(ScheduleLabelVO labelVO) {
+		return labelMapper.labelUpdate(labelVO);
+	}
+
 }

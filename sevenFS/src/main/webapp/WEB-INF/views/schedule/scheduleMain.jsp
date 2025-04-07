@@ -6,9 +6,7 @@
 <title>Insert title here</title>
 <script type="text/javascript">
 	document.addEventListener('DOMContentLoaded', function() {
-		// let myEmpInfo = "${myEmpInfo}"
-		// console.log("myEmpInfo : ",myEmpInfo);
-		// let myEmpInfo = 'EmpVO(emplNo:"20252023")';
+		
 		let emplNo = "${myEmpInfo.emplNo}";
 		let deptCode = "${myEmpInfo.deptCode}"
 		let shceduleList = [];
@@ -16,13 +14,6 @@
    		console.log("직원 이름:", emplNo);
    		console.log("직원 부서:", deptCode);
 		console.log("FullCalendar 버전:", FullCalendar.version);
-
-		// const fltrLbl = {
-		// 	'schdulTyList':$('.event-filter:checked').map(function(){return $(this).val()}).get(),
-		// 	'lblNoList':[]
-		// 	// 'lblNoList':[]
-		// }
-		// console.log('====================',fltrLbl);
 
 		// bootstrap 시작
 		var insModal = new bootstrap.Modal(document.getElementById('myModal'));
@@ -127,54 +118,8 @@
 			}
 			return differenceInDays>=num?true:false;
 		}
-		// createIcon = function(type, color) {
-		// 	// console.log("createIcon 실행 됨");
-		// 	let style = 'display: inline-block; width: 12px; height: 12px; margin-right: 8px;';
-			
-		// 	if (type === 'circle') {
-		// 		style += 'border-radius: 50%;';
-		// 	} else {
-		// 		style += 'border-radius: 0;';
-		// 	}
-			
-		// 	style += 'background-color: ' + color + ';';
-			
-		// 	return '<span style="' + style + '"></span>';
-		// }
-		// const labelSideBar = function(labelList) {
-		// 	let labelSection = $('#labelSection');
-			
-		// 	// 기존 체크박스의 상태를 저장
-		// 	let checkedLabels = {};
-		// 	$('.label-filter').each(function() {
-		// 		checkedLabels[$(this).val()] = $(this).prop('checked');
-		// 	});
-			
-		// 	// fltrLbl.lblNoList에서 현재 선택된 라벨 정보도 사용
-		// 	if (fltrLbl && fltrLbl.lblNoList && fltrLbl.lblNoList.length > 0) {
-		// 		fltrLbl.lblNoList.forEach(lblNo => {
-		// 			checkedLabels[lblNo] = true;
-		// 		});
-    	// 	}
-    
-		// 	labelSection.empty();
-		// 	let checkboxHtml = '';
-			
-		// 	labelList.forEach(label => {
-		// 		let icon = createIcon('circle', label.lblColor);
-		// 		// 이전에 저장된 상태가 있으면 그 상태를 사용, 없으면 기본적으로 체크
-		// 		let isChecked = Object.keys(checkedLabels).length > 0 ? 
-		// 					(checkedLabels[label.lblNo] === true) : 
-		// 					true; // 초기 상태는 모두 체크
-				
-		// 		checkboxHtml += icon + '<label>' + label.lblNm + 
-		// 					'<input type="checkbox" class="label-filter" value="' + 
-		// 					label.lblNo + '"' + (isChecked ? ' checked' : '') + '></label><br>';
-		// 	});
-			
-		// 	labelSection.append(checkboxHtml);
-		// }
-		const modalLblSel = function(labelList){
+
+		window.modalLblSel = function(labelList){
 			let labelSection = $('#scheduleLabel');
 			console.log('modalLblSel -> labelList',labelList);
 			console.log('modalLblSel -> labelSection : ',labelSection);
@@ -187,6 +132,7 @@
 			})
 			labelSection.append(checkboxHtml);
 		}
+
 		window.chngData = function(dataMap){
 			// labelSideBar(dataMap.labelList);
 			modalLblSel(dataMap.labelList);
@@ -452,6 +398,7 @@
 			$('#schTitle').val(info.event._def.title);
 			$('#schContent').val(info.event._def.extendedProps.schdulCn);
 			$('#schdulTy').val(info.event._def.extendedProps.schdulTy);
+			console.log($('#scheduleLabel').val(info.event._def.extendedProps.lblNo));
 		})	
 		
 		// allDay 관련 함수들 시작

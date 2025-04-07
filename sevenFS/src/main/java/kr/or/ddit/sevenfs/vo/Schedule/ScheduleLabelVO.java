@@ -13,4 +13,6 @@ public class ScheduleLabelVO {
 	private String lblColor;
 	private String lblNm;
 	private String emplNo;
+	
+	private String deptCode;
 }

@@ -15,7 +15,7 @@
         <!-- 일정 필터 -->
         <div class="filter-section">
             <h3>일정 필터</h3>
-            <button type="button" id="filterAll"> 전체 보기</button><br>
+            <button type="button" id="filterAll" class="btn btn-primary"> 전체 보기</button><br>
             <div id="filterSection">
                 <label>전체 일정<input type="checkbox" class="event-filter" value="2" checked></label><br>
                 <label>부서 일정<input type="checkbox" class="event-filter" value="1" checked></label><br>
@@ -25,17 +25,17 @@
         <!-- 라벨 필터 -->
         <div class="label-section">
             <h3>라벨</h3>
-            <button type="button" id="labelAll">전체 보기</button>
+            <button type="button" id="labelAll" class="btn btn-primary">전체 보기</button>
             <div class="label-action-wrapper" style="position: relative; display: inline-block;">
-                <button id="addLabelBtn" type="button">추가</button>
+                <button id="addLabelBtn" type="button" class="btn btn-primary">추가</button>
                 <!-- 라벨 추가 팝업 -->
-                <div id="labelPopup" class="label-popup" style="display: none;" >
+                <div id="labelPopup" class="label-popup input-style-1 " style="display: none;" >
                     <div id="colorPicker" class="color-picker">
                         <!-- 여기에 색상 셀이 들어감 -->
                     </div>
-                    <input type="text" class="input-style-1" id="newLabelName" placeholder="라벨 이름 입력" />
-                    <button id="saveLabelBtn">저장</button>
-                    <button id="delLabelBtn" onclick="delLabel(event)" style="display: none;">삭제</button>
+                    <input type="text" class="input-style-1 " id="newLabelName" placeholder="라벨 이름 입력" />
+                    <button id="saveLabelBtn" class="btn btn-primary" >저장</button>
+                    <button id="delLabelBtn" class="btn btn-danger" onclick="delLabel(event)" style="display: none;">삭제</button>
                 </div>
             </div>
             <br>
@@ -54,6 +54,13 @@
 
 <!-- 스타일 -->
 <style>
+    #saveLabelBtn, #delLabelBtn, #addLabelBtn, #labelAll, #filterAll{
+        padding: 4px 8px; /* 내부 여백 줄이기 */
+        font-size: 12px; /* 글자 크기 줄이기 */
+        width: auto; /* 자동 크기 조정 */
+        height: 30px; /* 높이 설정 */
+    }
+
     .label-popup {
         display: none; /*처음엔 숨김*/
         position: absolute;
@@ -152,10 +159,6 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
     // 사이드바 라벨 관련 요소
-        // const addLabelBtn = $('#addLabelBtn');
-        // const labelPopup = $('#labelPopup');
-        // const saveLabelBtn = $('#saveLabelBtn');
-        // const labelSection = $('#labelSection');
         const addLabelBtn = document.getElementById('addLabelBtn');
         const labelPopup = document.getElementById('labelPopup');
         const saveLabelBtn = document.getElementById('saveLabelBtn');
@@ -209,6 +212,7 @@
         $(document).on('click', '#addLabelBtn', function(e) {
             e.stopPropagation(); // 이벤트 버블링 방지
             e.preventDefault(); // 기본 동작 방지
+            $('#lblNoInp').remove();
             $('#delLabelBtn').css('display','none')
             const $popup = $('#labelPopup');
             const $icon = $(this);
@@ -256,7 +260,7 @@
         $(document).on('click', '.lblIcon', function(e) {
             e.stopPropagation(); // 이벤트 버블링 방지
             e.preventDefault(); // 기본 동작 방지
-            console.log('sssssssssssssssssssssssssssssssssssss',e.target.nextElementSibling.firstElementChild.value);            
+            console.log('lblIcon click : ',e.target.nextElementSibling.firstElementChild.value);            
             let selLblNo = e.target.nextElementSibling.firstElementChild.value;
             const $popup = $('#labelPopup');
             const $icon = $(this);
@@ -269,7 +273,9 @@
             //     $('#labelPopup').append('<button id="delLabelBtn" onclick="delLabel(event)">삭제</button>');
             // }
             $('#delLabelBtn').css('display','inline-block');
-            $('#delLabelBtn').data('selLblNo',selLblNo);
+            $('#lblNoInp').remove();
+            let lblNoInp = '<input hidden name="lblNo" id="lblNoInp" value="'+selLblNo+'" />'
+            $('#labelPopup').append(lblNoInp);
 
             console.log('data 확인 : ', $('#delLabelBtn').data());
 
@@ -367,38 +373,45 @@
         // 저장 버튼 클릭 시 라벨 추가
         saveLabelBtn.addEventListener('click', function () {
             const labelName = document.getElementById('newLabelName').value.trim();
-            
             if (!labelName) {
                 alert('라벨 이름을 입력해주세요');
                 return;
             }
-            
             let labelData = {
                 'lblNm': labelName,
                 'lblColor': selectedColor,
                 'emplNo': emplNo,
                 'deptCode': deptCode
             };
-            
+
+            let ajaxUrl = ''
+            console.log("$('#lblNoInp')",$('#lblNoInp'));
+            if($('#lblNoInp').val()){
+                ajaxUrl = "/myCalendar/labelUpdate"
+                labelData.lblNo = $('#lblNoInp').val();
+            }else{
+                ajaxUrl = "/myCalendar/labelAdd"
+            }
+            console.log('라벨 생성 / 업데이트 요청 전 확인 /ajaxUrl : ',ajaxUrl,' /labelData : ',labelData);
             // 라벨 추가 AJAX 요청
             $.ajax({
-                url: "/myCalendar/labelAdd",
+                url: ajaxUrl,
                 type: "post",
                 data: JSON.stringify(labelData),
                 contentType: "application/json",
                 success: function(response) {
-                    console.log("라벨 추가 성공:", response);
-                    
-                    // 응답으로 받은 데이터로 라벨 사이드바와 캘린더 이벤트 업데이트
-                    if (response) {
-                        labelSideBar(response);
-                        // modalLblSel(response.labelList);
+                    console.log('분기처리 전 response : ',response);
+                    if(response.labelList){
+                        console.log('response.labelList====================',response.labelList);
+                        labelSideBar(response.labelList);
+                        let clndr = chngData(response);
+                        window.globalCalendar.setOption('events', clndr);
                     }
-                    
-                    // if (response.scheduleList) {
-                    //     let clndr = chngData(response);
-                    //     window.globalCalendar.setOption('events', clndr);
-                    // }
+                    else{
+                        labelSideBar(response);
+                        modalLblSel(response)
+                    }
+                    console.log("라벨 추가 성공:", response);
                     
                     // 입력 필드 초기화 및 팝업 닫기
                     document.getElementById('newLabelName').value = '';
@@ -487,7 +500,7 @@
         window.delLabel = function(e){
             // console.log('delLabel',e.target);
             // console.log('삭제 데이터 확인 : ','delLabel',$('#delLabelBtn').data().selLblNo);
-            let lblNo = $('#delLabelBtn').data().selLblNo;
+            let lblNo = $('#lblNoInp').val();
             $.ajax({
                 url:'/myCalendar/delLabel',
                 method:'post',

@@ -183,6 +183,20 @@ public class ScheduleController {
 		log.info("getLabels -> labelList : " + labelList);
 		return labelList;
 	}
+	@PostMapping("/labelUpdate")
+	@ResponseBody
+	public Map<String,Object> labelUpdate(@RequestBody ScheduleLabelVO labelVO){
+		log.info("labelUpdate -> labelVO : " + labelVO);
+		int result = labelService.labelUpdate(labelVO);
+		ScheduleVO scheduleVO = new ScheduleVO();
+		scheduleVO.setEmplNo(labelVO.getEmplNo());
+		scheduleVO.setDeptCode(labelVO.getDeptCode());
+//		scheduleVO.setLblNo(null);
+		Map<String,Object> myCalendar = scheduleService.scheduleList(scheduleVO);
+		log.info("labelUpdate -> myCalendar : "+myCalendar);
+		return myCalendar;
+	}
+	
 	@PostMapping("/delLabel")
 	@ResponseBody
 	public Map<String,Object> delLabel(@RequestBody ScheduleVO scheduleVO){
