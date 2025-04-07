@@ -99,7 +99,7 @@
 				   <div class="activity-meta text-start" style="margin-top: 20px;">
 			 			<input type="hidden" name="emplNo" value="${emp.emplNo}">
 			   	          <div class="input-style-1 form-group col-8" style="margin-left:15%;">
-				            <label for="password" class="form-label required">비밀번호<span class="text-danger">*</span></label>				            
+				            <label for="password" class="form-label required">비밀번호-수정필요<span class="text-danger">*</span></label>				            
 				            <input type="text" name="password" class="form-control" value="${emp.password}">
 				           <div class="invalid-feedback"></div>
 			   	          </div>

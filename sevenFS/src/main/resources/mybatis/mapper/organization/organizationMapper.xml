@@ -85,7 +85,7 @@
 		AND E.EMPL_NO=#{emplNo}
 	</select>
 	
-		<!-- 사원 상세직급 -->
+	<!-- 사원 상세직급 -->
 	<select id="empDetailPos" parameterType="String" resultMap="commonMap">
 		SELECT CC.CMMN_CODE_NM
 		FROM COMMON_CODE CC
