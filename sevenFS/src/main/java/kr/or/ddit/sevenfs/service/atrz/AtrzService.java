@@ -55,6 +55,13 @@ public interface AtrzService {
 	//연차신청서 상세보기
 	public DocumHolidayVO holidayDetail(int holiActplnNo);
 	
+	//결재 대기중인 문서리스트
+	public List<AtrzVO> atrzApprovalList(String emplNo);
+	//기안중인 문서리스트
+	public List<AtrzVO> atrzSubmitList(String emplNo);
+	//기안완료된 문서리스트
+	public List<AtrzVO> atrzCompletedList(String emplNo);
+	
 	
 	//비즈니스 로직 이란???
 	//컨드롤러에서는 화면에서 보여지는것만 

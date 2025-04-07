@@ -1,11 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper">
-	<select id="homeList" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
-		SELECT *  /* AtrzMapper.homeList */
-		FROM ATRZ
-		WHERE DRAFTER_EMPNO=#{drafterEmpno}
-		ORDER BY atrz_drft_dt
+	<select id="homeList" resultMap="atrzMap">
+		SELECT /* AtrzMapper.homeList */
+	        A.atrz_doc_no,
+	        A.drafter_empno,
+	        A.drafter_clsf,
+	        A.drafter_empnm,
+	        A.drafter_dept,
+	        A.bkmk_yn,
+	        A.atch_file_no,
+	        A.atrz_sj,
+	        A.atrz_cn,
+	        A.atrz_opinion,
+	        A.atrz_tmpr_stre_dt,
+	        A.atrz_drft_dt,
+	        A.atrz_compt_dt,
+	        A.atrz_rtrvl_dt,
+	        A.atrz_sttus_code,
+	        A.eltsgn_image,
+	        A.doc_form_no,
+	        A.atrz_delete_yn,
+	        A.schdul_reg_yn,
+	
+	        L.atrz_doc_no as line_atrz_doc_no,
+	        L.atrz_ln_sn,
+	        L.sanctner_empno,
+	        L.sanctner_clsf_code,
+	        L.contd_empno,
+	        L.contd_clsf_code,
+	        L.dcrb_man_empno,
+	        L.dcrb_man_clsf_code,
+	        L.atrz_ty,
+	        L.sanctn_progrs_sttus_code,
+	        L.dcrb_author_yn,
+	        L.contd_author_yn,
+	        L.sanctn_opinion,
+	        L.eltsgn_image as line_eltsgn_image,
+	        L.sanctn_confm_dt,
+	
+	        H.holi_actpln_no,
+	        H.atrz_doc_no as holi_atrz_doc_no,
+	        H.holi_code,
+	        H.holi_start,
+	        H.holi_end
+	
+	    FROM atrz A
+	    LEFT JOIN atrz_line L ON A.atrz_doc_no = L.atrz_doc_no
+	    LEFT JOIN docum_holiday H ON A.atrz_doc_no = H.atrz_doc_no
+	    WHERE A.drafter_empno = #{drafterEmpno}
+	    ORDER BY A.atrz_drft_dt
+	</select>
+	
+	<!-- 결재 대기중인 문서리스트 -->
+	<select id="atrzApprovalList" resultMap="atrzMap">
+		SELECT  /* AtrzMapper.atrzApprovalList */
+		    a.atrz_doc_no,
+		    a.atrz_sj,
+		    a.atrz_cn,
+		    a.atrz_drft_dt,
+		    a.drafter_empno,
+		    a.atrz_sttus_code,
+		    
+		    l.atrz_ln_sn,
+		    l.sanctner_empno,
+		    l.sanctn_progrs_sttus_code,
+		    l.atrz_ty,
+		    l.dcrb_author_yn
+		
+		FROM atrz a
+		LEFT JOIN atrz_line l
+		    ON a.atrz_doc_no = l.atrz_doc_no
+		
+		WHERE a.atrz_compt_dt IS NULL
+		  AND l.sanctner_empno = #{emplNo}
+		  AND l.sanctn_progrs_sttus_code = '00'
+		  AND NOT EXISTS (
+		        SELECT 1
+		        FROM atrz_line l2
+		        WHERE l2.atrz_doc_no = a.atrz_doc_no
+		          AND l2.atrz_ln_sn &lt; l.atrz_ln_sn
+		          AND l2.sanctn_progrs_sttus_code = '00'
+		    )
+		ORDER BY a.atrz_drft_dt DESC
+	</select>
+	
+	<!-- 기안중인 문서리스트 문서리스트 -->
+	<select id="atrzSubmitList" resultMap="atrzMap" parameterType="string">
+		select 	/* AtrzMapper.atrzSubmitList */
+	        a.atrz_doc_no,
+	        a.atrz_sj,
+	        a.atrz_cn,
+	        a.atrz_drft_dt,
+	        a.atrz_compt_dt,
+	        a.atrz_rtrvl_dt,
+	        a.atrz_sttus_code,
+	        a.drafter_empno,
+	        a.drafter_empnm,
+	        a.drafter_clsf,
+	        a.drafter_dept,
+	        l.atrz_ln_sn,
+	        l.sanctner_empno,
+	        l.sanctn_progrs_sttus_code
+	    from atrz a
+	    left join atrz_line l
+	        on a.atrz_doc_no = l.atrz_doc_no
+	    where a.drafter_empno = #{emplNo}
+	    order by a.atrz_drft_dt desc
+	</select>
+	
+	<!-- 기안완료된 문서리스트 -->
+	<select id="atrzCompletedList" resultMap="atrzMap" parameterType="string">
+		select 	/* AtrzMapper.atrzCompletedList */
+	        a.atrz_doc_no,
+	        a.atrz_sj,
+	        a.atrz_cn,
+	        a.atrz_drft_dt,
+	        a.atrz_compt_dt,
+	        a.atrz_rtrvl_dt,
+	        a.atrz_sttus_code,
+	        a.drafter_empno,
+	        a.drafter_empnm,
+	        a.drafter_clsf,
+	        a.drafter_dept
+	    from atrz a
+	    where a.drafter_empno = #{emplNo}
+	      and a.atrz_sttus_code = '20'
+	    order by a.atrz_compt_dt desc
 	</select>
 	
 	
@@ -21,26 +142,6 @@
 	        ON A.ATRZ_DOC_NO = D.DRAFT_NO
 	    WHERE A.ATRZ_DOC_NO = #{atrzDocNo}
 	</select>
-	<resultMap id="atrzMap" type="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
-		<result property="schdulRegYn" column="SCHDUL_REG_YN"/>
-		<result property="drafterEmpnm" column="DRAFTER_EMPNM"/>
-		<result property="drafterDept" column="DRAFTER_DEPT"/>
-		<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
-		<result property="drafterEmpno" column="DRAFTER_EMPNO"/>
-		<result property="drafterClsf" column="DRAFTER_CLSF"/>
-		<result property="bkmkYn" column="BKMK_YN"/>
-		<result property="atchFileNo" column="ATCH_FILE_NO"/>
-		<result property="atrzSj" column="ATRZ_SJ"/>
-		<result property="atrzCn" column="ATRZ_CN"/>
-		<result property="atrzOpinion" column="ATRZ_OPINION"/>
-		<result property="atrzTmprStreDt" column="ATRZ_TMPR_STRE_DT"/>
-		<result property="atrzDrftDt" column="ATRZ_DRFT_DT"/>
-		<result property="atrzComptDt" column="ATRZ_COMPT_DT"/>
-		<result property="atrzRtrvlDt" column="ATRZ_RTRVL_DT"/>
-		<result property="atrzSttusCode" column="ATRZ_STTUS_CODE"/>
-		<result property="eltsgnImage" column="ELTSGN_IMAGE"/>
-		<result property="docFormNo" column="DOC_FORM_NO"/>
-	</resultMap>
 	
 	  <resultMap id="EmployeeResultMap" type="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
         <id property="emplNo" column="EMPL_NO"/>
@@ -265,7 +366,7 @@
 	<!-- 	전자결재번호,기안자사번, 직급, 이름,부서,  -->
 			 atrz
 		(
-			  ATRZ_DOC_NO
+			  atrz_doc_no
 			, drafter_empno
 			, drafter_clsf
 			, drafter_empnm
@@ -350,48 +451,60 @@
 		<result property="holiCode" column="HOLI_CODE"/>
 		<result property="holiStart" column="HOLI_START"/>
 		<result property="holiEnd" column="HOLI_END"/>
-		
-		<!-- 전자결재 -->
-		<association property="atrzVO" javaType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
-			<result property="atchFileNo" column="ATCH_FILE_NO"/>
-			<result property="atrzCn" column="ATRZ_CN"/>
-			<result property="atrzComptDt" column="ATRZ_COMPT_DT"/>
-			<result property="atrzDeleteYn" column="ATRZ_DELETE_YN"/>
-			<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
-			<result property="atrzDrftDt" column="ATRZ_DRFT_DT"/>
-			<result property="atrzOpinion" column="ATRZ_OPINION"/>
-			<result property="atrzRtrvlDt" column="ATRZ_RTRVL_DT"/>
-			<result property="atrzSj" column="ATRZ_SJ"/>
-			<result property="atrzSttusCode" column="ATRZ_STTUS_CODE"/>
-			<result property="atrzTmprStreDt" column="ATRZ_TMPR_STRE_DT"/>
-			<result property="bkmkYn" column="BKMK_YN"/>
-			<result property="docFormNo" column="DOC_FORM_NO"/>
-			<result property="drafterClsf" column="DRAFTER_CLSF"/>
-			<result property="drafterDept" column="DRAFTER_DEPT"/>
-			<result property="drafterEmpnm" column="DRAFTER_EMPNM"/>
-			<result property="drafterEmpno" column="DRAFTER_EMPNO"/>
-			<result property="eltsgnImage" column="ELTSGN_IMAGE"/>
-			<result property="schdulRegYn" column="SCHDUL_REG_YN"/>
-		</association>
-		
-		<!-- 전자결재선 -->
-		<collection property="atrzLineList" ofType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
-			<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
-			<result property="atrzLnSn" column="ATRZ_LN_SN"/>
-			<result property="sanctnerEmpno" column="SANCTNER_EMPNO"/>
-			<result property="sanctnerClsfCode" column="SANCTNER_CLSF_CODE"/>
-			<result property="contdEmpno" column="CONTD_EMPNO"/>
-			<result property="contdClsfCode" column="CONTD_CLSF_CODE"/>
-			<result property="dcrbManEmpno" column="DCRB_MAN_EMPNO"/>
-			<result property="dcrbManClsfCode" column="DCRB_MAN_CLSF_CODE"/>
-			<result property="atrzTy" column="ATRZ_TY"/>
-			<result property="sanctnProgrsSttusCode" column="SANCTN_PROGRS_STTUS_CODE"/>
-			<result property="dcrbAuthorYn" column="DCRB_AUTHOR_YN"/>
-			<result property="contdAuthorYn" column="CONTD_AUTHOR_YN"/>
-			<result property="sanctnOpinion" column="SANCTN_OPINION"/>
-			<result property="eltsgnImage" column="ELTSGN_IMAGE"/>
-			<result property="sanctnConfmDt" column="SANCTN_CONFM_DT"/>
-		</collection>
+		<association property="atrzVO" resultMap="atrzMap"></association>
+	</resultMap>
+
+	<!-- 월차신청서 -->
+<!-- 	<resultMap id="holidayDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.DocumHolidayVO" > -->
+<!-- 		<id property="holiActplnNo" column="HOLI_ACTPLN_NO"/> -->
+<!-- 		<result property="atrzDocNo" column="ATRZ_DOC_NO"/> -->
+<!-- 		<result property="holiCode" column="HOLI_CODE"/> -->
+<!-- 		<result property="holiStart" column="HOLI_START"/> -->
+<!-- 		<result property="holiEnd" column="HOLI_END"/> -->
+<!-- 		<association property="atrzVO" resultMap="atrzMap"></association> -->
+<!-- 	</resultMap> -->
+	
+	<!-- 전자결재 -->
+	<resultMap type="kr.or.ddit.sevenfs.vo.atrz.AtrzVO" id="atrzMap">
+		<result property="atchFileNo" column="ATCH_FILE_NO"/>
+		<result property="atrzCn" column="ATRZ_CN"/>
+		<result property="atrzComptDt" column="ATRZ_COMPT_DT"/>
+		<result property="atrzDeleteYn" column="ATRZ_DELETE_YN"/>
+		<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
+		<result property="atrzDrftDt" column="ATRZ_DRFT_DT"/>
+		<result property="atrzOpinion" column="ATRZ_OPINION"/>
+		<result property="atrzRtrvlDt" column="ATRZ_RTRVL_DT"/>
+		<result property="atrzSj" column="ATRZ_SJ"/>
+		<result property="atrzSttusCode" column="ATRZ_STTUS_CODE"/>
+		<result property="atrzTmprStreDt" column="ATRZ_TMPR_STRE_DT"/>
+		<result property="bkmkYn" column="BKMK_YN"/>
+		<result property="docFormNo" column="DOC_FORM_NO"/>
+		<result property="drafterClsf" column="DRAFTER_CLSF"/>
+		<result property="drafterDept" column="DRAFTER_DEPT"/>
+		<result property="drafterEmpnm" column="DRAFTER_EMPNM"/>
+		<result property="drafterEmpno" column="DRAFTER_EMPNO"/>
+		<result property="eltsgnImage" column="ELTSGN_IMAGE"/>
+		<result property="schdulRegYn" column="SCHDUL_REG_YN"/>
+		<collection property="atrzLineVOList" resultMap="atrzLineMap"></collection>
+	</resultMap>
+	
+	<!-- 전자결재선 -->
+	<resultMap type="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO" id="atrzLineMap">
+		<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
+		<result property="atrzLnSn" column="ATRZ_LN_SN"/>
+		<result property="sanctnerEmpno" column="SANCTNER_EMPNO"/>
+		<result property="sanctnerClsfCode" column="SANCTNER_CLSF_CODE"/>
+		<result property="contdEmpno" column="CONTD_EMPNO"/>
+		<result property="contdClsfCode" column="CONTD_CLSF_CODE"/>
+		<result property="dcrbManEmpno" column="DCRB_MAN_EMPNO"/>
+		<result property="dcrbManClsfCode" column="DCRB_MAN_CLSF_CODE"/>
+		<result property="atrzTy" column="ATRZ_TY"/>
+		<result property="sanctnProgrsSttusCode" column="SANCTN_PROGRS_STTUS_CODE"/>
+		<result property="dcrbAuthorYn" column="DCRB_AUTHOR_YN"/>
+		<result property="contdAuthorYn" column="CONTD_AUTHOR_YN"/>
+		<result property="sanctnOpinion" column="SANCTN_OPINION"/>
+		<result property="eltsgnImage" column="ELTSGN_IMAGE"/>
+		<result property="sanctnConfmDt" column="SANCTN_CONFM_DT"/>
 	</resultMap>
 	
 	

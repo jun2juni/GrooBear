@@ -40,9 +40,11 @@ public class AtrzVO {
 	private String deptCodeNm;//부서코드명
 	
 	
-	
 	//파일첨부
 	private MultipartFile[] uploadFile;
+	
+	//atrz: atrzLine 1: N
+	private List<AtrzLineVO> atrzLineVOList;
 	
 	// 검색필터
 	private String type; // 검색타입

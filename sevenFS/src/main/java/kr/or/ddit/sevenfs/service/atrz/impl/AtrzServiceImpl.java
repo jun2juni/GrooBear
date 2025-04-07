@@ -109,9 +109,23 @@ public class AtrzServiceImpl implements AtrzService {
 	public DocumHolidayVO holidayDetail(int holiActplnNo) {
 		return this.atrzMapper.holidayDetail(holiActplnNo);
 	}
+	//결재 대기중인 문서리스트
+	@Override
+	public List<AtrzVO> atrzApprovalList(String emplNo) {
+		return this.atrzMapper.atrzApprovalList(emplNo);
+	}
+	//기안중인 문서리스트
+	@Override
+	public List<AtrzVO> atrzSubmitList(String emplNo) {
+		return this.atrzMapper.atrzSubmitList(emplNo);
+	}
+	//기안완료된 문서리스트
+	@Override
+	public List<AtrzVO> atrzCompletedList(String emplNo) {
+		return this.atrzMapper.atrzCompletedList(emplNo);
+	}
 	
 	
-//	
 //	//사원의 직급가져오기
 //	
 //	public String atrzEmplPosi() {

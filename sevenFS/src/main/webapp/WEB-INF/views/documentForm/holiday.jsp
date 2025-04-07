@@ -124,6 +124,7 @@
 	padding-bottom: 10px;
 	width: 300px;
 	box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.1);
+	
 }
 
 .ui-widget.ui-widget-content {
@@ -298,7 +299,7 @@ select.ui-datepicker-year {
 								<div class="critical d-flex gap-2 mb-3">
 									<!--성진스 버튼-->
 									<button id="s_eap_app_top" type="button" 
-										class="btn btn-outline-primary d-flex align-items-center gap-1">
+										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app">
 										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
 									</button>
 									<a id="s_eap_stor" type="button"
@@ -349,7 +350,7 @@ select.ui-datepicker-year {
 												style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">연차신청서</div>
 
 											<div style="float: left; width: 230px; margin: 0 30px;">
-												<table border="1" id="s_eap_draft_info">
+												<table border="1" id="s_eap_draft_info" class="text-center">
 													<tr>
 														<!-- 기안자 정보가져오기 -->
 <%-- 													<p>${empVO}</p>  --%>
@@ -361,8 +362,13 @@ select.ui-datepicker-year {
 														<td>${empVO.deptNm}</td>
 													</tr>
 													<tr>
+														<!-- 기안일 출력을 위한 것 -->
+														<jsp:useBean id="now" class="java.util.Date" />
+														<fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm:ss" var="today" />
 														<th>기안일</th>
-														<td>SYSDATE</td>
+														<td>
+															<c:out value="${today}"/>
+														</td>
 													</tr>
 													<tr>
 														<th>문서번호</th>
@@ -401,70 +407,81 @@ select.ui-datepicker-year {
 											<div style="border: 1px solid lightgray; margin: 10px;"></div>
 											<div style="margin: 0 10px;">
 
-												<div style="padding: 10px 0;">
-													<div class="s_frm_title">1. 종류</div>
-													<div class="form-check" style="display: inline-block;">
-														<input class="form-check-input" type="radio"
-															name="holiCode" id="flexRadioDefault1" checked
-															value="A"> <label class="form-check-label"
-															for="flexRadioDefault1"> 연차 </label>
+												<div class="row align-items-start" style="padding: 10px 0;">
+													<div class="col-auto">
+														<div class="s_frm_title mb-2"><b>유형</b></div>
+														<div class="form-check mr-5" style="display: inline-block;">
+															<input class="form-check-input" type="radio"
+																name="holiCode" id="flexRadioDefault1" checked
+																value="A"> 
+																<label class="form-check-label"	for="flexRadioDefault1">연차</label>
+														</div>
+														<div class="form-check mr-5" style="display: inline-block;">
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2" value="B">
+															<label class="form-check-label" for="flexRadioDefault2">반차</label>
+														</div>
+														<div class="form-check mr-5" style="display: inline-block;">
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault3" value="C">
+															<label class="form-check-label" for="flexRadioDefault3">병가</label>
+														</div>
+														<div class="form-check mr-5" style="display: inline-block;">
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault4" value="D">
+															<label class="form-check-label" for="flexRadioDefault4">공가</label>
+														</div>
 													</div>
-													<div class="form-check" style="display: inline-block;">
-														<input class="form-check-input" type="radio"
-															name="holiCode" id="flexRadioDefault2" value="B">
-														<label class="form-check-label" for="flexRadioDefault2">
-															반차 </label>
-													</div>
-													<div class="form-check" style="display: inline-block;">
-														<input class="form-check-input" type="radio"
-															name="holiCode" id="flexRadioDefault3" value="C">
-														<label class="form-check-label" for="flexRadioDefault3">
-															병가 </label>
-													</div>
-													<div class="form-check" style="display: inline-block;">
-														<input class="form-check-input" type="radio"
-															name="holiCode" id="flexRadioDefault4" value="D">
-														<label class="form-check-label" for="flexRadioDefault4">
-															공가 </label>
-													</div>
+													
+													<!--연차기간 선택 시작-->
+													<div class="col ms-4">
+														<div class="s_frm_title mb-2"><b>신청기간</b></div>
+														<!-- <div style="margin: 5px 0;">
+															사용 가능한 휴가일수는 <span id="s_ho_use">${checkHo }</span>일 입니다.
+														</div> -->
+														<div>
+															<input type="text" placeholder="신청 시작 기간을 선택해주세요"
+																class="form-control s_ho_start d-inline-block"
+																style="width: 250px; cursor: context-menu;"
+																id="s_ho_start" required="required" onchange="dateCnt();" name="holiStartArr">
+															<input type="time" class="form-control d-inline-block"
+																style="width: 150px; display: none;"
+																id="s_start_time" min="09:00:00" max="18:00:00" value="09:00:00"
+																disabled onchange="dateCnt();" name="holiStartArr"> 부터
+														</div>
+														<div>
+															<input type="text" placeholder="신청 종료 기간을 선택해주세요"
+																class="form-control s_ho_end d-inline-block mt-2"
+																style="width: 250px; cursor: context-menu;"
+																id="s_ho_end" required="required" onchange="dateCnt();" name="holiEndArr" />
+															<input type="time" class="form-control d-inline-block"
+																style="width: 150px; display: none;"
+																id="s_end_time" min="09:00:00" max="18:00:00" value="18:00:00"
+																disabled onchange="dateCnt();" name="holiEndArr" /> 까지
+															<div class="d-inline-block" >
+																(총 <span id="s_date_cal">0</span>일)
+															</div>
+														</div>
+														<div id="halfTypeArea" style="display: none; margin-top: 5px;">
+															<div class="form-check d-inline-block mr-3">
+																<input class="form-check-input" type="radio" name="halfType" id="halfAm" value="AM" checked>
+																<label class="form-check-label" for="halfAm">오전반차</label>
+															</div>
+															<div class="form-check d-inline-block">
+																<input class="form-check-input" type="radio" name="halfType" id="halfPm" value="PM">
+																<label class="form-check-label" for="halfPm">오후반차</label>
+															</div>
+														</div>
+													</div>	
+													<!--연차기간 선택 끝-->
+
 												</div>
 
 												<div style="padding: 10px 0;">
-													<div class="s_frm_title">2. 내용</div>
+													<div class="s_frm_title mb-2"> 내용</div>
 													<textarea class="form-control s_scroll"
 														style="resize: none; height: 150px;" id="s_ho_co" name="atrzCn" 
 														required="required" rows="2" cols="20" wrap="hard"></textarea>
 												</div>
 
-												<div style="padding: 10px 0;">
-													<div class="s_frm_title">3. 신청기간</div>
-													<div style="margin: 5px 0;">
-														사용 가능한 휴가일수는 <span id="s_ho_use">${checkHo }</span>일 입니다.
-													</div>
-													<div>
-														<input type="text" placeholder="신청 시작 기간을 선택해주세요"
-															class="form-control s_ho_start"
-															style="width: 250px; display: inline-block; cursor: context-menu;"
-															id="s_ho_start" required="required" onchange="dateCnt();" name="holiStartArr">
-														<input type="time" class="form-control"
-															style="width: 150px; display: inline-block;"
-															id="s_start_time" min="09:00:00" max="18:00:00"
-															required="required" onchange="dateCnt();" name="holiStartArr"> 부터
-													</div>
-													<div>
-														<input type="text" placeholder="신청 종료 기간을 선택해주세요"
-															class="form-control s_ho_end"
-															style="width: 250px; display: inline-block; cursor: context-menu; margin-top: 10px;"
-															id="s_ho_end" required="required" onchange="dateCnt();" name="holiEndArr" />
-														<input type="time" class="form-control"
-															style="width: 150px; display: inline-block;"
-															id="s_end_time" min="09:00:00" max="18:00:00"
-															required="required" onchange="dateCnt();" name="holiEndArr" /> 까지
-														<div style="display: inline-block;">
-															(총 <span id="s_date_cal">0</span>일)
-														</div>
-													</div>
-												</div>
+												
 
 												<div style="padding: 10px 0;">
 													<div class="s_frm_title">파일첨부</div>
@@ -489,7 +506,7 @@ select.ui-datepicker-year {
 								<div class="critical d-flex gap-2 mt-3">
 									<!--성진스 버튼-->
 									<button id="s_eap_app_bottom" type="button" 
-										class="btn btn-outline-primary d-flex align-items-center gap-1">
+										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app">
 										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
 									</button>
 									<a id="s_eap_stor" type="button"
@@ -523,6 +540,69 @@ select.ui-datepicker-year {
 
 
 <script>
+
+//반차선택시 라디오버튼활성화
+
+let isHalfSelected = false; // 반차 선택 여부 flag
+
+$('input[name="holiCode"]').on('change', function () {
+	const selected = $(this).val();-
+
+	if (selected === 'B') {
+		isHalfSelected = true;
+
+		// 반차 선택 시: 시간 자동 셋팅 & 비활성화
+		$('#halfTypeArea').show();
+		$('#s_start_time, #s_end_time')
+			.val('') // 초기화
+			.prop('disabled', true)
+			.hide();
+		
+		// 오전 반차 기본 선택
+		$('#halfAm').prop('checked', true).trigger('change');
+		
+		// ✅ 시작일과 종료일 맞추기
+		const startVal = $('#s_ho_start').val();
+		const endVal = $('#s_ho_end').val();
+
+		if (startVal && startVal !== endVal) {
+			$('#s_ho_end').val(startVal); // 종료일을 시작일로 맞춤
+			dateCnt(); // 변경된 날짜 반영
+		}
+		
+	} else {
+		// 반차 아닌 경우
+		$('#halfTypeArea').hide();
+
+		// 반차 이력 유무 상관없이 기본값 세팅 + 비활성화 유지
+		$('#s_start_time').val('09:00:00');
+		$('#s_end_time').val('18:00:00');
+		$('#s_start_time, #s_end_time')
+			.prop('disabled', true)
+			.show();
+		dateCnt();
+	}
+});
+
+//반차에서 오전반차 선택시 
+$('input[name="halfType"]').on('change', function () {
+
+	const selected = $(this).val();
+
+	if (selected === 'AM') {
+		$('#s_start_time').val('09:00:00');
+		$('#s_end_time').val('13:00:00');
+	} else if (selected === 'PM') {
+		$('#s_start_time').val('14:00:00');
+		$('#s_end_time').val('18:00:00');
+	}
+
+	// ✅ 여기도 비활성화 상태 유지
+	$('#s_start_time, #s_end_time').prop('disabled', true);
+});
+
+
+
 // 결재요청 클릭 시
 $("#s_eap_app").click(function() {
 	var eap_title = $('#s_ho_tt').val();
@@ -655,7 +735,7 @@ let authList = [];
 
 $(document).ready(function() {
 	//******* 폼 전송 *******
-	$("#s_eap_app_bottom").on("click",function(){
+	$(".s_eap_app").on("click",function(){
 		event.preventDefault();
 // 		alert("체킁");
 		console.log("전송하기 체킁 확인");
@@ -713,9 +793,9 @@ $(document).ready(function() {
 		formData.append("emplNm",secEmplNm);
 		
 		const junyError = (request, status, error) => {
-       				 console.log("code: " + request.status)
-        			 console.log("message: " + request.responseText)
-        			 console.log("error: " + error);
+					console.log("code: " + request.status)
+					console.log("message: " + request.responseText)
+					console.log("error: " + error);
             }
 
 		$.ajax({
@@ -851,7 +931,7 @@ $(document).ready(function() {
 							<th>\${result.deptNm}</th>
 							<th>\${result.posNm}</th>
 							<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
-							<th>
+							<th hidden>
 								<select class="form-select selAuth" aria-label="Default select example">
 									<option value="0" selected>결재</option>
 									<option value="1">참조</option>
@@ -872,12 +952,12 @@ $(document).ready(function() {
 	//왼쪽버튼의 경우에는 결재선선택과는 거리가 멀기 때문에 필요없음
 	//왼쪽 버튼을 눌렀을때 삭제처리되어야함
 	$(document).on("click", "#remo_appLine",function(){
-		let lastRow = $(".s_appLine_tbody_new .clsTr").last();   //가장마지막에 추가된 tr
+		let lastRow = $(".s_appLine_tbody_new .clsTr");   //가장마지막에 추가된 tr
 		//삭제대상확인 
 		// console.log("삭제대상 :", lastRow.prop("outerHTML"));
 		
 		if(lastRow.length > 0){
-			$('tr:last-child').remove(); 
+			lastRow.last().remove(); 
 				// console.log("개똥이장군");
 				// console.log("lastRow : ",lastRow);
 				
@@ -1072,80 +1152,141 @@ $(document).ready(function() {
 	$("#s_ho_start").datepicker({
 		timepicker: true,
 		changeMonth: true,
-			changeYear: true,
-			controlType: 'select',
-			timeFormat: 'HH:mm',
-			dateFormat: 'yy-mm-dd',
-			yearRange: '1930:2025',
-            minDate: 0, // 오늘 날짜 이전 선택 불가
-			dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
-			dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
-			monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-			monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-			beforeShowDay: disableAllTheseDays2,
-			onSelect: function(dateText, inst) {
-			
+		changeYear: true,
+		controlType: 'select',
+		timeFormat: 'HH:mm',
+		dateFormat: 'yy-mm-dd',
+		yearRange: '1930:2025',
+		minDate: 0, // 오늘 날짜 이전 선택 불가
+		dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
+		dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+		monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+		monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+		beforeShowDay: disableAllTheseDays2,
+		onSelect: function(dateText, inst) {
 			var date1 = new Date($("#s_ho_end").val()).getTime();
 			var date2 = new Date(dateText).getTime();
+		// 반차일 경우 종료일도 자동으로 동일하게 세팅
+		if ($("input[name='holiCode']:checked").val() === 'B') {
+			$("#s_ho_end").val(dateText); // 종료일에 시작일값 넣기
+		}
 			
-			// 시작 날짜와 끝나는 날짜 비교하여 끝나는 날짜보다 시작하는 날짜가 앞이면 경고창으로 안내
-			if(date1 < date2 == true) {
-				swal({
-					title: "신청 시작 기간을 다시 선택해주세요.",
-					text: "",
-					icon: "error",
-					closeOnClickOutside: false,
-					closeOnEsc: false
-				});
-				$("#s_ho_start").val("");
+		// 시작 날짜와 끝나는 날짜 비교하여 끝나는 날짜보다 시작하는 날짜가 앞이면 경고창으로 안내
+		if(date1 < date2 == true) {
+			swal({
+				title: "신청 시작 기간을 다시 선택해주세요.",
+				text: "",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
+			$("#s_ho_start").val("");
 			}
 			dateCnt();
-			},
-			beforeShow: function() {
-				setTimeout(function(){
-					$('.ui-datepicker').css('z-index', 99999999999999);
-				}, 0);
-			}
+		},
+		beforeShow: function(input, inst) {
+		setTimeout(function() {
+			addDatepickerTitle("시작일자 달력");
+			// 위치 계산
+			var offset = $(input).offset();
+			var height = $(input).outerHeight();
+			//위치조정변수
+			var extraTopOffset = -100; 
+			var extraRightOffset = 500; // 오른쪽으로 20px 이동
+
+			$('#ui-datepicker-div').css({
+				'top': (offset.top + height + extraTopOffset) + 'px',
+				'left': (offset.left + extraRightOffset) + 'px',
+				'z-index': 99999999999999
+			});
+		}, 0);
+	},
+	onChangeMonthYear: function(year, month, inst) {
+		setTimeout(function() {
+			addDatepickerTitle("시작일자 달력");
+		}, 0);
+	}
 	});
 	
 	$("#s_ho_end").datepicker({
 		timepicker: true,
 		changeMonth: true,
-			changeYear: true,
-			controlType: 'select',
-			timeFormat: 'HH:mm',
-			dateFormat: 'yy-mm-dd',
-			yearRange: '1930:2025',
-			minDate: 0, // 오늘 날짜 이전 선택 불가
-			dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
-			dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
-			monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-			monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-			beforeShowDay: disableAllTheseDays2,
-			onSelect: function(dateText, inst) {
-					var date1 = new Date($("#s_ho_start").val()).getTime();
-					var date2 = new Date(dateText).getTime();
+		changeYear: true,
+		controlType: 'select',
+		timeFormat: 'HH:mm',
+		dateFormat: 'yy-mm-dd',
+		yearRange: '1930:2025',
+		minDate: 0, // 오늘 날짜 이전 선택 불가
+		dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
+		dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+		monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+		monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+		beforeShowDay: disableAllTheseDays2,
+		onSelect: function(dateText, inst) {
+				var date1 = new Date($("#s_ho_start").val()).getTime();
+				var date2 = new Date(dateText).getTime();
             
-              	// 시작 날짜와 끝나는 날짜 비교하여 시작하는 날짜보다 끝나는 날짜가 앞이면 경고창으로 안내
-			if(date1 > date2 == true) {
-				swal({
-					title: "신청 종료 기간을 다시 선택해주세요.",
-					text: "",
-					icon: "error",
-					closeOnClickOutside: false,
-					closeOnEsc: false
-				});
-				$("#s_ho_end").val("");
-			}
+		// 반차일 경우 시작일도 자동으로 동일하게 세팅
+		if ($("input[name='holiCode']:checked").val() === 'B') {
+			$("#s_ho_start").val(dateText); // 시작일에 종료일 값 넣기
+		}		
+				
+				
+		// 시작 날짜와 끝나는 날짜 비교하여 시작하는 날짜보다 끝나는 날짜가 앞이면 경고창으로 안내
+		if(date1 > date2 == true) {
+			swal({
+				title: "신청 종료 기간을 다시 선택해주세요.",
+				text: "",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
+			$("#s_ho_end").val("");
+		}
 			dateCnt();
-			},
-			beforeShow: function() {
-				setTimeout(function(){
-					$('.ui-datepicker').css('z-index', 99999999999999);
-				}, 0);
-			}
+	},
+	beforeShow: function(input, inst) {
+		setTimeout(function() {
+		//달력명 표시 
+		addDatepickerTitle("종료일자 달력");
+		// 위치 계산
+		var offset = $(input).offset();
+		var height = $(input).outerHeight();
+		//위치조정변수
+		var extraTopOffset = -145; 
+		var extraRightOffset = 500; // 오른쪽으로 20px 이동
+
+
+		$('#ui-datepicker-div').css({
+			'top': (offset.top + height + extraTopOffset) + 'px',
+			'left': (offset.left + extraRightOffset) + 'px',
+			'z-index': 99999999999999
+		});
+		}, 0);
+	},
+	onChangeMonthYear: function(year, month, inst) {
+		setTimeout(function() {
+			addDatepickerTitle("종료일자 달력");
+		}, 0);
+	}
 	});
 });
+
+//시작일 선택 시, 반차일 경우 종료일도 동일하게 세팅
+$('#s_ho_start').on('change', function () {
+	const selectedStartDate = $(this).val();
+	const isHalf = $('input[name="holiCode"]:checked').val() === 'B';
+
+	if (isHalf && selectedStartDate) {
+		$('#s_ho_end').val(selectedStartDate);
+	}
+});
+function addDatepickerTitle(title) {
+	$('#ui-datepicker-div .datepicker-title').remove();
+	$('#ui-datepicker-div').prepend(
+		'<div class="datepicker-title" style="padding:5px 10px; font-weight:bold; border-bottom:1px solid #ccc;">' + title + '</div>'
+	);
+}
 
 function disableAllTheseDays2(date) {
 		var day = date.getDay();

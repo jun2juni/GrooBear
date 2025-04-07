@@ -179,16 +179,16 @@
 						<div class="tab-pane fade show active" id="contact1-tab-pane"
 							role="tabpanel" aria-labelledby="contact1-tab" tabindex="0">
 										<!-- <p>${myEmpInfo}</p> -->
-							<div class="atrzTabCont" style="margin-top: 0px;">
+							<div class="atrzTabCont" style="margin-top: 0px; overflow-x: auto;">
 								<div class="container mt-2 homeContainer">
-									<div class="row flex-nowrap overflow-auto">
-										<!-- <p>${beDocCnt}</p> -->
-										<!-- <p>${homeBeDoc}</p> -->
-<%-- 										<p>${homeReqDoc}</p> --%>
-<%-- 										<p>${recDocCnt}</p> --%>
-<%-- 										<p>${atrzEmploInfo}</p> --%>
+									<div class="row flex-nowrap">
+										
+										<!-- <p>atrzApprovalList : ${atrzApprovalList}</p> -->
+										<!-- <p>atrzSubmitList : ${atrzSubmitList}</p> -->
+										<!-- <p>atrzCompletedList : ${atrzCompletedList}</p> -->
+										
 										<input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
-										<c:forEach var="atrzVO" items="${atrzVOList}">
+										<c:forEach var="atrzVO" items="${atrzApprovalList}">
 											<div class="col-sm-3">
 												<div class="card" >
 													<div class="card-header" style="height: 36px;">
@@ -221,7 +221,7 @@
 															</c:choose>
 															<!--결재상태코드에 따른 조건 끝-->
 															<!-- <p>${documHolidayVO}</p> -->
-															<a href="/atrz/selectForm/holidayDetail?holiActplnNo=${documHolidayVO.holiActplnNo}" class="col-6 col-md-8">
+															<a href="/atrz/selectForm/holidayDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="col-6 col-md-8">
 																<h5 class="homeFr">${atrzVO.atrzSj}</h5>
 															</a>
 														</div>
@@ -236,7 +236,7 @@
 															<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
 														</div>
 														<div class="col text-center">
-															<a href="#" class="btn btn-default wdBtn">결재하기</a>
+															<a href="/atrz/selectForm/holidayDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="btn btn-default wdBtn">결재하기</a>
 														</div>
 												</div>
 											</div>
@@ -250,25 +250,29 @@
 							<div class="atrzTabCont">
 								<div class="col-lg-12">
 									<div class="card-style mb-30 docList">
-										<h6 class="mb-10">기안진행문서</h6>
+										<div style="display: flex; justify-content: space-between; align-items: center;" class="mb-10">
+											<h6 class="mb-10">기안진행문서</h6>
+											<a href="#" class="text-sm fw-bolder" style="color: #4a6cf7;">
+												더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
+											</a>
+										</div>
 										<div class="table-wrapper table-responsive">
 											<table class="table striped-table">
 												<thead>
+													<!-- <p>${atrzSubmitList}</p> -->
+													<!-- <p>${atrzVOList}</p> -->
 													<tr>
 														<th>
-															<h6 class="fw-bolder">기안일시</h6>
+															<h6 class="fw-bolder" style="text-align: center;">기안일시</h6>
 														</th>
 														<th>
-															<h6 class="fw-bolder">제목</h6>
+															<h6 class="fw-bolder" style="padding-left: 120px;">제목</h6>
 														</th>
 														<th>
-															<h6 class="fw-bolder">기안부서</h6>
+															<h6 class="fw-bolder" style="text-align: center;">기안부서</h6>
 														</th>
 														<th>
-															<h6 class="fw-bolder">기안자</h6>
-														</th>
-														<th>
-															<h6 class="fw-bolder">첨부파일</h6>
+															<h6 class="fw-bolder" style="text-align: center;">기안자</h6>
 														</th>
 														<th>
 															<h6 class="fw-bolder">결재상태</h6>
@@ -276,30 +280,40 @@
 													</tr>
 												</thead>
 												<!-- <p>${atrzVOList}</p> -->
-												<c:forEach var="atrzVO" items="${atrzVOList}">
+												<c:forEach var="atrzVO" items="${atrzSubmitList}">
 													<tbody>
 														<tr>
-															<td style="padding-top: 10px; padding-bottom: 10px;">
-																<p class="text-sm">
+															<td style="padding-top: 10px; padding-bottom: 10px;" >
+																<p class="text-sm" style="text-align: center;">
 																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
 																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
 																	<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
 															</td>
-															<td  style="padding-top: 0px;">
-																<a href="#" class="text-sm fw-bolder listCont">${atrzVO.atrzSj}</a>
-															</td>
-															<td  style="padding-top: 0px;">
-																<p class="fw-bolder">${atrzVO.deptCodeNm}</p>
+															<td style="text-align: left; padding-top: 0px;">
+																<a href="#" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
+																<c:choose>
+																	<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
+																		<span class="material-symbols-outlined" style="margin-right: 5px;">
+																		attach_file
+																		</span>
+																	</c:when>
+																	<c:otherwise>
+																		<!-- 빈 span으로 공간 확보 -->
+																		<span class="material-symbols-outlined" style="margin-right: 5px; visibility: hidden;">
+																		attach_file
+																		</span>
+																	</c:otherwise>
+																</c:choose>
+																${atrzVO.atrzSj}
+																</a>
 															</td>
 															<td style="padding-top: 0px;">
-																<p class="fw-bolder">${atrzVO.drafterEmpnm}</p>
+																<p class="fw-bolder" style="text-align: center;">${atrzVO.deptCodeNm}</p>
 															</td>
-															<td style="padding-top: 0px;">
-																<p class="fw-bolder">
-																	<span class="material-symbols-outlined">
-																		attach_file </span>
-																</p>
+															<td style="padding-top: 0px;" >
+																<p class="fw-bolder" style="text-align: center;">${atrzVO.drafterEmpnm}</p>
 															</td>
+															
 															<td  style="padding-top: 0px;">
 																<h6 class="text-sm">
 																	<p>
@@ -345,91 +359,113 @@
 							<div class="atrzTabCont">
 								<div class="col-lg-12">
 									<div class="card-style mb-30 docList">
+										<div style="display: flex; justify-content: space-between; align-items: center;" class="mb-10">
 										<h6 class="mb-10">완료문서</h6>
-										<div class="table-wrapper table-responsive">
-											<table class="table striped-table">
-												<thead>
-													<tr>
-														<th>
-															<h6 class="fw-bolder">기안일시</h6>
-														</th>
-														<th>
-															<h6 class="fw-bolder">제목</h6>
-														</th>
-														<th>
-															<h6 class="fw-bolder">기안부서</h6>
-														</th>
-														<th>
-															<h6 class="fw-bolder">기안자</h6>
-														</th>
-														<th>
-															<h6 class="fw-bolder">첨부파일</h6>
-														</th>
-														<th>
-															<h6 class="fw-bolder">결재상태</h6>
-														</th>
-													</tr>
-													<!-- end table row-->
-												</thead>
-												<c:forEach var="atrzVO" items="${atrzVOList}">
-													<tbody>
-														<tr>
-															<td style="padding-top: 10px; padding-bottom: 10px;">
-																<p class="text-sm">
-																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
-																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
-																	<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
-															</td>
-															<td  style="padding-top: 0px;">
-																<a href="#" class="text-sm fw-bolder listCont">${atrzVO.atrzSj}</a>
-															</td>
-															<td  style="padding-top: 0px;">
-																<p class="fw-bolder">${atrzVO.deptCodeNm}</p>
-															</td>
-															<td style="padding-top: 0px;">
-																<p class="fw-bolder">${atrzVO.drafterEmpnm}</p>
-															</td>
-															<td style="padding-top: 0px;">
-																<p class="fw-bolder">
-																	<span class="material-symbols-outlined">
-																		attach_file </span>
-																</p>
-															</td>
-															<td  style="padding-top: 0px;">
-																<h6 class="text-sm">
-																	<p>
-																		<c:choose>
-																			<c:when test="${atrzVO.atrzSttusCode == '00' }">
-																				<span
-																					class="status-btn close-btn actBtn col-sm-6 col-md-4"
-																					style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
-																			</c:when>
-																			<c:when test="${atrzVO.atrzSttusCode == '10' }">
-																				<span
-																					class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
-																			</c:when>
-																			<c:when test="${atrzVO.atrzSttusCode == '20' }">
-																				<span
-																					class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
-																			</c:when>
-																			<c:when test="${atrzVO.atrzSttusCode == '30' }">
-																				<span
-																					class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
-																			</c:when>
-																			<c:otherwise>
-																				<span
-																					class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4"
-																					style="background-color: pink; color: #ed268a;">취소</span>
-																			</c:otherwise>
-																		</c:choose>
-																	</p>
-																</h6>
-															</td>
-														</tr>
-													</tbody>
-												</c:forEach>
-											</table>
+										<a href="#" class="text-sm fw-bolder" style="color: #4a6cf7;">
+											더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
+										</a>
 										</div>
+											<div class="table-wrapper table-responsive">
+												<table class="table striped-table">
+													<thead>
+														<!-- <p>${atrzVO}</p> -->
+														<!-- <p>${atrzVOList}</p> -->
+														<tr>
+															<th >
+																<h6 class="fw-bolder" style="text-align: center;">기안일시</h6>
+															</th>
+															<th>
+																<h6 class="fw-bolder" style="text-align: center;">완료일시</h6>
+															</th>
+															<th>
+																<h6 class="fw-bolder" style="padding-left: 120px;">제목</h6>
+															</th>
+															<th>
+																<h6 class="fw-bolder" style="text-align: center;">기안부서</h6>
+															</th>
+															<th>
+																<h6 class="fw-bolder" style="text-align: center;">기안자</h6>
+															</th>
+															<th>
+																<h6 class="fw-bolder">결재상태</h6>
+															</th>
+														</tr>
+													</thead>
+													<c:forEach var="atrzVO" items="${atrzCompletedList}">
+														<tbody>
+															<tr>
+																<td style="padding-top: 10px; padding-bottom: 10px;" >
+																	<p class="text-sm" style="text-align: center;">
+																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																		<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
+																</td>
+																<td style="padding-top: 10px; padding-bottom: 10px;" >
+																	<p class="text-sm" style="text-align: center;">
+																		<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																		<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="HH:mm:ss" var="onlyTime" />
+																		<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
+																</td>
+																<td style="text-align: left; padding-top: 0px;">
+																	<a href="#" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
+																	<c:choose>
+																		<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
+																			<span class="material-symbols-outlined" style="margin-right: 5px;">
+																			attach_file
+																			</span>
+																		</c:when>
+																		<c:otherwise>
+																			<!-- 빈 span으로 공간 확보 -->
+																			<span class="material-symbols-outlined" style="margin-right: 5px; visibility: hidden;">
+																			attach_file
+																			</span>
+																		</c:otherwise>
+																	</c:choose>
+																	${atrzVO.atrzSj}
+																	</a>
+																</td>
+																<td style="padding-top: 0px;">
+																	<p class="fw-bolder" style="text-align: center;">${atrzVO.deptCodeNm}</p>
+																</td>
+																<td style="padding-top: 0px;" >
+																	<p class="fw-bolder" style="text-align: center;">${atrzVO.drafterEmpnm}</p>
+																</td>
+																
+																<td  style="padding-top: 0px;">
+																	<h6 class="text-sm">
+																		<p>
+																			<c:choose>
+																				<c:when test="${atrzVO.atrzSttusCode == '00' }">
+																					<span
+																						class="status-btn close-btn actBtn col-sm-6 col-md-4"
+																						style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
+																				</c:when>
+																				<c:when test="${atrzVO.atrzSttusCode == '10' }">
+																					<span
+																						class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
+																				</c:when>
+																				<c:when test="${atrzVO.atrzSttusCode == '20' }">
+																					<span
+																						class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
+																				</c:when>
+																				<c:when test="${atrzVO.atrzSttusCode == '30' }">
+																					<span
+																						class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																				</c:when>
+																				<c:otherwise>
+																					<span
+																						class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4"
+																						style="background-color: pink; color: #ed268a;">취소</span>
+																				</c:otherwise>
+																			</c:choose>
+																		</p>
+																	</h6>
+																</td>
+															</tr>
+														</tbody>
+													</c:forEach>
+												</table>
+											</div>
 									</div>
 								</div>
 							</div>

@@ -121,7 +121,15 @@ public class AtrzController {
 		int recDocCnt = atrzService.recDocCnt(emplNo);
 		model.addAttribute("recDocCnt", recDocCnt);
 		
-
+		//여기는 내가 결재차례인경우에 해당
+		List<AtrzVO> atrzApprovalList = atrzService.atrzApprovalList(emplNo);
+		model.addAttribute("atrzApprovalList", atrzApprovalList);
+		//가언즁안 문서에 해당 기안일시 최신순으로 10개만 출력
+		List<AtrzVO> atrzSubmitList = atrzService.atrzSubmitList(emplNo);
+		model.addAttribute("atrzSubmitList", atrzSubmitList);
+		//기안완료된 문서에 해당 완료일시 최신순으로 10개만 출력
+		List<AtrzVO> atrzCompletedList = atrzService.atrzCompletedList(emplNo);
+		model.addAttribute("atrzCompletedList", atrzCompletedList);
 
 //		// 사원정보 가져오는것 산나님 EmployeeVO에 추가한것있음 나중에 첫글자 소문자로 변경해야함
 //		List<AtrzVO> atrzEmploInfo = this.atrzService.atrzEmploInfo();
@@ -482,13 +490,11 @@ public class AtrzController {
 	@PostMapping(value = "atrzInsert")
 	public String insertAppLineList(AtrzVO atrzVO,
 			     @RequestPart("atrzLineList")List<AtrzLineVO> atrzLineList, 
-			     @RequestPart("docHoliday") DocumHolidayVO documHolidayVO,
-			     @RequestParam(name = "emplNo", required = false) String emplNo){
+			     @RequestPart("docHoliday") DocumHolidayVO documHolidayVO){
 		
 		log.info("atrz {}",atrzVO);
 		log.info("atrzLineList {}",atrzLineList);
 		log.info("documHolidayVO {}",documHolidayVO);
-		log.info("emplNo {}",emplNo);
 		
 		//여기서 담기지 않았음.. 사원정보가 오지 않음
 		

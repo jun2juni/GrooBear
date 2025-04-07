@@ -28,25 +28,24 @@
 						</div>
 						<!-- 좌측 결재선사원선택부분 끝 -->
 						<!-- 결재선 추가 삭제 버튼 공간 시작-->
-						<div class="col-sm-1">
-							<div id="atrzLineAddRemBtn"
+						<div class="col-sm-1 d-flex flex-column justify-content-between align-items-start">
+							<div id="atrzLineAddRemBtn" class="d-flex flex-column justify-content-between align-items-center"
 								style="height: 500px; padding-top: 180px;">
-								<button id="add_appLine" type="button" class="btn btn-secondary"
-									style="margin-bottom: 70px;">
+								<button id="add_appLine" type="button" class="btn btn-secondary" style="margin-top: -80px;">
 									<i class="lni lni-arrow-right"></i>
 								</button>
-								<button id="remo_appLine" type="button" class="btn btn-secondary">
+								<button id="remo_appLine" type="button" class="btn btn-secondary" style="margin-top: -100px;">
 									<i class="lni lni-arrow-left"></i>
 								</button>
-								<span> <i class="bi bi-arrow-left-square-fill"
-									style="background-color: pink"></i>
-								</span>
+								<button id="add_attLine" type="button" class="btn btn-secondary" style="margin-bottom: 120px;">
+									<i class="lni lni-arrow-right"></i>
+								</button>
+								
 							</div>
 						</div>
 						<!-- 결재선 추가 삭제 버튼 공간 끝-->
 						<!-- 결재선리스트 -->
-						<div class="col-sm-7"
-							style="float: left; text-align: center; margin-left: 20px;">
+						<div class="col-sm-7" style="float: left; text-align: center; margin-left: 20px;">
 							<div style="font-size: 1.2em; font-weight: bold;">결재선
 								리스트</div>
 							<div
@@ -58,7 +57,7 @@
 										<th scope="col">이름</th>
 										<th scope="col">부서</th>
 										<th scope="col">직책</th>
-										<th scope="col">권한</th>
+										<th scope="col" hidden>권한</th>
 										<th scope="col">전결여부</th>
 									</tr>
 								</thead>
@@ -69,6 +68,20 @@
 
 								</tbody>
 							</table>
+							<div style="margin-top: 50px;">	
+								<div style="font-size: 1.2em;font-weight: bold;">참조자 리스트</div>
+									<div style="border-bottom: 1px solid lightgray; margin: 20px 0;"></div>
+									<table class="table" style="text-align: center; width: 400px;">
+										<thead>
+											<tr>
+											<th scope="col">NO</th>
+											<th scope="col">참조자명</th>
+											</tr>
+										</thead>
+									<tbody class="s_appDept_tbody_cl" style="text-align: center;width: 400px;">
+									</tbody>
+									</table>
+							</div>
 						</div>
 					</div>
 				</div>
