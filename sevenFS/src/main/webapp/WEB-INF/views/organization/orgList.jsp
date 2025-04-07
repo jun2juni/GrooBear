@@ -18,7 +18,7 @@
     </div>
     
   	<div class="d-flex justify-content-between">
-       <button id="allBtn" class="main-btn dark-btn rounded-full btn-hover btn-xs" onclick="openTree();">전체</button>
+       <button type="button" id="allBtn" class="main-btn dark-btn rounded-full btn-hover btn-xs" onclick="openTree();">전체</button>    <!-- 성실 수정함 버튼 타입 버튼 추가 -->
 	    <div class="content text-center">
 	    	<c:if test="${fn:contains(pageContext.request.requestURL, 'orglistAdmin')}" >
 	            <%-- <sec:authentication property="principal" /> --%>

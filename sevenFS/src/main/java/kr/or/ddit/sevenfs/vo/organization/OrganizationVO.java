@@ -14,4 +14,5 @@ public class OrganizationVO {
 	
 	private List<kr.or.ddit.sevenfs.vo.CommonCodeVO> deptList;	// 부서명
 	private List<EmployeeVO> empList;	// 직급명
+	private List<CommonCodeVO> posList;  // 포지션 추가함 -채성실
 }

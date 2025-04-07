@@ -60,6 +60,7 @@ public class OrganizationController {
 	@GetMapping("/organization")
 	public OrganizationVO organization() {
 		OrganizationVO organization = organizationService.organization();
+		organization.setPosList(organizationService.posList()); // 포지션 추가함 -채성실
 		log.info("orgData : " + organization);
 		
 		return organization;

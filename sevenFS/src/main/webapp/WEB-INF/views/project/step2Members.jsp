@@ -58,9 +58,11 @@
 						<div class="table-responsive">
 							<table class="table table-bordered" id="selectedMembersTable">
 								<thead>
-									<tr>
+									<tr align="center">
 										<th>역할</th>
 										<th>이름</th>
+										<th>부서명</th>
+										<th>직급</th>
 										<th>연락처</th>
 										<th>이메일</th>
 										<th>삭제</th>
