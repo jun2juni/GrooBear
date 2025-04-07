@@ -32,7 +32,7 @@
     </select>
 
     <insert id="insertNotification" parameterType="notificationVO">
-        INSERT ALL
+        INSERT ALL /* 알림 추가 */
         <foreach collection="employeeVOList" item="emplVO">
             INTO NOTIFICATION(
                 NTCN_SN
@@ -64,10 +64,14 @@
           AND NTCN_SN = #{ntcnSn}
     </delete>
 
-    <update id="updateNotificationAllRead">
+    <update id="updateNotificationRead">
         UPDATE NOTIFICATION
         SET NTCN_READ_YN = 'Y'
         WHERE EMPL_NO = #{emplNo}
+        <if test="ntcnSn != null and ntcnSn != ''">
+            AND NTCN_SN = #{ntcnSn}
+        </if>
+
     </update>
 </mapper>
 

@@ -16,7 +16,7 @@ public interface NotificationService {
     public int deleteNotification(NotificationVO notificationVO);
 
     // 알림 읽음 처리
-    public int updateNotificationAllRead(String emplNo);
+    public int updateNotificationRead(String emplNo, Integer ntcnSn);
 
     // 읽지 않은 알림 가져오기
     public List<NotificationVO> getUnreadNotifications(EmployeeVO employeeVO);

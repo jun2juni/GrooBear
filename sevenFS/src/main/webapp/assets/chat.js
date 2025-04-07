@@ -29,6 +29,7 @@ class Alert {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+  let infoAlert = new Alert(document.getElementById('infoSuccess'));
   // 내 계정 알림 구독
   connectWebSocket({
     roomPath: "alert/room",
@@ -37,32 +38,7 @@ document.addEventListener("DOMContentLoaded", function() {
       console.log(message, "alert" + message);
 
       if (message.type === TALK) {
-        for (const dom of document.querySelectorAll(".chatRoom")) {
-          // 내가 보고 있는 채팅방이 아닌 경우
-          if (!dom.classList.contains("bg-body-secondary") && dom.dataset.chttRoomNo == message.chttRoomNo) {
-            let badgeDom = dom.querySelector(".read-badge");
-            let chatLastMsgDom = dom.querySelector(".chat-last-msg");
-            let chatCreateDateDom = dom.querySelector(".chat-create-date");
-
-            badgeDom.classList.remove("d-none");
-            // 알림 카운트
-            badgeDom.innerHTML = Number(badgeDom.innerHTML) + 1;
-            // 채팅 내용
-            chatLastMsgDom.innerHTML = message?.mssageCn ?? "내용 없음";
-            // 채팅 받은 시간
-            chatCreateDateDom.innerHTML = formatDate(message?.createDate ?? new Date(), "HH:mm");
-
-
-            infoAlert.setMessage({
-              title: "[메시지 알림]",
-              content: message.messageCn,
-              sender: message.empName
-            });
-            // 내가 보낸 메세지는 안받기
-            infoAlert.show();
-            break; // 루프 중단
-          }
-        }
+       chatAlert(message, infoAlert);
       }
 
       if (message.type === NOTIFICATION) {
@@ -72,6 +48,8 @@ document.addEventListener("DOMContentLoaded", function() {
           content: message.ntcnCn
         })
         infoAlert.show();
+
+        document.querySelector("#notificationList").insertAdjacentHTML("afterbegin", buildNotification(message));
       }
     }
   });
@@ -387,9 +365,180 @@ function formatDate(date, format = "yyyy-MM-dd HH:mm") {
     .replace("mm", minute);
 }
 
+function chatAlert(message, infoAlert) {
+  let bFocus = true;
+  // 채팅 화면에 들어와 있는 경우
+  for (const dom of document.querySelectorAll(".chatRoom")) {
+    bFocus = false;
+    // 내가 보고 있는 채팅방이 아닌 경우
+    if (!dom.classList.contains("bg-body-secondary") && dom.dataset.chttRoomNo == message.chttRoomNo) {
+      let badgeDom = dom.querySelector(".read-badge");
+      let chatLastMsgDom = dom.querySelector(".chat-last-msg");
+      let chatCreateDateDom = dom.querySelector(".chat-create-date");
 
+      badgeDom.classList.remove("d-none");
+      badgeDom.innerHTML = Number(badgeDom.innerHTML) + 1; // 알림 카운트
+      chatLastMsgDom.innerHTML = message?.mssageCn ?? "내용 없음"; // 채팅 내용
+      chatCreateDateDom.innerHTML = formatDate(message?.createDate ?? new Date(), "HH:mm"); // 채팅 받은 시간
+      break; // 루프 중단
+    }
+  }
 
+  // 채팅방 화면을 안보고 있는 경우만 알림 활성 화
+  if (bFocus) {
+    document.querySelector("#messageNoti span").classList.remove("d-none");
+    document.querySelector("#chatNotification .alert").classList.add("d-none");
+    infoAlert.setMessage({
+      title: `${message.emplNm ?? "마동석"} 님이 보냈습니다.`,
+      content: message.mssageCn
+    });
+    // 내가 보낸 메세지는 안받기
+    infoAlert.show();
 
+    let alertChatNoList = []
+    document.querySelectorAll("#chatNotification li").forEach((item) => {
+      alertChatNoList.push(item.dataset.chatRoomNo);
+    })
+
+    if (alertChatNoList.includes(message.chttRoomNo + "")) {
+      // 이미 있는 채팅방인 경우는 내용만 수정
+      let findDom = document.querySelectorAll("#chatNotification li")[alertChatNoList.indexOf(message.chttRoomNo + "")];
+
+      findDom.querySelector(".content").innerHTML = `
+                  <div class="content">
+                    <h6>${message.emplNm}</h6>
+                    <p>${message.mssageCn}</p>
+                    <span>${formatDate(message.mssageCreatDt)}</span>
+                  </div>
+            `;
+    } else {
+      document.querySelector("#chatNotification").innerHTML += `
+          <li data-chat-room-no="${message.chttRoomNo}">
+            <a href="/chat/list?chatRoomNo=${message.chttRoomNo}" target="_blank">
+              <div class="image">
+                <img class="rounded-circle" src="${message.proflPhotoUrl}" alt="채팅방 메인 이미지" onerror="this.src='/assets/images/image-error.png'" />
+              </div>
+              <div class="content">
+                <h6>${message.emplNm}</h6>
+                <p>${message.mssageCn}</p>
+                <span>${formatDate(message.mssageCreatDt)}</span>
+              </div>
+            </a>
+          </li>
+        `
+    }
+
+  }
+}
+
+function readNotification(ntcnSn) {
+  console.log(ntcnSn, emp.emplNo)
+  fetch("/notification/readNotification",  {
+    method: "post",
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        "ntcnSn": ntcnSn
+    })
+  })
+}
+
+function getNotification() {
+  fetch("/getNotification")
+    .then(res => res.json())
+    .then((result) => {
+      console.log(result.chatList);
+      console.log(result.notification);
+
+      // 읽지 않은 채팅이 있는 경우
+      if (result.chatList.length > 0) {
+        document.querySelector("#messageNoti span").classList.remove("d-none");
+        document.querySelector("#chatNotification .alert").classList.add("d-none");
+
+        for(const chat of result.chatList) {
+
+          buildChatNotification(chat)
+
+        }
+      }
+
+      // 알림이 있는 경우
+      if (result.notification.length > 0) {
+        for(const notification of result.notification) {
+          document.querySelector("#notificationList").insertAdjacentHTML("beforeend", buildNotification(notification));
+        }
+      }
+    })
+}
+
+// 알림 정보 호출 하기
+getNotification();
+
+// 헤드에 알림 빌드
+function buildNotification(message) {
+  document.querySelector("#notificationList .alert").classList.add("d-none");
+  document.querySelector("#notification span").classList.remove("d-none");
+
+  // 헤더 알림에 추가 하기
+  let html = `
+      <li onclick="readNotification(${message.ntcnSn})">
+        <a href="${message.originPath}">
+          <div class="image">
+              ${message.notificationIcon}
+          </div>
+          <div class="content">
+            <h6>
+                ${message.ntcnSj}
+            </h6>
+            <p>
+                ${message.ntcnCn}
+            </p>
+            <span>${formatDate(new Date())}</span>
+          </div>
+        </a>
+      </li>
+    `;
+
+  return html;
+}
+
+// 헤드에 메세지 빌드
+function buildChatNotification(message) {
+  // 헤더에 채팅 추가
+  let alertChatNoList = []
+  document.querySelectorAll("#chatNotification li").forEach((item) => {
+    alertChatNoList.push(item.dataset.chatRoomNo);
+  })
+
+  if (alertChatNoList.includes(message.chttRoomNo + "")) {
+    // 이미 있는 채팅방인 경우는 내용만 수정
+    let findDom = document.querySelectorAll("#chatNotification li")[alertChatNoList.indexOf(message.chttRoomNo + "")];
+
+    findDom.querySelector(".content").innerHTML = `
+                  <div class="content">
+                    <h6>${message.emplNm}</h6>
+                    <p>${message.lastMsg}</p>
+                    <span>${formatDate(message.chttCreatDt)}</span>
+                  </div>
+            `;
+  } else {
+    document.querySelector("#chatNotification").innerHTML += `
+          <li data-chat-room-no="${message.chttRoomNo}">
+            <a href="/chat/list?chatRoomNo=${message.chttRoomNo}" target="_blank">
+              <div class="image">
+                <img class="rounded-circle" src="${message.proflPhotoUrl}" alt="채팅방 메인 이미지" onerror="this.src='/assets/images/image-error.png'" />
+              </div>
+              <div class="content">
+                <h6>${message.emplNm}</h6>
+                <p>${message.lastMsg}</p>
+                <span>${formatDate(message.chttCreatDt)}</span>
+              </div>
+            </a>
+          </li>
+        `
+  }
+}
 
 
 {

@@ -123,7 +123,7 @@
 								  </p>
 								</div>
 							  </div>
-							  <div class="pt-1">
+							  <div>
 								  <%-- 마지막 보낸 메세지 시간 --%>
 								<p class="chat-create-date small text-muted mb-1">
 								  <c:choose>
@@ -394,7 +394,7 @@
 						</p>
 					  </div>
 					</div>
-					<div class="pt-1">
+					<div>
 					  <%-- 마지막 보낸 메세지 시간 --%>
 					  <p class="chat-create-date small text-muted mb-1">
 						\${formatDate(new Date(), "HH:mm")}

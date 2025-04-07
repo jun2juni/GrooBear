@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -361,6 +362,15 @@ public class OrganizationController {
 		
 		return "redirect:/orglistAdmin";
 	}
-	
+
+	// 사용자 알림 정보 가져오기 - 허성진
+	@ResponseBody
+	@GetMapping("/getNotification")
+	public Map<String, Object> getNotification(@AuthenticationPrincipal CustomUser customUser) {
+		EmployeeVO empVO = customUser.getEmpVO();
+		Map<String, Object> empNotification = this.organizationService.getEmpNotification(empVO);
+
+		return empNotification;
+	}
 	
 }

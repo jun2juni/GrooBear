@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.service.organization;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
@@ -61,4 +62,7 @@ public interface OrganizationService {
 
 		//해당 직원의 상세정보 목록을 select
 		public List<EmployeeVO> emplDetailList(List<String> list);
+
+		// 사용자 알림정보 불러오기
+		public Map<String, Object> getEmpNotification(EmployeeVO emplDetail);
 }

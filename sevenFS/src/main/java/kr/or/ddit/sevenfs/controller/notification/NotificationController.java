@@ -28,7 +28,7 @@ public class NotificationController {
     public String list(@AuthenticationPrincipal CustomUser user,
                        Model model,
                        @RequestParam(defaultValue = "1") int currentPage
-                       ) {
+    ) {
         EmployeeVO empVO = user.getEmpVO();
 
         List<NotificationVO> notificationVOList = this.notificationService.notificationList(currentPage, empVO);
@@ -38,8 +38,6 @@ public class NotificationController {
 
         model.addAttribute("notificationVOList", notificationVOList);
         model.addAttribute("articlePage", articlePage);
-
-
         return "notification/list";
     }
 
@@ -57,14 +55,24 @@ public class NotificationController {
     }
 
     @ResponseBody
+    @PostMapping("/readNotification")
+    public String readNotification(@AuthenticationPrincipal CustomUser user,
+                                                int ntcnSn) {
+        EmployeeVO empVO = user.getEmpVO();
+        int i = notificationService.updateNotificationRead(empVO.getEmplNo(), ntcnSn);
+
+        return i > 0 ? "success" : "fail";
+    }
+
+    @ResponseBody
     @GetMapping("/insertTest")
     public String insertTest() {
 
         NotificationVO notificationVO = new NotificationVO();
-        notificationVO.setNtcnSj("[게시판 알림] 알림 제목입니다~~~~~~");
+        notificationVO.setNtcnSj("[게시판 알림] 알림 제목입니다22222");
         notificationVO.setNtcnCn("[게시판 알림] 이 알림은 미국에서 시작해서 1997에서 시작한다 7FS 화이팅");
         notificationVO.setOriginPath("/chat/list");
-        notificationVO.setSkillCode("01");
+        notificationVO.setSkillCode("02");
 
         List<EmployeeVO> employeeVOList = new ArrayList<>();
 //        String[] emplNo = {"20250000", "20250001", "20250002", "20250003"};

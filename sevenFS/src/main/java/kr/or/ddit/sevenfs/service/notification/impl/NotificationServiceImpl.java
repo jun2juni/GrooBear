@@ -23,12 +23,11 @@ public class NotificationServiceImpl implements NotificationService {
     public List<NotificationVO> notificationList(int currentPage, EmployeeVO employeeVO) {
         List<NotificationVO> notificationVOList = notificationMapper.notificationList(currentPage, employeeVO);
         // 목록 온 경우 읽음 처리
-        updateNotificationAllRead(employeeVO.getEmplNo());
+        updateNotificationRead(employeeVO.getEmplNo(), null);
         return notificationVOList;
     }
 
     /**
-     *
      * @param notificationVO - 알림 내용
      * @param employeeVOList - 알림 보내야하는 사원 목록
      * @return
@@ -51,8 +50,10 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public int updateNotificationAllRead(String emplNo) {
-        return notificationMapper.updateNotificationAllRead(emplNo);
+    public int updateNotificationRead(String emplNo, Integer ntcnSn) {
+        log.debug("emplNo = {}", emplNo);
+        log.debug("ntcnSn = {}", ntcnSn);
+        return notificationMapper.updateNotificationRead(emplNo, ntcnSn);
     }
 
 

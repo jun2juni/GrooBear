@@ -109,18 +109,25 @@ public class OrganizationServiceImpl implements OrganizationService {
 			emplDetail.setClsfCodeNm("사원");  // 사원 부서 이름 임시로 추가
 		}
 
+		return emplDetail;
+	}
+
+	public Map<String, Object> getEmpNotification(EmployeeVO emplDetail) {
 		// 읽지 않은 알림
 		List<NotificationVO> unreadNotifications = notificationService.getUnreadNotifications(emplDetail);
 		emplDetail.setNotificationVOList(unreadNotifications);
 
 		// 읽지 않은 채팅
 		Map<String, Object> params = new HashMap<>();
-		params.put("emplNo", emplNo);
+		params.put("emplNo", emplDetail.getEmplNo());
 		params.put("bUnRead", true);
 		List<ChatRoomVO> chatRoomVOList = chatService.chatList(params);
 		emplDetail.setChatRoomVOList(chatRoomVOList);
 
-		return emplDetail;
+		return  Map.of(
+			"notification", unreadNotifications,
+			"chatList", chatRoomVOList
+		);
 	}
 	
 	// 사원 상세부서
