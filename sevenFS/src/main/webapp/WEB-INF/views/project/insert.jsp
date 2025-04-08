@@ -21,15 +21,17 @@
 			<div class="container-fluid">
 				<h2 class="mb-4">프로젝트 생성</h2>
 
-				<form id="projectForm" action="/project/insert" method="post"
-					enctype="multipart/form-data">
+				<form id="projectForm" action="/project/insert" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="taskListJson" id="taskListJson" />
 					<div class="card">
 						<div class="card-body">
 							<ul class="nav nav-tabs" id="formTabs">
-								<li class="nav-item"><a class="nav-link active"
-									data-step="1" href="#">기본정보</a></li>
-								<li class="nav-item"><a class="nav-link" data-step="2"
-									href="#">인원등록</a></li>
+								<li class="nav-item">
+									<a class="nav-link active" data-step="1" href="#">기본정보</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" data-step="2" href="#">인원등록</a>
+								</li>
 								<li class="nav-item"><a class="nav-link" data-step="3"
 									href="#">업무관리</a></li>
 								<li class="nav-item"><a class="nav-link" data-step="4"
@@ -47,7 +49,7 @@
 								</div>
 								<div class="tab-pane" id="step3">
 									<c:import url="step3Tasks.jsp" />
-									<input type="hidden" name="taskListJson" id="taskListJson" />
+									 
 								</div>
 								<div class="tab-pane" id="step4">
 									<c:import url="step4Details.jsp" />
@@ -57,13 +59,26 @@
 								</div>
 							</div>
 
-							<div class="mt-4 d-flex justify-content-between">
-								<button type="button" id="prevBtn" class="btn btn-secondary"
-									disabled>이전</button>
-								<button type="button" id="nextBtn" class="btn btn-primary">다음</button>
-								<button type="submit" id="submitBtn"
-									class="btn btn-success d-none">프로젝트 생성</button>
-							</div>
+
+							
+<div class="row g-2 mt-4">
+  <div class="col-6">
+    <button type="button" id="prevBtn" class="btn btn-secondary w-100 py-3 fw-bold" disabled>이전</button>
+  </div>
+  <div class="col-6">
+    <button type="button" id="nextBtn" class="btn btn-primary w-100 py-3 fw-bold">다음</button>
+  <div class="col-12">
+    <button type="submit" id="submitBtn" class="btn btn-success w-100 py-3 fw-bold d-none">
+      <i class="fas fa-check me-2"></i> 프로젝트 생성
+    </button>
+  </div>
+</div>
+				
+						
+									
+							
+							
+							
 						</div>
 					</div>
 				</form>
@@ -340,7 +355,7 @@ function createTaskListItem(task, index, isSubTask) {
 	      <div>
 	        <div class="d-flex align-items-center">
 	          \${taskPrefix}<strong>\${task.taskNm}</strong>
-	          \${isSubTask ? '<span class="badge bg-light text-dark ms-2">하위업무</span>' : ''}
+
 	        </div>
 	        <div class="mt-1">
 	          <span class="badge \${badgeClass} me-1">\${task.chargerEmpNm}</span>
@@ -349,7 +364,7 @@ function createTaskListItem(task, index, isSubTask) {
 	            \${task.taskGrad ? ' 등급: ' + task.taskGrad : ''}
 	          </span>
 	        </div>
-	        \${task.taskCn ? '<div class="text-muted small mt-1">' + task.taskCn + '</div>' : ''}
+	       
 	      </div>
 	      <div>
 	        \${isSubTask ? 
@@ -415,27 +430,42 @@ function resetTaskForm() {
     if (element) element.value = '';
   });
   
-  const selects = ['taskPriort', 'taskGrad'];
-  selects.forEach(id => {
-    const element = document.getElementById(id);
-    if (element) element.selectedIndex = 0;
+  // select 요소 초기화
+  ['taskPriort', 'taskGrad'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (sel) sel.selectedIndex = 0;
   });
-  
-  // 기존 코드에서 사용하던 변수가 있다면 초기화
-  if (typeof selectedParentTaskId !== 'undefined') {
-    selectedParentTaskId = null;
-  }
+
+  selectedParentTaskId = null;
 }
 
 
 
 //======================= 하위 업무 준비 =======================
 function prepareSubTask(index) {
+  // 404 오류 방지를 위해 AJAX 요청 제거
+  
+  // 선택한 업무 정보 가져오기
   const task = taskList[index];
+  if (!task) return;
+  
+  // 상위 업무명 필드에 선택한 업무명 설정
   const parentTaskInput = document.getElementById('parentTaskNm');
   if (parentTaskInput) {
     parentTaskInput.value = task.taskNm;
-    // 업무명은 비워두지 않고 그대로 유지 
+  }
+  
+  // 업무명 필드 초기화 및 포커스
+  const taskNmInput = document.getElementById('taskNm');
+  if (taskNmInput) {
+    taskNmInput.value = '';
+    taskNmInput.focus();
+  }
+  
+  // 스크롤을 폼 영역으로 이동
+  const formCard = document.querySelector('.form-step .card');
+  if (formCard) {
+    formCard.scrollIntoView({ behavior: 'smooth' });
   }
 }
 
@@ -489,79 +519,85 @@ function loadMemberButtons() {
     observers: '참조자'
   };
   
+  let hasMembers = false; // 전체 멤버 존재 여부 체크
+
   // 역할별 섹션 생성
   for (const role in selectedMembers) {
     const members = selectedMembers[role];
-    
-    if (members.length > 0) {
-      // 역할별 그룹 헤더 생성
-      const groupHeader = document.createElement('div');
-      groupHeader.className = 'w-100 mb-2 mt-2';
-      groupHeader.innerHTML = `
-        <span class="badge \${roleColors[role]} py-1 px-2">
-          <i class="\${roleIcons[role]} me-1"></i> \${roleNames[role]}
-        </span>
-      `;
-      container.appendChild(groupHeader);
-      
-      // 역할별 버튼 그룹 생성
-      const buttonGroup = document.createElement('div');
-      buttonGroup.className = 'd-flex flex-wrap gap-1 mb-3';
-      
-      // 각 멤버별 버튼 생성
-      members.forEach(member => {
-        if (!member || typeof member !== 'object') {
-          console.warn("잘못된 멤버 데이터:", member);
-          return;
-        }
-        
-        const displayName = member.name || '이름 없음';
-        
-        // 새로운 카드 스타일 버튼
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `btn btn-outline-${roleColors[role].replace('btn-', '')} rounded-3 text-start shadow-sm m-1`;
-        btn.style.minWidth = '120px';
-        btn.style.fontSize = '0.85rem';
-        btn.style.borderWidth = '1px';
-        
-        btn.innerHTML = `
-          <i class="\${roleIcons[role]} me-1"></i> \${displayName}
-          <div class="text-muted small">\${member.position || ''}</div>
-        `;
-        
-        // 버튼 클릭 시 담당자로 설정
-        btn.addEventListener('click', () => {
-          const chargerInput = document.getElementById('chargerEmpNm');
-          const chargerIdInput = document.getElementById('chargerEmpno');
-          
-          if (chargerInput) chargerInput.value = displayName;
-          if (chargerIdInput) chargerIdInput.value = member.id || '';
-          
-          // 선택된 버튼 하이라이트
-          document.querySelectorAll('#memberSelectBtns button').forEach(b => {
-            b.classList.remove('active');
-            b.style.borderWidth = '1px';
-          });
-          btn.classList.add('active');
-          btn.style.borderWidth = '2px';
-        });
-        
-        buttonGroup.appendChild(btn);
-      });
-      
-      container.appendChild(buttonGroup);
-    }
-  }
 
+    if (members.length > 0) {
+    	hasMembers = true;
+    	  // 역할별 구분선 + 그룹 헤더
+    	  const groupWrapper = document.createElement('div');
+    	  groupWrapper.className = 'pt-3 mt-3 border-top border-secondary-subtle';
+
+    	  // 역할 헤더
+    	  const groupHeader = document.createElement('div');
+    	  groupHeader.className = 'w-100 mb-2';
+    	  groupHeader.innerHTML = `
+    	    <span class="badge \${roleColors[role]} py-1 px-2">
+    	      <i class="\${roleIcons[role]} me-1"></i> \${roleNames[role]}
+    	    </span>
+    	  `;
+    	  groupWrapper.appendChild(groupHeader);
+
+    	  // 버튼 그룹
+    	  const buttonGroup = document.createElement('div');
+    	  buttonGroup.className = 'd-flex flex-wrap gap-2';
+
+    	  members.forEach(member => {
+    	    if (!member || typeof member !== 'object') {
+    	      console.warn("잘못된 멤버 데이터:", member);
+    	      return;
+    	    }
+
+    	    const displayName = member.name || '이름 없음';
+
+    	    const btn = document.createElement('button');
+    	    btn.type = 'button';
+    	    btn.className = `btn btn-outline-\${roleColors[role].replace('btn-', '')} rounded-3 text-start shadow-sm`;
+    	    btn.style.minWidth = '120px';
+    	    btn.style.fontSize = '0.85rem';
+    	    btn.style.borderWidth = '1px';
+
+    	    btn.innerHTML = `
+    	      <i class="\${roleIcons[role]} me-1"></i> \${displayName}
+    	      <div class="text-muted small">\${member.position || ''}</div>
+    	    `;
+
+    	    btn.addEventListener('click', () => {
+    	      const chargerInput = document.getElementById('chargerEmpNm');
+    	      const chargerIdInput = document.getElementById('chargerEmpno');
+
+    	      if (chargerInput) chargerInput.value = displayName;
+    	      if (chargerIdInput) chargerIdInput.value = member.id || '';
+
+    	      document.querySelectorAll('#memberSelectBtns button').forEach(b => {
+    	        b.classList.remove('active');
+    	        b.style.borderWidth = '1px';
+    	      });
+    	      btn.classList.add('active');
+    	      btn.style.borderWidth = '2px';
+    	    });
+
+    	    buttonGroup.appendChild(btn);
+    	  });
+
+    	  groupWrapper.appendChild(buttonGroup);
+    	  container.appendChild(groupWrapper);
+    	}
+  }
+  
   // 인원이 없을 경우 안내 메시지 추가
-  if (container.children.length === 0) {
+  if (!hasMembers) {
     const emptyMsg = document.createElement('div');
     emptyMsg.className = 'alert alert-info mt-2 small';
     emptyMsg.innerHTML = '<i class="fas fa-info-circle me-2"></i>인원 등록 탭에서 멤버를 추가하세요.';
     container.appendChild(emptyMsg);
   }
 }
+
+
 
 // 파일 이름만 리스트에 보여주는 곳
 document.addEventListener("DOMContentLoaded", () => {
@@ -604,7 +640,7 @@ function loadOrgTree() {
 
   fetch("/organization")
     .then(resp => {
-      if (!resp.ok) throw new Error(`조직도 데이터 로딩 실패: ${resp.status} ${resp.statusText}`);
+      if (!resp.ok) throw new Error(`조직도 데이터 로딩 실패: \${resp.status} ${resp.statusText}`);
       return resp.json();
     })
     .then(res => {
@@ -770,6 +806,9 @@ function loadOrgTree() {
           //직원 목록에서 삭제하는 기능
           row.querySelector(".remove-member").addEventListener("click", function () {
             row.remove();
+            
+            const role = row.dataset.role; // <-- 삭제된 대상의 실제 역할을 여기서 가져옴
+            
             selectedMembers[currentTarget] = selectedMembers[currentTarget].filter(p => p.id !== emp.id);
 
             const targetInput = document.getElementById(currentTarget);
@@ -795,7 +834,8 @@ function loadOrgTree() {
 
             loadMemberButtons();
           });
-
+          http://searchalgorithm.co.kr/ad/tab_open.php?app=501&domain=coupang.com&type=1&aid=8769&browser=whale&guid=2cdc821b-3863-47b8-90ce-c3422d00edf3&ver=20240101
+        		  
           selectedMembers[currentTarget].push(emp);
 
           const targetInput = document.getElementById(currentTarget);
@@ -817,84 +857,189 @@ function loadOrgTree() {
     });
 }
 
+// 계층 구조 정렬을 위한 함수(최종확인에서 업무 목록을 계층형으로 보여주기 위함)
+function getTaskHierarchySortedList(taskList) {
+  const result = [];
+
+  const parentTasks = taskList.filter(t => !t.parentTaskNm);
+  parentTasks.forEach(parent => {
+	  result.push(parent);
+	  
+  const children = taskList.filter(t => t.parentTaskNm === parent.taskNm);
+  	result.push(...children);
+  });
+  return result;
+  }
+
+
+//===============세부 정보========================
+
+	// 금액입력 시 자동 천단위 콤마 추가
+	document.getElementById("amountInput").addEventListener("input", function(){
+		  //숫자만 입력하도록 필터링 
+		  let rawValue = this.value.replace(/[^0-9]/g, "");
+		  
+		  // amountInput에는 숫자만 유지
+		  this.value = rawValue;
+		  
+		  // 천 단위 콤마 추가한 값 표시
+		  document.getElementById("amountDisplay").textContent = 
+			  rawValue ? Number(rawValue).toLocaleString('ko-KR') + "원": "0 원";
+	});
+	
+// 주소 API 
+	document.getElementById('restaurantAdd1').addEventListener('blur', updateFullAddress);
+	document.getElementById('restaurantAdd2').addEventListener('blur', updateFullAddress);
+	
+	function updateFullAddress() {
+	  const main = document.getElementById('restaurantAdd1').value.trim();
+	  const detail = document.getElementById('restaurantAdd2').value.trim();
+	  const full = [main, detail].filter(Boolean).join(' ');
+	  document.getElementById('fullAddress').value = full;
+	}
+
+
+
 //======================= 프로젝트 요약 갱신 =======================
 function updateConfirmation() {
-const confirmFields = [
-  { id: 'confirmPrjctNm', selector: '[name="prjctNm"]', defaultValue: '미입력' },
-  { id: 'confirmCtgry', selector: '[name="ctgryNo"] option:checked', property: 'textContent', defaultValue: '미선택' },
-  { id: 'confirmPrjctCn', selector: '[name="prjctCn"]', defaultValue: '미입력' },
-  { id: 'confirmPrjctSttus', selector: '[name="prjctSttus"] option:checked', property: 'textContent', defaultValue: '미선택' },
-  { id: 'confirmPrjctGrad', selector: '[name="prjctGrad"] option:checked', property: 'textContent', defaultValue: '미선택' },
-  { id: 'confirmAmount', selector: '[name="prjctRcvordAmount"]', defaultValue: '0', formatter: value => `${value} 원` },
-  { id: 'confirmAdres', selector: '#fullAddress', defaultValue: '미입력' },
-  { id: 'confirmUrl', selector: '[name="prjctUrl"]', defaultValue: '미입력' }
-];
+  // 1. 기본 정보 설정
+  document.getElementById('confirmPrjctNm').textContent = document.querySelector('[name="prjctNm"]').value || '미입력';
+  document.getElementById('confirmCtgry').textContent = document.querySelector('[name="ctgryNo"] option:checked')?.textContent || '미선택';
+  document.getElementById('confirmPrjctCn').textContent = document.querySelector('[name="prjctCn"]').value || '미입력';
+  
+  // 1-1. 기간 정보 수정
+  const beginDate = document.querySelector('[name="prjctBeginDate"]').value || '미정';
+  const endDate = document.querySelector('[name="prjctEndDate"]').value || '미정';
+  document.getElementById('confirmPeriod').textContent = `\${beginDate} ~ \${endDate}`;
+  
+  document.getElementById('confirmPrjctSttus').textContent = document.querySelector('[name="prjctSttus"] option:checked')?.textContent || '미선택';
+  document.getElementById('confirmPrjctGrad').textContent = document.querySelector('[name="prjctGrad"] option:checked')?.textContent || '미선택';
+  
+  // 4. 수주금액 수정
+  const amount = document.querySelector('[name="prjctRcvordAmount"]').value || '0';
+  document.getElementById('confirmAmount').textContent = `\${numberWithCommas(amount)} 원`;
+  
+  // 5. 주소 수정
+  const fullAddress = document.getElementById('fullAddress')?.value || 
+                      document.querySelector('[name="prjctAdres"]')?.value || '미입력';
+  document.getElementById('confirmAdres').textContent = fullAddress;
+  
+  console.log("fullAddress:", document.getElementById('fullAddress')?.value);
+  console.log("prjctAdres:", document.querySelector('[name="prjctAdres"]')?.value);
 
-confirmFields.forEach(field => {
-  const element = document.getElementById(field.id);
-  if (!element) return;
-  
-  const valueElement = document.querySelector(field.selector);
-  if (!valueElement) {
-    element.textContent = field.defaultValue;
-    return;
-  }
-  
-  let value = field.property ? valueElement[field.property] : valueElement.value;
-  value = value || field.defaultValue;
-  
-  if (field.formatter) {
-    value = field.formatter(value);
-  }
-  
-  element.textContent = value;
-});
+  // 6. url
+  const prjctUrl = document.querySelector('[name="prjctUrl"]');
+  const urlValue = prjctUrl?.value.trim() ||'미입력';
+  document.getElementById('confirmUrl').textContent = urlValue;
 
-// 기간 요약 설정
-const periodElement = document.getElementById('confirmPeriod');
-if (periodElement) {
-  const beginDate = document.querySelector('[name="prjctBeginDate"]')?.value || '미정';
-  const endDate = document.querySelector('[name="prjctEndDate"]')?.value || '미정';
-  periodElement.textContent = `${beginDate} ~ ${endDate}`;
-}
-
-// 업무 목록 요약
-const confirmTaskList = document.getElementById('confirmTaskList');
-if (confirmTaskList) {
-  confirmTaskList.innerHTML = '';
-  
-  if (taskList.length === 0) {
-    confirmTaskList.textContent = '등록된 업무가 없습니다.';
-  } else {
-    taskList.forEach(task => {
-      const div = document.createElement('div');
-      div.className = 'mb-2';
-      div.innerHTML = `<strong>${task.taskNm}</strong> - ${task.chargerEmpNm} (${task.taskBeginDt || '미정'} ~ ${task.taskEndDt || '미정'})`;
-      confirmTaskList.appendChild(div);
+  // 2. 참여 인원 정보 개선
+  const confirmMemberList = document.getElementById('confirmMemberList');
+  if (confirmMemberList) {
+    confirmMemberList.innerHTML = '';
+    
+    // 역할별로 구분하여 표시
+    const roles = [
+      { key: 'responsibleManager', label: '책임자', icon: 'fas fa-user-tie' },
+      { key: 'participants', label: '참여자', icon: 'fas fa-user-check' },
+      { key: 'observers', label: '참조자', icon: 'fas fa-user-clock' }
+    ];
+    
+    roles.forEach(role => {
+      if (selectedMembers[role.key].length > 0) {
+        const roleDiv = document.createElement('div');
+        roleDiv.className = 'mb-2';
+        roleDiv.innerHTML = `
+          <strong><i class="\${role.icon} me-2"></i>\${role.label}:</strong> 
+          \${selectedMembers[role.key].map(p => p.name).join(', ')}
+        `;
+        confirmMemberList.appendChild(roleDiv);
+      }
     });
+    
+    // 선택된 인원이 없는 경우
+    if (confirmMemberList.children.length === 0) {
+      confirmMemberList.textContent = '선택된 인원이 없습니다.';
+    }
+  }
+
+  // 3. 업무 목록 요약 개선
+  const confirmTaskList = document.getElementById('confirmTaskList');
+  if (confirmTaskList) {
+    confirmTaskList.innerHTML = '';
+    
+    if (taskList.length === 0) {
+      confirmTaskList.textContent = '등록된 업무가 없습니다.';
+    } else {
+      // 업무 목록 테이블 생성
+      const table = document.createElement('table');
+      table.className = 'table table-sm table-bordered';
+      
+      // 테이블 헤더
+      const thead = document.createElement('thead');
+      thead.innerHTML = `
+        <tr class="table-light">
+          <th>상위업무</th>
+          <th>업무명</th>
+          <th>담당자</th>
+          <th>기간</th>
+          <th>중요도</th>
+          <th>등급</th>
+        </tr>
+      `;
+      table.appendChild(thead);
+      
+      // 테이블 본문
+      const tbody = document.createElement('tbody');
+      
+      
+      // 정렬된 리스트 사용!
+      const sortedTaskList  = getTaskHierarchySortedList(taskList);
+
+      sortedTaskList.forEach(task => {
+        const tr = document.createElement('tr');
+
+        if (task.parentTaskNm) {
+          tr.classList.add('table-light'); // 하위업무는 배경 다르게
+        }
+        
+        
+        // 중요도에 따른 배지 색상
+        let priorityBadge = '';
+        if (task.priort || task.taskPriort) {
+          const priority = task.priort || task.taskPriort;
+          switch(priority) {
+            case '00': priorityBadge = '<span class="badge bg-success">낮음</span>'; break;
+            case '01': priorityBadge = '<span class="badge bg-info">보통</span>'; break;
+            case '02': priorityBadge = '<span class="badge bg-warning">높음</span>'; break;
+            case '03': priorityBadge = '<span class="badge bg-danger">긴급</span>'; break;
+            default: priorityBadge = '-';
+          }
+        } else {
+          priorityBadge = '-';
+        }
+        
+        tr.innerHTML = `
+          <td class="text-center">\${task.parentTaskNm ? `<i class="fas fa-level-up-alt fa-rotate-90 me-1 text-primary"></i>\${task.parentTaskNm}` : '-'}</td>
+          <td><strong>\${task.taskNm}</strong></td>
+          <td>\${task.chargerEmpNm}</td>
+          <td>\${task.taskBeginDt || '미정'} ~ \${task.taskEndDt || '미정'}</td>
+          <td>\${priorityBadge}</td>
+          <td>\${task.taskGrad || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      
+      table.appendChild(tbody);
+      confirmTaskList.appendChild(table);
+    }
   }
 }
 
-// 선택된 인원 요약
-const confirmMemberList = document.getElementById('confirmMemberList');
-if (confirmMemberList) {
-  const memberInfo = [];
-  
-  if (selectedMembers.responsibleManager.length > 0) {
-    memberInfo.push("책임자: " + selectedMembers.responsibleManager.map(p => p.name).join(', '));
-  }
-  
-  if (selectedMembers.participants.length > 0) {
-    memberInfo.push("참여자: " + selectedMembers.participants.map(p => p.name).join(', '));
-  }
-  
-  if (selectedMembers.observers.length > 0) {
-    memberInfo.push("참조자: " + selectedMembers.observers.map(p => p.name).join(', '));
-  }
-  
-  confirmMemberList.textContent = memberInfo.join(' | ') || '선택된 인원이 없습니다.';
+// 숫자에 천 단위 쉼표 추가 함수
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-}
+
 </script>
 </body>
 </html>
