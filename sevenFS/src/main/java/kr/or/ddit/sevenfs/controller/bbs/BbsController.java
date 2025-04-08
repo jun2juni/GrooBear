@@ -73,6 +73,7 @@ public class BbsController {
         map.put("currentPage", currentPage);
         map.put("size", size);
         map.put("category", bbsVO.getCategory());
+        map.put("bbsCtgryNo", bbsVO.getBbsCtgryNo());
         int total = this.bbsService.getTotal(map);
         map.put("total", total);
         log.info("맵 : " + map);

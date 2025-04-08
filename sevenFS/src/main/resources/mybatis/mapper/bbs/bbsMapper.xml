@@ -210,6 +210,7 @@
 		FROM BBS B
 		WHERE 1 = 1
 		AND B.BBSCTT_USE_YN = 'Y'
+		AND B.BBS_CTGRY_NO = #{bbsCtgryNo}
 		<if test="searchKeyword != null and searchKeyword != ''">
 			<choose>
 				<when test="category == 'bbscttSj'">
