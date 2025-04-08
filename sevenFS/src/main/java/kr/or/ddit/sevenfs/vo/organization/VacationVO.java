@@ -18,5 +18,8 @@ public class VacationVO {
 	private int excessWorkYryc;
 	private int cmpnstnYryc;
 	
+	// 사원이름
+	private String emplNm;
+	
 
 }

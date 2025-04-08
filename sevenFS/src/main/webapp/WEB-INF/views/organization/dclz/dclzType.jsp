@@ -25,32 +25,26 @@
 	
 	<section class="section">
 		<div class="container-fluid">
-			
-			
-			
 			<!-- 출퇴근 버튼 -->
-		   <div class="col-12 d-flex ml-50">
-			<div class=" card-style w-25 mt-30 mb-50">
-			<span class="status-btn dark-btn ml-25 mb-20 mt-10">${today}</span>
+		   <div class="row">
+			<div class="col-4 card-style mb-30">
+				<span class="status-btn dark-btn text-center ml-70 mt-50">${today}</span>
+				
+				<div class="text-center d-flex mb-30 mt-60 ml-60">
+					<div class="content mr-30">
+				       	<button type="button" id="${todayWorkTime != null ? '' : 'workStartButton'}" class="btn-sm main-btn active-btn-light square-btn btn-hover">출근</button>
+						<p id="startTime">${todayWorkTime != null ? todayWorkTime : '출근 전'}</p>
+				    </div>
+				    <div class="content">
+				       	<button type="button" id="${todayWorkEndTime != null ? '' : 'workEndButton'}" class="btn-sm main-btn active-btn-light square-btn btn-hover">퇴근</button>
+						<p id="endTime">${todayWorkEndTime != null ? todayWorkEndTime : '퇴근 전'}</p>
+				    </div>
+				</div>
+			</div> 
 			
-			<div class=" text-center d-flex mb-30 mt-20 ml-20">
-				<div class="content mr-30">
-			       	<button type="button" id="workStartButton" class="btn-sm main-btn primary-btn-outline rounded-full btn-hover">출근</button>
-					<p id="startTime">${todayWorkTime != null ? todayWorkTime : '미등록'}</p>
-			    </div>
-			    <div class="content">
-			       	<button type="button" id="workEndButton" class="btn-sm main-btn primary-btn-outline rounded-full btn-hover">퇴근</button>
-					<p id="endTime">${todayWorkEndTime != null ? todayWorkEndTime : '미등록'}</p>
-			    </div>
-			</div>
-			<div class="d-flex ml-30">
-				<button class="btn-sm main-btn dark-btn-outline btn-hover">외근</button>
-				<button class="btn-sm main-btn dark-btn-outline btn-hover ml-10">조퇴</button>
-			</div>
-			</div>
-			<div class="ml-30">
-			<div class="d-flex">
-	          <div class="col-10">
+			<div class="col-8">
+			<div class="row">
+	          <div class="col-6">
 	            <div class="icon-card mb-30">
 	              <div class="icon orange">
 	                <i class="lni lni-user"></i>
@@ -66,7 +60,7 @@
 	            <!-- End Icon Cart -->
 	          </div>
 	          <!-- End Col -->
-	          <div class="col-10 ml-30">
+	          <div class="col-6">
 	            <div class="icon-card mb-30">
 	              <div class="icon success">
 	                <i class="lni lni-users"></i>
@@ -94,8 +88,8 @@
 	          <!-- End Col -->
             </div>
 	          <!-- End Col -->
-	         <div class="d-flex">
-	          <div class="col-10">
+	         <div class="row">
+	          <div class="col-6">
 	            <div class="icon-card mb-30">
 	              <div class="icon orange">
 	                <i class="lni lni-smile"></i>
@@ -120,8 +114,8 @@
 	            </div>
 	            <!-- End Icon Cart -->
 	          </div>
-	          <div class="col-10 ml-30">
-	            <div class="icon-card mb-30">
+	          <div class="col-6">
+	            <div class="icon-card">
 	              <div class="icon primary">
 	                <i class="lni lni-alarm-clock"></i>
 	              </div>
@@ -150,6 +144,7 @@
 	        </div>
 	        </div>
         
+	        
 	        <div class="row">
 	          <div class="">
 	            <div class="card-style mb-30" id="divPage">
@@ -164,7 +159,7 @@
 	                    <div class="select-position select-sm">
 	                      <select class="light-bg" id="yearSelect">
 	                      <c:set var="prevYear" value="" />
-							<option>년도선택</option>
+							<option>년도 선택</option>
 							<c:forEach var="dclzWork" items="${empDclzList}">
 							  <c:set var="currentYear" value="${dclzWork.dclzNo.substring(0, 4)}" />
 							  <c:if test="${currentYear != prevYear}">
@@ -179,7 +174,7 @@
 	                    </div>
 	                    <div class="select-position select-sm ml-10">
 	                      <select class="light-bg" id=monthSelect>
-	                      <option>월선택</option>
+	                      <option>월 선택</option>
 		                     <c:forEach var="dclzWork" items="${empDclzList}">
 		                        <option value="">${dclzWork.dclzNo.substring(4,6)}</option>
 	                        </c:forEach> 
@@ -238,7 +233,14 @@
 	                        <p class="text-sm">${dclzWork.workBeginTime} ~</p>
 	                      </td>
 	                      <td>
-	                        <p class="text-sm">${dclzWork.workEndTime}</p>
+	                      <c:choose>
+	                      	<c:when test="${dclzWork.workEndTime == null}">
+	                      		<p class="text-sm">미등록</p>
+	                      	</c:when>
+	                      	<c:otherwise>
+	                      		 <p class="text-sm">${dclzWork.workEndTime}</p>
+	                      	</c:otherwise>
+	                      </c:choose>
 	                      </td>
 	                      <td>
 	                        <p class="text-sm">${allTime}</p>
@@ -258,7 +260,6 @@
 	          </div>
 	          <!— End Col —>
 	        </div>
-		
 		</div>
 	</section>
 	<c:import url="../../layout/footer.jsp" />
@@ -270,10 +271,10 @@ $(function(){
 	$("#yearSelect").on("change", function(){
 		// 선택 년도 보내기
 		const yearSelect = this.value;
-		console.log("selYear : " , yearSelect);
+		//console.log("selYear : " , yearSelect);
 		
 		const emplNo = ${emplNo}
-		console.log("emplNo : " , emplNo)
+		//console.log("emplNo : " , emplNo)
 		
 		fetch("/dclz/yearSelect",{
 			method : "post",
@@ -296,13 +297,14 @@ $(function(){
 			page.html("");
 			
 			const selYearList = res.selYearList;
-			console.log("선택년도 데이터 : " , selYearList);
+			//console.log("선택년도 데이터 : " , selYearList);
 			
 			const currentPage = res.currentPage;
-			console.log("페이지 : " , currentPage);
+			//console.log("페이지 : " , currentPage);
 			
-			
+			//const nullEndTime = [];
 			selYearList.map((item) => {
+				
 				const tr = document.createElement('tr');
 				tr.innerHTML = `
 					 <td>
@@ -337,17 +339,26 @@ $(function(){
 					total="${res.endPage}"></page-navi>
 					`)
 		
-		
+			// 월 넣어줄 select box
 			const selMonth = $("#monthSelect");
 			selMonth.html("");
 			
-			selYearList.map((items) => {
+			// 중복값 제거
+			let notDuplMonth = [];
+			selYearList.forEach(item =>{
+				 if(!notDuplMonth.includes(item.dclzNo.substring(4,6))){
+					 notDuplMonth.push(item.dclzNo.substring(4,6));
+				 }
+			})
+			//console.log("화긴: ",notDuplMonth);
+			
+			notDuplMonth.map((items) => {
 				selMonth.append(
 					`
-					<option value="\${items.dclzNo.substring(4,6)}" id="mon">\${items.dclzNo.substring(4,6)}</option>
+					<option value="\${items}" id="mon">\${items}</option>
 					`		
 				);
-			}) 
+			})  
 		})		
 	}) // end sel
 }) // end fn
@@ -357,12 +368,12 @@ $(document).on('change', '#monthSelect', function(e) {
 	const employeeNo = ${emplNo};
 	
 	const monVal = e.target.value;
-	console.log(monVal);
+	//console.log(monVal);
 	
 	const page = $("#page");
 	
 	const yearVal = $('#yearSelect').val();
-	console.log(yearVal);
+	//console.log(yearVal);
 	
 	// 선택한 달 보내기
 	fetch("/dclz/yearSelect",{
@@ -378,14 +389,13 @@ $(document).on('change', '#monthSelect', function(e) {
 		})
 		.then(resp => resp.json())
 		.then(res => {
-			console.log("월까지 선택한 결과 : " ,res.selMonList);
+			//console.log("월까지 선택한 결과 : " ,res.selMonList);
 			
 			const selMonList = res.selMonList;
 			
 			const dclzBody = $("#dclzBody");
 			
 			dclzBody.html("");
-			
 			page.html("");
 			
 			selMonList.map((item) => {
@@ -423,8 +433,6 @@ $(document).on('change', '#monthSelect', function(e) {
 					total="${res.endPage}"></page-navi>
 					`)
 		})
-	
-	
 });
 
 </script>

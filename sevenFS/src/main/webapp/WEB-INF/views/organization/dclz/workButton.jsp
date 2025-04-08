@@ -7,16 +7,12 @@
 <script type="text/javascript">
 // 비동기로 출퇴근 시간 출력하기
  document.addEventListener("DOMContentLoaded", function() {
+	 
 	 $("#workStartButton").on("click", function(){
 		//alert("출근");
 		
 		const startTime = $('#startTime').val();
-		//startTime.disabled = false;
 		
-/* 		if(startTime != null){
-			swal("이미 출근이 등록된 사원입니다.", " ", "warning");
-		}else{   */
-			
 		// 비동기로 insert 하고 출근 시간 가져오기
 		fetch("/dclz/todayWorkStart", {
 			method : "get",
@@ -31,8 +27,11 @@
 				.then((value) => {
 				//console.log("출근 시간 : " , res);
 				$("#startTime").html(res);
+				
+				$("#workStartButton").prop("disabled", true);
+				
 				location.href="/dclz/dclzType";
-				startTime.disabled = true;
+				
 			})
 			}else{
 				swal("출근 버튼을 다시 눌러주세요.", " ", "warning");
@@ -41,22 +40,15 @@
 		.catch(err => {
 			swal("출근 버튼을 다시 눌러주세요.", " ", "warning");
 		})// end fetch
-	 /*    }   */
 	}) // end startBtn 
 		
 		
 	$("#workEndButton").on("click", function(){
-		//alert("퇴근");
+		//alert("퇴근");		
 		
-		const endTime = $('#endTime').val();
-		//endTime.disabled = false;
-		
+		const endTime = $('#endTime').val();	
 		//console.log(endTime);
 		
-		// 이미 퇴근을 눌렀으면 경고창
-	/* 	 if(endTime != null){
-			swal("이미 퇴근처리가 완료된 사원입니다.", " ", "warning");
-		} else{  */ 
 		// 비동기로 update 하고 퇴근 시간 가져오기
 		 fetch("/dclz/todayWorkEnd", {
 			method : "get",
@@ -81,9 +73,7 @@
 		.catch(err => {
 			swal("퇴근 버튼을 다시 눌러주세요.", " ", "warning");
 		})// end fetch 
-	/*    }   */
 	}) // end endBtn
-		
 }); // end fn		
 </script>
 

@@ -29,6 +29,7 @@ import kr.or.ddit.sevenfs.utils.CommonCode;
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
 import kr.or.ddit.sevenfs.vo.organization.DclzTypeDetailVO;
 import kr.or.ddit.sevenfs.vo.organization.DclzTypeVO;
+import kr.or.ddit.sevenfs.vo.organization.VacationVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -271,7 +272,22 @@ public class DclzTypeController {
 			
 			return mapMonth;
 		}
-		
 	}
+	
+	// 연차 페이지
+	@GetMapping("/vacation")
+	public String vacation(Model model, Principal principal, VacationVO vacationVO) {
+		
+		model.addAttribute("title","나의 연차 내역");
+		
+		// 현재 로그인한 사원번호
+		String emplNo = principal.getName();
+		// 사원의 이번년도 연차 현황 가져오기
+		VacationVO emplVacation = dclztypeService.emplVacationCnt(emplNo);
+		model.addAttribute("emplVacation",emplVacation);
+		
+		return "organization/dclz/vacation";
+	}
+	
 
 }

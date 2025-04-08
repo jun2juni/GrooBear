@@ -14,6 +14,7 @@ import kr.or.ddit.sevenfs.service.organization.DclztypeService;
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
 import kr.or.ddit.sevenfs.vo.organization.DclzTypeDetailVO;
 import kr.or.ddit.sevenfs.vo.organization.DclzTypeVO;
+import kr.or.ddit.sevenfs.vo.organization.VacationVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -102,6 +103,12 @@ public class DclztypeServiceImpl implements DclztypeService {
 	@Override
 	public int getTotal(Map<String, Object> map) {
 		return dclztypeMapper.getTotal(map);
+	}
+
+	// 사원 한명의 이번년도 연차 정보 가져오기
+	@Override
+	public VacationVO emplVacationCnt(String emplNo) {
+		return dclztypeMapper.emplVacationCnt(emplNo);
 	}
 
 }
