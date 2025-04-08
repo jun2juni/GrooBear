@@ -158,6 +158,14 @@
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        $('#openModalBtn').on('click',function(){
+            $('.modal-title').text("일정 등록");
+			$("#modalSubmit").text("등록");
+			if($("#deleteBtn").length){
+				("#deleteBtn").remove();
+			}
+            insModal.show();
+        })
     // 사이드바 라벨 관련 요소
         const addLabelBtn = document.getElementById('addLabelBtn');
         const labelPopup = document.getElementById('labelPopup');

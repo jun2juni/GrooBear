@@ -16,7 +16,7 @@
 		console.log("FullCalendar 버전:", FullCalendar.version);
 
 		// bootstrap 시작
-		var insModal = new bootstrap.Modal(document.getElementById('myModal'));
+		window.insModal = new bootstrap.Modal(document.getElementById('myModal'));
 		console.log("$('#myModal')[0]",$('#myModal')[0]);
 		// console.log('start : ',$('#calAddFrm')[0].start.val);
 		console.log('insModal : ',insModal);
