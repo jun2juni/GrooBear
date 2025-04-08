@@ -81,12 +81,6 @@
           </div>
         </div>
 
-        <div class="col-12">
-          <div class="input-style-1">
-            <label>프로젝트 URL</label>
-            <input type="url" name="prjctUrl" placeholder="https://example.com" class="bg-transparent" />
-          </div>
-        </div>
       </div>
     </div>
   </div>

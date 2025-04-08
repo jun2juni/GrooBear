@@ -18,96 +18,6 @@
 <title>${title}</title>
 <c:import url="../layout/prestyle.jsp" />
 
-<!--스타일태그시작  -->
-<style>
-</style>
-<!--스타일태그끝  -->
-
-
-<script type="text/javascript"
-	src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript">
-	/* 구글차트 패키지모음******* */
-	google.charts.load('current', {'packages':['corechart']});
-	google.charts.setOnLoadCallback(drawVisualization);
-	/* 구글차트 패키지모음********* */ 
-		
-	
-	
-	// 차트 변경
-	/* 차트 기본형태 : line */
-    let comboChartType = 'line';
-	function onChartTypeChange() {
-        const selectBox = document.getElementById('chartTypeSelect');
-        comboChartType = selectBox.value;
-//         drawVisualization();
-	console.log()
-     }
-// 	차트그려주는 drawVisualization
-	function drawVisualization(AWOL) {
-    // Some raw data (not necessarily accurate)
-    	var data = new google.visualization.arrayToDataTable(AWOL.map(([key, value], idx) => idx== 0 ? [key, value] : [key, +value]));
-    	console.log("데이타",data);
-		console.log("했어용!!!!!!!!",AWOL);
-//     	var data = google.visualization.arrayToDataTable([
-//     		 ['Month', 'Bolivia', 'Ecuador', 'Madagascar', 'Papua New Guinea', 'Rwanda', 'Average'],
-//              ['2004/05',  165,      938,         522,             998,           450,      614.6],
-//              ['2005/06',  135,      1120,        599,             1268,          288,      682],
-//              ['2006/07',  157,      1167,        587,             807,           397,      623],
-//              ['2007/08',  139,      1110,        615,             968,           215,      609.4],
-//              ['2008/09',  136,      691,         629,             1026,          366,      569.6]
-//         ]);
-
-        var options = {
-          title : '',
-          vAxis: {title: 'Cups'},
-          hAxis: {title: 'Month'},
-          seriesType: comboChartType
-        };
-
-        var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-      }
-	
-	  
-	
-	//object -> 요청파라미터 string
-	 $(function(){
-		$("#btnSubmit").on("click",function(){  
-			
-			//object -> 요청파라미터 string
-			//1. 연간
-			//interval=year&chartType=line&startYearsY=2024&endYearsY=2025&startYearsM=&startDays=&endDays=&dept=%EC%9D%B8%EC%82%AC%EB%B6%80&dept=%EC%98%81%EC%97%85%EB%B6%80
-			
-			//2. 월간
-			//interval=month&chartType=line&startYearsM=2025&startMonths=01&endMonths=05&startDays=&endDays=&dept=%EC%83%9D%EC%82%B0%EB%B6%80&dept=%EA%B5%AC%EB%A7%A4%EB%B6%80
-			
-			//3. 일간
-			//interval=day&chartType=bars&startYearsM=&startDays=2025-04-04&endDays=2025-04-30&dept=%ED%92%88%EC%A7%88%EB%B6%80&dept=%EC%97%B0%EA%B5%AC%EC%86%8C
-			let frm = $("#frm").serialize();
-			console.log("frm : ", frm);
-
-    	  $.ajax({
-    		 url:"/statistics/statisticsAWOL/AWOLAjax",
-    		 data:frm,
-    		 type:"post",
-    		 dataType:"json",
-    		 success:function(result){
-    		 console.log("result : ", result);
-    			 //매개
-    			 
-    			 let AWOL = result;
-    			 
-    			 google.charts.setOnLoadCallback(drawStuff(AWOL)));
-    		 }
-    	  });		
-		});//end btnSubmit
-	 });//end 달러function
-	 
-	 
-	
-	</script>
-
 </head>
 <body>
 	<c:import url="../layout/sidebar.jsp" />
@@ -126,7 +36,7 @@
 										<button class="nav-link" id="tab1" data-bs-toggle="tab"
 											data-bs-target="#content1" type="button"
 											onClick="location.href='statisticsHome'" role="tab"
-											aria-controls="content1" aria-selected="true">Home</buㅈtton>
+											aria-controls="content1" aria-selected="true">Home</button>
 									</li>
 									<li class="nav-item" role="presentation">
 										<button class="nav-link active" id="tab2" data-bs-toggle="tab"
@@ -354,33 +264,33 @@
 												<div class="d-flex gap-5">
 													<div class="form-check checkbox-style mb-20">
 														<input class="form-check-input" type="checkbox"
-															name="dept" value="selectAll" id="checkbox-1"  onclick='selectAll(this)'>
+															 value="selectAll" id="selectAll" onclick='checkedAll(this)'>
 														<label class="form-check-label" for="checkbox-1" >전체선택</label>
 														<!--전체선택 끝 부서시작  -->
-														<input class="form-check-input" type="checkbox"
-															name="dept" value="10" id="checkbox-1" >
-														<label class="form-check-label" for="checkbox-1">인사부</label>
-														<input class="form-check-input" type="checkbox"
-															name="dept" value="20" id="checkbox-2" >
-														<label class="form-check-label" for="checkbox-2">경영지원부</label>
-														<input class="form-check-input" type="checkbox"
-															name="dept" value="30" id="checkbox-3" >
-														<label class="form-check-label" for="checkbox-3">영업부</label>
-														<input class="form-check-input" type="checkbox"
-															name="dept" value="40" id="checkbox-3" >
-														<label class="form-check-label" for="checkbox-3">생산부</label>
-														<input class="form-check-input" type="checkbox"
-															name="dept" value="50" id="checkbox-3" >
-														<label class="form-check-label" for="checkbox-3">구매부</label>
-														<input class="form-check-input" type="checkbox"
-															name="dept" value="60" id="checkbox-3" >
-														<label class="form-check-label" for="checkbox-3">품질부</label>
-														<input class="form-check-input" type="checkbox"
-															name="dept" value="70" id="checkbox-3" >
-														<label class="form-check-label" for="checkbox-3">디자인부</label>
-														<input class="form-check-input" type="checkbox"
-															name="dept" value="80" id="checkbox-3" >
-														<label class="form-check-label" for="checkbox-3">연구소</label>
+														<input class="form-check-input" type="checkbox"  data-dept="인사부"
+															name="dept" value="10" id="checkbox-10" onclick="fck(this)">
+														<label class="form-check-label" for="checkbox-10">인사부</label>
+														<input class="form-check-input" type="checkbox"  data-dept="경영지원부"
+															name="dept" value="20" id="checkbox-20" onclick="fck(this)" >
+														<label class="form-check-label" for="checkbox-20" data-dept="경영지원부">경영지원부</label>
+														<input class="form-check-input" type="checkbox" data-dept="영업부"
+															name="dept" value="30" id="checkbox-30"  onclick="fck(this)">
+														<label class="form-check-label" for="checkbox-30" >영업부</label>
+														<input class="form-check-input" type="checkbox" data-dept="생산부"
+															name="dept" value="40" id="checkbox-40" onclick="fck(this)" >
+														<label class="form-check-label" for="checkbox-40">생산부</label>
+														<input class="form-check-input" type="checkbox" data-dept="구매부"
+															name="dept" value="50" id="checkbox-50" onclick="fck(this)" >
+														<label class="form-check-label" for="checkbox-50">구매부</label>
+														<input class="form-check-input" type="checkbox" data-dept="품질부"
+															name="dept" value="60" id="checkbox-60" onclick="fck(this)" >
+														<label class="form-check-label" for="checkbox-60">품질부</label>
+														<input class="form-check-input" type="checkbox" data-dept="디자인부"
+															name="dept" value="70" id="checkbox-70" onclick="fck(this)" >
+														<label class="form-check-label" for="checkbox-70">디자인부</label>
+														<input class="form-check-input" type="checkbox" data-dept="연구소"
+															name="dept" value="80" id="checkbox-80" onclick="fck(this)">
+														<label class="form-check-label" for="checkbox-80">연구소</label>
 													</div>
 												</div>
 											</div>
@@ -388,49 +298,149 @@
 										<!-- 전체 폼태그 끝 form  -->
 										<div class="select-style-1 form-group w-fit">
 											<select name="chartType" class="form-select" id="chartType"
-												onchange="onChartTypeChange()">
+												onClick="updateChartType()">
 												<label for="chartType" class="form-label">차트 유형 선택:</label>
-												<option selected="" disabled="" readonly="" value="">그래프
-													유형을	 선택해주세요</option>
-												<option value="line">선형(Line)</option>
-												<option value="bars">막대(Bar)</option>
-												<option value="area">영역(Area)</option>
+												<option value="line">선형(line)</option>
+												<option value="bars">막대(bar)</option>
+												<option value="area">영역(area)</option>
 											</select>
-											<div class="invalid-feedback">그래프 유형을 선택해주세요.</div>
 										</div>
 										<!-- 폼태그안의 카드 끝   -->
-									</div>
+									<!-- 	<div class="input-style-1 form-group col-6 mt-3 mb-3">
+											<label for="chartTitle" class="form-label required mt-3">제목</label>
+											<input type="text" name="chartTitle" class="form-control"
+												id="chartTitle" placeholder="차트의 제목을 입력해주세요" required
+												maxlength="100">
+											<div class="invalid-feedback">차트의 제목을 입력해주세요.</div>
+											<label for="vAxisTitle" class="form-label required mt-3">세로축</label>
+											<input type="text" name="vAxisTitle" class="form-control"
+												id="vAxisTitle" placeholder="차트의 세로축을입력해주세요" required
+												maxlength="100">
+											<div class="invalid-feedback">차트의 제목을 입력해주세요.</div>
+											<label for="hAxisTitle" class="form-label required mt-3">가로축</label>
+											<input type="text" name="hAxisTitle" class="form-control"
+												id="hAxisTitle" placeholder="차트의 가로축을 입력해주세요" required
+												maxlength="100">
+											<div class="invalid-feedback">차트의 제목을 입력해주세요.</div>
+										</div> -->
+									</div> <!-- 2번째 내부카드 안 끝 -->
 									<button type="button" id="btnSubmit" tabindex="1"
 										class="btn submit btn-primary col-2 mt-3"
 										onclick="drawVisualization()">그래프 조회</button>
 								</div>
 								<!--제목 및 가로 세로 축 제목 적는 곳   -->
-								<div class="input-style-1 form-group col-6 mt-3 mb-3">
-									<label for="chartTitle" class="form-label required mt-3">제목</label>
-									<input type="text" name="chartTitle" class="form-control"
-										id="chartTitle" placeholder="차트의 제목을 입력해주세요" required
-										maxlength="100">
-									<div class="invalid-feedback">차트의 제목을 입력해주세요.</div>
-									<label for="vAxisTitle" class="form-label required mt-3">세로축</label>
-									<input type="text" name="vAxisTitle" class="form-control"
-										id="vAxisTitle" placeholder="차트의 세로축을입력해주세요" required
-										maxlength="100">
-									<div class="invalid-feedback">차트의 제목을 입력해주세요.</div>
-									<label for="hAxisTitle" class="form-label required mt-3">가로축</label>
-									<input type="text" name="hAxisTitle" class="form-control"
-										id="hAxisTitle" placeholder="차트의 가로축을 입력해주세요" required
-										maxlength="100">
-									<div class="invalid-feedback">차트의 제목을 입력해주세요.</div>
-								</div>
+								
 								<div id="chart_div" style="width: 900px; height: 500px;"></div>
 							</div>
 							<!-- 카드끝 -->
-						</div>
+						</div> <!-- 그래프 조회버튼 위 카드/ -->
+					</div>
+				</div>
+			</div>
+			
 		</section>
+			
 
-		<script>
+	<%@ include file="../layout/footer.jsp"%>
+	</main>
+<%@ include file="../layout/prescript.jsp"%>
+<script>
 
+	
+	/* 차트 기본형태 : bars */
+	let comboChartType = '';
 
+	/* 구글차트 패키지모음******* */
+	google.charts.load('current', {'packages':['corechart']});
+// 	google.charts.setOnLoadCallback(drawVisualization);
+	/* 구글차트 패키지모음********* */ 
+	
+	
+	
+	 $(function(){
+		$("#btnSubmit").on("click",function(){  
+			
+			//object -> 요청파라미터 string
+			//1. 연간
+			//interval=year&chartType=line&startYearsY=2024&endYearsY=2025&startYearsM=&startDays=&endDays=&dept=%EC%9D%B8%EC%82%AC%EB%B6%80&dept=%EC%98%81%EC%97%85%EB%B6%80
+			
+			//2. 월간
+			//interval=month&chartType=line&startYearsM=2025&startMonths=01&endMonths=05&startDays=&endDays=&dept=%EC%83%9D%EC%82%B0%EB%B6%80&dept=%EA%B5%AC%EB%A7%A4%EB%B6%80
+			
+			//3. 일간
+			//interval=day&chartType=bars&startYearsM=&startDays=2025-04-04&endDays=2025-04-30&dept=%ED%92%88%EC%A7%88%EB%B6%80&dept=%EC%97%B0%EA%B5%AC%EC%86%8C
+			let frm = $("#frm").serialize();
+			console.log("frm : ", frm);
+
+    	  $.ajax({
+    		 url:"/statistics/statisticsAWOL/AWOLAjax",
+    		 data:frm,
+    		 type:"post",
+    		 dataType:"json",
+    		 success:function(result){
+    		 console.log("result : ", result);
+    			 //매개
+    			 
+    			 let AWOL = result;
+    			 
+    			 google.charts.setOnLoadCallback(drawStuff(AWOL))
+    		 }
+    	  });		
+		});//end btnSubmit
+	 });//end 달러function
+	 
+	 
+	function drawVisualization(AWOL) {
+			
+
+		    // Some raw data (not necessarily accurate)
+//		     	var data = new google.visualization.arrayToDataTable(AWOL.map(([key, value], idx) => idx== 0 ? [key, value] : [key, +value]));
+		    	console.log("데이타",data);
+				console.log("했어용!!!!!!!!",AWOL);
+				let arr = [];
+// 				document.querySelectorAll("input[name=dept]:checked").forEach(item => {
+// 					arr.push(item.value);
+// 				})
+				console.log(arr);
+// 				var data = google.visualization.arrayToDataTable([
+// 			          ['Interval', checkedDeptArr,],
+// 			          ['2025/01',  165,      938,         522,             998,           450,      614.6],
+// 			          ['2025/02',  135,      1120,        599,             1268,          288,      682],
+// 			          ['2025/03',  157,      1167,        587,             807,           397,      623],
+// 			          ['2025/04',  139,      1110,        615,             968,           215,      609.4],
+// 			          ['2025/05',  136,      691,         629,             1026,          366,      569.6],
+// 			        ]);
+				 var data = google.visualization.arrayToDataTable([
+				      ['Interval', ...checkedDeptArr, ],
+			          ['2025/01',  165,      938,         522,             998,           450,      614.6],
+			          ['2025/02',  135,      1120,        599,             1268,          288,      682],
+			          ['2025/03',  157,      1167,        587,             807,           397,      623],
+			          ['2025/04',  139,      1110,        615,             968,           215,      609.4],
+				      ['2025/05',  136,      691,         629,             1026,          366,      569.6],
+				        ]);
+				
+		        var options = {
+		          vAxis: {title: '지각 및 조퇴 횟수'},
+		          hAxis: {title: '선택 부서 '},
+		          seriesType: comboChartType
+		        };
+
+		        var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+		        chart.draw(data, options);
+		      }
+			// 차트 변경
+		 	 function updateChartType() {
+		 		const selectElement = document.getElementById('chartType');
+		 	    const selectedType = selectElement.value;
+
+		 	    if (selectedType) {
+		 	        comboChartType = selectedType; // 선택된 차트 유형으로 업데이트
+		 	    }
+		   }
+	
+</script>
+
+<script>
 
 function handleIntervalChange(event) {
 	console.log("왔다");
@@ -499,24 +509,47 @@ function handleIntervalChange(event) {
 
 	$(function(){
 		console.log("개똥이!");
-		$("input[name='interval']").on("change",function(e){ 
+		$("input[name='interval']").on("change", function(e){ 
 			console.log("개똥이2!");
-			handleIntervalChange(e);
+		    handleIntervalChange(e);
 		});
 	});
-	//전체 체크 해제 
-	function selectAll(selectAll)  {
-		  const checkboxes 
-		     = document.querySelectorAll('input[type="checkbox"]');
-		  
-		  checkboxes.forEach((checkbox) => {
-		    checkbox.checked = selectAll.checked
-		  })
-	 }
-</script>
-		<%@ include file="../layout/footer.jsp"%>
-	</main>
-	<%@ include file="../layout/prescript.jsp"%>
 
+	// 개별 선택 및 배열에 담는 함수 
+	let checkedDeptArr = [];
+	const ckboxes = document.querySelectorAll("[name=dept]");
+	function checkedAll(dThis)  {
+		  if(dThis.checked){
+	            for(let i=0; i< ckboxes.length; i++){
+	            	ckboxes[i].checked=true;
+	            	checkedDeptArr.push(ckboxes[i].dataset.dept);
+	            }
+
+	            console.log("잘담겻낭?"+checkedDeptArr);
+	        }else {
+	            for(let i=0; i< ckboxes.length; i++){
+	            	ckboxes[i].checked=false;
+	            	checkedDeptArr.splice(0,1);  // 실제 요소 자체를 지우는 메소드,
+	            }
+	            console.log("지워졌낭??"+checkedDeptArr);
+	        }
+	} // selectAll 끗 
+	
+	
+	function fck(dThis) {
+		let val = dThis.dataset.dept;
+		if(dThis.checked) {
+			console.log("추가!!",checkedDeptArr);
+			checkedDeptArr.push(val);
+		} else {
+			if(checkedDeptArr.indexOf(val) !=-1){
+				console.log("제거!!");
+				let schIndex = checkedDeptArr.indexOf(val); 
+				checkedDeptArr.splice(schIndex,1);   
+			}
+		}
+		console.log("현재 배열 상태 !!",checkedDeptArr);
+	}
+</script>
 </body>
 </html>

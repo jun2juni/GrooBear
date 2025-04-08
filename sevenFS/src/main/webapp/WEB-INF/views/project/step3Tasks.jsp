@@ -78,9 +78,9 @@
         </div>
 
         <div class="text-end mt-3">
-          <button type="button" id="resetTaskForm" class="btn btn-outline-secondary me-2">
-            <i class="fas fa-undo me-1"></i> 초기화
-          </button>
+			<button type="button" class="btn btn-outline-secondary mt-2" onclick="resetTaskForm()">
+			  <i class="fas fa-undo-alt me-1"></i> 초기화
+			</button>
           <button type="button" id="addTaskBtn" class="btn btn-success">
             <i class="fas fa-plus me-1"></i> 업무 추가
           </button>

@@ -15,34 +15,29 @@
           <span class="badge text-bg-success">(단위: 원)</span>
         </label>
         <div class="d-flex align-items-center">
-          <input type="text" name="prjctRcvordAmount" id="amountInput"
-                 class="form-control text-end me-2" placeholder="0"
+          <input type="text" name="prjctRcvordAmount" id="amountInput" class="form-control text-end me-2" placeholder="0"
                  style="background-color: white; width: 50%;" />
-          <span id="amountDisplay"
-                class="form-control text-end bg-light"
+          <span id="amountDisplay" class="form-control text-end bg-light d-inline-block"
                 style="width: 50%; border: 1px solid #ced4da; border-radius: .375rem;">
-            
           </span>
         </div>
       </div>
-
+      
       <!-- 주소 입력 -->
-      <div class="input-style-1 mb-4">
-        <label>프로젝트 주소</label>
-        <div class="input-group mb-2">
-          <input type="text" id="postcode" class="form-control bg-transparent"
-                 placeholder="우편번호" readonly />
-          <button type="button" class="btn btn-outline-secondary"
-                  id="searchAddressBtn">
-            <i class="fas fa-search me-1"></i> 주소 검색
-          </button>
-        </div>
-        <input type="text" id="address" name="address"
-               class="form-control bg-transparent mb-2" placeholder="주소" readonly />
-        <input type="text" id="detailAddress" name="detailAddress"
-               class="form-control bg-transparent mb-2" placeholder="상세주소" />
-        <input type="hidden" name="prjctAdres" id="fullAddress" />
-      </div>
+		<div class="row">
+			<div class="col-md-12">
+						<label for="restaurantAdd1" class="form-label mb-3">프로젝트 주소</label>
+				<div class="input-style-1 mb-4">
+					<div class="mb-4">
+						<input type="text" name="restaurantAdd1" class="form-control address-select" id="restaurantAdd1" placeholder="주소를 입력하세요." value="" required="required" style="background-color: white;">
+						<div class="invalid-feedback restaurantAdd1">식당 주소 찾기를 진행해주세요</div>
+						<input type="text" name="restaurantAdd2" class="form-control mt-3" id="addressDetail" maxlength="30" placeholder="상세주소를 입력하세요." value="" required="required" style="background-color: white;">
+						<div class="invalid-feedback">상세주소를 입력해주세요</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 
       <!-- URL -->
       <div class="input-style-1">

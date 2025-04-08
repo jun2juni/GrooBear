@@ -23,5 +23,6 @@ public class StatisticsVO {
 	private String startDays;
 	private String endDays;
 	
-	private int deptCodeLength;
+	// 범례로 지정된 날짜에 대한 타입명 -- GOOGLE API DATA HEADERS =>  
+	private String monterm;
 }
