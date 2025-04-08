@@ -59,7 +59,16 @@
 <select id="emplDclzTypeList" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
 	WITH U AS(
 	    SELECT ROW_NUMBER() OVER(ORDER BY D.dclz_no DESC) RNUM
-	         , D.EMPL_NO, D.DCLZ_NO, D.DCLZ_CODE, D.DCLZ_BEGIN_DT, D.DCLZ_END_DT, D.cmmn_code_nm
+	         , D.EMPL_NO
+	         , D.DCLZ_NO
+	         , D.DCLZ_CODE
+	         , D.DCLZ_BEGIN_DT
+	         , D.DCLZ_END_DT
+	         , D.cmmn_code_nm
+   		     ,TO_CHAR(D.dclz_begin_dt, 'HH24:MI:SS') as work_begin_time
+		     ,TO_CHAR(D.dclz_end_dt, 'HH24:MI:SS') as work_end_time
+		     ,TO_CHAR(D.dclz_end_dt, 'YYYY-mm-DD') as work_begin_date
+		     ,TO_CHAR(D.dclz_end_dt, 'YYYY-mm-DD') as work_end_date
 	    FROM
 	    (
 	        SELECT dt.EMPL_NO, dt.DCLZ_NO, dt.DCLZ_CODE, dt.DCLZ_BEGIN_DT, dt.DCLZ_END_DT, cc.cmmn_code_nm
@@ -138,7 +147,7 @@
 </update>
 
 <!-- 오늘 등록한 출,퇴근 시간 가져오기 -->
-<select id="getTodayWorkTime" parameterType="String" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
+<select id="getTodayWorkTime" parameterType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
 	SELECT 
 		   TO_CHAR(dclz_begin_dt, 'HH24:MI:SS') as today_work_start_time
            ,TO_CHAR(dclz_end_dt, 'HH24:MI:SS') as today_work_end_time

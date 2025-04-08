@@ -38,8 +38,8 @@ public class DclztypeServiceImpl implements DclztypeService {
 		List<DclzTypeVO> empDclzList = dclztypeMapper.emplDclzTypeList(map);
 
 		// 총 근무시간 계산 - 다시해야됨
-//		String beginTime = empDclzList.get(0).getWorkBeginTime();
-//		String endTime = empDclzList.get(0).getWorkEndTime();
+		String beginTime = empDclzList.get(0).getWorkBeginTime();
+		String endTime = empDclzList.get(0).getWorkEndTime();
 		
 //		if(endTime != null) {
 //			LocalTime begin = LocalTime.parse(beginTime);

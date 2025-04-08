@@ -44,78 +44,68 @@ public class DclzTypeController {
 			@RequestParam(defaultValue="1") int currentPage,
 			@RequestParam(defaultValue = "10") int size
 			) {
-		
+		model.addAttribute("title" , "나의 근태 현황");
+		// 페이징처리
 		String emplNo = principal.getName();
 		//log.info("username : " + emplNo);
 		dclzTypeVO.setEmplNo(emplNo);
 		model.addAttribute("emplNo" , emplNo);
-		
 		Map<String, Object> map = new HashMap<>();
 		map.put("emplNo" , emplNo);
 		map.put("currentPage", currentPage);
 		map.put("size", size);
-		
 		// 게시글의 총 갯수
 		int total = dclztypeService.getTotal(map);
 		log.info("total : " + total);
-		
 		ArticlePage<DclzTypeVO> articlePage = new ArticlePage<>(total, currentPage, size);
 		model.addAttribute("articlePage" , articlePage);
-		
-		
-		//log.info("근태 현황 와씀");
-		
-		model.addAttribute("title" , "나의 근태 현황");
 		
 		// 근태현황 대분류 개수
 		DclzTypeVO dclzCnt = dclztypeService.dclzCnt(emplNo);
 		//log.info("dclzCnt : " + dclzCnt);
 		model.addAttribute("dclzCnt" , dclzCnt);
-		
 		// 사원 상세 근태현황 목록
 		List<DclzTypeDetailVO> empDetailDclzTypeCnt = dclztypeService.empDetailDclzTypeCnt(emplNo);
 		//log.info("empDetailDclzTypeCnt" + empDetailDclzTypeCnt);
-		
 		model.addAttribute("empDetailDclzTypeCnt", empDetailDclzTypeCnt);		
-		model.addAttribute("empDetailDclzTypeCnt",empDetailDclzTypeCnt);
 		
 		// 사원의 전체 근태현황 조회
 		List<DclzTypeVO> empDclzList = dclztypeService.emplDclzTypeList(map);
 		log.info("empDclzList : " + empDclzList);
+		// 사원의 총 근무시간 합계 가져오기
+//		String allTime = dclzTypeVO.getAllWorkTime();
+//		log.info("제발담겨라 아아아 : " + allTime);
+//		model.addAttribute("allTime", allTime);
 		
-		String allTime = dclzTypeVO.getAllWorkTime();
-		log.info("제발담겨라 아아아 : " + allTime);
-		model.addAttribute("allTime", allTime);
 		
-		//String dclzCode = empDclzList.get(0).getDclzCode();
-		
+		String dclzCode = empDclzList.get(0).getDclzCode();
 		model.addAttribute("empDclzList",empDclzList);
+		log.info("dclzCode : " + dclzCode);
 		
 		// 오늘날짜
 		Date today = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		dateFormat.applyPattern("yyyy년 MM월 dd일");
 		//log.info("today : " + dateFormat.format(today));
-		
 	    model.addAttribute("today" , dateFormat.format(today));
-		model.addAttribute("emplNo", emplNo);
-		
+	    
 		dclzTypeVO.setEmplNo(emplNo);
-		//dclzTypeVO.setDclzCode(dclzCode);
+		dclzTypeVO.setDclzCode(dclzCode);
 		
-		
+		// 오늘 등록된 출,퇴근 시간 가져오기
 		DclzTypeVO workTime = dclztypeService.getTodayWorkTime(dclzTypeVO);
+		log.info("workTime : " + workTime);
 		if(workTime == null) {
 			return "organization/dclz/dclzType";
 		}
-		
 		String todayWorkTime = workTime.getTodayWorkStartTime();
 		String todayWorkEndTime = workTime.getTodayWorkEndTime();
-		
      	model.addAttribute("todayWorkTime", todayWorkTime);
      	model.addAttribute("todayWorkEndTime", todayWorkEndTime);
-		
-		
+     	log.info("todayWorkTime : " + todayWorkTime);
+     	log.info("todayWorkEndTime : " + todayWorkEndTime);
+     	
+       		
 		return "organization/dclz/dclzType";
 	}
 	

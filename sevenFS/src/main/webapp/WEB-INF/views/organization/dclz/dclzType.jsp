@@ -29,7 +29,7 @@
 			
 			
 			<!-- 출퇴근 버튼 -->
-		   <div class="col-12 d-flex">
+		   <div class="col-12 d-flex ml-50">
 			<div class=" card-style w-25 mt-30 mb-50">
 			<span class="status-btn dark-btn ml-25 mb-20 mt-10">${today}</span>
 			
