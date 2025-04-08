@@ -37,13 +37,13 @@
 				<div class="row">
 					<div class="col-12">
 						<div class="card-style">
-							<h2 class="text-primary text-center">(🌸◔ ω ◔)</h2>
+							<h2 class="text-primary text-center">게시판 등록</h2>
 							<form action="/bbs/bbsInsert" method="post" name="newProduct"
 								enctype="multipart/form-data" class="mb-4">
 								<!-- 게시글 제목 -->
 								<div class="mb-3">
 									<label class="form-label">제목</label> 
-									<input type="text" name="bbscttSj" class="form-control" placeholder="최대 255자" required>
+									<input type="text" name="bbscttSj" class="form-control" placeholder="제목을 입력해 주세요." required>
 								</div>
 								
 								<!-- 작성자 번호 -->

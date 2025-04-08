@@ -47,7 +47,7 @@
 }
 
 table.table-hover.align-middle.text-center tbody tr td {
-	padding: 15px 0; /* 상하 15px, 좌우 0px */
+	padding: 10px 0; /* 상하 15px, 좌우 0px */
 }
 
 
@@ -96,21 +96,24 @@ table.table-hover.align-middle.text-center tbody tr td {
             <table class="table table-hover align-middle text-center" style="table-layout: fixed; width: 100%;">
               <thead class="table-light">
                 <tr>
-                  <th style="width: 10%;">게시글 유형</th>
+                  <th style="width: 8%;">게시글 유형</th>
+                  <th style="width: 5%;"></th>
                   <th style="width: 60%; text-align: left;">제목</th>
                   <th style="width: 10%;">작성자</th>
                   <th style="width: 10%;">작성일</th>
-                  <th style="width: 10%;">조회수</th>
+                  <th style="width: 10%; text-align: right;">조회수</th>
                 </tr>
               </thead>
               <tbody>
                 <c:forEach var="bbsVO" items="${bbsList}">
                   <tr onClick="location.href='/bbs/bbsDetail?bbsSn=${bbsVO.bbsSn}'" style="cursor:pointer;">
                     <td>${bbsVO.bbsCtgryNo}</td>
-                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">
+                    <td>
                     	<c:if test="${bbsVO.upendFixingYn == 'Y'}">
 					        <span style="color: red; font-weight: bold;">[공지]</span>
 					    </c:if>
+                    </td>
+                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">
                     	${bbsVO.bbscttSj}
                     	<c:choose>
                         <c:when test="${not empty bbsVO.files and bbsVO.files.size() > 0}">
@@ -122,7 +125,7 @@ table.table-hover.align-middle.text-center tbody tr td {
                     </td>
                     <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${myEmpInfo.emplNm}</td>
                     <td>${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}</td>
-                    <td>
+                    <td style="text-align: right;">
                       ${bbsVO.rdcnt}
                     </td>
                   </tr>
