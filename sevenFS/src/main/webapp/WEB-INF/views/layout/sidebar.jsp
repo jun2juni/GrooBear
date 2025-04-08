@@ -115,10 +115,9 @@
           </a>
           <ul id="schdule" class="dropdown-nav collapse" style="">
             <li>
-              <a href="/myCalendar"> 1뎁스 </a>
+              <a href="/myCalendar"> 내 일정 </a>
             </li>
             <li>
-              <a href="/schdule"> 2뎁스 </a>
             </li>
           </ul>
         </li>
@@ -194,10 +193,10 @@
           </a>
           <ul id="bbs" class="dropdown-nav collapse" style="">
             <li>
-              <a href="/bbs/bbsList?bbsCtgryNo=1"> 게시판 1 </a>
+              <a href="/bbs/bbsList?ctgryNo=1"> 게시판 1 </a>
             </li>
             <li>
-              <a href="/bbs/bbsList?bbsCtgryNo=2"> 게시판 2 </a>
+              <a href="/bbs/bbsList?ctgryNo=2"> 게시판 2 </a>
             </li>
           </ul>
         </li>

@@ -406,6 +406,9 @@
                         labelSideBar(response.labelList);
                         let clndr = chngData(response);
                         window.globalCalendar.setOption('events', clndr);
+                        // if(response.lblNo){
+                        //     window.fltrLbl.lblNoList.push(response.lblNo);
+                        // }
                     }
                     else{
                         labelSideBar(response);

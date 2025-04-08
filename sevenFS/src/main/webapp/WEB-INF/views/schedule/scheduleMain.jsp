@@ -8,7 +8,7 @@
 	document.addEventListener('DOMContentLoaded', function() {
 		
 		let emplNo = "${myEmpInfo.emplNo}";
-		let deptCode = "${myEmpInfo.deptCode}"
+		let deptCode = "${myEmpInfo.deptCode}";
 		let shceduleList = [];
 		let showList = [];
    		console.log("직원 이름:", emplNo);
@@ -127,7 +127,8 @@
 			let checkboxHtml = '<option value="0">[기본] 나의 일정</option>';
 			labelList.forEach(label=>{
 				// console.log('modalLblSel -> label : ',label);
-				let icon = createIcon('circle',label.lblColor);
+				// let icon = createIcon('circle',label.lblColor);
+				// console.log('icon : ',icon);
 				checkboxHtml += '<option type="checkbox" value='+label.lblNo+'>'+label.lblNm+'</option>';
 			})
 			labelSection.append(checkboxHtml);

@@ -119,8 +119,7 @@ INSERT INTO SCHEDULE (
 <update id="delLabelFromSchdule" parameterType="kr.or.ddit.sevenfs.vo.schedule.ScheduleVO">
 	UPDATE schedule
 	SET lbl_no = null
-	WHERE empl_no = #{emplNo}
-	  AND lbl_no = #{lblNo}
+	WHERE lbl_no = #{lblNo}
 </update>
 
 </mapper>
