@@ -2,6 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.organization.DclztypeMapper">
 
+<!-- 사원의 근태현황 총 갯수 -->
+<select id="getTotal" parameterType="HashMap" resultType="int">
+	  SELECT COUNT(*)
+      FROM   dclz_type
+      where empl_no=#{emplNo}
+</select>
+
+
 <!-- 사원의 근태현황 대분류로 조회  -->
 <select id="dclzCnt" parameterType="String" resultMap="dclztypeMap">
 	SELECT 
@@ -29,8 +37,8 @@
        AND DCLZ_CODE = '11'
 </select> -->
 
-<!-- 전체 근태현황 조회 -->
-<select id="emplDclzTypeList" parameterType="String" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
+<!-- 사원 한명의 전체 근태현황 조회 -->
+<!-- <select id="emplDclzTypeList" parameterType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
 	SELECT 
 		    dt.empl_no
 		   ,dt.dclz_no
@@ -45,6 +53,25 @@
 	  WHERE cmmn_code_group='ATTEND'
       AND dt.empl_no = #{emplNo}
       ORDER BY dt.dclz_no DESC
+</select> -->
+
+<!-- 사원 한명의 전체 근태현황 조회 -->
+<select id="emplDclzTypeList" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
+	WITH U AS(
+	    SELECT ROW_NUMBER() OVER(ORDER BY D.dclz_no DESC) RNUM
+	         , D.EMPL_NO, D.DCLZ_NO, D.DCLZ_CODE, D.DCLZ_BEGIN_DT, D.DCLZ_END_DT, D.cmmn_code_nm
+	    FROM
+	    (
+	        SELECT dt.EMPL_NO, dt.DCLZ_NO, dt.DCLZ_CODE, dt.DCLZ_BEGIN_DT, dt.DCLZ_END_DT, cc.cmmn_code_nm
+	        FROM   dclz_type dt
+	        RIGHT OUTER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
+	        WHERE cmmn_code_group='ATTEND'
+	        AND EMPL_NO=#{emplNo}
+	    )D  
+	)
+	SELECT U.*
+	FROM U
+	WHERE U.RNUM BETWEEN (#{currentPage} * #{size})-(#{size}-#{currentPage}) AND (#{currentPage}* #{size})
 </select>
 
 <!-- 사원 근태 갯수 -->
@@ -122,7 +149,7 @@
 </select>
 
 <!-- 선택한 년도의 데이터 가져오기 -->
-<select id="getSelectYear" parameterType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
+<!-- <select id="getSelectYear" parameterType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
 	SELECT 
 		    dt.empl_no
 		   ,dt.dclz_no
@@ -136,11 +163,43 @@
       AND dt.empl_no = #{emplNo}
       AND (TO_CHAR(dt.dclz_begin_dt, 'YYYY') LIKE #{workBeginDate})
       ORDER BY dt.dclz_no DESC
+</select> -->
+
+<!-- 선택한 년도의 데이터 가져오기 -->
+<select id="getSelectYear" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
+WITH U AS(
+    SELECT ROW_NUMBER() OVER(ORDER BY D.dclz_no DESC) RNUM
+         , D.EMPL_NO, D.DCLZ_NO, D.DCLZ_CODE, D.work_begin_time, D.work_end_time, D.cmmn_code_nm
+     FROM
+	(
+    SELECT 
+		    dt.empl_no
+		   ,dt.dclz_no
+		   ,dt.dclz_code
+		   ,TO_CHAR(dt.dclz_begin_dt, 'HH24:MI:SS') as work_begin_time
+		   ,TO_CHAR(dt.dclz_end_dt, 'HH24:MI:SS') as work_end_time
+           ,cc.cmmn_code_nm
+	  FROM dclz_type dt
+      RIGHT OUTER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
+	  WHERE cmmn_code_group='ATTEND'
+      AND dt.empl_no = #{emplNo}
+      AND (TO_CHAR(dt.dclz_begin_dt, 'YYYY') LIKE #{workBeginDate})
+      )
+      D
+      )
+      SELECT U.*
+        FROM U
+        WHERE U.RNUM BETWEEN (#{currentPage} * 10)-(10-#{currentPage}) AND (#{currentPage}* 10)
 </select>
 
 <!-- 선택한 년도와 달의 데이터 가져오기 -->
-<select id="getSelectMonth" parameterType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
-	SELECT 
+<select id="getSelectMonth" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
+WITH U AS(
+    SELECT ROW_NUMBER() OVER(ORDER BY D.dclz_no DESC) RNUM
+         , D.EMPL_NO, D.DCLZ_NO, D.DCLZ_CODE, D.work_begin_time, D.work_end_time, D.cmmn_code_nm
+     FROM
+	(
+    SELECT 
 		    dt.empl_no
 		   ,dt.dclz_no
 		   ,dt.dclz_code
@@ -153,7 +212,12 @@
       AND dt.empl_no = #{emplNo}
       AND (TO_CHAR(dt.dclz_begin_dt, 'YYYY') LIKE #{workBeginDate})
       AND (TO_CHAR(dt.dclz_end_dt, 'mm') LIKE #{workEndDate})
-      ORDER BY dt.dclz_no DESC
+      )
+      D
+      )
+      SELECT U.*
+        FROM U
+        WHERE U.RNUM BETWEEN (#{currentPage} * 10)-(10-#{currentPage}) AND (#{currentPage}* 10)
 </select>
 
 

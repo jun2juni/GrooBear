@@ -152,7 +152,7 @@
         
 	        <div class="row">
 	          <div class="">
-	            <div class="card-style mb-30">
+	            <div class="card-style mb-30" id="divPage">
 	              <div class="title d-flex flex-wrap justify-content-between align-items-center">
 	                <div style="width: 50%">
 	                  <h6 class="text-medium mb-30">전체 근무일자</h6>
@@ -160,6 +160,7 @@
 	                </div>
 	                <div class="right">
 	                  <div class="select-style-1 d-flex">
+	                  	<a href="/dclz/dclzType" class="btn-sm main-btn light-btn-light btn-hover mr-10 rounded-md">전체 목록 보기</a>
 	                    <div class="select-position select-sm">
 	                      <select class="light-bg" id="yearSelect">
 	                      <c:set var="prevYear" value="" />
@@ -217,7 +218,7 @@
 	                  
 			          
 	                  <tbody id="dclzBody">
-		                  <c:forEach var="dclzWork" items="${empDclzList}">
+	                  <c:forEach var="dclzWork" items="${empDclzList}">
 	                  <c:set var="year" value="${dclzWork.dclzNo.substring(0,4)}"></c:set>
 			          <c:set var="month" value="${dclzWork.dclzNo.substring(4,6)}"></c:set>
 			          <c:set var="day" value="${dclzWork.dclzNo.substring(6,8)}"></c:set>
@@ -240,19 +241,24 @@
 	                        <p class="text-sm">${dclzWork.workEndTime}</p>
 	                      </td>
 	                      <td>
-	                        <p class="text-sm">43</p>
+	                        <p class="text-sm">${allTime}</p>
 	                      </td>
 	                    </tr>
 	                  </c:forEach>
 	                  </tbody>
 	                </table>
+	                  <page-navi id="page"
+						url="/dclz/dclzType?"
+						current="${param.get("currentPage")}"
+						show-max="10"
+						total="${articlePage.endPage}"></page-navi>
 	                <!-- End Table -->
 	              </div>
 	            </div>
 	          </div>
 	          <!— End Col —>
 	        </div>
-			
+		
 		</div>
 	</section>
 	<c:import url="../../layout/footer.jsp" />
@@ -282,11 +288,21 @@ $(function(){
 		.then(resp => resp.json())
 		.then(res => {
 			//console.log("선택년도의 데이터 : " , res);
+			
 			const dclzBody = $("#dclzBody");
-			
+			const page = $("#page");
+
 			dclzBody.html("");
+			page.html("");
 			
-			res.map((item) => {
+			const selYearList = res.selYearList;
+			console.log("선택년도 데이터 : " , selYearList);
+			
+			const currentPage = res.currentPage;
+			console.log("페이지 : " , currentPage);
+			
+			
+			selYearList.map((item) => {
 				const tr = document.createElement('tr');
 				tr.innerHTML = `
 					 <td>
@@ -307,17 +323,25 @@ $(function(){
                     <p class="text-sm">\${item.workEndTime}</p>
                   </td>
                   <td>
-                    <p class="text-sm">43</p>
+                    <p class="text-sm"></p>
                   </td>
 				`
 				dclzBody.append(tr);
-			})
-			
+			});
+			// 년도 선택시 페이징처리
+			page.html(`
+					 <page-navi
+					url="/dclz/dclzType?"
+					current="${param.get('currentPage')}"
+					show-max="10"
+					total="${res.endPage}"></page-navi>
+					`)
+		
+		
 			const selMonth = $("#monthSelect");
 			selMonth.html("");
 			
-			
-			res.map((items) => {
+			selYearList.map((items) => {
 				selMonth.append(
 					`
 					<option value="\${items.dclzNo.substring(4,6)}" id="mon">\${items.dclzNo.substring(4,6)}</option>
@@ -334,6 +358,8 @@ $(document).on('change', '#monthSelect', function(e) {
 	
 	const monVal = e.target.value;
 	console.log(monVal);
+	
+	const page = $("#page");
 	
 	const yearVal = $('#yearSelect').val();
 	console.log(yearVal);
@@ -352,13 +378,17 @@ $(document).on('change', '#monthSelect', function(e) {
 		})
 		.then(resp => resp.json())
 		.then(res => {
-			//console.log("월까지 선택한 결과 : " ,res);
+			console.log("월까지 선택한 결과 : " ,res.selMonList);
+			
+			const selMonList = res.selMonList;
 			
 			const dclzBody = $("#dclzBody");
 			
 			dclzBody.html("");
 			
-			res.map((item) => {
+			page.html("");
+			
+			selMonList.map((item) => {
 				const tr = document.createElement('tr');
 				tr.innerHTML = `
 					 <td>
@@ -383,7 +413,15 @@ $(document).on('change', '#monthSelect', function(e) {
                   </td>
 				`
 				dclzBody.append(tr);
-			})
+			});
+			// 년도+월 선택시 페이징처리
+			page.html(`
+					 <page-navi
+					url="/dclz/dclzType?"
+					current="${param.get('currentPage')}"
+					show-max="10"
+					total="${res.endPage}"></page-navi>
+					`)
 		})
 	
 	

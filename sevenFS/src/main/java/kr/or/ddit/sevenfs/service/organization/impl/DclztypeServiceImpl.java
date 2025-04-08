@@ -1,7 +1,10 @@
 package kr.or.ddit.sevenfs.service.organization.impl;
 
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,21 +30,33 @@ public class DclztypeServiceImpl implements DclztypeService {
 
 	// 사원 출퇴근 현황 목록 조회
 	@Override
-	public List<DclzTypeVO> emplDclzTypeList(String emplNo) {
+	public List<DclzTypeVO> emplDclzTypeList(Map<String, Object> map) {
 		
-		DclzTypeVO dclzTypeVO = new DclzTypeVO();
+		//DclzTypeVO dclzTypeVO = new DclzTypeVO();
 		
-		List<DclzTypeVO> empDclzList = dclztypeMapper.emplDclzTypeList(emplNo);
+		// 사원의 전체 근태현황
+		List<DclzTypeVO> empDclzList = dclztypeMapper.emplDclzTypeList(map);
+
+		// 총 근무시간 계산 - 다시해야됨
+//		String beginTime = empDclzList.get(0).getWorkBeginTime();
+//		String endTime = empDclzList.get(0).getWorkEndTime();
 		
-		// 사원에 해당하는 근태현황 유형 가져오기
-//		List<String> dclzLabel = new ArrayList<>();
-//		for(int i=0; i<empDclzList.size(); i++) {
-//			String dclzCode = empDclzList.get(i).getDclzCode();
-//			 dclzTypeVO.setDclzCode(dclzCode);
-//			 dclzLabel.add(dclzTypeVO.getDclzNm());
+//		if(endTime != null) {
+//			LocalTime begin = LocalTime.parse(beginTime);
+//			LocalTime end = LocalTime.parse(endTime);
+//
+//			Duration duration = Duration.between(begin, end);
+//			log.info("시간 : " + duration);
+//			
+//			long hours = duration.toHours();
+//			long minutes = duration.toMinutes();
+//			long seconds = duration.toSeconds();
+//
+//			String allTime = hours+"시간 "+minutes+"분 ";
+//			
+//			dclzTypeVO.setAllWorkTime(allTime);
+//
 //		}
-//		log.info("dclzLabel : " + dclzLabel);
-		
 		
 		return empDclzList;
 	}
@@ -73,14 +88,20 @@ public class DclztypeServiceImpl implements DclztypeService {
 
 	// 선택한 년도의 데이터 가져오기
 	@Override
-	public List<DclzTypeVO> getSelectYear(DclzTypeVO dclzTypeVO) {
-		return dclztypeMapper.getSelectYear(dclzTypeVO);
+	public List<DclzTypeVO>  getSelectYear(Map<String, Object> map) {
+		return dclztypeMapper.getSelectYear(map);
 	}
 
 	// 년도와 월 모두 선택했을경우
 	@Override
-	public List<DclzTypeVO> getSelectMonth(DclzTypeVO dclzTypeVO) {
-		return dclztypeMapper.getSelectMonth(dclzTypeVO);
+	public List<DclzTypeVO> getSelectMonth(Map<String, Object> map) {
+		return dclztypeMapper.getSelectMonth(map);
+	}
+
+	// 사원의 총 근태현황 갯수
+	@Override
+	public int getTotal(Map<String, Object> map) {
+		return dclztypeMapper.getTotal(map);
 	}
 
 }

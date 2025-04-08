@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.or.ddit.sevenfs.service.organization.DclztypeService;
+import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.utils.CommonCode;
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
 import kr.or.ddit.sevenfs.vo.organization.DclzTypeDetailVO;
@@ -39,15 +40,32 @@ public class DclzTypeController {
 	DclztypeService dclztypeService;
 	
 	@GetMapping("/dclzType")
-	public String dclzType(Model model, Principal principal, DclzTypeVO dclzTypeVO) {
+	public String dclzType(Model model, Principal principal, DclzTypeVO dclzTypeVO,
+			@RequestParam(defaultValue="1") int currentPage,
+			@RequestParam(defaultValue = "10") int size
+			) {
+		
+		String emplNo = principal.getName();
+		//log.info("username : " + emplNo);
+		dclzTypeVO.setEmplNo(emplNo);
+		model.addAttribute("emplNo" , emplNo);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("emplNo" , emplNo);
+		map.put("currentPage", currentPage);
+		map.put("size", size);
+		
+		// 게시글의 총 갯수
+		int total = dclztypeService.getTotal(map);
+		log.info("total : " + total);
+		
+		ArticlePage<DclzTypeVO> articlePage = new ArticlePage<>(total, currentPage, size);
+		model.addAttribute("articlePage" , articlePage);
+		
 		
 		//log.info("근태 현황 와씀");
 		
 		model.addAttribute("title" , "나의 근태 현황");
-		
-		String emplNo = principal.getName();
-		//log.info("username : " + emplNo);
-		model.addAttribute("emplNo" , emplNo);
 		
 		// 근태현황 대분류 개수
 		DclzTypeVO dclzCnt = dclztypeService.dclzCnt(emplNo);
@@ -61,19 +79,17 @@ public class DclzTypeController {
 		model.addAttribute("empDetailDclzTypeCnt", empDetailDclzTypeCnt);		
 		model.addAttribute("empDetailDclzTypeCnt",empDetailDclzTypeCnt);
 		
-		// 사원 전체 근태현황 조회
-		List<DclzTypeVO> empDclzList = dclztypeService.emplDclzTypeList(emplNo);
-		//log.info("empDclzList : " + empDclzList);
+		// 사원의 전체 근태현황 조회
+		List<DclzTypeVO> empDclzList = dclztypeService.emplDclzTypeList(map);
+		log.info("empDclzList : " + empDclzList);
 		
-		String dclzCode = empDclzList.get(0).getDclzCode();
+		String allTime = dclzTypeVO.getAllWorkTime();
+		log.info("제발담겨라 아아아 : " + allTime);
+		model.addAttribute("allTime", allTime);
 		
-		// 사원의 근태 모든 년도 가져오기
-//		for(int i=0; i<empDclzList.size(); i++) {
-//			empDclzList.get(i).getTodayWorkStartTime();
-//		}
+		//String dclzCode = empDclzList.get(0).getDclzCode();
+		
 		model.addAttribute("empDclzList",empDclzList);
-		
-		// 총 근무시간 계산하기
 		
 		// 오늘날짜
 		Date today = new Date();
@@ -85,7 +101,7 @@ public class DclzTypeController {
 		model.addAttribute("emplNo", emplNo);
 		
 		dclzTypeVO.setEmplNo(emplNo);
-		dclzTypeVO.setDclzCode(dclzCode);
+		//dclzTypeVO.setDclzCode(dclzCode);
 		
 		
 		DclzTypeVO workTime = dclztypeService.getTodayWorkTime(dclzTypeVO);
@@ -149,12 +165,25 @@ public class DclzTypeController {
 	// 퇴근 버튼 눌렀을때 실행
 	@ResponseBody
 	@GetMapping("/todayWorkEnd")
-	public String todayWorkEnd(Principal principal, Model model, DclzTypeVO dclzTypeVO) {
+	public String todayWorkEnd(Principal principal, Model model, DclzTypeVO dclzTypeVO,
+			@RequestParam(defaultValue="1") int currentPage,
+			@RequestParam(defaultValue = "10") int size) {
 		
 		String emplNo = principal.getName();
 		dclzTypeVO.setEmplNo(emplNo);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("emplNo" , emplNo);
+		map.put("currentPage", currentPage);
+		map.put("size", size);
+		
+		// 게시글의 총 갯수
+		int total = dclztypeService.getTotal(map);
+		log.info("total : " + total);
+		
+		ArticlePage<DclzTypeVO> articlePage = new ArticlePage<>(total, currentPage, size);
 
-		List<DclzTypeVO> empDclzList = dclztypeService.emplDclzTypeList(emplNo);
+		List<DclzTypeVO> empDclzList = dclztypeService.emplDclzTypeList(map);
 		//log.info("empDclzList : " + empDclzList);
 		String dclzCode = empDclzList.get(0).getDclzCode();
 		
@@ -181,41 +210,76 @@ public class DclzTypeController {
 	// 년도 , 달 선택했을때
 	@ResponseBody
 	@PostMapping("/yearSelect")
-	public List<DclzTypeVO> yearSelect(@RequestBody DclzTypeVO dclzTypeVO) {
+	public Map<String, Object> yearSelect(@RequestBody DclzTypeVO dclzTypeVO,
+			@RequestParam(defaultValue="1") int currentPage,
+			@RequestParam(defaultValue = "10") int size) {
+		
+		String employeeNo = dclzTypeVO.getEmplNo();
+		
+		// 년도 조회 쿼리로 보낼 map
+		Map<String, Object> map = new HashMap<>();
+		map.put("emplNo" , employeeNo);
+		map.put("currentPage", currentPage);
+		map.put("size", size);
+		
+		// 년도 + 달 조회 쿼리로 보낼 map
+		Map<String, Object> mapMonth = new HashMap<>();
+		mapMonth.put("emplNo" , employeeNo);
+		mapMonth.put("currentPage", currentPage);
+		mapMonth.put("size", size);
+		
+		// 게시글의 총 갯수
+		int total = dclztypeService.getTotal(map);
+		log.info("total : " + total);
+		
+		// 페이지 정보
+		ArticlePage<DclzTypeVO> articlePage = new ArticlePage<>(total, currentPage, size);
+		map.put("articlePage", articlePage);
+		mapMonth.put("articlePage", articlePage);
 		
 		//log.info("param : " + dclzTypeVO);
 		// jsp에서 보낸 년도
 		String date = dclzTypeVO.getWorkBeginDate();
 		String selYear = date.substring(0, 4);
+		map.put("workBeginDate", selYear);
 		dclzTypeVO.setWorkBeginDate(selYear);
 		//log.info("선택년도 : " + dclzTypeVO.getWorkBeginDate());
+
 		
 		// jsp에서 보낸 달
 		String mon = dclzTypeVO.getWorkEndDate();
-		//log.info("선택 달 : " + mon);
+		log.info("선택 달 : " + mon);
 		
 		if(mon == null) {
 			// 년도에만 해당하는 목록
-			List<DclzTypeVO> selYearList = dclztypeService.getSelectYear(dclzTypeVO);
+			List<DclzTypeVO> selYearList = dclztypeService.getSelectYear(map);
 			//log.info("selYearList : " + selYearList);
+			map.put("selYearList", selYearList);
+			return map;
 			
-			return selYearList;
 		}else {
 			String emplNo = dclzTypeVO.getEmplNo();
 			dclzTypeVO.setEmplNo(emplNo);
+			
+			mapMonth.put("emplNo", emplNo);
+			
 			
 			String selectYear = dclzTypeVO.getWorkBeginDate();
 			//log.info("월까지선택한 ㅁ년도 : " + selectYear);
 			dclzTypeVO.setWorkBeginDate(selectYear);
 			
+			mapMonth.put("workBeginDate", selectYear);
+			mapMonth.put("workEndDate", mon);
+			
 			//log.info("월선택 실행");
 			dclzTypeVO.setWorkBeginDate(selYear);
 			dclzTypeVO.setWorkEndDate(mon);
 			
-			List<DclzTypeVO> selMonList = dclztypeService.getSelectMonth(dclzTypeVO);
+			List<DclzTypeVO> selMonList = dclztypeService.getSelectMonth(mapMonth);
 			//log.info("selMonList : " + selMonList);
+			mapMonth.put("selMonList", selMonList);
 			
-			return selMonList;
+			return mapMonth;
 		}
 		
 	}
