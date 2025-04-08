@@ -55,12 +55,12 @@ public class BbsController {
     
     @GetMapping("/bbsList")
     public String bbsList(Model model, 
-    					  @RequestParam("ctgryNo") int ctgryNo,
+    					  @RequestParam("bbsCtgryNo") int bbsCtgryNo,
                           @ModelAttribute BbsVO bbsVO,
                           @RequestParam(defaultValue = "1") int currentPage,
                           @RequestParam(defaultValue = "10") int size) {
     	
-    	bbsVO.setBbsCtgryNo(ctgryNo);
+    	bbsVO.setBbsCtgryNo(bbsCtgryNo);
 
         log.info("서치키워드 확인: " + bbsVO.getSearchKeyword());
         log.info("서치카테고리 확인: " + bbsVO.getCategory());
@@ -91,7 +91,7 @@ public class BbsController {
         model.addAttribute("selectedCategory", bbsVO.getCategory());
         model.addAttribute("articlePage", articlePage);
         model.addAttribute("bbsList", bbsList);
-        model.addAttribute("ctgryNo", ctgryNo);
+        model.addAttribute("bbsCtgryNo", bbsCtgryNo);
 
         return "bbs/bbsList";
     }
@@ -104,9 +104,9 @@ public class BbsController {
      * 게시글 작성 폼
      */
     @GetMapping("/bbsInsert")
-    public String bbsInsertForm(@ModelAttribute BbsVO bbsVO, @RequestParam("ctgryNo") int ctgryNo) {
+    public String bbsInsertForm(@ModelAttribute BbsVO bbsVO, @RequestParam("bbsCtgryNo") int bbsCtgryNo) {
     	
-    	bbsVO.setBbsCtgryNo(ctgryNo);
+    	bbsVO.setBbsCtgryNo(bbsCtgryNo);
     	
         return "bbs/bbsInsert";
     }
@@ -115,10 +115,10 @@ public class BbsController {
      * 게시글 작성 처리
      */
     @PostMapping("/bbsInsert")
-    public String bbsInsert(@ModelAttribute BbsVO bbsVO, Model model,@RequestParam("ctgryNo") int ctgryNo, MultipartFile[] uploadFile, @RequestParam("uploadFile") MultipartFile file) {
+    public String bbsInsert(@ModelAttribute BbsVO bbsVO, Model model,@RequestParam("bbsCtgryNo") int bbsCtgryNo, MultipartFile[] uploadFile, @RequestParam("uploadFile") MultipartFile file) {
         log.info("게시글 등록 요청");
         
-        bbsVO.setBbsCtgryNo(ctgryNo);
+        bbsVO.setBbsCtgryNo(bbsCtgryNo);
 
         long attachFileNm = attachFileService.insertFileList("insertFile", uploadFile);
         bbsVO.setAtchFileNo(attachFileNm);

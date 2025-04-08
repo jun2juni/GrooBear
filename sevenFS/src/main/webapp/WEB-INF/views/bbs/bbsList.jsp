@@ -63,14 +63,13 @@ table.table-hover.align-middle.text-center tbody tr td {
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="text-dark">게시판</h3>
             <!-- 움직이는 태두리 없이 hover 효과만 적용 -->
-            <a href="/bbs/bbsInsert?ctgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-primary">게시글 추가</a>
+            <a href="/bbs/bbsInsert?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-primary">게시글 추가</a>
           </div>
           <!-- (나머지 게시판 및 테이블 내용) -->
           <nav class="navbar navbar-light">
             <div class="container-fluid" style="padding-left:0px;">
               <form action="/bbs/bbsList" method="get" class="d-flex">
-              <input type="hidden" value="${bbsVO.bbsCtgryNo}" name="ctgryNo">
-              	<input type="hidden" name="bbsCtgryNo" value="1">
+              <input type="hidden" value="${bbsVO.bbsCtgryNo}" name="bbsCtgryNo">
                 <!-- 카테고리 선택 드롭다운 -->
                 <select name="category" class="form-select me-2">
 				  <option value="bbscttSj"

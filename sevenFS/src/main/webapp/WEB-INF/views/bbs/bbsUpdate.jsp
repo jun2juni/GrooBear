@@ -38,7 +38,7 @@
                             <form action="/bbs/bbsUpdate" method="post" enctype="multipart/form-data">
                             	<input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
                                 <input type="hidden" name="bbsSn" value="${bbsVO.bbsSn}">
-                                <input type="hidden" value="${bbsVO.bbsCtgryNo}" name="ctgryNo">
+                                <input type="hidden" value="${bbsVO.bbsCtgryNo}" name="bbsCtgryNo">
                                 <div>
                                     제목
                                     <input type="text" name="bbscttSj" value="${bbsVO.bbscttSj}" class="form-control" />

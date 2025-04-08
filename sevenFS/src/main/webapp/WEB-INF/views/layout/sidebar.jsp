@@ -194,10 +194,10 @@
           </a>
           <ul id="bbs" class="dropdown-nav collapse" style="">
             <li>
-              <a href="/bbs/bbsList?ctgryNo=1"> 게시판 1 </a>
+              <a href="/bbs/bbsList?bbsCtgryNo=1"> 게시판 1 </a>
             </li>
             <li>
-              <a href="/bbs/bbsList?ctgryNo=2"> 게시판 2 </a>
+              <a href="/bbs/bbsList?bbsCtgryNo=2"> 게시판 2 </a>
             </li>
           </ul>
         </li>

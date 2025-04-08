@@ -79,11 +79,11 @@
 								</div>
 								
 								<!-- 카테고리 번호 지정 -->
-								<input type="hidden" value="${bbsVO.bbsCtgryNo}" name="ctgryNo">
+								<input type="hidden" value="${bbsVO.bbsCtgryNo}" name="bbsCtgryNo">
 
 								<!-- 게시글 추가 버튼 -->
 								<button type="submit" class="btn btn-primary">추가</button>
-								<a href="/bbs/bbsList?ctgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-secondary">취소</a>
+								<a href="/bbs/bbsList?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-secondary">취소</a>
 							</form>
 						</div>
 					</div>

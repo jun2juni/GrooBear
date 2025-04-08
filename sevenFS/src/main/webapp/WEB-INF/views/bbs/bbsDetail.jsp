@@ -55,7 +55,7 @@
 							<p>${bbsVO.bbsSn} 번</p><br>
 							<form action="/bbs/bbsUpdate" method="get">
 								<input type="hidden" name="bbsSn" value="${bbsVO.bbsSn}">
-								<input type="hidden" value="${bbsVO.bbsCtgryNo}" name="ctgryNo">
+								<input type="hidden" value="${bbsVO.bbsCtgryNo}" name="bbsCtgryNo">
 								<div class="board-detail">
 									<div>제목<p>${bbsVO.bbscttSj}</p></div><br>
 									<div>내용<p>${bbsVO.bbscttCn}</p></div><br>
@@ -75,7 +75,7 @@
 								</div>
 								<div class="position-relative">
 									<div class="position-absolute bottom-0 start-0">
-										<a href="/bbs/bbsList?ctgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-secondary">목록으로 돌아가기</a>
+										<a href="/bbs/bbsList?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-secondary">목록으로 돌아가기</a>
 									</div>
 									<div class="d-grid gap-2 d-md-flex justify-content-md-end">
 										<button type="submit" class="btn btn-outline-warning">수정</button>&nbsp;
@@ -103,7 +103,7 @@
                 data: {bbsSn: bbsSn},
                 success: function(){
                     alert("삭제되었습니다.");
-                    window.location.href = "/bbs/bbsList?ctgryNo="+${bbsVO.bbsCtgryNo};
+                    window.location.href = "/bbs/bbsList?bbsCtgryNo="+${bbsVO.bbsCtgryNo};
                 }
             });
         }
