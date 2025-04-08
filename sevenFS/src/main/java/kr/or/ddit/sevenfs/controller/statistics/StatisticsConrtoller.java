@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import kr.or.ddit.sevenfs.service.statistics.impl.StatisticsServiceImpl;
 import kr.or.ddit.sevenfs.vo.statistics.StatisticsVO;
 import lombok.extern.slf4j.Slf4j;
-
+	
 
 @Controller
 @Slf4j
@@ -86,7 +86,9 @@ public class StatisticsConrtoller {
 			
 			//부서배열 dept=[10, 30, 40] => deptList : ['10', '30', '40']
 			statisticsVO.setDeptList(deptList);
-		}//부서 선택을 했을때만 실행
+			log.info("deptList : " + deptList);
+		}//부서 선택을 했을때만 실행	
+		
 		
 		List<Map<String,Object>> mapList = this.statisticsServiceImpl.AWOLAjax(statisticsVO);
 		// awolList잘받아왓나 
@@ -104,7 +106,7 @@ public class StatisticsConrtoller {
 		arrList.add(arr);
 		
 		
-		return null;
+		return arrList;
 	}
 	
 
