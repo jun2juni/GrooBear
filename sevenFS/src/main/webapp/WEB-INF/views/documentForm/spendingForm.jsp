@@ -62,12 +62,12 @@
 		<div style="margin: 0 10px;">
 		
 			<div style="padding: 10px 0;">
-				<div class="s_frm_title">1. 지출 내용</div>
+				<div class="s_frm_title"><b>지출 내용</b></div>
 				<textarea class="form-control" style="resize: none;" readonly></textarea>
 			</div>
 			
 			<div style="padding: 10px 0;">
-				<div class="s_frm_title">2. 지출 내역</div>
+				<div class="s_frm_title"><b>지출 내역</b></div>
 				<table class="table" style="text-align: center;">
 				  <thead>
 				    <tr>

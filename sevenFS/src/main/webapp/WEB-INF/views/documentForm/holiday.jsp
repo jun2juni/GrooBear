@@ -287,7 +287,7 @@ select.ui-datepicker-year {
 	<main class="main-wrapper">
 		<%@ include file="../layout/header.jsp"%>
 		<section class="section">
-		<form id="atrz_ho_form" action="/atrz/appLineList" method="post" enctype="multipart/form-data">
+		<form id="atrz_ho_form" action="/atrz/insertAtrzLine" method="post" enctype="multipart/form-data">
 			<div class="container-fluid">
 				<!-- 여기서 작업 시작 -->
 				<div class="row">
@@ -749,6 +749,8 @@ $(document).ready(function() {
 
 		
 		let formData = new FormData();
+		formData.append("docFormNm","H");
+		formData.append("docFormNo",1);
 		formData.append("atrzSj",jnForm.atrzSj.value);
 		formData.append("atrzCn",jnForm.atrzCn.value);
 		if(jnForm.uploadFile.files.length){
@@ -799,7 +801,7 @@ $(document).ready(function() {
             }
 
 		$.ajax({
-			url:"/atrz/atrzInsert",
+			url:"/atrz/atrzHolidayInsert",
 			processData:false,
 			contentType:false,
 			type:"post",
@@ -814,28 +816,6 @@ $(document).ready(function() {
 			},
 			error: junyError
 		})
-		
-		//<form
-		//여기서 for문을돌려서 하나씩 담아줘야한다.
-		/*
-		let str ="";
-		$.each(authList, function(i,emp){
-			str +=`
-				<input type="hidden" name="documHolidayVO.atrzLineVOList[${i}].atrzLnSn" value="\${emp.atrzLnSn}" /><br>
-				<input type="hidden" name="documHolidayVO.atrzLineVOList[${i}].sanctnerEmpno" value="\${emp.auth}" /><br>
-				<input type="hidden" name="documHolidayVO.atrzLineVOList[${i}].atrzTy" value="\${emp.emplNo}" /><br>
-				<input type="hidden" name="documHolidayVO.atrzLineVOList[${i}].dcrbAuthorYn" value="\${emp.flex}" /><br>
-			`;
-		})
-		
-		// console.log("str : "+str);
-		$("#atrz_ho_form").append(str);
-		*/
-		
-		
-		//폼제출
-		//$("#atrz_ho_form").submit();	
-
 	});
 	
 	//버튼눌렀을때 작동되게 하기 위해서 변수에 담아준다.
@@ -866,91 +846,87 @@ $(document).ready(function() {
 		console.log("결재선지정->emplNo : ",emplNo);
 		
 	});//end jstree-anchor
-	$(document).on("click", "#add_appLine",function(){
-		 //사원선택안하고 화살표로 추가 했을때
-		if(!emplNo){
-			swal({
-				title: "",
-				text: "선택한 사원이 없습니다.",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false
-			});
+	
+	let selectedType = "sign";  // 기본은 결재
+
+	$(document).on("click", "#add_appLine", function(){
+		selectedType = "sign";  // 결재선
+		addAppLine();
+	});
+
+	$(document).on("click", "#add_attLine", function(){
+		selectedType = "ref";  // 참조자
+		addAppLine();
+	});
+
+
+	function addAppLine() {
+	if(!emplNo){
+		swal({ text: "선택한 사원이 없습니다.", icon: "error" });
+		return;
+	}
+	if(secEmplNo == emplNo){
+		swal({ text: "본인은 결재선 리스트에 추가할 수 없습니다.", icon: "error" });
+		return;
+	}
+	for(let i = 0; i< $('.s_td_no').length; i++){
+		if($('.s_td_no').eq(i).text() == emplNo){
+			swal({ text: "이미 추가된 사원입니다.", icon: "error" });
 			return;
 		}
-		
-		 //여기에선 본인을 선택하면 본인은 추가 안되게 만들어야함(완료)
-		if(secEmplNo==emplNo){
-			swal({
-                title: "",
-                text: "본인은 결재선 리스트에 추가할 수 없습니다.",
-                icon: "error",
-                closeOnClickOutside: false,
-                closeOnEsc: false
-            });
-			return;
-		}
-		
-		 //여기서 이미 결재선 넣어준 사람은 다시 들어지 않게 해야함
-		for(let i = 0; i< $('.s_td_no').length; i++){
-			if($('.s_td_no').eq(i).text()== emplNo){
-				swal({
-					title: "",
-					text: "결재선에 이미 선택되어 있습니다.",
-					icon: "error",
-					closeOnClickOutside: false,
-					closeOnEsc: false
-				});
-				
-				return;
+	}
+
+	$.ajax({
+		url:"/atrz/insertAtrzEmp",
+		data:{"emplNo":emplNo},
+		type:"post",
+		dataType:"json",
+		success:function(result){
+			let noLen = $(".clsTr").length;
+
+			let selectHtml = `
+				<select class="form-select selAuth" aria-label="Default select example">
+					<option value="0" \${selectedType == "sign" ? "selected" : ""}>결재</option>
+					<option value="1" \${selectedType == "ref" ? "selected" : ""}>참조</option>
+				</select>
+			`;
+
+			// 참조일 때는 checkbox 없이 처리
+			let checkboxHtml = "";
+			if (selectedType == "sign") {
+				checkboxHtml = `
+					<input class="form-check-input flexCheckDefault" type="checkbox" value="Y" />
+				`;
+			}
+
+
+
+			let str = `
+					<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
+						<th>\${noLen+1}</th>
+						<th style="display: none;" class="s_td_no">\${result.emplNo}</th>
+						<th class="s_td_name">\${result.emplNm}</th>
+						<th>\${result.deptNm}</th>
+						<th>\${result.posNm}</th>
+						<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
+						<th hidden>\${selectHtml}</th>
+						<th>\${checkboxHtml}</th>
+					</tr>
+				`;
+
+			// ✅ 타입에 따라 위치 다르게 append
+			if(selectedType === "sign"){
+				$(".s_appLine_tbody_new").append(str);  // 위쪽 결재선
+			}else{
+				$(".s_appLine_tbody_ref").append(str);  // 아래쪽 참조자
 			}
 		}
-		 //여기서 전결여부는 장급만 되어야함
-		$.ajax({
-				url:"/atrz/appLineEmp",
-				data:{"emplNo":emplNo},
-				type:"post",
-				dataType:"json",
-				success:function(result){
-					let resultObj = result;
-					console.log("result : ", result);
-					console.log("result.emplNm : ",result.emplNm);
-					console.log("result.posNm : ",result.posNm);
-					
-					//중복으로는 못들어가게 만들기
-					
-					//NO처리하기
-					let noLen = $(".clsTr").length;
-					console.log("noLen : ", noLen);
-					//여기서는 jsp언어는 java에서 처리 못하도록 역슬래시를 사용해서 막아야한다.
-					let str = `
-						<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
-							<th>\${noLen+1}</th>
-							<th style="display: none;" class="s_td_no">\${result.emplNo}</th>
-							<th class="s_td_name">\${result.emplNm}</th>
-							<th>\${result.deptNm}</th>
-							<th>\${result.posNm}</th>
-							<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
-							<th hidden>
-								<select class="form-select selAuth" aria-label="Default select example">
-									<option value="0" selected>결재</option>
-									<option value="1">참조</option>
-								</select>
-							</th>
-							<th>
-								<input class="form-check-input flexCheckDefault" type="checkbox" value="Y" />
-							</th>
-						</tr>
-						`;
-					$(".s_appLine_tbody_new").append(str);    
-					
-				}//end success
-			});//end ajax
-	
-	})//결재선선택후에 결재선리스트로 가는버튼 
+	});
+}
 	
 	//왼쪽버튼의 경우에는 결재선선택과는 거리가 멀기 때문에 필요없음
 	//왼쪽 버튼을 눌렀을때 삭제처리되어야함
+	//결재자 리스트 삭제
 	$(document).on("click", "#remo_appLine",function(){
 		let lastRow = $(".s_appLine_tbody_new .clsTr");   //가장마지막에 추가된 tr
 		//삭제대상확인 
@@ -958,6 +934,7 @@ $(document).ready(function() {
 		
 		if(lastRow.length > 0){
 			lastRow.last().remove(); 
+			reindexApprovalLines();
 				// console.log("개똥이장군");
 				// console.log("lastRow : ",lastRow);
 				
@@ -975,6 +952,33 @@ $(document).ready(function() {
 					return;
 			}
 		});
+	//전체테이블 순번 다시 매기기
+	function reindexApprovalLines() {
+		$(".clsTr").each(function(index) {
+			$(this).find("th").first().text(index + 1);
+		});
+	}
+
+	//참조자 리스트 삭제
+	$(document).on("click", "#remo_attLine", function() {
+    let refRows = $(".s_appLine_tbody_ref .clsTr");
+
+    if (refRows.length > 0) {
+        // 마지막 참조자 삭제
+        refRows.last().remove();
+        // 순번 다시 매기기
+        reindexApprovalLines();
+    } else {
+        swal({
+            title: "",
+            text: "삭제할 참조자가 없습니다.",
+            icon: "error",
+            closeOnClickOutside: false,
+            closeOnEsc: false
+        });
+    }
+});
+
 	
 	//결재선지정에서 확인버튼 눌렀을때
 	$("#s_add_appLine_list").click(function(){
@@ -1072,7 +1076,7 @@ $(document).ready(function() {
 
 //asnyc를 써서 
 		$.ajax({
-			url:"/atrz/appLineList",
+			url:"/atrz/insertAtrzLine",
 			processData:false,
 			contentType:false,
 			type:"post",

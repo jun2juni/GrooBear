@@ -1,88 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper">
-	<select id="homeList" resultMap="atrzMap">
-		SELECT /* AtrzMapper.homeList */
-	        A.atrz_doc_no,
-	        A.drafter_empno,
-	        A.drafter_clsf,
-	        A.drafter_empnm,
-	        A.drafter_dept,
-	        A.bkmk_yn,
-	        A.atch_file_no,
-	        A.atrz_sj,
-	        A.atrz_cn,
-	        A.atrz_opinion,
-	        A.atrz_tmpr_stre_dt,
-	        A.atrz_drft_dt,
-	        A.atrz_compt_dt,
-	        A.atrz_rtrvl_dt,
-	        A.atrz_sttus_code,
-	        A.eltsgn_image,
-	        A.doc_form_no,
-	        A.atrz_delete_yn,
-	        A.schdul_reg_yn,
-	
-	        L.atrz_doc_no as line_atrz_doc_no,
-	        L.atrz_ln_sn,
-	        L.sanctner_empno,
-	        L.sanctner_clsf_code,
-	        L.contd_empno,
-	        L.contd_clsf_code,
-	        L.dcrb_man_empno,
-	        L.dcrb_man_clsf_code,
-	        L.atrz_ty,
-	        L.sanctn_progrs_sttus_code,
-	        L.dcrb_author_yn,
-	        L.contd_author_yn,
-	        L.sanctn_opinion,
-	        L.eltsgn_image as line_eltsgn_image,
-	        L.sanctn_confm_dt,
-	
-	        H.holi_actpln_no,
-	        H.atrz_doc_no as holi_atrz_doc_no,
-	        H.holi_code,
-	        H.holi_start,
-	        H.holi_end
-	
-	    FROM atrz A
-	    LEFT JOIN atrz_line L ON A.atrz_doc_no = L.atrz_doc_no
-	    LEFT JOIN docum_holiday H ON A.atrz_doc_no = H.atrz_doc_no
-	    WHERE A.drafter_empno = #{drafterEmpno}
-	    ORDER BY A.atrz_drft_dt
-	</select>
-	
 	<!-- 결재 대기중인 문서리스트 -->
 	<select id="atrzApprovalList" resultMap="atrzMap">
 		SELECT  /* AtrzMapper.atrzApprovalList */
-		    a.atrz_doc_no,
-		    a.atrz_sj,
-		    a.atrz_cn,
-		    a.atrz_drft_dt,
-		    a.drafter_empno,
-		    a.atrz_sttus_code,
-		    
-		    l.atrz_ln_sn,
-		    l.sanctner_empno,
-		    l.sanctn_progrs_sttus_code,
-		    l.atrz_ty,
-		    l.dcrb_author_yn
+		    A.ATRZ_DOC_NO
+		  , A.DRAFTER_EMPNO
+		  , A.DRAFTER_CLSF
+		  , A.DRAFTER_EMPNM
+		  , A.DRAFTER_DEPT
+		  , A.BKMK_YN
+		  , A.ATCH_FILE_NO
+		  , A.ATRZ_SJ
+		  , A.ATRZ_CN
+		  , A.ATRZ_OPINION
+		  , A.ATRZ_TMPR_STRE_DT
+		  , A.ATRZ_DRFT_DT
+		  , A.ATRZ_COMPT_DT
+		  , A.ATRZ_RTRVL_DT
+		  , A.ATRZ_STTUS_CODE
+		  , A.ELTSGN_IMAGE
+		  , A.DOC_FORM_NO
+		  , A.ATRZ_DELETE_YN
+		  , A.SCHDUL_REG_YN
+		  , L.atrz_ln_sn
+		  , L.sanctner_empno
+		  , L.sanctn_progrs_sttus_code
+		  , L.atrz_ty
+		  , L.dcrb_author_yn
 		
-		FROM atrz a
-		LEFT JOIN atrz_line l
-		    ON a.atrz_doc_no = l.atrz_doc_no
+		FROM atrz A
+		LEFT JOIN atrz_line L
+		    ON A.atrz_doc_no = L.atrz_doc_no
 		
-		WHERE a.atrz_compt_dt IS NULL
-		  AND l.sanctner_empno = #{emplNo}
-		  AND l.sanctn_progrs_sttus_code = '00'
+		WHERE A.atrz_compt_dt IS NULL
+		  AND L.sanctner_empno = #{emplNo}
+		  AND L.sanctn_progrs_sttus_code = '00'
 		  AND NOT EXISTS (
 		        SELECT 1
-		        FROM atrz_line l2
-		        WHERE l2.atrz_doc_no = a.atrz_doc_no
-		          AND l2.atrz_ln_sn &lt; l.atrz_ln_sn
-		          AND l2.sanctn_progrs_sttus_code = '00'
+		        FROM atrz_line L2
+		        WHERE L2.atrz_doc_no = A.atrz_doc_no
+		          AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
+		          AND L2.sanctn_progrs_sttus_code = '00'
 		    )
-		ORDER BY a.atrz_drft_dt DESC
+		ORDER BY A.atrz_drft_dt DESC
 	</select>
 	
 	<!-- 기안중인 문서리스트 문서리스트 -->
@@ -152,215 +113,10 @@
         <collection property="EmplAtrzList" ofType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO" resultMap="atrzMap"/>
     </resultMap>
 
-
-	<!-- 전자결재 및 사원 정보 조회 SQL -->
-<!--     <select id="atrzEmploInfo" resultMap="EmployeeResultMap"> -->
-<!--        SELECT  -->
-<!--             E.EMPL_NO, E.EMPL_NM, E.DEPT_CODE, E.CLSF_CODE, -->
-<!--             A.ATRZ_DOC_NO, A.DRAFTER_EMPNO, A.DRAFTER_CLSF, A.DRAFTER_EMPNM,  -->
-<!--             A.DRAFTER_DEPT, A.BKMK_YN, A.ATCH_FILE_NO, A.ATRZ_SJ, A.ATRZ_CN,  -->
-<!--             A.ATRZ_OPINION, A.ATRZ_TMPR_STRE_DT, A.ATRZ_DRFT_DT, A.ATRZ_COMPT_DT,  -->
-<!--             A.ATRZ_RTRVL_DT, A.ATRZ_STTUS_CODE, A.ELTSGN_IMAGE, A.DOC_FORM_NO,  -->
-<!--             A.ATRZ_DELETE_YN, A.SCHDUL_REG_YN -->
-<!--         FROM EMPLOYEE E -->
-<!--         LEFT JOIN ATRZ A ON E.EMPL_NO = A.DRAFTER_EMPNO -->
-<!--          WHERE E.EMPL_NO = #{emplNo} -->
-<!--     </select> -->
-	
-	
-	<select id="selectBeforeDoc" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
-    SELECT TO_CHAR(A.ATRZ_DRFT_DT, 'YYYY/MM/DD') AS ATRZ_DRFT_DT,
-           A.ATCH_FILE_NO,
-           (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPT' AND CMMN_CODE = E.DEPT_CODE) AS DEPT_NAME,
-           E.EMPL_NM AS DRAFTER_NAME,
-           A.ATRZ_SJ,
-           A.ATRZ_CN,
-           A.DRAFTER_EMPNO,
-           A.DOC_FORM_NO,
-           A.ATRZ_DOC_NO,
-           CASE 
-               WHEN A.ATRZ_STTUS_CODE = '30' THEN '결재회수'
-               WHEN A.ATRZ_STTUS_CODE = '00' THEN '진행중'
-               WHEN A.ATRZ_STTUS_CODE = '10' THEN '반려'
-               WHEN A.ATRZ_STTUS_CODE = '20' THEN '결재완료'
-               WHEN A.ATRZ_STTUS_CODE = '40' THEN '취소'
-               WHEN A.ATRZ_STTUS_CODE = '99' THEN '임시저장'
-               ELSE '알 수 없음'
-           END AS ATRZ_STTUS
-    FROM ATRZ A
-    JOIN EMPLOYEE E ON A.DRAFTER_EMPNO = E.EMPL_NO
-    WHERE (A.ATRZ_STTUS_CODE = '00' OR A.ATRZ_STTUS_CODE = '10')
-      AND A.DRAFTER_EMPNO = #{emp_no}
-      AND A.ATRZ_SJ IS NOT NULL
-    <choose>
-        <when test="type != null and type.equals('ATRZ_SJ')">
-            AND A.ATRZ_SJ LIKE '%' || #{keyword} || '%'
-        </when>
-        <when test="type != null and type.equals('DRAFTER_NAME')">
-            AND E.EMPL_NM LIKE '%' || #{keyword} || '%'
-        </when>
-        <when test="type != null and type.equals('DEPT_NAME')">
-            AND EXISTS (
-                SELECT 1 FROM COMMON_CODE C
-                WHERE C.CMMN_CODE_GROUP = 'DEPT' 
-                  AND C.CMMN_CODE = E.DEPT_CODE
-                  AND C.CMMN_CODE_NM LIKE '%' || #{keyword} || '%'
-            )
-        </when>
-    </choose>
-    ORDER BY A.ATRZ_DRFT_DT DESC, A.ATRZ_DOC_NO DESC
-</select>
-<!-- 서브메뉴에 띄울 결재 대기 문서 개수 -->
-<select id="beDocCnt" parameterType="string" resultType="_int">
-    SELECT COUNT(*) 
-    FROM (
-        SELECT TO_CHAR(A.ATRZ_DRFT_DT, 'YYYY/MM/DD') AS ATRZ_DRFT_DT,
-               (SELECT CMMN_CODE_NM 
-                  FROM COMMON_CODE 
-                 WHERE CMMN_CODE_GROUP = 'DEPT' 
-                   AND CMMN_CODE = E.DEPT_CODE) AS DEPT_NAME,
-               A.ATCH_FILE_NO,
-               E.EMPL_NM AS DRAFTER_NAME,
-               A.ATRZ_SJ,
-               A.ATRZ_CN,
-               A.DRAFTER_EMPNO,
-               A.ATRZ_DOC_NO,
-               CASE 
-                   WHEN A.ATRZ_STTUS_CODE = '30' THEN '결재회수'
-                   WHEN A.ATRZ_STTUS_CODE = '00' THEN '진행중'
-                   WHEN A.ATRZ_STTUS_CODE = '10' THEN '반려'
-                   WHEN A.ATRZ_STTUS_CODE = '20' THEN '결재완료'
-                   WHEN A.ATRZ_STTUS_CODE = '40' THEN '취소'
-                   WHEN A.ATRZ_STTUS_CODE = '99' THEN '임시저장'
-                   ELSE '알 수 없음'
-               END AS ATRZ_STTUS,
-               A.DOC_FORM_NO
-        FROM ATRZ A
-        JOIN EMPLOYEE E ON A.DRAFTER_EMPNO = E.EMPL_NO
-        WHERE (A.ATRZ_STTUS_CODE = '00' OR A.ATRZ_STTUS_CODE = '10') 
-          AND A.DRAFTER_EMPNO = #{emp_no} 
-          AND A.ATRZ_SJ IS NOT NULL
-        ORDER BY A.ATRZ_DRFT_DT DESC, A.ATRZ_DOC_NO DESC
-    )
-</select>
-
-<!-- 전자결재 홈 전자 결재 대기 -->
-<!-- <select id="selectHomeBeDoc" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO"> -->
-<!--     SELECT TO_CHAR(A.ATRZ_DRFT_DT, 'YYYY/MM/DD') AS ATRZ_DRFT_DT, -->
-<!--            (SELECT CMMN_CODE_NM  -->
-<!--               FROM COMMON_CODE  -->
-<!--              WHERE CMMN_CODE_GROUP = 'DEPT'  -->
-<!--                AND CMMN_CODE = E.DEPT_CODE) AS DEPT_NAME, -->
-<!--            A.ATCH_FILE_NO, -->
-<!--            E.EMPL_NM AS DRAFTER_NAME, -->
-<!--            A.ATRZ_SJ, -->
-<!--            A.ATRZ_CN, -->
-<!--            A.DRAFTER_EMPNO, -->
-<!--            A.ATRZ_DOC_NO, -->
-<!--            CASE  -->
-<!--                WHEN A.ATRZ_STTUS_CODE = '30' THEN '결재회수' -->
-<!--                WHEN A.ATRZ_STTUS_CODE = '00' THEN '결재대기' -->
-<!--                WHEN A.ATRZ_STTUS_CODE = '10' THEN '진행중' -->
-<!--                WHEN A.ATRZ_STTUS_CODE = '20' THEN '결재완료' -->
-<!--                WHEN A.ATRZ_STTUS_CODE = '40' THEN '취소' -->
-<!--                WHEN A.ATRZ_STTUS_CODE = '99' THEN '임시저장' -->
-<!--                ELSE '알 수 없음' -->
-<!--            END AS ATRZ_STTUS, -->
-<!--            A.DOC_FORM_NO -->
-<!--     FROM ATRZ A -->
-<!--     JOIN EMPLOYEE E ON A.DRAFTER_EMPNO = E.EMPL_NO -->
-<!--     WHERE (A.ATRZ_STTUS_CODE = '00' OR A.ATRZ_STTUS_CODE = '10')  -->
-<!--       AND A.DRAFTER_EMPNO = #{emp_no}  -->
-<!--       AND A.ATRZ_SJ IS NOT NULL -->
-<!--     ORDER BY A.ATRZ_DRFT_DT DESC, A.ATRZ_DOC_NO DESC -->
-<!-- </select> -->
-
-<!-- 전자결재 홈 기안 진행 문서 -->
-<!-- <select id="selectHomeReqDoc" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO"> -->
-<!--     SELECT A.*, B.DEPT_NAME  -->
-<!--     FROM ( -->
-<!--         SELECT TO_CHAR(A.ATRZ_DRFT_DT, 'YYYY/MM/DD') AS ATRZ_DRFT_DT, -->
-<!--                A.ATCH_FILE_NO, -->
-<!--                E.EMPL_NM AS DRAFTER_NAME, -->
-<!--                A.ATRZ_SJ, -->
-<!--                A.ATRZ_CN, -->
-<!--                A.DRAFTER_EMPNO, -->
-<!--                A.ATRZ_DOC_NO, -->
-<!--                CASE  -->
-<!--                    WHEN A.ATRZ_STTUS_CODE = '30' THEN '결재회수' -->
-<!--                    WHEN A.ATRZ_STTUS_CODE = '00' THEN '결재대기' -->
-<!--                    WHEN A.ATRZ_STTUS_CODE = '10' THEN '진행중' -->
-<!--                    WHEN A.ATRZ_STTUS_CODE = '20' THEN '결재완료' -->
-<!--                    WHEN A.ATRZ_STTUS_CODE = '40' THEN '취소' -->
-<!--                    WHEN A.ATRZ_STTUS_CODE = '99' THEN '임시저장' -->
-<!--                    ELSE '알 수 없음' -->
-<!--                END AS ATRZ_STTUS, -->
-<!--                A.DOC_FORM_NO -->
-<!--         FROM ATRZ A -->
-<!--         JOIN EMPLOYEE E ON A.DRAFTER_EMPNO = E.EMPL_NO -->
-<!--         WHERE A.ATRZ_SJ IS NOT NULL  -->
-<!--           AND ( -->
-<!--                (A.ATRZ_STTUS_CODE = '00' AND A.DRAFTER_EMPNO = #{emp_no})  -->
-<!--                OR (A.ATRZ_STTUS_CODE = '10' AND A.DRAFTER_EMPNO = #{emp_no}) -->
-<!--           ) -->
-<!--         ORDER BY A.ATRZ_DRFT_DT DESC, A.ATRZ_DOC_NO DESC -->
-<!--     ) A, -->
-<!--     (SELECT EMPL_NO,  -->
-<!--             (SELECT CMMN_CODE_NM  -->
-<!--              FROM COMMON_CODE  -->
-<!--              WHERE CMMN_CODE_GROUP = 'DEPT'  -->
-<!--                AND CMMN_CODE = E.DEPT_CODE) AS DEPT_NAME -->
-<!--      FROM EMPLOYEE E -->
-<!--     ) B -->
-<!--     WHERE A.DRAFTER_EMPNO = B.EMPL_NO -->
-<!-- </select> -->
-
-<!-- 서브 메뉴에 띄울 결재 수신 문서 개수 -->
-<select id="recDocCnt" parameterType="string" resultType="int">
-    SELECT COUNT(*) 
-    FROM (
-        SELECT A.*, B.DEPT_NAME 
-        FROM (
-            SELECT TO_CHAR(A.ATRZ_DRFT_DT, 'YYYY/MM/DD') AS ATRZ_DRFT_DT,
-                   A.ATCH_FILE_NO,
-                   E.EMPL_NM AS DRAFTER_NAME,
-                   A.ATRZ_SJ,
-                   A.ATRZ_CN,
-                   A.DRAFTER_EMPNO,
-                   A.ATRZ_DOC_NO,
-                   CASE 
-                       WHEN A.ATRZ_STTUS_CODE = '30' THEN '결재회수'
-                       WHEN A.ATRZ_STTUS_CODE = '00' THEN '결재대기'
-                       WHEN A.ATRZ_STTUS_CODE = '10' THEN '진행중'
-                       WHEN A.ATRZ_STTUS_CODE = '20' THEN '결재완료'
-                       WHEN A.ATRZ_STTUS_CODE = '40' THEN '취소'
-                       WHEN A.ATRZ_STTUS_CODE = '99' THEN '임시저장'
-                       ELSE '알 수 없음'
-                   END AS ATRZ_STTUS,
-                   A.DOC_FORM_NO
-            FROM ATRZ A
-            JOIN EMPLOYEE E ON A.DRAFTER_EMPNO = E.EMPL_NO
-            WHERE (A.ATRZ_STTUS_CODE = '00' OR A.ATRZ_STTUS_CODE = '10') 
-              AND A.ATRZ_SJ IS NOT NULL 
-              AND (
-                   (A.ATRZ_STTUS_CODE = '00' AND A.DRAFTER_EMPNO = #{emp_no}) 
-                   OR (A.ATRZ_STTUS_CODE = '10' AND A.DRAFTER_EMPNO = #{emp_no})
-              )
-            ORDER BY A.ATRZ_DRFT_DT DESC, A.ATRZ_DOC_NO DESC
-        ) A,
-        (SELECT EMPL_NO, 
-                (SELECT CMMN_CODE_NM 
-                 FROM COMMON_CODE 
-                 WHERE CMMN_CODE_GROUP = 'DEPT' 
-                   AND CMMN_CODE = E.DEPT_CODE) AS DEPT_NAME
-         FROM EMPLOYEE E
-        ) B
-        WHERE A.DRAFTER_EMPNO = B.EMPL_NO
-    )
-</select>
+	<!-- 전자결재테이블 등록 -->
 	<insert id="insertAtrz" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
 		<selectKey resultType="string" order="BEFORE" keyProperty="atrzDocNo">
-			SELECT CREATE_DOC_NO('H') AS CREATE_DOC_NO FROM DUAL
+			SELECT CREATE_DOC_NO(#{docFormNm}) AS CREATE_DOC_NO FROM DUAL
 		</selectKey>
 		INSERT INTO     /* AtrzMapper.insertAtrz */
 	<!-- 	전자결재번호,기안자사번, 직급, 이름,부서,  -->
@@ -392,12 +148,10 @@
 			,#{atrzCn}
 			,SYSDATE
 			,'00'
-			,1
+			,#{docFormNo}
 		)
-	<!-- 번호 함수로 넣기  -->
-	<!-- 만약에 이게   -->
 	</insert>
-	
+	<!-- 전자결재결재선 등록 -->
 	<insert id="insertAtrzLine" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
 		INSERT INTO  /* AtrzMapper.insertAtrzLine */
 			atrz_line 
@@ -420,7 +174,8 @@
 			)	
 	</insert>
 	
-	<insert id="insertHoliday" parameterType="kr.or.ddit.sevenfs.vo.atrz.DocumHolidayVO">
+	<!-- 연차신청서 등록 -->
+	<insert id="insertHoliday" parameterType="kr.or.ddit.sevenfs.vo.atrz.HolidayVO">
 		<selectKey resultType="int" order="BEFORE" keyProperty="holiActplnNo">
 			SELECT NVL(MAX(HOLI_ACTPLN_NO),0)+1 FROM DOCUM_HOLIDAY
 		</selectKey>
@@ -442,9 +197,37 @@
 			, #{holiEnd}
 			)
 	</insert>
+	<insert id="insertSpending" parameterType="kr.or.ddit.sevenfs.vo.atrz.SpendingVO">
+		<selectKey resultType="int" order="BEFORE" keyProperty="spendingReportNo">
+			SELECT NVL(MAX(spending_report_no),0)+1 FROM docum_spending
+		</selectKey>
+		INSERT INTO /* AtrzMapper.insertSpending */
+			docum_spending    
+			(
+			   spending_report_no
+			 , atrz_doc_no
+			 , expense_order
+			 , expense_date
+			 , item_description
+			 , item_quantity
+			 , item_amount
+			 , payment_method
+			)
+		VALUES
+			(
+			  #{spendingReportNo}
+			, #{atrzDocNo}
+			, #{expenseOrder}
+			, #{expenseDate}
+			, #{itemDescription}
+			, #{itemQuantity}
+			, #{itemAmount}
+			, #{paymentMethod}
+			)
+	</insert>
 	
-	<!-- 상세보기를 위한 resultMap 사용 -->
-	<resultMap id="holidayDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.DocumHolidayVO" >
+	<!-- 연차신청서 resultMap 사용 -->
+	<resultMap id="holidayDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.HolidayVO" >
 		<!-- 연차신청서 -->
 		<id property="holiActplnNo" column="HOLI_ACTPLN_NO"/>
 		<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
@@ -454,15 +237,18 @@
 		<association property="atrzVO" resultMap="atrzMap"></association>
 	</resultMap>
 
-	<!-- 월차신청서 -->
-<!-- 	<resultMap id="holidayDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.DocumHolidayVO" > -->
-<!-- 		<id property="holiActplnNo" column="HOLI_ACTPLN_NO"/> -->
-<!-- 		<result property="atrzDocNo" column="ATRZ_DOC_NO"/> -->
-<!-- 		<result property="holiCode" column="HOLI_CODE"/> -->
-<!-- 		<result property="holiStart" column="HOLI_START"/> -->
-<!-- 		<result property="holiEnd" column="HOLI_END"/> -->
-<!-- 		<association property="atrzVO" resultMap="atrzMap"></association> -->
-<!-- 	</resultMap> -->
+	<!-- 지출결의서 resultMap -->
+	<resultMap id="spendingDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.SpendingVO" >
+		<result property="spendingReportNo" column="SPENDING_REPORT_NO"/>
+		<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
+		<result property="expenseOrder" column="EXPENSE_ORDER"/>
+		<result property="expenseDate" column="EXPENSE_DATE"/>
+		<result property="itemDescription" column="ITEM_DESCRIPTION"/>
+		<result property="itemQuantity" column="ITEM_QUANTITY"/>
+		<result property="itemAmount" column="ITEM_AMOUNT"/>
+		<result property="paymentMethod" column="PAYMENT_METHOD"/>
+		<association property="atrzVO" resultMap="atrzMap"></association>
+	</resultMap>
 	
 	<!-- 전자결재 -->
 	<resultMap type="kr.or.ddit.sevenfs.vo.atrz.AtrzVO" id="atrzMap">

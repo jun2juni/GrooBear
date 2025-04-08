@@ -182,8 +182,10 @@
 							<div class="atrzTabCont" style="margin-top: 0px; overflow-x: auto;">
 								<div class="container mt-2 homeContainer">
 									<div class="row flex-nowrap">
-										
+										<!-- <p>atrzLineVOList</p> -->
+										<!-- <p>atrzVOList : ${atrzVOList}</p> -->
 										<!-- <p>atrzApprovalList : ${atrzApprovalList}</p> -->
+										<!-- <p>atrzApprovalList[0] : ${atrzApprovalList[0]}</p> -->
 										<!-- <p>atrzSubmitList : ${atrzSubmitList}</p> -->
 										<!-- <p>atrzCompletedList : ${atrzCompletedList}</p> -->
 										
@@ -256,6 +258,7 @@
 												더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
 											</a>
 										</div>
+										<!-- <p>atrzSubmitList[0] : ${atrzSubmitList[0]}</p> -->
 										<div class="table-wrapper table-responsive">
 											<table class="table striped-table">
 												<thead>
@@ -269,10 +272,10 @@
 															<h6 class="fw-bolder" style="padding-left: 120px;">제목</h6>
 														</th>
 														<th>
-															<h6 class="fw-bolder" style="text-align: center;">기안부서</h6>
+															<h6 class="fw-bolder" style="text-align: center;">진행부서</h6>
 														</th>
 														<th>
-															<h6 class="fw-bolder" style="text-align: center;">기안자</h6>
+															<h6 class="fw-bolder" style="text-align: center;">진행자</h6>
 														</th>
 														<th>
 															<h6 class="fw-bolder">결재상태</h6>

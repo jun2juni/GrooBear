@@ -28,28 +28,32 @@
 						</div>
 						<!-- 좌측 결재선사원선택부분 끝 -->
 						<!-- 결재선 추가 삭제 버튼 공간 시작-->
-						<div class="col-sm-1 d-flex flex-column justify-content-between align-items-start">
-							<div id="atrzLineAddRemBtn" class="d-flex flex-column justify-content-between align-items-center"
-								style="height: 500px; padding-top: 180px;">
-								<button id="add_appLine" type="button" class="btn btn-secondary" style="margin-top: -80px;">
-									<i class="lni lni-arrow-right"></i>
+						<div class="col-sm-1 d-flex flex-column align-items-center" style="padding-top: 180px;">
+
+							<!-- 위쪽 세트 -->
+							<div class="d-flex flex-column align-items-center" style="gap: 5px; margin-bottom: 80px;">
+								<button id="add_appLine" type="button" class="btn btn-secondary">
+								<i class="lni lni-arrow-right"></i>
 								</button>
-								<button id="remo_appLine" type="button" class="btn btn-secondary" style="margin-top: -100px;">
-									<i class="lni lni-arrow-left"></i>
+								<button id="remo_appLine" type="button" class="btn btn-secondary">
+								<i class="lni lni-arrow-left"></i>
 								</button>
-								<button id="add_attLine" type="button" class="btn btn-secondary" style="margin-bottom: 120px;">
-									<i class="lni lni-arrow-right"></i>
+							</div>
+							<!-- 아래쪽 세트 -->
+							<div class="d-flex flex-column align-items-center" style="gap: 5px;">
+								<button id="add_attLine" type="button" class="btn btn-secondary">
+								<i class="lni lni-arrow-right"></i>
 								</button>
-								
+								<button id="remo_attLine" type="button" class="btn btn-secondary">
+								<i class="lni lni-arrow-left"></i>
+								</button>
 							</div>
 						</div>
 						<!-- 결재선 추가 삭제 버튼 공간 끝-->
 						<!-- 결재선리스트 -->
 						<div class="col-sm-7" style="float: left; text-align: center; margin-left: 20px;">
-							<div style="font-size: 1.2em; font-weight: bold;">결재선
-								리스트</div>
-							<div
-								style="border-bottom: 1px solid lightgray; margin: 20px 0;"></div>
+							<div style="font-size: 1.2em; font-weight: bold;">결재선 리스트</div>
+							<div style="border-bottom: 1px solid lightgray; margin: 20px 0;"></div>
 							<table class="table">
 								<thead>
 									<tr>
@@ -62,23 +66,22 @@
 									</tr>
 								</thead>
 								<!-- 여기에 결재선지정 사람들이 들어가야함 -->
-								<tbody class="s_appLine_tbody_new"
-									style="text-align: center;">
-
-
+								<tbody class="s_appLine_tbody_new" style="text-align: center;">
 								</tbody>
 							</table>
 							<div style="margin-top: 50px;">	
 								<div style="font-size: 1.2em;font-weight: bold;">참조자 리스트</div>
 									<div style="border-bottom: 1px solid lightgray; margin: 20px 0;"></div>
-									<table class="table" style="text-align: center; width: 400px;">
+									<table class="table">
 										<thead>
 											<tr>
 											<th scope="col">NO</th>
 											<th scope="col">참조자명</th>
+											<th scope="col">부서</th>
+											<th scope="col">직급</th>
 											</tr>
 										</thead>
-									<tbody class="s_appDept_tbody_cl" style="text-align: center;width: 400px;">
+									<tbody class="s_appLine_tbody_ref" style="text-align: center;">
 									</tbody>
 									</table>
 							</div>

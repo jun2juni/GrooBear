@@ -30,6 +30,8 @@ public class AtrzVO {
 	private String atrzDeleteYn; // 삭제 여부
 	private String schdulRegYn; //일정등록 추가 여부  (결재완료 되었을경우에 버튼활성화)
 	
+	private String docFormNm; // 문서 양식 번호
+	
 	
 	//전자결재 사원정보를 위한것
 	private String emplNo; 
@@ -56,7 +58,9 @@ public class AtrzVO {
 	private EmployeeVO empAtrzVO;
 	
 	//ARTZ : DOCUM_HOLIDAY = 1 : 1
-	private DocumHolidayVO documHolidayVO;
+	private HolidayVO documHolidayVO;
+	
+	private SpendingVO spendingVO;
 	
 	
 }
