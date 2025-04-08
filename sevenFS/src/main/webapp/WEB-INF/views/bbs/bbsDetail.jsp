@@ -84,6 +84,23 @@
 									</div>
 								</div>
 							</form>
+							<!-- 댓글 영역 -->
+								<div class="card-style mt-4">
+								    <h5 class="text-primary">💬 댓글</h5>
+								
+								    <!-- 댓글 입력창 -->
+								    <div class="mt-3">
+								        <textarea id="answerCn" rows="3" class="form-control" placeholder="댓글을 입력하세요." ></textarea>
+								        <div class="d-flex justify-content-end mt-2">
+								            <button type="button" class="btn btn-primary" onclick="submitComment()">댓글 등록</button>
+								        </div>
+								    </div>
+								
+								    <!-- 댓글 리스트 출력 영역 -->
+								    <div id="answerContent" class="mt-4">
+								        <%-- AJAX로 댓글 목록이 여기 들어올 예정 --%>
+								    </div>
+								</div>
 						</div>
 					</div>
 				</div>
@@ -93,8 +110,12 @@
 	</main>
 
 	<c:import url="../layout/prescript.jsp" />
-
+	<!-- 삭제 폼 -->
 	<script>
+	
+	
+
+	
     function bbsDelete(bbsSn){
         if(confirm("삭제하시겠습니까?")){
             $.ajax({
@@ -108,6 +129,83 @@
             });
         }
     }
+    
+	// 댓글 등록
+	function submitComment() {
+	    const answerCn = $("#answerCn").val().trim();  // 앞뒤 공백 제거
+	
+	    if (!answerCn) {
+	        alert("댓글 내용을 입력해주세요.");
+	        $("#answerCn").focus();
+	        return;
+	    }
+	
+	    $.ajax({
+	        type: "POST",
+	        url: "/bbs/answer",
+	        data: {
+	            bbsSn: ${bbsVO.bbsSn},
+	            bbsCtgryNo: ${bbsVO.bbsCtgryNo},
+	            answerCn: answerCn,
+	            emplNo: ${myEmpInfo.emplNo}
+	        },
+	        success: function(response) {
+	            console.log("댓글 등록 성공");
+	            $("#answerCn").val(""); // 입력창 비우기
+	            loadAnswer(); // 댓글 목록 새로고침
+	        },
+	        error: function(xhr) {
+	            console.error("댓글 등록 실패:", xhr.responseText);
+	        }
+	    });
+	}
+	
+	// 댓글 목록 불러오기
+	function loadAnswer() {
+	    $.ajax({
+	        url: "/bbs/answer",
+	        type: "GET",
+	        data: {
+	            bbsSn: ${bbsVO.bbsSn},
+	            bbsCtgryNo: ${bbsVO.bbsCtgryNo}
+	        },
+	        
+	        success: function(data) {
+	            console.log("댓글 데이터:", data);
+	            let html = "";
+	            data.forEach(function(answer) {
+	                console.log("각 댓글:", answer); // 실제 데이터 확인
+	                html += `
+	                    <div class="card mb-3">
+	                        <div class="card-body">
+	                            <div class="d-flex justify-content-between align-items-center mb-2">
+	                                <h6 class="mb-0 fw-bold text-primary">${myEmpInfo.emplNm}</h6>
+	                                <small class="text-muted">\${answer.answerCreatDt}</small>
+	                            </div>
+	                            <p class="card-text">\${answer.answerCn}</p>
+	                        </div>
+	                    </div>
+	                `;
+
+	            });
+	            
+	            console.log("최종 HTML:", html);
+	            $("#answerContent").html(html);
+	        }
+,
+	        error: function(xhr) {
+	            console.error("댓글 불러오기 실패:", xhr.responseText);
+	        }
+	    });
+	}
+	
+	$(document).ready(function() {
+	    loadAnswer();  // 페이지 들어오면 바로 댓글 가져오게
+	});
+
+
 	</script>
+
+		
 </body>
 </html>

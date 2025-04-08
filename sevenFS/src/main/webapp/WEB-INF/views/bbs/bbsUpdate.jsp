@@ -83,6 +83,15 @@
 									</c:choose>
                                 </div>
                                 <br>
+                                <!-- 상단 고정 여부 -->
+								<div class="mb-3">
+									<label class="form-label">상단 고정 여부</label>
+									<select name="upendFixingYn" class="form-control">
+										<option value="Y">고정</option>
+										<option value="N">고정 안함</option>
+									</select>
+								</div>
+								<br>
                                 <div>
                                     <button type="submit" class="btn btn-warning">확인</button> &nbsp;
                                     <a href="/bbs/bbsDetail?bbsSn=${bbsVO.bbsSn}" class="btn btn-secondary">취소</a>

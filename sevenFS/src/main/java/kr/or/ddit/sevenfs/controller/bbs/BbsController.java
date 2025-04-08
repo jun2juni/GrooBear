@@ -135,7 +135,7 @@ public class BbsController {
         
         
         
-        return "redirect:/bbs/bbsList?ctgryNo="+bbsVO.getBbsCtgryNo();
+        return "redirect:/bbs/bbsList?bbsCtgryNo="+bbsVO.getBbsCtgryNo();
     }
 
 

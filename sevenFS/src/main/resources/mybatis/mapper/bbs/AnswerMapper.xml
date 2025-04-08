@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.bbs.AnswerMapper">
+
+	<insert id="insertAnswer" parameterType="AnswerVO">
+	  INSERT INTO BBS_ANSWER (
+	    ANSWER_NO, BBS_SN, BBS_CTGRY_NO, EMPL_NO, ANSWER_CN, ANSWER_CREAT_DT
+	  ) VALUES (
+	    SEQ_ANSWER.NEXTVAL,
+	    #{bbsSn},
+	    #{bbsCtgryNo},
+	    #{emplNo},
+	    #{answerCn},
+	    SYSDATE
+	  )
+	</insert>
+	
+	<select id="selectAnswer" parameterType="map" resultType="AnswerVO">
+	  SELECT *
+	  FROM BBS_ANSWER
+	  WHERE BBS_SN = #{bbsSn}
+	    AND BBS_CTGRY_NO = #{bbsCtgryNo}
+	  ORDER BY ANSWER_CREAT_DT DESC
+	</select>
+		
+</mapper>
