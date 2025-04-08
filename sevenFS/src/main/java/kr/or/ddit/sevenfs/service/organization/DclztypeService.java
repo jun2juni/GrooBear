@@ -6,6 +6,7 @@ import java.util.Map;
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
 import kr.or.ddit.sevenfs.vo.organization.DclzTypeDetailVO;
 import kr.or.ddit.sevenfs.vo.organization.DclzTypeVO;
+import kr.or.ddit.sevenfs.vo.organization.VacationVO;
 
 public interface DclztypeService {
 	
@@ -35,5 +36,8 @@ public interface DclztypeService {
 	
 	// 년도와 월 모두 선ㅇ택했을 경우
 	public List<DclzTypeVO> getSelectMonth(Map<String, Object> map);
+	
+	// 사원 한명의 이번년도 연차 정보 가져오기
+	public VacationVO emplVacationCnt(String emplNo);
 	
 }

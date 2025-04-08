@@ -42,18 +42,6 @@ public class DclzTypeVO {
 	
 	// 총 근무시간
 	private String allWorkTime;
-	
-	
-	
-	// 사원
-	//private EmployeeVO emplList;
-	
-	// 근태현황 이름
-		//private String dclzNm;	
-	
-	// 근태코드에 맞는 근태 현황 반환
-//	public void setDclzCode(String dclzCode) {
-//		this.dclzCode = dclzCode;
-//		this.dclzNm = CommonCode.AttendEnum.BAD.getLabelByCode(dclzCode);
-//	}
+
+
 }

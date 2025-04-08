@@ -217,7 +217,7 @@
               <a href="/dclz/dclzType"> 근태현황</a>
             </li>
             <li>
-              <a href="/vacation"> 연차 </a>
+              <a href="/dclz/vacation"> 연차 </a>
             </li>
           </ul>
         </li>

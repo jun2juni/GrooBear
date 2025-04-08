@@ -24,37 +24,6 @@
 	    GROUP BY DT.EMPL_NO
 </select>
 
-<!-- 사원 출퇴근 현황 목록 조회 -->
-<!-- <select id="emplDclzTypeList" parameterType="String" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
-	SELECT 
-		    EMPL_NO
-		   ,DCLZ_NO
-		   ,DCLZ_CODE
-		   ,DCLZ_BEGIN_DT
-		   ,DCLZ_END_DT 
-	  FROM DCLZ_TYPE
-	 WHERE EMPL_NO = #{emplNo}
-       AND DCLZ_CODE = '11'
-</select> -->
-
-<!-- 사원 한명의 전체 근태현황 조회 -->
-<!-- <select id="emplDclzTypeList" parameterType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
-	SELECT 
-		    dt.empl_no
-		   ,dt.dclz_no
-		   ,dt.dclz_code
-		   ,TO_CHAR(dt.dclz_begin_dt, 'HH24:MI:SS') as work_begin_time
-		   ,TO_CHAR(dt.dclz_end_dt, 'HH24:MI:SS') as work_end_time
-		   ,TO_CHAR(dt.dclz_end_dt, 'YYYY-mm-DD') as work_begin_date
-		   ,TO_CHAR(dt.dclz_end_dt, 'YYYY-mm-DD') as work_end_date
-           ,cc.cmmn_code_nm
-	  FROM dclz_type dt
-      RIGHT OUTER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
-	  WHERE cmmn_code_group='ATTEND'
-      AND dt.empl_no = #{emplNo}
-      ORDER BY dt.dclz_no DESC
-</select> -->
-
 <!-- 사원 한명의 전체 근태현황 조회 -->
 <select id="emplDclzTypeList" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
 	WITH U AS(
@@ -110,17 +79,6 @@
 	<result property="upperCmmnCode" column="UPPER_CMMN_CODE"/>
 </resultMap>
 
-<!-- <resultMap type="kr.or.ddit.sevenfs.vo.CommonCodeVO" id="commonMap">
-	<result property="cmmnCodeSn" column="CMMN_CODE_SN"/>
-	<result property="cmmnCodeGroup" column="CMMN_CODE_GROUP"/>
-	<result property="cmmnCode" column="CMMN_CODE"/>
-	<result property="cmmnCodeNm" column="CMMN_CODE_NM"/>
-	<result property="cmmnCodeDc" column="CMMN_CODE_DC"/>
-	<result property="useYn" column="USE_YN"/>
-	<result property="upperCmmnCode" column="UPPER_CMMN_CODE"/>
-	<result property="cnt" column="CNT"/>
-</resultMap> -->
-
 <!-- 출근시간 등록 -->
 <insert id="workBeginInsert" parameterType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
 	INSERT INTO dclz_type
@@ -156,23 +114,6 @@
  	   AND dclz_code = #{dclzCode}
 	   AND dclz_no = TO_CHAR(SYSDATE, 'YYYYmmDD')
 </select>
-
-<!-- 선택한 년도의 데이터 가져오기 -->
-<!-- <select id="getSelectYear" parameterType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
-	SELECT 
-		    dt.empl_no
-		   ,dt.dclz_no
-		   ,dt.dclz_code
-		   ,TO_CHAR(dt.dclz_begin_dt, 'HH24:MI:SS') as work_begin_time
-		   ,TO_CHAR(dt.dclz_end_dt, 'HH24:MI:SS') as work_end_time
-           ,cc.cmmn_code_nm
-	  FROM dclz_type dt
-      RIGHT OUTER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
-	  WHERE cmmn_code_group='ATTEND'
-      AND dt.empl_no = #{emplNo}
-      AND (TO_CHAR(dt.dclz_begin_dt, 'YYYY') LIKE #{workBeginDate})
-      ORDER BY dt.dclz_no DESC
-</select> -->
 
 <!-- 선택한 년도의 데이터 가져오기 -->
 <select id="getSelectYear" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
@@ -229,5 +170,23 @@ WITH U AS(
         WHERE U.RNUM BETWEEN (#{currentPage} * 10)-(10-#{currentPage}) AND (#{currentPage}* 10)
 </select>
 
+<!-- 사원 한명의 현재년도 연차 정보 가져오기 -->
+<select id="emplVacationCnt" parameterType="String" resultType="kr.or.ddit.sevenfs.vo.organization.VacationVO">
+	SELECT v.EMPL_NO
+	       , v.YRYC_YEAR
+	       , v.YRYC_USE_BEGIN_DATE
+	       , v.YRYC_USE_END_DATE
+	       , v.TOT_YRYC_DAYCNT
+	       , v.YRYC_USE_DAYCNT
+	       , v.YRYC_MDAT_DAYCNT
+	       , v.YRYC_REMNDR_DAYCNT
+	       , v.EXCESS_WORK_YRYC
+	       , v.CMPNSTN_YRYC
+	       , emp.empl_nm
+	FROM vacation v, employee emp
+	WHERE v.empl_no = emp.empl_no
+	AND v.empl_no = #{emplNo}
+	ANd v.yryc_year = TO_CHAR(SYSDATE, 'YYYY')
+</select>
 
 </mapper>
