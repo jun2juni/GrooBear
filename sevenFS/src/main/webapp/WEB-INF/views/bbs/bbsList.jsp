@@ -1,4 +1,4 @@
-	<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -84,7 +84,7 @@ table.table-hover.align-middle.text-center tbody tr td {
 
                 
                 <!-- 검색어 입력 필드 -->
-                <input type="text" name="searchKeyword" value="${SearchKeyword}" class="form-control me-2" placeholder="검색어 입력">
+                <input type="text" name="searchKeyword" value="${SearchKeyword}" class="form-control me-2" placeholder="검색어 입력" style="width: 500%;">
                 
                 <!-- 검색 버튼 -->
                 <button style="white-space: nowrap;" type="submit" class="btn btn-outline-primary">검색</button>
@@ -111,7 +111,7 @@ table.table-hover.align-middle.text-center tbody tr td {
                     <td>${bbsVO.bbsSn}</td>
                     <td>
                     	<c:if test="${bbsVO.upendFixingYn == 'Y'}">
-					        <span style="color: red; font-weight: bold;">[공지]</span>
+					        <span style="color: red; font-weight: bold;">[고정]</span>
 					    </c:if>
                     </td>
                     <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">

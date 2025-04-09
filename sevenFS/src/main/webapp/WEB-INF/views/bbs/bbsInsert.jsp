@@ -75,8 +75,8 @@
 								<div class="mb-3">
 									<label class="form-label">상단 고정 여부</label>
 									<select name="upendFixingYn" class="form-control">
-										<option value="Y">고정</option>
 										<option value="N">고정 안함</option>
+										<option value="Y">고정</option>
 									</select>
 								</div>
 								

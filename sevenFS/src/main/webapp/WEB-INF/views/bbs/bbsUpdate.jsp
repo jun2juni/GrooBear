@@ -22,6 +22,9 @@
         width: 100px;
         height: 100px;
     }
+    .ck-editor__editable {
+	    min-height: 300px;
+	}
 </style>
 <body>
     <c:import url="../layout/sidebar.jsp" />
@@ -41,7 +44,7 @@
                                 <input type="hidden" value="${bbsVO.bbsCtgryNo}" name="bbsCtgryNo">
                                 <div>
                                     제목
-                                    <input type="text" name="bbscttSj" value="${bbsVO.bbscttSj}" class="form-control" />
+                                    <input style="max-width: 500px;" type="text" name="bbscttSj" value="${bbsVO.bbscttSj}" class="form-control" />
                                 </div>
                                 <br>
                                 <div class="col-sm-12">
@@ -52,7 +55,7 @@
                                 <br>
                                 <div>
                                     작성자
-                                    <input type="hidden" name="emplName" value="${myEmpInfo.emplNm}" class="form-control" readonly/>
+                                    <input type="hidden" name="emplName" value="${bbsVO.emplNm}" class="form-control" readonly/>
                                 </div>
                                 <br>
                                 <div>
@@ -87,8 +90,8 @@
 								<div class="mb-3">
 									<label class="form-label">상단 고정 여부</label>
 									<select name="upendFixingYn" class="form-control">
-										<option value="Y">고정</option>
 										<option value="N">고정 안함</option>
+										<option value="Y">고정</option>
 									</select>
 								</div>
 								<br>
