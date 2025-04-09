@@ -183,7 +183,6 @@
         
         <%--게시판 사이드 바 --%>
         <li class="nav-item nav-item-has-children">
-          ${bbsCategory}
           <a href="#1" class="${fn:contains(currentURL, '/bbs') ? '' : 'collapsed'}"
              data-bs-toggle="collapse" data-bs-target="#bbs"
              aria-controls="bbs" aria-expanded="false" aria-label="Toggle navigation">
