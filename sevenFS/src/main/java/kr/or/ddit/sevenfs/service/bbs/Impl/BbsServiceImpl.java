@@ -3,6 +3,7 @@ package kr.or.ddit.sevenfs.service.bbs.Impl;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.ddit.sevenfs.vo.bbs.BbsCategoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +58,11 @@ public class BbsServiceImpl implements BbsService{
 	public int getTotal(Map<String, Object> map) {
 		log.info("BbsServiceImpl getTotal : "+map);
 		return bbsMapper.getTotal(map);
+	}
+
+	@Override
+	public List<BbsCategoryVO> bbsCategoryList() {
+		return bbsMapper.bbsCategoryList();
 	}
 
 }

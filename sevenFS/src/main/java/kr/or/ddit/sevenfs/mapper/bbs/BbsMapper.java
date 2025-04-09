@@ -3,6 +3,7 @@ package kr.or.ddit.sevenfs.mapper.bbs;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.ddit.sevenfs.vo.bbs.BbsCategoryVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -27,4 +28,5 @@ public interface BbsMapper {
 
 	public void increaseViewCount(int bbsSn);
 
+    List<BbsCategoryVO> bbsCategoryList();
 }

@@ -183,6 +183,7 @@
         
         <%--게시판 사이드 바 --%>
         <li class="nav-item nav-item-has-children">
+          ${bbsCategory}
           <a href="#1" class="${fn:contains(currentURL, '/bbs') ? '' : 'collapsed'}"
              data-bs-toggle="collapse" data-bs-target="#bbs"
              aria-controls="bbs" aria-expanded="false" aria-label="Toggle navigation">
@@ -192,12 +193,11 @@
             <span class="text">게시판</span>
           </a>
           <ul id="bbs" class="dropdown-nav collapse" style="">
-            <li>
-              <a href="/bbs/bbsList?bbsCtgryNo=1"> 게시판 1 </a>
-            </li>
-            <li>
-              <a href="/bbs/bbsList?bbsCtgryNo=2"> 게시판 2 </a>
-            </li>
+            <c:forEach var="category" items="${bbsCategory}">
+              <li>
+                <a href="/bbs/bbsList?bbsCtgryNo=${category.bbsCtgryNo}">${category.ctgryNm}</a>
+              </li>
+            </c:forEach>
           </ul>
         </li>
         <%--게시판 사이드 바 --%>

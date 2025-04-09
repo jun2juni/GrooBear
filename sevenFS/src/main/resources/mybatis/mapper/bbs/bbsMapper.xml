@@ -250,4 +250,9 @@
 			</choose>
 		</if>
 	</select>
+
+	<select id="bbsCategoryList" resultType="kr.or.ddit.sevenfs.vo.bbs.BbsCategoryVO">
+		SELECT BBS_CTGRY_NO, UPPER_CTGRY_NO, CTGRY_NM, CTGRY_CREAT_DT, CTGRY_USE_YN, DEPT_CODE
+		FROM BBS_CTGRY
+	</select>
 </mapper>

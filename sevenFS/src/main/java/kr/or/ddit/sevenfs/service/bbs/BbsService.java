@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import kr.or.ddit.sevenfs.utils.ArticlePage;
+import kr.or.ddit.sevenfs.vo.bbs.BbsCategoryVO;
 import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
 
 public interface BbsService {
@@ -22,5 +23,6 @@ public interface BbsService {
 	public int getTotal(Map<String, Object> map);
 	
 	
-
+	// 게시판 카테고리 가죠오기
+	public List<BbsCategoryVO> bbsCategoryList();
 }
