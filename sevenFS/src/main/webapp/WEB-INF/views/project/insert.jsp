@@ -11,6 +11,13 @@
 <title>${title}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <c:import url="../layout/prestyle.jsp" />
+
+<style>
+.form-step {
+  padding-bottom: 2rem; /* 혹은 class="pb-4" */
+}
+
+</style>
 </head>
 <body>
 	<c:import url="../layout/sidebar.jsp" />
@@ -61,18 +68,18 @@
 
 
 							
-<div class="row g-2 mt-4">
-  <div class="col-6">
-    <button type="button" id="prevBtn" class="btn btn-secondary w-100 py-3 fw-bold" disabled>이전</button>
-  </div>
-  <div class="col-6">
-    <button type="button" id="nextBtn" class="btn btn-primary w-100 py-3 fw-bold">다음</button>
-  <div class="col-12">
-    <button type="submit" id="submitBtn" class="btn btn-success w-100 py-3 fw-bold d-none">
-      <i class="fas fa-check me-2"></i> 프로젝트 생성
-    </button>
-  </div>
-</div>
+							<div class="row g-2 mt-4">
+							  <div class="col-4">
+							    <button type="button" id="prevBtn" class="btn btn-secondary w-100 py-3 fw-bold" disabled>이전</button>
+							  </div>
+							  <div class="col-4">
+							    <button type="button" id="nextBtn" class="btn btn-primary w-100 py-3 fw-bold">다음</button>
+							  <div class="col-12">
+							    <button type="submit" id="submitBtn" class="btn btn-success w-100 py-3 fw-bold d-none">
+							      <i class="fas fa-check me-2"></i> 프로젝트 생성
+							    </button>
+							  </div>
+							</div>
 				
 						
 									
@@ -164,7 +171,7 @@ document.getElementById('addTaskBtn').addEventListener('click', function () {
   }
   
   const task = {
-    id: `task-${taskList.length + 1}`,
+    id: `task-\${taskList.length + 1}`,
     taskNm: taskNmValue,
     chargerEmpNm: chargerEmpNmValue,
     chargerEmpno: chargerEmpnoValue,
@@ -180,6 +187,8 @@ document.getElementById('addTaskBtn').addEventListener('click', function () {
   taskList.push(task);
   updateTaskList();
   resetTaskForm();
+  
+  console.log("업무 추가 및 폼 초기화 완료");
 });
 
 
@@ -211,6 +220,7 @@ document.querySelectorAll('.open-org-chart').forEach(btn => {
 goToStep(currentStep);
 loadOrgTree();
 loadMemberButtons();
+validateProjectDates();
 });
 
 //======================= 탭 이동 함수 =======================
@@ -422,24 +432,70 @@ function fillTaskForm(index) {
 	}
 
 
-//업무 폼 초기화 함수
+// 파일 입력란 초기화 함수 분리
+function resetFileInput() {
+  // 파일 input 완전 초기화
+  const oldFileInput = document.getElementById('uploadTaskFiles');
+  const fileNameList = document.getElementById('fileNameList');
+
+  if (oldFileInput) {
+    // 기존 값 초기화
+    oldFileInput.value = '';
+    
+    // DOM 요소를 새 것으로 교체
+    const newFileInput = oldFileInput.cloneNode(false); // deep copy 없이 요소만 복제
+    oldFileInput.parentNode.replaceChild(newFileInput, oldFileInput);
+
+    // change 이벤트 다시 등록
+    newFileInput.addEventListener('change', function() {
+      if (fileNameList) {
+        fileNameList.innerHTML = '';
+
+        const files = Array.from(this.files);
+        const maxFiles = 5;
+
+        if (files.length > maxFiles) {
+          alert(`최대 ${maxFiles}개까지 업로드할 수 있습니다.`);
+          newFileInput.value = '';
+          return;
+        }
+
+        files.forEach(file => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item';
+          li.textContent = file.name;
+          fileNameList.appendChild(li);
+        });
+      }
+    });
+
+    // 초기화 시 파일 목록도 비워주기
+    if (fileNameList) {
+      fileNameList.innerHTML = '';
+    }
+  }
+}
+
+// 업무 폼 초기화 함수 수정
 function resetTaskForm() {
   const formFields = ['taskNm', 'chargerEmpNm', 'chargerEmpno', 'taskBeginDt', 'taskEndDt', 'taskCn', 'parentTaskNm'];
   formFields.forEach(id => {
     const element = document.getElementById(id);
     if (element) element.value = '';
   });
-  
-  // select 요소 초기화
+
   ['taskPriort', 'taskGrad'].forEach(id => {
     const sel = document.getElementById(id);
     if (sel) sel.selectedIndex = 0;
   });
 
+  // 파일 입력란 초기화 함수 호출
+  resetFileInput();
+
   selectedParentTaskId = null;
+  
+  console.log('폼 초기화 완료');
 }
-
-
 
 //======================= 하위 업무 준비 =======================
 function prepareSubTask(index) {
@@ -448,6 +504,8 @@ function prepareSubTask(index) {
   // 선택한 업무 정보 가져오기
   const task = taskList[index];
   if (!task) return;
+  
+  resetTaskForm(); 
   
   // 상위 업무명 필드에 선택한 업무명 설정
   const parentTaskInput = document.getElementById('parentTaskNm');
@@ -600,7 +658,7 @@ function loadMemberButtons() {
 
 
 // 파일 이름만 리스트에 보여주는 곳
-document.addEventListener("DOMContentLoaded", () => {
+/* document.addEventListener("DOMContentLoaded", () => {
   const fileInput = document.getElementById('uploadTaskFiles');
   const fileNameList = document.getElementById('fileNameList');
 
@@ -624,6 +682,46 @@ document.addEventListener("DOMContentLoaded", () => {
         fileNameList.appendChild(li);
       });
     });
+  }
+}); */
+
+//파일 입력 필드에 변경 이벤트 리스너 추가 (파일추가 시 나오는 리스트)
+document.getElementById('uploadTaskFiles').addEventListener('change', function(e) {
+  const fileList = e.target.files;
+  const fileNameList = document.getElementById('fileNameList');
+  
+  // 기존 목록 초기화
+  fileNameList.innerHTML = '';
+  
+  // 파일이 없으면 메시지 표시
+  if (fileList.length === 0) {
+    fileNameList.innerHTML = '<li class="list-group-item text-muted">선택된 파일이 없습니다.</li>';
+    return;
+  }
+  
+  // 각 파일에 대한 목록 항목 생성
+  for (let i = 0; i < fileList.length; i++) {
+    const file = fileList[i];
+    const li = document.createElement('li');
+    li.className = 'list-group-item d-flex justify-content-between align-items-center';
+    
+    // 파일 이름과 아이콘 영역
+    const fileInfo = document.createElement('div');
+    fileInfo.innerHTML = `<i class="fas fa-file-alt me-2 text-primary"></i><span>\${file.name}</span>`;
+    
+    // 삭제 버튼
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-sm btn-outline-danger';
+    deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+    deleteBtn.setAttribute('type', 'button');
+    deleteBtn.onclick = function() {
+      li.remove();
+    };
+    
+    // 항목에 요소 추가
+    li.appendChild(fileInfo);
+    li.appendChild(deleteBtn);
+    fileNameList.appendChild(li);
   }
 });
 
@@ -703,7 +801,7 @@ function loadOrgTree() {
     	  // 조직도 전체 컨테이너에도 스타일 적용
     	    const orgCard = document.querySelector('.col-md-4 .card');
     	    if (orgCard) {
-    	      orgCard.style.maxHeight = '600px';
+    	      orgCard.style.maxHeight = '800px';
     	      orgCard.style.overflow = 'auto';
     	    }
     	  });
@@ -781,25 +879,27 @@ function loadOrgTree() {
           emp.phone = formattedPhone; // <- 업데이트
 
           // 직원 목록 테이블화
-          row.innerHTML = `
-        	  <td class="text-center">
-        	    <span class="badge \${currentTarget === 'responsibleManager' ? 'bg-danger' : 
-        	                        currentTarget === 'participants' ? 'bg-primary' : 
-        	                        'bg-secondary'} p-2">
-        	      <i class="\${roleIcon} me-1"></i> \${roleDisplayName}
-        	    </span>
-        	  </td>
-        	  <td class="text-center"><strong>\${emp.name || '이름없음'}</strong></td>
-        	  <td class="text-center">\${emp.dept || '부서없음'}</td>
-        	  <td class="text-center">\${emp.position || '직급없음'}</td>
-        	  <td class="text-center"><i class="fas fa-phone-alt me-1 text-muted"></i>\${emp.phone || '연락처없음'}</td>
-        	  <td class="text-center"><i class="fas fa-envelope me-1 text-muted"></i>\${emp.email || '이메일없음'}</td>
-        	  <td class="text-center">
-        	    <button type="button" class="btn btn-sm btn-outline-danger remove-member">
-        	      <i class="fas fa-times"></i>
-        	    </button>
-        	  </td>
-        	`;
+		row.innerHTML = `
+		  <td class="text-center">
+		    <span class="badge \${currentTarget === 'responsibleManager' ? 'bg-danger' : 
+		                        currentTarget === 'participants' ? 'bg-primary' : 
+		                        'bg-secondary'} p-2">
+		      <i class="\${roleIcon} me-1"></i> \${roleDisplayName}
+		    </span>
+		  </td>
+		  <td class="text-center"><strong>\${emp.name || '이름없음'}</strong></td>
+		  <td class="text-start ps-2">\${emp.dept || '부서없음'}</td>
+		  <td class="text-center">\${emp.position || '직급없음'}</td>
+		  <td class="text-center"><i class="fas fa-phone-alt me-1 text-muted"></i>\${emp.phone || '연락처없음'}</td>
+		  <td class="text-start ps-2"><i class="fas fa-envelope me-1 text-muted"></i>\${emp.email || '이메일없음'}</td>
+		  <td class="text-center">
+		    <button type="button" class="btn btn-sm btn-outline-danger remove-member">
+		      <i class="fas fa-times"></i>
+		    </button>
+		  </td>
+		`;
+
+        	
           tableBody.appendChild(row);
 
           
@@ -888,17 +988,34 @@ function getTaskHierarchySortedList(taskList) {
 	});
 	
 // 주소 API 
-	document.getElementById('restaurantAdd1').addEventListener('blur', updateFullAddress);
-	document.getElementById('restaurantAdd2').addEventListener('blur', updateFullAddress);
+function updateFullAddress() {
+    const main = document.getElementById('restaurantAdd1').value.trim();
+    const detail = document.getElementById('addressDetail').value.trim();
+    const full = [main, detail].filter(Boolean).join(' ');
+    
+    let fullAddressElement = document.getElementById('fullAddress');
+    if (!fullAddressElement) {
+        fullAddressElement = document.createElement('input');
+        fullAddressElement.type = 'hidden';
+        fullAddressElement.id = 'fullAddress';
+        fullAddressElement.name = 'prjctAdres';  // 필요하다면 name도 설정
+        document.body.appendChild(fullAddressElement);
+    }
+    
+    fullAddressElement.value = full;
+    
+    // 주소 확인란 업데이트
+    const confirmAdresElement = document.getElementById('confirmAdres');
+    if (confirmAdresElement) {
+        confirmAdresElement.textContent = full || '미입력';
+    }
+    
+    console.log("업데이트된 전체 주소:", full);
+}
+
+document.getElementById('restaurantAdd1').addEventListener('blur', updateFullAddress);
+document.getElementById('addressDetail').addEventListener('blur', updateFullAddress); 
 	
-	function updateFullAddress() {
-	  const main = document.getElementById('restaurantAdd1').value.trim();
-	  const detail = document.getElementById('restaurantAdd2').value.trim();
-	  const full = [main, detail].filter(Boolean).join(' ');
-	  document.getElementById('fullAddress').value = full;
-	}
-
-
 
 //======================= 프로젝트 요약 갱신 =======================
 function updateConfirmation() {
@@ -922,14 +1039,22 @@ function updateConfirmation() {
   // 5. 주소 수정
   const fullAddress = document.getElementById('fullAddress')?.value || 
                       document.querySelector('[name="prjctAdres"]')?.value || '미입력';
-  document.getElementById('confirmAdres').textContent = fullAddress;
+  
   
   console.log("fullAddress:", document.getElementById('fullAddress')?.value);
   console.log("prjctAdres:", document.querySelector('[name="prjctAdres"]')?.value);
 
-  // 6. url
+  //6. url
   const prjctUrl = document.querySelector('[name="prjctUrl"]');
-  const urlValue = prjctUrl?.value.trim() ||'미입력';
+  let urlValue = prjctUrl?.value.trim() || '미입력';
+
+  // URL에 프로토콜이 없으면 https:// 추가
+  if (urlValue !== '미입력' && !urlValue.startsWith('https://') && !urlValue.startsWith('http://')) {
+      urlValue = 'https://' + urlValue;
+      // 실제 폼 제출 시 사용될 값도 업데이트
+      prjctUrl.value = urlValue;
+  }
+
   document.getElementById('confirmUrl').textContent = urlValue;
 
   // 2. 참여 인원 정보 개선
@@ -978,12 +1103,12 @@ function updateConfirmation() {
       const thead = document.createElement('thead');
       thead.innerHTML = `
         <tr class="table-light">
-          <th>상위업무</th>
-          <th>업무명</th>
-          <th>담당자</th>
-          <th>기간</th>
-          <th>중요도</th>
-          <th>등급</th>
+          <th style="text-align:center">상위업무</th>
+          <th style="text-align:center">업무명</th>
+          <th style="text-align:center">담당자</th>
+          <th style="text-align:center">기간</th>
+          <th style="text-align:center">중요도</th>
+          <th style="text-align:center">등급</th>
         </tr>
       `;
       table.appendChild(thead);
@@ -1039,6 +1164,39 @@ function updateConfirmation() {
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+
+
+//======================유효성 검사 ==============================
+	// 날짜 유효성 검증 (시작일-종료일 비교)
+function validateProjectDates() {
+  const startDateInput = document.querySelector('[name="prjctBeginDate"]');
+  const endDateInput = document.querySelector('[name="prjctEndDate"]');
+  
+  if(!startDateInput || !endDateInput) return; // 요소가 없으면 종료
+  
+  // 종료일 변경 시 시작일과 비교
+  endDateInput.addEventListener('change', function() {
+    if(startDateInput.value && endDateInput.value) {
+      if(new Date(endDateInput.value) < new Date(startDateInput.value)) {
+        alert('종료일은 시작일 이후로 설정해야 합니다.');
+        endDateInput.value = '';
+      }
+    }
+  });
+  
+  // 시작일 변경 시 종료일과 비교
+  startDateInput.addEventListener('change', function() {
+    if(startDateInput.value && endDateInput.value) {
+      if(new Date(endDateInput.value) < new Date(startDateInput.value)) {
+        alert('시작일은 종료일 이전으로 설정해야 합니다.');
+        startDateInput.value = '';
+      }
+    }
+  });
+}
+
+
 
 </script>
 </body>

@@ -6,23 +6,7 @@
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
 <c:set var="title" scope="application" value="메인" />
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta
-name="viewport"
-content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-/>
-<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-<title>${title}</title>
-
-</head>
-<body>
-<main class="main-wrapper">
-
-<section class="section">
-<div class="container-fluid">
+<div class="card-style">
     <!-- 검색 폼 추가 -->
 <div class="row mb-4">
     <div class="col-md-8 col-lg-6 mx-auto">
@@ -153,7 +137,7 @@ content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=
 				        <div class="card-style">
 				            <div style="display: flex; justify-content: center;">
 				                <page-navi
-				                    url="/project/projectList?keyword=${param.keyword}"
+				                    url="/project/tab?keyword=${param.keyword}"
 				                    current="${articlePage.getCurrentPage()}"
 				                    show-max="5"
 				                    total="${articlePage.getTotalPages()}"
@@ -250,7 +234,3 @@ $(document).ready(function() {
     // 이미 페이지가 로드된 상태이므로 추가 작업 필요 없음
 });
 </script>
-</section>
-</main>
-</body>
-</html>

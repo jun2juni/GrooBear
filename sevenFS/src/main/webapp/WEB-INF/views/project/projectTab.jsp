@@ -27,7 +27,7 @@
 
             <div class="container">
                 <!-- 탭 메뉴 -->
-                <ul class="nav nav-pills mb-3 d-flex justify-content-center" id="pills-tab" role="tablist">
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active d-flex align-items-center" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#dashBoard" type="button" role="tab" aria-controls="dashBoard" aria-selected="true">
                             <span class="material-icons-outlined me-1">grid_view</span> 대시보드
