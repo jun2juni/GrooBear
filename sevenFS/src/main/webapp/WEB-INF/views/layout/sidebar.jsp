@@ -205,47 +205,45 @@
         <li class="nav-item nav-item-has-children">
           <a href="#1" class="${fn:contains(currentURL, '/dclzType') ? '' : 'collapsed'}"
              data-bs-toggle="collapse" data-bs-target="#dclzType"
-             aria-controls="dclzType" aria-expanded="false" aria-label="Toggle navigation">
+             aria-controls="dclzType" aria-expanded="true" aria-label="Toggle navigation">
 			<span class="icon material-symbols-outlined">
 			work
 			</span>
             <span class="text">근태</span>
           </a>
-          <ul id="dclzType" class="dropdown-nav collapse" style="">
+          <ul id="dclzType" class="dropdown-nav collapse ${fn:contains(currentURL, '/dclz') ? 'show' : ''}" style="">
             <li>
-              <a href="/dclz/dclzType"> 근태현황</a>
+              <a href="/dclz/dclzType" class="${fn:contains(currentURL, '/dclz/dclzType') ? 'active' : ''}"> 근태현황 </a>	
             </li>
             <li>
-              <a href="/dclz/vacation"> 연차 </a>
+              <a href="/dclz/vacation" class="${fn:contains(currentURL, '/dclz/vacation') ? 'active' : ''}"> 연차 </a>
             </li>
           </ul>
         </li>
+        
         <%--근태현황 사이드 바 --%>
         
-        
-
         <%--조직도 사이드 바 --%>
-        <li class="nav-item">
-          <a href="/orglist" class="${fn:contains(currentURL, '/orglist') ? '' : 'collapsed'}" >
-            <span class="icon material-symbols-outlined">groups</span>
+        <li class="nav-item ${fn:contains(currentURL, '/organization/organizationList') ? 'active' : ''}">
+        	${pageContext.request.contextPath}
+          <a href="/orglist">
+             <span class="icon material-symbols-outlined">groups</span>
             <span class="text">조직도</span>
           </a>
-          </li>
+        </li>
         <%--조직도 사이드 바 --%>
         
          <%-- 관리자일 경우에만 보임  --%>
         <%--조직관리 사이드 바 --%>
-        <sec:authorize access="hasRole('ROLE_ADMIN')">
-        <li class="nav-item">
-          <a href="/orglistAdmin" class="${fn:contains(currentURL, '/orglistAdmin') ? '' : 'collapsed'}" >
-            <span class="icon material-symbols-outlined">
-				manage_accounts
-			</span>
+        <li class="nav-item ${fn:contains(currentURL, '/organization/orglistAdmin') ? 'active' : ''}">
+        	${pageContext.request.contextPath}
+          <a href="/orglistAdmin">
+             <span class="icon material-symbols-outlined">groups</span>
             <span class="text">조직관리</span>
           </a>
-          </li>
-          </sec:authorize>
+        </li>
         <%--조직관리 사이드 바 --%>
+
     </ul>
     
      
