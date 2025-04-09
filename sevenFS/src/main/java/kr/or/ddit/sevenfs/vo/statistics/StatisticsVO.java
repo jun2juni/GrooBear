@@ -25,4 +25,8 @@ public class StatisticsVO {
 	
 	// 범례로 지정된 날짜에 대한 타입명 -- GOOGLE API DATA HEADERS =>  
 	private String monterm;
+	
+	// 최종본
+	private String started;
+	private String ended;
 }

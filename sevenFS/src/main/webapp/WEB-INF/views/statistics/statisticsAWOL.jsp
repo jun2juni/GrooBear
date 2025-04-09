@@ -3,7 +3,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
 <c:set var="title" scope="application" value="통계" />
@@ -18,6 +17,30 @@
 <title>${title}</title>
 <c:import url="../layout/prestyle.jsp" />
 
+<style type="text/css">
+.input-style-1 {
+    display: flex; /* 필드들을 한 줄에 배치 */
+    align-items: center; /* 수직 중앙 정렬 */
+    gap: 20px; /* 필드 간 간격 */
+    flex-wrap: nowrap; /* 줄 바꿈 방지 */
+}
+
+.input-style-1 label {
+    font-size: 14px; /* 레이블 크기 */
+    margin-right: 8px; /* 레이블과 입력 필드 간 간격 */
+}
+
+.input-style-1 input {
+    width: 200px; /* 입력 필드 길이를 줄임 */
+    padding: 3px; /* 입력 필드 내부 여백 */
+    border: 1px solid #ccc; /* 테두리 스타일 */
+    border-radius: 4px; /* 모서리를 둥글게 */
+    box-sizing: border-box; /* padding 포함 크기 계산 */
+    font-size: 14px; /* 입력 필드 텍스트 크기 */
+}
+
+
+</style>
 </head>
 <body>
 	<c:import url="../layout/sidebar.jsp" />
@@ -122,8 +145,7 @@
 										<form id="frm">
 											<div class="d-flex  align-items-center mb-3">
 												<legend>통계 기간 설정</legend>
-												<button type="button" onClick="window.location.reload()"
-													class="btn btn-outline-primary" >Re&nbsp;&nbsp;Try</button>
+												<button type="button" onclick="window.location.reload()" class="btn btn-outline-primary text-nowrap">초기화</button>
 											</div>
 											<div class="form-check radio-style mb-20 "
 												style="display: inline-block;">
@@ -159,10 +181,9 @@
 													<div class="card-body">
 														<div class="select-style-1 form-group w-fit"">
 															<label for="startYears" class="form-label"> 시작년도
-															</label> <select name="startYearsY" class="form-select"
-																id="startYearsY">
-																<option selected="" disabled="" readonly=""
-																	value="startYearsY">조회를 시작 할 년도를 선택해주세요</option>
+															</label> 
+															<select name="startYearsY" class="form-select" id="startYearsY">
+																<option selected="" disabled="" readonly="" value="startYearsY">조회를 시작 할 년도를 선택해주세요</option>
 																<option value="2025">2025</option>
 																<option value="2024">2024</option>
 																<option value="2023">2023</option>
@@ -172,10 +193,8 @@
 														</div>
 														<div class="select-style-1 form-group w-fit">
 															<label for="endYearsY" class="form-label"> 종료년도 </label>
-															<select name="endYearsY" class="form-select"
-																id="endYearsY">
-																<option selected="" disabled="" readonly=""
-																	value="endYearsY">조회를 종료 할 년도를 선택해주세요</option>
+															<select name="endYearsY" class="form-select" id="endYearsY">
+																<option selected="" disabled="" readonly="" value="endYearsY">조회를 종료 할 년도를 선택해주세요</option>
 																<option value="2025">2025</option>
 																<option value="2024">2024</option>
 																<option value="2023">2023</option>
@@ -196,21 +215,18 @@
 													</div>
 													<div class="card-body">
 														<div class="select-style-1 form-group w-fit">
-															<label for="startYears" class="form-label"> 시작년도
-															</label> <select name="startYearsM" class="form-select mb-2"
-																id="startYearsM">
-																<option selected="" readonly="" value="">조회 년도를
-																	선택 해주세요</option>
+															<label for="startYears" class="form-label"> 시작년도</label> 
+															<select name="startYearsM" class="form-select mb-2" id="startYearsM">
+																<option selected="" readonly="" value="">조회 년도를 선택 해주세요</option>
 																<option value="2025">2025</option>
 																<option value="2024">2024</option>
 																<option value="2023">2023</option>
 																<option value="2022">2022</option>
 																<option value="2021">2021</option>
-															</select> <label for="startYearsM" class="form-label"> 시작월
-															</label> <select name="startMonths" class="form-select mb-2"
-																id="startMonths">
-																<option selected="" disabled="" readonly="" value="">조회를
-																	종료 할 월을 선택해주세요</option>
+															</select>
+															<label for="startYearsM" class="form-label"> 시작월</label>
+															<select name="startMonths" class="form-select mb-2" id="startMonths">
+																<option selected="" disabled="" readonly="" value="">조회를 종료 할 월을 선택해주세요</option>
 																<option value="01">1월</option>
 																<option value="02">2월</option>
 																<option value="03">3월</option>
@@ -223,11 +239,10 @@
 																<option value="10">10월</option>
 																<option value="11">11월</option>
 																<option value="12">12월</option>
-															</select> <label for="startMonths" class="form-label"> 종료월
-															</label> <select name="endMonths" class="form-select mb-2"
-																id="endMonths">
-																<option selected="" disabled="" readonly="" value="">조회를
-																	종료 할 월을 선택해주세요</option>
+															</select> 
+															<label for="startMonths" class="form-label"> 종료월</label>
+															<select name="endMonths" class="form-select mb-2" id="endMonths">
+																<option selected="" disabled="" readonly="" value="">조회를 종료 할 월을 선택해주세요</option>
 																<option value="01">1월</option>
 																<option value="02">2월</option>
 																<option value="03">3월</option>
@@ -247,18 +262,19 @@
 											</div>
 
 											<div id="dynamicInputDays" style="display: none;">
-												<div class="card-header">
-													<legend>특정 기간 선택</legend>
-												</div>
-												<div class="input-style-1">
-													<label>시작일</label> <input id="startDays" name="startDays"
-														type="date" data-listener-added_846ff8c4="true">
-												</div>
-												<div class="input-style-1">
-													<label>종료일</label> <input id="endDays" name="endDays"
-														type="date" data-listener-added_846ff8c4="true">
-												</div>
+											    <div class="card-header">
+											        <legend>특정 기간 선택</legend>
+												    <div class="input-container">
+												        <div class="input-style-1">
+												            <label>시작일</label>
+												            <input id="startDays" name="startDays" type="date" data-listener-added_846ff8c4="true">
+												             <label>종료일</label>
+												            <input id="endDays" name="endDays" type="date" data-listener-added_846ff8c4="true">
+												        </div>
+												    </div>
+											    </div>
 											</div>
+
 											<div class="select-style-1 form-group">
 												<label>조회 할 부서를 선택 해 주세요 <span class="text-danger">*</span></label>
 												<div class="d-flex gap-5">
@@ -306,36 +322,19 @@
 											</select>
 										</div>
 										<!-- 폼태그안의 카드 끝   -->
-									<!-- 	<div class="input-style-1 form-group col-6 mt-3 mb-3">
-											<label for="chartTitle" class="form-label required mt-3">제목</label>
-											<input type="text" name="chartTitle" class="form-control"
-												id="chartTitle" placeholder="차트의 제목을 입력해주세요" required
-												maxlength="100">
-											<div class="invalid-feedback">차트의 제목을 입력해주세요.</div>
-											<label for="vAxisTitle" class="form-label required mt-3">세로축</label>
-											<input type="text" name="vAxisTitle" class="form-control"
-												id="vAxisTitle" placeholder="차트의 세로축을입력해주세요" required
-												maxlength="100">
-											<div class="invalid-feedback">차트의 제목을 입력해주세요.</div>
-											<label for="hAxisTitle" class="form-label required mt-3">가로축</label>
-											<input type="text" name="hAxisTitle" class="form-control"
-												id="hAxisTitle" placeholder="차트의 가로축을 입력해주세요" required
-												maxlength="100">
-											<div class="invalid-feedback">차트의 제목을 입력해주세요.</div>
-										</div> -->
 									</div> <!-- 2번째 내부카드 안 끝 -->
-									<button type="button" id="btnSubmit" tabindex="1"
-										class="btn submit btn-primary col-2 mt-3"
-										onclick="drawVisualization()">그래프 조회</button>
+									<button type="button" id="btnSubmit" tabindex="1" class="btn submit btn-primary col-2 mt-3" onclick="drawVisualization()">그래프 조회</button>
 								</div>
 								<!--제목 및 가로 세로 축 제목 적는 곳   -->
-								
+
+								<div>${result}</div>	<!-- erase remove delete replaceAll필요 -->							
 								<div id="chart_div" style="width: 900px; height: 500px;"></div>
 							</div>
 							<!-- 카드끝 -->
 						</div> <!-- 그래프 조회버튼 위 카드/ -->
 					</div>
 				</div>
+				
 			</div>
 			
 		</section>
@@ -352,20 +351,29 @@
     let checkedDeptArr = ["MONTH"]; // 내가 선택한 부서 담는 배열
 	/* 구글차트 패키지모음******* */
 	google.charts.load('current', {'packages':['corechart']});
-// 	google.charts.setOnLoadCallback(drawVisualization);
+	google.charts.setOnLoadCallback(drawVisualization);
 	/* 구글차트 패키지모음********* */ 
 	
-
-	async function drawVisualization(AWOL) {
+	
+	  // 구글 차트api에서 차트를 그려주는 펑션 function
+	  async function drawVisualization() {
 	  // 여기서 비동기 요청
-	  const response = await fetch("/hm/fighting"); // 여기에 파라미터 추가 하기
+	  const response = await fetch('/statistics/statisticsAWOL?'+ new URLSearchParams({
+		    started: document.querySelector('#startYearsY').value+'01',
+		    ended : document.querySelector('#endYearsY').value+'12'
+		}).toString()); // 여기에 파라미터 추가 하기
+		console.log("확인 좀 해보자",response);
+	  // document.queryselector(#startYearsM).value  //밸류가 맞는진 확인 해봐야겠다 -> 쿼리스트링으로 넘겨야함 
+	  // document.queryselector(#endYearsM).value => 넘겨야함 쿼리스트링 ()
 	  const fetchData = await response.json();
-      let demo = fetchData.demo;
+	  
+      let AWOL = fetchData.AWOL;
       
 	  let chartList = [];
 	  // let header = ["MONTH", "인사부", "임원진"];
       chartList.push(checkedDeptArr);
-      demo.forEach((item) => {
+      
+      AWOL.forEach((item) => {
         let wrap = []
         for(const head of checkedDeptArr) {
         	wrap.push(item[head]);
@@ -434,8 +442,8 @@
       console.log("현재 배열 상태 !!",checkedDeptArr);
     }
 
-    $(function(){
-      $("#btnSubmit").on("click",function(){
+//     $(function(){
+//       $("#btnSubmit").on("click",function(){
 
         //object -> 요청파라미터 string
         //1. 연간
@@ -446,25 +454,25 @@
 
         //3. 일간
         //interval=day&chartType=bars&startYearsM=&startDays=2025-04-04&endDays=2025-04-30&dept=%ED%92%88%EC%A7%88%EB%B6%80&dept=%EC%97%B0%EA%B5%AC%EC%86%8C
-        let frm = $("#frm").serialize();
-        console.log("frm : ", frm);
+//         let frm = $("#frm").serialize();
+//         console.log("frm : ", frm);
 
-        $.ajax({
-          url:"/statistics/statisticsAWOL/AWOLAjax",
-          data:frm,
-          type:"post",
-          dataType:"json",
-          success:function(result){
-            console.log("result : ", result);
-            //매개
+//         $.ajax({
+//           url:"/statistics/statisticsAWOL/AWOLAjax",
+//           data:frm,
+//           type:"post",
+//           dataType:"json",
+//           success:function(result){
+//             console.log("result : ", result);
+//             //매개
 
-            let AWOL = result;
+//             let AWOL = result;
 
-            google.charts.setOnLoadCallback(drawStuff(AWOL))
-          }
-        });
-      });//end btnSubmit
-    });//end 달러function
+//             google.charts.setOnLoadCallback(drawStuff(AWOL))
+//           }
+//         });
+//       });//end btnSubmit
+//     });//end 달러function
 </script>
 
 <script>

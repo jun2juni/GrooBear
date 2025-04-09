@@ -1,12 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper
-	namespace="kr.or.ddit.sevenfs.mapper.statistics.StatisticsMapper">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.statistics.StatisticsMapper">
 
+	<select id="getAWOL" resultType="java.util.Map">
+		WITH MONTHS AS (SELECT TO_CHAR(ADD_MONTHS(TO_DATE(#{started}, 'YYYYMM'), LEVEL - 1), 'YYYY-MM') AS MONTH
+						FROM DUAL
+		<![CDATA[
+						CONNECT BY
+							LEVEL <= MONTHS_BETWEEN(TO_DATE(#{ended}, 'YYYYMM'), TO_DATE(#{started}, 'YYYYMM')) + 1
+		]]>
+		),
+			 DEPARTMENTS AS (SELECT CMMN_CODE,
+									CASE
+										WHEN CMMN_CODE BETWEEN 0 AND 9 THEN '임원진'
+										WHEN CMMN_CODE BETWEEN 10 AND 19 THEN '인사부'
+										WHEN CMMN_CODE BETWEEN 20 AND 29 THEN '경영지원부'
+										WHEN CMMN_CODE BETWEEN 30 AND 39 THEN '영업부'
+										WHEN CMMN_CODE BETWEEN 40 AND 49 THEN '생산부'
+										WHEN CMMN_CODE BETWEEN 50 AND 59 THEN '구매부'
+										WHEN CMMN_CODE BETWEEN 60 AND 69 THEN '품질부'
+										WHEN CMMN_CODE BETWEEN 70 AND 79 THEN '디자인부'
+										WHEN CMMN_CODE BETWEEN 80 AND 89 THEN '연구소'
+										WHEN CMMN_CODE BETWEEN 90 AND 99 THEN '7FS'
+										END AS DEPT_RANGE
+							 FROM COMMON_CODE
+							 WHERE CMMN_CODE_GROUP = 'DEPARTMENT'),
+			 DCLZ_FILTERED AS (SELECT *
+							   FROM DCLZ_TYPE
+		<![CDATA[
+							   WHERE DCLZ_BEGIN_DT >= DCLZ_NO
+								 AND DCLZ_BEGIN_DT <= DCLZ_NO
+								   /* 여기 선택한 근퇴 정보 들어가야함 */
+								 AND DCLZ_CODE IN ('01', '03')
+		]]>
+		),
+			 DATA_JOIN AS (SELECT TO_CHAR(DCLZ.DCLZ_BEGIN_DT, 'YYYY-MM') AS MONTH,
+								  CASE
+									  WHEN CC.CMMN_CODE BETWEEN 0 AND 9 THEN '임원진'
+									  WHEN CC.CMMN_CODE BETWEEN 10 AND 19 THEN '인사부'
+									  WHEN CC.CMMN_CODE BETWEEN 20 AND 29 THEN '경영지원부'
+									  WHEN CC.CMMN_CODE BETWEEN 30 AND 39 THEN '영업부'
+									  WHEN CC.CMMN_CODE BETWEEN 40 AND 49 THEN '생산부'
+									  WHEN CC.CMMN_CODE BETWEEN 50 AND 59 THEN '구매부'
+									  WHEN CC.CMMN_CODE BETWEEN 60 AND 69 THEN '품질부'
+									  WHEN CC.CMMN_CODE BETWEEN 70 AND 79 THEN '디자인부'
+									  WHEN CC.CMMN_CODE BETWEEN 80 AND 89 THEN '연구소'
+									  WHEN CC.CMMN_CODE BETWEEN 90 AND 99 THEN '7FS'
+									  END                                AS DEPT_RANGE
+						   FROM COMMON_CODE CC
+									LEFT JOIN EMPLOYEE EMP ON CC.CMMN_CODE = EMP.DEPT_CODE
+									LEFT JOIN DCLZ_FILTERED DCLZ ON DCLZ.EMPL_NO = EMP.EMPL_NO
+						   WHERE CC.CMMN_CODE_GROUP = 'DEPARTMENT'),
+			 BASE_DATA AS (SELECT M.MONTH, D.DEPT_RANGE, COUNT(J.MONTH) AS EMP_COUNT
+						   FROM MONTHS M
+									CROSS JOIN DEPARTMENTS D
+									LEFT JOIN DATA_JOIN J
+											  ON J.MONTH = M.MONTH AND J.DEPT_RANGE = D.DEPT_RANGE
+						   GROUP BY M.MONTH, D.DEPT_RANGE)
+		SELECT *
+		FROM BASE_DATA
+			PIVOT (
+			SUM(EMP_COUNT)
+			FOR DEPT_RANGE IN (
+					<!--<foreach collection="dclzCodeList" item="dclz" separator=",">
+						'${dclz}' AS "${dclz}"
+					</foreach>-->
+				'임원진' AS 임원진,
+				'인사부' AS 인사부,
+				'경영지원부' AS 경영지원부,
+				'영업부' AS 영업부,
+				'생산부' AS 생산부,
+				'구매부' AS 구매부,
+				'품질부' AS 품질부,
+				'디자인부' AS 디자인부,
+				'연구소' AS 연구소,
+				'7FS' AS "7FS"
+				)
 
-
-
- <!-- 특정 년도 특정 년 조회 쿼리 : 입력년도(-1) - 입력 월 (시작시점) / 입력년도(+1) -입력(종료시점)/ 근태코드가  
+			)
+		ORDER BY MONTH
+	</select>
+	 <!-- AWOL 종료 시점 ********************************************************************* -->
+	
+	
+	
+<!-- 특정 년도 특정 년 조회 쿼리 : 입력년도(-1) - 입력 월 (시작시점) / 입력년도(+1) -입력(종료시점)/ 근태코드가  
  		지각 01 조퇴 03 
  	특정 년도 특정 월 조회 쿼리 : AWOL 근태 지각 조퇴 통계 public List<Map<String,Object>>  --> 
  		<!--  AWOLAjax(StatisticsVO statisticsVO)--> 
@@ -51,7 +129,7 @@
 		일간 StatisticsVO(interval=day, chartType=area, startYearsY=null, endYearsY=null, 
 		dept=[구매부, 디자인부, 연구소], startYearsM=, startMonths=null, endMonths=null , startDays=2025-04-04,  
  		endDays=2025-04-30)  -->
- 	<select id="AWOLAjax" resultType="hashMap" parameterType="kr.or.ddit.sevenfs.vo.statistics.StatisticsVO"> 
+ 	<!-- <select id="AWOLAjax" resultType="hashMap" parameterType="kr.or.ddit.sevenfs.vo.statistics.StatisticsVO"> 
  		SELECT 
  		to_CHAR(DCLZ.DCLZ_BEGIN_DT,'YYYY-MM'), 
  		CASE 
@@ -131,8 +209,6 @@
  		END 
  		ORDER to_CHAR(DCLZ.DCLZ_BEGIN_DT,'YYYY-MM'), 
  		BY DEPT_RANGE DESC 
- 	</select>
-
-
+ 	</select> -->
 
 </mapper>

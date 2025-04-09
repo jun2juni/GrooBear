@@ -10,5 +10,5 @@ import kr.or.ddit.sevenfs.vo.statistics.StatisticsVO;
 public interface StatisticsService {
 	
 	//AWOL 근태 지각 조퇴 통계
-	public List<Map<String,Object>> AWOLAjax(StatisticsVO statisticsVO);
+	public List<Map<String,Object>> getAWOL(String started, String ended, String[] dclzCodeList);
 }
