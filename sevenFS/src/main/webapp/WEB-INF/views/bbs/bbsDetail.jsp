@@ -251,27 +251,29 @@
 	
 	// 댓글 수정
 	function editAnswer(answerNo) {
-		const currentText = $(`#answerCn-${answerNo}`).text();
-		const newText = prompt("댓글을 수정하세요", currentText);
-
-		if (newText && newText.trim()) {
-			$.ajax({
-				type: "POST",
-				url: "/bbs/answer/update",
-				data: {
-					answerNo: answerNo,
-					answerCn: newText
-				},
-				success: function () {
-					alert("댓글이 수정되었습니다.");
-					loadAnswer();
-				},
-				error: function (xhr) {
-					alert("댓글 수정 실패: " + xhr.responseText);
-				}
-			});
-		}
+	    const currentText = $(`#answerCn-${answerNo}`).data("content");  // or use .text() or .html() if 안 쓰면
+	    const newText = prompt("댓글을 수정하세요", currentText);
+	
+	    if (newText && newText.trim()) {
+	        $.ajax({
+	            type: "POST",
+	            url: "/bbs/answer/update",
+	            data: {
+	                answerNo: answerNo,
+	                answerCn: newText.trim()
+	            },
+	            success: function () {
+	                alert("댓글이 수정되었습니다.");
+	                loadAnswer();
+	            },
+	            error: function (xhr) {
+	                alert("댓글 수정 실패: " + xhr.responseText);
+	            }
+	        });
+	    }
 	}
+
+
 	
 	// 댓글 삭제
 	function deleteAnswer(answerNo) {
