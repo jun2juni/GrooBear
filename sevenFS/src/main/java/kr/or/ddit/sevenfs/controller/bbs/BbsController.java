@@ -53,49 +53,71 @@ public class BbsController {
     	return "bbs/bbs";
     }
     
+    /**
+     * 게시판 리스트 페이지를 반환하는 컨트롤러 메서드
+     * 
+     * @param model       뷰에 데이터를 전달하기 위한 Model 객체
+     * @param bbsCtgryNo  게시판 카테고리 번호
+     * @param bbsVO       게시판 검색 및 정렬 관련 VO 객체
+     * @param currentPage 현재 페이지 번호 (기본값: 1)
+     * @param size        한 페이지에 보여질 게시글 수 (기본값: 10)
+     * @return            게시판 목록 뷰 페이지 경로
+     */
     @GetMapping("/bbsList")
     public String bbsList(Model model, 
-    					  @RequestParam("bbsCtgryNo") int bbsCtgryNo,
+                          @RequestParam("bbsCtgryNo") int bbsCtgryNo,
                           @ModelAttribute BbsVO bbsVO,
                           @RequestParam(defaultValue = "1") int currentPage,
                           @RequestParam(defaultValue = "10") int size) {
-    	
-    	bbsVO.setBbsCtgryNo(bbsCtgryNo);
 
+        // 게시판 카테고리 번호 설정
+        bbsVO.setBbsCtgryNo(bbsCtgryNo);
+
+        // 검색 키워드 및 카테고리 로깅 (디버깅 용도)
         log.info("서치키워드 확인: " + bbsVO.getSearchKeyword());
         log.info("서치카테고리 확인: " + bbsVO.getCategory());
+
+        // 뷰에 검색 키워드 전달
         model.addAttribute("SearchKeyword", bbsVO.getSearchKeyword());
 
-        Map<String,Object> map = new HashMap<String,Object>();
-        
-        //글의 수 구하기->페이징 블록을 좌우함
+        // 페이징 및 검색 조건을 담을 맵 생성
+        Map<String, Object> map = new HashMap<>();
         map.put("searchKeyword", bbsVO.getSearchKeyword());
         map.put("currentPage", currentPage);
         map.put("size", size);
         map.put("category", bbsVO.getCategory());
         map.put("bbsCtgryNo", bbsVO.getBbsCtgryNo());
+
+        // 전체 게시글 수 조회 (페이징 계산을 위해 필요)
         int total = this.bbsService.getTotal(map);
         map.put("total", total);
+
+        // 맵 디버깅 로그
         log.info("맵 : " + map);
-        
+
         // 페이징 처리 객체 생성
-        //total(글의 수) = 1
-        ArticlePage<BbsVO> articlePage = new ArticlePage<BbsVO>(total, currentPage, size);
-        bbsVO.setOrderByDate("desc");  
+        ArticlePage<BbsVO> articlePage = new ArticlePage<>(total, currentPage, size);
+
+        // 게시글 정렬 조건 설정 (날짜 기준 내림차순)
+        bbsVO.setOrderByDate("desc");
+
+        // 페이징 객체에 검색 조건 VO 설정 및 전체 게시글 수 설정
         articlePage.setSearchVo(bbsVO);
         articlePage.setTotal(total);
-        List<BbsVO> bbsList = bbsService.bbsList(articlePage);
-        
-        // 기존 bbsVO를 그대로 사용 (중요)
-        //total(글의 수) = 1
 
+        // 게시글 리스트 조회
+        List<BbsVO> bbsList = bbsService.bbsList(articlePage);
+
+        // 뷰에 전달할 모델 속성 설정
         model.addAttribute("selectedCategory", bbsVO.getCategory());
         model.addAttribute("articlePage", articlePage);
         model.addAttribute("bbsList", bbsList);
         model.addAttribute("bbsCtgryNo", bbsCtgryNo);
 
+        // 게시판 목록 뷰 반환
         return "bbs/bbsList";
     }
+
 
 
 
