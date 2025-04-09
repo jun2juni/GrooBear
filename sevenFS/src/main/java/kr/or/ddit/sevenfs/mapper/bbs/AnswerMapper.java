@@ -14,4 +14,8 @@ public interface AnswerMapper {
 
 	public List<AnswerVO> selectAnswer(Map<String, Object> params);
 
+	public void updateAnswer(int answerNo, String answerCn);
+
+	public void deleteAnswer(int answerNo);
+
 }

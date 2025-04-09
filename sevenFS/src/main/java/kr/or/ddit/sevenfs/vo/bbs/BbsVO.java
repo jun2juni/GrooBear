@@ -25,5 +25,10 @@ public class BbsVO {
 	private String searchKeyword; // 검색 키워드
 	private String orderByDate; // 오더바이데이트
 	private String category;  // bbscttSj 또는 bbscttCn
+	
+	private String bbsCtgryNm; // 게시판 카테고리 이름
+	private String emplNm;     // 작성자 이름
+	private int commentCnt;    // 댓글 수
+	private int likeCnt; // 좋아요 수
 
 }

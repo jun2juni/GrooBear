@@ -3,68 +3,83 @@
 <mapper namespace="kr.or.ddit.sevenfs.mapper.bbs.BbsMapper">
 
 	<select id="bbsList"
-		parameterType="kr.or.ddit.sevenfs.utils.ArticlePage"
-		resultMap="BbsResultMap">
-		SELECT
-		B.BBS_SN,
-		B.BBS_CTGRY_NO,
-		B.EMPL_NO,
-		B.BBSCTT_SJ,
-		B.BBSCTT_CN,
-		B.BBSCTT_CREAT_DT,
-		B.BBSCTT_UPDT_DT,
-		B.RDCNT,
-		B.BBSCTT_USE_YN,
-		B.UPEND_FIXING_YN,
-		B.ATCH_FILE_NO,
-		(SELECT COUNT(1) FROM ATTATCH_FILE F WHERE B.ATCH_FILE_NO =
-		F.ATCH_FILE_NO) AS ATCH_CNT
-		FROM BBS B
-
-		<where>
-			B.BBSCTT_USE_YN = 'Y'
-
-			<choose>
-					<when test="articlePage.searchVo.category == 'bbscttSj'">
-						AND B.BBSCTT_SJ LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
-					</when>
-					<when test="articlePage.searchVo.category == 'bbscttCn'">
-						AND B.BBSCTT_CN LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
-					</when>
-					<otherwise>
-						AND (
-						B.BBSCTT_SJ LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
-						OR B.BBSCTT_CN LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
-						)
-					</otherwise>
-				</choose>
-
-			<!-- 카테고리 필터링 -->
-			<if
-				test="articlePage.searchVo.bbsCtgryNo != null and articlePage.searchVo.bbsCtgryNo != 0">
-				AND B.BBS_CTGRY_NO = #{articlePage.searchVo.bbsCtgryNo}
-			</if>
-
-				
-
-		</where>
-
-		<!-- 정렬 -->
-		ORDER BY
-		  DECODE(B.UPEND_FIXING_YN, 'Y', 0, 1),  <!-- 상단 고정 먼저 -->
-		  <if test="articlePage.searchVo.orderByDate != null and articlePage.searchVo.orderByDate == 'desc'">
-		    B.BBSCTT_CREAT_DT DESC,
-		  </if>
-		  <if test="articlePage.searchVo.orderByDate != null and articlePage.searchVo.orderByDate == 'asc'">
-		    B.BBSCTT_CREAT_DT ASC,
-		  </if>
-		  B.BBSCTT_CREAT_DT DESC
-
-
-		<!-- 페이징 처리 -->
-		OFFSET (#{articlePage.currentPage} - 1) * 10 ROWS FETCH NEXT 10 ROWS
-		ONLY
+	        parameterType="kr.or.ddit.sevenfs.utils.ArticlePage"
+	        resultMap="BbsResultMap">
+	    SELECT
+	        B.BBS_SN,
+	        B.BBS_CTGRY_NO,
+	        CT.Ctgry_NM AS BBS_CTGRY_NM, 
+	        B.EMPL_NO,
+	        E.EMPL_NM,                   
+	        B.BBSCTT_SJ,
+	        B.BBSCTT_CN,
+	        B.BBSCTT_CREAT_DT,
+	        B.BBSCTT_UPDT_DT,
+	        B.RDCNT,
+	        B.BBSCTT_USE_YN,
+	        B.UPEND_FIXING_YN,
+	        B.ATCH_FILE_NO,
+	
+	        -- 첨부파일 수
+	        (SELECT COUNT(1) 
+	         FROM ATTATCH_FILE F 
+	         WHERE B.ATCH_FILE_NO = F.ATCH_FILE_NO) AS ATCH_CNT,
+	
+	        -- 댓글 수
+	        (SELECT COUNT(*) 
+	         FROM BBS_ANSWER A 
+	         WHERE A.BBS_SN = B.BBS_SN 
+	           AND A.BBS_CTGRY_NO = B.BBS_CTGRY_NO) AS COMMENT_CNT,
+	           
+	        -- 좋아요 수 👍
+		    (SELECT COUNT(*) 
+		     FROM BBS_LIKE L 
+		     WHERE L.BBS_SN = B.BBS_SN 
+		       AND L.BBS_CTGRY_NO = B.BBS_CTGRY_NO) AS LIKE_CNT
+	
+	    FROM BBS B
+	    JOIN EMPLOYEE E ON B.EMPL_NO = E.EMPL_NO
+	    JOIN BBS_CTGRY CT ON B.BBS_CTGRY_NO = CT.BBS_CTGRY_NO
+	
+	    <where>
+	        B.BBSCTT_USE_YN = 'Y'
+	
+	        <choose>
+	            <when test="articlePage.searchVo.category == 'bbscttSj'">
+	                AND B.BBSCTT_SJ LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
+	            </when>
+	            <when test="articlePage.searchVo.category == 'bbscttCn'">
+	                AND B.BBSCTT_CN LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
+	            </when>
+	            <otherwise>
+	                AND (
+	                    B.BBSCTT_SJ LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
+	                    OR B.BBSCTT_CN LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
+	                )
+	            </otherwise>
+	        </choose>
+	
+	        <!-- 카테고리 필터링 -->
+	        <if test="articlePage.searchVo.bbsCtgryNo != null and articlePage.searchVo.bbsCtgryNo != 0">
+	            AND B.BBS_CTGRY_NO = #{articlePage.searchVo.bbsCtgryNo}
+	        </if>
+	    </where>
+	
+	    <!-- 정렬 -->
+	    ORDER BY
+	        DECODE(B.UPEND_FIXING_YN, 'Y', 0, 1), 
+	        <if test="articlePage.searchVo.orderByDate != null and articlePage.searchVo.orderByDate == 'desc'">
+	            B.BBSCTT_CREAT_DT DESC,
+	        </if>
+	        <if test="articlePage.searchVo.orderByDate != null and articlePage.searchVo.orderByDate == 'asc'">
+	            B.BBSCTT_CREAT_DT ASC,
+	        </if>
+	        B.BBSCTT_CREAT_DT DESC
+	
+	    OFFSET (#{articlePage.currentPage} - 1) * 10 ROWS
+	    FETCH NEXT 10 ROWS ONLY
 	</select>
+
 
 
 
@@ -76,7 +91,9 @@
 		<!-- 게시글 정보 매핑 -->
 		<id property="bbsSn" column="BBS_SN" />
 		<result property="bbsCtgryNo" column="BBS_CTGRY_NO" />
+		<result property="bbsCtgryNm" column="BBS_CTGRY_NM"/>
 		<result property="emplNo" column="EMPL_NO" />
+		<result property="emplNm" column="EMPL_NM"/>
 		<result property="bbscttSj" column="BBSCTT_SJ" />
 		<result property="bbscttCn" column="BBSCTT_CN" />
 		<result property="bbscttCreatDt" column="BBSCTT_CREAT_DT" />
@@ -85,6 +102,8 @@
 		<result property="bbscttUseYn" column="BBSCTT_USE_YN" />
 		<result property="upendFixingYn" column="UPEND_FIXING_YN" />
 		<result property="atchFileNo" column="ATCH_FILE_NO" />
+		<result property="commentCnt" column="COMMENT_CNT"/>
+		<result property="likeCnt" column="LIKE_CNT"/>
 
 		<!-- 첨부 파일 정보 매핑 -->
 		<collection property="files"
@@ -115,23 +134,27 @@
 	</select>
 
 	<!-- 게시글 상세 조회 -->
-	<select id="bbsDetail" resultMap="BbsResultMap"
-		parameterType="int">
-		SELECT
-		B.BBS_SN,
-		B.BBS_CTGRY_NO,
-		B.EMPL_NO,
-		B.BBSCTT_SJ,
-		B.BBSCTT_CN,
-		B.BBSCTT_CREAT_DT,
-		B.BBSCTT_UPDT_DT,
-		B.RDCNT,
-		B.BBSCTT_USE_YN,
-		B.UPEND_FIXING_YN,
-		B.ATCH_FILE_NO
-		FROM BBS B
-		WHERE B.BBS_SN = #{bbsSn}
+	<select id="bbsDetail" resultMap="BbsResultMap" parameterType="int">
+	    SELECT
+	        B.BBS_SN,
+	        B.BBS_CTGRY_NO,
+	        CT.CTGRY_NM AS BBS_CTGRY_NM,
+	        B.EMPL_NO,
+	        E.EMPL_NM,
+	        B.BBSCTT_SJ,
+	        B.BBSCTT_CN,
+	        B.BBSCTT_CREAT_DT,
+	        B.BBSCTT_UPDT_DT,
+	        B.RDCNT,
+	        B.BBSCTT_USE_YN,
+	        B.UPEND_FIXING_YN,
+	        B.ATCH_FILE_NO
+	    FROM BBS B
+	    JOIN EMPLOYEE E ON B.EMPL_NO = E.EMPL_NO
+	    JOIN BBS_CTGRY CT ON B.BBS_CTGRY_NO = CT.BBS_CTGRY_NO
+	    WHERE B.BBS_SN = #{bbsSn}
 	</select>
+
 	
 	<!-- 게시글 조회수 추가 -->
 	<update id="increaseViewCount" parameterType="int">

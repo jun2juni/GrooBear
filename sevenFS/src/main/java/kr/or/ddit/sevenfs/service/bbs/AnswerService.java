@@ -10,4 +10,8 @@ public interface AnswerService {
 	public void saveAnswer(AnswerVO vo);
 
 	public List<AnswerVO> selectAnswer(Map<String, Object> params);
+
+	public void updateAnswer(int answerNo, String answerCn);
+
+	public void deleteAnswer(int answerNo);
 }

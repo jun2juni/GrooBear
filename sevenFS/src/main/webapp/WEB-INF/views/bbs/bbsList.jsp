@@ -96,18 +96,19 @@ table.table-hover.align-middle.text-center tbody tr td {
             <table class="table table-hover align-middle text-center" style="table-layout: fixed; width: 100%;">
               <thead class="table-light">
                 <tr>
-                  <th style="width: 8%;">게시글 유형</th>
+                  <th style="width: 8%;">게시글 번호</th>
                   <th style="width: 5%;"></th>
-                  <th style="width: 60%; text-align: left;">제목</th>
+                  <th style="width: 50%;">제목</th>
                   <th style="width: 10%;">작성자</th>
                   <th style="width: 10%;">작성일</th>
-                  <th style="width: 10%; text-align: right;">조회수</th>
+                  <th style="width: 10%;">조회수</th>
+                  <th style="width: 10%;">좋아요</th>
                 </tr>
               </thead>
               <tbody>
                 <c:forEach var="bbsVO" items="${bbsList}">
                   <tr onClick="location.href='/bbs/bbsDetail?bbsSn=${bbsVO.bbsSn}'" style="cursor:pointer;">
-                    <td>${bbsVO.bbsCtgryNo}</td>
+                    <td>${bbsVO.bbsSn}</td>
                     <td>
                     	<c:if test="${bbsVO.upendFixingYn == 'Y'}">
 					        <span style="color: red; font-weight: bold;">[공지]</span>
@@ -117,16 +118,19 @@ table.table-hover.align-middle.text-center tbody tr td {
                     	${bbsVO.bbscttSj}
                     	<c:choose>
                         <c:when test="${not empty bbsVO.files and bbsVO.files.size() > 0}">
-                          	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
-						  		<path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1M.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8z"/>
+                          	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-paperclip" viewBox="0 0 16 16">
+							  <path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0z"/>
 							</svg>
                         </c:when>
                       </c:choose>
                     </td>
-                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${myEmpInfo.emplNm}</td>
+                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${bbsVO.emplNm}</td>
                     <td>${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}</td>
-                    <td style="text-align: right;">
+                    <td>
                       ${bbsVO.rdcnt}
+                    </td>
+                    <td>
+                      ${bbsVO.likeCnt}
                     </td>
                   </tr>
                 </c:forEach>

@@ -201,7 +201,7 @@ public class BbsController {
     	
     	log.info("삭제 댐? : " + delete);
     	
-    	return "redirect:/bbs/bbsList?ctgryNo="+bbsVO.getBbsCtgryNo();
+    	return "redirect:/bbs/bbsList?bbsCtgryNo="+bbsVO.getBbsCtgryNo();
     }
     
     

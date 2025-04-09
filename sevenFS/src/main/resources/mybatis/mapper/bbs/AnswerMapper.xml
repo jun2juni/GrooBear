@@ -16,11 +16,29 @@
 	</insert>
 	
 	<select id="selectAnswer" parameterType="map" resultType="AnswerVO">
-	  SELECT *
-	  FROM BBS_ANSWER
-	  WHERE BBS_SN = #{bbsSn}
-	    AND BBS_CTGRY_NO = #{bbsCtgryNo}
-	  ORDER BY ANSWER_CREAT_DT DESC
+	  SELECT 
+	    A.*,
+	    E.EMPL_NM
+	  FROM BBS_ANSWER A
+	  JOIN EMPLOYEE E ON A.EMPL_NO = E.EMPL_NO
+	  WHERE A.BBS_SN = #{bbsSn}
+	    AND A.BBS_CTGRY_NO = #{bbsCtgryNo}
+	  ORDER BY A.ANSWER_CREAT_DT DESC
 	</select>
+	
+	
+	<!-- 댓글 수정 -->
+	<update id="updateAnswer">
+		UPDATE BBS_ANSWER
+		SET ANSWER_CN = #{answerCn}
+		WHERE ANSWER_NO = #{answerNo}
+	</update>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="deleteAnswer">
+		DELETE FROM BBS_ANSWER
+		WHERE ANSWER_NO = #{answerNo}
+	</delete>
+		
 		
 </mapper>

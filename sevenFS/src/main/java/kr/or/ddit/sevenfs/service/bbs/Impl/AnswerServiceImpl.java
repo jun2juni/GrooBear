@@ -30,4 +30,16 @@ public class AnswerServiceImpl implements AnswerService {
 		return answerMapper.selectAnswer(params);
 	}
 
+	@Override
+	public void updateAnswer(int answerNo, String answerCn) {
+		// TODO Auto-generated method stub
+		answerMapper.updateAnswer(answerNo, answerCn);
+	}
+
+	@Override
+	public void deleteAnswer(int answerNo) {
+		// TODO Auto-generated method stub
+		answerMapper.deleteAnswer(answerNo);
+	}
+
 }

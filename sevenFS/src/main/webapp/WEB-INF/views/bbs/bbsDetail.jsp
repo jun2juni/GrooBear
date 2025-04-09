@@ -12,7 +12,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>${title}</title>
 <c:import url="../layout/prestyle.jsp" />
-
+<script>
+    const loginUserEmplNo = "${myEmpInfo.emplNo}";
+</script>
 </head>
 <style>
     img {
@@ -59,7 +61,7 @@
 								<div class="board-detail">
 									<div>제목<p>${bbsVO.bbscttSj}</p></div><br>
 									<div>내용<p>${bbsVO.bbscttCn}</p></div><br>
-									<div>작성자<p>${myEmpInfo.emplNm}</p></div><br>
+									<div>작성자<p>${bbsVO.emplNm}</p></div><br>
 									<div>작성일<p>${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}</p></div><br>
 									<c:set var="Efile" value="${bbsVO.files}" />
 									<div>파일
@@ -125,6 +127,7 @@
                 success: function(){
                     alert("삭제되었습니다.");
                     window.location.href = "/bbs/bbsList?bbsCtgryNo="+${bbsVO.bbsCtgryNo};
+                    console.log("삭제요청 "+${bbsVO.bbsCtgryNo});
                 }
             });
         }
@@ -132,6 +135,7 @@
     
 	// 댓글 등록
 	function submitComment() {
+		console.log("댓굴 등록 실행");
 	    const answerCn = $("#answerCn").val().trim();  // 앞뒤 공백 제거
 	
 	    if (!answerCn) {
@@ -147,7 +151,6 @@
 	            bbsSn: ${bbsVO.bbsSn},
 	            bbsCtgryNo: ${bbsVO.bbsCtgryNo},
 	            answerCn: answerCn,
-	            emplNo: ${myEmpInfo.emplNo}
 	        },
 	        success: function(response) {
 	            console.log("댓글 등록 성공");
@@ -175,18 +178,38 @@
 	            let html = "";
 	            data.forEach(function(answer) {
 	                console.log("각 댓글:", answer); // 실제 데이터 확인
+	                const formattedDate = formatDate(answer.answerCreatDt); // ← 여기서 먼저 포맷
 	                html += `
 	                    <div class="card mb-3">
 	                        <div class="card-body">
 	                            <div class="d-flex justify-content-between align-items-center mb-2">
-	                                <h6 class="mb-0 fw-bold text-primary">${myEmpInfo.emplNm}</h6>
-	                                <small class="text-muted">\${answer.answerCreatDt}</small>
+	                                <h6 class="mb-0 fw-bold text-primary">` + answer.emplNm + `</h6>
+	                                <small class="text-muted">` + formatDate(answer.answerCreatDt) + `</small>
 	                            </div>
-	                            <p class="card-text">\${answer.answerCn}</p>
+	                            <p class="card-text" id="answerCn-` + answer.answerNo + `">` + answer.answerCn + `</p>
+	                `;
+
+	                // 댓글 작성자일 때만 버튼 보여주기
+	                if (answer.emplNo === loginUserEmplNo) {
+	                    html += `
+	                        <div class="mt-2 d-flex justify-content-end">
+	                            <button class="btn btn btn-outline-warning me-2"
+	                                    onclick="editAnswer(` + answer.answerNo + `)">수정</button>
+	                            <button class="btn btn btn-outline-danger me-2"
+	                                    onclick="deleteAnswer(` + answer.answerNo + `)">삭제</button>
+	                        </div>
+	                    `;
+	                }
+
+	                html += `
 	                        </div>
 	                    </div>
 	                `;
 
+
+
+	                console.log("서버에서 온 날짜:", answer.answerCreatDt);
+	                console.log("포맷한 날짜:", formatDate(answer.answerCreatDt));
 	            });
 	            
 	            console.log("최종 HTML:", html);
@@ -202,6 +225,51 @@
 	$(document).ready(function() {
 	    loadAnswer();  // 페이지 들어오면 바로 댓글 가져오게
 	});
+	
+	
+	// 댓글 수정
+	function editAnswer(answerNo) {
+		const currentText = $(`#answerCn-${answerNo}`).text();
+		const newText = prompt("댓글을 수정하세요", currentText);
+
+		if (newText && newText.trim()) {
+			$.ajax({
+				type: "POST",
+				url: "/bbs/answer/update",
+				data: {
+					answerNo: answerNo,
+					answerCn: newText
+				},
+				success: function () {
+					alert("댓글이 수정되었습니다.");
+					loadAnswer();
+				},
+				error: function (xhr) {
+					alert("댓글 수정 실패: " + xhr.responseText);
+				}
+			});
+		}
+	}
+	
+	// 댓글 삭제
+	function deleteAnswer(answerNo) {
+		if (confirm("댓글을 삭제하시겠습니까?")) {
+			$.ajax({
+				type: "POST",
+				url: "/bbs/answer/delete",
+				data: { answerNo: answerNo },
+				success: function () {
+					alert("댓글이 삭제되었습니다.");
+					loadAnswer();
+				},
+				error: function (xhr) {
+					alert("댓글 삭제 실패: " + xhr.responseText);
+				}
+			});
+		}
+	}
+
+
 
 
 	</script>
