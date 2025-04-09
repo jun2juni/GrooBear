@@ -171,7 +171,6 @@
 		SET
 		BBSCTT_SJ = #{bbscttSj},
 		BBSCTT_CN = #{bbscttCn},
-		EMPL_NO = #{emplNo},
 		BBSCTT_UPDT_DT = SYSDATE,
 		UPEND_FIXING_YN = #{upendFixingYn},
 		ATCH_FILE_NO = #{atchFileNo}
