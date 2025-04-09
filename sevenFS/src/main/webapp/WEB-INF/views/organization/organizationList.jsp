@@ -26,7 +26,7 @@
 	  <div class="container-fluid">
 	  	<div class="row">
 		  <div class="col-4">
-			<div class="card-style">
+			<div class="card-style overflow-scroll" style="max-height: 90vh;" >
 			  <c:import url="../organization/orgList.jsp" />
 			</div>
 		  </div>
@@ -82,12 +82,21 @@
         // 부서 삭제 - 관리자만 가능
         $(function(){
           $("#deptDeleteBtn").on("click", function(){
-            swal({
-              title: "정말 삭제하시겠습니까?",
-              icon: "warning",
-              buttons: true,
-              dangerMode: true,
-            })
+            	swal({
+                    title: "정말 삭제하시겠습니까?",
+                    icon: "warning",
+                    buttons: {
+                    	cancle : {
+                    		text : '삭제 취소',
+                    		value : false
+                    	},
+                    	confirm : {
+                    		text : '확인',
+                    		value : true
+                    	}
+                    },
+                    dangerMode: true
+                  })
               .then((willDelete) => {
                 if (willDelete) {
                   fetch("deptDelete?cmmnCode="+ data.node.id,{
@@ -100,15 +109,24 @@
                     .then(res => {
                       console.log("삭제성공? : " , res);
                     })
-                  swal("식제되었습니다.]", {
-                    icon: "success",
+                  swal("식제되었습니다.", {
+                    icon: "success"
                   })
                     .then((res)=>{
                       location.href = "/orglistAdmin";
                     })
                 } else {
-                  swal("취소되었습니다.");
-                }
+                	swal({
+               		  title: "취소되었습니다.",
+               		  icon: "info",
+               		  buttons: {
+               		    confirm: {
+               		      text: "확인",
+               		      value: true
+               		    }
+               		  }
+               		});
+                  }
               });
           }); // end function
         }); // end del function

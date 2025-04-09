@@ -11,7 +11,7 @@
 		<div class="chat-about-profile">
 			<div class="content text-center">
 				<h5 class="text-bold mb-10"></h5>
-				<span class="status-btn main-btn primary-btn-light rounded-full btn-hover">DEPARTMENT</span>
+				<span class="status-btn main-btn primary-btn-light rounded-full btn-hover">부서 등록</span>
 			</div>
 		</div>
 		<div class="activity-meta text-start" style="margin-top: 20px;">
@@ -52,11 +52,11 @@
 					<span class="text-danger">*</span>
 				</label> 
 				<input type="text" name="cmmnCodeDc" class="form-control" id="cmmnCodeDc" required>
-				<div class="invalid-feedback"></div>
+				<div class="invalid-feedback">부서 설명을 작성하세요.</div>
 			</div>
 			<div class="content text-center">
 				<button type="button" id="insertBtn"
-					class="main-btn primary-btn-light square-btn btn-hover btn-sm">확인</button>
+					class="main-btn success-btn-light square-btn btn-hover btn-sm">확인</button>
 			</div>
 		</div>
 	</div>

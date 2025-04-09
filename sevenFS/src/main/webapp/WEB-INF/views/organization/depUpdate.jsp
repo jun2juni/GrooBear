@@ -31,7 +31,7 @@
 				   <div class="chat-about-profile">
 				     <div class="content text-center">
 				       <h5 class="text-bold mb-10"></h5>
-				       <span class="status-btn info-btn">${deptDetail.cmmnCodeGroup}</span>
+				       	 	<span class="btn-sm main-btn active-btn-light rounded-full btn-hover">${deptDetail.cmmnCodeGroup}</span>
 				     </div>
 				   </div>
 				   <div class="activity-meta text-start" style="margin-top: 20px;">
@@ -54,7 +54,7 @@
 			   	          <div class="input-style-1 form-group col-8" style="margin-left:15%;">
 				            <label for="cmmnCodeDc" class="form-label required">부서설명 <span class="text-danger">*</span></label>
 				            <input type="text" name="cmmnCodeDc" class="form-control" id="cmmnCodeDc" value="${deptDetail.cmmnCodeDc}" required>
-				           <div class="invalid-feedback"></div>
+				           <div class="invalid-feedback">해당 부서에 대한 설명을 작성하세요.</div>
 			   	          </div>
 
 				     <div class="content text-center">
@@ -74,7 +74,7 @@
 	$("#updateBtn").on("click", function(e){
 		
 		e.preventDefault();
-		console.log("ㅇㄹㅇ");
+		//console.log("ㅇㄹㅇ");
 		
         /* var upperDepClick = document.getElementById("upperCmmnCode").value.trim();
 		console.log("upperDepClick :", upperDepClick);

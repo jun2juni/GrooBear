@@ -8,7 +8,7 @@
 	   <div class="chat-about-profile">
 	     <div class="content text-center" style="margin-bottom: 70px;">
 	       <h5 class="text-bold mb-10"></h5>
-	       <span class="status-btn info-btn">${deptDetail.cmmnCodeGroup}</span>
+	       <span class="btn-sm main-btn active-btn-light rounded-full btn-hover">${deptDetail.cmmnCodeGroup}</span>
 	     </div>
 	   </div>
 	   <div class="activity-meta text-start" style="margin-top: 20px;">
@@ -22,12 +22,8 @@
 	         <span class="col-4">부서설명</span>
 	         <span class="col-8 text-medium text-dark">${deptDetail.cmmnCodeDc}</span>
 	       </li>
-	       <hr>
-	       <li class="row">
-	         <span class="col-4">부서코드</span>
-	         <span class="col-8 text-medium text-dark">${deptDetail.cmmnCode}</span>
-	       </li>
 	     </ul>
+	     
 	     <!-- 관리자면 전부 다 보이게,  -->
 	     <sec:authorize access="hasRole('ROLE_ADMIN')">
 	     <div class="content text-center">

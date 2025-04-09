@@ -121,10 +121,11 @@ function clickEmp(data) {
 	 $(function(){
 	     $("#emplDeleteBtn").on("click", function(){
         swal({
-            title: "정말 삭제하시겠습니까?",
+            text: "정말 삭제하시겠습니까?",
             icon: "warning",
-            buttons: true,
-            dangerMode: true,
+            showCancelButton: true,
+            confirmButtonText: "Select Patient?",
+            cancelButtonText: "Speed Case?"
             })
             .then((willDelete) => {
               if (willDelete) {
@@ -159,12 +160,20 @@ function clickDept(data) {
     // 부서 삭제 - 관리자만 가능
     $(function(){
       $("#deptDeleteBtn").on("click", function(){
-        swal({
-          title: "정말 삭제하시겠습니까?",
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-          })
+    	  swal({
+              title: "정말 삭제하시겠습니까?",
+              icon: "warning",
+              buttons : {
+            	  cancle : {
+            		  text : '삭제 취소',
+            		  value : false,
+            	  },
+            	  confirm : {
+            		  text : '확인',
+            		  value : true
+            	  }
+              }
+              })
           .then((willDelete) => {
             if (willDelete) {
               fetch("deptDelete?cmmnCode="+ data.node.id,{

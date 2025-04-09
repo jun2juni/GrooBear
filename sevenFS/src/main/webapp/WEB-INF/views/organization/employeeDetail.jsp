@@ -78,7 +78,7 @@
      <sec:authentication property="principal.empVO" var="emp" />
 	     <div class="content text-center" style="margin-top: 40px;">
 	     	<c:if test="${emp.emplNo == empDetail.emplNo || emp.emplNo == '20250000'}">
-		    	 <a href="/emplUpdate?emplNo=${empDetail.emplNo}" class="main-btn primary-btn-light square-btn btn-hover btn-sm">수정</a>
+		    	 <a href="/emplUpdate?emplNo=${empDetail.emplNo}" class="main-btn success-btn-light square-btn btn-hover btn-sm">수정</a>
 		     </c:if>
 		     <c:if test="${emp.emplNo == '20250000'}">
 		     	<button type="button" id="emplDeleteBtn" class="main-btn danger-btn-light square-btn btn-hover btn-sm">삭제</button>
