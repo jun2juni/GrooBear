@@ -23,6 +23,9 @@
         width: 100px;
         height: 100px;
     }
+	.ck-editor__editable {
+	    min-height: 300px;
+	}
 </style>
 <body>
 <c:import url="../layout/sidebar.jsp" />
@@ -43,7 +46,7 @@
 								<!-- 게시글 제목 -->
 								<div class="mb-3">
 									<label class="form-label">제목</label> 
-									<input type="text" name="bbscttSj" class="form-control" placeholder="제목을 입력해 주세요." required>
+									<input style="max-width: 500px;" type="text" name="bbscttSj" class="form-control" placeholder="제목을 입력해 주세요." required>
 								</div>
 								
 								<!-- 작성자 번호 -->

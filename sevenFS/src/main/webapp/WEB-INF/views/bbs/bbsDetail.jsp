@@ -53,7 +53,7 @@
 				<div class="row">
 					<div class="col-12">
 						<div class="card-style">
-							<h2 class="text-primary text-center">(🌸◔ ω ◔)</h2>
+							<h2 class="text-primary text-center">게시글 상세</h2>
 							<p>${bbsVO.bbsSn} 번</p><br>
 							<form action="/bbs/bbsUpdate" method="get">
 								<input type="hidden" name="bbsSn" value="${bbsVO.bbsSn}">
