@@ -191,10 +191,10 @@
             </span>
             <span class="text">게시판</span>
           </a>
-          <ul id="bbs" class="dropdown-nav collapse" style="">
+          <ul id="bbs" class="dropdown-nav collapse ${fn:contains(currentURL, '/bbs') ? 'show' : ''}" style="">
             <c:forEach var="category" items="${bbsCategory}">
               <li>
-                <a href="/bbs/bbsList?bbsCtgryNo=${category.bbsCtgryNo}">${category.ctgryNm}</a>
+                <a class="${param.get('bbsCtgryNo') == category.bbsCtgryNo ? 'active' : ''}" href="/bbs/bbsList?bbsCtgryNo=${category.bbsCtgryNo}">${category.ctgryNm}</a>
               </li>
             </c:forEach>
           </ul>
