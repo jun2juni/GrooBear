@@ -59,28 +59,26 @@ public class DclzTypeController {
 		int total = dclztypeService.getTotal(map);
 		log.info("total : " + total);
 		ArticlePage<DclzTypeVO> articlePage = new ArticlePage<>(total, currentPage, size);
-		model.addAttribute("articlePage" , articlePage);
+		log.info("articlePage : " + articlePage);
+		
 		
 		// 근태현황 대분류 개수
 		DclzTypeVO dclzCnt = dclztypeService.dclzCnt(emplNo);
-		//log.info("dclzCnt : " + dclzCnt);
+		log.info("dclzCnt : " + dclzCnt);
 		model.addAttribute("dclzCnt" , dclzCnt);
 		// 사원 상세 근태현황 목록
 		List<DclzTypeDetailVO> empDetailDclzTypeCnt = dclztypeService.empDetailDclzTypeCnt(emplNo);
-		//log.info("empDetailDclzTypeCnt" + empDetailDclzTypeCnt);
+		log.info("empDetailDclzTypeCnt" + empDetailDclzTypeCnt);
 		model.addAttribute("empDetailDclzTypeCnt", empDetailDclzTypeCnt);		
 		
 		// 사원의 전체 근태현황 조회
 		List<DclzTypeVO> empDclzList = dclztypeService.emplDclzTypeList(map);
 		log.info("empDclzList : " + empDclzList);
-		// 사원의 총 근무시간 합계 가져오기
-//		String allTime = dclzTypeVO.getAllWorkTime();
-//		log.info("제발담겨라 아아아 : " + allTime);
-//		model.addAttribute("allTime", allTime);
+		model.addAttribute("empDclzList",empDclzList);
+		model.addAttribute("articlePage" , articlePage);
 		
 		
 		String dclzCode = empDclzList.get(0).getDclzCode();
-		model.addAttribute("empDclzList",empDclzList);
 		log.info("dclzCode : " + dclzCode);
 		
 		// 오늘날짜
@@ -285,6 +283,11 @@ public class DclzTypeController {
 		// 사원의 이번년도 연차 현황 가져오기
 		VacationVO emplVacation = dclztypeService.emplVacationCnt(emplNo);
 		model.addAttribute("emplVacation",emplVacation);
+		//log.info("연차내역 : " + emplVacation);
+		
+		// 공통코드가 연차에 해당하는 사원의 모든 년도 데이터 가져오기
+		List<VacationVO> emplCmmnVacationList = dclztypeService.emplVacationDataList(emplNo);
+		model.addAttribute("emplCmmnVacationList" , emplCmmnVacationList);
 		
 		return "organization/dclz/vacation";
 	}

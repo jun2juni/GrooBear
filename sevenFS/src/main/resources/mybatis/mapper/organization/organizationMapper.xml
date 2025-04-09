@@ -94,6 +94,15 @@
 		AND E.EMPL_NO= #{emplNo}
 	</select>
 	
+	<!-- 사원 상세 성별  -->
+	<select id="empDetailGender" parameterType="String" resultMap="commonMap">
+		      SELECT cc.cmmn_code_nm
+      FROM common_code cc
+      LEFT JOIN employee e ON cc.cmmn_code = e.gender_code
+      WHERE cc.cmmn_code_group='GENDER'
+      AND e.empl_no=#{emplNo}
+	</select>
+	
 	<resultMap type="kr.or.ddit.sevenfs.vo.CommonCodeVO" id="commonMap">
 		<result property="cmmnCodeSn" column="CMMN_CODE_SN"/>
 		<result property="cmmnCodeGroup" column="CMMN_CODE_GROUP"/>

@@ -27,18 +27,20 @@
 		<div class="container-fluid">
 			<!-- 출퇴근 버튼 -->
 		   <div class="row">
-			<div class="col-4 card-style mb-30">
-				<span class="status-btn dark-btn text-center ml-70 mt-50">${today}</span>
-				
-				<div class="text-center d-flex mb-30 mt-60 ml-60">
-					<div class="content mr-30">
-				       	<button type="button" id="${todayWorkTime != null ? '' : 'workStartButton'}" class="btn-sm main-btn active-btn-light square-btn btn-hover">출근</button>
-						<p id="startTime">${todayWorkTime != null ? todayWorkTime : '출근 전'}</p>
-				    </div>
-				    <div class="content">
-				       	<button type="button" id="${todayWorkEndTime != null ? '' : 'workEndButton'}" class="btn-sm main-btn active-btn-light square-btn btn-hover">퇴근</button>
-						<p id="endTime">${todayWorkEndTime != null ? todayWorkEndTime : '퇴근 전'}</p>
-				    </div>
+			<div class="col-4 mb-30">
+				<div class="card-style">
+					<span class="status-btn dark-btn text-center ml-50 mt-50">${today}</span>
+					
+					<div class="text-center d-flex mb-30 mt-60 ml-60">
+						<div class="content mr-30">
+					       	<button type="button" id="${todayWorkTime != null ? '' : 'workStartButton'}" class="btn-sm main-btn success-btn-light rounded-full btn-hover">출근</button>
+							<p id="startTime">${todayWorkTime != null ? todayWorkTime : '출근 전'}</p>
+					    </div>
+					    <div class="content">
+					       	<button type="button" id="${todayWorkEndTime != null ? '' : 'workEndButton'}" class="btn-sm main-btn danger-btn-light rounded-full btn-hover">퇴근</button>
+							<p id="endTime">${todayWorkEndTime != null ? todayWorkEndTime : '퇴근 전'}</p>
+					    </div>
+					</div>
 				</div>
 			</div> 
 			
@@ -51,7 +53,7 @@
 	              </div>
 	              <div class="content">
 		              <h6>근무</h6>
-	                <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.work}건</h3>
+		                <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.work == null ? 0 : dclzCnt.work}건</h3>
 	                <p class="text-sm text-success">
 	                  <span class="text-gray"></span>
 	                </p>
@@ -67,16 +69,14 @@
 	              </div>
 	              <div class="content">
 	                <h6 class="mb-10">출장</h6>
-	                <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.businessTrip}건</h3>
+		                <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.businessTrip == null ? 0 : dclzCnt.businessTrip}건</h3>
 	                <p class="text-sm text-success">
 					<c:forEach var="dclzType" items="${empDetailDclzTypeCnt}" varStatus="status">
 						<c:choose>
 							<c:when test="${dclzType.upperCmmnCode == '30' && dclzType.cnt != 0}">
-		                  		<span>${separator}${dclzType.cmmnCodeNm} ${dclzType.cnt}</span>
-		                  		<c:set var="separator" value=" / " />
+		                  		<span>${dclzType.cmmnCodeNm} ${dclzType.cnt} / </span>
 		                  	</c:when>
 							<c:otherwise>
-								<span> </span>
 							</c:otherwise>
 						</c:choose>
 					</c:forEach>
@@ -96,13 +96,12 @@
 	              </div>
 	              <div class="content">
 	                <h6 class="mb-10">휴가</h6>
-	                <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.vacation}건</h3>
+		                <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.vacation == null ? 0 : dclzCnt.vacation}건</h3>
 	                <p class="text-sm text-success">
 	                <c:forEach var="dclzType" items="${empDetailDclzTypeCnt}" varStatus="status">
 						<c:choose>
 							<c:when test="${dclzType.upperCmmnCode == '20' && dclzType.cnt != 0}">
-		                  		<span>${separator}${dclzType.cmmnCodeNm} ${dclzType.cnt}</span>
-		                  		<c:set var="separator" value=" / " />
+		                  		<span>${separator}${dclzType.cmmnCodeNm} ${dclzType.cnt} / </span>
 		                  	</c:when>
 							<c:otherwise>
 								<span> </span>
@@ -121,13 +120,12 @@
 	              </div>
 	              <div class="content">
 	                <h6 class="mb-10">기타</h6>
-	                <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.bad}건</h3>
+		              	 <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.bad == null ? 0 : dclzCnt.bad}건</h3>
 	                <p class="text-sm text-danger">
 	                <c:forEach var="dclzType" items="${empDetailDclzTypeCnt}" varStatus="status">
 	                  <c:choose>
 	                  	<c:when test="${dclzType.upperCmmnCode == '00' && dclzType.cnt != 0}">
-	                  		<span>${separator}${dclzType.cmmnCodeNm} ${dclzType.cnt}</span>
-	                  		<c:set var="separator" value=" / " />
+	                  		<span>${separator}${dclzType.cmmnCodeNm} ${dclzType.cnt} / </span>
 	                  	</c:when>
 	                  <c:otherwise>
 	                  	<span> </span>
@@ -230,7 +228,7 @@
 	                        </div>
 	                      </td>
 	                      <td>
-	                        <p class="text-sm">${dclzWork.workBeginTime} ~</p>
+	                        <p class="text-sm">${dclzWork.workBeginTime}</p>
 	                      </td>
 	                      <td>
 	                      <c:choose>
@@ -243,7 +241,15 @@
 	                      </c:choose>
 	                      </td>
 	                      <td>
-	                        <p class="text-sm">${allTime}</p>
+	                      <c:choose>
+	                      	<c:when test="${dclzWork.workHour == 0}">
+	                      		<p class="text-sm">0시간 0분</p>
+	                      	</c:when>
+	                      	<c:otherwise>
+	                      		 <p class="text-sm">${dclzWork.workHour}시간 ${dclzWork.workMinutes}분</p>
+	                      	</c:otherwise>
+	                      </c:choose>
+	                       
 	                      </td>
 	                    </tr>
 	                  </c:forEach>
@@ -319,13 +325,13 @@ $(function(){
                     </div>
                   </td>
                   <td>
-                    <p class="text-sm">\${item.workBeginTime} ~</p>
+                    <p class="text-sm">\${item.workBeginTime === null ? '미등록' : item.workBeginTime}</p>
                   </td>
                   <td>
-                    <p class="text-sm">\${item.workEndTime}</p>
+                    <p class="text-sm">\${item.workEndTime === null ? '미등록' : item.workEndTime}</p>
                   </td>
                   <td>
-                    <p class="text-sm"></p>
+                    <p class="text-sm">\${item.workHour === null ? 0 : item.workHour}시간 \${item.workMinutes === null ? 0 : item.workMinutes}분</p>
                   </td>
 				`
 				dclzBody.append(tr);
@@ -413,13 +419,13 @@ $(document).on('change', '#monthSelect', function(e) {
                     </div>
                   </td>
                   <td>
-                    <p class="text-sm">\${item.workBeginTime} ~</p>
+                    <p class="text-sm">\${item.workBeginTime === null ? '미등록' : item.workBeginTime}</p>
                   </td>
                   <td>
-                    <p class="text-sm">\${item.workEndTime}</p>
+                    <p class="text-sm">\${item.workEndTime === null ? '미등록' : item.workEndTime}</p>
                   </td>
                   <td>
-                    <p class="text-sm">43</p>
+                    <p class="text-sm">\${item.workHour === null ? 0 : item.workHour}시간 \${item.workMinutes === null ? 0 : item.workMinutes}분</p>
                   </td>
 				`
 				dclzBody.append(tr);

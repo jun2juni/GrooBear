@@ -44,4 +44,7 @@ public interface DclztypeMapper {
 	// 사원 한명의 이번년도 연차 정보 가져오기
 	public VacationVO emplVacationCnt(String emplNo);
 	
+	// 공통코드가 연차에 해당하는 사원의 모든 년도 데이터 가져오기
+	public List<VacationVO> emplVacationDataList(String emplNo);
+	
 }

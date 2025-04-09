@@ -40,8 +40,10 @@ public class DclzTypeVO {
 	// 퇴근시간
 	private String todayWorkEndTime;
 	
-	// 총 근무시간
-	private String allWorkTime;
+	// 총 근무 - 시간 기준
+	private String workHour;
+	// 총 근무 - 분 기준
+	private String workMinutes;
 
 
 }

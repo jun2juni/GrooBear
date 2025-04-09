@@ -37,10 +37,11 @@ public class DclztypeServiceImpl implements DclztypeService {
 		
 		// 사원의 전체 근태현황
 		List<DclzTypeVO> empDclzList = dclztypeMapper.emplDclzTypeList(map);
-
+		log.info("service -> empDclzList : " + empDclzList);
+		
 		// 총 근무시간 계산 - 다시해야됨
-		String beginTime = empDclzList.get(0).getWorkBeginTime();
-		String endTime = empDclzList.get(0).getWorkEndTime();
+		//String beginTime = empDclzList.get(0).getWorkBeginTime();
+		//String endTime = empDclzList.get(0).getWorkEndTime();
 		
 //		if(endTime != null) {
 //			LocalTime begin = LocalTime.parse(beginTime);
@@ -109,6 +110,12 @@ public class DclztypeServiceImpl implements DclztypeService {
 	@Override
 	public VacationVO emplVacationCnt(String emplNo) {
 		return dclztypeMapper.emplVacationCnt(emplNo);
+	}
+
+	// 공통코드가 연차에 해당하는 사원의 모든 년도 데이터 가져오기
+	@Override
+	public List<VacationVO> emplVacationDataList(String emplNo) {
+		return dclztypeMapper.emplVacationDataList(emplNo);
 	}
 
 }

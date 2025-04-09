@@ -20,6 +20,8 @@ public class VacationVO {
 	
 	// 사원이름
 	private String emplNm;
+	// 연차 유형명
+	private String cmmnCodeNm;
 	
 
 }

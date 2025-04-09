@@ -25,14 +25,22 @@
 		<div class="container-fluid">
 			<%-- ${emplVacation} --%>
 			<div class="row">			
-				<div class="col-2">
+				<div class="col-3">
 	              <div class="icon-card mb-30">
 	                <div class="content mx-auto">
 	                  <div>
-	                  	<h3><span class="status-btn success-btn">직급???</span></h3>
+	                  	<h3 ><span class="status-btn dark-btn text-center">연차 사용 기간</span></h3>
 	                  </div>
 	                  <div>
-	                    <p class="text-dark text-center">${emplVacation.emplNm}</p>
+	                       <c:set var="beginDt" value="${emplVacation.yrycUseBeginDate}"></c:set>
+		                   <c:set var="bgYear" value="${beginDt.substring(0,4)}"></c:set>
+		                   <c:set var="bgMonth" value="${beginDt.substring(4,6)}"></c:set>
+		                   <c:set var="bgDay" value="${beginDt.substring(6,8)}"></c:set>
+		                   <c:set var="endDt" value="${emplVacation.yrycUseEndDate}"></c:set>
+		                   <c:set var="edYear" value="${endDt.substring(0,4)}"></c:set>
+		                   <c:set var="edMonth" value="${endDt.substring(4,6)}"></c:set>
+		                   <c:set var="edDay" value="${endDt.substring(6,8)}"></c:set>
+	                    <p class="text-center">${bgYear}.${bgMonth}.${bgDay} ~ ${edYear}.${edMonth}.${edDay}</p>
 	                  </div>
 	                </div>
 	              </div>
@@ -45,7 +53,7 @@
 	                  	<h3><span class="status-btn success-btn">총 연차 수</span></h3>
 	                  </div>
 	                  <div>
-	                    <p class="text-center"> ${emplVacation.totYrycDaycnt} </p>
+	                    <p class="text-center"> ${emplVacation.totYrycDaycnt}개</p>
 	                  </div>
 	                </div>
 	              </div>
@@ -58,7 +66,7 @@
 	                  	<h3><span class="status-btn success-btn">사용 연차 수</span></h3>
 	                  </div>
 	                  <div>
-	                    <p class="text-center">${emplVacation.yrycUseDaycnt}</p>
+	                    <p class="text-center">${emplVacation.yrycRemndrDaycnt}개</p>
 	                  </div>
 	                </div>
 	              </div>
@@ -71,7 +79,7 @@
 	                  	<h3><span class="status-btn success-btn">잔여 연차 수</span></h3>
 	                  </div>
 	                  <div>
-	                    <p class="text-center">보상</p>
+	                    <p class="text-center">${emplVacation.yrycUseDaycnt}개</p>
 	                  </div>
 	                </div>
 	              </div>
@@ -101,31 +109,27 @@
                       <th>
                         <h6>내용</h6>
                       </th>
-                      <th>
-                        <h6>상태</h6>
-                      </th>
                     </tr>
                     <!-- end table row-->
                   </thead>
                   <tbody>
+					<c:forEach var="emplVacationData" items="${emplCmmnVacationList}" >
                     <tr>
                       <td>
                         <div>
                         </div>
                       </td>
                       <td class="min-width">
-                        <span class="status-btn active-btn">반차</span>
+                        <span>${emplVacationData.cmmnCodeNm}</span>
                       </td>
                       <td class="min-width">
                         <p><a href="#0">날짜입력</a></p>
                       </td>
                       <td class="min-width">
-                        <p>개인사유</p>
-                      </td>
-                      <td>
-                      	<h5><span class="badge bg-success">사용완료</span></h5>
+                        <p></p>
                       </td>
                     </tr>
+                    </c:forEach>
                     <!-- end table row -->
                   </tbody>
                 </table>
