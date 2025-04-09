@@ -52,7 +52,7 @@
                                 <br>
                                 <div>
                                     작성자
-                                    <input type="text" name="emplName" value="${myEmpInfo.emplNm}" class="form-control" readonly/>
+                                    <input type="hidden" name="emplName" value="${myEmpInfo.emplNm}" class="form-control" readonly/>
                                 </div>
                                 <br>
                                 <div>

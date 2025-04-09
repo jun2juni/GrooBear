@@ -60,8 +60,7 @@
 
 								<!-- 작성자 이름 -->
 								<div class="mb-3">
-									<label class="form-label">작성자</label> 
-									<input type="text" name="emplNm" class="form-control" value="${myEmpInfo.emplNm}" readonly>
+									<input type="hidden" name="emplNm" class="form-control" value="${myEmpInfo.emplNm}" readonly>
 								</div>
 
 								<!-- 파일 업로드 -->
