@@ -2,6 +2,7 @@ package kr.or.ddit.sevenfs.controller.project;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.project.ProjectService;
 import kr.or.ddit.sevenfs.service.project.ProjectTaskService;
@@ -95,33 +97,47 @@ public class ProjectController {
 	 }
 
 	
-    @PostMapping("/insert")
-    public String insertProject(@ModelAttribute ProjectVO projectVO, RedirectAttributes redirectAttrs,
-    		@RequestParam("taskListJson") String taskListJson) {
-        // 1. 프로젝트 정보 저장 
-    	log.info("insertProject -> projectVO(전) {} :" ,projectVO);
-        // 프로젝트 아이디 가져옴
-    	
-        
-        ObjectMapper mapper = new ObjectMapper();
-        List<ProjectTaskVO> taskList;
-		try {
-			taskList = mapper.readValue(taskListJson, new TypeReference<List<ProjectTaskVO>>() {});
-			// 프로젝트 추가
-			projectService.createProject(projectVO, taskList);
-			
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		
-		int newPrjctId = projectVO.getPrjctNo();
-		
-		
-        // 2. 리다이렉트로 업무 등록 페이지로 이동
-        return "redirect:/project/" + newPrjctId + "/taskForm";
-    }
+	@PostMapping("/insert")
+	public String insertProject(@ModelAttribute ProjectVO projectVO,
+								RedirectAttributes redirectAttrs,
+	                            @RequestParam("taskListJson") String taskListJson,
+	                            HttpServletRequest request) {
+		log.info("====== [insertProject] 요청 도착 ======");
+		log.info("======== 프로젝트 생성 요청 ========");
+		log.info("ProjectVO: {}", projectVO);
+	    // 모든 파라미터 확인
+	    request.getParameterMap().forEach((k, v) -> {
+	        log.info("▶ 파라미터: {} = {}", k, Arrays.toString(v));
+	    });
+	    try {
+	        ObjectMapper mapper = new ObjectMapper();
+	        List<ProjectTaskVO> taskList = mapper.readValue(taskListJson, new TypeReference<List<ProjectTaskVO>>() {});
+	        log.info("TaskList 크기 : {}" , taskList.size());
+	        for(ProjectTaskVO task : taskList) {
+	        	log.info("Task : {}", task);
+	        }
+	        // 참여자 목록 로그 찍기 
+	        if(projectVO.getProjectEmpVOList() != null) {
+	        	log.info("EmpList 크기 : {}" , projectVO.getProjectEmpVOList().size());
+	        	for(ProjectEmpVO emp : projectVO.getProjectEmpVOList()) {
+	        		log.info("Emp : {}", emp);
+	        	}
+	        }else {
+	        	log.warn("프로젝트 참여자 목록이 NULL입니다.");
+	        }
+	        
+	        // 실제 DB 저장
+	        projectService.createProject(projectVO, taskList);
+	        
+	      
+	    } catch (Exception e) {
+	        log.error("프로젝트 생성 중 오류", e);
+	        redirectAttrs.addFlashAttribute("errorMessage", "프로젝트 등록 중 오류 발생: " + e.getMessage());
+	        return "redirect:/project/insert";
+	    }
+	    return "redirect:/project/tab";
+	}
+
 	
 	
 /*

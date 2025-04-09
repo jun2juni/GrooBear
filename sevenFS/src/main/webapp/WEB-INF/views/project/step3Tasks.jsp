@@ -44,7 +44,7 @@
           <!-- 담당자 선택 -->
           <div class="col-md-12 mt-2">
             <label class="form-label fw-semibold">담당자 선택</label>
-            <div id="memberSelectBtns" class="d-flex flex-wrap gap-1 mt-2 mb-2"></div>
+            <div id="memberSelectBtns" class=" mt-2 mb-2"></div>
           </div>
 
           <!-- 날짜 및 중요도/등급 -->
@@ -63,7 +63,7 @@
             <select id="taskPriort" class="form-select">
               <option value="">선택하세요</option>
               <option value="00">낮음</option>
-              <option value="01">보통</option>
+              <option value="01" selected>보통</option>
               <option value="02">높음</option>
               <option value="03">긴급</option>
             </select>
@@ -75,7 +75,7 @@
               <option value="">선택하세요</option>
               <option value="A">A</option>
               <option value="B">B</option>
-              <option value="C">C</option>
+              <option value="C" selected>C</option>
               <option value="D">D</option>
               <option value="E">E</option>
             </select>

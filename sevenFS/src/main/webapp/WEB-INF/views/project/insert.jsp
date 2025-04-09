@@ -7,93 +7,108 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<title>${title}</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<c:import url="../layout/prestyle.jsp" />
+  <meta charset="UTF-8" />
+  <title>${title}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <c:import url="../layout/prestyle.jsp" />
 
-<style>
-.form-step {
-  padding-bottom: 2rem; /* 혹은 class="pb-4" */
+  <style>
+    .form-step {
+      padding-bottom: 2rem;
+    }
+    .step-indicator {
+      font-weight: bold;
+      text-align: right;
+      font-size: 0.95rem;
+    }
+
+.step-label {
+  font-size: 0.9rem;
+  color: #ccc;
+  font-weight: 500;
+  text-align: center;
+  flex: 1;
 }
-
-</style>
+.step-label.active {
+  color: #000; /* 강조 */
+  font-weight: bold;
+}
+#progressStepLabels {
+  gap: 0.5rem;
+}
+    
+  </style>
 </head>
 <body>
-	<c:import url="../layout/sidebar.jsp" />
-	<main class="main-wrapper">
-		<c:import url="../layout/header.jsp" />
+  <c:import url="../layout/sidebar.jsp" />
+  <main class="main-wrapper">
+    <c:import url="../layout/header.jsp" />
 
-		<section class="section">
-			<div class="container-fluid">
-				<h2 class="mb-4">프로젝트 생성</h2>
+    <section class="section">
+      <div class="container-fluid">
 
-				<form id="projectForm" action="/project/insert" method="post" enctype="multipart/form-data">
-				<input type="hidden" name="taskListJson" id="taskListJson" />
-					<div class="card">
-						<div class="card-body">
-							<ul class="nav nav-tabs" id="formTabs">
-								<li class="nav-item">
-									<a class="nav-link active" data-step="1" href="#">기본정보</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" data-step="2" href="#">인원등록</a>
-								</li>
-								<li class="nav-item"><a class="nav-link" data-step="3"
-									href="#">업무관리</a></li>
-								<li class="nav-item"><a class="nav-link" data-step="4"
-									href="#">세부정보</a></li>
-								<li class="nav-item"><a class="nav-link" data-step="5"
-									href="#">최종확인</a></li>
-							</ul>
-
-							<div class="tab-content mt-4">
-								<div class="tab-pane active" id="step1">
-									<c:import url="step1Basic.jsp" />
-								</div>
-								<div class="tab-pane" id="step2">
-									<c:import url="step2Members.jsp" />
-								</div>
-								<div class="tab-pane" id="step3">
-									<c:import url="step3Tasks.jsp" />
-									 
-								</div>
-								<div class="tab-pane" id="step4">
-									<c:import url="step4Details.jsp" />
-								</div>
-								<div class="tab-pane" id="step5">
-									<c:import url="step5Confirm.jsp" />
-								</div>
-							</div>
+		<!-- 진행바 영역 -->
+		<div class="mb-3">
+		  <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+		    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated text-center fw-bold" style="width: 20%;">
+		      1/5
+		    </div>
+		  </div>
+		  <div class="d-flex justify-content-between mt-2" id="progressStepLabels">
+		    <span class="step-label active">기본정보</span>
+		    <span class="step-label">인원등록</span>
+		    <span class="step-label">업무관리</span>
+		    <span class="step-label">세부정보</span>
+		    <span class="step-label">최종확인</span>
+		  </div>
+		</div>
 
 
-							
-							<div class="row g-2 mt-4">
-							  <div class="col-4">
-							    <button type="button" id="prevBtn" class="btn btn-secondary w-100 py-3 fw-bold" disabled>이전</button>
-							  </div>
-							  <div class="col-4">
-							    <button type="button" id="nextBtn" class="btn btn-primary w-100 py-3 fw-bold">다음</button>
-							  <div class="col-12">
-							    <button type="submit" id="submitBtn" class="btn btn-success w-100 py-3 fw-bold d-none">
-							      <i class="fas fa-check me-2"></i> 프로젝트 생성
-							    </button>
-							  </div>
-							</div>
-				
-						
-									
-							
-							
-							
-						</div>
-					</div>
-				</form>
-			</div>
-		</section>
-		<c:import url="../layout/footer.jsp" />
-	</main>
-	<c:import url="../layout/prescript.jsp" />
+        <form id="projectForm" action="/project/insert" method="post" enctype="multipart/form-data">
+          <input type="hidden" name="taskListJson" id="taskListJson" />
+          <div class="card">
+            <div class="card-body">
+              <!-- 탭 제거하고 단계별 컨텐츠만 출력 -->
+              <div class="tab-content mt-3">
+                <div class="tab-pane active" id="step1">
+                  <c:import url="step1Basic.jsp" />
+                </div>
+                <div class="tab-pane" id="step2">
+                  <c:import url="step2Members.jsp" />
+                </div>
+                <div class="tab-pane" id="step3">
+                  <c:import url="step3Tasks.jsp" />
+                </div>
+                <div class="tab-pane" id="step4">
+                  <c:import url="step4Details.jsp" />
+                </div>
+                <div class="tab-pane" id="step5">
+                  <c:import url="step5Confirm.jsp" />
+                </div>
+              </div>
+
+              <!-- 이전/다음/생성 버튼 -->
+<div class="row g-2 mt-4" id="stepButtons">
+  <div class="col-4">
+    <button type="button" id="prevBtn" class="btn btn-secondary w-100 py-3 fw-bold">이전</button>
+  </div>
+  <div class="col-4" id="nextOrSubmitWrapper">
+    <button type="button" id="nextBtn" class="btn btn-primary w-100 py-3 fw-bold">다음</button>
+    <button type="submit" id="submitBtn" class="btn btn-success w-100 py-3 fw-bold d-none">
+      <i class="fas fa-check me-2"></i> 프로젝트 생성
+    </button>
+  </div>
+</div>
+
+              
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+    <c:import url="../layout/footer.jsp" />
+  </main>
+  <c:import url="../layout/prescript.jsp" />
 <script>
 console.log("[script.js] 시작됨");
 
@@ -110,6 +125,32 @@ responsibleManager: [],
 participants: [],
 observers: []
 };
+
+
+//진행바 
+function updateProgress() {
+  const progressPercentage = (currentStep / totalSteps) * 100;
+  const progressBar = document.getElementById('progressBar');
+  const stepLabels = document.querySelectorAll('#progressStepLabels .step-label');
+
+  if (progressBar) {
+    progressBar.style.width = progressPercentage + '%';
+    progressBar.setAttribute('aria-valuenow', progressPercentage);
+    progressBar.textContent = `\${currentStep}/\${totalSteps}`;
+  }
+
+  // 단계별 텍스트 강조 처리
+  stepLabels.forEach((label, index) => {
+    if (index === currentStep - 1) {
+      label.classList.add('active');
+    } else {
+      label.classList.remove('active');
+    }
+  });
+}
+
+
+
 
 //======================= 초기 실행 =======================
 document.addEventListener("DOMContentLoaded", function () {
@@ -183,11 +224,12 @@ document.getElementById('addTaskBtn').addEventListener('click', function () {
     parentTaskNm: parentTaskNmValue || null,
     parentIndex: parentIndex
   };
-
+  console.log("업무 추가 후 taskList", taskList);
   taskList.push(task);
   updateTaskList();
   resetTaskForm();
   
+
   console.log("업무 추가 및 폼 초기화 완료");
 });
 
@@ -197,12 +239,49 @@ document.getElementById('addTaskBtn').addEventListener('click', function () {
 const projectForm = document.getElementById('projectForm');
 if (projectForm) {
   projectForm.addEventListener('submit', function () {
+	  //e.preventDefault(); // ← 테스트용으로 전송 막기
+    // 콘솔 디버깅 로그
+    console.log("[제출 직전] taskList", taskList);
+    console.log("[제출 직전] selectedMembers", selectedMembers);
+
+    // 업무 목록 전송용 JSON 문자열 처리
     const taskListJson = document.getElementById('taskListJson');
     if (taskListJson) {
-      taskListJson.value = JSON.stringify(taskList);
+	 	const cleanedTaskList = taskList.map(({ id, chargerEmpNm, ...rest }) => rest);
+	 	document.getElementById('taskListJson').value = JSON.stringify(cleanedTaskList);
+
+	 	console.log("[제출 직전] cleanedTaskList", cleanedTaskList);
+    }
+
+    // 참여자 히든 인풋 생성
+    document.querySelectorAll('input[name^="projectEmpVOList["]').forEach(el => el.remove());
+    const roles = {
+      responsibleManager: '00',
+      participants: '01',
+      observers: '02'
+    };
+    let index = 0;
+    for (const role in selectedMembers) {
+      selectedMembers[role].forEach(member => {
+        const input1 = document.createElement('input');
+        input1.type = 'hidden';
+        input1.name = `projectEmpVOList[\${index}].prtcpntEmpno`;
+        input1.value = member.id;
+
+        const input2 = document.createElement('input');
+        input2.type = 'hidden';
+        input2.name = `projectEmpVOList[\${index}].prtcpntRole`;
+        input2.value = roles[role];
+
+        projectForm.appendChild(input1);
+        projectForm.appendChild(input2);
+
+        index++;
+      });
     }
   });
 }
+
 
 // 조직도 선택 대상 지정
 document.querySelectorAll('.open-org-chart').forEach(btn => {
@@ -217,39 +296,37 @@ document.querySelectorAll('.open-org-chart').forEach(btn => {
   });
 });
 
+
+//프로젝트 날짜 검증
+validateDates('[name="prjctBeginDate"]', '[name="prjctEndDate"]');
+// 업무 날짜 검증
+validateDates('#taskBeginDt', '#taskEndDt', '업무 종료일은 시작일 이후로 설정해야 합니다.');
+
+
 goToStep(currentStep);
 loadOrgTree();
 loadMemberButtons();
-validateProjectDates();
 });
 
 //======================= 탭 이동 함수 =======================
 function goToStep(step) {
-if (step < 1 || step > totalSteps) return;
-currentStep = step;
+  if (step < 1 || step > totalSteps) return;
+  currentStep = step;
 
-for (let i = 1; i <= totalSteps; i++) {
-  const stepDiv = document.getElementById('step' + i);
-  const tabLink = document.querySelector(`a[data-step="\${i}"]`);
-
-  if (stepDiv) {
-    stepDiv.style.display = (i === step) ? 'block' : 'none';
-    stepDiv.classList.toggle('active', i === step);
+  // 기존 탭 내용 처리
+  for (let i = 1; i <= totalSteps; i++) {
+    const stepDiv = document.getElementById('step' + i);
+    if (stepDiv) {
+      stepDiv.style.display = (i === step) ? 'block' : 'none';
+      stepDiv.classList.toggle('active', i === step);
+    }
   }
-  if (tabLink) {
-    tabLink.classList.toggle('active', i === step);
-  }
+
+  updateButtonState();
+  updateProgress(); // 진행바 업데이트
+  if (step === totalSteps) updateConfirmation();
 }
 
-updateButtonState();
-
-// step 3으로 이동할 때 멤버 버튼 업데이트 
-if (step === 3) {
-  loadMemberButtons();
-}
-
-if (step === totalSteps) updateConfirmation();
-}
 
 function nextStep() {
 if (currentStep < totalSteps) goToStep(currentStep + 1);
@@ -260,21 +337,23 @@ if (currentStep > 1) goToStep(currentStep - 1);
 }
 
 function updateButtonState() {
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const submitBtn = document.getElementById('submitBtn');
+	  const prevBtn = document.getElementById('prevBtn');
+	  const nextBtn = document.getElementById('nextBtn');
+	  const submitBtn = document.getElementById('submitBtn');
 
-if (!prevBtn || !nextBtn || !submitBtn) return;
+	  if (!prevBtn || !nextBtn || !submitBtn) return;
 
-prevBtn.disabled = (currentStep === 1);
-if (currentStep === totalSteps) {
-  nextBtn.classList.add('d-none');
-  submitBtn.classList.remove('d-none');
-} else {
-  nextBtn.classList.remove('d-none');
-  submitBtn.classList.add('d-none');
-}
-}
+	  prevBtn.disabled = (currentStep === 1);
+
+	  if (currentStep === totalSteps) {
+	    nextBtn.classList.add('d-none');
+	    submitBtn.classList.remove('d-none');
+	  } else {
+	    nextBtn.classList.remove('d-none');
+	    submitBtn.classList.add('d-none');
+	  }
+	}
+
 
 //======================= 업무 리스트 갱신 =======================
 function updateTaskList() {
@@ -1059,10 +1138,10 @@ function updateConfirmation() {
 
   // 2. 참여 인원 정보 개선
   const confirmMemberList = document.getElementById('confirmMemberList');
-  if (confirmMemberList) {
-    confirmMemberList.innerHTML = '';
+  /*   if (confirmMemberList) {
+    confirmMemberList.innerHTML = '';   */
     
-    // 역할별로 구분하여 표시
+ /*    // 역할별로 구분하여 표시
     const roles = [
       { key: 'responsibleManager', label: '책임자', icon: 'fas fa-user-tie' },
       { key: 'participants', label: '참여자', icon: 'fas fa-user-check' },
@@ -1086,12 +1165,51 @@ function updateConfirmation() {
       confirmMemberList.textContent = '선택된 인원이 없습니다.';
     }
   }
-
+ */
   // 3. 업무 목록 요약 개선
-  const confirmTaskList = document.getElementById('confirmTaskList');
+  
+   const confirmResponsible = document.getElementById('confirmResponsible');
+   const confirmParticipants = document.getElementById('confirmParticipants');
+   const confirmObservers = document.getElementById('confirmObservers');
+
+   if (confirmResponsible) {
+	   confirmResponsible.innerHTML = selectedMembers.responsibleManager
+	     .map(p => `
+	       <button type="button" class="btn btn-outline-danger rounded-3 text-start shadow-sm"
+	               style="min-width: 120px; font-size: 0.85rem; border-width: 1px;">
+	         <i class="fas fa-user-tie me-1" aria-hidden="true"></i> \${p.name}
+	         <div class="text-muted small">\${p.position || ''}</div>
+	       </button>
+	     `).join('');
+	 }
+
+	 if (confirmParticipants) {
+	   confirmParticipants.innerHTML = selectedMembers.participants
+	     .map(p => `
+	       <button type="button" class="btn btn-outline-primary rounded-3 text-start shadow-sm"
+	               style="min-width: 120px; font-size: 0.85rem; border-width: 1px;">
+	         <i class="fas fa-user-check me-1" aria-hidden="true"></i> \${p.name}
+	         <div class="text-muted small">\${p.position || ''}</div>
+	       </button>
+	     `).join('');
+	 }
+
+	 if (confirmObservers) {
+	   confirmObservers.innerHTML = selectedMembers.observers
+	     .map(p => `
+	       <button type="button" class="btn btn-outline-secondary rounded-3 text-start shadow-sm"
+	               style="min-width: 120px; font-size: 0.85rem; border-width: 1px;">
+	         <i class="fas fa-user-clock me-1" aria-hidden="true"></i> \${p.name}
+	         <div class="text-muted small">\${p.position || ''}</div>
+	       </button>
+	     `).join('');
+	 }
+
+  
+
+  const confirmTaskList = document.getElementById('confirmTaskList'); 
   if (confirmTaskList) {
     confirmTaskList.innerHTML = '';
-    
     if (taskList.length === 0) {
       confirmTaskList.textContent = '등록된 업무가 없습니다.';
     } else {
@@ -1146,10 +1264,10 @@ function updateConfirmation() {
         tr.innerHTML = `
           <td class="text-center">\${task.parentTaskNm ? `<i class="fas fa-level-up-alt fa-rotate-90 me-1 text-primary"></i>\${task.parentTaskNm}` : '-'}</td>
           <td><strong>\${task.taskNm}</strong></td>
-          <td>\${task.chargerEmpNm}</td>
-          <td>\${task.taskBeginDt || '미정'} ~ \${task.taskEndDt || '미정'}</td>
-          <td>\${priorityBadge}</td>
-          <td>\${task.taskGrad || '-'}</td>
+          <td class="text-center">\${task.chargerEmpNm}</td>
+          <td class="text-center">\${task.taskBeginDt || '미정'} ~ \${task.taskEndDt || '미정'}</td>
+          <td class="text-center">\${priorityBadge}</td>
+          <td class="text-center">\${task.taskGrad || '-'}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -1169,17 +1287,19 @@ function numberWithCommas(x) {
 
 //======================유효성 검사 ==============================
 	// 날짜 유효성 검증 (시작일-종료일 비교)
-function validateProjectDates() {
-  const startDateInput = document.querySelector('[name="prjctBeginDate"]');
-  const endDateInput = document.querySelector('[name="prjctEndDate"]');
+function validateDates(startDateSelector, endDateSelector, customMessage) {
+  const startDateInput = document.querySelector(startDateSelector);
+  const endDateInput = document.querySelector(endDateSelector);
   
   if(!startDateInput || !endDateInput) return; // 요소가 없으면 종료
+  
+  const errorMessage = customMessage || '종료일은 시작일 이후로 설정해야 합니다.';
   
   // 종료일 변경 시 시작일과 비교
   endDateInput.addEventListener('change', function() {
     if(startDateInput.value && endDateInput.value) {
       if(new Date(endDateInput.value) < new Date(startDateInput.value)) {
-        alert('종료일은 시작일 이후로 설정해야 합니다.');
+        alert(errorMessage);
         endDateInput.value = '';
       }
     }

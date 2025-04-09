@@ -16,7 +16,7 @@ public interface ProjectService {
 	public int insertProject(ProjectVO projectVO);
 	public int insertProjectEmpBatch(List<ProjectEmpVO> projectEmpList);
 	public ProjectVO projectDetail(int prjctNo);
-	public void createProject(ProjectVO projectVO, List<ProjectTaskVO> taskList);
+	public int createProject(ProjectVO projectVO, List<ProjectTaskVO> taskList);
 
 	
 }

@@ -4,7 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-<c:set var="title" scope="application" value="메인" />
+<c:set var="title" scope="application" value="프로젝트 관리" />
 
 <!DOCTYPE html>
 <html lang="en">

@@ -24,11 +24,11 @@
               <label class="form-label fw-semibold">사업 분류 <span class="text-danger">*</span></label>
               <select name="ctgryNo" class="form-select" required style="width: 90%;">
                 <option value="">사업 분류를 선택하세요</option>
-                <option value="00">국가지원사업</option>
-                <option value="01">법인자체사업</option>
-                <option value="02">산학협력사업</option>
-                <option value="03">민간수주사업</option>
-                <option value="04">해외협력사업</option>
+                <option value="1">국가지원사업</option>
+                <option value="2">법인자체사업</option>
+                <option value="3">산학협력사업</option>
+                <option value="4">민간수주사업</option>
+                <option value="5">해외협력사업</option>
               </select>
             </div>
           </div>

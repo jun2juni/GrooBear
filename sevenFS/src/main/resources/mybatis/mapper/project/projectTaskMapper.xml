@@ -38,7 +38,7 @@
             #{task.taskNm},
             #{task.taskCn},
             #{task.priort},
-            #{task.taskGrad}
+            #{task.taskGrad}e
         )
     </foreach>
 </insert>

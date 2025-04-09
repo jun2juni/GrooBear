@@ -10,10 +10,11 @@ import kr.or.ddit.sevenfs.vo.project.ProjectVO;
 @Mapper
 public interface ProjectTaskMapper {
 
-	public void insertProjectTask(ProjectTaskVO taskVO);
+	public int insertProjectTask(ProjectTaskVO task);
 
 	public List<ProjectTaskVO> getParentTasks(int prjctNo); 
 	
 	public void insertProjectTaskBatch(List<ProjectTaskVO> taskList);
+
 
 }

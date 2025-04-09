@@ -173,6 +173,36 @@
         #{prjctBeginDate}, #{prjctEndDate}
     )
 </insert>
+
+	<!-- 프로젝트 직원 등록  -->
+	<insert id="insertProjectEmpBatch" parameterType="java.util.List">
+	    INSERT INTO PROJECT_EMP (
+	        PRJCT_NO,
+	        PRTCPNT_EMPNO,
+	        PRTCPNT_ROLE,
+	        PRJCT_AUTHOR,
+	        EVL_MAN_EMPNO,
+	        EVL_CN,
+	        EVL_GRAD,
+	        EVL_WRITNG_DT,
+	        SECSN_YN
+	    )
+	    VALUES
+	    <foreach collection="list" item="emp" separator=",">
+	        (
+	            #{emp.prjctNo},
+	            #{emp.prtcpntEmpno},
+	            #{emp.prtcpntRole},
+	            NULL,
+	            NULL,
+	            NULL,
+	            NULL,
+	            SYSDATE,
+	            'N'
+	        )
+	    </foreach>
+	</insert>
+
 	
 	
 <!-- 	

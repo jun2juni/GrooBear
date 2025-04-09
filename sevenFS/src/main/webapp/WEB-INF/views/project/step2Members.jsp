@@ -37,11 +37,11 @@
             <input type="text" id="responsibleManager" class="form-control rounded-start" 
                    placeholder="책임자를 선택해주세요" readonly />
             <input type="hidden" id="responsibleManagerEmpno" name="responsibleManagerEmpno" />
-<button type="button"
-  class="btn btn-outline-primary org-chart-btn open-org-chart d-flex align-items-center gap-1 px-3 py-2"
-  data-target="responsibleManager">
-  <i class="fas fa-search"></i> <span class="btn-text">조직도</span>
-</button>
+			<button type="button"
+			  class="btn btn-outline-primary org-chart-btn open-org-chart d-flex align-items-center gap-1 px-3 py-2"
+			  data-target="responsibleManager">
+			  <i class="fas fa-search"></i> <span class="btn-text">조직도</span>
+			</button>
 
           </div>
           <small class="text-muted mt-1 d-block">프로젝트를 총괄할 책임자를 지정해주세요</small>

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
@@ -16,8 +17,10 @@ public interface ProjectMapper {
 
 	public List<ProjectVO> projectList(Map<String, Object> map);
 	public int getTotal(Map<String, Object> map);
-	public int insertProjectEmpBatch(List<ProjectEmpVO> projectEmps);
+
+	/* public int insertProjectEmpBatch(List<ProjectEmpVO> projectEmps); */
 	public ProjectVO projectDetail(int prjctNo);
 	public int insertProject(ProjectVO projectVO);
-	public void createProject(ProjectVO projectVO);
+	int insertProjectEmpBatch(@Param("list") List<ProjectEmpVO> projectEmpVOList);
+
 }
