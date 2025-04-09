@@ -123,6 +123,10 @@ table.table-hover.align-middle.text-center tbody tr td {
 							</svg>
                         </c:when>
                       </c:choose>
+                      <c:if test="${bbsVO.commentCnt != null}">
+					        <span style="color: red;">[${bbsVO.commentCnt}]</span>
+					  </c:if>
+                      
                     </td>
                     <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${bbsVO.emplNm}</td>
                     <td>${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}</td>
