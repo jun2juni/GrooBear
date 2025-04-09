@@ -20,8 +20,9 @@ public class DemoColtroller {
     @GetMapping("/fighting")
     public Map<String, Object> fighting() {
         Map<String, Object> result = new HashMap<>();
-        String[] arr = {"임원진", "인사부"};
-        List<Map<String, Object>> demo = demoService.getDemo("202401", "202512", arr);
+        String[] header = {"임원진", "인사부"};
+        String[] dclzArr = {"01", "02", "03"};
+        List<Map<String, Object>> demo = demoService.getDemo("20240101", "20251231", header);
         result.put("demo", demo);
         return result;
     }

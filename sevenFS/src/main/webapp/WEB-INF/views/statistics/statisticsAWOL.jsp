@@ -349,95 +349,122 @@
 	
 	/* 차트 기본형태 : bars */
 	let comboChartType = '';
-
+    let checkedDeptArr = ["MONTH"]; // 내가 선택한 부서 담는 배열
 	/* 구글차트 패키지모음******* */
 	google.charts.load('current', {'packages':['corechart']});
 // 	google.charts.setOnLoadCallback(drawVisualization);
 	/* 구글차트 패키지모음********* */ 
 	
-	
-	
-	 $(function(){
-		$("#btnSubmit").on("click",function(){  
-			
-			//object -> 요청파라미터 string
-			//1. 연간
-			//interval=year&chartType=line&startYearsY=2024&endYearsY=2025&startYearsM=&startDays=&endDays=&dept=%EC%9D%B8%EC%82%AC%EB%B6%80&dept=%EC%98%81%EC%97%85%EB%B6%80
-			
-			//2. 월간
-			//interval=month&chartType=line&startYearsM=2025&startMonths=01&endMonths=05&startDays=&endDays=&dept=%EC%83%9D%EC%82%B0%EB%B6%80&dept=%EA%B5%AC%EB%A7%A4%EB%B6%80
-			
-			//3. 일간
-			//interval=day&chartType=bars&startYearsM=&startDays=2025-04-04&endDays=2025-04-30&dept=%ED%92%88%EC%A7%88%EB%B6%80&dept=%EC%97%B0%EA%B5%AC%EC%86%8C
-			let frm = $("#frm").serialize();
-			console.log("frm : ", frm);
 
-    	  $.ajax({
-    		 url:"/statistics/statisticsAWOL/AWOLAjax",
-    		 data:frm,
-    		 type:"post",
-    		 dataType:"json",
-    		 success:function(result){
-    		 console.log("result : ", result);
-    			 //매개
-    			 
-    			 let AWOL = result;
-    			 
-    			 google.charts.setOnLoadCallback(drawStuff(AWOL))
-    		 }
-    	  });		
-		});//end btnSubmit
-	 });//end 달러function
-	 
-	 
-	function drawVisualization(AWOL) {
-			
+	async function drawVisualization(AWOL) {
+	  // 여기서 비동기 요청
+	  const response = await fetch("/hm/fighting"); // 여기에 파라미터 추가 하기
+	  const fetchData = await response.json();
+      let demo = fetchData.demo;
+      
+	  let chartList = [];
+	  // let header = ["MONTH", "인사부", "임원진"];
+      chartList.push(checkedDeptArr);
+      demo.forEach((item) => {
+        let wrap = []
+        for(const head of checkedDeptArr) {
+        	wrap.push(item[head]);
+        }
+        chartList.push(wrap);
+	  })
+      console.log(chartList)
+      
+      var data = google.visualization.arrayToDataTable(chartList);
+	  var options = {
+		vAxis: {title: '지각 및 조퇴 횟수'},
+		hAxis: {title: '선택 부서 '},
+		seriesType: comboChartType
+	  };
 
-		    // Some raw data (not necessarily accurate)
-//		     	var data = new google.visualization.arrayToDataTable(AWOL.map(([key, value], idx) => idx== 0 ? [key, value] : [key, +value]));
-		    	console.log("데이타",data);
-				console.log("했어용!!!!!!!!",AWOL);
-				let arr = [];
-// 				document.querySelectorAll("input[name=dept]:checked").forEach(item => {
-// 					arr.push(item.value);
-// 				})
-				console.log(arr);
-// 				var data = google.visualization.arrayToDataTable([
-// 			          ['Interval', checkedDeptArr,],
-// 			          ['2025/01',  165,      938,         522,             998,           450,      614.6],
-// 			          ['2025/02',  135,      1120,        599,             1268,          288,      682],
-// 			          ['2025/03',  157,      1167,        587,             807,           397,      623],
-// 			          ['2025/04',  139,      1110,        615,             968,           215,      609.4],
-// 			          ['2025/05',  136,      691,         629,             1026,          366,      569.6],
-// 			        ]);
-				 var data = google.visualization.arrayToDataTable([
-				      ['Interval', ...checkedDeptArr, ],
-			          ['2025/01',  165,      938,         522,             998,           450,      614.6],
-			          ['2025/02',  135,      1120,        599,             1268,          288,      682],
-			          ['2025/03',  157,      1167,        587,             807,           397,      623],
-			          ['2025/04',  139,      1110,        615,             968,           215,      609.4],
-				      ['2025/05',  136,      691,         629,             1026,          366,      569.6],
-				        ]);
-				
-		        var options = {
-		          vAxis: {title: '지각 및 조퇴 횟수'},
-		          hAxis: {title: '선택 부서 '},
-		          seriesType: comboChartType
-		        };
+	  var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+    }
 
-		        var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
-		        chart.draw(data, options);
-		      }
-			// 차트 변경
-		 	 function updateChartType() {
-		 		const selectElement = document.getElementById('chartType');
-		 	    const selectedType = selectElement.value;
+    // 차트 변경
+    function updateChartType() {
+      const selectElement = document.getElementById('chartType');
+      const selectedType = selectElement.value;
 
-		 	    if (selectedType) {
-		 	        comboChartType = selectedType; // 선택된 차트 유형으로 업데이트
-		 	    }
-		   }
-	
+      if(selectedType) {
+        comboChartType = selectedType; // 선택된 차트 유형으로 업데이트
+      }
+    }
+    
+    // 개별 선택 및 배열에 담는 함수
+    const ckboxes = document.querySelectorAll("[name=dept]");
+    function checkedAll(dThis)  {
+      if(dThis.checked){
+        checkedDeptArr = ["MONTH"];
+        for(let i=0; i< ckboxes.length; i++){
+          ckboxes[i].checked=true;
+          checkedDeptArr.push(ckboxes[i].dataset.dept);
+        }
+
+        console.log("잘담겻낭?"+checkedDeptArr);
+      }else {
+        for(let i=0; i< ckboxes.length; i++){
+          ckboxes[i].checked=false;
+        }
+        checkedDeptArr = ["MONTH"];
+
+        console.log("지워졌낭??"+checkedDeptArr);
+      }
+
+      console.log(checkedDeptArr)
+    } // selectAll 끗
+
+
+    function fck(dThis) {
+      let val = dThis.dataset.dept;
+      if(dThis.checked) {
+        console.log("추가!!",checkedDeptArr);
+        checkedDeptArr.push(val);
+      } else {
+        if(checkedDeptArr.indexOf(val) !=-1){
+          console.log("제거!!");
+          let schIndex = checkedDeptArr.indexOf(val);
+          checkedDeptArr.splice(schIndex,1);
+        }
+      }
+      console.log("현재 배열 상태 !!",checkedDeptArr);
+    }
+
+    $(function(){
+      $("#btnSubmit").on("click",function(){
+
+        //object -> 요청파라미터 string
+        //1. 연간
+        //interval=year&chartType=line&startYearsY=2024&endYearsY=2025&startYearsM=&startDays=&endDays=&dept=%EC%9D%B8%EC%82%AC%EB%B6%80&dept=%EC%98%81%EC%97%85%EB%B6%80
+
+        //2. 월간
+        //interval=month&chartType=line&startYearsM=2025&startMonths=01&endMonths=05&startDays=&endDays=&dept=%EC%83%9D%EC%82%B0%EB%B6%80&dept=%EA%B5%AC%EB%A7%A4%EB%B6%80
+
+        //3. 일간
+        //interval=day&chartType=bars&startYearsM=&startDays=2025-04-04&endDays=2025-04-30&dept=%ED%92%88%EC%A7%88%EB%B6%80&dept=%EC%97%B0%EA%B5%AC%EC%86%8C
+        let frm = $("#frm").serialize();
+        console.log("frm : ", frm);
+
+        $.ajax({
+          url:"/statistics/statisticsAWOL/AWOLAjax",
+          data:frm,
+          type:"post",
+          dataType:"json",
+          success:function(result){
+            console.log("result : ", result);
+            //매개
+
+            let AWOL = result;
+
+            google.charts.setOnLoadCallback(drawStuff(AWOL))
+          }
+        });
+      });//end btnSubmit
+    });//end 달러function
 </script>
 
 <script>
@@ -515,41 +542,7 @@ function handleIntervalChange(event) {
 		});
 	});
 
-	// 개별 선택 및 배열에 담는 함수 
-	let checkedDeptArr = [];
-	const ckboxes = document.querySelectorAll("[name=dept]");
-	function checkedAll(dThis)  {
-		  if(dThis.checked){
-	            for(let i=0; i< ckboxes.length; i++){
-	            	ckboxes[i].checked=true;
-	            	checkedDeptArr.push(ckboxes[i].dataset.dept);
-	            }
-
-	            console.log("잘담겻낭?"+checkedDeptArr);
-	        }else {
-	            for(let i=0; i< ckboxes.length; i++){
-	            	ckboxes[i].checked=false;
-	            	checkedDeptArr.splice(0,1);  // 실제 요소 자체를 지우는 메소드,
-	            }
-	            console.log("지워졌낭??"+checkedDeptArr);
-	        }
-	} // selectAll 끗 
 	
-	
-	function fck(dThis) {
-		let val = dThis.dataset.dept;
-		if(dThis.checked) {
-			console.log("추가!!",checkedDeptArr);
-			checkedDeptArr.push(val);
-		} else {
-			if(checkedDeptArr.indexOf(val) !=-1){
-				console.log("제거!!");
-				let schIndex = checkedDeptArr.indexOf(val); 
-				checkedDeptArr.splice(schIndex,1);   
-			}
-		}
-		console.log("현재 배열 상태 !!",checkedDeptArr);
-	}
 </script>
 </body>
 </html>

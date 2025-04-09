@@ -62,10 +62,10 @@
 			PIVOT (
 			SUM(EMP_COUNT)
 			FOR DEPT_RANGE IN (
-					<foreach collection="dclzCodeList" item="dclz" separator=",">
+					<!--<foreach collection="dclzCodeList" item="dclz" separator=",">
 						'${dclz}' AS "${dclz}"
-					</foreach>
-				/*'임원진' AS 임원진,
+					</foreach>-->
+				'임원진' AS 임원진,
 				'인사부' AS 인사부,
 				'경영지원부' AS 경영지원부,
 				'영업부' AS 영업부,
@@ -74,8 +74,9 @@
 				'품질부' AS 품질부,
 				'디자인부' AS 디자인부,
 				'연구소' AS 연구소,
-				'7FS' AS "7FS"*/
+				'7FS' AS "7FS"
 				)
+
 			)
 		ORDER BY MONTH
 	</select>
