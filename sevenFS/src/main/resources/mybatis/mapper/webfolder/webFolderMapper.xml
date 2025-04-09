@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.webfolder.WebFolderMapper">
+    <insert id="insertFolder" parameterType="webFolderVO">
+        INSERT INTO FOLDER(FOLDER_NO, UPPER_FOLDER_NO, FOLDER_NM, FOLDER_PATH, FOLDER_TY)
+        VALUES (#{folderNo}, #{upperFolderNo}, #{folderNm}, #{folderPath}, #{folderTy})
+
+        <selectKey resultType="int" order="BEFORE" keyProperty="folderNo">
+            SELECT SEQ_FOLDER.NEXTVAL FROM DUAL
+        </selectKey>
+    </insert>
+
+    <select id="getFolder" resultType="kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO">
+        SELECT FOLDER_NO,
+               UPPER_FOLDER_NO,
+               FOLDER_NM,
+               FOLDER_PATH,
+               FOLDER_TY,
+               DEPT_CODE,
+               FOLDER_CREAT_DT,
+               FOLDER_UPDT_DT,
+               FOLDER_DELETE_YN,
+               FOLDER_CREAT_EMPNO
+        FROM FOLDER
+        WHERE FOLDER_NO = #{folderNo}
+        ORDER BY FOLDER_CREAT_DT
+    </select>
+
+    <select id="getFolderList" resultType="webFolderVO">
+        SELECT FOLDER_NO,
+               UPPER_FOLDER_NO,
+               FOLDER_NM,
+               FOLDER_PATH,
+               FOLDER_TY,
+               DEPT_CODE,
+               FOLDER_CREAT_DT,
+               FOLDER_UPDT_DT,
+               FOLDER_DELETE_YN,
+               FOLDER_CREAT_EMPNO
+        FROM FOLDER
+        WHERE UPPER_FOLDER_NO = #{upperFolderNo}
+        ORDER BY FOLDER_CREAT_DT DESC
+    </select>
+
+    <select id="getFileList" resultMap="folderFileResultMap">
+        SELECT FOLDER_NO,
+               FF.ATCH_FILE_NO,
+               FILE_DWLD_CO,
+               FILE_UPLOAD_EMPNO,
+
+               AF.ATCH_FILE_NO,
+               FILE_SN,
+               FILE_STRE_PATH,
+               FILE_NM,
+               FILE_STRE_NM,
+               FILE_EXTSN,
+               FILE_MIME,
+               FILE_SIZE,
+               FILE_VIEW_SIZE,
+               DWLD_CO,
+               EMPL_NO,
+               FILE_USE_YN,
+               FILE_CREAT_DT
+        FROM FOLDER_FILE FF
+                 LEFT JOIN ATTATCH_FILE AF ON (FF.ATCH_FILE_NO = AF.ATCH_FILE_NO)
+        WHERE FOLDER_NO = #{upperFolderNo}
+        ORDER BY FILE_CREAT_DT DESC
+    </select>
+
+    <!-- 밑에는 전체 다 가져오는 경우에 사용 -->
+    <!-- 파일 목록  -->
+    <resultMap id="folderResultMap" type="webFolderVO">
+        <result property="folderPath" column="FOLDER_PATH"/>
+        <result property="folderTy" column="FOLDER_TY"/>
+        <result property="deptCode" column="DEPT_CODE"/>
+        <result property="folderCreatDt" column="FOLDER_CREAT_DT"/>
+        <result property="folderUpdtDt" column="FOLDER_UPDT_DT"/>
+        <result property="folderDeleteYn" column="FOLDER_DELETE_YN"/>
+        <result property="folderCreatEmpno" column="FOLDER_CREAT_EMPNO"/>
+        <result property="folderNo" column="FOLDER_NO"/>
+        <result property="upperFolderNo" column="UPPER_FOLDER_NO"/>
+        <result property="folderNm" column="FOLDER_NM"/>
+        <collection property="fileList" resultMap="folderFileResultMap" />
+    </resultMap>
+
+    <resultMap id="folderFileResultMap" type="webFolderFileVO">
+        <result property="folderNo" column="FOLDER_NO"/>
+        <result property="atchFileNo" column="ATCH_FILE_NO"/>
+        <result property="fileDwldCo" column="FILE_DWLD_CO"/>
+        <result property="fileUploadEmpno" column="FILE_UPLOAD_EMPNO"/>
+        <collection property="attachFileVO" resultMap="kr.or.ddit.sevenfs.mapper.AttachFileMapper.attachFileResultMap" />
+    </resultMap>
+    <!--현재 미사용-->
+    <select id="getFolder_fail" resultMap="folderResultMap">
+        SELECT F.FOLDER_NO,
+               UPPER_FOLDER_NO,
+               FOLDER_NM,
+               FOLDER_PATH,
+               FOLDER_TY,
+               DEPT_CODE,
+               FOLDER_CREAT_DT,
+               FOLDER_UPDT_DT,
+               FOLDER_DELETE_YN,
+               FOLDER_CREAT_EMPNO,
+               FF.FOLDER_NO,
+               FF.ATCH_FILE_NO,
+               FILE_DWLD_CO,
+               FILE_UPLOAD_EMPNO,
+               AF.ATCH_FILE_NO,
+               FILE_SN,
+               FILE_STRE_PATH,
+               FILE_NM,
+               FILE_STRE_NM,
+               FILE_EXTSN,
+               FILE_MIME,
+               FILE_SIZE,
+               FILE_VIEW_SIZE,
+               DWLD_CO,
+               EMPL_NO,
+               FILE_USE_YN,
+               FILE_CREAT_DT
+        FROM (SELECT A.*
+              FROM (SELECT FOLDER_NO,
+                           UPPER_FOLDER_NO,
+                           FOLDER_NM,
+                           FOLDER_PATH,
+                           FOLDER_TY,
+                           DEPT_CODE,
+                           FOLDER_CREAT_DT,
+                           FOLDER_UPDT_DT,
+                           FOLDER_DELETE_YN,
+                           FOLDER_CREAT_EMPNO,
+                           LEVEL as le
+                    FROM FOLDER
+                    START WITH UPPER_FOLDER_NO IS NULL
+                    CONNECT BY PRIOR FOLDER_NO = UPPER_FOLDER_NO) A
+              WHERE A.le = #{level}) F
+                 LEFT JOIN FOLDER_FILE FF ON (F.FOLDER_NO = FF.FOLDER_NO)
+                 LEFT JOIN ATTATCH_FILE AF ON (FF.ATCH_FILE_NO = AF.ATCH_FILE_NO)
+    </select>
+
+
+</mapper>

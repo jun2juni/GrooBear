@@ -112,7 +112,7 @@ public class AttachFile {
     }
 
     // 폴더 생성
-    private void folderMkdirs(String dir) {
+    public void folderMkdirs(String dir) {
         File folder = new File(saveDir + dir);
         if (!folder.exists() && !folder.mkdirs()) {
             log.error("폴더 생성 실패: {}", folder);

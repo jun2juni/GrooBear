@@ -2,6 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.AttachFileMapper">
 
+    <resultMap id="attachFileResultMap" type="attachFileVO">
+        <result property="atchFileNo" column="ATCH_FILE_NO"/>
+        <result property="fileSn" column="FILE_SN"/>
+        <result property="fileStrePath" column="FILE_STRE_PATH"/>
+        <result property="fileNm" column="FILE_NM"/>
+        <result property="fileStreNm" column="FILE_STRE_NM"/>
+        <result property="fileExtsn" column="FILE_EXTSN"/>
+        <result property="fileMime" column="FILE_MIME"/>
+        <result property="fileSize" column="FILE_SIZE"/>
+        <result property="fileViewSize" column="FILE_VIEW_SIZE"/>
+        <result property="dwldCo" column="DWLD_CO"/>
+        <result property="emplNo" column="EMPL_NO"/>
+        <result property="fileUseYn" column="FILE_USE_YN"/>
+        <result property="fileCreatDt" column="FILE_CREAT_DT"/>
+    </resultMap>
+
     <select id="getAttachFileNo" resultType="long">
         SELECT SEQ_ATTATCH_FILE.NEXTVAL FROM DUAL
     </select>
