@@ -73,7 +73,7 @@
               <a href="/atrz/home" class="${fn:contains(currentURL, '/atrz/home') ? 'active' : ''}"> 전자결재 </a>
             </li>
             <li>
-              <a href="/atrz/approval" class="${fn:contains(currentURL, '/atrz/approval') ? 'active' : ''}"> 결재하기 </a>
+              <a href="/atrz/approval" class="${fn:contains(currentURL, '/atrz/approval') ? 'active' : ''}"> 결재 대기 문서 </a>
             </li>
             <li>
               <a href="/atrz/document" class="${fn:contains(currentURL, '/atrz/document') ? 'active' : ''}"> 전자결재 문서함 </a>
