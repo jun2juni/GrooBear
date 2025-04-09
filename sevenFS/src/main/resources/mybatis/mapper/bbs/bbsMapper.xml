@@ -31,7 +31,7 @@
 	         WHERE A.BBS_SN = B.BBS_SN 
 	           AND A.BBS_CTGRY_NO = B.BBS_CTGRY_NO) AS COMMENT_CNT,
 	           
-	        -- 좋아요 수 👍
+	        -- 좋아요 수 
 		    (SELECT COUNT(*) 
 		     FROM BBS_LIKE L 
 		     WHERE L.BBS_SN = B.BBS_SN 
@@ -148,12 +148,20 @@
 	        B.RDCNT,
 	        B.BBSCTT_USE_YN,
 	        B.UPEND_FIXING_YN,
-	        B.ATCH_FILE_NO
+	        B.ATCH_FILE_NO,
+	
+	        -- 👍 좋아요 수
+	        (SELECT COUNT(*) 
+	         FROM BBS_LIKE L 
+	         WHERE L.BBS_SN = B.BBS_SN 
+	           AND L.BBS_CTGRY_NO = B.BBS_CTGRY_NO) AS LIKE_CNT
+	
 	    FROM BBS B
 	    JOIN EMPLOYEE E ON B.EMPL_NO = E.EMPL_NO
 	    JOIN BBS_CTGRY CT ON B.BBS_CTGRY_NO = CT.BBS_CTGRY_NO
 	    WHERE B.BBS_SN = #{bbsSn}
 	</select>
+
 
 	
 	<!-- 게시글 조회수 추가 -->

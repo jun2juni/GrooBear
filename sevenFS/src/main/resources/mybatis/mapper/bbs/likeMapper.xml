@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.bbs.LikeMapper">
+
+	<select id="existsLike" resultType="boolean">
+	  SELECT CASE 
+	           WHEN EXISTS (
+	             SELECT 1 FROM BBS_LIKE
+	             WHERE BBS_SN = #{bbsSn}
+	               AND BBS_CTGRY_NO = #{bbsCtgryNo}
+	               AND EMPL_NO = #{emplNo}
+	           ) THEN 1 ELSE 0
+	         END
+	  FROM DUAL
+	</select>
+
+
+    <insert id="insertLike">
+        INSERT INTO BBS_LIKE (BBS_SN, BBS_CTGRY_NO, EMPL_NO)
+        VALUES (#{bbsSn}, #{bbsCtgryNo}, #{emplNo})
+    </insert>
+
+    <delete id="deleteLike">
+        DELETE FROM BBS_LIKE
+        WHERE BBS_SN = #{bbsSn}
+          AND BBS_CTGRY_NO = #{bbsCtgryNo}
+          AND EMPL_NO = #{emplNo}
+    </delete>
+
+    <select id="countLikes" resultType="int">
+        SELECT COUNT(*)
+        FROM BBS_LIKE
+        WHERE BBS_SN = #{bbsSn}
+          AND BBS_CTGRY_NO = #{bbsCtgryNo}
+    </select>
+		
+		
+</mapper>

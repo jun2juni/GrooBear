@@ -67,13 +67,17 @@
 									<div>파일
 										<c:if test="${not empty Efile}">
 											<c:forEach var="file" items="${bbsVO.files}">
-												<a href="http://localhost/download?fileName=test/34e5c6bb8bd34d62a8eae92ef506005e_carnation-g75dae9d9b_1280.jpg"" target="_blank">${file.fileStreNm}</a>
+												<a href="http://localhost/download?fileName=test/34e5c6bb8bd34d62a8eae92ef506005e_carnation-g75dae9d9b_1280.jpg" target="_blank">${file.fileStreNm}</a>
 											</c:forEach>
 										</c:if>
 										<c:if test="${empty Efile}">
 											<p>파일없음</p>
 										</c:if>
 									</div><br>
+									<button class="btn btn-outline-secondary" type="button" id="likeBtn" onclick="toggleLike()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+  <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/>
+</svg></button>
+									<span id="likeCount">${bbsVO.likeCnt}</span>
 								</div>
 								<div class="position-relative">
 									<div class="position-absolute bottom-0 start-0">
@@ -115,23 +119,41 @@
 	<!-- 삭제 폼 -->
 	<script>
 	
+	// 좋아용
+	const bbsSn = ${bbsVO.bbsSn};
+	const bbsCtgryNo = ${bbsVO.bbsCtgryNo};
+
+	function toggleLike() {
+	    $.post("/bbs/like/toggle", {
+	        bbsSn: bbsSn,
+	        bbsCtgryNo: bbsCtgryNo
+	    }, function (res) {
+	        if (res.liked) {
+	            $("#likeBtn").addClass("text-danger");
+	        } else {
+	            $("#likeBtn").removeClass("text-danger");
+	        }
+	        $("#likeCount").text(res.likeCount);
+	    }).fail(function (xhr) {
+	        console.error("좋아요 처리 실패:", xhr.responseText);
+	    });
+	}
+
+	// 페이지 진입 시 현재 좋아요 상태 확인해서 버튼 상태 적용
+	$(document).ready(function () {
+	    $.get("/bbs/like/exists", {
+	        bbsSn: bbsSn,
+	        bbsCtgryNo: bbsCtgryNo
+	    }, function (liked) {
+	        if (liked) {
+	            $("#likeBtn").addClass("text-danger");
+	        }
+	    });
+	});
+	
+	
 	
 
-	
-    function bbsDelete(bbsSn){
-        if(confirm("삭제하시겠습니까?")){
-            $.ajax({
-                url: "/bbs/bbsDelete",
-                method: "post",
-                data: {bbsSn: bbsSn},
-                success: function(){
-                    alert("삭제되었습니다.");
-                    window.location.href = "/bbs/bbsList?bbsCtgryNo="+${bbsVO.bbsCtgryNo};
-                    console.log("삭제요청 "+${bbsVO.bbsCtgryNo});
-                }
-            });
-        }
-    }
     
 	// 댓글 등록
 	function submitComment() {
