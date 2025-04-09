@@ -13,7 +13,7 @@
 						data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<div class="row ">
+					<div class="row">
 						<!-- 좌측 결재선사원선택부분 시작 -->
 						<div class="col-md-3 flex-grow-1">
 							<div class="s_scroll"

@@ -23,13 +23,13 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 				<option id="s_spending_form" value="s_spending_form">지출결의서</option>
 				<option id="s_draft_form" value="s_draft_form">기안서</option>
 				<option id="s_salary_form" value="s_salary_form">급여명세서</option>
-				<option id="s_account_form" value="s_account_form">급여계좌변경 신청서</option>
+				<option id="s_account_form" value="s_account_form">급여계좌변경신청서</option>
 				<option id="s_certifi_form" value="s_certifi_form">재직증명서</option>
 				<option id="s_resign_form" value="s_resign_form">퇴사신청서</option>
 				<!-- 			            <option id="s_test_form" value="s_test_form">테스트</option> -->
 			</select>
 			<!-- 여기에 양식 미리보기라고 알려줘야됨 -->
-			<p> 양식미리보기</p>
+			<!-- <p> 양식미리보기</p> -->
 			<div id="s_document_form"
 				style="margin-top: 20px; border: 1px solid lightgray; border-radius: 5px; padding: 10px;">
 				양식을 선택해주세요.
@@ -68,19 +68,19 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 						}else if(selectValue=="s_draft_form"){  //기안서
 							$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/draftForm");
 							$("#s_document_form").html('');
-						}else if(selectValue=="s_draft_form"){  //급여명세서
+						}else if(selectValue=="s_salary_form"){  //급여명세서
 							$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/salaryForm");
 							$("#s_document_form").html('');
 						}
-						else if(selectValue=="s_draft_form"){  //급여계좌변경서
+						else if(selectValue=="s_account_form"){  //급여계좌변경서
 							$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/bankAccountForm");
 							$("#s_document_form").html('');
 						}
-						else if(selectValue=="s_draft_form"){  //재직증명서
+						else if(selectValue=="s_certifi_form"){  //재직증명서
 							$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/certificationForm");
 							$("#s_document_form").html('');
 						}
-						else if(selectValue=="s_draft_form"){  //퇴사신청서
+						else if(selectValue=="s_resign_form"){  //퇴사신청서
 							$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/resignationForm");
 							$("#s_document_form").html('');
 						}else{   //양식을 선택하지않았다면

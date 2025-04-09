@@ -81,44 +81,44 @@
 						</div>
 						
 						<!--연차기간 선택 시작-->
-						<div class="col ms-4">
-							<div class="s_frm_title mb-2"><b>신청기간</b></div>
-							<!-- <div style="margin: 5px 0;">
-								사용 가능한 휴가일수는 <span id="s_ho_use">${checkHo }</span>일 입니다.
-							</div> -->
-							<div>
-								<input type="text" placeholder="신청 시작 기간을 선택해주세요"
-									class="form-control s_ho_start d-inline-block"
-									style="width: 250px; cursor: context-menu;"
-									id="s_ho_start" required="required" onchange="dateCnt();" name="holiStartArr" readonly/>
-							</div>
-							<div>
-								<input type="text" placeholder="신청 종료 기간을 선택해주세요"
-									class="form-control s_ho_end d-inline-block mt-2"
-									style="width: 250px; cursor: context-menu;"
-									id="s_ho_end" required="required" onchange="dateCnt();" name="holiEndArr" readonly/>
-								<div class="d-inline-block" >
-									(총 <span id="s_date_cal">0</span>일)
-								</div>
-							</div>
-						</div>	
-						<!--연차기간 선택 끝-->
-					</div>
-
-					<div style="padding: 10px 0;">
-						<div class="s_frm_title mb-2"> 내용</div>
-						<textarea class="form-control s_scroll"
-							style="resize: none; height: 150px;" id="s_ho_co" name="atrzCn" 
-							required="required" rows="2" cols="20" wrap="hard" readonly></textarea>
-					</div>
-					<div style="padding: 10px 0;">
-						<div class="s_frm_title">파일첨부</div>
-						<div id="s_file_upload">
-							<input type="file" name="uploadFile" id="eap_file_path" multiple readonly/>
+					<div class="col ms-4">
+						<div class="s_frm_title mb-2"><b>신청기간</b></div>
+						<!-- <div style="margin: 5px 0;">
+							사용 가능한 휴가일수는 <span id="s_ho_use">${checkHo }</span>일 입니다.
+						</div> -->
+						<div>
+							<input type="text" placeholder="신청 시작 기간을 선택해주세요"
+								class="form-control s_ho_start d-inline-block"
+								style="width: 250px; cursor: context-menu;"
+								id="s_ho_start" required="required" onchange="dateCnt();" name="holiStartArr" readonly/>
 						</div>
-						<input type="hidden" name="fileUrl" id="fileUrl">
-					</div>
+						<div>
+							<input type="text" placeholder="신청 종료 기간을 선택해주세요"
+								class="form-control s_ho_end d-inline-block mt-2"
+								style="width: 250px; cursor: context-menu;"
+								id="s_ho_end" required="required" onchange="dateCnt();" name="holiEndArr" readonly/>
+							<div class="d-inline-block" >
+								(총 <span id="s_date_cal">0</span>일)
+							</div>
+						</div>
+					</div>	
+						<!--연차기간 선택 끝-->
 				</div>
+
+				<div style="padding: 10px 0;">
+					<div class="s_frm_title mb-2"> 내용</div>
+					<textarea class="form-control s_scroll"
+						style="resize: none; height: 150px;" id="s_ho_co" name="atrzCn" 
+						required="required" rows="2" cols="20" wrap="hard" readonly></textarea>
+				</div>
+				<div style="padding: 10px 0;">
+					<div class="s_frm_title">파일첨부</div>
+					<div id="s_file_upload">
+						<input type="file" name="uploadFile" id="eap_file_path" multiple readonly/>
+					</div>
+					<input type="hidden" name="fileUrl" id="fileUrl">
+				</div>
+			</div>
 		</div>
 </body>
 </html>

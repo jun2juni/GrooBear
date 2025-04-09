@@ -28,7 +28,9 @@ import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
+import kr.or.ddit.sevenfs.vo.atrz.BankAccountVO;
 import kr.or.ddit.sevenfs.vo.atrz.HolidayVO;
+import kr.or.ddit.sevenfs.vo.atrz.SalaryVO;
 import kr.or.ddit.sevenfs.vo.atrz.SpendingVO;
 import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
@@ -168,14 +170,11 @@ public class AtrzController {
 		int result = 0;
 		// 선택한 문서 양식이 "연차신청서"일 경우
 		if ("연차신청서".equals(form)) {
-//			result = atrzService.insertHoDoc();
-			//전자결재문서번호를 양식선택시 생성해서 insert해준다.
-//			resultDoc =atrzService.selectDoc(df_code);
 			//남은 휴가일수 확인(사원번호를 가져와야함)
-//			Double checkHo = atrzService.readHoCnt();
-//			model.addAttribute("checkHo",checkHo);
+			//Double checkHo = atrzService.readHoCnt();
+			//model.addAttribute("checkHo",checkHo);
 			//문서양식번호 띄울 정보
-//			model.addAttribute("resultDoc",resultDoc);
+			//model.addAttribute("resultDoc",resultDoc);
 			//여기서 이 결과 값을 documentForm/holiday에 보내야함
 			df_code = "A";
 			return "연차신청서";
@@ -192,9 +191,9 @@ public class AtrzController {
 			df_code = "D";
 			return "급여명세서";
 			
-		} else if ("급여통장변경신청서".equals(form)) {
+		} else if ("급여계좌변경신청서".equals(form)) {
 			df_code = "E";
-			return "급여통장변경신청서";
+			return "급여계좌변경신청서";
 			
 		}else if ("재직증명서".equals(form)) {
 			df_code = "F";
@@ -287,44 +286,7 @@ public class AtrzController {
 		return "documentForm/bankAccount";
 	}
 	
-
-	// 2) 기안서 전송양식
-	@PostMapping("/draft/insert")
-	public String draftInsert(DraftVO draftVO
-	// 파일등록추가
-	) {
-		// draftInsert->draftVO(insert전) : DraftVO(title=sfadadfs, content=sadfsdafd,
-		// draftNo=null)
-		log.info("draftInsert->draftVO(insert전) : " + draftVO);
-		int result = this.atrzService.draftInsert(draftVO);
-		log.info("selectDraftInsert-> result : " + result);
-		// draftVO(insert 후) : DraftVO(title=asddfs, content=sdafasdfdsfasdfsdaf,
-		// draftNo=1)
-		log.info("selectDraftInsert-> draftVO(insert 후) : " + draftVO);
-
-		// 1. 상세보기가 없음
-		// 2. 상세보기로 들어가야 함
-		// 3. 한 양식당 jsp가 2개가 만들어져있음( 1) input, 2) 보여주는 양식 미리보기 )
-		return "redirect:/atrz/selectForm/draftDetail?draftNo=" + draftVO.getDraftNo();
-	}
-
-	// 3) 기안서 상세
-	@GetMapping("/selectForm/draftDetail")
-	public String draftDetail(Model model, @RequestParam(value = "draftNo", required = true) String draftNo) {
-		log.info("draftDetail->draftNo : " + draftNo);
-
-		// SELECT * FROM DRAFT WHERE DRAFT_NO = 2
-		DraftVO draftVO = this.atrzService.draftDetail(draftNo);
-		log.info("draftDetail->draftVO : " + draftVO);
-
-		model.addAttribute("title", "기안서 상세보기");
-		model.addAttribute("draftVO", draftVO);
-
-		return "documentForm/draftDetail";
-	}
-	
-	
-
+	//기안자 정보 등록 전자결재 등록
 	// 결재선지정 시 직원명 클릭하면 emplNo을 파라미터로 받아 DB select를 하여 JSON String으로 해당 직원 정보를 응답해줌
 	// 요청파라미터 : {"emplNo":emplNo}
 	@ResponseBody
@@ -348,7 +310,7 @@ public class AtrzController {
 		return emplDetail;
 	}
 
-	
+	//결재자 정보등록 결재선 등록
 	//모달에서 선택한 결재선이 비동기로 담아서 보내서 확인해야함
 	@ResponseBody
 	@PostMapping(value = "insertAtrzLine")
@@ -384,7 +346,7 @@ public class AtrzController {
 		
 	}
 	
-	
+	//연차신청서 등록
 	@ResponseBody
 	@PostMapping(value = "atrzHolidayInsert")
 	public String insertHolidayForm(AtrzVO atrzVO,
@@ -421,8 +383,6 @@ public class AtrzController {
 			atrzService.insertAtrzLine(atrzLineVO);
 
 		}
-		
-		
 		
 		//문서번호등록
 		documHolidayVO.setAtrzDocNo(atrzDocNo);
@@ -462,45 +422,21 @@ public class AtrzController {
 		return "쭈니성공";
 	}
 	
-	
+	//지출결의서 등록
 	@ResponseBody
 	@PostMapping(value = "atrzSpendingInsert")
 	public String insertSpendingForm(AtrzVO atrzVO,
 			     @RequestPart("atrzLineList")List<AtrzLineVO> atrzLineList, 
 			     SpendingVO spendingVO){
 		
-		/*emplNo = drafterEmpno : 기안자 사번 / emplNm = drafterEmpnm : 기안자 명
-		AtrzVO(atrzDocNo=null, drafterEmpno=null, drafterClsf=null, drafterEmpnm=null, drafterDept=null, bkmkYn=null, 
-		atchFileNo=0, atrzSj=미리작성한 제목입니다., atrzCn=ㅁㄴㅇㄹ, atrzOpinion=null, atrzTmprStreDt=null, atrzDrftDt=null, 
-		atrzComptDt=null, atrzRtrvlDt=null, atrzSttusCode=null, eltsgnImage=null, docFormNo=2, atrzDeleteYn=null, 
-		schdulRegYn=null, docFormNm=S, emplNo=20250004, emplNm=null, clsfCode=null, clsfCodeNm=null, deptCode=null, deptCodeNm=null, 
-		uploadFile=null, atrzLineVOList=null, type=null, keyword=null, drafts=null, empAtrzVO=null, documHolidayVO=null, spendingVO=null)
-		 */
 		atrzVO.setDrafterEmpno(atrzVO.getEmplNo());
 		
-		log.info("atrzSpendingInsert-> atrz : "+atrzVO);
-		/*
-		atrzLineList : [AtrzLineVO(atrzDocNo=null, atrzLnSn=1, sanctnerEmpno=20250000, sanctnerClsfCode=null, 
-		contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=N, sanctnProgrsSttusCode=null, 
-		dcrbAuthorYn=0, contdAuthorYn=null, sanctnOpinion=null, eltsgnImage=null, sanctnConfmDt=null, 
-		atrzLineList=null), 
-		AtrzLineVO(atrzDocNo=null, atrzLnSn=2, sanctnerEmpno=20250020, sanctnerClsfCode=null, contdEmpno=null, contdClsfCode=null, 
-		dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=N, sanctnProgrsSttusCode=null, dcrbAuthorYn=0, contdAuthorYn=null, sanctnOpinion=null, 
-		eltsgnImage=null, sanctnConfmDt=null, atrzLineList=null), 
-		AtrzLineVO(atrzDocNo=null, atrzLnSn=3, sanctnerEmpno=20250008, sanctnerClsfCode=null, contdEmpno=null, contdClsfCode=null,
-		 dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=N, sanctnProgrsSttusCode=null, dcrbAuthorYn=1, contdAuthorYn=null, sanctnOpinion=null, 
-		 eltsgnImage=null, sanctnConfmDt=null, atrzLineList=null)]
-		 */
-		log.info("atrzSpendingInsert-> atrzLineList : "+atrzLineList);
-		/*
-		 SpendingVO(spendingReportNo=0, atrzDocNo=null, expenseOrder=0, expenseDate=null, itemDescription=null, 
-		 itemQuantity=0, itemAmount=null, paymentMethod=null, atrzLineVOList=null, atrzVO=null)
-		 */
-		log.info("atrzSpendingInsert-> spendingVO : "+spendingVO);
+		log.info("insertSpendingForm-> atrz : "+atrzVO);
+		log.info("insertSpendingForm-> atrzLineList : "+atrzLineList);
+		log.info("insertSpendingForm-> spendingVO : "+spendingVO);
 		
 		
 		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
-		
 		log.info("insertSpendingForm->emplDetail : "+emplDetail);
 		//여기서 VO를 하나 씩 담아야 하는건가...싶다. 
 		String clsfCode = emplDetail.getClsfCode();
@@ -531,5 +467,165 @@ public class AtrzController {
 		
 		return "쭈니성공";
 	}
+	
+	//급여명세서 등록
+	@ResponseBody
+	@PostMapping(value = "atrzSalaryInsert")
+	public String insertSalaryForm(AtrzVO atrzVO,
+			     @RequestPart("atrzLineList")List<AtrzLineVO> atrzLineList, 
+			     SalaryVO salaryVO){
+		
+		atrzVO.setDrafterEmpno(atrzVO.getEmplNo());
+		
+		log.info("insertSalaryForm-> atrz : "+atrzVO);
+		log.info("insertSalaryForm-> atrzLineList : "+atrzLineList);
+		log.info("insertSalaryForm-> spendingVO : "+salaryVO);
+		
+		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
+		log.info("insertSalaryForm->emplDetail : "+emplDetail);
+		//여기서 VO를 하나 씩 담아야 하는건가...싶다. 
+		String clsfCode = emplDetail.getClsfCode();
+		String deptCode = emplDetail.getDeptCode();
+		atrzVO.setClsfCode(clsfCode);
+		atrzVO.setDeptCode(deptCode);
+		
+		log.info("insertSalaryForm-> atrzVO(사원추가후) : "+atrzVO);
+		
+		//전자결재 테이블 등록
+		int atrzResult = atrzService.insertAtrz(atrzVO);
+		
+		//전자결재 문서번호등록
+		String atrzDocNo = atrzVO.getAtrzDocNo();
+		log.info("insertSpendingForm-> atrzDocNo :  문서번호 등록 : "+atrzDocNo);
+		//변수에 있는 문서번호를 넣어주기 atrzLineVO에 넣어주기
+		for(AtrzLineVO atrzLineVO : atrzLineList) {
+			atrzLineVO.setAtrzDocNo(atrzDocNo);
+			log.info("atrzLineVO :  문서번호 등록후 : "+atrzLineVO);	
+			atrzService.insertAtrzLine(atrzLineVO);
+		}
+		
+		//문서번호등록
+		salaryVO.setAtrzDocNo(atrzDocNo);
+		log.info("salaryVO :  문서번호 등록후 : "+salaryVO);	
+		//지출결의서 등록
+		int documSalaryResult = atrzService.insertSalary(salaryVO);
+		
+		return "쭈니성공";
+	}
+	
+	
+	
+	
+	//급여계좌변경신청서 등록
+	@ResponseBody
+	@PostMapping(value = "atrzBankAccountInsert")
+	public String insertBankAccountForm(AtrzVO atrzVO,
+			     @RequestPart("atrzLineList")List<AtrzLineVO> atrzLineList, 
+			     BankAccountVO bankAccountVO){
+		
+		atrzVO.setDrafterEmpno(atrzVO.getEmplNo());
+		
+		log.info("insertBankAccountForm-> atrz : "+atrzVO);
+		log.info("insertBankAccountForm-> atrzLineList : "+atrzLineList);
+		log.info("insertBankAccountForm-> bankAccountVO : "+bankAccountVO);
+		
+		
+		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
+		log.info("insertBankAccountForm->emplDetail : "+emplDetail);
+		//여기서 VO를 하나 씩 담아야 하는건가...싶다. 
+		String clsfCode = emplDetail.getClsfCode();
+		String deptCode = emplDetail.getDeptCode();
+		atrzVO.setClsfCode(clsfCode);
+		atrzVO.setDeptCode(deptCode);
+		
+		log.info("insertBankAccountForm-> atrzVO(사원추가후) : "+atrzVO);
+		
+		//전자결재 테이블 등록
+		int atrzResult = atrzService.insertAtrz(atrzVO);
+		
+		//전자결재 문서번호등록
+		String atrzDocNo = atrzVO.getAtrzDocNo();
+		log.info("insertBankAccountForm-> atrzDocNo :  문서번호 등록 : "+atrzDocNo);
+		//변수에 있는 문서번호를 넣어주기 atrzLineVO에 넣어주기
+		for(AtrzLineVO atrzLineVO : atrzLineList) {
+			atrzLineVO.setAtrzDocNo(atrzDocNo);
+			log.info("atrzLineVO :  문서번호 등록후 : "+atrzLineVO);	
+			atrzService.insertAtrzLine(atrzLineVO);
+		}
+		
+		//문서번호등록
+		bankAccountVO.setAtrzDocNo(atrzDocNo);
+		log.info("spendingVO :  문서번호 등록후 : "+bankAccountVO);	
+		//급여계좌변경신청서 등록
+		int documBankAccountResult = atrzService.insertBankAccount(bankAccountVO);
+		
+		return "쭈니성공";
+	}
+	//기안서 등록 
+	@ResponseBody
+	@PostMapping(value = "atrzDraftInsert")
+	public String insertDraftForm(AtrzVO atrzVO,
+			     @RequestPart("atrzLineList")List<AtrzLineVO> atrzLineList, 
+			     DraftVO draftVO){
+		
+		atrzVO.setDrafterEmpno(atrzVO.getEmplNo());
+		
+		log.info("insertDraftForm-> atrz : "+atrzVO);
+		log.info("insertDraftForm-> atrzLineList : "+atrzLineList);
+		log.info("insertDraftForm-> draftVO : "+draftVO);
+		
+		
+		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
+		log.info("insertDraftForm->emplDetail : "+emplDetail);
+		//여기서 VO를 하나 씩 담아야 하는건가...싶다. 
+		String clsfCode = emplDetail.getClsfCode();
+		String deptCode = emplDetail.getDeptCode();
+		atrzVO.setClsfCode(clsfCode);
+		atrzVO.setDeptCode(deptCode);
+		
+		log.info("insertDraftForm-> atrzVO(사원추가후) : "+atrzVO);
+		
+		//전자결재 테이블 등록
+		int atrzResult = atrzService.insertAtrz(atrzVO);
+		
+		//전자결재 문서번호등록
+		String atrzDocNo = atrzVO.getAtrzDocNo();
+		log.info("insertDraftForm-> atrzDocNo :  문서번호 등록 : "+atrzDocNo);
+		//변수에 있는 문서번호를 넣어주기 atrzLineVO에 넣어주기
+		for(AtrzLineVO atrzLineVO : atrzLineList) {
+			atrzLineVO.setAtrzDocNo(atrzDocNo);
+			log.info("atrzLineVO :  문서번호 등록후 : "+atrzLineVO);	
+			atrzService.insertAtrzLine(atrzLineVO);
+		}
+		
+		//문서번호등록
+		draftVO.setAtrzDocNo(atrzDocNo);
+		log.info("insertDraftForm->draftVO :  문서번호 등록후 : "+draftVO);	
+		//급여계좌변경신청서 등록
+		int documDraftResult = atrzService.insertDraft(draftVO);
+		
+		return "쭈니성공";
+	}
+	
+	
+	
+
+	// 3) 기안서 상세
+	@GetMapping("/selectForm/draftDetail")
+	public String draftDetail(Model model, @RequestParam(value = "draftNo", required = true) String draftNo) {
+		log.info("draftDetail->draftNo : " + draftNo);
+
+		// SELECT * FROM DRAFT WHERE DRAFT_NO = 2
+		DraftVO draftVO = this.atrzService.draftDetail(draftNo);
+		log.info("draftDetail->draftVO : " + draftVO);
+
+		model.addAttribute("title", "기안서 상세보기");
+		model.addAttribute("draftVO", draftVO);
+
+		return "documentForm/draftDetail";
+	}
+	
+	
+	
 
 }

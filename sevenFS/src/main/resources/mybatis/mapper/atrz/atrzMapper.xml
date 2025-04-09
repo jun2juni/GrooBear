@@ -1,6 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper">
+	<select id="homeList" resultMap="atrzMap">
+		SELECT /* AtrzMapper.homeList */
+	        A.atrz_doc_no,
+	        A.drafter_empno,
+	        A.drafter_clsf,
+	        A.drafter_empnm,
+	        A.drafter_dept,
+	        A.bkmk_yn,
+	        A.atch_file_no,
+	        A.atrz_sj,
+	        A.atrz_cn,
+	        A.atrz_opinion,
+	        A.atrz_tmpr_stre_dt,
+	        A.atrz_drft_dt,
+	        A.atrz_compt_dt,
+	        A.atrz_rtrvl_dt,
+	        A.atrz_sttus_code,
+	        A.eltsgn_image,
+	        A.doc_form_no,
+	        A.atrz_delete_yn,
+	        A.schdul_reg_yn,
+	
+	        L.atrz_doc_no as line_atrz_doc_no,
+	        L.atrz_ln_sn,
+	        L.sanctner_empno,
+	        L.sanctner_clsf_code,
+	        L.contd_empno,
+	        L.contd_clsf_code,
+	        L.dcrb_man_empno,
+	        L.dcrb_man_clsf_code,
+	        L.atrz_ty,
+	        L.sanctn_progrs_sttus_code,
+	        L.dcrb_author_yn,
+	        L.contd_author_yn,
+	        L.sanctn_opinion,
+	        L.eltsgn_image as line_eltsgn_image,
+	        L.sanctn_confm_dt,
+	
+	        H.holi_actpln_no,
+	        H.atrz_doc_no as holi_atrz_doc_no,
+	        H.holi_code,
+	        H.holi_start,
+	        H.holi_end
+	
+	    FROM atrz A
+	    LEFT JOIN atrz_line L ON A.atrz_doc_no = L.atrz_doc_no
+	    LEFT JOIN docum_holiday H ON A.atrz_doc_no = H.atrz_doc_no
+	    WHERE A.drafter_empno = #{drafterEmpno}
+	    ORDER BY A.atrz_drft_dt
+	</select>
+
+
 	<!-- 결재 대기중인 문서리스트 -->
 	<select id="atrzApprovalList" resultMap="atrzMap">
 		SELECT  /* AtrzMapper.atrzApprovalList */
@@ -63,8 +115,8 @@
 	        l.atrz_ln_sn,
 	        l.sanctner_empno,
 	        l.sanctn_progrs_sttus_code
-	    from atrz a
-	    left join atrz_line l
+	    from atrz A
+	    left join atrz_line L
 	        on a.atrz_doc_no = l.atrz_doc_no
 	    where a.drafter_empno = #{emplNo}
 	    order by a.atrz_drft_dt desc
@@ -91,18 +143,6 @@
 	</select>
 	
 	
-	<select id="atrzDetail" resultMap="atrzMap" parameterType="string">
-		SELECT 
-	        A.ATRZ_DOC_NO, A.DRAFTER_EMPNO, A.DRAFTER_CLSF, A.BKMK_YN, A.ATCH_FILE_NO, 
-	        A.ATRZ_SJ, A.ATRZ_CN, A.ATRZ_OPINION, A.ATRZ_TMPR_STRE_DT, A.ATRZ_DRFT_DT, 
-	        A.ATRZ_COMPT_DT, A.ATRZ_RTRVL_DT, A.ATRZ_STTUS_CODE, A.ELTSGN_IMAGE, 
-	        A.DOC_FORM_NO, A.ATRZ_DELETE_YN,
-	        D.DRAFT_NO, D.DRAFT_TITLE, D.DRAFT_CONTENT
-	    FROM ATRZ A
-	    LEFT JOIN DRAFT D 
-	        ON A.ATRZ_DOC_NO = D.DRAFT_NO
-	    WHERE A.ATRZ_DOC_NO = #{atrzDocNo}
-	</select>
 	
 	  <resultMap id="EmployeeResultMap" type="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
         <id property="emplNo" column="EMPL_NO"/>
@@ -226,6 +266,86 @@
 			)
 	</insert>
 	
+	<insert id="insertSalary" parameterType="kr.or.ddit.sevenfs.vo.atrz.SalaryVO">
+		<selectKey resultType="int" order="BEFORE" keyProperty="salaryNo">
+			SELECT NVL(MAX(salary_no),0)+1 FROM docum_salary
+		</selectKey>
+		INSERT INTO 	/* AtrzMapper.insertSalary */
+			docum_salary
+			(
+			  salary_no
+			, atrz_doc_no
+			, base_salary
+			, meal_allowance
+			, income_tax
+			, local_tax
+			, pension
+			, employment_ins
+			, health_ins
+			, care_ins, pay_date
+			)
+		VALUES
+			(
+			  #{salaryNo}
+			, #{atrzDocNo}
+			, #{baseSalary}
+			, #{mealAllowance}
+			, #{incomeTax}
+			, #{localTax}
+			, #{pension}
+			, #{employmentIns}
+			, #{healthIns}
+			, #{careIns}
+			, #{payDate}
+			)
+	</insert>
+	
+	<insert id="insertBankAccount" parameterType="kr.or.ddit.sevenfs.vo.atrz.BankAccountVO">
+		<selectKey resultType="int" order="BEFORE" keyProperty="bankAccNo">
+			SELECT NVL(MAX(bank_acc_no),0)+1 FROM docum_bank_account
+		</selectKey>
+		INSERT INTO 	/* AtrzMapper.insertBankAccount */
+			docum_bank_account
+			(
+			   bank_acc_no
+			 , atrz_doc_no
+			 , old_bank
+			 , old_acc_no
+			 , new_bank
+			 , new_acc_no
+			 , reason
+			)
+		VALUES
+			(
+			  #{bankAccNo}
+			, #{atrzDocNo}
+			, #{oldBank}
+			, #{oldAccNo}
+			, #{newBank}
+			, #{newAccNo}
+			, #{reason}
+			)
+	</insert>
+	
+	<insert id="insertDraft" parameterType="kr.or.ddit.sevenfs.vo.atrz.DraftVO">
+		<selectKey resultType="int" order="BEFORE" keyProperty="draftNo">
+			SELECT NVL(MAX(draft_no),0)+1 FROM docum_draft
+		</selectKey>
+		INSERT INTO 	/* AtrzMapper.insertDraft */
+			docum_draft
+			(
+			   atrz_doc_no
+			 , draft_no
+			)
+		VALUES
+			(
+			  #{atrzDocNo}
+			, #{draftNo}
+			)
+	</insert>
+	
+	
+	
 	<!-- 연차신청서 resultMap 사용 -->
 	<resultMap id="holidayDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.HolidayVO" >
 		<!-- 연차신청서 -->
@@ -247,6 +367,40 @@
 		<result property="itemQuantity" column="ITEM_QUANTITY"/>
 		<result property="itemAmount" column="ITEM_AMOUNT"/>
 		<result property="paymentMethod" column="PAYMENT_METHOD"/>
+		<association property="atrzVO" resultMap="atrzMap"></association>
+	</resultMap>
+	
+	<!-- 급여명세서 resultMap -->
+	<resultMap id="salaryDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.SalaryVO">
+		<result property="salaryNo" column="SALARY_NO"/>
+		<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
+		<result property="baseSalary" column="BASE_SALARY"/>
+		<result property="mealAllowance" column="MEAL_ALLOWANCE"/>
+		<result property="incomeTax" column="INCOME_TAX"/>
+		<result property="localTax" column="LOCAL_TAX"/>
+		<result property="pension" column="PENSION"/>
+		<result property="employmentIns" column="EMPLOYMENT_INS"/>
+		<result property="healthIns" column="HEALTH_INS"/>
+		<result property="careIns" column="CARE_INS"/>
+		<association property="atrzVO" resultMap="atrzMap"></association>
+	</resultMap>
+	
+	<!-- 급여계좌변경신청서 resultMap -->
+	<resultMap id="bankAccountDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.BankAccountVO">
+		<result property="bankAccNo" column="BANK_ACC_NO"/>
+		<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
+		<result property="oldBank" column="OLD_BANK"/>
+		<result property="oldAccNo" column="OLD_ACC_NO"/>
+		<result property="newBank" column="NEW_BANK"/>
+		<result property="newAccNo" column="NEW_ACC_NO"/>
+		<result property="reason" column="REASON"/>
+		<association property="atrzVO" resultMap="atrzMap"></association>
+	</resultMap>
+	
+	<!-- 기안서 resultMap -->
+	<resultMap id="draftDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.DraftVO" >
+		<result property="draftNo" column="DRAFT_NO"/>
+		<result property="atrzDocNo" column="ATRZ_DOC_NO"/>
 		<association property="atrzVO" resultMap="atrzMap"></association>
 	</resultMap>
 	

@@ -7,8 +7,10 @@ import org.apache.ibatis.annotations.Param;
 
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
+import kr.or.ddit.sevenfs.vo.atrz.BankAccountVO;
 import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 import kr.or.ddit.sevenfs.vo.atrz.HolidayVO;
+import kr.or.ddit.sevenfs.vo.atrz.SalaryVO;
 import kr.or.ddit.sevenfs.vo.atrz.SpendingVO;
 
 @Mapper
@@ -23,14 +25,8 @@ public interface AtrzMapper {
 	//목록 출력
 	public List<AtrzVO> homeList(String emplNo);
 	
-	//기안문서 post
-	public int draftInsert(DraftVO draftVO);
-	
 	//기안문서 detail
 	public DraftVO draftDetail(String draftNo);
-	
-	//전자결재와 기안문서 조인하기 위한것
-	public AtrzVO atrzDetail(@Param("atrzDocNo") String atrzDocNo);
 	
 	//전자결재 테이블 등록
 	public int insertAtrz(AtrzVO atrzVO);
@@ -44,6 +40,13 @@ public interface AtrzMapper {
 	
 	//지출결의서 테이블 등록
 	public int insertSpending(SpendingVO spendingVO);
+	//급여명세서 등록
+	public int insertSalary(SalaryVO salaryVO);
+	//급여계좌변경신청서 테이블 등록
+	public int insertBankAccount(BankAccountVO bankAccountVO);
+	
+	//기안서 등록
+	public int insertDraft(DraftVO draftVO);
 	
 	
 	

@@ -25,6 +25,7 @@
 	padding: 5px;
 	border: 1px solid;
 	font-size: .9em;
+	font-weight: bold;
 }
 #s_eap_draft_info tr th,
 #s_eap_draft tr th,
@@ -233,12 +234,13 @@
 }
 
 .ui-state-highlight, .ui-widget-content .ui-state-highlight,
-	.ui-widget-header .ui-state-highlight {
+.ui-widget-header .ui-state-highlight {
 	border: 0px;
-	background: #f1f1f1;
+	background: #b0e0e6  ;
 	border-radius: 50%;
 	padding-top: 10px;
 	padding-bottom: 10px;
+	width: 30px;
 }
 
 .inp {
@@ -390,7 +392,7 @@ select.ui-datepicker-year {
 											</div>
 
 
-											<div style="float: left; width: 800px; margin-right: 5px;"
+											<div style="float: right;  margin-right: 10px;"
 												id=s_eap_draft_app>
 												
 												</div>
@@ -399,7 +401,7 @@ select.ui-datepicker-year {
 												<div
 													style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목
 													:</div>
-												<input type="text" class="form-control"
+												<input type="text" class="form-control" placeholder="제목을 입력해주세요"
 													style="display: inline-block; width: 90%; margin-left: 5px;"
 													id="s_ho_tt" name="atrzSj" required="required">
 											</div>
@@ -475,8 +477,8 @@ select.ui-datepicker-year {
 												</div>
 
 												<div style="padding: 10px 0;">
-													<div class="s_frm_title mb-2"> 내용</div>
-													<textarea class="form-control s_scroll"
+													<div class="s_frm_title mb-2">내용</div>
+													<textarea class="form-control s_scroll" placeholder="내용을 입력해주세요"
 														style="resize: none; height: 150px;" id="s_ho_co" name="atrzCn" 
 														required="required" rows="2" cols="20" wrap="hard"></textarea>
 												</div>
@@ -546,7 +548,7 @@ select.ui-datepicker-year {
 let isHalfSelected = false; // 반차 선택 여부 flag
 
 $('input[name="holiCode"]').on('change', function () {
-	const selected = $(this).val();-
+	const selected = $(this).val();
 
 	if (selected === 'B') {
 		isHalfSelected = true;
@@ -1015,6 +1017,7 @@ $(document).ready(function() {
 		//JSON Object
 		let data = {};
 		//II. 권한 정보(.selAuth)
+		authList = [];
 		$(".selAuth").each(function(idx,auth){
 			//전결여부 기본 N
 			let dcrbAuthorYn = "N";

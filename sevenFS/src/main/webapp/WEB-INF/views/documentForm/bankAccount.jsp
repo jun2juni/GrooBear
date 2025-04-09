@@ -236,11 +236,10 @@
 .ui-state-highlight, .ui-widget-content .ui-state-highlight,
 	.ui-widget-header .ui-state-highlight {
 	border: 0px;
-	background: #b0e0e6  ;
+	background: #f1f1f1;
 	border-radius: 50%;
 	padding-top: 10px;
 	padding-bottom: 10px;
-	width: 30px;
 }
 
 .inp {
@@ -272,21 +271,11 @@ select.ui-datepicker-year {
 	top: 9px !important;
 }
 /* 달력이전다음버튼 변경하는 클래스 */
-/* input, select에 여백 주기 */
-.s_default_tbody_cl td > .form-control,
-.s_default_tbody_cl th > .form-control,
-.s_default_tbody_cl td > .form-select {
-margin-bottom: 8px !important;
-}
+/* .ui-icon ui-icon-circle-triangle-e{ */
+	
+/* } */
 
-/* 셀 내부 여백 주기 */
-.s_default_tbody_cl td,
-.s_default_tbody_cl th {
-padding: 10px !important;
-}
-.s_sp_date {
-	text-align: center;
-}
+
 
 </style>
 <title>${title}</title>
@@ -294,7 +283,6 @@ padding: 10px !important;
 </head>
 <body>
 	<sec:authentication property="principal.empVO" var="empVO" />
-	<%-- <p> ${empVO.emplNm} ${empVO.emplNo}</p> --%>
 	<!-- <p>empVO: ${empVO}</p> -->
 	<%@ include file="../layout/sidebar.jsp"%>
 	<main class="main-wrapper">
@@ -343,7 +331,7 @@ padding: 10px !important;
 									
 									<div id="s_eap_content_box_left" class="s_scroll">
 										<div class="s_div_container s_scroll">
-											<div style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">지출결의서</div>
+											<div style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">급여통장변경 신청서</div>
 												<div style="float: left; width: 230px; margin: 0 30px;">
 													<table border="1" id="s_eap_draft_info" class="text-center">
 														<tr>
@@ -372,7 +360,7 @@ padding: 10px !important;
 													</table>
 												</div>
 
-											<div style="float: left; width: 130px; margin-left: 20px; margin-right: 20px;">
+											<div style="float: left; width: 130px; margin-right: 10px;">
 												<table border="1" id="s_eap_draft">
 													<tr>
 														<th rowspan="2">신청</th>
@@ -384,87 +372,74 @@ padding: 10px !important;
 												</table>
 											</div>
 
-											
-											<div style="float: right; margin-right: 10px;" id=s_eap_draft_app>
+
+											<div style="float: left; width: 800px; margin-right: 5px;" id=s_eap_draft_app>
 											</div>
 											<div id="s_eap_final">
 											<div>
-												<div style="padding: 50px 10px 20px; clear: both;">
-													<div
-														style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목
-														:</div>
-													<input type="text" class="form-control" value="" placeholder="제목을 입력해주세요"
-														style="display: inline-block; width: 90%; margin-left: 5px;"
-														id="s_sp_tt" name="atrzSj">
+												<div style="padding: 50px 10px 10px; clear: both;">
+													<div style="display: inline-block; font-size: 1.2em; font-weight: bold;"  >제목 : </div> 
+													<input type="text" class="form-control" style="display: inline-block; width: 100%; margin-left: 5px;" 
+													id="s_sp_tt" name="atrzSj" value="[${empVO.deptNm}_${empVO.emplNm}] &nbsp;&nbsp;급여계좌변경 신청서"/>
 												</div>
 
 												<div style="border: 1px solid lightgray; margin: 10px;"></div>
 												<div style="margin: 0 10px;">
 
-													<div style="padding: 10px 0;">
-														<div class="s_frm_title mb-2"><b>지출 내용</b></div>
-														<textarea class="form-control"
-															style="resize: none; height: 150px;" id="s_sp_co" name="atrzCn"
-															required="required" rows="2" cols="20" wrap="hard" placeholder="지출내용을 입력해주세요"></textarea>
-													</div>
-													<div style="padding: 10px 0;">
-														<div class="s_frm_title"><b>지출 내역</b></div>
-														<table class="table" style="text-align: center;">
-															<thead>
-																<tr>
-																	<th scope="col" style="width: 130px;">날짜</th>
-																	<th scope="col" style="width: 300px;">내역</th>
-																	<th scope="col" style="width: 70px;">수량</th>
-																	<th scope="col" style="width: 150px;">금액</th>
-																	<th scope="col" style="width: 130px;">결제수단</th>
-																</tr>
-															</thead>
-															<tbody id="s_default_tbody" class="s_default_tbody_cl">
-																<tr>
-																	<th scope="row">
-																		<input type="text" 
-																		class="form-control s_sp_date " id="s_sp_date" onkeyup="checkDateFormat(this)"
-																		name="expenseDate" placeholder="날짜 선택" 
-																		style="cursor: context-menu;"></th>
-																	<td><input type="text" placeholder="지출내역을 작성해주세요"
-																		class="form-control s_sp_detail" name="itemDescription"></td>
-																	<td><input type="text" id="sp_count"
-																		class="form-control s_sp_count" name="itemQuantity" 
-																		onblur="total()" placeholder="수량입력" onkeyup="commas(this)"
-																		></td>
-																		<!-- oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" -->
-																	<td><input type="text" placeholder="금액입력"
-																		class="form-control s_sp_amount" id="sp_amount"
-																		name="itemAmount" onkeyup="commas(this)"
-																		onblur="total()"></td>
-																	<td><select class="form-select s_select"
-																		aria-label="Default select example">
-																			<option value="C" >신용카드</option>
-																			<option value="A">가상계좌</option>
-																	</select></td>
-																</tr>
-
-															</tbody>
-															<tfoot>
-																<tr>
-																	<th colspan="3">합계</th>
-																	<td colspan="2">\ <span id="s_total_price"></span>
-																		(VAT포함)
-																	</td>
-																</tr>
-															</tfoot>
-														</table>
-														<button type="button" id="s_add_sp_detail" class="btn btn-success" onclick="addTr()">내역 추가</button>
-													</div>
-
-													<div style="padding: 10px 0;">
-														<div class="s_frm_title">파일첨부</div>
-														<!-- <input type="file" class="form-control"> -->
-														<div id="s_file_upload">
-															<input type="file" id="eap_file_path" name="uploadFile" />
+													<didv style="padding: 10px 0;">
+														<div class="row align-items-start" style="padding: 10px 0;">
+															<div class="col-auto">
+															</div>
 														</div>
-														<input type="hidden" name="fileUrl" id="fileUrl">
-													</div>
+														<div>
+															<div class="row mb-3">
+																<div class="col-md-3">
+																	<label class="form-label">이름</label>
+																	<input type="text" class="form-control" name="emplNm" id="emplNm" value="${empVO.emplNm}" readonly>
+																</div>
+																<div class="col-md-3">
+																	<label class="form-label">사번</label>
+																	<input type="text" class="form-control" name="emplNo" id="emplNo" value="${empVO.emplNo}" readonly>
+																</div>
+																<div class="col-md-3">
+																	<label class="form-label">기존 은행명</label>
+																	<input type="text" class="form-control" name="oldBank" id="oldBank" value="${empVO.bankNm}" readonly>
+																</div>
+																<div class="col-md-3">
+																	<label class="form-label">기존 계좌번호</label>
+																	<input type="text" class="form-control" name="oldAccNo" id="oldAccNo" value="${empVO.acnutno}" readonly>
+																</div>
+															</div>
+															<hr>
+															<div class="row mb-3">
+																<h6 class="">변경할 계좌 정보</h6>
+																<div class="col-md-6">
+																	<label class="form-label mb-2 mt-1">신규 은행명</label>
+																	<select class="form-select" name="newBank" id="newBank" required>
+																		<option value="">은행 선택</option>
+																		<option value="KB국민은행">KB국민은행</option>
+																		<option value="신한은행">신한은행</option>
+																		<option value="우리은행">우리은행</option>
+																		<option value="하나은행">하나은행</option>
+																		<option value="IBK기업은행">IBK기업은행</option>
+																		<option value="NH농협은행">NH농협은행</option>
+																		<option value="지역농협">지역농협</option>
+																		<option value="카카오뱅크">카카오뱅크</option>
+																		<option value="토스뱅크">토스뱅크</option>
+																		<option value="SC제일은행">SC제일은행</option>
+																		<option value="씨티은행">씨티은행</option>
+																	</select>
+																</div>
+																<div class="col-md-6">
+																	<label class="form-label">신규 계좌번호</label>
+																	<input type="text" class="form-control" name="newAccNo" id="newAccNo" placeholder="새로운 계좌번호를 입력해주세요" required>
+																</div>
+															</div>
+															<div class="mb-3">
+																<label class="form-label">변경 사유</label>
+																<textarea class="form-control" name="reason" id="reason" rows="3" required style="height: 145px;" placeholder="변경사유를 입력해주세요"></textarea>
+															</div>
+														</div>
 												</div>
 
 											</div>
@@ -515,109 +490,10 @@ padding: 10px !important;
 		<%@ include file="../layout/footer.jsp"%>
 	</main>
 	<%@ include file="../layout/prescript.jsp"%>
+	<!-- 제이쿼리사용시 여기다 인포트 -->
 
 
 <script>
-//내역추가
-function addTr() {
-	$(".s_default_tbody_cl").append(
-		'<tr>'
-			+ '<th scope="row"><input type="date" class="form-control s_sp_date" id="s_sp_date" name="sp_date"></th>'
-			+ '<td><input type="text" class="form-control s_sp_detail" name="sp_detail"></td>'
-			+ '<td><input type="number" id="sp_count" class="form-control s_sp_count" name="sp_count" onblur="total()"></td>'
-			+ '<td><input type="text" class="form-control s_sp_amount" id="sp_amount" name="sp_amount" onkeyup="commas(this)" onblur="total()"></td>'
-			+ '<td>'
-			+ '<select class="form-select s_select" aria-label="Default select example">'
-				+ '<option value="C">신용카드</option>'
-				+ '<option value="A">가상계좌</option>'
-			+ '</select>'
-			+ '</td>'
-		+ '</tr>'	
-	);
-}
-// 합계 구하기
-function total() {
-	var spCnt = 0;
-	var spAmount = 0;
-	var total = 0;
-	var sum = 0;
-	// const number;
-	for(var i = 0; i < $('.s_sp_count').length; i++) {
-		spCnt = $(".s_sp_count").eq(i).val();
-		spAmount = $(".s_sp_amount").eq(i).val();
-		
-		spAmount = spAmount.replace(/,/g, "");
-		total = Number(spCnt * spAmount);
-		
-		sum += total;
-	}
-	
-	$("#s_total_price").text(sum);
-	
-	var total1 = $("#s_total_price").text();
-	var total2 = total1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	$('#s_total_price').text(total2);
-};
-
-function commas(t) {
-
-// 콤마 빼고 
-var x = t.value;			
-x = x.replace(/,/gi, '');
-
-// 숫자 정규식 확인
-var regexp = /^[0-9]*$/;
-if(!regexp.test(x)){ 
-	$(t).val(""); 
-	swal({
-			title: "숫자만 입력 가능합니다.",
-			text: "",
-			icon: "error",
-			closeOnClickOutside: false,
-			closeOnEsc: false
-		});
-} else {
-	x = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");			
-	$(t).val(x);			
-}
-}
-
-//날짜 정규식 확인
-	function checkDateFormat(t) {
-	var x = t.value.trim();
-
-	// 날짜 정규식 (YYYY-MM-DD)
-	var regexp = /^[0-9\-]*$/;
-
-	if (!regexp.test(x)) {
-		$(t).val(""); // 잘못된 입력 제거
-
-		swal({
-		title: "숫자와 '-'만 입력 가능합니다.",
-		text: "날짜는 YYYY-MM-DD 형식으로 입력해주세요.",
-		icon: "error",
-		closeOnClickOutside: false,
-		closeOnEsc: false
-		});
-		return;
-	}
-
-	// 입력이 10자리 되었을 때 형식까지 검사
-	if (x.length === 10 && !/^\d{4}-\d{2}-\d{2}$/.test(x)) {
-		$(t).val("");
-
-		swal({
-		title: "날짜 형식 오류",
-		text: "날짜는 YYYY-MM-DD 형식으로 입력해주세요.",
-		icon: "error",
-		closeOnClickOutside: false,
-		closeOnEsc: false
-		});
-	}
-	}
-
-
-
 //JSON Object List
 let authList = [];
 $(document).ready(function() {
@@ -632,9 +508,9 @@ $(document).ready(function() {
 		var sp_pay_code = "";
 		
 		// 제목, 내용이 비어있을 때
-		if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
+		if($('#s_sp_tt').val() == "" || $('#reason').val() == "") {
 			swal({
-					title: "제목 또는 내용이 비어있습니다.",
+					title: "제목 또는 변경사유가 비어있습니다.",
 					text: "다시 확인해주세요.",
 					icon: "error",
 					closeOnClickOutside: false,
@@ -642,36 +518,6 @@ $(document).ready(function() {
 				});
 			return;
 		}
-		
-		// 지출 내역이 비어있을 때
-		if($('.s_sp_date').val() == "" || $('.s_sp_detail').val() == "" || $('.s_sp_count').val() == "" || $('.s_sp_amount').val() == "") {
-			swal({
-					title: "지출 내역을 다시 확인하여 입력해주세요.",
-					text: "",
-					icon: "error",
-					closeOnClickOutside: false,
-					closeOnEsc: false
-				});
-			return;
-		}
-		
-		// 지출 날짜가 'YYYY-MM-DD'형태로 입력이 되지 않았을 때
-		if($('.s_sp_date').val().length != 10) {
-			swal({
-					title: "날짜를 'YYYY-MM-DD'형태로 입력해주세요.",
-					text: "",
-					icon: "error",
-					closeOnClickOutside: false,
-					closeOnEsc: false
-				});
-			return;
-		}
-		
-		var eap_content = $('#s_sp_co').val();
-
-		
-		// textarea에 \r \n같은 문자를 <br>로 바꿔주기
-		eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
 		
 		
 		//보고 가져온것 끝
@@ -687,8 +533,8 @@ $(document).ready(function() {
 			let atrzLine = {
 				atrzLnSn: auth.atrzLnSn ,
 				sanctnerEmpno: auth.emplNo,
-				atrzTy: auth.flex,
-				dcrbAuthorYn: auth.auth
+			    atrzTy: auth.flex,
+			    dcrbAuthorYn: auth.auth
 			}
 			atrzLineList.push(atrzLine);			
 		}
@@ -704,22 +550,23 @@ $(document).ready(function() {
 		formData.append("deptCode","${empVO.deptCode}");
 		formData.append("deptCodeNm","${empVO.deptNm}");
 
-		formData.append("docFormNm","S");
-		formData.append("docFormNo",2);
-		formData.append("atrzSj",jnForm.atrzSj.value);
-		formData.append("atrzCn",jnForm.atrzCn.value);
-		formData.append("expenseDate", $('.s_sp_date').val());
-		formData.append("itemDescription", $('.s_sp_detail').val());
-		formData.append("itemQuantity", $('.s_sp_count').val());
-		formData.append("itemAmount", $('.s_sp_amount').val());
-		formData.append("paymentMethod", $('.s_select').val());
-		// formData.append("eap_title", $('#s_sp_tt').val());
-		// formData.append("eap_content", $('#eap_content').val());
+		formData.append("docFormNm","B");
+		formData.append("docFormNo",7);
+		formData.append("atrzSj",jnForm.s_sp_tt.value);
+		formData.append("atrzCn",jnForm.reason.value);
+		// formData.append("bankAccNo", $('#s_sp_date').val());
+		// formData.append("atrzDocNo", $('#oldBank').val());
+
+		formData.append("oldBank", $('#oldBank').val());
+		formData.append("oldAccNo", $('#oldAccNo').val());
+		formData.append("newBank", $('#newBank').val());
+		formData.append("newAccNo", $('#newAccNo').val());
+		formData.append("reason", $('#reason').val());
 		
-		if(jnForm.uploadFile.files.length){
-			for(let i=0; i< jnForm.uploadFile.files.length; i++)
-			formData.append("uploadFile",jnForm.uploadFile.files[i]);
-		}
+		// if(jnForm.uploadFile.files.length){
+		// 	for(let i=0; i< jnForm.uploadFile.files.length; i++)
+		// 	formData.append("uploadFile",jnForm.uploadFile.files[i]);
+		// }
 
 
 		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
@@ -735,7 +582,7 @@ $(document).ready(function() {
         }
 
 		$.ajax({
-			url:"/atrz/atrzSpendingInsert",
+			url:"/atrz/atrzBankAccountInsert",
 			processData:false,
 			contentType:false,
 			type:"post",
@@ -947,8 +794,7 @@ $(document).ready(function() {
 		
 		//JSON Object
 		let data = {};
-		//여기서 배열을 초기화준다면 결재선을 다시 들어가게 한다.
-		//결재선이 중복으로 들어가게 안되도록 만들어준다.
+		//새로운 배열 리스트 만들어주기
 		authList = [];
 		//II. 권한 정보(.selAuth)
 		$(".selAuth").each(function(idx,auth){
@@ -1121,6 +967,11 @@ $(document).ready(function() {
 			}, 0);
 		}
 	});
+
+
+
+
+
 });
 </script>
 	<!-- 주니가 입력한 스크립트 끝 -->

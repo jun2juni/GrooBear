@@ -190,7 +190,7 @@
 										<!-- <p>atrzCompletedList : ${atrzCompletedList}</p> -->
 										
 										<input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
-										<c:forEach var="atrzVO" items="${atrzApprovalList}">
+										<c:forEach var="atrzVO" items="${atrzApprovalList}" begin="0" end="9">
 											<div class="col-sm-3">
 												<div class="card" >
 													<div class="card-header" style="height: 36px;">
@@ -254,7 +254,7 @@
 									<div class="card-style mb-30 docList">
 										<div style="display: flex; justify-content: space-between; align-items: center;" class="mb-10">
 											<h6 class="mb-10">기안진행문서</h6>
-											<a href="#" class="text-sm fw-bolder" style="color: #4a6cf7;">
+											<a href="/atrz/approval" class="text-sm fw-bolder" style="color: #4a6cf7;">
 												더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
 											</a>
 										</div>
@@ -263,10 +263,12 @@
 											<table class="table striped-table">
 												<thead>
 													<!-- <p>${atrzSubmitList}</p> -->
-													<!-- <p>${atrzVOList}</p> -->
 													<tr>
 														<th>
 															<h6 class="fw-bolder" style="text-align: center;">기안일시</h6>
+														</th>
+														<th>
+															<h6 class="fw-bolder" style="text-align: center;">양식유형</h6>
 														</th>
 														<th>
 															<h6 class="fw-bolder" style="padding-left: 120px;">제목</h6>
@@ -291,6 +293,19 @@
 																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
 																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
 																	<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
+															</td>
+															<td style="padding-top: 0px;">
+																<p class="fw-bolder" style="text-align: center;">
+																	<c:choose>
+																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'H')}">연차신청서</c:when>
+																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'S')}">지출결의서</c:when>
+																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'B')}">급여계좌변경신청서</c:when>
+																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'A')}">급여명세서</c:when>
+																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'D')}">기안서</c:when>
+																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'C')}">재직증명서</c:when>
+																		<c:otherwise>퇴사신청서</c:otherwise>
+																	</c:choose>
+																</p>
 															</td>
 															<td style="text-align: left; padding-top: 0px;">
 																<a href="#" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
@@ -364,7 +379,7 @@
 									<div class="card-style mb-30 docList">
 										<div style="display: flex; justify-content: space-between; align-items: center;" class="mb-10">
 										<h6 class="mb-10">완료문서</h6>
-										<a href="#" class="text-sm fw-bolder" style="color: #4a6cf7;">
+										<a href="/atrz/document" class="text-sm fw-bolder" style="color: #4a6cf7;">
 											더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
 										</a>
 										</div>

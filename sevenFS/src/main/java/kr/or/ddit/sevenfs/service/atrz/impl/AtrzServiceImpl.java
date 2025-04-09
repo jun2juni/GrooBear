@@ -9,7 +9,9 @@ import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
+import kr.or.ddit.sevenfs.vo.atrz.BankAccountVO;
 import kr.or.ddit.sevenfs.vo.atrz.HolidayVO;
+import kr.or.ddit.sevenfs.vo.atrz.SalaryVO;
 import kr.or.ddit.sevenfs.vo.atrz.SpendingVO;
 import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 @Service
@@ -39,23 +41,12 @@ public class AtrzServiceImpl implements AtrzService {
 		return this.atrzMapper.homeList(emplNo);
 	}
 	
-	//문서양식 post
-	@Override
-	public int draftInsert(DraftVO draftVO) {
-		return this.atrzMapper.draftInsert(draftVO);
-	}
-	
 	//기안서 상세
 	@Override
 	public DraftVO draftDetail(String draftNo) {
 		return this.atrzMapper.draftDetail(draftNo);
 	}
 	
-	//전자결재와 기안문서 조인을 위한것
-	@Override
-	public AtrzVO atrzDetail(String atrzDocNo) {
-		return this.atrzMapper.atrzDetail(atrzDocNo);
-	}
 	
 	//전자결재테이블 등록
 	@Override
@@ -79,12 +70,27 @@ public class AtrzServiceImpl implements AtrzService {
 		return this.atrzMapper.holidayDetail(holiActplnNo);
 	}
 	
-	//지출결의서등록
+	//지출결의서 등록
 	@Override
 	public int insertSpending(SpendingVO spendingVO) {
 		return this.atrzMapper.insertSpending(spendingVO);
 	}
+	//급여명세서 등록
+	@Override
+	public int insertSalary(SalaryVO salaryVO) {
+		return this.atrzMapper.insertSalary(salaryVO);
+	}
+	//급여계좌변경신청서 등록
+	@Override
+	public int insertBankAccount(BankAccountVO bankAccountVO) {
+		return this.atrzMapper.insertBankAccount(bankAccountVO);
+	}
 	
+	//기안서 등록 
+	@Override
+	public int insertDraft(DraftVO draftVO) {
+		return this.atrzMapper.insertDraft(draftVO);
+	}
 	
 	
 	

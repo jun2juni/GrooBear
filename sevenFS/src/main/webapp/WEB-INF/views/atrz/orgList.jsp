@@ -44,7 +44,7 @@
             if(data.node.original.deptYn == false) {
                 // 여기는 사원 클릭 한 경우 작동
                 if (typeof clickEmp === "function") {
-                    clickEmp(data);
+                    clickEmp("사원클릭 :" ,data);
                 }
             }
             
@@ -52,7 +52,7 @@
             if(data.node.original.deptYn == true){
                 // 여기는 부서 클릭 한경우 사용
                 if (typeof clickDept === "function") {
-                    clickDept(data);
+                    clickDept("부서클릭 :" ,data);
                 }
             }
         } // end function
@@ -65,7 +65,8 @@
         })
             .then(resp => resp.json())
             .then(res => {
-                console.log("부서! : ", res.deptList);
+                //조직도확인
+                // console.log("부서! : ", res.deptList);
                 const dep = res.deptList;
                 const emp = res.empList;
                 
@@ -106,15 +107,28 @@
         };
         
         $('#jstree').on("changed.jstree", function (e, data) {
-            console.log(data.selected);
+            console.log("클릭한사원(부서) : ",data.selected);
         });
         
         // node 열렸을때
         $('#jstree').on("open_node.jstree", function (e, data) {
-            console.log("노드open", data.node);
+            // console.log("노드open", data.node);
         });
         
         $('#jstree').on("select_node.jstree", deptClick);
+
+        //검색했을때 사원으로 포커스 변경
+        $('#jstree').on('search.jstree', function (e, data) {
+        setTimeout(() => {
+            const matchedEls = document.querySelectorAll('#jstree .jstree-search');
+            if (matchedEls.length > 0) {
+                matchedEls[0].scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }, 300); // DOM 렌더링 후 실행되도록 약간의 delay 추가
+    });
+
+
+
     })
     
     // 검색기능
@@ -143,27 +157,4 @@
         }
     }
     
-    // 부서등록 - 관리자만 가능
-    function deptInsert(){
-        fetch("/depInsert", {
-            method : "get",
-            headers : {
-                "Content-Type": "application/json"
-            }
-        })
-            .then(resp => resp.text())
-            .then(res => {
-                console.log("부서등록 : " , res);
-                $("#emplDetail").html(res);
-                
-                $("#insertBtn").on("click", function(){
-                    swal("등록되었습니다.")
-                        .then((value)=>{
-                            $("#depInsertForm").submit();
-                        });
-                });
-                
-            })
-    }
-
 </script>
