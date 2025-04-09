@@ -293,6 +293,22 @@
 		}
 	}
 
+	function bbsDelete(bbsSn) {
+	    if (confirm("정말 삭제하시겠습니까?")) {
+	        $.ajax({
+	            url: "/bbs/bbsDelete",
+	            type: "POST",
+	            data: { bbsSn: bbsSn },
+	            success: function (res) {
+	                alert("삭제되었습니다.");
+	                window.location.href = "/bbs/bbsList?bbsCtgryNo=" + bbsCtgryNo;
+	            },
+	            error: function (xhr) {
+	                alert("삭제 실패: " + xhr.responseText);
+	            }
+	        });
+	    }
+	}
 
 
 
