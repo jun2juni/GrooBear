@@ -224,6 +224,7 @@
         <%--근태현황 사이드 바 --%>
         
         <%--조직도 사이드 바 --%>
+        <sec:authorize access="hasRole('ROLE_MEMBER')">
         <li class="nav-item ${fn:contains(currentURL, '/organization/organizationList') ? 'active' : ''}">
         	${pageContext.request.contextPath}
           <a href="/orglist">
@@ -231,10 +232,12 @@
             <span class="text">조직도</span>
           </a>
         </li>
+        </sec:authorize>
         <%--조직도 사이드 바 --%>
         
          <%-- 관리자일 경우에만 보임  --%>
         <%--조직관리 사이드 바 --%>
+        <sec:authorize access="hasRole('ROLE_ADMIN')">
         <li class="nav-item ${fn:contains(currentURL, '/organization/orglistAdmin') ? 'active' : ''}">
         	${pageContext.request.contextPath}
           <a href="/orglistAdmin">
@@ -242,6 +245,7 @@
             <span class="text">조직관리</span>
           </a>
         </li>
+        </sec:authorize>
         <%--조직관리 사이드 바 --%>
 
     </ul>

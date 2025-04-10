@@ -119,7 +119,7 @@
 							<option value="@nate.com">@nate.com</option>
 					 </select>
 		            </div>
-		            <input type="text" id="email" name="email">
+		            <input type="hidden" id="email" name="email">
 		          </div> 
 		          <div class="col-12" style="display: flex;">
 	          		<div class="input-style-1 form-group col-2" style="margin-left:15%;">
@@ -191,7 +191,8 @@
 	            </form>
             	<div class="invalid-feedback"></div>
 			    <div class="content text-center">
-			    <button type="submit" id="emplInsertBtn" class="main-btn primary-btn-light square-btn btn-hover btn-sm">확인</button>
+			    <button type="submit" id="emplInsertBtn" class="main-btn primary-btn-light square-btn btn-hover btn-sm mr-5">확인</button>
+			     <a href="/orglistAdmin" class="main-btn dark-btn-light square-btn btn-hover btn-sm">등록취소</a>
 		    	</div>
 		    	</div>
             </div>

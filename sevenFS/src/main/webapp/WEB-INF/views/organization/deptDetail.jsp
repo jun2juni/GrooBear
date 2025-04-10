@@ -8,7 +8,7 @@
 	   <div class="chat-about-profile">
 	     <div class="content text-center" style="margin-bottom: 70px;">
 	       <h5 class="text-bold mb-10"></h5>
-	       <span class="btn-sm main-btn active-btn-light rounded-full btn-hover">${deptDetail.cmmnCodeGroup}</span>
+	       <span class="status-btn success-btn">${deptDetail.cmmnCodeGroup}</span>
 	     </div>
 	   </div>
 	   <div class="activity-meta text-start" style="margin-top: 20px;">
@@ -27,7 +27,7 @@
 	     <!-- 관리자면 전부 다 보이게,  -->
 	     <sec:authorize access="hasRole('ROLE_ADMIN')">
 	     <div class="content text-center">
-		     <a href="/depUpdate?cmmnCode=${deptDetail.cmmnCode}" class="main-btn success-btn-light square-btn btn-hover btn-sm">수정</a>
+		     <a href="/depUpdate?cmmnCode=${deptDetail.cmmnCode}" class="main-btn primary-btn-light square-btn btn-hover btn-sm">수정</a>
 		     <button id="deptDeleteBtn" type="button" class="main-btn danger-btn-light square-btn btn-hover btn-sm">삭제</button>
 	     </div>
 		</sec:authorize>

@@ -41,6 +41,8 @@ public class EmployeeVO implements UserDetails {
 	private String bankNm;
 	private String adres;
 	private String acnutno; // 계좌번호
+	
+	private String upperCmmnCode; // 상위부서코드
 
 	private String deptNm; // 부서명
 	private String posNm;  // 직급명

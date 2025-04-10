@@ -44,31 +44,27 @@
 				   </div>
 				   
 				  <sec:authorize access="hasRole('ROLE_ADMIN')">
+				  <c:set var="emp" value="${emplDetail.emplDet}"></c:set>
 				  <div class="input-style-1 form-group col-12" style="display: flex;">
 				  	<div class="input-style-1 form-group col-2" style="margin-left: 15%">
 			         	 <label for="clsfCode" class="form-label required">직급<span class="text-danger">*</span></label>
 			     	     <select id="duration" class="form-select w-auto" name="clsfCode">
 							<c:forEach var="posList" items="${emplDetail.posList}">
-								<option value="${posList.cmmnCode}">${posList.cmmnCodeNm}</option>
+								<option value="${posList.cmmnCode}"
+								${emp.clsfCode == posList.cmmnCode ? 'selected' : '' }>
+								${posList.cmmnCodeNm}</option>
 							</c:forEach>
 						 </select>
 				 	 </div>
-				  	<%-- <div class="input-style-1 form-group col-6">
-		         	 <label for="deptCode" class="form-label required">부서<span class="text-danger">*</span></label>
-		     	     <select id="duration" class="form-select w-auto" name="deptCode">
-						<c:forEach var="depList" items="${emplDetail.depList}">
-							<option value="${depList.cmmnCode}">${depList.cmmnCodeNm}</option>
-						</c:forEach>
-					 </select>
-				  	</div> --%>
-				  	
 				  	<div class="input-style-1 form-group col-2">
 		         	 <label for=upperDept class="form-label required">소속부서<span class="text-danger">*</span></label>
-		     	     <select id="upperDept" class="form-select w-auto" required="required">
+		     	      <select id="upperDept" class="form-select w-auto" required="required">
 						<c:forEach var="upperDepList" items="${emplDetail.upperDepList}">
-							<option value="${upperDepList.cmmnCode}">${upperDepList.cmmnCodeNm}</option>
-						</c:forEach>
-					 </select>
+							<option value="${upperDepList.cmmnCode}"
+							${emp.upperCmmnCode == upperDepList.cmmnCode ? 'selected' : ''}>
+							${upperDepList.cmmnCodeNm}</option>
+						 </c:forEach>
+					  </select>
 				  	</div>
 				  	<%-- 부서 선택하면 소속팀 출력 --%>
 					<div>
@@ -79,8 +75,6 @@
 					    
 					    </div>
 					</div>				  	
-				  	
-				  	
 				  </div>
 				  </sec:authorize>
 				   <c:set var="emp" value="${emplDetail.emplDet}"></c:set>
@@ -98,11 +92,11 @@
 				   </sec:authorize>
 				   <div class="activity-meta text-start" style="margin-top: 20px;">
 			 			<input type="hidden" name="emplNo" value="${emp.emplNo}">
-			   	          <div class="input-style-1 form-group col-8" style="margin-left:15%;">
+			   	          <!-- <div class="input-style-1 form-group col-8" style="margin-left:15%;">
 				            <label for="password" class="form-label required">비밀번호-수정필요<span class="text-danger">*</span></label>				            
-				            <input type="text" name="password" class="form-control" value="${emp.password}">
 				           <div class="invalid-feedback"></div>
-			   	          </div>
+			   	          </div>  -->
+				            <input type="hidden" name="password" class="form-control" value="${emp.password}">
 	   	            	<sec:authorize access="hasRole('ROLE_ADMIN')">
 		   	            <div class="col-12" style="display: flex;">
 			   	          <div class="input-style-1 form-group" style="margin-left:15%;">
@@ -110,24 +104,21 @@
 				            <input type="text" name="emplNm" class="form-control" id="emplNm" value="${emp.emplNm}" required>
 				            <div class="invalid-feedback">이름을 작성하세요.</div>
 				          </div>
-						  <div class="form-group" style="margin-left:15%;">
+						<div class="form-group" style="margin-left:15%;">
 						    <label for="genderCode" class="form-label" style="font-size: 14px; font-weight: 500; color: #1A2142;">
 						        성별
 						    </label>
-						    <div class="form-check checkbox-style checkbox-warning">
-						        <input class="form-check-input" type="radio" value="01" name="genderCode" id="radio-female">
-						        <label class="form-check-label" for="radio-female">여성</label>
-						    </div>
-						    <div class="form-check checkbox-style checkbox-warning mb-20">
-						        <input class="form-check-input" type="radio" value="00" name="genderCode" id="radio-male">
-						        <label class="form-check-label" for="radio-male">남성</label>
-						    </div>
+						    <select class="form-select" name="genderCode" id="genderCode" style="width: 200px;">
+						        <option value="00" ${emp.genderCode == '00' ? 'selected' : ''}>남성</option>
+						        <option value="01" ${emp.genderCode == '01' ? 'selected' : ''}>여성</option>
+						    </select>
 						</div>
+						
 		   	            </div>
 		   	            
 			           </sec:authorize>
 		   	        	
-			            <div class="input-style-1 form-group col-8" style="margin-left:15%;">
+			            <div class="input-style-1 form-group col-4" style="margin-left:15%;">
 				            <label for="email" class="form-label required">이메일 <span class="text-danger">*</span></label>
 				            <input type="text" name="email" class="form-control" id="email" value="${emp.email}" required>
 				            <div class="invalid-feedback"></div>
@@ -206,7 +197,13 @@
 				            <div class="invalid-feedback"></div>
 				          </div>
 				     <div class="content text-center">
-				     <button type="button" id="emplUpdateBtn" class="main-btn success-btn-light square-btn btn-hover btn-sm">확인</button>
+				     <button type="button" id="emplUpdateBtn" class="main-btn primary-btn-light square-btn btn-hover btn-sm mr-5">확인</button>
+				     <sec:authorize access="hasRole('ROLE_ADMIN')">
+				    	 <a href="/orglistAdmin" class="main-btn dark-btn-light square-btn btn-hover btn-sm">수정취소</a>
+				     </sec:authorize>
+				     <sec:authorize access="hasRole('ROLE_MEMBER')">
+				    	 <a href="/orglist" class="main-btn dark-btn-light square-btn btn-hover btn-sm">수정취소</a>
+				     </sec:authorize>
 				     </div>
 				   </div>
 				</div>   
@@ -247,14 +244,14 @@ $("#upperDept").on("change", function(){
 		 // 여기서 $("#lowerDepartment") 내부 비우기
 		  $("#lowerDepartment").html("");
 		 res.map((lowerDep, idx) => {
-				//console.log("lowerDep : " , lowerDep.cmmnCodeNm);
+				console.log("lowerDep : " , lowerDep.cmmnCodeNm);
 				const id = idx;
 				//console.log("id" , id);
 					
 				 $("#lowerDepartment").append(
 					`
 					 <div>
-					 <input type="radio" value="\${lowerDep.cmmnCode}" id="\${id}" name="deptCode">
+					 <input type="radio" value="\${lowerDep.cmmnCode}" id="\${id}" name="deptCode" >
 		      		 <label for="\${id}">\${lowerDep.cmmnCodeNm}</label>
 					</div>
 					`

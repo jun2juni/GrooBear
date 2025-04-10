@@ -111,6 +111,7 @@ public class OrganizationController {
 		deptData.put("deptDetail", deptDetail);
 		deptData.put("upperDepList", upperDepList);
 		
+		
 		model.addAttribute("deptData", deptData);
 
 		return "organization/depUpdate";
@@ -152,6 +153,8 @@ public class OrganizationController {
 	public List<CommonCodeVO> getLowerdeptList(@RequestParam String upperCmmnCode) {
 		
 		List<CommonCodeVO> lowerDep = organizationService.lowerDepList(upperCmmnCode);
+		
+		
 		
 		// 하위부서 리스트 반환
 		return lowerDep;

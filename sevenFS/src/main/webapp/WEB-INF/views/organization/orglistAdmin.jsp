@@ -118,25 +118,40 @@ function clickEmp(data) {
        
    
 	// 삭제 클릭한 경우
-	 $(function(){
+	  $(function(){
 	     $("#emplDeleteBtn").on("click", function(){
-        swal({
-            text: "정말 삭제하시겠습니까?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Select Patient?",
-            cancelButtonText: "Speed Case?"
-            })
+	    	 swal({
+                 title: "정말 삭제하시겠습니까?",
+                 icon: "warning",
+                 buttons: {
+                 	cancle : {
+                 		text : '삭제 취소',
+                 		value : false
+                 	},
+                 	confirm : {
+                 		text : '확인',
+                 		value : true
+                 	}
+                 },
+                 dangerMode: true
+               })
             .then((willDelete) => {
               if (willDelete) {
-                swal("식제되었습니다.", {
+                swal("삭제되었습니다.", {
                   icon: "success",
-                })
+                  buttons: {
+	           		    confirm: {
+	           		      text: "확인",
+	           		      value: true
+	           		    }
+           		    }
+                 })
                 .then((res)=>{
                     location.href = "/emplDelete?emplNo=" + data.node.id;
                   })
               } else {
-                swal("취소되었습니다.");
+                swal("취소되었습니다.")
+                ;
               }
             });
 	     })
@@ -166,7 +181,7 @@ function clickDept(data) {
               buttons : {
             	  cancle : {
             		  text : '삭제 취소',
-            		  value : false,
+            		  value : false
             	  },
             	  confirm : {
             		  text : '확인',
@@ -186,14 +201,23 @@ function clickDept(data) {
                 .then(res => {
                   //console.log("삭제성공? : " , res);
                 })
-              swal("식제되었습니다.", {
+              swal("삭제되었습니다.", {
                 icon: "success",
               })
                 .then((res)=>{
                   location.href = "/orglistAdmin";
                 })
             } else {
-              swal("취소되었습니다.");
+            	swal({
+             		  title: "취소되었습니다.",
+             		  icon: "info",
+             		  buttons: {
+             		    confirm: {
+             		      text: "확인",
+             		      value: true
+             		    }
+             		  }
+             		});
             }
           });
       }); // end function

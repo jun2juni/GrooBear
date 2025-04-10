@@ -85,6 +85,7 @@
             	swal({
                     title: "정말 삭제하시겠습니까?",
                     icon: "warning",
+                    confirmButtonColor : '#d33',
                     buttons: {
                     	cancle : {
                     		text : '삭제 취소',
@@ -109,7 +110,7 @@
                     .then(res => {
                       console.log("삭제성공? : " , res);
                     })
-                  swal("식제되었습니다.", {
+                  swal("삭제되었습니다.", {
                     icon: "success"
                   })
                     .then((res)=>{

@@ -60,7 +60,7 @@
 	
 	<!-- 사원 상세보기 -->
 	<select id="emplDetail" parameterType="String" resultMap="employeeMap">
-		SELECT e.EMPL_NO, PASSWORD, ENABLED, EMPL_NM, BRTHDY, TELNO, ACNUTNO, BANK_NM, EMAIL, POST_NO,
+      SELECT e.EMPL_NO, PASSWORD, ENABLED, EMPL_NM, BRTHDY, TELNO, ACNUTNO, BANK_NM, EMAIL, POST_NO,
 			   ADRES,  DETAIL_ADRES,  ECNY_DATE,  RETIRE_DATE,  ATCH_FILE_NO,  ELCTRN_SIGN_IMAGE_URL,
 			   PROFL_PHOTO_URL,
 			   DEPT_CODE,
@@ -69,9 +69,11 @@
 			   EMPL_STTUS_CODE,
 			   ANSLRY,
 			   PARTCLR_MATTER, CONTD_EMPNO,
-			   AUTHORITY
+			   AUTHORITY,
+               cc.upper_cmmn_code
 		FROM EMPLOYEE e
 		LEFT JOIN AUTH a on(e.empl_no = a.empl_no)
+        LEFT JOIN common_code cc on(cc.cmmn_code = e.dept_code)
 		WHERE e.EMPL_NO = #{emplNo}
 		  AND ENABLED = '1'
 	</select>
@@ -139,6 +141,7 @@
 		<result property="anslry" column="ANSLRY"/>
 		<result property="partclrMatter" column="PARTCLR_MATTER"/>
 		<result property="contdEmpno" column="CONTD_EMPNO"/>
+		<result property="upperCmmnCode" column="UPPER_CMMN_CODE"/>
 
 		<collection property="empAuthVOList" resultMap="loginAuthMap"/>
 	</resultMap>
