@@ -3,17 +3,23 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
-<c:set var="title" scope="application" value="메인" />
+<c:set var="title" scope="application" value="게시판리스트" />
+<c:set var="copyLight" scope="application" value="by 박현준" />
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8" />
+	
  	<meta name="viewport"
 		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	
 	<title>게시판</title>
+	
   <%@ include file="../layout/prestyle.jsp" %>
 <style>
 .file-table {
@@ -54,6 +60,7 @@ table.table-hover.align-middle.text-center tbody tr td {
 </style>
 </head>
 <body>
+
 <%@ include file="../layout/sidebar.jsp" %>
 <main class="main-wrapper">
   <%@ include file="../layout/header.jsp" %>
@@ -62,7 +69,6 @@ table.table-hover.align-middle.text-center tbody tr td {
         <div class="card-style mb-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="text-dark">게시판</h3>
-            <!-- 움직이는 태두리 없이 hover 효과만 적용 -->
             <a href="/bbs/bbsInsert?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-primary">게시글 추가</a>
           </div>
           <!-- (나머지 게시판 및 테이블 내용) -->
