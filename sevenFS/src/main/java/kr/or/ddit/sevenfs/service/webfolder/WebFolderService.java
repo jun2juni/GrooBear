@@ -2,6 +2,7 @@ package kr.or.ddit.sevenfs.service.webfolder;
 
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderFileVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public interface WebFolderService {
     public List<WebFolderVO> getFolderList(String upperFolderNo);
 
     // 파일 업로드
+    public int insertFiles(MultipartFile[] uploadFile, WebFolderVO webFolderVO, String emplNo);
 
     // 폴더 추가
     public int inertFolder(WebFolderVO webFolderVO);

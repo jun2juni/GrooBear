@@ -29,4 +29,7 @@ public interface AttachFileService {
     // 단일 파일 추가
     public AttachFileVO insertFile(String dir, MultipartFile[] files);
 
+    // 단일 파일 추가
+    public AttachFileVO insertFile(String dir, MultipartFile file);
+
 }

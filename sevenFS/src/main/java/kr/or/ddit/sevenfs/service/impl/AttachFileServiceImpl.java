@@ -89,4 +89,18 @@ public class AttachFileServiceImpl implements AttachFileService {
 
         return null;
     }
+
+    @Override
+    public AttachFileVO insertFile(String dir, MultipartFile file) {
+        long atchFileNo = getAttachFileNo();
+        MultipartFile[] files = new MultipartFile[]{file};
+        List<AttachFileVO> attachFileVOList = attachFile.fileRealSave(dir, files, atchFileNo, 1);
+
+        if (!attachFileVOList.isEmpty()) {
+            attachFileMapper.insertFileList(attachFileVOList);
+            return attachFileVOList.getFirst();
+        }
+
+        return null;
+    }
 }

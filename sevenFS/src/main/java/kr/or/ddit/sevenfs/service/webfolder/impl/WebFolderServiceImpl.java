@@ -4,19 +4,27 @@ import kr.or.ddit.sevenfs.mapper.webfolder.WebFolderMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.webfolder.WebFolderService;
 import kr.or.ddit.sevenfs.utils.AttachFile;
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderFileVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class WebFolderServiceImpl implements WebFolderService {
     @Autowired
     private WebFolderMapper webFolderMapper;
     @Autowired
     private AttachFile attachFile;
+    @Autowired
+    private AttachFileService attachFileService;
+
 
     @Override
     public WebFolderVO getFolder(int folderNo) {
@@ -34,8 +42,35 @@ public class WebFolderServiceImpl implements WebFolderService {
     }
 
     @Override
+    public int insertFiles(MultipartFile[] uploadFile, WebFolderVO webFolderVO, String emplNo) {
+        // 파일 업로드
+        List<WebFolderFileVO> webFolderFileVOList = new ArrayList<>();
+        for (MultipartFile file : uploadFile) {
+            AttachFileVO attachFileVO = attachFileService.insertFile(webFolderVO.getFolderPath(), file);
+            if (attachFileVO != null) {
+                log.debug("attachFileVO {}", attachFileVO);
+                WebFolderFileVO webFolderFileVO = new WebFolderFileVO();
+                webFolderFileVO.setFolderNo(webFolderVO.getFolderNo());
+                webFolderFileVO.setAtchFileNo(attachFileVO.getAtchFileNo());
+                webFolderFileVO.setFileUploadEmpno(emplNo);
+                webFolderFileVOList.add(webFolderFileVO);
+            }
+        }
+
+
+        log.debug("webFolderFileVOList {}", webFolderFileVOList);
+        int result = webFolderMapper.insertFiles(webFolderFileVOList);
+
+
+
+        // 해당 정보 가지고
+        return result;
+    }
+
+    @Override
     public int inertFolder(WebFolderVO webFolderVO) {
         WebFolderVO upperFolder = getFolder(webFolderVO.getUpperFolderNo());
+        // ROOT 폴더인 경우 / 안들어가게하기
         webFolderVO.setFolderPath(upperFolder.getFolderPath() + "/" + webFolderVO.getFolderNm());
         // 임시 폴더 타입
         webFolderVO.setFolderTy("0");

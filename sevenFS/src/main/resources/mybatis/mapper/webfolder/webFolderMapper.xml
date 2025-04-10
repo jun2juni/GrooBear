@@ -10,6 +10,18 @@
         </selectKey>
     </insert>
 
+    <insert id="insertFiles" parameterType="list">
+        INSERT ALL
+            <foreach collection="webFolderFileVOList" item="webFolderFile">
+                INTO FOLDER_FILE (FOLDER_NO, ATCH_FILE_NO, FILE_DWLD_CO, FILE_UPLOAD_EMPNO)
+                VALUES (#{webFolderFile.folderNo},
+                        #{webFolderFile.atchFileNo},
+                        0,
+                        #{webFolderFile.fileUploadEmpno})
+            </foreach>
+        SELECT 1 FROM DUAL
+    </insert>
+
     <select id="getFolder" resultType="kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO">
         SELECT FOLDER_NO,
                UPPER_FOLDER_NO,

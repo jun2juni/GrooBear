@@ -8,6 +8,8 @@ import java.util.List;
 
 @Mapper
 public interface WebFolderMapper {
+    public int insertFiles(List<WebFolderFileVO> webFolderFileVOList);
+
     public List<WebFolderVO> getFolderList(String upperFolderNo);
 
     public List<WebFolderFileVO> getFileList(String folderNo);
