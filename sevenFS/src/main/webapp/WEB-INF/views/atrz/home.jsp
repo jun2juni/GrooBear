@@ -223,7 +223,7 @@
 															</c:choose>
 															<!--결재상태코드에 따른 조건 끝-->
 															<!-- <p>${documHolidayVO}</p> -->
-															<a href="/atrz/selectForm/holidayDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="col-6 col-md-8">
+															<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="col-6 col-md-8">
 																<h5 class="homeFr">${atrzVO.atrzSj}</h5>
 															</a>
 														</div>
@@ -308,7 +308,7 @@
 																</p>
 															</td>
 															<td style="text-align: left; padding-top: 0px;">
-																<a href="#" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
+																<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
 																<c:choose>
 																	<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
 																		<span class="material-symbols-outlined" style="margin-right: 5px;">

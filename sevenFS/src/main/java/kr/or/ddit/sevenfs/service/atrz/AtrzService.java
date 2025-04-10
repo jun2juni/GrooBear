@@ -1,7 +1,10 @@
 package kr.or.ddit.sevenfs.service.atrz;
 
 import java.util.List;
+import java.util.Map;
 
+import kr.or.ddit.sevenfs.utils.ArticlePage;
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
 import kr.or.ddit.sevenfs.vo.atrz.BankAccountVO;
@@ -32,9 +35,7 @@ public interface AtrzService {
 	
 	//연차신청서 등록
 	public int insertHoliday(HolidayVO holidayVO);
-	//연차신청서 상세보기
-	public HolidayVO holidayDetail(int holiActplnNo);
-	
+
 	
 	//지출결의서 등록
 	public int insertSpending(SpendingVO spendingVO);
@@ -44,6 +45,12 @@ public interface AtrzService {
 	public int insertBankAccount(BankAccountVO bankAccountVO);
 	//기안서 등록
 	public int insertDraft(DraftVO draftVO);
+	
+	//전자결재 상세보기
+	public AtrzVO getAtrzDetail(String atrzDocNo);
+	//2) 결재선지정 후에 제목, 내용, 등록일자, 상태 update
+	public int insertUpdateAtrz(AtrzVO atrzVO);
+	
 	
 	
 	//비즈니스 로직 이란???

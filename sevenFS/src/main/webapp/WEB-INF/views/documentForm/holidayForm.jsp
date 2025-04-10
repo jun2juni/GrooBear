@@ -61,14 +61,18 @@
 				<div style="margin: 0 10px;">
 					<div class="row align-items-start" style="padding: 10px 0;">
 						<div class="col-auto">
+							<div class="form-check mr-5" style="display: inline-block;">
+								<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2" value="B">
+								<label class="form-check-label" for="flexRadioDefault2">오전반차</label>
+							</div>
+							<div class="form-check mr-5" style="display: inline-block;">
+								<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2" value="B">
+								<label class="form-check-label" for="flexRadioDefault2">오후반차</label>
+							</div>
 							<div class="s_frm_title mb-2"><b>유형</b></div>
 							<div class="form-check mr-5" style="display: inline-block;">
 								<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault1" checked value="A"> 
 								<label class="form-check-label"	for="flexRadioDefault1">연차</label>
-							</div>
-							<div class="form-check mr-5" style="display: inline-block;">
-								<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2" value="B">
-								<label class="form-check-label" for="flexRadioDefault2">반차</label>
 							</div>
 							<div class="form-check mr-5" style="display: inline-block;">
 								<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault3" value="C">

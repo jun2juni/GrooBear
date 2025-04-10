@@ -413,22 +413,26 @@ select.ui-datepicker-year {
 													<div class="col-auto">
 														<div class="s_frm_title mb-2"><b>유형</b></div>
 														<div class="form-check mr-5" style="display: inline-block;">
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2"  value="20">
+															<label class="form-check-label" for="flexRadioDefault2">오전반차</label>
+														</div>
+														<div class="form-check mr-5" style="display: inline-block;">
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2"  value="21">
+															<label class="form-check-label" for="flexRadioDefault2">오후반차</label>
+														</div>
+														<div class="form-check mr-5" style="display: inline-block;">
 															<input class="form-check-input" type="radio"
 																name="holiCode" id="flexRadioDefault1" checked
-																value="A"> 
+																value="22"> 
 																<label class="form-check-label"	for="flexRadioDefault1">연차</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2" value="B">
-															<label class="form-check-label" for="flexRadioDefault2">반차</label>
-														</div>
-														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault3" value="C">
-															<label class="form-check-label" for="flexRadioDefault3">병가</label>
-														</div>
-														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault4" value="D">
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault4" value="23">
 															<label class="form-check-label" for="flexRadioDefault4">공가</label>
+														</div>
+														<div class="form-check mr-5" style="display: inline-block;">
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault3" value="24">
+															<label class="form-check-label" for="flexRadioDefault3">병가</label>
 														</div>
 													</div>
 													
@@ -542,69 +546,6 @@ select.ui-datepicker-year {
 
 
 <script>
-
-//반차선택시 라디오버튼활성화
-
-let isHalfSelected = false; // 반차 선택 여부 flag
-
-$('input[name="holiCode"]').on('change', function () {
-	const selected = $(this).val();
-
-	if (selected === 'B') {
-		isHalfSelected = true;
-
-		// 반차 선택 시: 시간 자동 셋팅 & 비활성화
-		$('#halfTypeArea').show();
-		$('#s_start_time, #s_end_time')
-			.val('') // 초기화
-			.prop('disabled', true)
-			.hide();
-		
-		// 오전 반차 기본 선택
-		$('#halfAm').prop('checked', true).trigger('change');
-		
-		// ✅ 시작일과 종료일 맞추기
-		const startVal = $('#s_ho_start').val();
-		const endVal = $('#s_ho_end').val();
-
-		if (startVal && startVal !== endVal) {
-			$('#s_ho_end').val(startVal); // 종료일을 시작일로 맞춤
-			dateCnt(); // 변경된 날짜 반영
-		}
-		
-	} else {
-		// 반차 아닌 경우
-		$('#halfTypeArea').hide();
-
-		// 반차 이력 유무 상관없이 기본값 세팅 + 비활성화 유지
-		$('#s_start_time').val('09:00:00');
-		$('#s_end_time').val('18:00:00');
-		$('#s_start_time, #s_end_time')
-			.prop('disabled', true)
-			.show();
-		dateCnt();
-	}
-});
-
-//반차에서 오전반차 선택시 
-$('input[name="halfType"]').on('change', function () {
-
-	const selected = $(this).val();
-
-	if (selected === 'AM') {
-		$('#s_start_time').val('09:00:00');
-		$('#s_end_time').val('13:00:00');
-	} else if (selected === 'PM') {
-		$('#s_start_time').val('14:00:00');
-		$('#s_end_time').val('18:00:00');
-	}
-
-	// ✅ 여기도 비활성화 상태 유지
-	$('#s_start_time, #s_end_time').prop('disabled', true);
-});
-
-
-
 // 결재요청 클릭 시
 $("#s_eap_app").click(function() {
 	var eap_title = $('#s_ho_tt').val();
@@ -623,36 +564,36 @@ $("#s_eap_app").click(function() {
 	// 신청 종료시간이 시작시간보다 빠를 때
 	if(start > end) {
 		swal({
-                  title: "종료 시간이 시작 시간보다 빠를 수 없습니다!",
-                  text: "신청 종료 시간을 다시 선택해주세요.",
-                  icon: "error",
-                  closeOnClickOutside: false,
-                  closeOnEsc: false
-              });
+				title: "종료 시간이 시작 시간보다 빠를 수 없습니다!",
+				text: "신청 종료 시간을 다시 선택해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
 		$("#s_end_time").val('');
 	}
 	
 	// 제목, 내용이 비어있을 때
 	if(eap_title == "" || eap_content == "") {
 		swal({
-                  title: "제목 또는 내용이 비어있습니다.",
-                  text: "다시 확인해주세요.",
-                  icon: "error",
-                  closeOnClickOutside: false,
-                  closeOnEsc: false
-              });
+				title: "제목 또는 내용이 비어있습니다.",
+				text: "다시 확인해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
 		return;
 	}
 	
 	// 신청한 휴가일수가 0일때 alert
 	if(ho_use_count == 0) {
 		swal({
-                  title: "신청한 휴가일수가 0일입니다",
-                  text: "날짜와 시간을 다시 선택해주세요",
-                  icon: "error",
-                  closeOnClickOutside: false,
-                  closeOnEsc: false
-              });
+				title: "신청한 휴가일수가 0일입니다",
+				text: "날짜와 시간을 다시 선택해주세요",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false
+			});
 		return;
 	}
 	
@@ -676,6 +617,11 @@ $("#s_eap_app").click(function() {
 
 // 총 일수 계산 함수
 function dateCnt() {
+	// 공가(23) 또는 병가(24)일 경우 총일수를 0으로 설정
+	if ($("input[name='holiCode']:checked").val() === '23' || $("input[name='holiCode']:checked").val() === '24') {
+		$('#s_date_cal').text('0');
+		return;
+	}
 	// 날짜 계산
 	var start = new Date($('#s_ho_start').val() + 'T' + $('#s_start_time').val());
 	var end = new Date($('#s_ho_end').val() + 'T' + $('#s_end_time').val());
@@ -703,7 +649,7 @@ function dateCnt() {
 		// 평일 계산할 cnt 선언
 		let cnt = 0;
 		while(true) {
-			let tmpDate = start;
+			let tmpDate = new Date(start); // Clone the start date
 			// 시작시간이 끝나는시간보다 크면
 			if(tmpDate.getTime() > end.getTime()) {
 				break;
@@ -713,7 +659,7 @@ function dateCnt() {
 				if(tmp != 0 && tmp != 6) {
 					cnt++;
 				} 
-				tmpDate.setDate(start.getDate() + 1);
+				start.setDate(start.getDate() + 1);
 			}
 		}
 		
@@ -725,15 +671,42 @@ function dateCnt() {
 		var cntStr = String(cnt);
 		$('#s_date_cal').text(cntStr);
 		
+		// 연차사용신청일을 변수에 담기
+		let holidayUsageDates = {
+			startDate: $('#s_ho_start').val(),
+			endDate: $('#s_ho_end').val()
+		};
+		
 	} else {
 		$('#s_date_cal').text('0');
 	}
 }
+// 오전반차 및 오후반차 선택 시 시간 설정 및 총일수 계산
+$("input[name='holiCode']").on("change", function () {
+	const selectedValue = $(this).val();
+	if (selectedValue === "20") { // 오전반차
+		$("#s_start_time").val("09:00:00").prop("disabled", true).show();
+		$("#s_end_time").val("13:00:00").prop("disabled", true).show();
+		$("#s_ho_end").val($("#s_ho_start").val()); // 종료일을 시작일과 동일하게 설정
+		$("#halfTypeArea").hide();
+	} else if (selectedValue === "21") { // 오후반차
+		$("#s_start_time").val("14:00:00").prop("disabled", true).show();
+		$("#s_end_time").val("18:00:00").prop("disabled", true).show();
+		$("#s_ho_end").val($("#s_ho_start").val()); // 종료일을 시작일과 동일하게 설정
+		$("#halfTypeArea").hide();
+	} else {
+		$("#s_start_time").val("09:00:00").prop("disabled", false).hide();
+		$("#s_end_time").val("18:00:00").prop("disabled", false).hide();
+		$("#halfTypeArea").hide();
+	}
+	dateCnt(); // 총일수 계산 호출
+});
 </script>
 
 <script>
 //JSON Object List
 let authList = [];
+
 
 $(document).ready(function() {
 	//******* 폼 전송 *******
@@ -746,15 +719,15 @@ $(document).ready(function() {
 		let jnForm = document.querySelector("#atrz_ho_form");
 		// console.log("${empVO}" + empVO);
 		
-		
-	
-
-		
 		let formData = new FormData();
 		formData.append("docFormNm","H");
 		formData.append("docFormNo",1);
 		formData.append("atrzSj",jnForm.atrzSj.value);
 		formData.append("atrzCn",jnForm.atrzCn.value);
+		
+	
+		formData.append("holiUseDays", $('#s_date_cal').text());  //연차사용일수 
+
 		if(jnForm.uploadFile.files.length){
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
 			formData.append("uploadFile",jnForm.uploadFile.files[i]);
@@ -783,8 +756,8 @@ $(document).ready(function() {
 		let docHoliday = {
 				holiStartArr:[jnForm.holiStartArr[0].value,jnForm.holiStartArr[1].value],   
 				holiEndArr:[jnForm.holiEndArr[0].value,jnForm.holiEndArr[1].value],
-				holiCode:jnForm.holiCode.value
-
+				holiCode:jnForm.holiCode.value,
+				holiUseDays: (jnForm.holiCode.value === '23' || jnForm.holiCode.value === '24') ? '0' : $('#s_date_cal').text()
 		}
 		console.log("docHoliday",docHoliday);
 		
@@ -795,6 +768,7 @@ $(document).ready(function() {
 		
 		formData.append("emplNo",secEmplNo);
 		formData.append("emplNm",secEmplNm);
+		formData.append("atrzDocNo",$("#s_dfNo").text());
 		
 		const junyError = (request, status, error) => {
 					console.log("code: " + request.status)
@@ -877,7 +851,7 @@ $(document).ready(function() {
 			return;
 		}
 	}
-
+	//기안자 정보담기
 	$.ajax({
 		url:"/atrz/insertAtrzEmp",
 		data:{"emplNo":emplNo},
@@ -886,13 +860,14 @@ $(document).ready(function() {
 		success:function(result){
 			let noLen = $(".clsTr").length;
 
+			console.log("결재선지정->result : ",result);
 			let selectHtml = `
 				<select class="form-select selAuth" aria-label="Default select example">
 					<option value="0" \${selectedType == "sign" ? "selected" : ""}>결재</option>
 					<option value="1" \${selectedType == "ref" ? "selected" : ""}>참조</option>
 				</select>
 			`;
-
+			
 			// 참조일 때는 checkbox 없이 처리
 			let checkboxHtml = "";
 			if (selectedType == "sign") {
@@ -911,6 +886,8 @@ $(document).ready(function() {
 						<th>\${result.deptNm}</th>
 						<th>\${result.posNm}</th>
 						<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
+						<input type="hidden" name="clsfCode" class="clsfCode" value="\${result.clsfCode}"/>
+						log.info("결재선지정->result : ",result);
 						<th hidden>\${selectHtml}</th>
 						<th>\${checkboxHtml}</th>
 					</tr>
@@ -1028,47 +1005,35 @@ $(document).ready(function() {
 				dcrbAuthorYn = "N";
 			}
 			
+			/* data -> AtrzLineVO
+			emplNo -> sanctnerEmpno
+			clsfCode -> sanctnerClsfCode
+			auth -> atrzTy
+			flex -> dcrbAuthorYn
+			atrzLnSn : atrzLnSn
+			*/
 			data = {
 				"emplNo":$(this).parent().parent().children("th").eq(1).html(),
+				"clsfCode": $(this).parent().parent().find(".clsfCode").val(),
 				"auth":$(this).val(),
 				"flex":dcrbAuthorYn,
 				"atrzLnSn":(idx+1)
 			};
-			
-			authList.push(data);
+			//결재선 목록
+			authList.push(data);			
+
+			formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",data.emplNo);
+			formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",data.clsfCode);
+			formData.append("atrzLineVOList["+idx+"].atrzTy",data.flex);//Y / N
+			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.auth);//  1 / 0
+			formData.append("atrzLineVOList["+idx+"].atrzLnSn",data.atrzLnSn);
 		});	
 		
-		//*******
-		/*
-		[
-		    {
-		        "emplNo": "20250008",
-		        "auth": "0",
-		        "flex": true
-		    },
-		    {
-		        "emplNo": "20250010",
-		        "auth": "1",
-		        "flex": false
-		    }
-		]
-		*/
+		//authList의 clsfCode를 가져와서 DB에 담기
 		console.log("순번권한전결여부authList : ", authList);
 		
-// 		let flexList = [];
-		
-		//III. 전결여부(.flexCheckDefault)
-// 		$(".flexCheckDefault").each(function(idx,flex){
-// 			console.log("flex : ", $(this).is(":checked"));
-			
-// 			if($(this).is(":checked")){
-// 				flexList.push("Y");
-// 			}else{
-// 				flexList.push("N");
-// 			}
-			
-// 		});
-		
+		formData.append("docFormNm","H");
+		formData.append("docFormNo",1);
 
 		/*
 		["20250008","20250010"]
@@ -1077,7 +1042,7 @@ $(document).ready(function() {
 		//이게 굳이 필요있나 싶음
 		//결재선 리스트에 있는 사원번호를 가져와 결재선 jsp에 이름 부서 직책 찍기
 
-//asnyc를 써서 
+		//asnyc를 써서 
 		$.ajax({
 			url:"/atrz/insertAtrzLine",
 			processData:false,
@@ -1085,71 +1050,80 @@ $(document).ready(function() {
 			type:"post",
 			data: formData,
 			dataType:"json",
-			success : function(result){
-		$(".btn-close").trigger('click');
-		console.log("result : ", result);
+			success : function(atrzVO){
+				$(".btn-close").trigger('click');
+				
+				console.log("atrzVO : ", atrzVO);
 
-		let tableHtml = `<table border="1" class="s_eap_draft_app"><tbody>`;
+				//문서번호 채우기
+				$("#s_dfNo").html(atrzVO.atrzDocNo);
 
-		// authList를 기반으로 분리
-		const approvalList = [];
-		const referenceList = [];
+				let result = atrzVO.emplDetailList;
 
-		$.each(authList, function(i, authItem) {
-			const matched = result.find(emp => emp.emplNo === authItem.emplNo);
-			if (matched) {
-				matched.flex = authItem.flex; // flex 정보도 보존
-				if (authItem.auth === "0") {
-					approvalList.push(matched);
-				} else if (authItem.auth === "1") {
-					referenceList.push(matched);
+				//result : List<EmployeeVO>
+				console.log("result : ", result);
+
+				let tableHtml = `<table border="1" class="s_eap_draft_app"><tbody>`;
+
+				// authList를 기반으로 분리
+				const approvalList = [];
+				const referenceList = [];
+
+				$.each(authList, function(i, authItem) {
+					const matched = result.find(emp => emp.emplNo === authItem.emplNo);
+					if (matched) {
+						matched.flex = authItem.flex; // flex 정보도 보존
+						if (authItem.auth === "0") {
+							approvalList.push(matched);
+						} else if (authItem.auth === "1") {
+							referenceList.push(matched);
+						}
+					}
+				});
+				//길준희 여기부터 시작
+				// 가. 결재파트 시작
+				if (approvalList.length > 0) {
+					tableHtml += `<tr><th rowspan="3">결재</th>`;
+					$.each(approvalList, function(i, employeeVO){
+						$("#atrz_ho_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
+						tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
+					});
+
+					tableHtml += `</tr><tr>`;
+					$.each(approvalList, function(i, employeeVO){
+						tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
+					});
+
+					tableHtml += `</tr><tr>`;
+					$.each(approvalList, function(i, employeeVO){
+						tableHtml += `<td><img
+							src="/assets/images/atrz/beforGR.png"
+							style="width: 50px;"></td>`;
+					});
+
+					tableHtml += `</tr>`;
 				}
-			}
-		});
 
-		// 가. 결재파트 시작
-		if (approvalList.length > 0) {
-			tableHtml += `<tr><th rowspan="3">결재</th>`;
-			$.each(approvalList, function(i, employeeVO){
-				$("#atrz_ho_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
-				tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
-			});
+				// 나. 참조파트 시작
+				if (referenceList.length > 0) {
+					tableHtml += `<tr><th rowspan="2">참조</th>`;
+					$.each(referenceList, function(i, employeeVO){
+						$("#atrz_ho_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
+						tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
+					});
 
-			tableHtml += `</tr><tr>`;
-			$.each(approvalList, function(i, employeeVO){
-				tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
-			});
+					tableHtml += `</tr><tr>`;
+					$.each(referenceList, function(i, employeeVO){
+						tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
+					});
 
-			tableHtml += `</tr><tr>`;
-			$.each(approvalList, function(i, employeeVO){
-				tableHtml += `<td><img
-					src="/assets/images/atrz/beforGR.png"
-					style="width: 50px;"></td>`;
-			});
+					tableHtml += `</tr>`;
+				}
 
-			tableHtml += `</tr>`;
-		}
+				tableHtml += `</tbody></table>`;
 
-		// 나. 참조파트 시작
-		if (referenceList.length > 0) {
-			tableHtml += `<tr><th rowspan="2">참조</th>`;
-			$.each(referenceList, function(i, employeeVO){
-				$("#atrz_ho_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
-				tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
-			});
-
-			tableHtml += `</tr><tr>`;
-			$.each(referenceList, function(i, employeeVO){
-				tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
-			});
-
-			tableHtml += `</tr>`;
-		}
-
-		tableHtml += `</tbody></table>`;
-
-		$("#s_eap_draft_app").html(tableHtml);
-		}
+				$("#s_eap_draft_app").html(tableHtml);
+			}//end success
 	});//ajax
 	//여기서 결재선에 담긴 애들을 다 하나씩 담아서 post로
 })
@@ -1279,15 +1253,7 @@ $(document).ready(function() {
 	});
 });
 
-//시작일 선택 시, 반차일 경우 종료일도 동일하게 세팅
-$('#s_ho_start').on('change', function () {
-	const selectedStartDate = $(this).val();
-	const isHalf = $('input[name="holiCode"]:checked').val() === 'B';
 
-	if (isHalf && selectedStartDate) {
-		$('#s_ho_end').val(selectedStartDate);
-	}
-});
 function addDatepickerTitle(title) {
 	$('#ui-datepicker-div .datepicker-title').remove();
 	$('#ui-datepicker-div').prepend(

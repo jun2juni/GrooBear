@@ -679,8 +679,14 @@ $(document).ready(function() {
 		let jnForm = document.querySelector("#atrz_ho_form");
 		// console.log("${empVO}" + empVO);
 		let formData = new FormData();
-		
-		
+		formData.append("docFormNm","S");
+		formData.append("docFormNo",2);
+		formData.append("atrzSj",jnForm.atrzSj.value);
+		formData.append("atrzCn",jnForm.atrzCn.value);
+		if(jnForm.uploadFile.files.length){
+			for(let i=0; i< jnForm.uploadFile.files.length; i++)
+			formData.append("uploadFile",jnForm.uploadFile.files[i]);
+		}
 		let atrzLineList = [];
 		for(let i=0; i< authList.length; i++){
 			let auth = authList[i];
@@ -704,10 +710,6 @@ $(document).ready(function() {
 		formData.append("deptCode","${empVO.deptCode}");
 		formData.append("deptCodeNm","${empVO.deptNm}");
 
-		formData.append("docFormNm","S");
-		formData.append("docFormNo",2);
-		formData.append("atrzSj",jnForm.atrzSj.value);
-		formData.append("atrzCn",jnForm.atrzCn.value);
 		formData.append("expenseDate", $('.s_sp_date').val());
 		formData.append("itemDescription", $('.s_sp_detail').val());
 		formData.append("itemQuantity", $('.s_sp_count').val());
@@ -846,6 +848,7 @@ $(document).ready(function() {
 							<th>\${result.deptNm}</th>
 							<th>\${result.posNm}</th>
 							<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
+							<input type="hidden" name="clsfCode" class="clsfCode" value="\${result.clsfCode}"/>
 							<th hidden>\${selectHtml}</th>
 							<th>\${checkboxHtml}</th>
 						</tr>
@@ -963,12 +966,18 @@ $(document).ready(function() {
 			
 			data = {
 				"emplNo":$(this).parent().parent().children("th").eq(1).html(),
+				"clsfCode": $(this).parent().parent().find(".clsfCode").val(),
 				"auth":$(this).val(),
 				"flex":dcrbAuthorYn,
 				"atrzLnSn":(idx+1)
 			};
 			
 			authList.push(data);
+			formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",data.emplNo);
+			formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",data.clsfCode);
+			formData.append("atrzLineVOList["+idx+"].atrzTy",data.flex);//Y / N
+			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.auth);//  1 / 0
+			formData.append("atrzLineVOList["+idx+"].atrzLnSn",data.atrzLnSn);
 		});	
 		
 		console.log("순번권한전결여부authList : ", authList);
@@ -986,7 +995,8 @@ $(document).ready(function() {
 // 			}
 			
 // 		});
-		
+		formData.append("docFormNm","S");
+		formData.append("docFormNo",2);
 
 		/*
 		["20250008","20250010"]
@@ -1003,9 +1013,14 @@ $(document).ready(function() {
 			type:"post",
 			data: formData,
 			dataType:"json",
-			success : function(result){
+			success : function(atrzVO){
 		$(".btn-close").trigger('click');
-		console.log("result : ", result);
+		console.log("atrzVO : ", atrzVO);
+
+		//문서번호 채우기
+		$("#s_dfNo").html(atrzVO.atrzDocNo);
+
+		let result = atrzVO.emplDetailList;
 
 		let tableHtml = `<table border="1" class="s_eap_draft_app"><tbody>`;
 

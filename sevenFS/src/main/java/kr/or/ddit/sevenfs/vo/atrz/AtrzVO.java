@@ -32,15 +32,18 @@ public class AtrzVO {
 	
 	private String docFormNm; // 문서 양식 번호
 	
+	private String[] emplNoArr; // 결재자 사원번호 배열
+	
 	
 	//전자결재 사원정보를 위한것
-	private String emplNo; 
-	private String emplNm;
-	private String clsfCode; // 직급코드
-	private String clsfCodeNm; // 직급코드명 
-	private String deptCode;//부서코드
-	private String deptCodeNm;//부서코드명
+	private String emplNo;   	//사원번호
+	private String emplNm;		//사원이름
+	private String clsfCode; 	//직급코드
+	private String clsfCodeNm; //직급코드명 
+	private String deptCode;	//부서코드
+	private String deptCodeNm;	//부서코드명
 	
+	//페이징 처리를 위한것
 	
 	//파일첨부
 	private MultipartFile[] uploadFile;
@@ -49,18 +52,21 @@ public class AtrzVO {
 	private List<AtrzLineVO> atrzLineVOList;
 	
 	// 검색필터
-	private String type; // 검색타입
-	private String keyword; // 검색내용
+//	private String type; // 검색타입
+//	private String keyword; // 검색내용
 	
-	private List<DraftVO> drafts; // 기안 목록 (1:N 관계)
+//	private List<DraftVO> drafts; // 기안 목록 (1:N 관계)
 	
 	//기안자의 정보를 가져오기 위한것
-	private EmployeeVO empAtrzVO;
+//	private EmployeeVO empAtrzVO;
 	
 	//ARTZ : DOCUM_HOLIDAY = 1 : 1
-	private HolidayVO documHolidayVO;
+	private HolidayVO holidayVO;
 	
 	private SpendingVO spendingVO;
+	
+	//결재 문서의 해당 직원의 상세정보 목록을 select
+	private List<EmployeeVO> emplDetailList;
 	
 	
 }

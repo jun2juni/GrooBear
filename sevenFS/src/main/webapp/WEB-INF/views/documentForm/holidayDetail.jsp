@@ -269,10 +269,6 @@ select.ui-datepicker-year {
 .ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
 	top: 9px !important;
 }
-/* 달력이전다음버튼 변경하는 클래스 */
-/* .ui-icon ui-icon-circle-triangle-e{ */
-	
-/* } */
 
 
 
@@ -290,6 +286,7 @@ select.ui-datepicker-year {
 		<form id="atrz_ho_form" action="/atrz/appLineList" method="post" enctype="multipart/form-data">
 			<div class="container-fluid">
 				<!-- 여기서 작업 시작 -->
+				<p>${atrzVO}</p>
 				<div class="row">
 					<div class="col-sm-12 mb-3 mb-sm-0">
 						<!-- 결재요청 | 임시저장 | 결재선지정 | 취소  -->
@@ -297,40 +294,20 @@ select.ui-datepicker-year {
 							<!-- 새로운 버튼 -->
 							<div class="tool_bar">
 								<div class="critical d-flex gap-2 mb-3">
-									<!--성진스 버튼-->
 									<button id="s_eap_app_top" type="button" 
 										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app">
-										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
+										<span class="material-symbols-outlined fs-5">note_alt</span> 결재
 									</button>
 									<a id="s_eap_stor" type="button"
 										class="btn btn-outline-success d-flex align-items-center gap-1"
 										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
-										class="material-symbols-outlined fs-5">error</span> 임시저장
-									</a> <a id="s_appLine_btn" type="button"
-										class="btn btn-outline-info d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
-										class="material-symbols-outlined fs-5">error</span> 결재선 지정
-									</a> <a type="button"
-										class="btn btn-outline-danger d-flex align-items-center gap-1"
-										href="/atrz/home"> <span
-										class="material-symbols-outlined fs-5">cancel</span> 취소
+										class="material-symbols-outlined fs-5">keyboard_return</span> 반려
+									</a> 
+									<a type="button"
+										class="btn btn-outline-secondary d-flex align-items-center gap-1"
+										href="/atrz/approval"> <span
+										class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록으로
 									</a>
-									<!-- 										<a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="/atrz/approval"> -->
-									<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
-									<!-- 											목록으로</a> -->
-
-									<!-- 										<a id="act_draft_withdrawal" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-									<!-- 											<span class="material-symbols-outlined fs-5">cancel</span>  -->
-									<!-- 											<span class="txt">상신취소</span> -->
-									<!-- 										</a> -->
-									<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-									<!-- 											<span class="material-symbols-outlined fs-5">error</span>  -->
-									<!-- 											<span class="txt">결재선 정보</span> -->
-									<!-- 										</a> -->
-									<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-									<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
-									<!-- 											<span class="txt">목록</span> -->
-									<!-- 										</a> -->
 								</div>
 							</div>
 
@@ -353,18 +330,19 @@ select.ui-datepicker-year {
 												<table border="1" id="s_eap_draft_info" class="text-center">
 													<tr>
 														<!-- 기안자 정보가져오기 -->
-<%-- 													<p>${empVO}</p>  --%>
+														<!-- <p>${atrzVO}</p> -->
+														<!-- <p>${employeeVO}</p> -->
 														<th>기안자</th>
-														<td>${empVO.emplNm}</td>
+														<td>${atrzVO.drafterEmpnm}</td>
 													</tr>
 													<tr>
 														<th>기안부서</th>
-														<td>${empVO.deptNm}</td>
+														<td>${atrzVO.deptCodeNm}</td>
 													</tr>
 													<tr>
 														<!-- 기안일 출력을 위한 것 -->
 														<jsp:useBean id="now" class="java.util.Date" />
-														<fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm:ss" var="today" />
+														<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd HH:mm:ss" var="today" />
 														<th>기안일</th>
 														<td>
 															<c:out value="${today}"/>
@@ -372,7 +350,7 @@ select.ui-datepicker-year {
 													</tr>
 													<tr>
 														<th>문서번호</th>
-														<td id="s_dfNo">${resultDoc.df_no}</td>
+														<td id="s_dfNo">${atrzVO.atrzDocNo}</td>
 													</tr>
 												</table>
 											</div>
@@ -381,27 +359,50 @@ select.ui-datepicker-year {
 												<table border="1" id="s_eap_draft">
 													<tr>
 														<th rowspan="2">신청</th>
-														<td>${empVO.clsfCodeNm}</td>
+														<td>${atrzVO.clsfCodeNm}</td>
 													</tr>
 													<tr>
-														<td>${empVO.emplNm}</td>
+														<td>${atrzVO.drafterEmpnm}</td>
 													</tr>
 												</table>
 											</div>
 
+											<!-- <p>${atrzVO.atrzLineVOList}</p> -->
+											<div style="float: left; width: 800px; margin-right: 5px;" id="s_eap_draft_app">
+												<table border="1" class="s_eap_draft_app">
+													<tbody>
+														<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+														<tr>
+															<th rowspan="3">결재</th>
+															<td>${atrzLineVO.sanctnerEmpno}</td>
+														</tr>
+														<tr>
+																<td name="sanctnerEmpno">${atrzLineVO.sanctnerEmpno}</td>
+														</tr>
+														<tr>
+															<td><img src="/assets/images/atrz/beforGR.png" style="width: 50px;"></td>
+														</tr>
+														<tr>
 
-											<div style="float: left; width: 800px; margin-right: 5px;"
-												id=s_eap_draft_app>
-												
-												</div>
+															<th rowspan="2">참조</th>
+																<td></td>
+														</tr>
+														<tr>
+															<td name="sanctnerEmpno"></td>
+														</tr>
+													</tbody>
+												</c:forEach>
+												</table>
+											</div>
+												<!--여기에 결재선이 보여야하는데-->
 
 											<div style="padding: 50px 10px 20px; clear: both;">
 												<div
 													style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목
 													:</div>
-												<input type="text" class="form-control"
+												<input type="text" class="form-control" value="${atrzVO.atrzSj}" 
 													style="display: inline-block; width: 90%; margin-left: 5px;"
-													id="s_ho_tt" name="atrzSj" required="required">
+													id="s_ho_tt" name="atrzSj" readonly>
 											</div>
 
 											<div style="border: 1px solid lightgray; margin: 10px;"></div>
@@ -478,7 +479,7 @@ select.ui-datepicker-year {
 													<div class="s_frm_title mb-2"> 내용</div>
 													<textarea class="form-control s_scroll"
 														style="resize: none; height: 150px;" id="s_ho_co" name="atrzCn" 
-														required="required" rows="2" cols="20" wrap="hard"></textarea>
+														required="required" rows="2" cols="20" wrap="hard">${atrzVO.atrzCn}</textarea>
 												</div>
 
 												
@@ -504,24 +505,19 @@ select.ui-datepicker-year {
 							<!-- 상하 버튼 추가 -->
 							<div class="tool_bar">
 								<div class="critical d-flex gap-2 mt-3">
-									<!--성진스 버튼-->
-									<button id="s_eap_app_bottom" type="button" 
+									<button id="s_eap_app_top" type="button" 
 										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app">
-										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
+										<span class="material-symbols-outlined fs-5">note_alt</span> 결재
 									</button>
 									<a id="s_eap_stor" type="button"
 										class="btn btn-outline-success d-flex align-items-center gap-1"
 										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
-										class="material-symbols-outlined fs-5">error</span> 임시저장
-									</a> <a id="s_appLine_btn" type="button"
-									
-										class="btn btn-outline-info d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
-										class="material-symbols-outlined fs-5">error</span> 결재선 지정
-									</a> <a type="button"
-										class="btn btn-outline-danger d-flex align-items-center gap-1"
-										href="/atrz/home"> <span
-										class="material-symbols-outlined fs-5">cancel</span> 취소
+										class="material-symbols-outlined fs-5">keyboard_return</span> 반려
+									</a> 
+									<a type="button"
+										class="btn btn-outline-secondary d-flex align-items-center gap-1"
+										href="/atrz/approval"> <span
+										class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록으로
 									</a>
 								</div>
 							</div>
@@ -949,357 +945,16 @@ $(document).ready(function() {
 	
 	})//결재선선택후에 결재선리스트로 가는버튼 
 	
-	//왼쪽버튼의 경우에는 결재선선택과는 거리가 멀기 때문에 필요없음
-	//왼쪽 버튼을 눌렀을때 삭제처리되어야함
-	$(document).on("click", "#remo_appLine",function(){
-		let lastRow = $(".s_appLine_tbody_new .clsTr");   //가장마지막에 추가된 tr
-		//삭제대상확인 
-		// console.log("삭제대상 :", lastRow.prop("outerHTML"));
-		
-		if(lastRow.length > 0){
-			lastRow.last().remove(); 
-				// console.log("개똥이장군");
-				// console.log("lastRow : ",lastRow);
-				
-				// lastRow.remove();
-				// console.log("삭제후 남은 행의갯수 : ",$(".s_appLine_tbody_new .clsTr").length);
-				// lastRow.children().last().remove();
-			}else{
-				swal({
-					title: "",
-					text: "삭제할 사원이 없습니다.",
-					icon: "error",
-					closeOnClickOutside: false,
-					closeOnEsc: false
-				});
-					return;
-			}
-		});
 	
 	//결재선지정에서 확인버튼 눌렀을때
-	$("#s_add_appLine_list").click(function(){
-		if($(".s_appLine_tbody_new .clsTr").length==0){
-			swal({
-				title: "결재선이 지정되어있지 않습니다.",
-				text: "결재할 사원을 추가해주세요!",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false
-			});
-			return;
-		}
-		var appLineArr = [];
-		
-		//1)
-		let formData = new FormData();
-		
-		//I. 결재자 정보
-		for(let i= 0; i<$(".s_td_no").length; i++){
-			let sTdNo = $(".s_td_no").eq(i).text();
-			console.log("sTdNo : ",sTdNo);
-			
-			appLineArr.push($(".s_td_no").eq(i).text());
-			console.log("appLineArr : ",appLineArr);
-			//위의 코드까지는 찍힘
-			
-			//2) 결재자 번호 입력
-			formData.append("emplNoArr",sTdNo);
-		}
-		var obj = {"emplNo" : appLineArr};
-		
-		
-		//JSON Object
-		let data = {};
-		//II. 권한 정보(.selAuth)
-		$(".selAuth").each(function(idx,auth){
-			//전결여부 기본 N
-			let dcrbAuthorYn = "N";
-			
-			if($(this).parent().next().children().eq(0).is(":checked")){//true
-				dcrbAuthorYn = "Y";
-			}else{
-				dcrbAuthorYn = "N";
-			}
-			
-			data = {
-				"emplNo":$(this).parent().parent().children("th").eq(1).html(),
-				"auth":$(this).val(),
-				"flex":dcrbAuthorYn,
-				"atrzLnSn":(idx+1)
-			};
-			
-			authList.push(data);
-		});	
-		
-		//*******
-		/*
-		[
-		    {
-		        "emplNo": "20250008",
-		        "auth": "0",
-		        "flex": true
-		    },
-		    {
-		        "emplNo": "20250010",
-		        "auth": "1",
-		        "flex": false
-		    }
-		]
-		*/
-		console.log("순번권한전결여부authList : ", authList);
-		
-// 		let flexList = [];
-		
-		//III. 전결여부(.flexCheckDefault)
-// 		$(".flexCheckDefault").each(function(idx,flex){
-// 			console.log("flex : ", $(this).is(":checked"));
-			
-// 			if($(this).is(":checked")){
-// 				flexList.push("Y");
-// 			}else{
-// 				flexList.push("N");
-// 			}
-			
-// 		});
-		
 
-		/*
-		["20250008","20250010"]
-		*/
-		console.log("obj.emplNo : ",obj.emplNo);
-		//이게 굳이 필요있나 싶음
-		//결재선 리스트에 있는 사원번호를 가져와 결재선 jsp에 이름 부서 직책 찍기
-
-//asnyc를 써서 
-		$.ajax({
-			url:"/atrz/appLineList",
-			processData:false,
-			contentType:false,
-			type:"post",
-			data: formData,
-			dataType:"json",
-			success : function(result){
-		$(".btn-close").trigger('click');
-		console.log("result : ", result);
-
-		let tableHtml = `<table border="1" class="s_eap_draft_app"><tbody>`;
-
-		// authList를 기반으로 분리
-		const approvalList = [];
-		const referenceList = [];
-
-		$.each(authList, function(i, authItem) {
-			const matched = result.find(emp => emp.emplNo === authItem.emplNo);
-			if (matched) {
-				matched.flex = authItem.flex; // flex 정보도 보존
-				if (authItem.auth === "0") {
-					approvalList.push(matched);
-				} else if (authItem.auth === "1") {
-					referenceList.push(matched);
-				}
-			}
-		});
-
-		// 가. 결재파트 시작
-		if (approvalList.length > 0) {
-			tableHtml += `<tr><th rowspan="3">결재</th>`;
-			$.each(approvalList, function(i, employeeVO){
-				$("#atrz_ho_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
-				tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
-			});
-
-			tableHtml += `</tr><tr>`;
-			$.each(approvalList, function(i, employeeVO){
-				tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
-			});
-
-			tableHtml += `</tr><tr>`;
-			$.each(approvalList, function(i, employeeVO){
-				tableHtml += `<td><img
-					src="/assets/images/atrz/beforGR.png"
-					style="width: 50px;"></td>`;
-			});
-
-			tableHtml += `</tr>`;
-		}
-
-		// 나. 참조파트 시작
-		if (referenceList.length > 0) {
-			tableHtml += `<tr><th rowspan="2">참조</th>`;
-			$.each(referenceList, function(i, employeeVO){
-				$("#atrz_ho_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
-				tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
-			});
-
-			tableHtml += `</tr><tr>`;
-			$.each(referenceList, function(i, employeeVO){
-				tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
-			});
-
-			tableHtml += `</tr>`;
-		}
-
-		tableHtml += `</tbody></table>`;
-
-		$("#s_eap_draft_app").html(tableHtml);
-		}
-	});//ajax
-	//여기서 결재선에 담긴 애들을 다 하나씩 담아서 post로
-})
-
-
-	// datepicker위젯
-	$("#s_ho_start").datepicker({
-		timepicker: true,
-		changeMonth: true,
-		changeYear: true,
-		controlType: 'select',
-		timeFormat: 'HH:mm',
-		dateFormat: 'yy-mm-dd',
-		yearRange: '1930:2025',
-		minDate: 0, // 오늘 날짜 이전 선택 불가
-		dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
-		dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
-		monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-		monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-		beforeShowDay: disableAllTheseDays2,
-		onSelect: function(dateText, inst) {
-			var date1 = new Date($("#s_ho_end").val()).getTime();
-			var date2 = new Date(dateText).getTime();
-		// 반차일 경우 종료일도 자동으로 동일하게 세팅
-		if ($("input[name='holiCode']:checked").val() === 'B') {
-			$("#s_ho_end").val(dateText); // 종료일에 시작일값 넣기
-		}
-			
-		// 시작 날짜와 끝나는 날짜 비교하여 끝나는 날짜보다 시작하는 날짜가 앞이면 경고창으로 안내
-		if(date1 < date2 == true) {
-			swal({
-				title: "신청 시작 기간을 다시 선택해주세요.",
-				text: "",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false
-			});
-			$("#s_ho_start").val("");
-			}
-			dateCnt();
-		},
-		beforeShow: function(input, inst) {
-		setTimeout(function() {
-			addDatepickerTitle("시작일자 달력");
-			// 위치 계산
-			var offset = $(input).offset();
-			var height = $(input).outerHeight();
-			//위치조정변수
-			var extraTopOffset = -100; 
-			var extraRightOffset = 500; // 오른쪽으로 20px 이동
-
-			$('#ui-datepicker-div').css({
-				'top': (offset.top + height + extraTopOffset) + 'px',
-				'left': (offset.left + extraRightOffset) + 'px',
-				'z-index': 99999999999999
-			});
-		}, 0);
-	},
-	onChangeMonthYear: function(year, month, inst) {
-		setTimeout(function() {
-			addDatepickerTitle("시작일자 달력");
-		}, 0);
-	}
-	});
-	
-	$("#s_ho_end").datepicker({
-		timepicker: true,
-		changeMonth: true,
-		changeYear: true,
-		controlType: 'select',
-		timeFormat: 'HH:mm',
-		dateFormat: 'yy-mm-dd',
-		yearRange: '1930:2025',
-		minDate: 0, // 오늘 날짜 이전 선택 불가
-		dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
-		dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
-		monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-		monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-		beforeShowDay: disableAllTheseDays2,
-		onSelect: function(dateText, inst) {
-				var date1 = new Date($("#s_ho_start").val()).getTime();
-				var date2 = new Date(dateText).getTime();
-            
-		// 반차일 경우 시작일도 자동으로 동일하게 세팅
-		if ($("input[name='holiCode']:checked").val() === 'B') {
-			$("#s_ho_start").val(dateText); // 시작일에 종료일 값 넣기
-		}		
-				
-				
-		// 시작 날짜와 끝나는 날짜 비교하여 시작하는 날짜보다 끝나는 날짜가 앞이면 경고창으로 안내
-		if(date1 > date2 == true) {
-			swal({
-				title: "신청 종료 기간을 다시 선택해주세요.",
-				text: "",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false
-			});
-			$("#s_ho_end").val("");
-		}
-			dateCnt();
-	},
-	beforeShow: function(input, inst) {
-		setTimeout(function() {
-		//달력명 표시 
-		addDatepickerTitle("종료일자 달력");
-		// 위치 계산
-		var offset = $(input).offset();
-		var height = $(input).outerHeight();
-		//위치조정변수
-		var extraTopOffset = -145; 
-		var extraRightOffset = 500; // 오른쪽으로 20px 이동
-
-
-		$('#ui-datepicker-div').css({
-			'top': (offset.top + height + extraTopOffset) + 'px',
-			'left': (offset.left + extraRightOffset) + 'px',
-			'z-index': 99999999999999
-		});
-		}, 0);
-	},
-	onChangeMonthYear: function(year, month, inst) {
-		setTimeout(function() {
-			addDatepickerTitle("종료일자 달력");
-		}, 0);
-	}
-	});
 });
 
-//시작일 선택 시, 반차일 경우 종료일도 동일하게 세팅
-$('#s_ho_start').on('change', function () {
-	const selectedStartDate = $(this).val();
-	const isHalf = $('input[name="holiCode"]:checked').val() === 'B';
 
-	if (isHalf && selectedStartDate) {
-		$('#s_ho_end').val(selectedStartDate);
-	}
-});
-function addDatepickerTitle(title) {
-	$('#ui-datepicker-div .datepicker-title').remove();
-	$('#ui-datepicker-div').prepend(
-		'<div class="datepicker-title" style="padding:5px 10px; font-weight:bold; border-bottom:1px solid #ccc;">' + title + '</div>'
-	);
-}
 
-function disableAllTheseDays2(date) {
-		var day = date.getDay();
-		return [(day != 0 && day != 6)];
-	// 0=일, 6=토 => 안나오게 할 것 
-    }
+
 </script>
 	<!-- 주니가 입력한 스크립트 끝 -->
-	<p></p>
-	<p>
-		<sec:authentication property="principal.Username" />
-	</p>
-
 </body>
 
 </html>

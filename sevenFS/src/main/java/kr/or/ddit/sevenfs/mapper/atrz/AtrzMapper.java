@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.mapper.atrz;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -28,15 +29,20 @@ public interface AtrzMapper {
 	//기안문서 detail
 	public DraftVO draftDetail(String draftNo);
 	
+	//전자결재 상세를 보기위한
+	public List<AtrzLineVO> atrzLineList(String atrzDocNo);
+	
+	
 	//전자결재 테이블 등록
 	public int insertAtrz(AtrzVO atrzVO);
+	
 	//전자결재선 테이블 등록
 	public int insertAtrzLine(AtrzLineVO atrzLineVO);
 	
 	//연차신청서 테이블 등록
 	public int insertHoliday(HolidayVO documHolidayVO);
-	//연차 신청서 상세보기
-	public HolidayVO holidayDetail(int holiActplnNo);
+	//연차신청서 상세
+	public AtrzVO holidayDetail(String atrzDocNo);
 	
 	//지출결의서 테이블 등록
 	public int insertSpending(SpendingVO spendingVO);
@@ -48,6 +54,11 @@ public interface AtrzMapper {
 	//기안서 등록
 	public int insertDraft(DraftVO draftVO);
 	
+	//전자결재 상세보기 
+	public AtrzVO selectAtrzDetail(String atrzDocNo);
+	public List<AtrzLineVO> selectAtrzLineList(String atrzDocNo);
+	//2) 결재선지정 후에 제목, 내용, 등록일자, 상태 update
+	public int insertUpdateAtrz(AtrzVO atrzVO);
 	
 	
 	

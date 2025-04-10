@@ -142,8 +142,6 @@
 	    order by a.atrz_compt_dt desc
 	</select>
 	
-	
-	
 	  <resultMap id="EmployeeResultMap" type="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
         <id property="emplNo" column="EMPL_NO"/>
        <result property="emplNm" column="EMPL_NM"/>
@@ -153,13 +151,18 @@
         <collection property="EmplAtrzList" ofType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO" resultMap="atrzMap"/>
     </resultMap>
 
-	<!-- 전자결재테이블 등록 -->
+	
+
+	<!-- 전자결재테이블 등록(결재선 지정 시 전자결재문서 번호를 생성해줌) 
+			SELECT CREATE_DOC_NO(#{docFormNm}) AS CREATE_DOC_NO FROM DUAL
+	-->
 	<insert id="insertAtrz" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
 		<selectKey resultType="string" order="BEFORE" keyProperty="atrzDocNo">
-			SELECT CREATE_DOC_NO(#{docFormNm}) AS CREATE_DOC_NO FROM DUAL
+			SELECT CREATE_DOC_NO(#{docFormNm}) FROM DUAL
 		</selectKey>
+	
 		INSERT INTO     /* AtrzMapper.insertAtrz */
-	<!-- 	전자결재번호,기안자사번, 직급, 이름,부서,  -->
+	<!-- 	전자결재번호, 기안자사번, 직급코드, 이름, 부서코드,  -->
 			 atrz
 		(
 			  atrz_doc_no
@@ -168,11 +171,6 @@
 			, drafter_empnm
 			, drafter_dept
 			, bkmk_yn
-			, atch_file_no
-			, atrz_sj
-			, atrz_cn
-			, atrz_drft_dt
-			, atrz_sttus_code
 			, doc_form_no
 		)
 		VALUES
@@ -183,14 +181,31 @@
 			,#{emplNm}
 			,#{deptCode}
 			,'N'
-			,null
-			,#{atrzSj}
-			,#{atrzCn}
-			,SYSDATE
-			,'00'
-			,#{docFormNo}
+			, #{docFormNo}
 		)
 	</insert>
+	
+	<!-- 전자결재테이블 등록(이미 전자결재 문서 번호가 존재함) 
+	atrzSj, atrzCn, atrzDrftDt, atrzSttusCode
+			AtrzVO(atrzDocNo=H_20250410_00003, drafterEmpno=null, drafterClsf=null, drafterEmpnm=null, drafterDept=null, bkmkYn=null, 
+			atchFileNo=0, atrzSj=미리작성한 제목입니다., atrzCn=sfda, atrzOpinion=null, atrzTmprStreDt=null, atrzDrftDt=null, atrzComptDt=null,
+			 atrzRtrvlDt=null, atrzSttusCode=null, eltsgnImage=null, docFormNo=1, atrzDeleteYn=null, schdulRegYn=null, docFormNm=H,
+		emplNoArr=null, emplNo=20250004, emplNm=길준희, clsfCode=02, clsfCodeNm=null, deptCode=91, deptCodeNm=null, uploadFile=null,
+		atrzLineVOList=null, holidayVO=null, spendingVO=null, emplDetailList=null)
+	-->
+	<update id="insertUpdateAtrz" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+		UPDATE atrz     /* AtrzMapper.insertUpdateAtrz */
+	<!-- 	첨부파일번호, 제목, 내용, 기안일시, 진행상태, 양식문서번호  -->
+		SET   atrz_sttus_code = '00'
+			, atrz_sj = #{atrzSj}
+			, atrz_cn = #{atrzCn}
+			, atrz_drft_dt = SYSDATE
+			<if test="atchFileNo!=null and atchFileNo!=''">
+				, atch_file_no = #{atchFileNo}
+			</if>
+        WHERE atrz_doc_no = #{atrzDocNo}		
+	</update>
+	
 	<!-- 전자결재결재선 등록 -->
 	<insert id="insertAtrzLine" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
 		INSERT INTO  /* AtrzMapper.insertAtrzLine */
@@ -199,6 +214,7 @@
 			  atrz_doc_no
 			, atrz_ln_sn
 			, sanctner_empno
+			, sanctner_clsf_code
 			, atrz_ty
 			, sanctn_progrs_sttus_code
 			, dcrb_author_yn
@@ -208,6 +224,7 @@
 			#{atrzDocNo}
 			, #{atrzLnSn}
 			, #{sanctnerEmpno}
+			, #{sanctnerClsfCode}
 			, #{atrzTy}
 			, '00'
 			, #{dcrbAuthorYn}
@@ -227,6 +244,7 @@
 			, HOLI_CODE
 			, HOLI_START
 			, HOLI_END
+			, HOLI_USE_DAYS
 			)
 		VALUES
 			(
@@ -235,6 +253,7 @@
 			, #{holiCode}
 			, #{holiStart}
 			, #{holiEnd}
+			, #{holiUseDays}
 			)
 	</insert>
 	<insert id="insertSpending" parameterType="kr.or.ddit.sevenfs.vo.atrz.SpendingVO">
@@ -344,6 +363,72 @@
 			)
 	</insert>
 	
+	<!-- 전자결재 상세조회 -->
+	<select id="selectAtrzDetail" parameterType="string" resultMap="atrzMap">
+		 SELECT 
+            A.ATRZ_DOC_NO,
+            A.DRAFTER_EMPNO,
+            A.DRAFTER_CLSF,
+            A.DRAFTER_EMPNM,
+            A.DRAFTER_DEPT,
+            A.BKMK_YN,
+            A.ATCH_FILE_NO,
+            A.ATRZ_SJ,
+            A.ATRZ_CN,
+            A.ATRZ_OPINION,
+            A.ATRZ_TMPR_STRE_DT,
+            A.ATRZ_DRFT_DT,
+            A.ATRZ_COMPT_DT,
+            A.ATRZ_RTRVL_DT,
+            A.ATRZ_STTUS_CODE,
+            A.ELTSGN_IMAGE,
+            A.DOC_FORM_NO,
+            A.ATRZ_DELETE_YN,
+            A.SCHDUL_REG_YN,
+
+            H.HOLI_ACTPLN_NO, H.HOLI_CODE, H.HOLI_START, H.HOLI_END,
+            S.SPENDING_REPORT_NO, S.EXPENSE_ORDER, S.EXPENSE_DATE, S.ITEM_DESCRIPTION, S.ITEM_QUANTITY, S.ITEM_AMOUNT, S.PAYMENT_METHOD,
+            SL.SALARY_NO, SL.BASE_SALARY, SL.MEAL_ALLOWANCE, SL.INCOME_TAX, SL.LOCAL_TAX, SL.PENSION, SL.EMPLOYMENT_INS, SL.HEALTH_INS, SL.CARE_INS, SL.PAY_DATE,
+            B.BANK_ACC_NO, B.OLD_BANK, B.OLD_ACC_NO, B.NEW_BANK, B.NEW_ACC_NO, B.REASON,
+            D.DRAFT_NO,
+            EC.EMP_CERT_NO,
+            R.RESIGNATION_NO
+            
+        FROM ATRZ A
+        LEFT JOIN DOCUM_HOLIDAY H ON A.ATRZ_DOC_NO = H.ATRZ_DOC_NO
+        LEFT JOIN DOCUM_SPENDING S ON A.ATRZ_DOC_NO = S.ATRZ_DOC_NO
+        LEFT JOIN DOCUM_SALARY SL ON A.ATRZ_DOC_NO = SL.ATRZ_DOC_NO
+        LEFT JOIN DOCUM_BANK_ACCOUNT B ON A.ATRZ_DOC_NO = B.ATRZ_DOC_NO
+        LEFT JOIN DOCUM_DRAFT D ON A.ATRZ_DOC_NO = D.ATRZ_DOC_NO
+        LEFT JOIN DOCUM_EMP_CERTIFICATE EC ON A.ATRZ_DOC_NO = EC.ATRZ_DOC_NO
+        LEFT JOIN DOCUM_RESIGNATION R ON A.ATRZ_DOC_NO = R.ATRZ_DOC_NO
+        WHERE A.ATRZ_DOC_NO = #{atrzDocNo}
+	</select>
+	
+	<!-- 전자결재선 상세보기 -->
+	<select id="selectAtrzLineList" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
+		SELECT 
+            ATRZ_DOC_NO,
+            ATRZ_LN_SN,
+            SANCTNER_EMPNO,
+            SANCTNER_CLSF_CODE,
+            CONTD_EMPNO,
+            CONTD_CLSF_CODE,
+            DCRB_MAN_EMPNO,
+            DCRB_MAN_CLSF_CODE,
+            ATRZ_TY,
+            SANCTN_PROGRS_STTUS_CODE,
+            DCRB_AUTHOR_YN,
+            CONTD_AUTHOR_YN,
+            SANCTN_OPINION,
+            ELTSGN_IMAGE,
+            SANCTN_CONFM_DT
+        FROM ATRZ_LINE
+        WHERE ATRZ_DOC_NO = #{atrzDocNo}
+        ORDER BY ATRZ_LN_SN
+	
+	</select>
+	
 	
 	
 	<!-- 연차신청서 resultMap 사용 -->
@@ -354,6 +439,7 @@
 		<result property="holiCode" column="HOLI_CODE"/>
 		<result property="holiStart" column="HOLI_START"/>
 		<result property="holiEnd" column="HOLI_END"/>
+		<result property="holiUseDays" column="HOLI_USE_DAYS"/>
 		<association property="atrzVO" resultMap="atrzMap"></association>
 	</resultMap>
 

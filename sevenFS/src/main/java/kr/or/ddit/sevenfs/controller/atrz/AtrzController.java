@@ -1,5 +1,6 @@
 package kr.or.ddit.sevenfs.controller.atrz;
 
+import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
+import kr.or.ddit.sevenfs.utils.ArticlePage;
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
@@ -105,9 +108,15 @@ public class AtrzController {
 	}
 		
 
-
+	//결재대기문서 페이징 처리중
 	@GetMapping("/approval")
-	public String approvalList(Model model,@AuthenticationPrincipal CustomUser customUser) {
+	public String approvalList(Model model,@AuthenticationPrincipal CustomUser customUser,
+			@RequestParam(defaultValue = "1") int total
+		, @RequestParam(defaultValue = "1")int currentPage
+		,@RequestParam (defaultValue = "10") int size) {
+		
+		ArticlePage<AttachFileVO> articlePage = new ArticlePage<>(total, currentPage, size);
+		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(1);
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
@@ -121,7 +130,8 @@ public class AtrzController {
 			atrzVO.setClsfCodeNm(employeeVO.getPosNm());
 			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
 		}
-		
+		model.addAttribute("atrzVOList",atrzVOList);
+		model.addAttribute("title","결재대기문서");
 		
 		return "atrz/approval";
 		
@@ -217,20 +227,56 @@ public class AtrzController {
 		model.addAttribute("title", "연차신청서");
 		return "documentForm/holiday";
 	}
-	// 연차신청서 상세보기
-	@GetMapping("selectForm/holidayDetail")
-	public String holidayDetail(Model model, @RequestParam(value = "holiActplnNo", required = true) int holiActplnNo,
-			HolidayVO documHolidayVO) {
-		log.info("holidayDetail-> holiActplnNo :"+holiActplnNo);
-		
-		documHolidayVO = this.atrzService.holidayDetail(holiActplnNo);
-		
-		model.addAttribute("title", "연차신청서 상세보기");
-		model.addAttribute("documHolidayVO",documHolidayVO);
-		log.info("selectHolidayDetail-> documHolidayVO : "+documHolidayVO);
-		return "documentForm/holidayDetail";
-		
+	//연차신청서 상세보기
+	@GetMapping("/selectForm/atrzDetail")
+	public String selectAtrzDetail(
+			  @RequestParam String atrzDocNo
+			, Model model) {
+		if (atrzDocNo == null || atrzDocNo.length() < 1) {
+	        return "redirect:/error"; // 유효하지 않은 문서번호
+	    }
+
+	    char docPrefix = atrzDocNo.charAt(0); // 예: H, S, D, A, B, C, R
+
+	    AtrzVO atrzVO = atrzService.getAtrzDetail(atrzDocNo);
+	    log.info("selectAtrzDetail->atrzVO: "+atrzVO);
+	    String emplNo =  atrzVO.getDrafterEmpno();
+	    log.info("selectAtrzDetail->emplNo: "+emplNo);
+	    EmployeeVO employeeVO = organizationService.emplDetail(emplNo);
+	    log.info("selectAtrzDetail->employeeVO: "+employeeVO);
+	    atrzVO.setEmplNm(employeeVO.getEmplNm());
+	    atrzVO.setClsfCodeNm(employeeVO.getPosNm());
+	    atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+	    
+	    model.addAttribute("atrzVO", atrzVO);
+	    model.addAttribute("employeeVO", employeeVO);
+	    
+	    
+	    //여기서 결재자의 직급코드를 가지고 오는 코드를 짜야함
+	    
+	    
+
+	    
+	    switch (docPrefix) {
+	        case 'H':
+	            return "documentForm/holidayDetail";         // 연차신청서
+	        case 'S':
+	            return "documentForm/spendingDetail";       // 지출결의서
+	        case 'D':
+	            return "documentForm/draftDetail";             // 기안서
+	        case 'A':
+	            return "documentForm/salarySlipDetail";       // 급여명세서
+	        case 'B':
+	            return "documentForm/accountChangeDetail";    // 급여계좌변경신청서
+	        case 'C':
+	            return "documentForm/employmentCertDetail";    // 재직증명서
+	        case 'R':
+	            return "documentForm/resignDetail";           // 퇴직신청서
+	        default:
+	            return "redirect:/error";               // 알 수 없는 양식
+	    }
 	}
+
 
 	// 지출결의서 양식조회
 	@GetMapping("/selectForm/spendingForm")
@@ -312,41 +358,78 @@ public class AtrzController {
 
 	//결재자 정보등록 결재선 등록
 	//모달에서 선택한 결재선이 비동기로 담아서 보내서 확인해야함
+	//String[] empNoList : 없음
+	//String[] empAttNoList, : 없음
 	@ResponseBody
 	@PostMapping(value = "insertAtrzLine")
-	public List<EmployeeVO> insertAtrzLine(
-							String[] emplNoArr,	HttpServletRequest req, Model model,
-							String[] empNoList,	String[] empAttNoList,String[] authList
-							) {
-		
+	public AtrzVO insertAtrzLine(
+			AtrzVO atrzVO,
+			String[] emplNoArr,	HttpServletRequest req, Model model,
+			String[] authList,
+			@AuthenticationPrincipal CustomUser customUser) {
+
 		List<String> appLinelist = new ArrayList<String>();
-		
-		log.debug("empNoList {}", Arrays.toString(empNoList)); // 결재자
-		log.debug("empAttNoList {}", Arrays.toString(empAttNoList)); // 참조자
-		
+
+		log.debug("insertAtrzLine->emplNoArr : {}", Arrays.toString(emplNoArr)); // 결재자(o)
+		log.debug("insertAtrzLine->atrzVO : {}", atrzVO); // 결재문서
+		log.debug("insertAtrzLine->authList : {}", Arrays.toString(authList)); // 참조자
+
 		for(String emplNo : emplNoArr) {
 			//selectAppLineList->emplNo : 20250008
 			//selectAppLineList->emplNo : 20250016
 			log.info("selectAppLineList->emplNo : " + emplNo);
-			
-			
+
+
 			appLinelist.add(emplNo);
 		}
-		
-		//여기서 결재자와 참조자를 나눠야 한다.
-		log.info("empNoList: " +Arrays.toString(empNoList));
-		log.info("empAttNoList : " +Arrays.toString(empAttNoList));
-		
-//		해당 직원의 상세정보 목록을 select
+
+
+		//1) insert(결재선 insert) - 문서번호가 있어야 함
+		/*
+		{emplNo},{clsfCode},{emplNm},{deptCode}
+		 */
+		//로그인 시 입력한 아이디(username : 로그인 아이디)
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		log.info("empVO : " + empVO);
+		String emplNo = empVO.getEmplNo();
+		log.info("emplNo : " + emplNo);
+		String emplNm = empVO.getEmplNm();
+		log.info("emplNm : " + emplNo);
+		String clsfCode = empVO.getClsfCode();
+		log.info("clsfCode : " + clsfCode);
+		String deptCode = empVO.getDeptCode();
+		log.info("deptCode : " + deptCode);
+
+		atrzVO.setEmplNo(emplNo);
+		atrzVO.setClsfCode(clsfCode);
+		atrzVO.setEmplNm(emplNm);
+		atrzVO.setDeptCode(deptCode);
+
+		int atrzResult = atrzService.insertAtrz(atrzVO);
+		//인서트를 하고난뒤에는 문서번호가 생성되있음
+		//그 문서번호를 가지고 전자결재선 문서번호를 인서트 해줘야함
+
+		log.info("insertAtrzLine->atrzVO(문서번호 생성 후) : " + atrzVO);
+
+		//		AtrzLineVO atrzLineVO = new AtrzLineVO();
+		//		String atrzDocNo = atrzVO.getAtrzDocNo();
+		//		atrzLineVO.setAtrzDocNo(atrzDocNo);
+		//		log.info("insertAppLineList-> atrzLineVO : "+atrzLineVO);
+
+		//3) /atrz/selectForm/holiday의 출력용
+		//		해당 직원의 상세정보 목록을 select
 		List<EmployeeVO> emplDetailList = organizationService.emplDetailList(appLinelist);
 		log.info("selectAppLineList->emplDetailList : " + emplDetailList);
-		
+
+		atrzVO.setEmplDetailList(emplDetailList);
+
 		//여기서 담아서 보내야함
-		return emplDetailList;
-		
+		return atrzVO;
+
 	}
 	
-	//연차신청서 등록
+	//연차신청서 등록(문서번호가 이미 있는 상태임)
 	@ResponseBody
 	@PostMapping(value = "atrzHolidayInsert")
 	public String insertHolidayForm(AtrzVO atrzVO,
@@ -354,9 +437,9 @@ public class AtrzController {
 			     @RequestPart("docHoliday") HolidayVO documHolidayVO
 			    ){
 		
-		log.info("atrz {}",atrzVO);
-		log.info("atrzLineList {}",atrzLineList);
-		log.info("documHolidayVO {}",documHolidayVO);
+		log.info("atrz(최초) : {}",atrzVO);
+		log.info("atrzLineList(최초) : {}",atrzLineList);
+		log.info("documHolidayVO(최초) : {}",documHolidayVO);
 		
 		//여기서 담기지 않았음.. 사원정보가 오지 않음
 		
@@ -368,24 +451,31 @@ public class AtrzController {
 		atrzVO.setDeptCode(deptCode);
 //		atrzVO.setDrafterClsf(emplDetail.get);
 		
+		/*atrzSj, atrzCn, atrzDrftDt, atrzSttusCode
+		AtrzVO(atrzDocNo=null, drafterEmpno=null, drafterClsf=null, drafterEmpnm=null, drafterDept=null, bkmkYn=null, 
+		atchFileNo=0, atrzSj=미리작성한 제목입니다., atrzCn=sfda, atrzOpinion=null, atrzTmprStreDt=null, atrzDrftDt=null, atrzComptDt=null,
+		 atrzRtrvlDt=null, atrzSttusCode=null, eltsgnImage=null, docFormNo=1, atrzDeleteYn=null, schdulRegYn=null, docFormNm=H,
+	emplNoArr=null, emplNo=20250004, emplNm=길준희, clsfCode=02, clsfCodeNm=null, deptCode=91, deptCodeNm=null, uploadFile=null,
+	atrzLineVOList=null, holidayVO=null, spendingVO=null, emplDetailList=null)
+		 */
 		log.info("insertAppLineList-> atrzVO(사원추가후) : "+atrzVO);
 //			organizationService.emplDetail(atrzVO.get)
 		//전자결재 테이블 등록
-		int atrzResult = atrzService.insertAtrz(atrzVO);
+//		int atrzResult = atrzService.insertAtrz(atrzVO);
 		
 		//문서번호등록
-		String atrzDocNo = atrzVO.getAtrzDocNo();
-		log.info("atrzDocNo :  문서번호 등록 : "+atrzDocNo);
+//		String atrzDocNo = atrzVO.getAtrzDocNo();
+//		log.info("atrzDocNo :  문서번호 등록 : "+atrzDocNo);
 		//변수에 있는 문서번호를 넣어주기 atrzLineVO에 넣어주기
-		for(AtrzLineVO atrzLineVO : atrzLineList) {
-			atrzLineVO.setAtrzDocNo(atrzDocNo);
-			log.info("atrzLineVO :  문서번호 등록후 : "+atrzLineVO);	
-			atrzService.insertAtrzLine(atrzLineVO);
-
-		}
+//		for(AtrzLineVO atrzLineVO : atrzLineList) {
+//			atrzLineVO.setAtrzDocNo(atrzDocNo);
+//			log.info("atrzLineVO :  문서번호 등록후 : "+atrzLineVO);	
+//			atrzService.insertAtrzLine(atrzLineVO);
+//
+//		}
 		
 		//문서번호등록
-		documHolidayVO.setAtrzDocNo(atrzDocNo);
+		documHolidayVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
 		log.info("documHolidayVO :  문서번호 등록후 : "+documHolidayVO);	
 		
 		//시간배열 다시 하나로 합치기
@@ -414,10 +504,29 @@ public class AtrzController {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-	    
-		//연차신청서 등록
-		int documHolidayResult = atrzService.insertHoliday(documHolidayVO);
 		
+		/*
+		HolidayVO(holiActplnNo=0, atrzDocNo=null, holiCode=22, 
+		holiStartArr=[2025-04-08, 09:00:00], holiStart=Tue Apr 08 09:00:00 KST 2025, holiEndArr=[2025-04-10, 18:00:00], 
+		holiEnd=Thu Apr 10 18:00:00 KST 2025, atrzLineVOList=null, atrzVO=null)
+		 */
+		log.info("insertHolidayForm->documHolidayVO :  문서번호 등록후 : "+documHolidayVO);
+	    
+		//1) atrz 테이블 update
+		/*atrzSj, atrzCn, atrzDrftDt, atrzSttusCode
+			AtrzVO(atrzDocNo=null, drafterEmpno=null, drafterClsf=null, drafterEmpnm=null, drafterDept=null, bkmkYn=null, 
+			atchFileNo=0, atrzSj=미리작성한 제목입니다., atrzCn=sfda, atrzOpinion=null, atrzTmprStreDt=null, atrzDrftDt=null, atrzComptDt=null,
+			 atrzRtrvlDt=null, atrzSttusCode=null, eltsgnImage=null, docFormNo=1, atrzDeleteYn=null, schdulRegYn=null, docFormNm=H,
+		emplNoArr=null, emplNo=20250004, emplNm=길준희, clsfCode=02, clsfCodeNm=null, deptCode=91, deptCodeNm=null, uploadFile=null,
+		atrzLineVOList=null, holidayVO=null, spendingVO=null, emplDetailList=null)
+			 */
+		//2) 결재선지정 후에 제목, 내용, 등록일자, 상태 update
+		int result = atrzService.insertUpdateAtrz(atrzVO);
+		log.info("insertHolidayForm->result : " + result);
+		
+		//3) 연차신청서 등록
+		int documHolidayResult = atrzService.insertHoliday(documHolidayVO);
+		log.info("insertHolidayForm->documHolidayResult : " + documHolidayResult);
 		
 		return "쭈니성공";
 	}
