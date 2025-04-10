@@ -324,18 +324,18 @@
             
             <div class="sidebar-section">
               <div class="sidebar-section-header">라벨</div>
-              <!-- <div class="sidebar-item">
+              <div class="sidebar-item">
                 <i class="fas fa-tag" style="color: #4285f4;"></i>
                 <span class="sidebar-label">내일정</span>
-              </div> -->
-              <!-- <div class="sidebar-item">
+              </div>
+              <div class="sidebar-item">
                 <i class="fas fa-tag" style="color: #ea4335;"></i>
                 <span class="sidebar-label">뉴스레터</span>
-              </div> -->
-              <!-- <div class="sidebar-item">
+              </div>
+              <div class="sidebar-item">
                 <i class="fas fa-tag" style="color: #fbbc04;"></i>
                 <span class="sidebar-label">중요</span>
-              </div> -->
+              </div>
             </div>
           </div>
           
@@ -390,14 +390,14 @@
         </div>
         
         <!-- 알림 바 -->
-        <div class="notification-bar">
+        <!-- <div class="notification-bar">
           <span>Gmail 데스크톱 알림을 사용 설정하세요.</span>
           <div class="notification-actions">
             <button class="notification-button">확인</button>
             <button class="notification-button">나중에 하기</button>
             <button class="close-button">×</button>
           </div>
-        </div>
+        </div> -->
       </div>
     
       <!-- jQuery 추가 -->

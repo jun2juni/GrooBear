@@ -15,35 +15,56 @@
         <!-- 일정 필터 -->
         <div class="filter-section">
             <h3>일정 필터</h3>
-            <button type="button" id="filterAll" class="btn btn-primary"> 전체 보기</button><br>
+            <button type="button" id="filterAll" class="btn btn-primary">전체 보기</button>
             <div id="filterSection">
-                <label>전체 일정<input type="checkbox" class="event-filter" value="2" checked></label><br>
-                <label>부서 일정<input type="checkbox" class="event-filter" value="1" checked></label><br>
-                <label>개인 일정<input type="checkbox" class="event-filter" value="0" checked></label>
+                <div class="checkbox-container">
+                    <label>전체 일정
+                        <input type="checkbox" class="event-filter" value="2" checked>
+                    </label>
+                </div>
+                <div class="checkbox-container">
+                    <label>부서 일정
+                        <input type="checkbox" class="event-filter" value="1" checked>
+                    </label>
+                </div>
+                <div class="checkbox-container">
+                    <label>개인 일정
+                        <input type="checkbox" class="event-filter" value="0" checked>
+                    </label>
+                </div>
             </div>
         </div>
+        <!-- 라벨 섹션도 JavaScript에서 생성될 때 동일한 구조로 만들어야 합니다 -->
+
         <!-- 라벨 필터 -->
         <div class="label-section">
             <h3>라벨</h3>
             <button type="button" id="labelAll" class="btn btn-primary">전체 보기</button>
-            <div class="label-action-wrapper" style="position: relative; display: inline-block;">
-                <button id="addLabelBtn" type="button" class="btn btn-primary">추가</button>
-                <!-- 라벨 추가 팝업 -->
-                <div id="labelPopup" class="label-popup input-style-1 " style="display: none;" >
+            <button id="addLabelBtn" type="button" class="btn btn-primary">추가</button>
+            <!-- 라벨 추가 팝업 -->
+            <div id="labelPopup" class="label-popup input-style-1" style="display: none;">
+                <!-- 팝업 내용 -->
+                <div class="form-group">
+                    <label for="newLabelName">라벨 이름</label>
+                    <input type="text" id="newLabelName" class="form-control" placeholder="라벨 이름 입력">
+                </div>
+                <div class="form-group">
+                    <label>색상 선택</label>
                     <div id="colorPicker" class="color-picker">
-                        <!-- 여기에 색상 셀이 들어감 -->
+                        <!-- 색상 셀이 자바스크립트로 여기에 추가됨 -->
                     </div>
-                    <input type="text" class="input-style-1 " id="newLabelName" placeholder="라벨 이름 입력" />
-                    <button id="saveLabelBtn" class="btn btn-primary" >저장</button>
-                    <button id="delLabelBtn" class="btn btn-danger" onclick="delLabel(event)" style="display: none;">삭제</button>
+                </div>
+                <div class="popbutton-group">
+                    <button id="saveLabelBtn" class="btn btn-primary">저장</button>
+                    <button id="delLabelBtn" class="btn btn-danger" onclick="delLabel(event)" style="display:none;">삭제</button>
                 </div>
             </div>
-            <br>
-            <label>[기본] 나의 일정<input type="checkbox" class="label-filter" id="def" value="0" checked></label><br>
-            <div id="labelSection">
+            <div class="label-container">
+                <div id="labelSection" style="display: inline;">
+                    <!-- 여기에 라벨이 동적으로 추가됩니다 -->
+                </div>
             </div>
         </div>
-
     </div>
 
     <!-- 캘린더 영역 -->
@@ -59,6 +80,7 @@
         font-size: 12px; /* 글자 크기 줄이기 */
         width: auto; /* 자동 크기 조정 */
         height: 30px; /* 높이 설정 */
+        margin: 3px;
     }
 
     .label-popup {
@@ -73,11 +95,11 @@
         border-radius: 5px;
     }
     .color-picker {
-    display: grid;
-    grid-template-columns: repeat(5, 20px);
-    gap: 5px;
-    margin: 10px 0;
-}
+        display: grid;
+        grid-template-columns: repeat(5, 20px);
+        gap: 5px;
+        margin: 10px 0;
+    }
 
     .color-cell {
         width: 20px;
@@ -137,6 +159,17 @@
         display: block;
         margin-bottom: 5px;
     }
+    /**/
+    .label-section {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .label-section label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    /**/
 
     .add-event {
         margin-top: 20px;
@@ -146,24 +179,133 @@
     #calendarContent {
         flex: 1; /* 남은 공간을 모두 차지 */
         padding: 20px;
-        overflow-y: auto; /* 내용이 많을 경우 스크롤 표시 */
+        overflow-y: hidden; /*내용이 많을 경우 스크롤 표시*/
     }
     .lblIcon:hover {
         transform: scale(1.3); /* 20% 확대 */
         transition: transform 0.3s ease-in-out; /* 부드러운 애니메이션 효과 */
     }
 
+    /* 버튼 크기 통일 및 정렬 */
+    .btn {
+        padding: 4px 8px;
+        font-size: 12px;
+        height: 30px;
+        min-width: 80px;
+        margin-bottom: 5px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
 
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* 체크박스 컨테이너 스타일 */
+    .checkbox-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 4px;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+    }
+
+    .checkbox-container:hover {
+        background-color: #f0f0f0;
+    }
+
+    /* 체크박스 라벨 스타일 */
+    .checkbox-container label {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    /* 체크박스 스타일 */
+    .checkbox-container input[type="checkbox"] {
+        margin-left: auto;
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+    }
+
+    /* 필터 섹션 스타일 */
+    .filter-section, .label-section {
+        padding: 10px;
+        margin-bottom: 15px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        border: 1px solid #e9ecef;
+    }
+
+    /* 섹션 제목 스타일 */
+    .filter-section h3, .label-section h3 {
+        margin-bottom: 10px;
+        font-size: 16px;
+        color: #495057;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 5px;
+    }
+
+
+
+
+    /**/
+    .labelCheck {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 4px;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+    }
+
+    .labelCheck:hover {
+        background-color: #f0f0f0;
+    }
+
+    .labelCheck label {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .labelCheck input[type="checkbox"] {
+        margin-left: auto;
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+    }
+    /**/
+
+
+
+    #calendarSidebar {
+        position: relative;
+    }
 
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         $('#openModalBtn').on('click',function(){
+            $("#schStart").removeAttr('max')
+            $("#schEnd").removeAttr('min')
+            $("#schStartTime").removeAttr('max')
+            $("#schEndTime").removeAttr('min')
+            
             $('.modal-title').text("일정 등록");
 			$("#modalSubmit").text("등록");
+            console.log('$("#deleteBtn")',$("#deleteBtn"))
 			if($("#deleteBtn").length){
-				("#deleteBtn").remove();
+				$("#deleteBtn").remove();
 			}
+            
             insModal.show();
         })
     // 사이드바 라벨 관련 요소
@@ -174,10 +316,10 @@
         
         // 색상 옵션
         const colorOptions = [
-            "#D50000", "#C51162", "#AA00FF", "#6200EA", "#304FFE",
-            "#2962FF", "#0091EA", "#00B8D4", "#00BFA5", "#00C853",
-            "#64DD17", "#AEEA00", "#FFD600", "#FFAB00", "#FF6D00",
-            "#DD2C00", "#8D6E63", "#9E9E9E", "#607D8B", "#000000"
+                "#D50000", "#C51162", "#AA00FF", "#6200EA", "#304FFE",
+                "#2962FF", "#0091EA", "#00B8D4", "#00BFA5", "#00C853",
+                "#64DD17", "#AEEA00", "#FFD600", "#FFAB00", "#FF6D00",
+                "#DD2C00", "#8D6E63", "#9E9E9E", "#607D8B", "#000000"
         ];
         
         // 직원 정보
@@ -215,39 +357,80 @@
             
             colorPicker.appendChild(cell);
         });
-        
-        // 라벨 추가 버튼 클릭 이벤트
-        $(document).on('click', '#addLabelBtn', function(e) {
+
+        // 아이콘 클릭 시 팝업창 표시 로직 (lblIcon 클릭 및 addLabelBtn 클릭 모두 해당)
+        $(document).on('click', '.lblIcon, #addLabelBtn', function(e) {
             e.stopPropagation(); // 이벤트 버블링 방지
             e.preventDefault(); // 기본 동작 방지
-            $('#lblNoInp').remove();
-            $('#delLabelBtn').css('display','none')
+            
             const $popup = $('#labelPopup');
             const $icon = $(this);
-            const iconRect = this.getBoundingClientRect(); // 뷰포트 기준 위치 정보
-            const windowWidth = $(window).width();
             
             // 기존 팝업을 먼저 숨김
             $popup.hide();
-            $('#newLabelName').val('');
             
-            // 팝업 너비 계산 (실제 표시되는 크기)
-            const popupWidth = 200; // CSS에 정의된 너비와 일치시키기
-            
-            // 오른쪽 공간이 부족하면 왼쪽에 표시
-            let leftPosition = iconRect.left;
-            if (iconRect.left + popupWidth > windowWidth) {
-                leftPosition = iconRect.left - popupWidth;
+            // 클릭한 요소가 addLabelBtn인지 lblIcon인지 확인하여 처리
+            if ($(this).attr('id') === 'addLabelBtn') {
+                $('#lblNoInp').remove();
+                $('#delLabelBtn').css('display', 'none');
+                $('#newLabelName').val('');
+            } else {
+                // lblIcon인 경우 - 편집 모드
+                let selLblNo = $(this).next('input').val();
+                console.log('selLblNo : ',selLblNo)
+                $('#delLabelBtn').css('display', 'inline-block');
+                $('#lblNoInp').remove();
+                let lblNoInp = '<input hidden name="lblNo" id="lblNoInp" value="' + selLblNo + '" />';
+                $('#labelPopup').append(lblNoInp);
+                
+                // 라벨 정보 가져오기
+                let labelText = '';
+                if ($(this).next('label').length) {
+                    labelText = $(this).next('label').clone().children().remove().end().text().trim();
+                } else if ($(this).parent().is('label')) {
+                    labelText = $(this).parent().clone().children().remove().end().text().trim();
+                }
+                $('#newLabelName').val(labelText);
+                
+                // 현재 아이콘의 배경색 가져오기
+                const currentBgColor = $(this).css('background-color');
+                updateColorPicker(currentBgColor);
             }
             
-            // DOM에 강제로 표시 후 위치 조정 (fixed 사용하여 뷰포트 기준으로 배치)
-            $popup.css({
-                'position': 'fixed', // 스크롤 위치와 관계없이 뷰포트 기준으로 배치
-                'top': (iconRect.bottom + 5) + 'px', // 아이콘 바로 아래에 배치
+            // 아이콘의 sidebar 내부에서의 위치 계산 (사이드바 스크롤 고려)
+            const $sidebar = $('#calendarSidebar');
+            const iconPositionTop = $icon.position().top; // 부모 요소 기준 상단 위치
+            const iconPositionLeft = $icon.position().left; // 부모 요소 기준 좌측 위치
+            const iconHeight = $icon.outerHeight();
+            const popupHeight = $popup.outerHeight() || 150; // 팝업 높이 (없으면 예상값)
+            
+            // 팝업창이 사이드바 밖으로 나가지 않도록 제한
+            const sidebarWidth = $sidebar.width();
+            const popupWidth = 200; // 팝업 너비
+            
+            let leftPosition = iconPositionLeft;
+            // 오른쪽 경계를 넘어가면 조정
+            if (leftPosition + popupWidth > sidebarWidth) {
+                leftPosition = sidebarWidth - popupWidth - 10; // 여백 10px
+            }
+            
+            // 위쪽에 표시 (팝업이 아이콘 위에 나타나도록)
+            let topPosition = iconPositionTop - popupHeight - 5; // 아이콘 위 5px 간격
+            
+            // 만약 위쪽 공간이 부족하면 아래쪽에 표시
+            if (topPosition < 0) {
+                topPosition = iconPositionTop + iconHeight + 5; // 아이콘 아래 5px 간격
+            }
+            
+            // 팝업을 사이드바에 직접 추가하고 위치 설정
+            $popup.appendTo($sidebar).css({
+                'position': 'absolute',
+                'top': topPosition + 'px',
                 'left': leftPosition + 'px',
                 'z-index': '9999',
                 'display': 'block'
             });
+            
             // 기존 문서 클릭 이벤트 핸들러를 일시적으로 제거
             $(document).off('click.labelPopup');
             
@@ -255,7 +438,8 @@
             setTimeout(() => {
                 $(document).on('click.labelPopup', function(event) {
                     if (!$(event.target).closest('#labelPopup').length && 
-                        !$(event.target).hasClass('lblIcon') && 
+                        !$(event.target).is('.lblIcon') && 
+                        !$(event.target).is('#addLabelBtn') &&
                         !$(event.target).hasClass('color-cell')) {
                         $popup.hide();
                         $(document).off('click.labelPopup');
@@ -264,64 +448,8 @@
             }, 100);
         });
 
-        // 아이콘 클릭 시 팝업창 표시 로직
-        $(document).on('click', '.lblIcon', function(e) {
-            e.stopPropagation(); // 이벤트 버블링 방지
-            e.preventDefault(); // 기본 동작 방지
-            console.log('lblIcon click : ',e.target.nextElementSibling.firstElementChild.value);            
-            let selLblNo = e.target.nextElementSibling.firstElementChild.value;
-            const $popup = $('#labelPopup');
-            const $icon = $(this);
-            const iconRect = this.getBoundingClientRect(); // 뷰포트 기준 위치 정보
-            const windowWidth = $(window).width();
-            
-            // 기존 팝업을 먼저 숨김
-            $popup.hide();
-            // if(!$('#delLabelBtn').length){
-            //     $('#labelPopup').append('<button id="delLabelBtn" onclick="delLabel(event)">삭제</button>');
-            // }
-            $('#delLabelBtn').css('display','inline-block');
-            $('#lblNoInp').remove();
-            let lblNoInp = '<input hidden name="lblNo" id="lblNoInp" value="'+selLblNo+'" />'
-            $('#labelPopup').append(lblNoInp);
-
-            console.log('data 확인 : ', $('#delLabelBtn').data());
-
-            // 팝업 너비 계산 (실제 표시되는 크기)
-            const popupWidth = 200; // CSS에 정의된 너비와 일치시키기
-            
-            // 오른쪽 공간이 부족하면 왼쪽에 표시
-            let leftPosition = iconRect.left;
-            if (iconRect.left + popupWidth > windowWidth) {
-                leftPosition = iconRect.left - popupWidth;
-            }
-            
-            // DOM에 강제로 표시 후 위치 조정 (fixed 사용하여 뷰포트 기준으로 배치)
-            $popup.css({
-                'position': 'fixed', // 스크롤 위치와 관계없이 뷰포트 기준으로 배치
-                'top': (iconRect.bottom + 5) + 'px', // 아이콘 바로 아래에 배치
-                'left': leftPosition + 'px',
-                'z-index': '9999',
-                'display': 'block'
-            });
-            
-            // 라벨 정보 가져오기 - 다양한 DOM 구조에 맞게 수정
-            let labelText = '';
-            if ($(this).next('label').length) {
-                labelText = $(this).next('label').clone().children().remove().end().text().trim();
-            } else if ($(this).parent().is('label')) {
-                labelText = $(this).parent().clone().children().remove().end().text().trim();
-            }
-            
-            $('#newLabelName').val(labelText);
-
-            
-            // 현재 아이콘의 배경색 가져오기
-            const currentBgColor = $(this).css('background-color');
-            
-            // 컬러피커 업데이트
-            $('.color-cell').removeClass('selected');
-            
+        // 컬러 피커 업데이트 함수 
+        function updateColorPicker(currentBgColor) {
             // RGB 색상을 Hex로 변환하는 함수
             const rgbToHex = (rgb) => {
                 if (!rgb) return '#000000';
@@ -338,6 +466,9 @@
             
             const hexColor = rgbToHex(currentBgColor);
             
+            // 컬러피커 업데이트
+            $('.color-cell').removeClass('selected');
+            
             // 가장 비슷한 색상 선택
             $('.color-cell').each(function() {
                 const cellColor = $(this).css('background-color');
@@ -349,35 +480,12 @@
                 }
             });
             
-            // 첫번째 셀을 기본 선택
+            // 첫번째 셀을 기본 선택 (일치하는 색상이 없을 경우)
             if ($('.color-cell.selected').length === 0) {
                 $('.color-cell').first().addClass('selected');
                 selectedColor = colorOptions[0];
             }
-            
-            // 기존 문서 클릭 이벤트 핸들러를 일시적으로 제거
-            $(document).off('click.labelPopup');
-            
-            // 문서 클릭 이벤트 다시 바인딩 (팝업 외부 클릭 시 닫기)
-            setTimeout(() => {
-                $(document).on('click.labelPopup', function(event) {
-                    if (!$(event.target).closest('#labelPopup').length && 
-                        !$(event.target).hasClass('lblIcon') && 
-                        !$(event.target).hasClass('color-cell')) {
-                        $popup.hide();
-                        $(document).off('click.labelPopup');
-                    }
-                });
-            }, 100);
-        });
-        
-        // // 바깥 클릭 시 팝업 닫기
-        // document.addEventListener('click', function (event) {
-        //     if (!labelPopup.contains(event.target) && event.target !== addLabelBtn) {
-        //         labelPopup.style.display = 'none';
-        //     }
-        // });
-        
+        }
         // 저장 버튼 클릭 시 라벨 추가
         saveLabelBtn.addEventListener('click', function () {
             const labelName = document.getElementById('newLabelName').value.trim();
@@ -414,9 +522,6 @@
                         labelSideBar(response.labelList);
                         let clndr = chngData(response);
                         window.globalCalendar.setOption('events', clndr);
-                        // if(response.lblNo){
-                        //     window.fltrLbl.lblNoList.push(response.lblNo);
-                        // }
                     }
                     else{
                         labelSideBar(response);
@@ -569,11 +674,12 @@
                 });
             }
             
-            // 기본 라벨 유지를 위한 HTML 코드 저장
-            let defaultLabelHtml = '<label>[기본] 나의 일정<input type="checkbox" class="label-filter" id="def" value="0" checked></label><br>';
-            
             labelSection.empty();
-            let checkboxHtml = '';
+            let checkboxHtml = `<div class="labelCheck" >
+                                    <label >[기본] 나의 일정
+                                        <input type="checkbox" class="label-filter" id="def" value="0" checked>
+                                    </label>
+                                </div>`;
             
             labelList.forEach(label => {
                 // 기본 라벨(0)은 건너뛰기 (이미 상단에 고정)
@@ -585,9 +691,12 @@
                             (checkedLabels[label.lblNo] === true) : 
                             false; // 초기 상태는 모두 체크
                 
-                checkboxHtml += icon + '<label>' + label.lblNm + 
-                            '<input type="checkbox" class="label-filter" value="' + 
-                            label.lblNo + '"' + (isChecked ? ' checked' : '') + '></label><br>';
+                checkboxHtml += `
+                                <div class="labelCheck" >
+                                    <label>\${icon}\${label.lblNm}
+                                        <input type="checkbox" class="label-filter" value="\${label.lblNo}"\${isChecked ? ' checked' : ''}>
+                                    </label>
+                                </div>`;
             });
             
             labelSection.append(checkboxHtml);

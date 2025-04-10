@@ -13,6 +13,12 @@ public class MailController {
 
 	@GetMapping("")
 	public String mailHome() {
+		
 		return "mail/mailHome";
+	}
+	@GetMapping("/mailSend")
+	public String mailSend() {
+		
+		return "mail/mailSend";
 	}
 }

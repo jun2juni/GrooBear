@@ -37,8 +37,8 @@
 	   OR (SCHDUL_TY = '1' AND DEPT_CODE = #{deptCode})
 	   OR (SCHDUL_TY = '2')
 	)
-	<if test="schdulTyList == null or schdulTyList.size() == 0 or lblNoList == null or lblNoList.size() == 0">
-		AND 1 = 0
+	<if test="schdulTyList == null or schdulTyList.size() == 0">
+    	AND 1 = 0
 	</if>
 	<if test="schdulTyList != null and schdulTyList.size() > 0">
 		AND schdul_ty IN
@@ -46,20 +46,28 @@
 	        #{ty}
 	    </foreach>
 	</if>
-    <if test="lblNoList != null and lblNoList.size() > 0">
-	    AND (lbl_no IN
-	    <foreach collection="lblNoList" item="no" open="(" separator="," close=")">
-	        #{no}
-	    </foreach>
-	    <foreach collection="lblNoList" item="no">
-			<if test="no == 0">
-				OR lbl_no IS NULL
-			</if>
-		</foreach>
-	    )
-    </if>
-	
+	<choose>
+	    <when test="lblNoList != null and lblNoList.size() > 0">
+		    AND (lbl_no IN
+		    <foreach collection="lblNoList" item="no" open="(" separator="," close=")">
+		        #{no}
+		    </foreach>
+		    <foreach collection="lblNoList" item="no">
+				<if test="no == 0">
+					OR lbl_no IS NULL
+				</if>
+			</foreach>
+			OR (schdul_ty = '1' OR schdul_ty = '2')
+		    )
+	    </when>
+<!-- 	    <if test="lblNoList == null and lblNoList.size() == 0"> -->
+		<otherwise>
+	    	AND (lbl_no IS NULL AND schdul_ty != '0')
+<!-- 	    </if> -->
+		</otherwise>
+	</choose>
 </select>
+
 
 <insert id="scheduleInsert" parameterType="kr.or.ddit.sevenfs.vo.schedule.ScheduleVO">
 	/*kr.or.ddit.sevenfs.mapper.schedule.ScheduleMapper.scheduleInsert 이걸 찍으면 log에서 찾기 편하다.*/
@@ -121,5 +129,6 @@ INSERT INTO SCHEDULE (
 	SET lbl_no = null
 	WHERE lbl_no = #{lblNo}
 </update>
+
 
 </mapper>

@@ -53,7 +53,7 @@
 	display: block;
 	font-weight: 500;
 	color: #5d657b;
-	margin-bottom: 10px;
+	margin-bottom: 4px;
 	font-size: 14px;
 }
 
@@ -77,6 +77,25 @@
 	outline: none;
 }
 
+.date-time-group {
+	display: flex;
+	gap: 6px;
+	align-items: flex-end;
+	margin-bottom: 10px; /* 각 그룹 간 간격 */
+}
+
+.date-time-group .input-style-1 {
+	flex: 1;
+	margin-bottom: 0;
+}
+
+.date-time-group .checkbox-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-left: 10px;
+	margin-bottom: 10px;
+}
 /* 체크박스 스타일 */
 .checkbox-wrapper {
 	display: flex;
@@ -181,9 +200,9 @@
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
 							viewBox="0 0 24 24" fill="none" stroke="currentColor"
 							stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+							<line x1="18" y1="6" x2="6" y2="18"></line>
+							<line x1="6" y1="6" x2="18" y2="18"></line>
+						</svg>
 					</button>
 				</div>
 				<div class="modal-body">
@@ -191,71 +210,61 @@
 						<div class="form-grid">
 							<input type="hidden" name="addUpt" id="addUpt" value="">
 							<input type="hidden" name="schdulNo" id="schdulNo" value="">
-							<div class="input-style-1">
-								<label>시작일</label>
-                <input class="dateInput" type="date" id="schStart" name="start" value="">
-							</div>
-							<div class="input-style-1">
-                <label>시간</label>
-                <input class="dateInput" type="time" id="schStartTime" name="startTime" value="">
-							</div>
-
-							<div class="input-style-1">
-								<label>종료일</label>
-                <input class="dateInput" type="date" id="schEnd" name="end" value="">
-							</div>
-              <div class="input-style-1">
-                <label>시간</label>
-                <input class="dateInput" type="time" id="schEndTime" name="endTime" value="" >
-							</div>
-              <!-- <div class="input-style-1">
-                <label>시간</label>
-                <input type="datetime-local" id="schStartTime" name="startTime" value="">
-							</div> -->
-
 							<div class="input-style-1 full-width">
 								<label>제목</label> 
-                <input type="text" id="schTitle" name="schdulSj" value="" placeholder="일정 제목을 입력하세요">
+								<input type="text" id="schTitle" name="schdulSj" value="" placeholder="일정 제목을 입력하세요">
 							</div>
-
 							<div class="input-style-1 full-width">
 								<label>내용</label> 
-                <input type="text" id="schContent" name="content" value="" placeholder="일정 내용을 입력하세요">
+								<input type="text" id="schContent" name="content" value="" placeholder="일정 내용을 입력하세요">
 							</div>
-
-							<!-- <div class="input-style-1 full-width">
-								<label>카테고리</label>
-                <input type="text" id="schCategory" name="category" value="" placeholder="카테고리를 입력하세요">
-							</div> -->
-              <div class="select-style-1">
-                <label>공개유형</label>
-                <div class="select-position">
-                  <select id="schdulTy" name="schdulTy">
-                    <option value="0">개인</option>
-                    <option value="1">부서</option>
-                    <!-- <option value="2">전체</option> 이건 추후에 관리자만 보이게 할것! -->
-                  </select>
-                </div>
-              </div>
+							<div class="date-time-group full-width">
+								<div class="input-style-1">
+									<div>
+										<label>시작일</label>
+										<input class="dateInput w-fit" type="date" id="schStart" name="start" value="" >
+									</div>
+									<div>
+										<label>시간</label>
+										<input class="dateInput w-fit" type="time" id="schStartTime" name="startTime" value="">
+									</div>
+								</div>
+							</div>
+							<div class="date-time-group full-width">
+								<div class="input-style-1">
+									<label>종료일</label>
+									<input class="dateInput w-fit" type="date" id="schEnd" name="end" value="">
+									<label>시간</label>
+									<input class="dateInput w-fit" type="time" id="schEndTime" name="endTime" value="" >
+								</div>
+							</div>
 							<div class="input-style-1">
 								<div class="checkbox-wrapper">
 									<label>하루종일</label>
-                  <input type="checkbox" id="allDay" name="allDay" class="checkbox-style">
+									  <input type="checkbox" id="allDay" name="allDay" class="checkbox-style">
+								</div>
+							</div>
+              				<div class="select-style-1">
+								<label>공개유형</label>
+								<div class="select-position">
+									<select id="schdulTy" name="schdulTy">
+										<option value="0">개인</option>
+										<option value="1">부서</option>
+										<!-- <option value="2">전체</option> 이건 추후에 관리자만 보이게 할것! -->
+									</select>
 								</div>
 							</div>
 							<div class="select-style-1 full-width">
 								<label>라벨 선택</label>
 								<div class="select-position">
-								  <select id="scheduleLabel" name="lblNo">
-								  </select>
+								  <select id="scheduleLabel" name="lblNo"></select>
 								</div>
-							  </div>
+							</div>
 						</div>
 						<div class="button-group" style="margin-top: 1px;">
 							<button id="modalSubmit" type="button" class="main-btn primary-btn btn-hover"
-							onclick="fCalAdd(event)"></button>
-							<button type="button" class="main-btn danger-btn btn-hover"
-								onclick="fMClose()">취소</button>
+								onclick="fCalAdd(event)"></button>
+							<button type="button" class="main-btn danger-btn btn-hover" onclick="fMClose()">취소</button>
 						</div>
 					</form>
 				</div>
