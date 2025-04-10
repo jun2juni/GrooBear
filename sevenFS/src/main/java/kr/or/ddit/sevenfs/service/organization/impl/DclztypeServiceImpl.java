@@ -24,9 +24,16 @@ public class DclztypeServiceImpl implements DclztypeService {
 	@Autowired
 	DclztypeMapper dclztypeMapper;
 	
+	// 사원의 근태현황 총 갯수
 	@Override
 	public DclzTypeVO dclzCnt(String emplNo) {
 		return dclztypeMapper.dclzCnt(emplNo);
+	}
+	
+	// 사원의 연차사용내역 총 갯수
+	@Override
+	public int getVacTotal(Map<String, Object> map) {
+		return dclztypeMapper.getVacTotal(map);
 	}
 
 	// 사원 출퇴근 현황 목록 조회
@@ -109,13 +116,32 @@ public class DclztypeServiceImpl implements DclztypeService {
 	// 사원 한명의 이번년도 연차 정보 가져오기
 	@Override
 	public VacationVO emplVacationCnt(String emplNo) {
-		return dclztypeMapper.emplVacationCnt(emplNo);
+		
+		VacationVO emplVacList = dclztypeMapper.emplVacationCnt(emplNo);
+		log.info("service사원연차 : " + emplVacList);
+		
+		// 총 연차일수
+		int totalYryc = emplVacList.getTotYrycDaycnt();
+		// 사용 연차일수
+		int useYryc = emplVacList.getYrycUseDaycnt();
+		// 잔여 연차일수 계산
+		int remainYryc = totalYryc - useYryc;
+		
+		// 잔여 연차일수 set해주기
+		emplVacList.setYrycRemndrDaycnt(remainYryc);
+		
+		// 연차코드가 23(공가), 24(병가)면 사용일수에서 차감 안되게하기
+		
+		
+		return emplVacList;
 	}
 
 	// 공통코드가 연차에 해당하는 사원의 모든 년도 데이터 가져오기
 	@Override
-	public List<VacationVO> emplVacationDataList(String emplNo) {
-		return dclztypeMapper.emplVacationDataList(emplNo);
+	public List<DclzTypeVO> emplVacationDataList(Map<String, Object> map) {
+		return dclztypeMapper.emplVacationDataList(map);
 	}
+
+
 
 }

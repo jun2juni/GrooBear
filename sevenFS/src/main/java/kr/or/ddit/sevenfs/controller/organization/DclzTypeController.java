@@ -274,23 +274,50 @@ public class DclzTypeController {
 	
 	// 연차 페이지
 	@GetMapping("/vacation")
-	public String vacation(Model model, Principal principal, VacationVO vacationVO) {
+	public String vacation(Model model, Principal principal, VacationVO vacationVO,
+			@RequestParam(defaultValue="1") int currentPage,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "") String keyword) {
 		
-		model.addAttribute("title","나의 연차 내역");
-		
+		//model.addAttribute("title","나의 연차 내역 by박호산나");
+
 		// 현재 로그인한 사원번호
 		String emplNo = principal.getName();
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("emplNo", emplNo);
+		map.put("currentPage", currentPage);
+		map.put("keyword", keyword);
+		
+		// 연차사용내역 전체 행 수
+		int total = dclztypeService.getVacTotal(map);
+		
+		// 페이지 정보
+		ArticlePage<VacationVO> articlePage = new ArticlePage<>(total, currentPage, size);
+		log.info("articlePage : " + articlePage);
+		log.info("keyword : " + keyword);
+		// 페이지정보 넘겨주기
+		model.addAttribute("articlePage" , articlePage);
+		
 		// 사원의 이번년도 연차 현황 가져오기
 		VacationVO emplVacation = dclztypeService.emplVacationCnt(emplNo);
+		
+		// 잔여연차 계산된값 확인
+		int remain = emplVacation.getYrycRemndrDaycnt();
+		//log.info("controller잔여연차 : " + remain);
+		
 		model.addAttribute("emplVacation",emplVacation);
 		//log.info("연차내역 : " + emplVacation);
 		
 		// 공통코드가 연차에 해당하는 사원의 모든 년도 데이터 가져오기
-		List<VacationVO> emplCmmnVacationList = dclztypeService.emplVacationDataList(emplNo);
+		List<DclzTypeVO> emplCmmnVacationList = dclztypeService.emplVacationDataList(map);
 		model.addAttribute("emplCmmnVacationList" , emplCmmnVacationList);
+		log.info("사원의 모든 연차 사용내역 : " + emplCmmnVacationList);
 		
 		return "organization/dclz/vacation";
 	}
+	
+	
 	
 
 }

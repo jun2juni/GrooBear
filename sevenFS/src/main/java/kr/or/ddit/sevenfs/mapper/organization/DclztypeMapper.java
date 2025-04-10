@@ -16,6 +16,9 @@ public interface DclztypeMapper {
 	
 	// 사원의 근태현황 총 갯수
 	public int getTotal(Map<String, Object> map);
+	
+	// 사원의 연차사용내역 총 갯수
+	public int getVacTotal(Map<String, Object> map);
 
 	// 사원 근태현황 대분류로 조회
 	public DclzTypeVO dclzCnt(String emplNo);
@@ -45,6 +48,6 @@ public interface DclztypeMapper {
 	public VacationVO emplVacationCnt(String emplNo);
 	
 	// 공통코드가 연차에 해당하는 사원의 모든 년도 데이터 가져오기
-	public List<VacationVO> emplVacationDataList(String emplNo);
+	public List<DclzTypeVO> emplVacationDataList(Map<String, Object> map);
 	
 }

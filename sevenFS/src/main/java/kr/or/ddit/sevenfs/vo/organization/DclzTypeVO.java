@@ -16,6 +16,7 @@ public class DclzTypeVO {
 	private String dclzCode;
 	private Date dclzBeginDt;
 	private Date dclzEndDt;
+	private String dclzReason;
 	
 	// 근태 대분류 유형 이름
 	private String bad; // 근태불량
@@ -44,6 +45,8 @@ public class DclzTypeVO {
 	private String workHour;
 	// 총 근무 - 분 기준
 	private String workMinutes;
+	
+	
 
 
 }

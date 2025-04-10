@@ -169,13 +169,18 @@
 		                        <option value="${dclzWork.workBeginDate}">${dclzWork.dclzNo.substring(0,4)}</option>
 	                        </c:forEach> --%>
 	                      </select>
+	                    <c:set var="duplMonth" value="" />
 	                    </div>
 	                    <div class="select-position select-sm ml-10">
 	                      <select class="light-bg" id=monthSelect>
 	                      <option>월 선택</option>
-		                     <c:forEach var="dclzWork" items="${empDclzList}">
-		                        <option value="">${dclzWork.dclzNo.substring(4,6)}</option>
-	                        </c:forEach> 
+		                    <c:forEach var="dclzWork" items="${empDclzList}">
+						      <c:set var="month" value="${fn:substring(dclzWork.dclzNo, 4, 6)}" />
+						      <c:if test="${not fn:contains(duplMonth, month)}">
+						        <option value="${month}">${month}</option>
+						        <c:set var="duplMonth" value="${duplMonth},${month}" />
+						      </c:if>
+						    </c:forEach>
 	                      </select>
 	                    </div>
 	                  </div>
@@ -224,7 +229,7 @@
 	                      </td>
 	                      <td>
 	                        <div>
-	                          <p class="text-sm">${dclzWork.cmmnCodeNm}</p>
+	                          <h4><span class="badge bg-dark">${dclzWork.cmmnCodeNm}</span></h4>
 	                        </div>
 	                      </td>
 	                      <td>
@@ -321,7 +326,7 @@ $(function(){
                   </td>
                   <td>
                     <div>
-                      <p class="text-sm">\${item.cmmnCodeNm}</p>
+                  	  <h4><span class="badge bg-dark">\${item.cmmnCodeNm}</span></h4>
                     </div>
                   </td>
                   <td>
@@ -415,7 +420,7 @@ $(document).on('change', '#monthSelect', function(e) {
                   </td>
                   <td>
                     <div>
-                      <p class="text-sm">\${item.cmmnCodeNm}</p>
+                      <h4><span class="badge bg-dark">\${item.cmmnCodeNm}</span></h4>
                     </div>
                   </td>
                   <td>

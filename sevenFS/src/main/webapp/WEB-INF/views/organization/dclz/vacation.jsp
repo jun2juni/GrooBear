@@ -5,7 +5,8 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
-<c:set var="title" scope="application" value="메인" />
+<c:set var="title" scope="application" value="나의 연차 내역 " />
+<c:set var="copyLight" scope="application" value="by 박호산나" />
 
 <!DOCTYPE html>
 <html lang="en">
@@ -28,8 +29,8 @@
 				<div class="col-3">
 	              <div class="icon-card mb-30">
 	                <div class="content mx-auto">
-	                  <div>
-	                  	<h3 ><span class="status-btn dark-btn text-center">연차 사용 기간</span></h3>
+	                  <div class="mx-auto text-center mb-2">
+	                  	<h4><span class="status-btn dark-btn">연차 사용 기간</span></h4>
 	                  </div>
 	                  <div>
 	                       <c:set var="beginDt" value="${emplVacation.yrycUseBeginDate}"></c:set>
@@ -50,7 +51,7 @@
 	              <div class="icon-card mb-30">
 	                <div class="content mx-auto">
 	                  <div>
-	                  	<h3><span class="status-btn success-btn">총 연차 수</span></h3>
+	                  	<h3><span class="status-btn success-btn mb-2">총 연차 수</span></h3>
 	                  </div>
 	                  <div>
 	                    <p class="text-center"> ${emplVacation.totYrycDaycnt}개</p>
@@ -63,10 +64,10 @@
 	              <div class="icon-card mb-30">
 	                <div class="content mx-auto">
 	                  <div>
-	                  	<h3><span class="status-btn success-btn">사용 연차 수</span></h3>
+	                  	<h3><span class="status-btn success-btn mb-2">사용 연차 수</span></h3>
 	                  </div>
 	                  <div>
-	                    <p class="text-center">${emplVacation.yrycRemndrDaycnt}개</p>
+	                    <p class="text-center">${emplVacation.yrycUseDaycnt}개</p>
 	                  </div>
 	                </div>
 	              </div>
@@ -76,24 +77,64 @@
 	              <div class="icon-card mb-30">
 	                <div class="content mx-auto">
 	                  <div>
-	                  	<h3><span class="status-btn success-btn">잔여 연차 수</span></h3>
+	                  	<h3><span class="status-btn success-btn mb-2">잔여 연차 수</span></h3>
 	                  </div>
 	                  <div>
-	                    <p class="text-center">${emplVacation.yrycUseDaycnt}개</p>
+	                    <p class="text-center">${emplVacation.yrycRemndrDaycnt}개</p>
 	                  </div>
 	                </div>
 	              </div>
 	              <!-- End Icon Cart -->
 	            </div>
 			</div>
-			<div class="row">
-          <div class="col-lg-12">
-            <div class="card-style clients-table-card mb-30">
-              <div class="title d-flex justify-content-between align-items-center">
-                <h6 class="mb-10">연차 사용 내역</h6>
-                <!-- select box 넣기  -->
+		<div>
+          <div class="">
+            <div class="card-style  mb-30 col-12">
+              <div class="row">
+              
+	            <div>
+	              <h6>연차 사용 내역</h6>
+	             </div> 
+	             <div class="">
+                <!-- 연차유형 selectBox -->
+                <div class="col-12 d-flex justify-content-end">
+	             <a href="/dclz/vacation" class="btn-sm light-btn-light btn-hover mr-10 rounded-md">전체 목록 보기</a>
+				<form method="get" action="/dclz/vacation" id="selType" class="mr-10" style="height:40px;">
+                <c:set var="duplTypes" value=""></c:set>
+                <div class="input-style-1 form-group col-3">
+				  <select id="vacType" class="form-select w-auto" required="required" name="keyword">
+				    <option>유형 선택</option>
+				    <c:forEach var="vacType" items="${emplCmmnVacationList}">
+				      <!-- 중복 확인: printedTypes에 포함되어 있지 않은 경우만 출력 -->
+				      <c:if test="${not fn:contains(duplTypes,vacType.cmmnCodeNm)}">
+				        <option value="${vacType.cmmnCodeNm}">${vacType.cmmnCodeNm}</option>
+				        <!-- 출력한 값 저장 -->
+				        <c:set var="duplTypes" value="${duplTypes},${vacType.cmmnCodeNm}" />
+				      </c:if>
+				    </c:forEach>
+				  </select>
+				</div>
+				 </form>
+			  	<!-- 년도 selectBox -->
+                <form method="get" action="/dclz/vacation" id="selYear" class="mr-10" style="height:40px;">
+			  	<c:set var="duplYears" value="" />
+                <div class="input-style-1 form-group col-3">
+	     	     <select id="vacYear" class="form-select w-auto" required="required">
+					<option>년도 선택</option>
+					<c:forEach var="vacDate" items="${emplCmmnVacationList}">
+						<fmt:formatDate value="${vacDate.dclzBeginDt}" pattern="yyyy" var="vacYear" />
+						<c:if test="${not fn:contains(duplYears, vacYear)}">
+							<option value="${vacYear}">${vacYear}</option>
+							<c:set var="duplYears" value="${duplYears},${vacYear}" />
+						</c:if>	
+					</c:forEach>
+				 </select> 
+				 <input type="hidden" id="yearKeyword" name="keyword">
+			  	</div>
+			  	</form>
+			 </div>
               </div>
-              <div class="table-wrapper table-responsive">
+              <div class="table-wrapper table-responsive mt-40">
                 <table class="table clients-table">
                   <thead>
                     <tr>
@@ -107,7 +148,7 @@
                         <h6>사용 기간</h6>
                       </th>
                       <th>
-                        <h6>내용</h6>
+                        <h6>연차사유</h6>
                       </th>
                     </tr>
                     <!-- end table row-->
@@ -120,13 +161,16 @@
                         </div>
                       </td>
                       <td class="min-width">
-                        <span>${emplVacationData.cmmnCodeNm}</span>
+                      <h4><span class="badge bg-dark">${emplVacationData.cmmnCodeNm}</span></h4>
                       </td>
                       <td class="min-width">
-                        <p><a href="#0">날짜입력</a></p>
+                        <p><span class="text-medium text-dark">
+                        <fmt:formatDate value="${emplVacationData.dclzBeginDt}" pattern="yyyy-MM-dd" />
+                         ~ <fmt:formatDate value="${emplVacationData.dclzEndDt}" pattern="yyyy-MM-dd" />
+                         </span></p>
                       </td>
                       <td class="min-width">
-                        <p></p>
+                        <p>${emplVacationData.dclzReason}</p>
                       </td>
                     </tr>
                     </c:forEach>
@@ -135,16 +179,47 @@
                 </table>
                 <!-- end table -->
               </div>
+                <page-navi id="page"
+				url="/dclz/vacation?"
+				current="${param.get("currentPage")}"
+				show-max="10"
+				total="${articlePage.endPage}"></page-navi>
             </div>
             <!-- end card -->
           </div>
           <!-- end col -->
         </div>
-			
+		</div>
 		</div>
 	</section>
   <%@ include file="../../layout/footer.jsp" %>
 </main>
 <%@ include file="../../layout/prescript.jsp" %>
+
+<script type="text/javascript">
+
+
+$(function(){
+	// 연차 유형 선택시
+	$('#vacType').on('change', function(){
+		//alert("dididi");
+		// keyword를 submit
+		$('#selType').submit();
+	})
+	
+	// 년도 선택시
+	$('#vacYear').on('change', function(){
+		const vacYear = $('#vacYear').val();
+		//console.log('vacYear : ' , vacYear);
+		//const cleanYear = vacYear.substring(0,4);
+		// input hidden 값 변경해주고 submit
+		const yearKey = $('#yearKeyword').val(vacYear);
+		console.log('yearKey : ' , yearKey.val())
+		$('#selYear').submit();
+	})
+})
+	
+</script>
+
 </body>
 </html>

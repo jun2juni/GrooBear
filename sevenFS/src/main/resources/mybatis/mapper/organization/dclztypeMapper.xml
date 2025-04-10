@@ -9,6 +9,12 @@
       where empl_no=#{emplNo}
 </select>
 
+<!-- 사원의 연차 사용내역 총 갯수 -->
+<select id="getVacTotal" parameterType="HashMap" resultType="int">
+	SELECT COUNT(*)
+	FROM vacation
+	WHERE empl_no=#{emplNo}
+</select>
 
 <!-- 사원의 근태현황 대분류로 조회  -->
 <!-- <select id="dclzCnt" parameterType="String" resultMap="dclztypeMap">
@@ -192,7 +198,7 @@ WITH U AS(
         WHERE U.RNUM BETWEEN (#{currentPage} * 10)-(10-1) AND (#{currentPage}* 10)
 </select>
 
-<!-- 사원 한명의 현재년도 연차 정보 가져오기 -->
+<!-- 사원 한명의 현재년도 연차 개수 정보 가져오기 -->
 <select id="emplVacationCnt" parameterType="String" resultType="kr.or.ddit.sevenfs.vo.organization.VacationVO">
 	SELECT v.EMPL_NO
 	       , v.YRYC_YEAR
@@ -204,7 +210,7 @@ WITH U AS(
 	       , v.YRYC_REMNDR_DAYCNT
 	       , v.EXCESS_WORK_YRYC
 	       , v.CMPNSTN_YRYC
-	       , v.YRYC_REASON
+	       , v.YRYC_DETAIL
 	       , emp.empl_nm
 	FROM vacation v, employee emp
 	WHERE v.empl_no = emp.empl_no
@@ -213,18 +219,70 @@ WITH U AS(
 </select>
 
 <!-- 공통코드가 연차에 해당하는 사원의 모든 년도 데이터 가져오기 -->
-<select id="emplVacationDataList" parameterType="String" resultType="kr.or.ddit.sevenfs.vo.organization.VacationVO">
-	SELECT vc.empl_no
+<select id="emplVacationDataList" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
+	WITH U AS(
+    SELECT ROW_NUMBER() OVER(ORDER BY D.dclz_end_dt DESC) RNUM
+       , D.cmmn_code_nm
+       , D.dclz_begin_dt
+       , D.dclz_end_dt
+       , D.dclz_reason
+     FROM
+    (
+    SELECT cc.cmmn_code_nm
+           , dt.dclz_begin_dt
+           , dt.dclz_end_dt
+           , dt.dclz_reason
+    FROM dclz_type dt
+    LEFT JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
+    WHERE dt.empl_no=#{emplNo}
+    AND cc.upper_cmmn_code='20'
+    AND cc.cmmn_code_group='ATTEND'
+       AND (
+         (TO_CHAR(dt.dclz_begin_dt, 'YYYY')) LIKE '%' || #{keyword} || '%'
+         OR cc.cmmn_code_nm  LIKE '%' || #{keyword} || '%'
+		)
+    )
+    D
+    )
+    SELECT U.*
+        FROM U
+        WHERE U.RNUM BETWEEN (#{currentPage} * 10)-(10-1) AND (#{currentPage}* 10)
+</select>
+
+<!-- <select id="emplVacationDataList" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.VacationVO">
+	WITH U AS(
+    SELECT ROW_NUMBER() OVER(ORDER BY V.dclz_end_dt DESC) RNUM
+         , V.yryc_year, V.yryc_use_begin_date, V.yryc_use_end_date, V.yryc_code, V.yryc_detail
+         , V.cmmn_code_nm, V.dclz_begin_dt, V.dclz_end_dt , V.dclz_reason
+     FROM
+    (
+    SELECT vc.empl_no
 	       , vc.yryc_year
 	       , vc.yryc_use_begin_date
 	       , vc.yryc_use_end_date     
-	       , vc.yryc_reason
+	       , vc.yryc_detail
 	       , vc.yryc_code
 	       , cc.cmmn_code_nm
+       	   , dt.dclz_begin_dt
+       	   , dt.dclz_end_dt	 
+       	   , dt.dclz_reason      
 	FROM vacation vc
 	LEFT JOIN common_code cc ON vc.yryc_code = cc.cmmn_code
+	LEFT JOIN dclz_type dt ON vc.yryc_code = dt.dclz_code
 	WHERE cc.cmmn_code_group = 'ATTEND'
-	AND vc.empl_no=#{emplNo}
-</select>
+	AND vc.empl_no= #{emplNo}
+     
+       AND (
+         (TO_CHAR(dt.dclz_begin_dt, 'YYYY')) LIKE '%' || #{keyword} || '%'
+         OR (TO_CHAR(dt.dclz_begin_dt, 'mm')) LIKE '%' || #{keyword} || '%'
+         OR cc.cmmn_code_nm  LIKE '%' || #{keyword} || '%'
+		)
+    )
+    V
+    )
+    SELECT U.*
+        FROM U
+        WHERE U.RNUM BETWEEN (#{currentPage} * 10)-(10-1) AND (#{currentPage} * 10)
+</select> -->
 
 </mapper>
