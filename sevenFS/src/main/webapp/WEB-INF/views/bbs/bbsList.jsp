@@ -71,7 +71,7 @@ table.table-hover.align-middle.text-center tbody tr td {
               <form action="/bbs/bbsList" method="get" class="d-flex">
               <input type="hidden" value="${bbsVO.bbsCtgryNo}" name="bbsCtgryNo">
                 <!-- 카테고리 선택 드롭다운 -->
-                <select name="category" class="form-select me-2">
+                <select name="category" class="form-select me-2" style="width: 100px;">
 				  <option value="bbscttSj"
 				    <c:if test="${selectedCategory == 'bbscttSj'}">selected</c:if>
 				  >제목</option>
@@ -84,7 +84,7 @@ table.table-hover.align-middle.text-center tbody tr td {
 
                 
                 <!-- 검색어 입력 필드 -->
-                <input type="text" name="searchKeyword" value="${SearchKeyword}" class="form-control me-2" placeholder="검색어 입력" style="width: 500%;">
+                <input type="text" name="searchKeyword" value="${SearchKeyword}" class="form-control me-2 col-auto flex-grow-1" placeholder="검색어 입력"">
                 
                 <!-- 검색 버튼 -->
                 <button style="white-space: nowrap;" type="submit" class="btn btn-outline-primary">검색</button>
@@ -92,7 +92,7 @@ table.table-hover.align-middle.text-center tbody tr td {
             </div>
           </nav>
 
-          <div class="table-responsive">
+          <div class="table">
             <table class="table table-hover align-middle text-center" style="table-layout: fixed; width: 100%;">
               <thead class="table-light">
                 <tr>
@@ -108,13 +108,13 @@ table.table-hover.align-middle.text-center tbody tr td {
               <tbody>
                 <c:forEach var="bbsVO" items="${bbsList}">
                   <tr onClick="location.href='/bbs/bbsDetail?bbsSn=${bbsVO.bbsSn}'" style="cursor:pointer;">
-                    <td>${bbsVO.bbsSn}</td>
-                    <td>
+                    <td style="border-bottom:1px solid #efefef;">${bbsVO.bbsSn}</td>
+                    <td style="border-bottom:1px solid #efefef;">
                     	<c:if test="${bbsVO.upendFixingYn == 'Y'}">
 					        <span style="color: red; font-weight: bold;">[고정]</span>
 					    </c:if>
                     </td>
-                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">
+                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;border-bottom:1px solid #efefef;">
                     	${bbsVO.bbscttSj}
                     	<c:choose>
                         <c:when test="${not empty bbsVO.files and bbsVO.files.size() > 0}">
@@ -128,12 +128,12 @@ table.table-hover.align-middle.text-center tbody tr td {
 					  </c:if>
                       
                     </td>
-                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${bbsVO.emplNm}</td>
-                    <td>${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}</td>
-                    <td>
+                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;border-bottom:1px solid #efefef;">${bbsVO.emplNm}</td>
+                    <td style="border-bottom:1px solid #efefef;">${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}</td>
+                    <td style="border-bottom:1px solid #efefef;">
                       ${bbsVO.rdcnt}
                     </td>
-                    <td>
+                    <td style="border-bottom:1px solid #efefef;">
                       ${bbsVO.likeCnt}
                     </td>
                   </tr>
