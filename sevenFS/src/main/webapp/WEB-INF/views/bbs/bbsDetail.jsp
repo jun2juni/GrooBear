@@ -79,14 +79,17 @@
 </svg></button>
 									<span id="likeCount">${bbsVO.likeCnt}</span>
 								</div>
-								<div class="position-relative">
-									<div class="position-absolute bottom-0 start-0">
-										<a href="/bbs/bbsList?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-secondary">목록으로 돌아가기</a>
-									</div>
-									<div class="d-grid gap-2 d-md-flex justify-content-md-end">
-										<button type="submit" class="btn btn-outline-warning">수정</button>&nbsp;
-										<button type="button" class="btn btn-outline-danger"
-											onclick="bbsDelete(${bbsVO.bbsSn})">삭제</button>&nbsp;
+								<div class="d-flex justify-content-between align-items-center">
+									<!-- 왼쪽 버튼 -->
+									<a href="/bbs/bbsList?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-secondary">
+										목록으로 돌아가기
+									</a>
+									<!-- 오른쪽 버튼 (수정/삭제) -->
+									<div>
+										<c:if test="${myEmpInfo.emplNo == bbsVO.emplNo}">
+											<button type="submit" class="btn btn-outline-warning me-2">수정</button>
+											<button type="button" class="btn btn-outline-danger" onclick="bbsDelete(${bbsVO.bbsSn})">삭제</button>
+										</c:if>
 									</div>
 								</div>
 							</form>
