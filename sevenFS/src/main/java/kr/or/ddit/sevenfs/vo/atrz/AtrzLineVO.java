@@ -10,7 +10,7 @@ public class AtrzLineVO {
 	private String atrzDocNo;//전자결재 문서 번호*
 	private int atrzLnSn;//전자결재 선 순번*
 	private String sanctnerEmpno;//처음 결재를 요청 받은 사번*
-	private String sanctnerClsfCode;
+	private String sanctnerClsfCode; //결재자 직급코드*
 	private String contdEmpno;
 	private String contdClsfCode;
 	private String dcrbManEmpno;
@@ -24,4 +24,13 @@ public class AtrzLineVO {
 	private Date sanctnConfmDt;
 	
 	private List<AtrzLineVO> atrzLineList;    //전자결재선 리스트
+	
+	private String sanctnerClsfNm; //결재자 직급명
+	private String sanctnerEmpNm; //결재자 이름
+	
+	private String befSanctnerEmpno;
+	private String befSanctnProgrsSttusCode;
+	private String aftSanctnerEmpno;
+	private String aftSanctnProgrsSttusCode;
+	private int    maxAtrzLnSn;
 }

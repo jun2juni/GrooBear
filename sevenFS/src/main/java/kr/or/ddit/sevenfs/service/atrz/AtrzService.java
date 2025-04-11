@@ -51,6 +51,12 @@ public interface AtrzService {
 	//2) 결재선지정 후에 제목, 내용, 등록일자, 상태 update
 	public int insertUpdateAtrz(AtrzVO atrzVO);
 	
+	//연차신청서 상세보기
+	public HolidayVO holidayDetail(String atrzDocNo);
+	
+	//전자결재 문서 상세보기 결재라인 수정(업데이트)
+	public int atrzDetailAppUpdate(AtrzVO atrzVO);
+	
 	
 	
 	//비즈니스 로직 이란???

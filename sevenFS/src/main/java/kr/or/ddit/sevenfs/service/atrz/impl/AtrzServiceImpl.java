@@ -1,5 +1,6 @@
 package kr.or.ddit.sevenfs.service.atrz.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -105,6 +106,7 @@ public class AtrzServiceImpl implements AtrzService {
 	public int insertDraft(DraftVO draftVO) {
 		return this.atrzMapper.insertDraft(draftVO);
 	}
+	
 	//전자결재 상세보기
 	@Override
 	public AtrzVO getAtrzDetail(String atrzDocNo) {
@@ -120,6 +122,57 @@ public class AtrzServiceImpl implements AtrzService {
 	public int insertUpdateAtrz(AtrzVO atrzVO) {
 		return this.atrzMapper.insertUpdateAtrz(atrzVO);
 	}
+	//연차신청서 상세보기
+	@Override
+	public HolidayVO holidayDetail(String atrzDocNo) {
+		return this.atrzMapper.holidayDetail(atrzDocNo);
+	}
+	
+	//전자결재 상세 업데이트
+	@Override
+	public int atrzDetailAppUpdate(AtrzVO atrzVO) {
+		String atrzDocNo = atrzVO.getAtrzDocNo();
+		
+		String emplNo = atrzVO.getEmplNo();
+		String atrzOption = atrzVO.getAtrzOpinion();
+		
+		List<AtrzLineVO> atrzLineVOList = atrzVO.getAtrzLineVOList(); 
+		
+		log.info("atrzDetailAppUpdate->atrzVO : "+atrzVO);
+		log.info("atrzDetailAppUpdate->atrzDocNo : "+atrzDocNo);
+		
+		
+		//현재 결재에서 결재한 사람 찾기
+		AtrzLineVO currentLine = null;
+		log.info("atrzDetailAppUpdate->currentLine: "+currentLine);
+
+		//나의 전자결재선 상황(1행)
+		AtrzLineVO emplAtrzLineInfo = this.atrzMapper.getAtrzLineInfo(atrzVO);
+		
+		//H_20250411_00003 문서의 결재선 총 스탭수
+		//0 : 마지막 결재자가 아님
+		//0이 아닌 경우 : 마지막 결재자임
+		int maxStep = atrzMapper.getMaxStep(atrzVO);
+		log.info("atrzDetailAppUpdate-> maxStep : "+maxStep);
+
+		//I. ATRZ_LINE 결재 처리
+		int result = atrzMapper.atrzDetailAppUpdate(atrzVO);
+		
+		//1) maxStep : 마지막 결재자 순서번호
+		//2) nextStep : 나 다음에 결재할 사람
+		//3) meStep : 내 결재 순서번호
+		//최종결재자인경우
+		if(maxStep==0){
+			
+			//III. ATRZ의 완료 및 일시 처리
+			atrzVO.setAtrzSttusCode("20");
+			result += atrzMapper.atrzStatusFinalUpdate(atrzVO);
+		}
+		
+		return 1;
+		
+	}
+	
 	
 	
 	

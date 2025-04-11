@@ -386,13 +386,14 @@
             A.ATRZ_DELETE_YN,
             A.SCHDUL_REG_YN,
 
-            H.HOLI_ACTPLN_NO, H.HOLI_CODE, H.HOLI_START, H.HOLI_END,
+            H.HOLI_ACTPLN_NO, H.HOLI_CODE, H.HOLI_START, H.HOLI_END,H.HOLI_USE_DAYS,
             S.SPENDING_REPORT_NO, S.EXPENSE_ORDER, S.EXPENSE_DATE, S.ITEM_DESCRIPTION, S.ITEM_QUANTITY, S.ITEM_AMOUNT, S.PAYMENT_METHOD,
             SL.SALARY_NO, SL.BASE_SALARY, SL.MEAL_ALLOWANCE, SL.INCOME_TAX, SL.LOCAL_TAX, SL.PENSION, SL.EMPLOYMENT_INS, SL.HEALTH_INS, SL.CARE_INS, SL.PAY_DATE,
             B.BANK_ACC_NO, B.OLD_BANK, B.OLD_ACC_NO, B.NEW_BANK, B.NEW_ACC_NO, B.REASON,
             D.DRAFT_NO,
             EC.EMP_CERT_NO,
             R.RESIGNATION_NO
+            
             
         FROM ATRZ A
         LEFT JOIN DOCUM_HOLIDAY H ON A.ATRZ_DOC_NO = H.ATRZ_DOC_NO
@@ -402,12 +403,13 @@
         LEFT JOIN DOCUM_DRAFT D ON A.ATRZ_DOC_NO = D.ATRZ_DOC_NO
         LEFT JOIN DOCUM_EMP_CERTIFICATE EC ON A.ATRZ_DOC_NO = EC.ATRZ_DOC_NO
         LEFT JOIN DOCUM_RESIGNATION R ON A.ATRZ_DOC_NO = R.ATRZ_DOC_NO
+        
         WHERE A.ATRZ_DOC_NO = #{atrzDocNo}
 	</select>
 	
 	<!-- 전자결재선 상세보기 -->
 	<select id="selectAtrzLineList" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
-		SELECT 
+		SELECT     /* AtrzMapper.selectAtrzLineList */
             ATRZ_DOC_NO,
             ATRZ_LN_SN,
             SANCTNER_EMPNO,
@@ -426,10 +428,80 @@
         FROM ATRZ_LINE
         WHERE ATRZ_DOC_NO = #{atrzDocNo}
         ORDER BY ATRZ_LN_SN
+	</select>
 	
+	<!-- 연차신청서 상세보기 -->
+	<select id="holidayDetail" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.HolidayVO">
+		SELECT 	/* AtrzMapper.holidayDetail */
+				HOLI_ACTPLN_NO
+				, ATRZ_DOC_NO
+				, HOLI_CODE
+				, HOLI_START
+				, HOLI_END
+				, HOLI_USE_DAYS
+		FROM DOCUM_HOLIDAY
+		WHERE ATRZ_DOC_NO = #{atrzDocNo}
 	</select>
 	
 	
+	<!--H_20250411_00003 문서의 결재선 총 스탭수
+	public int getMaxStep(AtrzVO atrzVO) 
+
+	0 : 최종결재자가 아님
+	 -->
+	<select id="getMaxStep" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO" resultType="int">
+		SELECT CASE WHEN ME.ATRZ_LN_SN = TOT.TOT_ATRZ_LN_SN THEN ME.ATRZ_LN_SN
+		            ELSE 0 
+		       END RSLT
+		FROM
+		(
+		    SELECT ATRZ_LN_SN, ATRZ_DOC_NO
+		    FROM   ATRZ_LINE
+		    WHERE  ATRZ_DOC_NO = #{atrzDocNo}
+		    AND    DCRB_AUTHOR_YN = '0'
+		    AND    SANCTNER_EMPNO = #{emplNo}
+		) ME,
+		(
+		    SELECT MAX(ATRZ_LN_SN) TOT_ATRZ_LN_SN, ATRZ_DOC_NO
+		    FROM   ATRZ_LINE
+		    WHERE  ATRZ_DOC_NO = #{atrzDocNo}
+		    AND    DCRB_AUTHOR_YN = '0'
+		    GROUP BY ATRZ_DOC_NO
+		) TOT
+		WHERE ME.ATRZ_DOC_NO = TOT.ATRZ_DOC_NO
+	</select>
+	
+	
+	<!-- 전자결재선 수정
+		 AtrzVO(atrzDocNo=H_20250411_00003, drafterEmpno=null, drafterClsf=null, drafterEmpnm=null, drafterDept=null, bkmkYn=null, 
+		 atchFileNo=0, atrzSj=null, atrzCn=null, atrzOpinion=null, atrzTmprStreDt=null, atrzDrftDt=null, atrzComptDt=null, atrzRtrvlDt=null, atrzSttusCode=null, 
+		 eltsgnImage=null, docFormNo=0, atrzDeleteYn=null, schdulRegYn=null, docFormNm=null, emplNoArr=null, emplNo=20250000, emplNm=null, clsfCode=null, clsfCodeNm=null,
+         deptCode=null, deptCodeNm=null, uploadFile=null, 
+		  	atrzLineVOList=[AtrzLineVO(atrzDocNo=null, atrzLnSn=0, sanctnerEmpno=null, sanctnerClsfCode=null, contdEmpno=null, 
+			  contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=null, sanctnProgrsSttusCode=null, dcrbAuthorYn=null, contdAuthorYn=null, 
+			  sanctnOpinion=승인합니다.,eltsgnImage=null, sanctnConfmDt=null, atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null)
+			  ], 
+		 holidayVO=null, spendingVO=null, salaryVO=null, 
+		 bankAccountVO=null, draftVO=null, emplDetailList=null, authorStatus=false, sanctnProgrsSttusCode=10)
+	 -->
+	 
+	<update id="atrzDetailAppUpdate" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+		UPDATE atrz_line  /* AtrzMapper.atrzDetailAppUpdate */
+		SET 
+			SANCTN_PROGRS_STTUS_CODE = 10
+			,SANCTN_CONFM_DT = SYSDATE
+			,SANCTN_OPINION = #{atrzLineVOList[0].sanctnOpinion}
+		WHERE ATRZ_DOC_NO = #{atrzDocNo} AND SANCTNER_EMPNO = #{emplNo}
+	</update>
+	
+	<!-- 전자결재문서 수정 -->
+	<update id="atrzStatusFinalUpdate" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+		UPDATE ATRZ /* AtrzMapper.atrzStatusFinalUpdate */
+		SET 
+			ATRZ_STTUS_CODE = #{atrzSttusCode}
+			,ATRZ_COMPT_DT = SYSDATE
+		WHERE ATRZ_DOC_NO = #{atrzDocNo}
+	</update>
 	
 	<!-- 연차신청서 resultMap 사용 -->
 	<resultMap id="holidayDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.HolidayVO" >
@@ -533,65 +605,33 @@
 		<result property="sanctnConfmDt" column="SANCTN_CONFM_DT"/>
 	</resultMap>
 	
+	<!-- 나의 전자결재선 상황(1행)
+	public AtrzLineVO getAtrzLineInfo(AtrzVO atrzVO) 
+	나는 결재해야 하나?
+	1) 전 결재자가 10, 40인가?
 	
-	<!-- 연차신청서 상세보기 -->
-	<select id="holidayDetail" parameterType="int" resultMap="holidayDetailMap" >
-		SELECT  /* DOCUM_HOLIDAY (연차신청서) */
-		     HO.holi_actpln_no
-		    ,HO.atrz_doc_no
-		    ,HO.holi_code
-		    ,HO.holi_start
-		    ,HO.holi_end
-		    
-		
-		    /* ATRZ (전자결재 기본 정보) */
-		    ,A.ATRZ_DOC_NO AS A_DOC_NO
-		    ,A.DRAFTER_EMPNO
-		    ,A.DRAFTER_CLSF
-		    ,A.DRAFTER_EMPNM
-		    ,A.DRAFTER_DEPT
-		    ,A.BKMK_YN
-		    ,A.ATCH_FILE_NO
-		    ,A.ATRZ_SJ
-		    ,A.ATRZ_CN
-		    ,A.ATRZ_OPINION
-		    ,A.ATRZ_TMPR_STRE_DT
-		    ,A.ATRZ_DRFT_DT
-		    ,A.ATRZ_COMPT_DT
-		    ,A.ATRZ_RTRVL_DT
-		    ,A.ATRZ_STTUS_CODE
-		    ,A.ELTSGN_IMAGE AS DRAFTER_ELTSGN
-		    ,A.DOC_FORM_NO
-		    ,A.ATRZ_DELETE_YN
-		    ,A.SCHDUL_REG_YN
-		    
-		
-		    /* ATRZ_LINE (결재선) */
-		    ,L.ATRZ_LN_SN
-		    ,L.SANCTNER_EMPNO
-		    ,L.SANCTNER_CLSF_CODE
-		    ,L.CONTD_EMPNO
-		    ,L.CONTD_CLSF_CODE
-		    ,L.DCRB_MAN_EMPNO
-		    ,L.DCRB_MAN_CLSF_CODE
-		    ,L.ATRZ_TY
-		    ,L.SANCTN_PROGRS_STTUS_CODE
-		    ,L.DCRB_AUTHOR_YN
-		    ,L.CONTD_AUTHOR_YN
-		    ,L.SANCTN_OPINION
-		    ,L.ELTSGN_IMAGE AS SANCTNER_ELTSGN
-		    ,L.SANCTN_CONFM_DT
-		
-		FROM 
-		    DOCUM_HOLIDAY HO
-		LEFT JOIN 
-		    ATRZ A ON HO.ATRZ_DOC_NO = A.ATRZ_DOC_NO
-		LEFT JOIN 
-		    ATRZ_LINE L ON HO.ATRZ_DOC_NO = L.ATRZ_DOC_NO
-		WHERE 
-		    HO.HOLI_ACTPLN_NO = #{holiActplnNo}
-		ORDER BY 
-		    L.ATRZ_LN_SN
+	AtrzVO(atrzDocNo=H_20250411_00003, drafterEmpno=null, drafterClsf=null, drafterEmpnm=null, drafterDept=null, bkmkYn=null, 
+		 atchFileNo=0, atrzSj=null, atrzCn=null, atrzOpinion=null, atrzTmprStreDt=null, atrzDrftDt=null, atrzComptDt=null, atrzRtrvlDt=null, atrzSttusCode=null, 
+		 eltsgnImage=null, docFormNo=0, atrzDeleteYn=null, schdulRegYn=null, docFormNm=null, emplNoArr=null, emplNo=20250000, emplNm=null, clsfCode=null, clsfCodeNm=null,
+         deptCode=null, deptCodeNm=null, uploadFile=null, ..
+	-->
+	<select id="getAtrzLineInfo" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
+		WITH T AS(
+		    SELECT A.ATRZ_LN_SN
+		         , A.SANCTNER_EMPNO
+		         , A.ATRZ_DOC_NO
+		         , A.SANCTN_PROGRS_STTUS_CODE
+		         , LAG(A.SANCTNER_EMPNO) OVER(ORDER BY A.ATRZ_LN_SN) BEF_SANCTNER_EMPNO
+		         , LAG(A.SANCTN_PROGRS_STTUS_CODE) OVER(ORDER BY A.ATRZ_LN_SN) BEF_SANCTN_PROGRS_STTUS_CODE
+		         , LEAD(A.SANCTNER_EMPNO) OVER(ORDER BY A.ATRZ_LN_SN) AFT_SANCTNER_EMPNO
+		         , LEAD(A.SANCTN_PROGRS_STTUS_CODE) OVER(ORDER BY A.ATRZ_LN_SN) AFT_SANCTN_PROGRS_STTUS_CODE
+		         , (SELECT MAX(B.ATRZ_LN_SN) FROM ATRZ_LINE B WHERE B.ATRZ_DOC_NO = #{atrzDocNo} AND B.DCRB_AUTHOR_YN = '0') MAX_ATRZ_LN_SN
+		    FROM   ATRZ_LINE A
+		    WHERE  A.ATRZ_DOC_NO = #{atrzDocNo}
+		    AND    A.DCRB_AUTHOR_YN = '0'
+		)
+		SELECT T.*
+		FROM T
+		WHERE  T.SANCTNER_EMPNO = #{emplNo}
 	</select>
-	
 </mapper>

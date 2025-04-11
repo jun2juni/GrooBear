@@ -41,8 +41,6 @@ public interface AtrzMapper {
 	
 	//연차신청서 테이블 등록
 	public int insertHoliday(HolidayVO documHolidayVO);
-	//연차신청서 상세
-	public AtrzVO holidayDetail(String atrzDocNo);
 	
 	//지출결의서 테이블 등록
 	public int insertSpending(SpendingVO spendingVO);
@@ -59,6 +57,20 @@ public interface AtrzMapper {
 	public List<AtrzLineVO> selectAtrzLineList(String atrzDocNo);
 	//2) 결재선지정 후에 제목, 내용, 등록일자, 상태 update
 	public int insertUpdateAtrz(AtrzVO atrzVO);
+	
+	//연차신청서 상세보기
+	public HolidayVO holidayDetail(String atrzDocNo);
+	//전자결재 문서 상세보기 수정(업데이트)
+	public int atrzDetailAppUpdate(AtrzVO atrzVO);
+	
+	//현재결재선 업데이트 
+	public void atrzDetailAppUpdate(AtrzLineVO currentLine);
+	//전자결재 문서 상태 업데이트 (최종결재자인경우)
+	public int atrzStatusFinalUpdate(AtrzVO atrzVO);
+	//H_20250411_00003 문서의 결재선 총 스탭수
+	public int getMaxStep(AtrzVO atrzVO);
+	//나의 전자결재선 상황(1행)
+	public AtrzLineVO getAtrzLineInfo(AtrzVO atrzVO);
 	
 	
 	

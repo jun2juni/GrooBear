@@ -12,7 +12,8 @@ import lombok.Data;
 public class AtrzVO {
 	private String atrzDocNo; // 전자결재 문서번호*
 	private String drafterEmpno; // 기안자 사번*
-	private String drafterClsf; // 기안자 직급*
+	private String drafterClsf; // 기안자 직급코드*
+	
 	private String drafterEmpnm; //기안자 이름*
 	private String drafterDept; //기안자 부서*
 	private String bkmkYn; // 즐겨찾기 여부*
@@ -61,12 +62,17 @@ public class AtrzVO {
 //	private EmployeeVO empAtrzVO;
 	
 	//ARTZ : DOCUM_HOLIDAY = 1 : 1
-	private HolidayVO holidayVO;
+	private HolidayVO holidayVO; 			//연차신청서
+	private SpendingVO spendingVO;  		//지출결의서
+	private SalaryVO salaryVO;				//급여명세서
+	private BankAccountVO bankAccountVO;	//급여계좌변경신청서 
+	private DraftVO draftVO; 				//기안서 
 	
-	private SpendingVO spendingVO;
 	
 	//결재 문서의 해당 직원의 상세정보 목록을 select
 	private List<EmployeeVO> emplDetailList;
 	
-	
+	//기타
+	private String authorStatus;//전결 상태
+	private String sanctnProgrsSttusCode;//결재 상태
 }
