@@ -109,6 +109,12 @@
         CONNECT BY PRIOR FOLDER_NO = UPPER_FOLDER_NO
     </select>
 
+    <select id="getTotalVolume" resultType="long">
+        SELECT SUM(FILE_SIZE)
+        FROM FOLDER_FILE FF
+        LEFT JOIN ATTATCH_FILE AF ON (FF.ATCH_FILE_NO = AF.ATCH_FILE_NO)
+    </select>
+
     <!-- 밑에는 전체 다 가져오는 경우에 사용 -->
     <!-- 파일 목록  -->
     <resultMap id="folderResultMap" type="webFolderVO">

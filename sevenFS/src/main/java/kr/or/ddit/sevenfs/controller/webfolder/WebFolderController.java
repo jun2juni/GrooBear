@@ -30,9 +30,11 @@ public class WebFolderController {
 
         // 파일 목록 가져오기
         log.debug("upperFolderNo: {}", upperFolderNo);
+        long totalVolume = webFolderService.getTotalVolume();
         List<WebFolderVO> folderVOList = webFolderService.getFolderList(upperFolderNo);
         List<WebFolderFileVO> fileListVOList = webFolderService.getFileList(upperFolderNo);
 
+        resultMap.put("totalVolume", totalVolume);
         resultMap.put("folder", folderVOList);
         resultMap.put("file", fileListVOList);
 

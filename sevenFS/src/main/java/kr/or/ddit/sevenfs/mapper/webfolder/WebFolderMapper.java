@@ -23,4 +23,6 @@ public interface WebFolderMapper {
     int deleteFiles(long[] deleteFileIdList);
 
     int deleteFolder(int[] deleteFolderIdList);
+
+    long getTotalVolume();
 }

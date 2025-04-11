@@ -18,6 +18,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class WebFolderServiceImpl implements WebFolderService {
+
     @Autowired
     private WebFolderMapper webFolderMapper;
     @Autowired
@@ -25,6 +26,10 @@ public class WebFolderServiceImpl implements WebFolderService {
     @Autowired
     private AttachFileService attachFileService;
 
+    @Override
+    public long getTotalVolume() {
+        return this.webFolderMapper.getTotalVolume();
+    }
 
     @Override
     public List<WebFolderVO> getWebFolderList() {

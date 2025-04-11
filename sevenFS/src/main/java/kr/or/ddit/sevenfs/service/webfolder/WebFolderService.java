@@ -7,6 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface WebFolderService {
+    // 전체 용량 가져오기
+    public long getTotalVolume();
+
     // 폴더 구조 가져오기
     public List<WebFolderVO> getWebFolderList();
 
