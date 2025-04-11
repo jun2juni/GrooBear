@@ -22,10 +22,9 @@
   <%@ include file="../layout/header.jsp" %>
   <section class="section">
     <div class="container-fluid">
-      <h1>여기는 mailHome</h1>
-<%--       <c:import url="./mailMain.jsp"></c:import> --%>
+      <c:import url="./mailMain.jsp"></c:import>
 <%--       <jsp:include page="./mailMain.jsp"></jsp:include> --%>
-      <%@ include file="./mailMain.jsp" %>
+<%--       <%@ include file="./mailMain.jsp" %> --%>
     
     </div>
   </section>

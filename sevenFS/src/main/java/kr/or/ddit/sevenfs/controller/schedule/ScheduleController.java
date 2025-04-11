@@ -67,8 +67,9 @@ public class ScheduleController {
 	}
 	
 	@GetMapping("")
-	public String calendarMain() {
+	public String calendarMain(Model model) {
 		log.info("calendarMain 실행");
+		model.addAttribute("title","내 일정");
 		return "schedule/scheduleHome";
 	}
 	/*
