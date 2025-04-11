@@ -53,6 +53,22 @@
         ORDER BY FILE_SN DESC
     </select>
 
+    <select id="getFileAttachListToDownload" resultType="kr.or.ddit.sevenfs.vo.AttachFileVO">
+        SELECT ATCH_FILE_NO,
+               FILE_STRE_PATH,
+               FILE_NM,
+               FILE_STRE_NM,
+               FILE_EXTSN,
+               EMPL_NO,
+               FILE_USE_YN
+        FROM ATTATCH_FILE
+        WHERE ATCH_FILE_NO IN (
+            <foreach item="attachFileNo" collection="attachFileNoList" separator=",">
+                #{attachFileNo}
+            </foreach>
+        )
+    </select>
+
     <update id="removeFileList" parameterType="attachFileVO">
         UPDATE ATTATCH_FILE
         SET FILE_USE_YN = 'N'

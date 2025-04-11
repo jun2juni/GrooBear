@@ -1,28 +1,44 @@
 package kr.or.ddit.sevenfs.controller.webfolder;
 
+import jakarta.servlet.http.HttpServletResponse;
+import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.webfolder.WebFolderService;
-import kr.or.ddit.sevenfs.vo.CustomUser;
-import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
+
+import kr.or.ddit.sevenfs.utils.AttachFile;
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderFileVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Slf4j
 @RestController
 @RequestMapping("/webFolder")
 public class WebFolderController {
+    @Value("${file.save.abs.path}")
+    String dir;
     @Autowired
     private WebFolderService webFolderService;
+    @Autowired
+    private AttachFileService attachFileService;
 
     @GetMapping("/list")
     public Map<String, Object> getFolder(String upperFolderNo) {
@@ -89,5 +105,30 @@ public class WebFolderController {
         int result = this.webFolderService.deleteFolder(webFolders);
 
         return Map.of("result", result != 0);
+    }
+
+    @GetMapping("/download-folder")
+    public void downloadZip(String folderNo, String folderName, HttpServletResponse response) throws IOException {
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(folderName, StandardCharsets.UTF_8) + ".zip");
+
+        List<AttachFileVO> attachFileVOList = this.webFolderService.getFileList(folderNo).stream()
+                .map((item) -> {
+                    return item.getAttachFileVO();
+                }).toList();
+
+        attachFileService.downloadZip(attachFileVOList, folderName, response);
+    }
+
+    @GetMapping("/download-file")
+    public void downloadFile(Long[] fileNoList, String folderName, HttpServletResponse response) throws IOException {
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(folderName, StandardCharsets.UTF_8) + ".zip");
+        List<Long> list = Stream.of(fileNoList).toList();
+        log.debug("list: {}", list);
+        List<AttachFileVO> attachFileVOList = this.attachFileService.getFileAttachList(list);
+
+        attachFileService.downloadZip(attachFileVOList, folderName, response);
+
     }
 }

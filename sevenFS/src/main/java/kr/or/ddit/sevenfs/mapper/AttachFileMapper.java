@@ -17,4 +17,5 @@ public interface AttachFileMapper {
 
     public int removeFileList(AttachFileVO attachFileVO);
 
+    List<AttachFileVO> getFileAttachListToDownload(List<Long> attachFileNoList);
 }
