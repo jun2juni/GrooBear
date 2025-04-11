@@ -30,6 +30,7 @@ public class BbsVO {
 	private String emplNm;     // 작성자 이름
 	private int commentCnt;    // 댓글 수
 	private int likeCnt; // 좋아요 수
+	private int rowNumber; // 게시글 번호
 		
 	}
 

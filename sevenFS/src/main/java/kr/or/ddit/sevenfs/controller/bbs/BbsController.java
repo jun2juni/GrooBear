@@ -107,7 +107,13 @@ public class BbsController {
 
         // 게시글 리스트 조회
         List<BbsVO> bbsList = bbsService.bbsList(articlePage);
+        int startRowNumber = total - (currentPage - 1) * size;
 
+        for (int i = 0; i < bbsList.size(); i++) {
+            bbsList.get(i).setRowNumber(startRowNumber - i); // 게시글 번호
+        }
+
+        
         // 뷰에 전달할 모델 속성 설정
         model.addAttribute("selectedCategory", bbsVO.getCategory());
         model.addAttribute("articlePage", articlePage);

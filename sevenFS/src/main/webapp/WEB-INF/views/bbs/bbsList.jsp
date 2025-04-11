@@ -113,8 +113,8 @@ table.table-hover.align-middle.text-center tbody tr td {
               </thead>
               <tbody>
                 <c:forEach var="bbsVO" items="${bbsList}">
-                  <tr onClick="location.href='/bbs/bbsDetail?bbsSn=${bbsVO.bbsSn}'" style="cursor:pointer;">
-                    <td style="border-bottom:1px solid #efefef;">${bbsVO.bbsSn}</td>
+                  	<tr onClick="location.href='/bbs/bbsDetail?bbsSn=${bbsVO.bbsSn}'" style="cursor:pointer;">
+                    <td style="border-bottom:1px solid #efefef;">${bbsVO.rowNumber}</td>
                     <td style="border-bottom:1px solid #efefef;">
                     	<c:if test="${bbsVO.upendFixingYn == 'Y'}">
 					        <span style="color: red; font-weight: bold;">[고정]</span>
