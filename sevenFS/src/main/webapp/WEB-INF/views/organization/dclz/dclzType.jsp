@@ -28,8 +28,8 @@
 			<!-- 출퇴근 버튼 -->
 		   <div class="row">
 			<div class="col-4 mb-30">
-				<div class="card-style">
-					<span class="status-btn dark-btn text-center ml-50 mt-50">${today}</span>
+				<div class="card-style text-center">
+					<span class="status-btn dark-btn text-center mt-50">${today}</span>
 					
 					<div class="text-center d-flex mb-30 mt-60 ml-60">
 						<div class="content mr-30">
@@ -43,7 +43,6 @@
 					</div>
 				</div>
 			</div> 
-			
 			<div class="col-8">
 			<div class="row">
 	          <div class="col-6">

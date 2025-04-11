@@ -249,40 +249,54 @@ WITH U AS(
         WHERE U.RNUM BETWEEN (#{currentPage} * 10)-(10-1) AND (#{currentPage}* 10)
 </select>
 
-<!-- <select id="emplVacationDataList" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.VacationVO">
-	WITH U AS(
-    SELECT ROW_NUMBER() OVER(ORDER BY V.dclz_end_dt DESC) RNUM
-         , V.yryc_year, V.yryc_use_begin_date, V.yryc_use_end_date, V.yryc_code, V.yryc_detail
-         , V.cmmn_code_nm, V.dclz_begin_dt, V.dclz_end_dt , V.dclz_reason
-     FROM
-    (
-    SELECT vc.empl_no
-	       , vc.yryc_year
-	       , vc.yryc_use_begin_date
-	       , vc.yryc_use_end_date     
-	       , vc.yryc_detail
-	       , vc.yryc_code
-	       , cc.cmmn_code_nm
-       	   , dt.dclz_begin_dt
-       	   , dt.dclz_end_dt	 
-       	   , dt.dclz_reason      
-	FROM vacation vc
-	LEFT JOIN common_code cc ON vc.yryc_code = cc.cmmn_code
-	LEFT JOIN dclz_type dt ON vc.yryc_code = dt.dclz_code
-	WHERE cc.cmmn_code_group = 'ATTEND'
-	AND vc.empl_no= #{emplNo}
-     
-       AND (
-         (TO_CHAR(dt.dclz_begin_dt, 'YYYY')) LIKE '%' || #{keyword} || '%'
-         OR (TO_CHAR(dt.dclz_begin_dt, 'mm')) LIKE '%' || #{keyword} || '%'
-         OR cc.cmmn_code_nm  LIKE '%' || #{keyword} || '%'
-		)
+<!-- 기본연차 지급 -->
+<insert id="basicVacInsert" parameterType="String">
+	INSERT INTO vacation(
+            EMPL_NO
+           , YRYC_YEAR
+           , YRYC_USE_BEGIN_DATE
+           , YRYC_USE_END_DATE
+           , TOT_YRYC_DAYCNT
+           , YRYC_USE_DAYCNT
+           , YRYC_MDAT_DAYCNT
+           , YRYC_REMNDR_DAYCNT
+           , EXCESS_WORK_YRYC
+           , CMPNSTN_YRYC
+           , YRYC_CODE
+           , YRYC_DETAIL
+           )
+    VALUES(
+        #{emplNo}
+        ,TO_CHAR(SYSDATE, 'YYYY')
+        ,TO_CHAR(SYSDATE, 'YYYY') || '0101'
+        ,TO_CHAR(SYSDATE, 'YYYY') || '1231'
+        ,#{TOT_YRYC_DAYCNT}
+        ,0
+        ,0
+        ,0
+        ,0
+        ,0
+        ,'20'
+        ,'기본연차 지급'
     )
-    V
-    )
-    SELECT U.*
-        FROM U
-        WHERE U.RNUM BETWEEN (#{currentPage} * 10)-(10-1) AND (#{currentPage} * 10)
-</select> -->
+</insert>
+
+<!-- 추가 연차일수 -->
+<update id="addVacInsert" parameterType="kr.or.ddit.sevenfs.vo.organization.VacationVO">
+	UPDATE vacation
+	SET
+	        YRYC_USE_BEGIN_DATE = TO_CHAR(SYSDATE, 'YYYY') || '0101'
+	       , YRYC_USE_END_DATE = TO_CHAR(SYSDATE, 'YYYY') || '1231'
+	       , TOT_YRYC_DAYCNT = #{totYrycDaycnt}
+	       , YRYC_USE_DAYCNT = #{yrycUseDaycnt}
+	       , YRYC_MDAT_DAYCNT = #{yrycMdatDaycnt}
+	       , YRYC_REMNDR_DAYCNT = #{yrycRemndrDaycnt}
+	       , EXCESS_WORK_YRYC = #{excessWorkYryc}
+	       , CMPNSTN_YRYC = #{cmpnstnYryc}
+	       , YRYC_CODE = 20
+	       , YRYC_DETAIL = ''
+	WHERE empl_no = #{emplNo}
+	AND YRYC_YEAR = TO_CHAR(SYSDATE, 'YYYY')
+</update>
 
 </mapper>

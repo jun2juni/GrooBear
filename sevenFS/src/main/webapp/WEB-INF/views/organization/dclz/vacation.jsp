@@ -91,7 +91,6 @@
           <div class="">
             <div class="card-style  mb-30 col-12">
               <div class="row">
-              
 	            <div>
 	              <h6>연차 사용 내역</h6>
 	             </div> 
@@ -135,7 +134,7 @@
 			 </div>
               </div>
               <div class="table-wrapper table-responsive mt-40">
-                <table class="table clients-table">
+                <table class="table clients-table" id="vacTable">
                   <thead>
                     <tr>
                       <th>
@@ -153,7 +152,7 @@
                     </tr>
                     <!-- end table row-->
                   </thead>
-                  <tbody>
+                  <tbody id="vacBody">
 					<c:forEach var="emplVacationData" items="${emplCmmnVacationList}" >
                     <tr>
                       <td>
@@ -161,7 +160,7 @@
                         </div>
                       </td>
                       <td class="min-width">
-                      <h4><span class="badge bg-dark">${emplVacationData.cmmnCodeNm}</span></h4>
+                      <h4><span class="badge bg-dark" id="vacData">${emplVacationData.cmmnCodeNm}</span></h4>
                       </td>
                       <td class="min-width">
                         <p><span class="text-medium text-dark">
@@ -217,6 +216,13 @@ $(function(){
 		console.log('yearKey : ' , yearKey.val())
 		$('#selYear').submit();
 	})
+	
+	const vacData = $('#vacData').val();
+	if(vacData == null){
+		const vacTable = $('#vacTable');
+		vacTable.innerHtml = "";
+		$('#vacTable').html('연차 사용 내역이 없습니다.');
+	}
 })
 	
 </script>

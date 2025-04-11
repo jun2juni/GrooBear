@@ -317,7 +317,25 @@ public class DclzTypeController {
 		return "organization/dclz/vacation";
 	}
 	
+	// 연차관리 페이지(관리자)
+	@GetMapping("/vacAdmin")
+	public String vacationAdmin() {
+		return "organization/dclz/vacAdmin";
+	}
 	
-	
-
+	// 연차관리에서 부여된 연차 update
+	@ResponseBody
+	@PostMapping("/addVacInsert")
+	public String addVacInsert(@RequestBody VacationVO vacationVO) {
+		log.info("addVacInsert->vacationVO : " + vacationVO);
+		
+		int result = dclztypeService.addVacInsert(vacationVO);
+		
+		// 선택사원 연차정보 UPDATE해주기
+		if(result == 1) {
+			return "성공";
+		}else {
+			return "실패";
+		}
+		}
 }

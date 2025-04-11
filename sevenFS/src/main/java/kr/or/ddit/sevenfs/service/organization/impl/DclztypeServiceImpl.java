@@ -142,6 +142,47 @@ public class DclztypeServiceImpl implements DclztypeService {
 		return dclztypeMapper.emplVacationDataList(map);
 	}
 
+	// 추가 연차지급시 update
+	@Override
+	public int addVacInsert(VacationVO vacationVO) {
+		
+		log.info("선택사원정보 : " + vacationVO);
+		
+		// 선택된 사원번호
+		String emplNo = vacationVO.getEmplNo();
+		log.info("선택사원 번호 : " + emplNo);
+		// 선택된 사원의 연차정보 가져오기
+		VacationVO emplVacCnt = dclztypeMapper.emplVacationCnt(emplNo);
+		log.info("선택사원의 연차정보 : " + emplVacCnt);
+		
+		// 선택사원의 총 연차일수
+		int totalVac = emplVacCnt.getTotYrycDaycnt();
+		
+		// 초과근무로 받은 연차
+		int addWorkVac = vacationVO.getExcessWorkYryc();
+		emplVacCnt.setExcessWorkYryc(addWorkVac);
+		
+		// 성과로 받은 연차
+		int cmpnVac = vacationVO.getCmpnstnYryc();
+		emplVacCnt.setCmpnstnYryc(cmpnVac);
+		
+		// 추가로 받은 연차 계산 , 총연차일수+받은연차일수
+		int sumTotalVac = totalVac+addWorkVac+cmpnVac;
+		log.info("계산된 총 연차일수 : " + sumTotalVac);
+		emplVacCnt.setTotYrycDaycnt(sumTotalVac);
+		
+		// total-use 계산
+//		int remainVac = emplVacCnt.getYrycRemndrDaycnt();
+//		int upRemainVac = sumTotalVac - remainVac;
+//		emplVacCnt.setYrycRemndrDaycnt(upRemainVac);
+		
+		// 선택사원 연차정보 UPDATE 해주기
+		int result = this.dclztypeMapper.addVacInsert(emplVacCnt);
+		log.info("update결과 : " + result);
+				
+		return result;
+	}
+
 
 
 }

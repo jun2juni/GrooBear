@@ -46,4 +46,7 @@ public interface DclztypeService {
 	// 공통코드가 연차에 해당하는 사원의 모든 년도 데이터 가져오기
 	public List<DclzTypeVO> emplVacationDataList(Map<String, Object> map);
 	
+	// 추가 연차지급시 update
+	public int addVacInsert(VacationVO vacationVO);
+	
 }
