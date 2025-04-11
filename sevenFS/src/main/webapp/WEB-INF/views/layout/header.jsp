@@ -14,7 +14,7 @@
               <i class="lni lni-chevron-left"></i>Menu
             </button>
           </div>
-          <h3>${title}</h3>
+ 		<h3>${title} <span class="ms-2" style='font-size:18px; color:gray;'>${copyLight}</span></h3>
         </div>
       </div>
       

@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
+<div class="step-content-wrapper">
 <div class="row g-4">
   <!-- 왼쪽 8 영역: 입력 영역 -->
   <div class="col-md-8">
@@ -39,6 +39,7 @@
             <input type="text" name="restaurantAdd2" class="form-control mt-3" id="addressDetail" 
                    maxlength="30" placeholder="상세주소를 입력하세요." value="" required="required" style="width: 70%; background-color: white;">
             <div class="invalid-feedback">상세주소를 입력해주세요</div>
+            <input type="hidden" name="prjctAdres" id="prjctAdres" />
           </div>
         </div>
 
@@ -72,7 +73,7 @@
     </div>
   </div>
 </div>
-
+</div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   // 금액 입력 시 천 단위 구분 기호 표시 및 원화 표시

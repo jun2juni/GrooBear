@@ -14,7 +14,7 @@
           <div class="col-md-6">
             <div class="mb-4">
               <label class="form-label fw-semibold">프로젝트 명 <span class="text-danger">*</span></label>
-              <input type="text" name="prjctNm" placeholder="프로젝트 명을 입력하세요" class="form-control" required style="width: 90%;" />
+              <input type="text" name="prjctNm" id="prjctNm" placeholder="프로젝트 명을 입력하세요" class="form-control" required style="width: 90%;" />
             </div>
           </div>
 

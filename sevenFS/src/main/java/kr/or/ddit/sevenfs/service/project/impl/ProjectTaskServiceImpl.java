@@ -24,6 +24,12 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
     @Override
     public void insertProjectTask(ProjectTaskVO taskVO) {
+    	
+    	if (taskVO.getTaskBeginDt() != null && taskVO.getTaskEndDt() != null) {
+    	    long diffInMillies = taskVO.getTaskEndDt().getTime() - taskVO.getTaskBeginDt().getTime();
+    	    int daycnt = (int) (diffInMillies / (1000 * 60 * 60 * 24)) + 1;
+    	    taskVO.setTaskDaycnt(daycnt);
+    	}
         projectTaskMapper.insertProjectTask(taskVO);
     }
 

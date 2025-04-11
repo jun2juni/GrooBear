@@ -21,6 +21,6 @@ public interface ProjectMapper {
 	/* public int insertProjectEmpBatch(List<ProjectEmpVO> projectEmps); */
 	public ProjectVO projectDetail(int prjctNo);
 	public int insertProject(ProjectVO projectVO);
-	int insertProjectEmpBatch(@Param("list") List<ProjectEmpVO> projectEmpVOList);
+	public int insertProjectEmpBatch(@Param("list") List<ProjectEmpVO> projectEmpVOList);
 
 }

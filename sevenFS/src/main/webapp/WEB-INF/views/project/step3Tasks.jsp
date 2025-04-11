@@ -60,7 +60,7 @@
 
           <div class="col-md-3">
             <label class="form-label fw-semibold">중요도</label>
-            <select id="taskPriort" class="form-select">
+            <select id="priort" class="form-select">
               <option value="">선택하세요</option>
               <option value="00">낮음</option>
               <option value="01" selected>보통</option>
@@ -90,19 +90,10 @@
           <!-- 첨부파일 -->
           <div class="col-md-5">
             <label for="uploadTaskFiles" class="form-label fw-semibold">업무 첨부파일</label>
-            <input type="file" id="uploadTaskFiles" name="uploadTaskFiles[]" class="form-control" multiple>
-            <small class="text-muted mt-1 d-block">첨부 파일은 최대 5개까지 등록 가능합니다.</small>
+			<input type="file" id="uploadTaskFiles" name="uploadFiles" class="form-control" multiple>
+			<small class="text-muted mt-1 d-block">첨부 파일은 최대 5개까지 등록 가능합니다.</small>
+            <ul id="fileNameList" class="list-group mt-2"></ul>
           </div>
-          
-          <div class="col-12 mt-3">
-			<ul id="fileNameList" class="list-group">
-			  <li id="noFileMessage" class="list-group-item text-center text-muted py-3">
-			    <i class="fas fa-file-slash me-2"></i>추가한 파일이 없습니다.
-			  </li>
-			  <!-- 여기에 파일 항목들이 추가됩니다 -->
-			</ul>
-          </div>
-        </div>
 
         <div class="text-end mt-4">
           <button type="button" class="btn btn-outline-secondary me-2" onclick="resetTaskForm()">
@@ -115,7 +106,7 @@
       </div>
     </div>
   </div>
-
+</div>
   <!-- 오른쪽 4 영역 -->
   <div class="col-md-4">
     <!-- 설명 카드 -->

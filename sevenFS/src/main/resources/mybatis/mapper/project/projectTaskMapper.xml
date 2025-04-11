@@ -38,15 +38,49 @@
             #{task.taskNm},
             #{task.taskCn},
             #{task.priort},
-            #{task.taskGrad}e
+            #{task.taskGrad}
         )
     </foreach>
 </insert>
 
-<insert id="insertTask" parameterType="ProjectTaskVO">
-  INSERT INTO PROJECT_TASK (...) VALUES (...)
-</insert>
 
-   
+    <insert id="insertProjectTask" parameterType="ProjectTaskVO">
+        <selectKey resultType="int" order="BEFORE" keyProperty="taskNo">
+            SELECT SEQ_PROJECT_TASK.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO PROJECT_TASK (
+            TASK_NO,
+            PRJCT_NO,
+            TASK_NM,
+            CHARGER_EMPNO,
+            TASK_BEGIN_DT,
+            TASK_END_DT,
+            PRIORT,
+            TASK_GRAD,
+            TASK_CN,
+            TASK_STTUS,
+            PROGRSRT,
+            UPPER_TASK_NO,
+            TASK_DAYCNT,
+            ATCH_FILE_NO
+        ) VALUES (
+            #{taskNo},
+            #{prjctNo},
+            #{taskNm},
+            #{chargerEmpno},
+            #{taskBeginDt},
+            #{taskEndDt},
+            #{priort},
+            #{taskGrad},
+            #{taskCn},
+            #{taskSttus},
+            #{progrsrt},
+            #{upperTaskNo},
+            #{taskDaycnt},
+            #{atchFileNo, jdbcType=NUMERIC}
+        )
+    </insert>
+
    
 </mapper>

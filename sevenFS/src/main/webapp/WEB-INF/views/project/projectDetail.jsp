@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="row">
   <div class="col-md-8">
     <div class="form-step">
@@ -90,16 +89,25 @@
                 </thead>
                 <tbody>
                   <c:forEach var="task" items="${project.taskList}">
-                    <tr class="${not empty task.parentTaskNm ? 'table-light' : ''}">
-                      <td><c:if test="${not empty task.parentTaskNm}"><i class="fas fa-level-up-alt fa-rotate-90 me-1 text-primary"></i>&nbsp;&nbsp;</c:if><strong>${task.taskNm}</strong></td>
-                      <td class="text-center">${task.chargerEmpNm}</td>
+                    <tr class="${not empty task.parentTaskNm ? 'table-light' : ''}" style="cursor:pointer" onclick="openTaskModal(${task.taskNo})">
+                      <td>
+                        <c:if test="${not empty task.parentTaskNm}"><i class="fas fa-level-up-alt fa-rotate-90 me-1 text-primary"></i></c:if>
+                        <strong>${task.taskNm}</strong>
+                      </td>
+                      <td class="text-center">
+                        <c:choose>
+                          <c:when test="${task.role == '00'}"><span class="badge bg-danger">${task.chargerEmpNm}</span></c:when>
+                          <c:when test="${task.role == '01'}"><span class="badge bg-primary">${task.chargerEmpNm}</span></c:when>
+                          <c:otherwise><span class="badge bg-secondary">${task.chargerEmpNm}</span></c:otherwise>
+                        </c:choose>
+                      </td>
                       <td class="text-center">${task.taskBeginDt} ~ ${task.taskEndDt}</td>
                       <td class="text-center">
                         <c:choose>
-                          <c:when test="${task.taskPriort == '00'}"><span class="badge bg-success">낮음</span></c:when>
-                          <c:when test="${task.taskPriort == '01'}"><span class="badge bg-info">보통</span></c:when>
-                          <c:when test="${task.taskPriort == '02'}"><span class="badge bg-warning">높음</span></c:when>
-                          <c:when test="${task.taskPriort == '03'}"><span class="badge bg-danger">긴급</span></c:when>
+                          <c:when test="${task.priort == '00'}"><span class="badge bg-success">낮음</span></c:when>
+                          <c:when test="${task.priort == '01'}"><span class="badge bg-info">보통</span></c:when>
+                          <c:when test="${task.priort == '02'}"><span class="badge bg-warning">높음</span></c:when>
+                          <c:when test="${task.priort == '03'}"><span class="badge bg-danger">긴급</span></c:when>
                           <c:otherwise>-</c:otherwise>
                         </c:choose>
                       </td>
@@ -108,6 +116,25 @@
                   </c:forEach>
                 </tbody>
               </table>
+            </div>
+
+            <!-- 업무 상세 모달 -->
+            <div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="taskDetailLabel">업무 상세 정보</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div id="taskDetailContent">로딩 중...</div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-warning" onclick="editTask()">수정하기</button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- 4. 세부 정보 -->
@@ -131,9 +158,33 @@
       <h6 class="mb-3 text-primary"><i class="fas fa-info-circle me-2"></i>프로젝트 상세 안내</h6>
       <ul class="text-muted small ps-3">
         <li>이 프로젝트는 저장된 상세 정보입니다.</li>
-        <li>업무 및 참여자 정보는 수정 불가 상태입니다.</li>
+        <li>업무 및 참여자 정보는 수정 가능 상태입니다.</li>
         <li>관리자 권한이 있을 경우 편집 또는 삭제할 수 있습니다.</li>
       </ul>
     </div>
   </div>
 </div>
+
+<script>
+function openTaskModal(taskNo) {
+  const modal = new bootstrap.Modal(document.getElementById('taskDetailModal'));
+  document.getElementById('taskDetailContent').innerHTML = '로딩 중...';
+
+  fetch(`/projectTask/detail/\${taskNo}`)
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById('taskDetailContent').innerHTML = html;
+    })
+    .catch(() => {
+      document.getElementById('taskDetailContent').innerHTML = '업무 상세 정보를 불러오지 못했습니다.';
+    });
+
+  modal.show();
+}
+
+function editTask() {
+  const taskContent = document.getElementById('taskDetailContent');
+  const taskNo = taskContent.querySelector('[data-task-no]').getAttribute('data-task-no');
+  location.href = `/projectTask/editForm?taskNo=\${taskNo}`;
+}
+</script>

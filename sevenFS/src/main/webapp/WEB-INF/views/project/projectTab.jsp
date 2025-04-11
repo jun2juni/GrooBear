@@ -5,6 +5,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <c:set var="title" scope="application" value="프로젝트 관리" />
+<c:set var="copyLight" scope="application" value="by 채성실" />
 
 <!DOCTYPE html>
 <html lang="en">

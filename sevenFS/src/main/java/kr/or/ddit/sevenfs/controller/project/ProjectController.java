@@ -1,11 +1,14 @@
 package kr.or.ddit.sevenfs.controller.project;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -91,52 +95,112 @@ public class ProjectController {
 	
 
 	@GetMapping("/insert")
-	 public String projectInsertForm() {
-		
+	 public String projectInsertForm(Model model) {
+		model.addAttribute("title", "프로젝트 생성");
 		 return "project/insert";
 	 }
 
 	
 	@PostMapping("/insert")
 	public String insertProject(@ModelAttribute ProjectVO projectVO,
-								RedirectAttributes redirectAttrs,
-	                            @RequestParam("taskListJson") String taskListJson,
-	                            HttpServletRequest request) {
-		log.info("====== [insertProject] 요청 도착 ======");
-		log.info("======== 프로젝트 생성 요청 ========");
-		log.info("ProjectVO: {}", projectVO);
-	    // 모든 파라미터 확인
-	    request.getParameterMap().forEach((k, v) -> {
-	        log.info("▶ 파라미터: {} = {}", k, Arrays.toString(v));
-	    });
+	                            RedirectAttributes redirectAttrs,
+	                            MultipartHttpServletRequest multiReq) {
+	    log.info("====== [insertProject] 요청 도착 ======");
+
 	    try {
-	        ObjectMapper mapper = new ObjectMapper();
-	        List<ProjectTaskVO> taskList = mapper.readValue(taskListJson, new TypeReference<List<ProjectTaskVO>>() {});
-	        log.info("TaskList 크기 : {}" , taskList.size());
-	        for(ProjectTaskVO task : taskList) {
-	        	log.info("Task : {}", task);
+	        // 1. 업무 리스트 처리
+	        Map<String, String[]> paramMap = multiReq.getParameterMap();
+	        List<ProjectTaskVO> taskList = new ArrayList<>();
+	        int index = 0;
+
+	        while (true) {
+	            String prefix = "taskList[" + index + "].";
+	            if (!paramMap.containsKey(prefix + "taskNm")) break;
+
+	            ProjectTaskVO task = new ProjectTaskVO();
+	            task.setTaskNm(multiReq.getParameter(prefix + "taskNm"));
+	            task.setChargerEmpno(multiReq.getParameter(prefix + "chargerEmpno"));
+	            task.setTaskBeginDt(Date.valueOf(multiReq.getParameter(prefix + "taskBeginDt")));
+	            task.setTaskEndDt(Date.valueOf(multiReq.getParameter(prefix + "taskEndDt")));
+	            task.setPriort(multiReq.getParameter(prefix + "priort"));
+	            task.setTaskGrad(multiReq.getParameter(prefix + "taskGrad"));
+	            task.setTaskCn(multiReq.getParameter(prefix + "taskCn"));
+
+	            String upperTaskNo = multiReq.getParameter(prefix + "upperTaskNo");
+	            if (upperTaskNo != null && !upperTaskNo.isBlank() && !"null".equals(upperTaskNo)) {
+	                task.setUpperTaskNo(Long.parseLong(upperTaskNo));
+	            }
+
+	            // 프론트에서 uploadFiles_task_{index}로 보내는 걸 맞춰 받기
+	            String fileKey = "uploadFiles_task_" + index;
+	            List<MultipartFile> fileList = multiReq.getFiles(fileKey);
+
+	            System.out.println("▶ 업무 " + index + " 파일 개수: " + fileList.size());
+	            for (MultipartFile file : fileList) {
+	                System.out.println("  🔸 파일명: " + file.getOriginalFilename() + ", 크기: " + file.getSize());
+	            }
+
+	            if (!fileList.isEmpty() && !fileList.get(0).isEmpty()) {
+	                MultipartFile[] fileArray = fileList.toArray(new MultipartFile[0]);
+	                long atchFileNo = attachFileService.insertFileList("task", fileArray);
+	                System.out.println("  ✅ 저장된 파일 번호: " + atchFileNo);
+	                task.setAtchFileNo(atchFileNo);
+	            }
+
+	            taskList.add(task);
+	            index++;
 	        }
-	        // 참여자 목록 로그 찍기 
-	        if(projectVO.getProjectEmpVOList() != null) {
-	        	log.info("EmpList 크기 : {}" , projectVO.getProjectEmpVOList().size());
-	        	for(ProjectEmpVO emp : projectVO.getProjectEmpVOList()) {
-	        		log.info("Emp : {}", emp);
-	        	}
-	        }else {
-	        	log.warn("프로젝트 참여자 목록이 NULL입니다.");
+
+	        // 2. 참여자 목록 처리
+	        Set<String> uniqueEmpnos = new HashSet<>();
+	        List<ProjectEmpVO> empList = new ArrayList<>();
+	        int empIdx = 0;
+	        while (true) {
+	            String empNo = multiReq.getParameter("projectEmpVOList[" + empIdx + "].prtcpntEmpno");
+	            String role = multiReq.getParameter("projectEmpVOList[" + empIdx + "].prtcpntRole");
+	            if (empNo == null || role == null) break;
+
+	            String uniqueKey = projectVO.getPrjctNo() + "_" + empNo;
+	            if (!uniqueEmpnos.add(uniqueKey)) {
+	                log.warn("중복 사원 건너뜀: {}", empNo);
+	                empIdx++;
+	                continue;
+	            }
+
+	            ProjectEmpVO emp = new ProjectEmpVO();
+	            emp.setPrtcpntEmpno(empNo);
+	            emp.setPrtcpntRole(role);
+	            empList.add(emp);
+
+	            empIdx++;
 	        }
-	        
-	        // 실제 DB 저장
+	        projectVO.setProjectEmpVOList(empList);
+
+	        // 3. 프로젝트 서비스 호출
 	        projectService.createProject(projectVO, taskList);
-	        
-	      
+
 	    } catch (Exception e) {
 	        log.error("프로젝트 생성 중 오류", e);
-	        redirectAttrs.addFlashAttribute("errorMessage", "프로젝트 등록 중 오류 발생: " + e.getMessage());
+	        redirectAttrs.addFlashAttribute("errorMessage", "프로젝트 등록 실패: " + e.getMessage());
 	        return "redirect:/project/insert";
 	    }
+
 	    return "redirect:/project/tab";
 	}
+
+
+
+	private Date parseDate(String value) {
+	    if (value == null || value.isBlank()) return null;
+	    try {
+	        return Date.valueOf(value);
+	    } catch (IllegalArgumentException e) {
+	        log.warn("날짜 변환 실패: {}", value);
+	        return null;
+	    }
+	}
+
+
 
 	
 	
@@ -182,18 +246,11 @@ public class ProjectController {
 	}
 */	
     
-    @GetMapping("/projectDetail")
-    public String projectDetail(Model model, 
-    		@RequestParam(value="prjctNo", required = true) int prjctNo) {
-    	log.info("projectDetail -> projectVO {} : ", prjctNo);
-    	
-    	ProjectVO projectVO = projectService.projectDetail(prjctNo);
-    	log.info("projectDetail -> projectVO(후) : {}", projectVO);
-    	
-    	model.addAttribute("project", projectVO);
-    	
-    	return "project/projectDetail";
-    	
-    	
-    }
+	@GetMapping("/projectDetail/{prjctNo}")
+	public String projectDetail(@PathVariable int prjctNo, Model model) {
+	    log.info("projectDetail -> projectVO {} : ", prjctNo);
+	    ProjectVO projectVO = projectService.projectDetail(prjctNo);
+	    model.addAttribute("project", projectVO);
+	    return "project/projectDetail";
+	}
 }

@@ -29,7 +29,7 @@ public class ProjectVO {
     private List<ProjectTaskVO> projectTaskVOList;
 	
     private long atchFileNo;
-	
+    private long upperTaskNo;
 	
     // 날짜 형식을 변경하는 getter 메소드 추가
     public String getPrjctBeginDateFormatted() {

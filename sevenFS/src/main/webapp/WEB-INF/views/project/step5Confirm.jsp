@@ -61,7 +61,7 @@
               <table class="table table-sm table-bordered">
                 <thead class="table-light">
                   <tr>
-                    <th style="text-align:left">업무명</th>
+                    <th style="text-align:center">업무명</th>
                     <th style="text-align:center">담당자</th>
                     <th style="text-align:center">기간</th>
                     <th style="text-align:center">중요도</th>

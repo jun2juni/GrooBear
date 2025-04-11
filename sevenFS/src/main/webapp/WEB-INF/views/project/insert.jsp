@@ -65,7 +65,6 @@
 
 
         <form id="projectForm" action="/project/insert" method="post" enctype="multipart/form-data">
-          <input type="hidden" name="taskListJson" id="taskListJson" />
           <div class="card">
             <div class="card-body">
               <!-- 탭 제거하고 단계별 컨텐츠만 출력 -->
@@ -190,10 +189,22 @@ document.getElementById('nextBtn').addEventListener('click', nextStep);
 
 // 업무 추가 버튼
 document.getElementById('addTaskBtn').addEventListener('click', function () {
-  const taskNmValue = document.getElementById('taskNm').value.trim();
-  const parentTaskNmValue = document.getElementById('parentTaskNm').value.trim();
-  const chargerEmpNmValue = document.getElementById('chargerEmpNm').value.trim();
+  const taskNmValue = document.getElementById('taskNm').value;
+  const chargerEmpNmValue = document.getElementById('chargerEmpNm').value;
   const chargerEmpnoValue = document.getElementById('chargerEmpno').value;
+  const parentTaskNmValue = document.getElementById('parentTaskNm').value;
+  
+  const uploadInput = document.getElementById('uploadTaskFiles');
+  
+  // 파일 객체를 직접 배열로 복사
+  const taskFiles = [];
+  for (let i = 0; i < uploadInput.files.length; i++) {
+    const file = uploadInput.files[i];
+    console.log(`파일 ${i+1}:`, file.name, file.size);
+    taskFiles.push(file);
+  }
+  
+  console.log("선택된 파일 수:", taskFiles.length);
   
   if (!taskNmValue) {
     alert('업무명을 입력해주세요.');
@@ -212,75 +223,108 @@ document.getElementById('addTaskBtn').addEventListener('click', function () {
   }
   
   const task = {
-    id: `task-\${taskList.length + 1}`,
+    id: taskList.length + 1,
     taskNm: taskNmValue,
     chargerEmpNm: chargerEmpNmValue,
     chargerEmpno: chargerEmpnoValue,
     taskBeginDt: document.getElementById('taskBeginDt').value,
     taskEndDt: document.getElementById('taskEndDt').value,
-    taskPriort: document.getElementById('taskPriort').value,
+    priort: document.getElementById('priort').value,
     taskGrad: document.getElementById('taskGrad').value,
     taskCn: document.getElementById('taskCn').value,
     parentTaskNm: parentTaskNmValue || null,
-    parentIndex: parentIndex
+    parentIndex: parentIndex,
+    upperTaskNo: null,
+    files: taskFiles
   };
+  
+  // 여기서 부모 task가 있으면 부모의 id(taskNo로 매핑될 예정) 넣기
+  if(parentIndex !== null && taskList[parentIndex]){
+    task.upperTaskNo = taskList[parentIndex].id; // 이건 프론트 기준 id
+  }
+  
   console.log("업무 추가 후 taskList", taskList);
   taskList.push(task);
   updateTaskList();
   resetTaskForm();
   
-
-  console.log("업무 추가 및 폼 초기화 완료");
+  console.log("업무 추가 및 폼 초기화 완료", task);
 });
-
 
 // form submit 시 업무 목록 포함
 // 업무 목록을 만들어서 전송 폼에 넣어둔다.
+// form submit 시 업무 목록 포함
 const projectForm = document.getElementById('projectForm');
 if (projectForm) {
-  projectForm.addEventListener('submit', function () {
-	  //e.preventDefault(); // ← 테스트용으로 전송 막기
-    // 콘솔 디버깅 로그
-    console.log("[제출 직전] taskList", taskList);
-    console.log("[제출 직전] selectedMembers", selectedMembers);
+  projectForm.addEventListener('submit', function (e) {
+    e.preventDefault(); // 폼 기본 제출 막기
 
-    // 업무 목록 전송용 JSON 문자열 처리
-    const taskListJson = document.getElementById('taskListJson');
-    if (taskListJson) {
-	 	const cleanedTaskList = taskList.map(({ id, chargerEmpNm, ...rest }) => rest);
-	 	document.getElementById('taskListJson').value = JSON.stringify(cleanedTaskList);
+    const formData = new FormData(projectForm); // 기존 form의 input 값 포함
 
-	 	console.log("[제출 직전] cleanedTaskList", cleanedTaskList);
-    }
+    // 불필요한 필드 제거 (파일 필드는 직접 추가할 것이므로)
+    formData.delete('uploadFiles');
 
-    // 참여자 히든 인풋 생성
-    document.querySelectorAll('input[name^="projectEmpVOList["]').forEach(el => el.remove());
-    const roles = {
-      responsibleManager: '00',
-      participants: '01',
-      observers: '02'
-    };
-    let index = 0;
+    // 업무 목록 및 파일 추가
+    taskList.forEach(({ id, chargerEmpNm, files, ...rest }, index) => {
+      // 기본 필드 추가
+      Object.entries(rest).forEach(([key, value]) => {
+        formData.append(`taskList[\${index}].\${key}`, value);
+      });
+
+      // 파일 업로드 처리
+      if (files && files.length > 0) {
+        console.log(`업무 \${index}의 파일 개수:`, files.length);
+        
+        files.forEach((file, fileIndex) => {
+          console.log(`파일 \${fileIndex} 정보:`, file.name, file.size);
+          
+          // 실제 File 객체인지 확인
+          if (file instanceof File && file.size > 0) {
+        	  formData.append(`uploadFiles_task_\${index}`, file);
+          }
+        });
+      }
+    });
+
+    // 참여자 정보
+    let empIndex = 0;
     for (const role in selectedMembers) {
+      const roleCode = {
+        responsibleManager: '00',
+        participants: '01',
+        observers: '02'
+      }[role];
+
       selectedMembers[role].forEach(member => {
-        const input1 = document.createElement('input');
-        input1.type = 'hidden';
-        input1.name = `projectEmpVOList[\${index}].prtcpntEmpno`;
-        input1.value = member.id;
-
-        const input2 = document.createElement('input');
-        input2.type = 'hidden';
-        input2.name = `projectEmpVOList[\${index}].prtcpntRole`;
-        input2.value = roles[role];
-
-        projectForm.appendChild(input1);
-        projectForm.appendChild(input2);
-
-        index++;
+        formData.append(`projectEmpVOList[\${empIndex}].prtcpntEmpno`, member.id);
+        formData.append(`projectEmpVOList[\${empIndex}].prtcpntRole`, roleCode);
+        empIndex++;
       });
     }
+
+    // 서버 전송
+    fetch('/project/insert', {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => {
+      if (res.ok) {
+        alert('등록 성공');
+        location.href = "/project/tab";
+      } else {
+        return res.text().then(text => {
+          console.error('등록 실패 응답:', text);
+          alert('등록 실패');
+        });
+      }
+    })
+    .catch(err => {
+      console.error("에러 발생:", err);
+      alert("에러 발생: " + err.message);
+    });
   });
 }
+
 
 
 // 조직도 선택 대상 지정
@@ -314,13 +358,17 @@ function goToStep(step) {
   currentStep = step;
 
   // 기존 탭 내용 처리
-  for (let i = 1; i <= totalSteps; i++) {
-    const stepDiv = document.getElementById('step' + i);
-    if (stepDiv) {
-      stepDiv.style.display = (i === step) ? 'block' : 'none';
-      stepDiv.classList.toggle('active', i === step);
-    }
+for (let i = 1; i <= totalSteps; i++) {
+  const stepDiv = document.getElementById('step' + i);
+  if (stepDiv) {
+	  if (i === step) {
+	        stepDiv.classList.add('active');
+	      } else {
+	        stepDiv.classList.remove('active');
+	      }
   }
+}
+console.log("goToStep 시작:", currentStep);
 
   updateButtonState();
   updateProgress(); // 진행바 업데이트
@@ -424,8 +472,8 @@ function createTaskListItem(task, index, isSubTask) {
   
   // 중요도에 따른 라벨
   let priorityBadge = '';
-  if (task.taskPriort) {
-    switch(task.taskPriort) {
+  if (task.priort) {
+    switch(task.priort) {
       case '00': priorityBadge = '<span class="badge bg-success me-1">낮음</span>'; break;
       case '01': priorityBadge = '<span class="badge bg-info me-1">보통</span>'; break;
       case '02': priorityBadge = '<span class="badge bg-warning me-1">높음</span>'; break;
@@ -488,13 +536,13 @@ function fillTaskForm(index) {
 	  document.getElementById('parentTaskNm').value = task.parentTaskNm || '';
 	  
 	  // Select 요소 설정
-	  const taskPriort = document.getElementById('taskPriort');
+	  const priort = document.getElementById('priort');
 	  const taskGrad = document.getElementById('taskGrad');
 	  
-	  if (task.taskPriort && taskPriort) {
-	    for (let i = 0; i < taskPriort.options.length; i++) {
-	      if (taskPriort.options[i].value === task.taskPriort) {
-	        taskPriort.selectedIndex = i;
+	  if (task.priort && priort) {
+	    for (let i = 0; i < priort.options.length; i++) {
+	      if (priort.options[i].value === task.priort) {
+	        priort.selectedIndex = i;
 	        break;
 	      }
 	    }
@@ -513,42 +561,14 @@ function fillTaskForm(index) {
 
 // 파일 입력란 초기화 함수 분리
 function resetFileInput() {
-  // 파일 input 완전 초기화
   const oldFileInput = document.getElementById('uploadTaskFiles');
   const fileNameList = document.getElementById('fileNameList');
 
   if (oldFileInput) {
-    // 기존 값 초기화
+    console.log("파일 입력 필드 초기화 전:", oldFileInput.files.length);
     oldFileInput.value = '';
+    console.log("파일 입력 필드 초기화 후:", oldFileInput.files.length);
     
-    // DOM 요소를 새 것으로 교체
-    const newFileInput = oldFileInput.cloneNode(false); // deep copy 없이 요소만 복제
-    oldFileInput.parentNode.replaceChild(newFileInput, oldFileInput);
-
-    // change 이벤트 다시 등록
-    newFileInput.addEventListener('change', function() {
-      if (fileNameList) {
-        fileNameList.innerHTML = '';
-
-        const files = Array.from(this.files);
-        const maxFiles = 5;
-
-        if (files.length > maxFiles) {
-          alert(`최대 ${maxFiles}개까지 업로드할 수 있습니다.`);
-          newFileInput.value = '';
-          return;
-        }
-
-        files.forEach(file => {
-          const li = document.createElement('li');
-          li.className = 'list-group-item';
-          li.textContent = file.name;
-          fileNameList.appendChild(li);
-        });
-      }
-    });
-
-    // 초기화 시 파일 목록도 비워주기
     if (fileNameList) {
       fileNameList.innerHTML = '';
     }
@@ -563,7 +583,7 @@ function resetTaskForm() {
     if (element) element.value = '';
   });
 
-  ['taskPriort', 'taskGrad'].forEach(id => {
+  ['priort', 'taskGrad'].forEach(id => {
     const sel = document.getElementById(id);
     if (sel) sel.selectedIndex = 0;
   });
@@ -623,7 +643,7 @@ function fillTaskForm(index) {
   document.getElementById('taskBeginDt').value = task.taskBeginDt;
   document.getElementById('taskEndDt').value = task.taskEndDt;
   document.getElementById('taskCn').value = task.taskCn;
-  document.getElementById('taskPriort').value = task.taskPriort;
+  document.getElementById('priort').value = task.priort;
   document.getElementById('taskGrad').value = task.taskGrad;
   document.getElementById('parentTaskNm').value = task.parentTaskNm;
   selectedParentTaskId = task.parentIndex;
@@ -817,7 +837,7 @@ function loadOrgTree() {
 
   fetch("/organization")
     .then(resp => {
-      if (!resp.ok) throw new Error(`조직도 데이터 로딩 실패: \${resp.status} ${resp.statusText}`);
+      if (!resp.ok) throw new Error(`조직도 데이터 로딩 실패: \${resp.status} \${resp.statusText}`);
       return resp.json();
     })
     .then(res => {
@@ -1013,8 +1033,7 @@ function loadOrgTree() {
 
             loadMemberButtons();
           });
-          http://searchalgorithm.co.kr/ad/tab_open.php?app=501&domain=coupang.com&type=1&aid=8769&browser=whale&guid=2cdc821b-3863-47b8-90ce-c3422d00edf3&ver=20240101
-        		  
+  
           selectedMembers[currentTarget].push(emp);
 
           const targetInput = document.getElementById(currentTarget);
@@ -1068,38 +1087,38 @@ function getTaskHierarchySortedList(taskList) {
 	
 // 주소 API 
 function updateFullAddress() {
-    const main = document.getElementById('restaurantAdd1').value.trim();
-    const detail = document.getElementById('addressDetail').value.trim();
-    const full = [main, detail].filter(Boolean).join(' ');
-    
-    let fullAddressElement = document.getElementById('fullAddress');
-    if (!fullAddressElement) {
-        fullAddressElement = document.createElement('input');
-        fullAddressElement.type = 'hidden';
-        fullAddressElement.id = 'fullAddress';
-        fullAddressElement.name = 'prjctAdres';  // 필요하다면 name도 설정
-        document.body.appendChild(fullAddressElement);
-    }
-    
-    fullAddressElement.value = full;
-    
-    // 주소 확인란 업데이트
-    const confirmAdresElement = document.getElementById('confirmAdres');
-    if (confirmAdresElement) {
-        confirmAdresElement.textContent = full || '미입력';
-    }
-    
-    console.log("업데이트된 전체 주소:", full);
-}
+  const main = document.getElementById('restaurantAdd1').value.trim();
+  const detail = document.getElementById('addressDetail').value.trim();
+  const full = [main, detail].filter(Boolean).join(' ');
 
+  // form 안의 hidden input을 직접 업데이트
+  const prjctAdresInput = document.getElementById('prjctAdres');
+  if (prjctAdresInput) {
+    prjctAdresInput.value = full;
+  }
+
+  // 주소 확인란 업데이트
+  const confirmAdresElement = document.getElementById('confirmAdres');
+  if (confirmAdresElement) {
+    confirmAdresElement.textContent = full || '미입력';
+  }
+  
+  
+
+  console.log("업데이트된 전체 주소:", full);
+}
 document.getElementById('restaurantAdd1').addEventListener('blur', updateFullAddress);
-document.getElementById('addressDetail').addEventListener('blur', updateFullAddress); 
-	
+document.getElementById('addressDetail').addEventListener('blur', updateFullAddress);
+
 
 //======================= 프로젝트 요약 갱신 =======================
 function updateConfirmation() {
+document.getElementById('confirmPrjctNm').textContent = '';
   // 1. 기본 정보 설정
-  document.getElementById('confirmPrjctNm').textContent = document.querySelector('[name="prjctNm"]').value || '미입력';
+    const prjctNm = document.querySelector('[name="prjctNm"]')?.value.trim() || '미입력';
+    document.getElementById('confirmPrjctNm').textContent = prjctNm;
+    console.log("prjctNm : ", prjctNm);
+  
   document.getElementById('confirmCtgry').textContent = document.querySelector('[name="ctgryNo"] option:checked')?.textContent || '미선택';
   document.getElementById('confirmPrjctCn').textContent = document.querySelector('[name="prjctCn"]').value || '미입력';
   
@@ -1116,8 +1135,13 @@ function updateConfirmation() {
   document.getElementById('confirmAmount').textContent = `\${numberWithCommas(amount)} 원`;
   
   // 5. 주소 수정
-  const fullAddress = document.getElementById('fullAddress')?.value || 
-                      document.querySelector('[name="prjctAdres"]')?.value || '미입력';
+  const prjctAdres = document.getElementById('prjctAdres')?.value || '미입력';
+  const confirmAdresElement = document.getElementById('confirmAdres');
+  if (confirmAdresElement) {
+    confirmAdresElement.textContent = prjctAdres;
+  }
+
+  console.log(" 최종 주소 확인:", prjctAdres);
   
   
   console.log("fullAddress:", document.getElementById('fullAddress')?.value);
@@ -1206,77 +1230,126 @@ function updateConfirmation() {
 	 }
 
   
+// 최종확인의 업무 테이블 
+ const confirmTaskList = document.getElementById('confirmTaskList'); 
 
-  const confirmTaskList = document.getElementById('confirmTaskList'); 
-  if (confirmTaskList) {
-    confirmTaskList.innerHTML = '';
-    if (taskList.length === 0) {
-      confirmTaskList.textContent = '등록된 업무가 없습니다.';
-    } else {
-      // 업무 목록 테이블 생성
-      const table = document.createElement('table');
-      table.className = 'table table-sm table-bordered';
-      
-      // 테이블 헤더
-      const thead = document.createElement('thead');
-      thead.innerHTML = `
-        <tr class="table-light">
-          <th style="text-align:center">상위업무</th>
-          <th style="text-align:center">업무명</th>
-          <th style="text-align:center">담당자</th>
-          <th style="text-align:center">기간</th>
-          <th style="text-align:center">중요도</th>
-          <th style="text-align:center">등급</th>
-        </tr>
-      `;
-      table.appendChild(thead);
-      
-      // 테이블 본문
-      const tbody = document.createElement('tbody');
-      
-      
-      // 정렬된 리스트 사용!
-      const sortedTaskList  = getTaskHierarchySortedList(taskList);
+ if (confirmTaskList) {
+   confirmTaskList.innerHTML = '';
 
-      sortedTaskList.forEach(task => {
-        const tr = document.createElement('tr');
+   if (taskList.length === 0) {
+     const emptyMsg = document.createElement('div');
+     emptyMsg.className = 'text-center text-muted py-3';
+     emptyMsg.textContent = '등록된 업무가 없습니다.';
+     confirmTaskList.appendChild(emptyMsg);
+   } else {
+     const table = document.createElement('table');
+     table.className = 'table table-sm table-bordered';
 
-        if (task.parentTaskNm) {
-          tr.classList.add('table-light'); // 하위업무는 배경 다르게
-        }
-        
-        
-        // 중요도에 따른 배지 색상
-        let priorityBadge = '';
-        if (task.priort || task.taskPriort) {
-          const priority = task.priort || task.taskPriort;
-          switch(priority) {
-            case '00': priorityBadge = '<span class="badge bg-success">낮음</span>'; break;
-            case '01': priorityBadge = '<span class="badge bg-info">보통</span>'; break;
-            case '02': priorityBadge = '<span class="badge bg-warning">높음</span>'; break;
-            case '03': priorityBadge = '<span class="badge bg-danger">긴급</span>'; break;
-            default: priorityBadge = '-';
-          }
-        } else {
-          priorityBadge = '-';
-        }
-        
-        tr.innerHTML = `
-          <td class="text-center">\${task.parentTaskNm ? `<i class="fas fa-level-up-alt fa-rotate-90 me-1 text-primary"></i>\${task.parentTaskNm}` : '-'}</td>
-          <td><strong>\${task.taskNm}</strong></td>
-          <td class="text-center">\${task.chargerEmpNm}</td>
-          <td class="text-center">\${task.taskBeginDt || '미정'} ~ \${task.taskEndDt || '미정'}</td>
-          <td class="text-center">\${priorityBadge}</td>
-          <td class="text-center">\${task.taskGrad || '-'}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-      
-      table.appendChild(tbody);
-      confirmTaskList.appendChild(table);
-    }
-  }
-}
+     // 헤더 구성
+     const thead = document.createElement('thead');
+     const headerRow = document.createElement('tr');
+     headerRow.className = 'table-light';
+
+     const headers = ['업무명', '담당자', '기간', '중요도', '등급'];
+     headers.forEach(text => {
+       const th = document.createElement('th');
+       th.textContent = text;
+       th.style.textAlign = 'center';
+       headerRow.appendChild(th);
+     });
+
+     thead.appendChild(headerRow);
+     table.appendChild(thead);
+
+     const tbody = document.createElement('tbody');
+     const sortedTaskList = getTaskHierarchySortedList(taskList); // 계층 정렬된 리스트
+
+     sortedTaskList.forEach(task => {
+       const tr = document.createElement('tr');
+
+       if (task.parentTaskNo) {
+         tr.classList.add('table-light');
+       }
+
+       // 1. 업무명 셀
+       const nameCell = document.createElement('td');
+       const indent = task.depth ? 15 + task.depth * 20 : 15;
+
+       nameCell.innerHTML = `
+         <div style="margin-left:\${indent}px;">
+           \${task.upperTaskNo ? '<i class="fas fa-level-up-alt fa-rotate-90 me-2 text-primary"></i>' : ''}
+           <strong>\${task.taskNm || ''}</strong>
+         </div>
+       `;
+       tr.appendChild(nameCell);
+
+       // 2. 담당자 셀
+       const chargerCell = document.createElement('td');
+       chargerCell.style.textAlign = 'center';
+
+       let badgeClass = 'bg-secondary';
+
+       // 역할에 따라 뱃지 색상 지정
+       if (typeof selectedMembers !== 'undefined') {
+         for (const role in selectedMembers) {
+           const found = selectedMembers[role].some(m => m.name === task.chargerEmpNm);
+           if (found) {
+             if (role === 'responsibleManager') badgeClass = 'bg-danger';
+             else if (role === 'participants') badgeClass = 'bg-primary';
+             else if (role === 'observers') badgeClass = 'bg-secondary';
+             break;
+           }
+         }
+       }
+
+       const chargerBadge = document.createElement('span');
+       chargerBadge.className = `badge \${badgeClass}`;
+       chargerBadge.textContent = task.chargerEmpNm || '-';
+       chargerCell.appendChild(chargerBadge);
+       tr.appendChild(chargerCell);
+
+       // 3. 기간 셀
+       const periodCell = document.createElement('td');
+       periodCell.style.textAlign = 'center';
+       periodCell.textContent = `\${task.taskBeginDt || '미정'} ~ \${task.taskEndDt || '미정'}`;
+       tr.appendChild(periodCell);
+
+       // 4. 중요도
+       const priorityCell = document.createElement('td');
+       priorityCell.style.textAlign = 'center';
+
+       let priorityBadge = '';
+       switch(task.priort) {
+         case '00': priorityBadge = '<span class="badge bg-success me-1">낮음</span>'; break;
+         case '01': priorityBadge = '<span class="badge bg-info me-1">보통</span>'; break;
+         case '02': priorityBadge = '<span class="badge bg-warning me-1">높음</span>'; break;
+         case '03': priorityBadge = '<span class="badge bg-danger me-1">긴급</span>'; break;
+         default: priorityBadge = '-';
+       }
+       priorityCell.innerHTML = priorityBadge;
+       tr.appendChild(priorityCell);
+
+       // 5. 등급
+       const gradeCell = document.createElement('td');
+       gradeCell.style.textAlign = 'center';
+
+       if (task.taskGrad) {
+         gradeCell.innerHTML = `<span class="badge bg-warning text-dark">\${task.taskGrad}</span>`;
+       } else {
+         gradeCell.textContent = '-';
+       }
+
+       tr.appendChild(gradeCell);
+
+       tbody.appendChild(tr);
+     });
+
+     table.appendChild(tbody);
+     confirmTaskList.appendChild(table);
+   }
+ }
+
+}// 최종확인의 닫힘
 
 // 숫자에 천 단위 쉼표 추가 함수
 function numberWithCommas(x) {

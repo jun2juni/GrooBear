@@ -173,35 +173,39 @@
         #{prjctBeginDate}, #{prjctEndDate}
     )
 </insert>
-
+ <!-- list 라는 이름의 리스트를 순회하면서 , 각 아이템을 emp라는 이름으로 insert 구문사이에 ; 붙여서 여러게 insert 진행 -->
+ 
 	<!-- 프로젝트 직원 등록  -->
 	<insert id="insertProjectEmpBatch" parameterType="java.util.List">
-	    INSERT INTO PROJECT_EMP (
-	        PRJCT_NO,
-	        PRTCPNT_EMPNO,
-	        PRTCPNT_ROLE,
-	        PRJCT_AUTHOR,
-	        EVL_MAN_EMPNO,
-	        EVL_CN,
-	        EVL_GRAD,
-	        EVL_WRITNG_DT,
-	        SECSN_YN
-	    )
-	    VALUES
-	    <foreach collection="list" item="emp" separator=",">
-	        (
-	            #{emp.prjctNo},
-	            #{emp.prtcpntEmpno},
-	            #{emp.prtcpntRole},
-	            NULL,
-	            NULL,
-	            NULL,
-	            NULL,
-	            SYSDATE,
-	            'N'
-	        )
-	    </foreach>
+	  INSERT INTO PROJECT_EMP (
+	    PRJCT_NO,
+	    PRTCPNT_EMPNO,
+	    PRTCPNT_ROLE,
+	    PRJCT_AUTHOR,
+	    EVL_MAN_EMPNO,
+	    EVL_CN,
+	    EVL_GRAD,
+	    EVL_WRITNG_DT,
+	    SECSN_YN
+	  )
+	  <foreach collection="list" item="emp" separator="UNION ALL">
+	    SELECT
+	      #{emp.prjctNo},
+	      #{emp.prtcpntEmpno},
+	      #{emp.prtcpntRole},
+	      #{emp.prjctAuthor},
+	      #{emp.evlManEmpno},
+	      #{emp.evlCn},
+	      #{emp.evlGrad},
+	      SYSDATE,
+	      #{emp.secsnYn}
+	    FROM DUAL
+	  </foreach>
 	</insert>
+
+
+
+
 
 	
 	
