@@ -16,6 +16,17 @@
 	WHERE empl_no=#{emplNo}
 </select>
 
+<!-- 모든 사원의 연차 현황 총 행의 갯수 -->
+<select id="getEmplAllVacTotal" resultType="int">
+    SELECT COUNT(*)
+    FROM dclz_type dt
+	    INNER JOIN employee e ON e.empl_no = dt.empl_no
+	    INNER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
+	AND cc.cmmn_code_group='ATTEND'
+	AND cc.upper_cmmn_code ='20'
+</select>
+
+
 <!-- 사원의 근태현황 대분류로 조회  -->
 <!-- <select id="dclzCnt" parameterType="String" resultMap="dclztypeMap">
 	SELECT 
@@ -218,7 +229,7 @@ WITH U AS(
 	ANd v.yryc_year = TO_CHAR(SYSDATE, 'YYYY')
 </select>
 
-<!-- 공통코드가 연차에 해당하는 사원의 모든 년도 데이터 가져오기 -->
+<!-- 공통코드가 연차에 해당하는 사원 한명의 모든 년도 데이터 가져오기 -->
 <select id="emplVacationDataList" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
 	WITH U AS(
     SELECT ROW_NUMBER() OVER(ORDER BY D.dclz_end_dt DESC) RNUM
@@ -298,5 +309,45 @@ WITH U AS(
 	WHERE empl_no = #{emplNo}
 	AND YRYC_YEAR = TO_CHAR(SYSDATE, 'YYYY')
 </update>
+
+<!-- 모든 사원 연차 현황 -->
+<select id="allEmplVacList" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
+	WITH U AS(
+    SELECT ROW_NUMBER() OVER(ORDER BY D.dclz_end_dt DESC) RNUM
+       , D.dclz_no
+       , D.dclz_code
+       , D.dclz_begin_dt
+       , D.dclz_end_dt
+       , D.dclz_reason
+       , D.empl_nm
+       , D.cmmn_code_nm
+     FROM
+    (
+    SELECT dt.EMPL_NO
+           , dt.DCLZ_NO
+           , dt.DCLZ_CODE
+           , dt.DCLZ_BEGIN_DT
+           , dt.DCLZ_END_DT
+           , dt.DCLZ_REASON
+           , e.empl_nm
+           , cc.cmmn_code_nm
+    FROM dclz_type dt
+    INNER JOIN employee e ON e.empl_no = dt.empl_no
+    INNER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
+    AND cc.cmmn_code_group='ATTEND'
+    AND cc.upper_cmmn_code ='20'
+    AND 
+    	(
+        e.empl_nm LIKE '%' || #{keyword} || '%'
+	    OR cc.cmmn_code_nm  LIKE '%' || #{keyword} || '%'
+	    OR (TO_CHAR(dt.dclz_begin_dt, 'YYYY') LIKE '%' || #{keyword} || '%')
+    	)
+    )
+    D
+    )
+    SELECT U.*
+        FROM U
+        WHERE U.RNUM BETWEEN (#{currentPage} * 10)-(10-1) AND (#{currentPage} * 10)
+</select>
 
 </mapper>

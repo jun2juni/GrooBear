@@ -35,46 +35,26 @@ public class DclztypeServiceImpl implements DclztypeService {
 	public int getVacTotal(Map<String, Object> map) {
 		return dclztypeMapper.getVacTotal(map);
 	}
-
+	
+	// 모든 사원의 연차 현황 총 행의 갯수
+	@Override
+	public int getEmplAllVacTotal() {
+		return dclztypeMapper.getEmplAllVacTotal();
+	}
+	
 	// 사원 출퇴근 현황 목록 조회
 	@Override
 	public List<DclzTypeVO> emplDclzTypeList(Map<String, Object> map) {
-		
-		//DclzTypeVO dclzTypeVO = new DclzTypeVO();
-		
 		// 사원의 전체 근태현황
 		List<DclzTypeVO> empDclzList = dclztypeMapper.emplDclzTypeList(map);
 		log.info("service -> empDclzList : " + empDclzList);
-		
-		// 총 근무시간 계산 - 다시해야됨
-		//String beginTime = empDclzList.get(0).getWorkBeginTime();
-		//String endTime = empDclzList.get(0).getWorkEndTime();
-		
-//		if(endTime != null) {
-//			LocalTime begin = LocalTime.parse(beginTime);
-//			LocalTime end = LocalTime.parse(endTime);
-//
-//			Duration duration = Duration.between(begin, end);
-//			log.info("시간 : " + duration);
-//			
-//			long hours = duration.toHours();
-//			long minutes = duration.toMinutes();
-//			long seconds = duration.toSeconds();
-//
-//			String allTime = hours+"시간 "+minutes+"분 ";
-//			
-//			dclzTypeVO.setAllWorkTime(allTime);
-//
-//		}
-		
 		return empDclzList;
 	}
-
+	
 	// 사원 근태 갯수
 	@Override
 	public List<DclzTypeDetailVO> empDetailDclzTypeCnt (String emplNo) {
 		return dclztypeMapper.empDetailDclzTypeCnt(emplNo);
-		
 	}
 
 	// 출근시간 등록
@@ -126,13 +106,10 @@ public class DclztypeServiceImpl implements DclztypeService {
 		int useYryc = emplVacList.getYrycUseDaycnt();
 		// 잔여 연차일수 계산
 		int remainYryc = totalYryc - useYryc;
-		
 		// 잔여 연차일수 set해주기
 		emplVacList.setYrycRemndrDaycnt(remainYryc);
 		
 		// 연차코드가 23(공가), 24(병가)면 사용일수에서 차감 안되게하기
-		
-		
 		return emplVacList;
 	}
 
@@ -146,14 +123,14 @@ public class DclztypeServiceImpl implements DclztypeService {
 	@Override
 	public int addVacInsert(VacationVO vacationVO) {
 		
-		log.info("선택사원정보 : " + vacationVO);
+		//log.info("선택사원정보 : " + vacationVO);
 		
 		// 선택된 사원번호
 		String emplNo = vacationVO.getEmplNo();
-		log.info("선택사원 번호 : " + emplNo);
+		//log.info("선택사원 번호 : " + emplNo);
 		// 선택된 사원의 연차정보 가져오기
 		VacationVO emplVacCnt = dclztypeMapper.emplVacationCnt(emplNo);
-		log.info("선택사원의 연차정보 : " + emplVacCnt);
+		//log.info("선택사원의 연차정보 : " + emplVacCnt);
 		
 		// 선택사원의 총 연차일수
 		int totalVac = emplVacCnt.getTotYrycDaycnt();
@@ -171,11 +148,6 @@ public class DclztypeServiceImpl implements DclztypeService {
 		log.info("계산된 총 연차일수 : " + sumTotalVac);
 		emplVacCnt.setTotYrycDaycnt(sumTotalVac);
 		
-		// total-use 계산
-//		int remainVac = emplVacCnt.getYrycRemndrDaycnt();
-//		int upRemainVac = sumTotalVac - remainVac;
-//		emplVacCnt.setYrycRemndrDaycnt(upRemainVac);
-		
 		// 선택사원 연차정보 UPDATE 해주기
 		int result = this.dclztypeMapper.addVacInsert(emplVacCnt);
 		log.info("update결과 : " + result);
@@ -183,6 +155,11 @@ public class DclztypeServiceImpl implements DclztypeService {
 		return result;
 	}
 
+	// 모든 사원의 연차 현황 - 관리자 조회시
+	@Override
+	public List<DclzTypeVO> allEmplVacList(Map<String, Object> map) {
+		return this.dclztypeMapper.allEmplVacList(map);
+	}
 
 
 }

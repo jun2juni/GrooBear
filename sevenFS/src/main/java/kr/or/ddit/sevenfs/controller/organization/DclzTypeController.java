@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -234,7 +235,7 @@ public class DclzTypeController {
 		dclzTypeVO.setWorkBeginDate(selYear);
 		//log.info("선택년도 : " + dclzTypeVO.getWorkBeginDate());
 
-		
+		// * 달만 선택시 검색 안됨 ...,
 		// jsp에서 보낸 달
 		String mon = dclzTypeVO.getWorkEndDate();
 		log.info("선택 달 : " + mon);
@@ -252,10 +253,7 @@ public class DclzTypeController {
 			
 			mapMonth.put("emplNo", emplNo);
 			
-			
 			String selectYear = dclzTypeVO.getWorkBeginDate();
-			//log.info("월까지선택한 ㅁ년도 : " + selectYear);
-			dclzTypeVO.setWorkBeginDate(selectYear);
 			
 			mapMonth.put("workBeginDate", selectYear);
 			mapMonth.put("workEndDate", mon);
@@ -319,7 +317,33 @@ public class DclzTypeController {
 	
 	// 연차관리 페이지(관리자)
 	@GetMapping("/vacAdmin")
-	public String vacationAdmin() {
+	public String vacationAdmin( Model model
+			,@RequestParam(defaultValue = "1") int currentPage
+			,@RequestParam(defaultValue = "10") int size
+			,@RequestParam(defaultValue = "") String keyword
+			) {
+		
+		log.info("받은 키워드 :" + keyword);
+		
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("currentPage", currentPage);
+		//map.put("size", size);
+		map.put("keyword", keyword);
+		
+		// 페이지정보
+		int total = dclztypeService.getEmplAllVacTotal();
+		log.info("total : " + total);
+		ArticlePage<VacationVO> articlePage = new ArticlePage<>(total, currentPage, size);
+		log.info("articlePage : " + articlePage);
+		model.addAttribute("articlePage", articlePage);
+		
+		// 모든 사원의 연차 현황
+		List<DclzTypeVO> allEmplVacList = this.dclztypeService.allEmplVacList(map);
+		log.info("모든 사원 연차 현황 : " + allEmplVacList);
+		//map.put("allEmplVacList", allEmplVacList);
+		model.addAttribute("allEmplVacList" , allEmplVacList);
+		
 		return "organization/dclz/vacAdmin";
 	}
 	
@@ -337,5 +361,5 @@ public class DclzTypeController {
 		}else {
 			return "실패";
 		}
-		}
+	}
 }

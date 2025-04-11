@@ -18,6 +18,9 @@ public class DclzTypeVO {
 	private Date dclzEndDt;
 	private String dclzReason;
 	
+	// 사원 이름
+	private String emplNm;
+	
 	// 근태 대분류 유형 이름
 	private String bad; // 근태불량
 	private String work; // 근무

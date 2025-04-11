@@ -30,7 +30,7 @@
 	              <div class="icon-card mb-30">
 	                <div class="content mx-auto">
 	                  <div class="mx-auto text-center mb-2">
-	                  	<h4><span class="status-btn dark-btn">연차 사용 기간</span></h4>
+	                  	<h4><span class="status-btn secondary-btn text-dark">연차 사용 기간</span></h4>
 	                  </div>
 	                  <div>
 	                       <c:set var="beginDt" value="${emplVacation.yrycUseBeginDate}"></c:set>
@@ -51,7 +51,7 @@
 	              <div class="icon-card mb-30">
 	                <div class="content mx-auto">
 	                  <div>
-	                  	<h3><span class="status-btn success-btn mb-2">총 연차 수</span></h3>
+	                   <h4><span class="status-btn secondary-btn mb-2 text-dark">총 연차 수</span></h4>
 	                  </div>
 	                  <div>
 	                    <p class="text-center"> ${emplVacation.totYrycDaycnt}개</p>
@@ -64,7 +64,7 @@
 	              <div class="icon-card mb-30">
 	                <div class="content mx-auto">
 	                  <div>
-	                  	<h3><span class="status-btn success-btn mb-2">사용 연차 수</span></h3>
+	                  	<h3><span class="status-btn secondary-btn mb-2 text-dark">사용 연차 수</span></h3>
 	                  </div>
 	                  <div>
 	                    <p class="text-center">${emplVacation.yrycUseDaycnt}개</p>
@@ -77,7 +77,7 @@
 	              <div class="icon-card mb-30">
 	                <div class="content mx-auto">
 	                  <div>
-	                  	<h3><span class="status-btn success-btn mb-2">잔여 연차 수</span></h3>
+	                  	<h3><span class="status-btn secondary-btn mb-2 text-dark">잔여 연차 수</span></h3>
 	                  </div>
 	                  <div>
 	                    <p class="text-center">${emplVacation.yrycRemndrDaycnt}개</p>
@@ -160,7 +160,7 @@
                         </div>
                       </td>
                       <td class="min-width">
-                      <h4><span class="badge bg-dark" id="vacData">${emplVacationData.cmmnCodeNm}</span></h4>
+                      <h4><span class="status-btn warning-btn text-gray" id="vacData">${emplVacationData.cmmnCodeNm}</span></h4>
                       </td>
                       <td class="min-width">
                         <p><span class="text-medium text-dark">
@@ -178,11 +178,14 @@
                 </table>
                 <!-- end table -->
               </div>
-                <page-navi id="page"
-				url="/dclz/vacation?"
-				current="${param.get("currentPage")}"
-				show-max="10"
-				total="${articlePage.endPage}"></page-navi>
+               <!-- 페이지네이션 -->
+               <page-navi id="page"
+				   url="/dclz/vacation?"
+				   current="${param.get("currentPage")}"
+				   show-max="10"
+				   total="${articlePage.totalPages}">
+			   </page-navi>
+			   <!-- 페이지네이션 -->
             </div>
             <!-- end card -->
           </div>

@@ -15,6 +15,9 @@ public interface DclztypeService {
 	
 	// 사원의 연차사용내역 총 갯수
 	public int getVacTotal(Map<String, Object> map);
+	
+	// 모든 사원의 연차 현황 총 행의 갯수
+	public int getEmplAllVacTotal();
 
 	// 사원 근태현황 대분류로 조회
 	public DclzTypeVO dclzCnt(String emplNo);
@@ -48,5 +51,8 @@ public interface DclztypeService {
 	
 	// 추가 연차지급시 update
 	public int addVacInsert(VacationVO vacationVO);
+	
+	// 모든 사원의 연차 현황
+	public List<DclzTypeVO> allEmplVacList(Map<String, Object> map);
 	
 }

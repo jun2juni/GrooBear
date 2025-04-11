@@ -24,16 +24,61 @@
 	<section class="section">
 		<div class="container-fluid">
        		<!-- Button trigger modal -->
-			<button type="button" class="btn-sm main-btn active-btn-outline square-btn btn-hover mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
-			  사원 연차 지급
-			</button>
+			
 			<div class="row">
             <div class="col-lg-12">
+            <div class="d-flex justify-content-start">
+             <button type="button" class="btn-sm main-btn primary-btn-light btn-hover text-dark rounded-md mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+				 사원 연차 지급
+			</button>
+             </div>
               <div class="card-style">
                 <div class="table-wrapper table-responsive">
                   <table class="table">
+                  <h6>전체사원 연차 현황</h6>
+                  <div class="mb-10 d-flex justify-content-end">
+                   <div>
+                   	 <a href="/dclz/vacAdmin" class="btn-sm light-btn-light btn-hover mr-10 rounded-md">전체 목록 보기</a>
+                   </div>
+                   <form action="/dclz/vacAdmin" method="get" id="selTypeForm">
+                  	<c:set var="duplTypes" value="" />
+	                <div class="input-style-1 form-group mr-10">
+		     	     <select id="vacType" class="form-select w-auto" required="required">
+						<option>유형 선택</option>
+						<c:forEach var="vacDatas" items="${allEmplVacList}">
+						<c:set var="vacType" value="${vacDatas.cmmnCodeNm}" />
+							<c:if test="${not fn:contains(duplTypes, vacType)}">
+								<option value="${vacType}">${vacType}</option>
+								<c:set var="duplTypes" value="${duplTypes},${vacType}" />
+							</c:if>	
+						</c:forEach>
+					 </select> 
+					 <input type="hidden" id="typeKeyword" name="keyword">
+				  	</div> 
+		            </form>
+		            <form action="/dclz/vacAdmin" method="get" id="selYearForm">
+                  	<c:set var="duplYears" value="" />
+	                <div class="input-style-1 form-group">
+		     	     <select id="vacYear" class="form-select w-auto" required="required">
+						<option>년도 선택</option>
+						<c:forEach var="vacDatas" items="${allEmplVacList}">
+						<fmt:formatDate value="${vacDatas.dclzBeginDt}" pattern="yyyy" var="vacYear" />
+							<c:if test="${not fn:contains(duplYears, vacYear)}">
+								<option value="${vacYear}">${vacYear}</option>
+								<c:set var="duplYears" value="${duplYears},${vacYear}" />
+							</c:if>	
+						</c:forEach>
+					 </select> 
+					 <input type="hidden" id="yearKeyword" name="keyword">
+				  	</div> 
+		            </form>
+		            </div>
                     <thead>
+		            <%-- ${allEmplVacList} --%>
                       <tr>
+                        <th>
+                          <h6>사원 이름</h6>
+                        </th>
                         <th>
                           <h6>연차 유형</h6>
                         </th>
@@ -47,25 +92,54 @@
                       <!-- end table row-->
                     </thead>
                     <tbody>
+                    <c:set var="emplVacData" value="${allEmplVacList}"></c:set>
+                      <c:forEach var="allVacData" items="${emplVacData}">
                       <tr>
                         <td>
                           <div>
                             <div>
-                              <p>Courtney Henry</p>
+                              ${allVacData.emplNm}
                             </div>
                           </div>
                         </td>
                         <td>
-                          <p>yourmail@gmail.com</p>
+                          <div>
+                            <div>
+                              <h4><span class="status-btn warning-btn text-gray">${allVacData.cmmnCodeNm}</span></h4>
+                            </div>
+                          </div>
                         </td>
                         <td>
-                          <p>(303)555 3343523</p>
+                          <fmt:formatDate var="beginDate" value="${allVacData.dclzBeginDt}" pattern="yyyy-MM-dd"/>
+                          <fmt:formatDate var="endDate" value="${allVacData.dclzEndDt}" pattern="yyyy-MM-dd"/>
+                        <c:choose>
+                          	<c:when test="${beginDate ==  endDate}">
+                          		 ${beginDate}
+                          	</c:when>
+                          	<c:otherwise>
+                          		 ${beginDate} ~ ${endDate}
+                          	</c:otherwise>
+                          </c:choose>
+                        </td>
+                        <td>
+                          ${allVacData.dclzReason}
                         </td>
                       </tr>
+                      </c:forEach>
                       <!-- end table row -->
                     </tbody>
                   </table>
                   <!-- end table -->
+                  <!-- 페이지네이션 -->
+                  <div>
+                  <page-navi
+					url="/dclz/vacAdmin?"
+					current="${param.get('currentPage')}"
+					show-max="10"
+					total="${articlePage.totalPages}">
+				  </page-navi> 
+				  </div>
+				  <!-- 페이지네이션 -->
                 </div>
               </div>
               <!-- end card -->
@@ -245,7 +319,27 @@ $(function(){
 	 		 //console.log('연차 추가하고 받은 결과 : ' , res);
 	 	 })
 	 })
-})
+	 
+	 // 유형 selectBox 선택시
+	 $('#vacType').on('change', function(){
+		 const vacType = $('#vacType').val();
+		 console.log('선택한 유형 : ' , vacType);
+		 // 선택한 유형 보내주기
+		 const typeKeyword = $('#typeKeyword').val(vacType);
+		 //console.log("바꿔준 input 값 : " , typeKeyword.val());
+		 $('#selTypeForm').submit();
+	 })
+	 // 년도 선택시
+	 $('#vacYear').on('change', function(){
+		 const vacYear = $('#vacYear').val();
+		 console.log('선택날짜 : ' , vacYear);
+		 // 선택 날짜 보내주기
+		 const yearKeyword = $('#yearKeyword').val(vacYear);
+		 $('#selYearForm').submit();
+	 })
+	 
+	 
+}) // end fn
 	
 	
 </script>

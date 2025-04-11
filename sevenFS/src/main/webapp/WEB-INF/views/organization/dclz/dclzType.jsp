@@ -228,7 +228,7 @@
 	                      </td>
 	                      <td>
 	                        <div>
-	                          <h4><span class="badge bg-dark">${dclzWork.cmmnCodeNm}</span></h4>
+	                          <h4><span class="status-btn warning-btn text-gray">${dclzWork.cmmnCodeNm}</span></h4>
 	                        </div>
 	                      </td>
 	                      <td>
@@ -325,7 +325,7 @@ $(function(){
                   </td>
                   <td>
                     <div>
-                  	  <h4><span class="badge bg-dark">\${item.cmmnCodeNm}</span></h4>
+                  	  <h4><span class="status-btn warning-btn text-gray">\${item.cmmnCodeNm}</span></h4>
                     </div>
                   </td>
                   <td>
@@ -419,7 +419,7 @@ $(document).on('change', '#monthSelect', function(e) {
                   </td>
                   <td>
                     <div>
-                      <h4><span class="badge bg-dark">\${item.cmmnCodeNm}</span></h4>
+                      <h4><span class="status-btn warning-btn text-gray">\${item.cmmnCodeNm}</span></h4>
                     </div>
                   </td>
                   <td>
