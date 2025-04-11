@@ -162,7 +162,6 @@ table.table-hover.align-middle.text-center tbody tr td {
                       <c:if test="${bbsVO.commentCnt != null}">
 					        <span style="color: red;">[${bbsVO.commentCnt}]</span>
 					  </c:if>
-                      
                     </td>
                     <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;border-bottom:1px solid #efefef;">${bbsVO.emplNm}</td>
                     <td style="border-bottom:1px solid #efefef;">${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}</td>

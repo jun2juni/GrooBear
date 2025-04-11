@@ -13,6 +13,8 @@ import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
 @Mapper
 public interface ComunityMapper {
 
-
+	//월별 메뉴삽입
 	public int comunityMenuInsert(BbsVO bbsVO);
+	//월별 메뉴 조회
+	public List<BbsVO> comunityMonthMenuList(@Param("articlePage") ArticlePage<BbsVO> articlePage);
 }

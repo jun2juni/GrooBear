@@ -28,5 +28,17 @@ public class ComunityServiceImpl implements ComunityService{
 		return comunityMapper.comunityMenuInsert(bbsVO);
 	}
 	
+	@Override
+	public int getTotal(Map<String, Object> map) {
+		
+		return 0;
+	}
+	
+	@Override
+	public List<BbsVO> comunityMonthMenuList(ArticlePage<BbsVO> articlePage) {
+		log.info("아티클페이지 : " + articlePage);
+		return comunityMapper.comunityMonthMenuList(articlePage);
+	}
+	
 
 }
