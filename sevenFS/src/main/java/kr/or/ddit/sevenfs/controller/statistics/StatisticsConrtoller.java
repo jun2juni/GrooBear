@@ -51,8 +51,18 @@ public class StatisticsConrtoller {
 //		
 //		return "/statisticsAWOL.jsp";
 //	}
-	@GetMapping("/statisticsAWOL")	
-	public String statisticsAWOL(Model model
+	
+	// 통계 AWOL
+	@GetMapping("/statisticsAWOL")
+	public String statisticsAWOL() {
+		
+		return "statistics/statisticsAWOL";
+	}
+	
+	// ResponseBody -> json으로내보낼 때 필요한 어노테이션 
+	@ResponseBody
+	@GetMapping("/resultAWOL")	
+	public Map<String, Object> resultAWOL(Model model
 								,@RequestParam(value ="started",required=false) String started
 								,@RequestParam(value ="ended",required=false)String ended) {
 		
@@ -65,8 +75,9 @@ public class StatisticsConrtoller {
         result.put("AWOL", AWOL);
 		  
         model.addAttribute("result",result);
+//        model.addAttribute("AWOL",AWOL);
         
-		return "statistics/statisticsAWOL" ;
+		return result ;
 	}
 	
 	// 비동기 처리 
