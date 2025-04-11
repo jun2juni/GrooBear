@@ -1,8 +1,5 @@
 package kr.or.ddit.sevenfs.config;
 
-import jakarta.servlet.Filter;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -15,10 +12,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000") // 요청을 허용할 출처
+                .allowedOriginPatterns("*") // 모든 origin 허용 (IP 포함)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("Authorization", "Content-Type")
-                .allowCredentials(true) // Allow credentials (cookies, authorization headers, etc.)
+                .allowedHeaders("*")
+                .allowCredentials(true); // 쿠키 등 인증 정보 허용
         ;
     }
 

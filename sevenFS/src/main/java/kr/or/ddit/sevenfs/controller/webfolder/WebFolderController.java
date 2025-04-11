@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
@@ -42,6 +39,17 @@ public class WebFolderController {
         return resultMap;
     }
 
+    @GetMapping("/folderList")
+    public Map<String, Object> getFolderList() {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        // 파일 목록 가져오기
+        List<WebFolderVO> webFolderList = this.webFolderService.getWebFolderList();
+        resultMap.put("folderList", webFolderList);
+
+        return resultMap;
+    }
+
     @PostMapping("/insertFolder")
     public WebFolderVO insertFolder(WebFolderVO webFolderVO) {
         log.debug("webFolderVO: {}", webFolderVO);
@@ -62,7 +70,22 @@ public class WebFolderController {
         Map<String, Object> resultMap = new HashMap<>();
         int i = this.webFolderService.insertFiles(uploadFile, webFolderVO, emplNo);
 
-
         return resultMap;
+    }
+
+    @PostMapping("/deleteFiles")
+    public Map<String, Object> deleteFiles(@RequestBody List<WebFolderFileVO> webFolderFiles) {
+        log.debug("webFolderFiles: {}", webFolderFiles);
+        int result = this.webFolderService.deleteFiles(webFolderFiles);
+
+        return Map.of("result", result != 0);
+    }
+
+    @PostMapping("/deleteFolders")
+    public Map<String, Object> deleteFolders(@RequestBody List<WebFolderVO> webFolders) {
+        log.debug("webFolderFiles: {}", webFolders);
+        int result = this.webFolderService.deleteFolder(webFolders);
+
+        return Map.of("result", result != 0);
     }
 }

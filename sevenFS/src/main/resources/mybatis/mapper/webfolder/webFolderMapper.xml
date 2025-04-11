@@ -22,6 +22,26 @@
         SELECT 1 FROM DUAL
     </insert>
 
+    <update id="deleteFiles" parameterType="long">
+      UPDATE ATTATCH_FILE
+      SET FILE_USE_YN = 'N'
+      WHERE ATCH_FILE_NO IN (
+          <foreach item="no" collection="deleteFileIdList" separator=",">
+                #{no}
+          </foreach>
+      )
+    </update>
+
+    <update id="deleteFolder" parameterType="int">
+        UPDATE FOLDER
+        SET FOLDER_DELETE_YN = 'Y'
+        WHERE FOLDER_NO IN (
+            <foreach item="no" collection="deleteFolderIdList" separator=",">
+                #{no}
+            </foreach>
+        )
+    </update>
+
     <select id="getFolder" resultType="kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO">
         SELECT FOLDER_NO,
                UPPER_FOLDER_NO,
@@ -51,6 +71,7 @@
                FOLDER_CREAT_EMPNO
         FROM FOLDER
         WHERE UPPER_FOLDER_NO = #{upperFolderNo}
+          AND FOLDER_DELETE_YN = 'N'
         ORDER BY FOLDER_CREAT_DT DESC
     </select>
 
@@ -76,7 +97,16 @@
         FROM FOLDER_FILE FF
                  LEFT JOIN ATTATCH_FILE AF ON (FF.ATCH_FILE_NO = AF.ATCH_FILE_NO)
         WHERE FOLDER_NO = #{upperFolderNo}
+          AND AF.FILE_USE_YN = 'Y'
         ORDER BY FILE_CREAT_DT DESC
+    </select>
+
+    <select id="getWebFolderList" resultType="kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO">
+        SELECT LPAD(' ', LEVEL, '-') || FOLDER_NM AS  FOLDER_NM, FOLDER_NO, FOLDER_PATH
+        FROM FOLDER
+        WHERE FOLDER_DELETE_YN = 'N'
+        START WITH UPPER_FOLDER_NO IS NULL
+        CONNECT BY PRIOR FOLDER_NO = UPPER_FOLDER_NO
     </select>
 
     <!-- 밑에는 전체 다 가져오는 경우에 사용 -->
@@ -150,6 +180,4 @@
                  LEFT JOIN FOLDER_FILE FF ON (F.FOLDER_NO = FF.FOLDER_NO)
                  LEFT JOIN ATTATCH_FILE AF ON (FF.ATCH_FILE_NO = AF.ATCH_FILE_NO)
     </select>
-
-
 </mapper>

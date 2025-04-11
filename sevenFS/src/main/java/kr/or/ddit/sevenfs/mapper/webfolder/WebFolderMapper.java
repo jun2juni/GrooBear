@@ -17,4 +17,10 @@ public interface WebFolderMapper {
     int insertFolder(WebFolderVO webFolderVO);
 
     WebFolderVO getFolder(int folderNo);
+
+    List<WebFolderVO> getWebFolderList();
+
+    int deleteFiles(long[] deleteFileIdList);
+
+    int deleteFolder(int[] deleteFolderIdList);
 }

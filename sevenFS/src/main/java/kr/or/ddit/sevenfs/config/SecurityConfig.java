@@ -8,6 +8,7 @@ import kr.or.ddit.sevenfs.service.auth.impl.EmpDetailImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -81,10 +82,11 @@ public class SecurityConfig {
                 .httpBasic(hbasic -> hbasic.disable())
                 .authorizeHttpRequests(authz -> authz
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ASYNC).permitAll() // forward
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 프리플라이트 OPTIONS 허용 (JSON 요청을 받으려고)
                         // 허가
                         .requestMatchers("/auth/login", "/signup",
                                  "/error",  "/images/**",  "/layout/**", "/assets/**",
-                                "/api/login", "/ws/**"
+                                "/api/login", "/ws/**", "/api/token/refresh"
                         ).permitAll()
                         .requestMatchers("/api/**").authenticated() // 나머지 API는 인증 필요
                         // .requestMatchers("/ceo/**").hasRole("ROLE_ADMIN")

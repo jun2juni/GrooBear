@@ -7,6 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface WebFolderService {
+    // 폴더 구조 가져오기
+    public List<WebFolderVO> getWebFolderList();
+
     // 폴더 정보가져오기
     public WebFolderVO getFolder(int folderNo);
 
@@ -23,8 +26,10 @@ public interface WebFolderService {
     public int inertFolder(WebFolderVO webFolderVO);
 
     // 파일 삭제
+    public int deleteFiles(List<WebFolderFileVO> webFolderVO);
+
+    // 폴더 삭제
+    public int deleteFolder(List<WebFolderVO> webFolderFileVO);
 
     // 파일 다운로드
-
-    // 파일
 }

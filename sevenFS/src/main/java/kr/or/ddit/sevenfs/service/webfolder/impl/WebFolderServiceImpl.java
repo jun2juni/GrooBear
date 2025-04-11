@@ -27,6 +27,11 @@ public class WebFolderServiceImpl implements WebFolderService {
 
 
     @Override
+    public List<WebFolderVO> getWebFolderList() {
+        return webFolderMapper.getWebFolderList();
+    }
+
+    @Override
     public WebFolderVO getFolder(int folderNo) {
         return webFolderMapper.getFolder(folderNo);
     }
@@ -61,8 +66,6 @@ public class WebFolderServiceImpl implements WebFolderService {
         log.debug("webFolderFileVOList {}", webFolderFileVOList);
         int result = webFolderMapper.insertFiles(webFolderFileVOList);
 
-
-
         // 해당 정보 가지고
         return result;
     }
@@ -82,5 +85,23 @@ public class WebFolderServiceImpl implements WebFolderService {
         }
 
         return result;
+    }
+
+    @Override
+    public int deleteFiles(List<WebFolderFileVO> webFolderFileVO) {
+        long[] deleteFileIdList = webFolderFileVO.stream()
+                .mapToLong(WebFolderFileVO::getAtchFileNo)
+                .toArray();
+
+        return this.webFolderMapper.deleteFiles(deleteFileIdList);
+    }
+
+    @Override
+    public int deleteFolder(List<WebFolderVO> webFolderVO) {
+        int[] deleteFolderIdList = webFolderVO.stream()
+                .mapToInt(WebFolderVO::getFolderNo)
+                .toArray();
+
+        return this.webFolderMapper.deleteFolder(deleteFolderIdList);
     }
 }
