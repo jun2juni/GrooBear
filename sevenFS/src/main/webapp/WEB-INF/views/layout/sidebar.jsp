@@ -218,6 +218,11 @@
             <li>
               <a href="/dclz/vacation" class="${fn:contains(currentURL, '/dclz/vacation') ? 'active' : ''}"> 연차 </a>
             </li>
+            <sec:authorize access="hasRole('ROLE_ADMIN')">
+            <li>
+              <a href="/dclz/vacAdmin" class="${fn:contains(currentURL, '/dclz/vacAdmin') ? 'active' : ''}"> 연차관리 </a>
+            </li>
+            </sec:authorize>
           </ul>
         </li>
         

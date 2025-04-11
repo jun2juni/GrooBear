@@ -182,7 +182,7 @@ public class OrganizationController {
 	}
 	
 
-	// 사용자가 선택한 사원상세
+	// 사용자가 선택한 사원상세 - jsp return
 	@GetMapping("/emplDetail")
 	public String emplDetail(@RequestParam(value = "emplNo") String emplNo
 							, Model model) {
@@ -209,6 +209,35 @@ public class OrganizationController {
 		model.addAttribute("empDetail", empDetail);
 		
 		return "organization/employeeDetail";
+	}
+	
+	// 사원상세 - data return
+	@ResponseBody
+	@GetMapping("/emplDetailData")
+	public Map<String, Object> emplDetail(@RequestParam(value = "emplNo") String emplNo) {
+		
+		Map<String, Object> empMap = new HashMap<>();
+		
+		//log.info("사원번호 와라와라 : " + emplNo);
+		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
+		log.info("사원상세 : " + empDetail);
+		
+		// 사원 파일 번호 가져오기
+		int fileNo = empDetail.getAtchFileNo();
+		
+		AttachFileVO attachFileVO = new AttachFileVO();
+		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
+		String empFileName = fileAttachList.get(0).getFileStrePath();
+		
+		// 사원 프로필 url가져오기
+		empDetail.setProflPhotoUrl(empFileName);
+		log.info("사원상세 프로필 url : " + empFileName);
+		
+		empMap.put("empFileName", empFileName);
+		empMap.put("empDetail", empDetail);
+		//empMap.put("empFileName", empFileName);
+		
+		return empMap;
 	}
 	
 	// 관리자가 선택한 사원상세
