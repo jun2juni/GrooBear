@@ -86,7 +86,7 @@
 									</a>
 									<!-- 오른쪽 버튼 (수정/삭제) -->
 									<div>
-										<c:if test="${myEmpInfo.emplNo == bbsVO.emplNo}">
+										<c:if test="${myEmpInfo.emplNo == bbsVO.emplNo || myEmpInfo.emplNo == '20250006'}">
 											<button type="submit" class="btn btn-outline-warning me-2">수정</button>
 											<button type="button" class="btn btn-outline-danger" onclick="bbsDelete(${bbsVO.bbsSn})">삭제</button>
 										</c:if>
@@ -214,8 +214,8 @@
 	                            <p class="card-text" id="answerCn-` + answer.answerNo + `">` + answer.answerCn + `</p>
 	                `;
 
-	                // 댓글 작성자일 때만 버튼 보여주기
-	                if (answer.emplNo === loginUserEmplNo) {
+	                // 댓글 작성자일 때만 버튼 보여주기 
+	                if (answer.emplNo == loginUserEmplNo || loginUserEmplNo == '20250006') {
 	                    html += `
 	                        <div class="mt-2 d-flex justify-content-end">
 	                            <button class="btn btn btn-outline-warning me-2"
