@@ -36,7 +36,7 @@
                 <div class="table-wrapper table-responsive">
                   <table class="table">
                   <h6>전체사원 연차 현황</h6>
-                  <div class="mb-10 d-flex justify-content-end">
+                  <div class="mb-10 d-flex justify-content-end col-12">
                    <div>
                    	 <a href="/dclz/vacAdmin" class="btn-sm light-btn-light btn-hover mr-10 rounded-md">전체 목록 보기</a>
                    </div>
@@ -70,7 +70,17 @@
 						</c:forEach>
 					 </select> 
 					 <input type="hidden" id="yearKeyword" name="keyword">
-				  	</div> 
+				  	</div>
+				  	</form>
+				  	<form action="/dclz/vacAdmin" method="get" id="selSearchNm">
+				  	<div class="ml-10 d-flex">
+				  	    <div class="rounded mb-3" style="width : 150px;">
+				            <input type="search" class="form-control rounded" placeholder="이름 입력" aria-label="Search" name="keyword" aria-describedby="search-addon" id="schName" onkeydown="fSchEnder(event)">
+				        </div>
+				        <span class="input-group-text border-0" id="search-addon" style="height:40px" onclick="fSch()">
+				            <i class="fas fa-search" aria-hidden="true"></i>
+				        </span>
+			        </div>
 		            </form>
 		            </div>
                     <thead>
@@ -337,6 +347,20 @@ $(function(){
 		 const yearKeyword = $('#yearKeyword').val(vacYear);
 		 $('#selYearForm').submit();
 	 })
+	 
+	 // 이름 검색하고 엔터 눌렀을시
+	  function fSchEnder(e) {
+        if (e.code === "Enter") {
+        	const schName = $('#schName').val();
+        }
+    }
+	
+	 // 이름 검색하고 돋보기 눌렀을시
+	/*  function fSch(){
+		 alert('dkfjdl');
+		 const schName = $('#schName').val();
+         console.log('이름 : ' , schName);
+	 } */
 	 
 	 
 }) // end fn
