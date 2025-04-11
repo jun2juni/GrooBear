@@ -263,4 +263,16 @@
 		SELECT BBS_CTGRY_NO, UPPER_CTGRY_NO, CTGRY_NM, CTGRY_CREAT_DT, CTGRY_USE_YN, DEPT_CODE
 		FROM BBS_CTGRY
 	</select>
+	
+	<!-- 게시글 일괄삭제 -->
+	<update id="bulkDelete" parameterType="list">
+	  UPDATE BBS
+	  SET BBSCTT_USE_YN = 'N',
+	      BBSCTT_UPDT_DT = SYSDATE
+	  WHERE BBS_SN IN
+	  <foreach collection="list" item="id" separator="," open="(" close=")">
+	    #{id}
+	  </foreach>
+	</update>
+		
 </mapper>

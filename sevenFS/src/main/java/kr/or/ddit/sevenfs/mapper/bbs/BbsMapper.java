@@ -29,4 +29,6 @@ public interface BbsMapper {
 	public void increaseViewCount(int bbsSn);
 
     List<BbsCategoryVO> bbsCategoryList();
+
+	public void bulkDelete(List<Integer> ids);
 }

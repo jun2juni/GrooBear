@@ -10,12 +10,14 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -232,7 +234,20 @@ public class BbsController {
     	return "redirect:/bbs/bbsList?bbsCtgryNo="+bbsVO.getBbsCtgryNo();
     }
     
-    
+    /**
+     * 일괄삭제
+     * @param payload
+     * @return
+     */
+    @PostMapping("/bulkDelete")
+    @ResponseBody
+    public ResponseEntity<?> bulkDelete(@RequestBody Map<String, List<Integer>> payload) {
+        List<Integer> ids = payload.get("ids");
+        log.info("삭제할 게시글 ID들: {}", ids);
+        bbsService.bulkDelete(ids); // 서비스에 위임
+        return ResponseEntity.ok().build();
+    }
+
 
 
     

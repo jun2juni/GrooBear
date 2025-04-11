@@ -68,9 +68,16 @@ table.table-hover.align-middle.text-center tbody tr td {
       <div class="container-fluid">
         <div class="card-style mb-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="text-dark">게시판</h3>
-            <a href="/bbs/bbsInsert?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-primary">게시글 추가</a>
-          </div>
+		    <h3 class="text-dark">게시판</h3>
+		    <div>
+		        <a href="/bbs/bbsInsert?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-primary me-2">게시글 추가</a>
+		        <c:if test="${myEmpInfo.emplNo == bbsVO.emplNo || myEmpInfo.emplNo == '20250006'}"><!-- 아직 권한 추가 안함 -->
+			        <button type="button" id="bulkToggleBtn" class="btn btn-outline-secondary me-2">일괄관리</button>
+			        <button type="button" id="bulkDeleteBtn" class="btn btn-danger" style="display:none;">선택 삭제</button>
+				</c:if>
+		    </div>
+		</div>
+
           <!-- (나머지 게시판 및 테이블 내용) -->
           <nav class="navbar navbar-light">
             <div class="container-fluid" style="padding-left:0px;">
@@ -95,6 +102,7 @@ table.table-hover.align-middle.text-center tbody tr td {
                 <!-- 검색 버튼 -->
                 <button style="white-space: nowrap;" type="submit" class="btn btn-outline-primary">검색</button>
               </form>
+              	
             </div>
           </nav>
 
@@ -102,6 +110,9 @@ table.table-hover.align-middle.text-center tbody tr td {
             <table class="table table-hover align-middle text-center" style="table-layout: fixed; width: 100%;">
               <thead class="table-light">
                 <tr>
+				    <th style="width: 3%; display: none;" class="bulk-col">
+				      <input type="checkbox" id="checkAll" />
+				    </th>
                   <th style="width: 8%;">게시글 번호</th>
                   <th style="width: 5%;"></th>
                   <th style="width: 50%;">제목</th>
@@ -114,6 +125,9 @@ table.table-hover.align-middle.text-center tbody tr td {
               <tbody>
                 <c:forEach var="bbsVO" items="${bbsList}">
                   	<tr onClick="location.href='/bbs/bbsDetail?bbsSn=${bbsVO.bbsSn}'" style="cursor:pointer;">
+                  	<td onclick="event.stopPropagation();" style="display: none;" class="bulk-col">
+				      <input type="checkbox" class="bulk-check" value="${bbsVO.bbsSn}" />
+				    </td>
                     <td style="border-bottom:1px solid #efefef;">${bbsVO.rowNumber}</td>
                     <td style="border-bottom:1px solid #efefef;">
                     	<c:if test="${bbsVO.upendFixingYn == 'Y'}">
@@ -164,6 +178,44 @@ table.table-hover.align-middle.text-center tbody tr td {
     </section>
   <%@ include file="../layout/footer.jsp" %>
 </main>
+<script>
+	document.addEventListener("DOMContentLoaded", () => {
+	  const toggleBtn = document.getElementById("bulkToggleBtn");
+	  const deleteBtn = document.getElementById("bulkDeleteBtn");
+	  const checkAll = document.getElementById("checkAll");
+	
+	  toggleBtn.addEventListener("click", () => {
+	    const bulkCols = document.querySelectorAll(".bulk-col");
+	    const display = bulkCols[0].style.display === "none" || bulkCols[0].style.display === "" ? "table-cell" : "none";
+	
+	    bulkCols.forEach(col => col.style.display = display);
+	    deleteBtn.style.display = display === "table-cell" ? "inline-block" : "none";
+	  });
+	
+	  checkAll?.addEventListener("change", (e) => {
+	    document.querySelectorAll(".bulk-check").forEach(cb => cb.checked = e.target.checked);
+	  });
+	
+	  deleteBtn.addEventListener("click", () => {
+	    const selected = Array.from(document.querySelectorAll(".bulk-check:checked")).map(cb => cb.value);
+	    if (selected.length === 0) {
+	      alert("삭제할 게시글을 선택해주세요.");
+	      return;
+	    }
+	
+	    if (!confirm(`${selected.length}개의 게시글을 삭제하시겠습니까?`)) return;
+	
+	    fetch("/bbs/bulkDelete", {
+	      method: "POST",
+	      headers: { "Content-Type": "application/json" },
+	      body: JSON.stringify({ ids: selected })
+	    })
+	    .then(res => res.ok ? location.reload() : alert("삭제 실패"))
+	    .catch(err => alert("에러 발생"));
+	  });
+	});
+</script>
+
 <%@ include file="../layout/prescript.jsp" %>
 </body>
 </html>

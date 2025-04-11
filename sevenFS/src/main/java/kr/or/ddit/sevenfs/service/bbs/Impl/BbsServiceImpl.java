@@ -65,4 +65,10 @@ public class BbsServiceImpl implements BbsService{
 		return bbsMapper.bbsCategoryList();
 	}
 
+	@Override
+	public void bulkDelete(List<Integer> ids) {
+		// TODO Auto-generated method stub
+		bbsMapper.bulkDelete(ids);
+	}
+
 }

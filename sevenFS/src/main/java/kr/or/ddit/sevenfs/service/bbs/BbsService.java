@@ -25,4 +25,7 @@ public interface BbsService {
 	
 	// 게시판 카테고리 가죠오기
 	public List<BbsCategoryVO> bbsCategoryList();
+
+	// 게시판 일괄삭제
+	public void bulkDelete(List<Integer> ids);
 }
