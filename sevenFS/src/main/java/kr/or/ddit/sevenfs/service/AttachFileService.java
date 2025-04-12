@@ -2,12 +2,15 @@ package kr.or.ddit.sevenfs.service;
 
 import jakarta.servlet.http.HttpServletResponse;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
+import kr.or.ddit.sevenfs.vo.webfolder.WebFolderFileVO;
+import kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface AttachFileService {
     // 파일 넘버 가져오기
@@ -39,5 +42,11 @@ public interface AttachFileService {
 
     // 단일 파일 여러개 가져오기
     public List<AttachFileVO> getFileAttachList(List<Long> attachFileNo);
+
+    // 파일 이동
+    public Map<String, String> fileMove(String targetFolder, List<AttachFileVO> fileAttachList) throws IOException;
+
+    // 폴더 이동
+    public Map<String, String> fileMove(String targetFolder, String moveFolder) throws IOException;
 }
 

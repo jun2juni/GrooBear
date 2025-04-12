@@ -10,15 +10,17 @@ import kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
 public class WebFolderServiceImpl implements WebFolderService {
-
     @Autowired
     private WebFolderMapper webFolderMapper;
     @Autowired
@@ -108,5 +110,48 @@ public class WebFolderServiceImpl implements WebFolderService {
                 .toArray();
 
         return this.webFolderMapper.deleteFolder(deleteFolderIdList);
+    }
+
+    @Transactional
+    @Override
+    public Map<String, String> updateMoveFolder(WebFolderVO targetFolder, WebFolderFileVO moveFile) throws IOException {
+        // 이동해야 하는 폴더 정보 webFolderVO
+        String folder = targetFolder.getFolderPath();
+
+        // 이동하는 파일 정보
+        long atchFileNo = moveFile.getAtchFileNo();
+        List<AttachFileVO> fileAttachList = this.attachFileService.getFileAttachList(atchFileNo);
+        log.debug("fileAttachList {}", fileAttachList);
+
+        Map<String, String> stringStringMap = this.attachFileService.fileMove(folder, fileAttachList);
+        log.debug("stringStringMap {}", stringStringMap);
+
+        if (stringStringMap != null) {
+            String result = stringStringMap.get("result");
+            if (result.equals("success")) {
+                moveFile.setFolderNo(targetFolder.getFolderNo());
+                this.webFolderMapper.updateMoveFolderFile(moveFile);
+            }
+        }
+
+        return stringStringMap;
+    }
+
+    @Transactional
+    @Override
+    public Map<String, String> updateMoveFolder(WebFolderVO targetFolder, WebFolderVO moveFolder) throws IOException {
+
+        Map<String, String> stringStringMap = this.attachFileService.fileMove(targetFolder.getFolderPath(), moveFolder.getFolderPath());
+        if (stringStringMap != null) {
+            String result = stringStringMap.get("result");
+            if (result.equals("success")) {
+                moveFolder.setUpperFolderNo(targetFolder.getFolderNo());
+                // 폴더 경로 변경
+                moveFolder.setFolderPath(targetFolder.getFolderPath() + "/" + moveFolder.getFolderNm());
+                this.webFolderMapper.updateMoveFolder(moveFolder);
+            }
+        }
+
+        return stringStringMap;
     }
 }

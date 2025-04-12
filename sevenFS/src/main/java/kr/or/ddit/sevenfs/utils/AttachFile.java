@@ -1,5 +1,6 @@
 package kr.or.ddit.sevenfs.utils;
 
+import jakarta.servlet.http.HttpServletResponse;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import lombok.extern.slf4j.Slf4j;
@@ -15,13 +16,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Slf4j
 @Component
@@ -126,6 +131,71 @@ public class AttachFile {
         String[] s = {"bytes", "KB", "MB", "GB", "TB", "PB"};
         int idx = (int) Math.floor(Math.log(size) / Math.log(1024));
         return new DecimalFormat("#,###.##").format(size / Math.pow(1024, idx)) + " " + s[idx];
+    }
+
+    // 파일 zip만들기
+    public void makeZip(List<AttachFileVO> attachFileVOList, String folderName, HttpServletResponse response) throws IOException {
+        try (ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream())) {
+            for (AttachFileVO attachFileVO : attachFileVOList) {
+                String fileStrePath = attachFileVO.getFileStrePath();
+                System.out.println(fileStrePath);
+
+                File file = new File( saveDir + fileStrePath);
+                if (file.exists()) {
+                    try (FileInputStream fileInputStream = new FileInputStream(file)) {
+                        ZipEntry zipEntry = new ZipEntry(file.getName()); // 진짜 파일 zip 파일에 추가
+                        zipOut.putNextEntry(zipEntry);
+
+                        byte[] bytes = new byte[1024];
+                        int len;
+                        while ((len = fileInputStream.read(bytes)) != -1) {
+                            zipOut.write(bytes, 0, len);
+                        }
+
+                        zipOut.closeEntry();
+                    }
+                }
+            }
+            zipOut.finish();
+        }
+    }
+
+    // 파일 이동
+
+    /**
+     *
+     * @param folder - 부모가 되는 폴더
+     * @param file - 이동하는 파일 또는 폴더
+     * @return
+     * @throws IOException
+     */
+    public Map<String, String> moveFile(String folder, String file) throws IOException {
+        Map<String, String> result = new HashMap<>();
+        String targetFolderPath = saveDir + folder;
+        Path targetFolder = Paths.get(targetFolderPath);
+
+        if (Files.exists(targetFolder)) {
+            String filePath = saveDir + file;
+            Path moveFile = Paths.get(filePath);
+
+            if (Files.exists(moveFile)) {
+                // 목적지 경로 (디렉토리 + 파일 이름)
+                Path targetPath = targetFolder.resolve(moveFile.getFileName());
+                Files.move(moveFile, targetPath, StandardCopyOption.ATOMIC_MOVE); // 있는경우 에러 던지기
+
+                result.put("result", "success");
+                result.put("message", "파일 이동 성공");
+            } else {
+
+                result.put("result", "fail");
+                result.put("message", "원본 파일이 존재하지 않습니다.");
+            }
+        } else {
+            result.put("result", "fail");
+            result.put("message", "타겟 폴더가 존재하지 않습니다.");
+        }
+
+        return result;
     }
 
     // 바이너리 파일 저장

@@ -122,6 +122,8 @@ public class WebFolderController {
 
     @GetMapping("/download-file")
     public void downloadFile(Long[] fileNoList, String folderName, HttpServletResponse response) throws IOException {
+        // 권한 확인하는거 추가 하기
+
         response.setContentType("application/zip");
         response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(folderName, StandardCharsets.UTF_8) + ".zip");
         List<Long> list = Stream.of(fileNoList).toList();
@@ -129,6 +131,23 @@ public class WebFolderController {
         List<AttachFileVO> attachFileVOList = this.attachFileService.getFileAttachList(list);
 
         attachFileService.downloadZip(attachFileVOList, folderName, response);
+    }
 
+    @PostMapping("/file-move")
+    public Map<String, String> fileMove(@RequestPart WebFolderVO targetFolder, @RequestPart WebFolderFileVO moveFile) throws IOException {
+        log.debug("targetFolder: {}", targetFolder);
+        log.debug("moveFile: {}", moveFile);
+        Map<String, String> stringStringMap = this.webFolderService.updateMoveFolder(targetFolder, moveFile);
+
+        return stringStringMap;
+    }
+
+    @PostMapping("/folder-move")
+    public Map<String, String> folderMove(@RequestPart WebFolderVO targetFolder, @RequestPart WebFolderVO moveFolder) throws IOException {
+        log.debug("targetFolder: {}", targetFolder);
+        log.debug("moveFolder: {}", moveFolder);
+        Map<String, String> stringStringMap = this.webFolderService.updateMoveFolder(targetFolder, moveFolder);
+
+        return stringStringMap;
     }
 }

@@ -4,7 +4,9 @@ import kr.or.ddit.sevenfs.vo.webfolder.WebFolderFileVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface WebFolderService {
     // 전체 용량 가져오기
@@ -35,4 +37,10 @@ public interface WebFolderService {
     public int deleteFolder(List<WebFolderVO> webFolderFileVO);
 
     // 파일 다운로드
+
+    // 파일 이동
+    public Map<String, String> updateMoveFolder(WebFolderVO targetFolder, WebFolderFileVO moveFile) throws IOException;
+
+    // 폴더 이동
+    public Map<String, String> updateMoveFolder(WebFolderVO targetFolder, WebFolderVO moveFolder) throws IOException;
 }

@@ -5,6 +5,8 @@ import kr.or.ddit.sevenfs.mapper.AttachFileMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.utils.AttachFile;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
+import kr.or.ddit.sevenfs.vo.webfolder.WebFolderFileVO;
+import kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -17,14 +19,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @Service
 public class AttachFileServiceImpl implements AttachFileService {
-     @Value("${file.save.abs.path}")
-    String dir;
     @Autowired
     private AttachFile attachFile;
 
@@ -117,32 +119,27 @@ public class AttachFileServiceImpl implements AttachFileService {
         return null;
     }
 
-
     @Override
     public void downloadZip(List<AttachFileVO> attachFileVOList, String folderName, HttpServletResponse response) throws IOException {
-        try (ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream())) {
-            for (AttachFileVO attachFileVO : attachFileVOList) {
-                String fileStrePath = attachFileVO.getFileStrePath();
-                System.out.println(fileStrePath);
+        this.attachFile.makeZip(attachFileVOList, folderName, response);
+    }
 
-                File file = new File( dir + fileStrePath);
-                if (file.exists()) {
-                    try (FileInputStream fileInputStream = new FileInputStream(file)) {
-                        ZipEntry zipEntry = new ZipEntry(file.getName()); // 진짜 파일 zip 파일에 추가
-                        zipOut.putNextEntry(zipEntry);
+    @Override
+    public Map<String, String> fileMove(String targetFolder, List<AttachFileVO> fileAttachList) throws IOException {
+        Map<String, String> result = new HashMap<String, String>();
 
-                        byte[] bytes = new byte[1024];
-                        int len;
-                        while ((len = fileInputStream.read(bytes)) != -1) {
-                            zipOut.write(bytes, 0, len);
-                        }
-
-                        zipOut.closeEntry();
-                    }
-                }
-            }
-            zipOut.finish();
+        // 이동해야할 파일들
+        for (AttachFileVO attachFileVO : fileAttachList) {
+            result = attachFile.moveFile(targetFolder, attachFileVO.getFileStrePath());
         }
+
+        return result;
+    }
+
+    @Override
+    public Map<String, String> fileMove(String targetFolder, String moveFolder) throws IOException {
+
+        return attachFile.moveFile(targetFolder, moveFolder);
     }
 
 }

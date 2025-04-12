@@ -42,6 +42,19 @@
         )
     </update>
 
+    <update id="updateMoveFolderFile" parameterType="webFolderFileVO">
+        UPDATE FOLDER_FILE
+        SET FOLDER_NO = #{folderNo}
+        WHERE ATCH_FILE_NO = ${atchFileNo}
+    </update>
+
+    <update id="updateMoveFolder" parameterType="webFolderVO">
+        UPDATE FOLDER
+        SET UPPER_FOLDER_NO = #{upperFolderNo},
+            FOLDER_PATH = #{folderPath}
+        WHERE FOLDER_NO = #{folderNo}
+    </update>
+
     <select id="getFolder" resultType="kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO">
         SELECT FOLDER_NO,
                UPPER_FOLDER_NO,
