@@ -78,6 +78,9 @@ public class MailController {
 		log.info("sendEmail");
 		log.info("sendEmail -> mailVO : " + mailVO);
 		log.info("sendEmail -> uploadFile : " + uploadFile);
+		for(MultipartFile file : uploadFile) {
+			log.info(file.getOriginalFilename());
+		}
 //		attachFileService.insertFile("test", uploadFile);
 		return "success";
 	}

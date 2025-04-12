@@ -157,7 +157,7 @@
                                             </div>
                                             <input type="text" name="recpEmailInp" id="recpEmailInp" style="margin: 3px; border: 1px;" >
                                         </div>
-                                        <button class="emailTreeBtn" type="button" data-event="recpEmailInp">주소록</button>
+                                        <button class="emailTreeBtn btn btn-primary" type="button" data-event="recpEmailInp">주소록</button>
                                     </div>
                                     <!-- 원본 -->
                                     <!-- <div class="mb-3" >
@@ -180,7 +180,7 @@
                                             </div>
                                             <input type="text" name="refEmailInp" id="refEmailInp" style="margin: 3px; border: 1px;" >
                                         </div>
-                                        <button class="emailTreeBtn" type="button" data-event="refEmailInp">주소록</button>
+                                        <button class="emailTreeBtn btn btn-primary" type="button" data-event="refEmailInp">주소록</button>
                                     </div>
                                     <!-- 숨은 참조 -->
                                     <div class="mb-3" id="hiddenRefInp"  >
@@ -194,7 +194,7 @@
                                             </div>
                                             <input type="text" name="hiddenRefEmailInp" id="hiddenRefEmailInp" style="margin: 3px; border: 0px;" >
                                         </div>
-                                        <button class="emailTreeBtn" type="button" data-event="hiddenRefEmailInp">주소록</button>
+                                        <button class="emailTreeBtn btn btn-primary" type="button" data-event="hiddenRefEmailInp">주소록</button>
                                     </div>
                                 </div>
                                 <!-- 조직도 -->
@@ -313,10 +313,9 @@
 
             $("input[name='uploadFile']").each(function(index,element){
                 console.log('element : ',index," : ", element);
-                console.log('element.value : ',index," : ",element.value);
-                console.log('element.value type : ', typeof(element.value));
-                // mailForm.append('uploadFile', element);
-                mailForm.append('uploadFile', element.value);
+                console.log('element.files : ',index," : ",element.files[0]);
+                console.log('element.value type : ', typeof(element.files[0]));
+                mailForm.append('uploadFile', element.files[0]);
             })
 
             console.log("mailForm : ", mailForm);
