@@ -1,42 +1,35 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>업무 등록</title>
+<meta charset="UTF-8">
+<title>업무 등록</title>
 </head>
 <body>
-  <h2>업무 등록</h2>
-  <form id="taskForm" enctype="multipart/form-data">
-    <input type="text" name="taskNm" placeholder="업무명" required />
-    <textarea name="taskCn" placeholder="업무 설명"></textarea>
+	<h2>업무 등록</h2>
+	<form id="taskForm" enctype="multipart/form-data">
+		<input type="text" name="taskNm" placeholder="업무명" required />
+		<textarea name="taskCn" placeholder="업무 설명"></textarea>
 
-    <label>상위 업무:</label>
-    <select name="upperTaskNo">
-      <option value="">(없음)</option>
-      <c:forEach items="${parentTasks}" var="pt">
-        <option value="${pt.taskNo}">${pt.taskNm}</option>
-      </c:forEach>
-    </select>
+		<label>상위 업무:</label> <select name="upperTaskNo">
+			<option value="">(없음)</option>
+			<c:forEach items="${parentTasks}" var="pt">
+				<option value="${pt.taskNo}">${pt.taskNm}</option>
+			</c:forEach>
+		</select> <label>담당자 사번:</label> <input type="text" name="chargerEmpno"
+			required />
 
-    <label>담당자 사번:</label>
-    <input type="text" name="chargerEmpno" required />
+		<!-- 첨부파일 업로드 -->
+		<file-upload label="업무 파일" name="uploadFile" max-files="5"
+			contextPath="${pageContext.request.contextPath}"></file-upload>
 
-    <!-- 첨부파일 업로드 -->
-    <file-upload
-      label="업무 파일"
-      name="uploadFile"
-      max-files="5"
-      contextPath="${pageContext.request.contextPath}"
-    ></file-upload>
+		<button type="submit">등록</button>
+	</form>
 
-    <button type="submit">등록</button>
-  </form>
+	<ul id="taskList"></ul>
 
-  <ul id="taskList"></ul>
-
-  <script>
+	<script>
     document.getElementById('taskForm').addEventListener('submit', async function (e) {
       e.preventDefault();
 

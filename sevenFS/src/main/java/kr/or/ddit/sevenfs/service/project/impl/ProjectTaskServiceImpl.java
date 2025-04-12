@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.or.ddit.sevenfs.mapper.AttachFileMapper;
 import kr.or.ddit.sevenfs.mapper.project.ProjectTaskMapper;
 import kr.or.ddit.sevenfs.service.project.ProjectTaskService;
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,9 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
 	@Autowired
 	ProjectTaskMapper projectTaskMapper;
+	
+	@Autowired
+	AttachFileMapper attachFileMapper;
 
 
     @Override
@@ -45,5 +50,42 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
             projectTaskMapper.insertProjectTask(taskVO);
         }
     }
+
+
+    @Override
+    public ProjectTaskVO getTaskById(Long taskNo) {
+    	
+        return projectTaskMapper.selectTaskById(taskNo);
+    }
+
+    @Override
+    public int updateTask(ProjectTaskVO taskVO) {
+        if (taskVO != null && taskVO.getAtchFileNo() > 0) {
+            List<AttachFileVO> attachFiles = attachFileMapper.getFileAttachList(taskVO.getAtchFileNo());
+            taskVO.setAttachFileList(attachFiles);
+        }
+        return projectTaskMapper.updateTask(taskVO);
+    }
+
+
+
+    @Override
+    public ProjectTaskVO selectTaskById(Long taskNo) {
+        ProjectTaskVO task = projectTaskMapper.selectTaskById(taskNo);
+
+        // 첨부 파일 조회
+        if (task != null && task.getAtchFileNo() > 0) {
+            List<AttachFileVO> attachFiles = attachFileMapper.getFileAttachList(task.getAtchFileNo());
+            task.setAttachFileList(attachFiles);
+        }
+
+        return task;
+    }
+
+
+	@Override
+	public boolean deleteTask(Long taskNo) {
+	    return projectTaskMapper.deleteTask(taskNo) > 0;
+	}
 
 }

@@ -18,5 +18,7 @@ public interface ProjectService {
 	public ProjectVO projectDetail(int prjctNo);
 	public int createProject(ProjectVO projectVO, List<ProjectTaskVO> taskList);
 
+
+
 	
 }

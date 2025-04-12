@@ -112,51 +112,94 @@
             GROUP BY P.PRJCT_NO
         )
     </select>
-
-    <!-- 프로젝트 목록 조회 -->
-	<select id="selectProjectList" resultType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
-		SELECT PRJCT_NO, CTGRY_NO, PRJCT_NM, PRJCT_CN, PRJCT_STTUS, PRJCT_GRAD,
-		       PRJCT_ADRES, PRJCT_URL, PRJCT_RCVORD_AMOUNT, PRJCT_BEGIN_DATE, 
-		       PRJCT_END_DATE
-		FROM PROJECT
-		ORDER BY PRJCT_NO DESC
-	</select> 
+	
+	<!-- 프로젝트 번호로 업무 목록 조회 -->
+	<select id="selectProjectTasks" resultType="ProjectTaskVO" parameterType="int">
+	  SELECT 
+	    PT.TASK_NO,
+	    PT.PRJCT_NO,
+	    PT.TASK_NM,
+	    PT.CHARGER_EMPNO,
+	    E.EMPL_NM AS CHARGER_EMPNM,
+	    PT.TASK_BEGIN_DT,
+	    PT.TASK_END_DT,
+	    PT.PRIORT,
+	    PT.TASK_GRAD,
+	    PT.TASK_CN,
+	    PT.TASK_STTUS,
+	    PT.PROGRSRT,
+	    PT.UPPER_TASK_NO,
+	    PT.TASK_DAYCNT,
+	    PT.ATCH_FILE_NO
+	  FROM PROJECT_TASK PT
+	  LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
+	  WHERE PT.PRJCT_NO = #{prjctNo}
+	  ORDER BY PT.UPPER_TASK_NO NULLS FIRST, PT.TASK_NO
+	</select>
+	
 	
 	<!-- 프로젝트 참여자 조회 (프로젝트 번호 기준) -->
-	<select id="selectProjectEmps" parameterType="long" resultMap="projectEmpResultMap">
-		SELECT PE.PRJCT_NO, PE.PRTCPNT_EMPNO, PE.PRTCPNT_ROLE, PE.PRJCT_AUTHOR,
-			   PE.EVL_MAN_EMPNO, PE.EVL_CN, PE.EVL_GRAD, PE.EVL_WRITNG_DT, 
-			   PE.EVL_UPDT_DT, PE.SECSN_YN,
-			   E.EMPL_NM AS EMP_NM
-		FROM PROJECT_EMP PE
-		LEFT JOIN EMPLOYEE E ON PE.PRTCPNT_EMPNO = E.EMPL_NO
-		WHERE PE.PRJCT_NO = #{prjctNo}
-	</select>
+<select id="selectProjectEmps" parameterType="long" resultMap="projectEmpResultMap">
+	SELECT 
+		PE.PRJCT_NO,
+		PE.PRTCPNT_EMPNO,
+		PE.PRTCPNT_ROLE,
+		PE.PRJCT_AUTHOR,
+		PE.EVL_MAN_EMPNO,
+		PE.EVL_CN,
+		PE.EVL_GRAD,
+		PE.EVL_WRITNG_DT,
+		PE.EVL_UPDT_DT,
+		PE.SECSN_YN,
+		E.EMPL_NM AS EMPL_NM,
+		POS.CMMN_CODE_NM AS POS_NM
+	FROM PROJECT_EMP PE
+	LEFT JOIN EMPLOYEE E ON PE.PRTCPNT_EMPNO = E.EMPL_NO
+	LEFT JOIN COMMON_CODE POS 
+		ON E.CLSF_CODE = POS.CMMN_CODE
+		AND POS.CMMN_CODE_GROUP = 'POSITION'
+	WHERE PE.PRJCT_NO = #{prjctNo}
+</select>
 	
 	<!-- 프로젝트 조회  -->
 	<select id="projectDetail" parameterType="int" resultMap="projectResultMap">
-	   SELECT P.PRJCT_NO, P.CTGRY_NO, P.PRJCT_NM, P.PRJCT_CN, P.PRJCT_STTUS, P.PRJCT_GRAD,
-	          P.PRJCT_ADRES, P.PRJCT_URL, P.PRJCT_RCVORD_AMOUNT, P.PRJCT_BEGIN_DATE, 
-	          P.PRJCT_END_DATE
-	   FROM PROJECT P
-	   WHERE P.PRJCT_NO = #{prjctNo}
+	  SELECT 
+	    P.PRJCT_NO, 
+	    P.CTGRY_NO, 
+	    C.CTGRY_NM,
+	    P.PRJCT_NM, 
+	    P.PRJCT_CN, 
+	    P.PRJCT_STTUS, 
+	    P.PRJCT_GRAD,
+	    P.PRJCT_ADRES, 
+	    P.PRJCT_URL, 
+	    P.PRJCT_RCVORD_AMOUNT, 
+	    P.PRJCT_BEGIN_DATE,  -- VARCHAR2 그대로
+	    P.PRJCT_END_DATE,
+	    CODE.CMMN_CODE_NM AS PRJCT_STTUS_NM
+	  FROM PROJECT P
+	  LEFT JOIN PROJECT_CATEGORY C ON P.CTGRY_NO = C.CTGRY_NO
+	  LEFT JOIN COMMON_CODE CODE 
+	    ON CODE.CMMN_CODE_GROUP = 'PRJCT_STTUS'
+	    AND P.PRJCT_STTUS = CODE.CMMN_CODE
+	  WHERE P.PRJCT_NO = #{prjctNo}
 	</select>
+
     
-  	<!-- 프로젝트 등록 -->
 	<insert id="insertProject" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
-		<selectKey resultType="int" order="BEFORE" keyProperty="prjctNo">
-			SELECT SEQ_PROJECT.NEXTVAL FROM DUAL
-		</selectKey>	
-		INSERT INTO PROJECT (
-		   PRJCT_NO, CTGRY_NO, PRJCT_NM, PRJCT_CN, PRJCT_STTUS, PRJCT_GRAD,
-		   PRJCT_ADRES, PRJCT_URL, PRJCT_RCVORD_AMOUNT, PRJCT_BEGIN_DATE, 
-		   PRJCT_END_DATE
-		) VALUES (
-		   #{prjctNo}, #{ctgryNo}, #{prjctNm}, #{prjctCn}, #{prjctSttus}, 
-		   #{prjctGrad}, #{prjctAdres}, #{prjctUrl}, #{prjctRcvordAmount}, 
-		   REPLACE(#{prjctBeginDate}, '-', ''), REPLACE(#{prjctEndDate}, '-', '')
-		)
+	  <selectKey resultType="int" order="BEFORE" keyProperty="prjctNo">
+	    SELECT SEQ_PROJECT.NEXTVAL FROM DUAL
+	  </selectKey>
+	  INSERT INTO PROJECT (
+	    PRJCT_NO, CTGRY_NO, PRJCT_NM, PRJCT_CN, PRJCT_STTUS, PRJCT_GRAD,
+	    PRJCT_ADRES, PRJCT_URL, PRJCT_RCVORD_AMOUNT, PRJCT_BEGIN_DATE, PRJCT_END_DATE
+	  ) VALUES (
+	    #{prjctNo}, #{ctgryNo}, #{prjctNm}, #{prjctCn}, #{prjctSttus}, #{prjctGrad},
+	    #{prjctAdres}, #{prjctUrl}, #{prjctRcvordAmount}, REPLACE(#{prjctBeginDate}, '-', ''), REPLACE(#{prjctEndDate}, '-', '')
+	  )
 	</insert>
+
+
 	
 	
 	<insert id="createProject" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
@@ -204,50 +247,9 @@
 	</insert>
 
 
-
-
-
-	
-	
-<!-- 	
-	 프로젝트 참여자 등록
-	<insert id="insertProjectEmp" parameterType="map">
-
-		INSERT INTO PROJECT_EMP (
-			PRJCT_NO, PRTCPNT_EMPNO, PRTCPNT_ROLE, PRJCT_AUTHOR,
-			EVL_MAN_EMPNO, EVL_CN, EVL_GRAD, EVL_WRITNG_DT, SECSN_YN
-		) VALUES (
-			#{prjctNo}, #{prtcpntEmpno}, #{prtcpntRole}, #{prjctAuthor},
-			#{evlManEmpno, jdbcType=VARCHAR}, #{evlCn, jdbcType=VARCHAR}, 
-			#{evlGrad, jdbcType=VARCHAR}, SYSDATE, 'N'
-		)
-	</insert>
-
-	 -->
-
-
 		
-	<!-- 과제 등록 
-	<insert id="insertProjectTask" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO">
-		<selectKey resultType="int" keyProperty="taskNo">
-			SELECT SEQ_PROJECT_TASK.NEXTVAL FROM DUAL
-		</selectKey>
-		INSERT INTO PROJECT_TASK (
-			TASK_NO, PRJCT_NO, UPPER_TASK_NO, CHARGER_EMPNO, TASK_NM,
-			TASK_CN, PRIORT, TASK_GRAD, PROGRSRT, TASK_STTUS,
-			ATCH_FILE_NO, TASK_BEGIN_DT, TASK_DAYCNT, TASK_END_DT
-		) VALUES (
-			#{taskNo}, #{prjctNo}, #{upperTaskNo, jdbcType=NUMERIC}, 
-			#{chargerEmpno}, #{taskNm}, #{taskCn, jdbcType=VARCHAR},
-			#{priort}, #{taskGrad}, #{progrsrt}, #{taskSttus},
-			#{atchFileNo, jdbcType=NUMERIC}, #{taskBeginDt}, 
-			#{taskDaycnt}, #{taskEndDt}
-		)
-	</insert>	
-	-->
-	
-<!-- 		
-    여러 과제 일괄 등록
+		
+    <!-- 여러 과제 일괄 등록 -->
 	<insert id="insertProjectTaskBatch" parameterType="java.util.List">
 		<foreach collection="list" item="item" separator=";" open="BEGIN" close="END;">
 			INSERT INTO PROJECT_TASK (
@@ -264,20 +266,6 @@
 		</foreach>
 	</insert>
 	
-	여러 프로젝트 참여자 일괄 등록
-	<insert id="insertProjectEmpBatch" parameterType="java.util.List">
-		<foreach collection="list" item="item" separator=";" open="BEGIN" close="END;">
-			INSERT INTO PROJECT_EMP (
-				PRJCT_NO, PRTCPNT_EMPNO, PRTCPNT_ROLE, PRJCT_AUTHOR,
-				EVL_MAN_EMPNO, EVL_CN, EVL_GRAD, EVL_WRITNG_DT, SECSN_YN
-			) VALUES (
-				#{item.prjctNo}, #{item.prtcpntEmpno}, #{item.prtcpntRole}, 
-				#{item.prjctAuthor}, #{item.evlManEmpno, jdbcType=VARCHAR}, 
-				#{item.evlCn, jdbcType=VARCHAR}, #{item.evlGrad, jdbcType=VARCHAR}, 
-				SYSDATE, 'N'
-			)
-		</foreach>
-	</insert> -->
 	
 	<!-- 프로젝트 수정 -->
 	<update id="updateProject" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectVO">

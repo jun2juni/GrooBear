@@ -1,113 +1,94 @@
 package kr.or.ddit.sevenfs.controller.project;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-
-import kr.or.ddit.sevenfs.mapper.project.ProjectTaskMapper;
+import kr.or.ddit.sevenfs.mapper.AttachFileMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
-import kr.or.ddit.sevenfs.service.project.ProjectService;
 import kr.or.ddit.sevenfs.service.project.ProjectTaskService;
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
-import kr.or.ddit.sevenfs.vo.project.ProjectVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Controller
-@RequestMapping("/project/task")
+@RequestMapping("/projectTask")
+@RequiredArgsConstructor
 public class ProjectTaskController {
 
-	@Autowired
-	private ProjectTaskService projectTaskService;
+	private final ProjectTaskService projectTaskService;
+	AttachFileService attachFileService;
+
+	// 프로젝트 업무 상세보기
+	@GetMapping("/detail")
+	public String taskDetail(@RequestParam("taskNo") Long taskNo, Model model) {
+		ProjectTaskVO task = projectTaskService.selectTaskById(taskNo);
+		model.addAttribute("task", task);
+		return "project/taskDetailContent";
+	}
+
+	// 프로젝트 업무 수정 폼 불러오기
+	@GetMapping("/editForm")
+	public String editTaskForm(@RequestParam("taskNo") Long taskNo, Model model) {
+		ProjectTaskVO task = projectTaskService.selectTaskById(taskNo);
+		model.addAttribute("task", task);
+		return "project/taskEditForm";
+	}
+
+	// 프로젝트 업무 수정
+	@PostMapping("/update")
+	public String updateTask(ProjectTaskVO taskVO,
+	                         @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
+	                         @RequestParam(value = "removeFileId", required = false) int[] removeFileIds,
+	                         RedirectAttributes ra) {
+
+	    // 파일 수정 처리
+	    AttachFileVO fileVO = new AttachFileVO();
+	    fileVO.setAtchFileNo(taskVO.getAtchFileNo());
+	    fileVO.setRemoveFileId(removeFileIds);
+
+	    // 📌 여기서 updateFileList가 새 번호를 설정해주지는 않기 때문에 수동으로 설정해야 함
+	    int result = 0;
+	    if (uploadFiles != null && uploadFiles.length > 0 || removeFileIds != null) {
+	        result = attachFileService.updateFileList("project/task", uploadFiles, fileVO);
+
+	        // 파일 번호가 없으면 새로 발급됨 (서비스 내부에서 getAttachFileNo 사용)
+	        if (fileVO.getAtchFileNo() > 0) {
+	            taskVO.setAtchFileNo(fileVO.getAtchFileNo());
+	        }
+	    }
+
+	    int update = projectTaskService.updateTask(taskVO);
+	    ra.addFlashAttribute("message", update > 0 ? "수정 성공" : "수정 실패");
+
+	    return "redirect:/project/projectDetail?prjctNo=" + taskVO.getPrjctNo();
+	}
+
+	@GetMapping("/file/download")
+	public ResponseEntity<Resource> download(@RequestParam("fileName") String fileName) {
+	    return attachFileService.downloadFile(fileName);
+	}
+
+
+
 	
-	@Autowired
-	private AttachFileService attachFileService;
-	
-	
-    // 단일 업무 등록 폼
-    @GetMapping("/insert/{prjctNo}")
-    public String insertProjectTaskForm(@PathVariable("prjctNo") int prjctNo, Model model) {
-        model.addAttribute("prjctNo", prjctNo);
-        model.addAttribute("projectTaskVO", new ProjectTaskVO());
-        return "project/taskForm";
-    }
-	
- // 단일 업무 등록 처리
-    @PostMapping("/insert")
-    public String insertProjectTask(@ModelAttribute ProjectTaskVO taskVO,
-                                    @RequestParam(value="uploadFile", required=false) MultipartFile[] uploadFiles) {
-        log.info("업무 등록 요청: {}", taskVO);
+	@GetMapping("/delete")
+	public String deleteTask(@RequestParam("taskNo") Long taskNo,
+	                         @RequestParam("prjctNo") Long prjctNo,
+	                         RedirectAttributes ra) {
+	    boolean success = projectTaskService.deleteTask(taskNo);
+	    ra.addFlashAttribute("message", success ? "업무가 삭제되었습니다." : "삭제 실패");
+	    return "redirect:/project/projectDetail?prjctNo=" + prjctNo;
+	}
 
-        // 파일 업로드 처리
-        if (uploadFiles != null && uploadFiles.length > 0 && !uploadFiles[0].isEmpty()) {
-            long attachFileNo = attachFileService.insertFileList("projectTask", uploadFiles);
-            taskVO.setAtchFileNo((int)attachFileNo);
-        }
-
-        // 업무 등록
-        projectTaskService.insertProjectTask(taskVO);
-
-        return "redirect:/project/projectDetail/" + taskVO.getPrjctNo();
-    }
-    
-    
-    /**
-     * 상위 업무 목록 조회 (AJAX)
-     */
-    @GetMapping("/parentTasks/{prjctNo}")
-    @ResponseBody
-    public List<ProjectTaskVO> getParentTasks(@PathVariable("prjctNo") int prjctNo) {
-        return projectTaskService.getParentTasks(prjctNo);
-    }
-    
- // 복수 업무 입력 폼
-    @GetMapping("/batchTaskInsert/{prjctNo}")
-    public String batchTaskInsertForm(@PathVariable("prjctNo") int prjctNo, Model model) {
-        model.addAttribute("prjctNo", prjctNo);
-        model.addAttribute("projectTaskVOList", new ArrayList<ProjectTaskVO>());
-        return "project/batchTaskInsert";
-    }
-
-    // 복수 업무 등록 처리
-    @PostMapping("/batchInsert")
-    public String batchTaskInsert(@PathVariable("prjctNo") int prjctNo,
-                                  @ModelAttribute("projectTaskVOList") List<ProjectTaskVO> projectTaskVOList,
-                                  @RequestParam(value="uploadFile", required=false) MultipartFile[] uploadFiles) {
-        for (ProjectTaskVO taskVO : projectTaskVOList) {
-            taskVO.setPrjctNo(prjctNo);
-            projectTaskService.insertProjectTask(taskVO);
-        }
-        return "redirect:/project/projectDetail/" + prjctNo;
-    }
-    
-    
-    @PostMapping("/ajax/insert")
-    @ResponseBody
-    public ProjectTaskVO ajaxInsertProjectTask(ProjectTaskVO taskVO,
-                                               @RequestParam(value = "uploadFile", required = false) MultipartFile[] uploadFiles) {
-        // 첨부파일 처리
-        if (uploadFiles != null && uploadFiles.length > 0 && !uploadFiles[0].isEmpty()) {
-            long attachFileNo = attachFileService.insertFileList("projectTask", uploadFiles);
-            taskVO.setAtchFileNo((int) attachFileNo);
-        }
-
-        projectTaskService.insertProjectTask(taskVO);
-        return taskVO; // JSON 형태로 반환
-    }
 
 }
-

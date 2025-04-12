@@ -239,9 +239,11 @@ document.getElementById('addTaskBtn').addEventListener('click', function () {
   };
   
   // 여기서 부모 task가 있으면 부모의 id(taskNo로 매핑될 예정) 넣기
-  if(parentIndex !== null && taskList[parentIndex]){
-    task.upperTaskNo = taskList[parentIndex].id; // 이건 프론트 기준 id
-  }
+	if (parentIndex !== null && taskList[parentIndex]) {
+	  task.upperTaskNo = taskList[parentIndex].id;
+	} else {
+	  task.upperTaskNo = null;  // 명확하게 null 설정!
+	}
   
   console.log("업무 추가 후 taskList", taskList);
   taskList.push(task);
@@ -251,7 +253,6 @@ document.getElementById('addTaskBtn').addEventListener('click', function () {
   console.log("업무 추가 및 폼 초기화 완료", task);
 });
 
-// form submit 시 업무 목록 포함
 // 업무 목록을 만들어서 전송 폼에 넣어둔다.
 // form submit 시 업무 목록 포함
 const projectForm = document.getElementById('projectForm');
@@ -267,9 +268,13 @@ if (projectForm) {
     // 업무 목록 및 파일 추가
     taskList.forEach(({ id, chargerEmpNm, files, ...rest }, index) => {
       // 기본 필드 추가
-      Object.entries(rest).forEach(([key, value]) => {
-        formData.append(`taskList[\${index}].\${key}`, value);
-      });
+		Object.entries(rest).forEach(([key, value]) => {
+		  // null 또는 "null" 문자열이면 무시
+		  if (key === "upperTaskNo" && (value === null || value === "null" || value === "")) {
+		    return; // append 하지 않음
+		  }
+		  formData.append(`taskList[\${index}].\${key}`, value);
+		});
 
       // 파일 업로드 처리
       if (files && files.length > 0) {
@@ -301,6 +306,8 @@ if (projectForm) {
         empIndex++;
       });
     }
+    console.log('전송 직전 taskList:', taskList);
+    console.log(JSON.stringify(taskList, null, 2));
 
     // 서버 전송
     fetch('/project/insert', {

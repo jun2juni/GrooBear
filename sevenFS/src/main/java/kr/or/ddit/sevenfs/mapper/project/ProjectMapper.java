@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectEmpVO;
+import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
 
 
@@ -22,5 +23,6 @@ public interface ProjectMapper {
 	public ProjectVO projectDetail(int prjctNo);
 	public int insertProject(ProjectVO projectVO);
 	public int insertProjectEmpBatch(@Param("list") List<ProjectEmpVO> projectEmpVOList);
+	public List<ProjectTaskVO> selectProjectTasks(int prjctNo);
 
 }

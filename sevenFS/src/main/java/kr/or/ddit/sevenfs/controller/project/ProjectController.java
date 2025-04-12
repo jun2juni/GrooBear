@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -143,7 +144,7 @@ public class ProjectController {
 	            if (!fileList.isEmpty() && !fileList.get(0).isEmpty()) {
 	                MultipartFile[] fileArray = fileList.toArray(new MultipartFile[0]);
 	                long atchFileNo = attachFileService.insertFileList("task", fileArray);
-	                System.out.println("  ✅ 저장된 파일 번호: " + atchFileNo);
+	                System.out.println("  저장된 파일 번호: " + atchFileNo);
 	                task.setAtchFileNo(atchFileNo);
 	            }
 
@@ -185,7 +186,8 @@ public class ProjectController {
 	        return "redirect:/project/insert";
 	    }
 
-	    return "redirect:/project/tab";
+	    return "redirect:/project/projectDetail?prjctNo=" + projectVO.getPrjctNo();
+
 	}
 
 
@@ -201,56 +203,18 @@ public class ProjectController {
 	}
 
 
-
-	
-	
-/*
-	@PostMapping("/insert")
-	public String projectInsert(ProjectVO projectVO,
-	        List<ProjectEmpVO> projectEmpVOList,
-	        @RequestParam(value = "uploadFile", required = false) MultipartFile[] uploadFiles,
-	        Model model) {
-	    try {
-	        // 1. 첨부파일
-	        if (uploadFiles != null && uploadFiles.length > 0 && !uploadFiles[0].isEmpty()) {
-	            long attachFileNo = attachFileService.insertFileList("project", uploadFiles);
-	            projectVO.setAtchFileNo(attachFileNo);
-	        }
-
-	        // 2. 프로젝트 등록
-	        int result = projectService.projectInsert(projectVO);
-	        if (result <= 0) throw new Exception("프로젝트 등록 실패");
-
-	        // 3. 참여자 등록
-	        if (projectEmpVOList != null) {
-	            for (ProjectEmpVO empVO : projectEmpVOList) {
-	                empVO.setPrjctNo(projectVO.getPrjctNo());
-	                if ("00".equals(empVO.getPrtcpntRole())) {
-	                    empVO.setEvlManEmpno(empVO.getPrtcpntEmpno());
-	                }
-	                empVO.setEvlCn("");
-	                empVO.setEvlGrad("01");
-	                empVO.setSecsnYn("N");
-	            }
-	            projectService.insertProjectEmpBatch(projectEmpVOList);
-	        }
-
-	        
-	        return "redirect:/project/" + projectVO.getPrjctNo() + "/taskForm";
-
-	    } catch (Exception e) {
-	        log.error("프로젝트 등록 실패", e);
-	        model.addAttribute("errorMessage", "프로젝트 등록 실패: " + e.getMessage());
-	        return "project/insert";
-	    }
-	}
-*/	
-    
-	@GetMapping("/projectDetail/{prjctNo}")
-	public String projectDetail(@PathVariable int prjctNo, Model model) {
-	    log.info("projectDetail -> projectVO {} : ", prjctNo);
+    // 프로젝트 상세보기
+	@GetMapping("/projectDetail")
+	public String projectDetail(Model model, @RequestParam("prjctNo") int prjctNo) {
 	    ProjectVO projectVO = projectService.projectDetail(prjctNo);
 	    model.addAttribute("project", projectVO);
 	    return "project/projectDetail";
+
 	}
+
+
+	
+
+	
+	
 }

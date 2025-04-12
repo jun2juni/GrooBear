@@ -2,6 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.project.ProjectTaskMapper">
 
+
+	<resultMap id="projectTaskResultMap" type="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO">
+	  <id property="taskNo" column="TASK_NO"/>
+	  <result property="prjctNo" column="PRJCT_NO"/>
+	  <result property="taskNm" column="TASK_NM"/>
+	  <result property="taskCn" column="TASK_CN"/>
+	  <result property="taskBeginDt" column="TASK_BEGIN_DT"/>
+	  <result property="taskEndDt" column="TASK_END_DT"/>
+	  <result property="taskGrad" column="TASK_GRAD"/>
+	  <result property="priort" column="PRIORT"/>
+	  <result property="taskSttus" column="TASK_STTUS"/>
+	  <result property="progrsrt" column="PROGRSRT"/>
+	  <result property="upperTaskNo" column="UPPER_TASK_NO"/>
+	  <result property="taskDaycnt" column="TASK_DAYCNT"/>
+	  <result property="atchFileNo" column="ATCH_FILE_NO"/>
+	  <result property="chargerEmpno" column="CHARGER_EMPNO"/>
+	  <result property="chargerEmpNm" column="CHARGER_EMP_NM"/>
+	  <result property="parentTaskNm" column="PARENT_TASK_NM"/>
+	</resultMap>
+
+
    <insert id="insertProjectTaskBatch">
 	 <selectKey resultType="int" order="BEFORE" keyProperty="taskNo">
 		SELECT SEQ_PROJECT.NEXTVAL FROM DUAL
@@ -81,6 +102,53 @@
             #{atchFileNo, jdbcType=NUMERIC}
         )
     </insert>
+    
+
+	<!-- 프로젝트 상세 업무 조회 -->
+	<select id="selectTaskById" resultMap="projectTaskResultMap" parameterType="long">
+	  SELECT 
+	    PT.TASK_NO,
+	    PT.PRJCT_NO,
+	    PT.TASK_NM,
+	    PT.TASK_CN,
+	    PT.TASK_BEGIN_DT,
+	    PT.TASK_END_DT,
+	    PT.TASK_GRAD,
+	    PT.PRIORT,
+	    PT.TASK_STTUS,
+	    PT.PROGRSRT,
+	    PT.UPPER_TASK_NO,
+	    PT.TASK_DAYCNT,
+	    PT.ATCH_FILE_NO,
+	    PT.CHARGER_EMPNO,
+	    E.EMPL_NM AS CHARGER_EMP_NM,
+	    PARENT.TASK_NM AS PARENT_TASK_NM
+	  FROM PROJECT_TASK PT
+	  LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
+	  LEFT JOIN PROJECT_TASK PARENT ON PT.UPPER_TASK_NO = PARENT.TASK_NO
+	  WHERE PT.TASK_NO = #{taskNo}
+	</select>
+
+
+	
+	  <update id="updateTask">
+	    UPDATE PROJECT_TASK
+	    SET
+	      TASK_NM = #{taskNm},
+	      TASK_CN = #{taskCn},
+	      TASK_BEGIN_DT = #{taskBeginDt},
+	      TASK_END_DT = #{taskEndDt},
+	      TASK_GRAD = #{taskGrad},
+	      PRIORT = #{priort},
+	      CHARGER_EMPNO = #{chargerEmpno}
+	    WHERE TASK_NO = #{taskNo}
+	  </update>
+
+ 	<!-- 프로젝트 업무 삭제 -->
+	 <delete id="deleteTask" parameterType="long">
+	  DELETE FROM PROJECT_TASK WHERE TASK_NO = #{taskNo}
+	</delete>
+ 
 
    
 </mapper>

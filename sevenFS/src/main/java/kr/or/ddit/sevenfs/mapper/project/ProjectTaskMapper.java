@@ -16,5 +16,11 @@ public interface ProjectTaskMapper {
 	
 	public void insertProjectTaskBatch(List<ProjectTaskVO> taskList);
 
+	public ProjectTaskVO selectTaskById(Long taskNo);
+
+	public int updateTask(ProjectTaskVO taskVO);
+
+	public int deleteTask(Long taskNo);
+
 
 }

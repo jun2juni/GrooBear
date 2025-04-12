@@ -13,6 +13,15 @@ public interface ProjectTaskService {
 	public void insertProjectTaskBatch(List<ProjectTaskVO> taskList);
 
     public  List<ProjectTaskVO> getParentTasks(int prjctNo);
+
+	public ProjectTaskVO getTaskById(Long taskNo);
+
+	public int updateTask(ProjectTaskVO taskVO);
+
+	public ProjectTaskVO selectTaskById(Long taskNo);
+    
+	public boolean deleteTask(Long taskNo);
+
     
     
 }

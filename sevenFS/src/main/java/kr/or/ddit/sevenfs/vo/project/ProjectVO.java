@@ -27,6 +27,14 @@ public class ProjectVO {
     
     private List<ProjectEmpVO> projectEmpVOList;
     private List<ProjectTaskVO> projectTaskVOList;
+    // 역할별 목록
+    private List<ProjectEmpVO> responsibleList;
+    private List<ProjectEmpVO> participantList;
+    private List<ProjectEmpVO> observerList;
+    
+    // 업무 리스트
+    private List<ProjectTaskVO> taskList;
+
 	
     private long atchFileNo;
     private long upperTaskNo;

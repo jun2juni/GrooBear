@@ -17,5 +17,7 @@ public class ProjectEmpVO {
 	private Date evlUpdtDt;
 	private String secsnYn = "N";            // 참여 상태
 	private String EmpNm;
-
+	private String emplNm;   
+	private String deptNm;   // 부서명 등도 같이 쓰고 있다면 같이 추가
+	private String posNm;    // 직급명 등도 같이 쓰고 있다면 같이 추가
 }

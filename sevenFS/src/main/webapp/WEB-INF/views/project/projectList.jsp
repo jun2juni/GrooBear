@@ -53,7 +53,7 @@
                             <c:forEach var="project" items="${projectList}">
                                 <tr class="align-middle">
                                     <td class="fw-medium">
-                                        <a href="/project/projectDetail/${project.prjctNo}" class="text-decoration-none text-primary">
+                                        <a href="/project/projectDetail?prjctNo=${project.prjctNo}" class="text-decoration-none text-primary">
                                             ${project.prjctNm}
                                         </a>
                                     </td>
@@ -106,7 +106,7 @@
                                                 <i class="material-icons-outlined" style="font-size: 18px;">more_vert</i>
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="/project/detail/${project.prjctNo}">상세보기</a></li>
+                                                <li><a class="dropdown-item" href="/project/projectDetail?prjctNo=${project.prjctNo}">상세보기</a></li>
                                                 <li><a class="dropdown-item" href="/project/edit/${project.prjctNo}">수정</a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" data-project-id="${project.prjctNo}">삭제</a></li>
