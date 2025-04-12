@@ -27,10 +27,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
+import kr.or.ddit.sevenfs.mapper.project.ProjectTaskMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.project.ProjectService;
 import kr.or.ddit.sevenfs.service.project.ProjectTaskService;
@@ -55,8 +57,10 @@ public class ProjectController {
 	
 	@Autowired
 	private AttachFileService attachFileService;
-	
+	@Autowired
 	private ProjectTaskService projectTaskService;
+	@Autowired
+	ProjectTaskMapper projectTaskMapper;
 	
 	
 	@GetMapping("/tab")
@@ -104,81 +108,49 @@ public class ProjectController {
 	
 	@PostMapping("/insert")
 	public String insertProject(@ModelAttribute ProjectVO projectVO,
-	                            RedirectAttributes redirectAttrs,
-	                            MultipartHttpServletRequest multiReq) {
+	                           @RequestParam("projectTasksJson") String projectTasksJson,
+	                           @RequestParam("projectEmpListJson") String projectEmpListJson,
+	                           RedirectAttributes redirectAttrs,
+	                           MultipartHttpServletRequest multiReq) {
 	    log.info("====== [insertProject] 요청 도착 ======");
 
 	    try {
-	        // 1. 업무 리스트 처리
-	        Map<String, String[]> paramMap = multiReq.getParameterMap();
-	        List<ProjectTaskVO> taskList = new ArrayList<>();
-	        int index = 0;
+	        // 1. JSON 문자열에서 업무 목록 파싱
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	        
+	        List<ProjectTaskVO> taskList = objectMapper.readValue(projectTasksJson, 
+	            new TypeReference<List<ProjectTaskVO>>() {});
+	        
+	        List<ProjectEmpVO> empList = objectMapper.readValue(projectEmpListJson,
+	            new TypeReference<List<ProjectEmpVO>>() {});
+	            
+	        log.info("파싱된 업무 개수: {}", taskList.size());
+	        log.info("파싱된 참여자 개수: {}", empList.size());
 
-	        while (true) {
-	            String prefix = "taskList[" + index + "].";
-	            if (!paramMap.containsKey(prefix + "taskNm")) break;
-
-	            ProjectTaskVO task = new ProjectTaskVO();
-	            task.setTaskNm(multiReq.getParameter(prefix + "taskNm"));
-	            task.setChargerEmpno(multiReq.getParameter(prefix + "chargerEmpno"));
-	            task.setTaskBeginDt(Date.valueOf(multiReq.getParameter(prefix + "taskBeginDt")));
-	            task.setTaskEndDt(Date.valueOf(multiReq.getParameter(prefix + "taskEndDt")));
-	            task.setPriort(multiReq.getParameter(prefix + "priort"));
-	            task.setTaskGrad(multiReq.getParameter(prefix + "taskGrad"));
-	            task.setTaskCn(multiReq.getParameter(prefix + "taskCn"));
-
-	            String upperTaskNo = multiReq.getParameter(prefix + "upperTaskNo");
-	            if (upperTaskNo != null && !upperTaskNo.isBlank() && !"null".equals(upperTaskNo)) {
-	                task.setUpperTaskNo(Long.parseLong(upperTaskNo));
-	            }
-
-	            // 프론트에서 uploadFiles_task_{index}로 보내는 걸 맞춰 받기
+	        // 2. 업무 파일 처리
+	        for (int index = 0; index < taskList.size(); index++) {
+	            ProjectTaskVO task = taskList.get(index);
+	            
+	            // 파일 처리
 	            String fileKey = "uploadFiles_task_" + index;
 	            List<MultipartFile> fileList = multiReq.getFiles(fileKey);
 
-	            System.out.println("▶ 업무 " + index + " 파일 개수: " + fileList.size());
-	            for (MultipartFile file : fileList) {
-	                System.out.println("  🔸 파일명: " + file.getOriginalFilename() + ", 크기: " + file.getSize());
-	            }
-
-	            if (!fileList.isEmpty() && !fileList.get(0).isEmpty()) {
+	            if (fileList != null && !fileList.isEmpty() && !fileList.get(0).isEmpty()) {
 	                MultipartFile[] fileArray = fileList.toArray(new MultipartFile[0]);
 	                long atchFileNo = attachFileService.insertFileList("task", fileArray);
-	                System.out.println("  저장된 파일 번호: " + atchFileNo);
 	                task.setAtchFileNo(atchFileNo);
 	            }
-
-	            taskList.add(task);
-	            index++;
 	        }
 
-	        // 2. 참여자 목록 처리
-	        Set<String> uniqueEmpnos = new HashSet<>();
-	        List<ProjectEmpVO> empList = new ArrayList<>();
-	        int empIdx = 0;
-	        while (true) {
-	            String empNo = multiReq.getParameter("projectEmpVOList[" + empIdx + "].prtcpntEmpno");
-	            String role = multiReq.getParameter("projectEmpVOList[" + empIdx + "].prtcpntRole");
-	            if (empNo == null || role == null) break;
-
-	            String uniqueKey = projectVO.getPrjctNo() + "_" + empNo;
-	            if (!uniqueEmpnos.add(uniqueKey)) {
-	                log.warn("중복 사원 건너뜀: {}", empNo);
-	                empIdx++;
-	                continue;
-	            }
-
-	            ProjectEmpVO emp = new ProjectEmpVO();
-	            emp.setPrtcpntEmpno(empNo);
-	            emp.setPrtcpntRole(role);
-	            empList.add(emp);
-
-	            empIdx++;
-	        }
+	        // 3. 참여자 목록 설정
 	        projectVO.setProjectEmpVOList(empList);
 
-	        // 3. 프로젝트 서비스 호출
+	        // 4. 프로젝트 서비스 호출 (업무 목록 포함)
 	        projectService.createProject(projectVO, taskList);
+
+	        // 5. 상위-하위 업무 관계 처리
+	        updateTaskHierarchy(taskList);
 
 	    } catch (Exception e) {
 	        log.error("프로젝트 생성 중 오류", e);
@@ -187,10 +159,47 @@ public class ProjectController {
 	    }
 
 	    return "redirect:/project/projectDetail?prjctNo=" + projectVO.getPrjctNo();
-
 	}
 
-
+	// 업무 계층 구조 업데이트 메서드
+	private void updateTaskHierarchy(List<ProjectTaskVO> taskList) {
+	    // 임시 인덱스를 사용하여 실제 TASK_NO로 매핑
+	    Map<Integer, Long> indexToTaskNoMap = new HashMap<>();
+	    
+	    // 1. 각 업무의 인덱스와 실제 TASK_NO 매핑 (0부터 시작하는 인덱스 사용)
+	    for (int i = 0; i < taskList.size(); i++) {
+	        indexToTaskNoMap.put(i, (long)taskList.get(i).getTaskNo());
+	        log.debug("인덱스 매핑: {} -> {}", i, taskList.get(i).getTaskNo());
+	    }
+	    
+	    // 2. 상위-하위 관계 업데이트
+	    for (ProjectTaskVO task : taskList) {
+	        log.debug("업무 처리: {}, tempParentIndex: {}", task.getTaskNm(), task.getTempParentIndex());
+	        
+	        if (task.getTempParentIndex() != null && !task.getTempParentIndex().isEmpty()) {
+	            try {
+	                int parentIndex = Integer.parseInt(task.getTempParentIndex());
+	                Long parentTaskNo = indexToTaskNoMap.get(parentIndex);
+	                
+	                log.debug("상위 업무 처리: 인덱스 {} -> taskNo {}", parentIndex, parentTaskNo);
+	                
+	                if (parentTaskNo != null) {
+	                    // 상위 업무 번호 업데이트
+	                    Map<String, Object> params = new HashMap<>();
+	                    params.put("taskNo", task.getTaskNo());
+	                    params.put("parentTaskNo", parentTaskNo);
+	                    
+	                    log.info("업무 관계 업데이트: 업무 {} -> 상위 업무 {}", task.getTaskNo(), parentTaskNo);
+	                    
+	                    // ProjectTaskMapper에 추가할 메서드
+	                    projectTaskMapper.updateTaskParent(params);
+	                }
+	            } catch (NumberFormatException e) {
+	                log.warn("상위 업무 인덱스 변환 실패: {}", task.getTempParentIndex());
+	            }
+	        }
+	    }
+	}
 
 	private Date parseDate(String value) {
 	    if (value == null || value.isBlank()) return null;

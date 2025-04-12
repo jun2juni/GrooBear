@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.service.project.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectVO projectDetail(int prjctNo) {
         ProjectVO projectVO = projectMapper.projectDetail(prjctNo);
 
-        // ✅ 참여자 역할 분리 (화면에서 바로 사용 가능하게)
+        // 1. 참여자 역할 분리
         if (projectVO.getProjectEmpVOList() != null) {
             List<ProjectEmpVO> responsibleList = new ArrayList<>();
             List<ProjectEmpVO> participantList = new ArrayList<>();
@@ -59,9 +60,9 @@ public class ProjectServiceImpl implements ProjectService {
 
             for (ProjectEmpVO emp : projectVO.getProjectEmpVOList()) {
                 switch (emp.getPrtcpntRole()) {
-                    case "00": responsibleList.add(emp); break;
-                    case "01": participantList.add(emp); break;
-                    case "02": observerList.add(emp); break;
+                    case "00" -> responsibleList.add(emp);
+                    case "01" -> participantList.add(emp);
+                    case "02" -> observerList.add(emp);
                 }
             }
 
@@ -70,11 +71,28 @@ public class ProjectServiceImpl implements ProjectService {
             projectVO.setObserverList(observerList);
         }
 
-        // ✅ 하위 업무 리스트는 ResultMap에 의해 projectTaskVOList에 매핑됨
-        projectVO.setTaskList(projectVO.getProjectTaskVOList()); // 계층형 화면 대응용
+        // 2. 계층 정렬 먼저 수행
+        if (projectVO.getProjectTaskVOList() != null) {
+            List<ProjectTaskVO> sortedTasks = sortTasksHierarchy(projectVO.getProjectTaskVOList());
+            projectVO.setTaskList(sortedTasks);
+
+            // 3. 정렬된 리스트 기준으로 역할 부여
+            if (projectVO.getProjectEmpVOList() != null) {
+                for (ProjectTaskVO task : sortedTasks) {
+                    for (ProjectEmpVO emp : projectVO.getProjectEmpVOList()) {
+                        if (emp.getPrtcpntEmpno().equals(task.getChargerEmpno())) {
+                            task.setRole(emp.getPrtcpntRole()); // "00", "01", "02"
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
         return projectVO;
     }
+
+
 
     @Override
     public int createProject(ProjectVO projectVO, List<ProjectTaskVO> taskList) {
@@ -116,5 +134,59 @@ public class ProjectServiceImpl implements ProjectService {
 
         return insertedCount;
     }
+    
+    private List<ProjectTaskVO> sortTasksHierarchy(List<ProjectTaskVO> tasks) {
+        if (tasks == null || tasks.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        Map<Long, List<ProjectTaskVO>> childMap = new HashMap<>();
+        List<ProjectTaskVO> topLevel = new ArrayList<>();
+        
+        // 로그 추가
+        log.debug("업무 계층 정렬 시작 - 총 업무 수: {}", tasks.size());
+        
+        for (ProjectTaskVO task : tasks) {
+            log.debug("업무 분석: {}, upperTaskNo: {}", task.getTaskNm(), task.getUpperTaskNo());
+            
+            Long upperTaskNo = task.getUpperTaskNo();
+            if (upperTaskNo == null) {
+                topLevel.add(task);
+                log.debug("최상위 업무로 분류: {}", task.getTaskNm());
+            } else {
+                childMap.computeIfAbsent(upperTaskNo, k -> new ArrayList<>()).add(task);
+                log.debug("하위 업무로 분류: {} (상위: {})", task.getTaskNm(), upperTaskNo);
+            }
+        }
+        
+        List<ProjectTaskVO> result = new ArrayList<>();
+        for (ProjectTaskVO parent : topLevel) {
+            parent.setDepth(0);
+            result.add(parent);
+            log.debug("최상위 업무 추가: {}", parent.getTaskNm());
+            
+            addChildrenRecursively(parent, childMap, result, 1);
+        }
+        
+        log.debug("계층 정렬 결과 - 총 업무 수: {}", result.size());
+        return result;
+    }
+
+    private void addChildrenRecursively(ProjectTaskVO parent, Map<Long, List<ProjectTaskVO>> childMap,
+                                       List<ProjectTaskVO> result, int depth) {
+        List<ProjectTaskVO> children = childMap.get(parent.getTaskNo());
+        if (children != null) {
+            for (ProjectTaskVO child : children) {
+                child.setDepth(depth);
+                child.setParentTaskNm(parent.getTaskNm());
+                result.add(child);
+                log.debug("하위 업무 추가: {} (상위: {}, 깊이: {})", child.getTaskNm(), parent.getTaskNm(), depth);
+                
+                addChildrenRecursively(child, childMap, result, depth + 1);
+            }
+        }
+    }
+
+
 }
 

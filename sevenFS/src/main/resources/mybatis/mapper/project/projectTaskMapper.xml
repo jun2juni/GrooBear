@@ -20,6 +20,7 @@
 	  <result property="chargerEmpno" column="CHARGER_EMPNO"/>
 	  <result property="chargerEmpNm" column="CHARGER_EMP_NM"/>
 	  <result property="parentTaskNm" column="PARENT_TASK_NM"/>
+	  
 	</resultMap>
 
 
@@ -103,7 +104,40 @@
         )
     </insert>
     
+    
+	<update id="updateTaskParent" parameterType="java.util.Map">
+	    UPDATE PROJECT_TASK
+	    SET UPPER_TASK_NO = #{parentTaskNo}
+	    WHERE TASK_NO = #{taskNo}
+	</update>
 
+	<!-- 프로젝트 번호로 업무 목록 조회 -->
+	<select id="selectProjectTasks" resultType="ProjectTaskVO" parameterType="int">
+	  SELECT 
+	    PT.TASK_NO,
+	    PT.PRJCT_NO,
+	    PT.TASK_NM,
+	    PT.CHARGER_EMPNO,
+	    E.EMPL_NM AS CHARGER_EMP_NM,
+	    PT.TASK_BEGIN_DT,
+	    PT.TASK_END_DT,
+	    PT.PRIORT,
+	    PT.TASK_GRAD,
+	    PT.TASK_CN,
+	    PT.TASK_STTUS,
+	    PT.PROGRSRT,
+	    PT.UPPER_TASK_NO,
+	    PT.TASK_DAYCNT,
+	    PT.ATCH_FILE_NO,
+	    PARENT.TASK_NM AS PARENT_TASK_NM
+	  FROM PROJECT_TASK PT
+	  LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
+	  LEFT JOIN PROJECT_TASK PARENT ON PT.UPPER_TASK_NO = PARENT.TASK_NO
+	                            AND PT.PRJCT_NO = PARENT.PRJCT_NO
+	  WHERE PT.PRJCT_NO = #{prjctNo}
+	  ORDER BY PT.UPPER_TASK_NO NULLS FIRST, PT.TASK_NO
+	</select>
+	
 	<!-- 프로젝트 상세 업무 조회 -->
 	<select id="selectTaskById" resultMap="projectTaskResultMap" parameterType="long">
 	  SELECT 
@@ -124,10 +158,13 @@
 	    E.EMPL_NM AS CHARGER_EMP_NM,
 	    PARENT.TASK_NM AS PARENT_TASK_NM
 	  FROM PROJECT_TASK PT
+		LEFT JOIN PROJECT_TASK PARENT 
+		  ON PT.UPPER_TASK_NO = PARENT.TASK_NO 
+		  AND PT.PRJCT_NO = PARENT.PRJCT_NO
 	  LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
-	  LEFT JOIN PROJECT_TASK PARENT ON PT.UPPER_TASK_NO = PARENT.TASK_NO
 	  WHERE PT.TASK_NO = #{taskNo}
 	</select>
+
 
 
 	

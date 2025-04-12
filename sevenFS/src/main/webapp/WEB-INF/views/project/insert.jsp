@@ -255,6 +255,7 @@ document.getElementById('addTaskBtn').addEventListener('click', function () {
 
 // 업무 목록을 만들어서 전송 폼에 넣어둔다.
 // form submit 시 업무 목록 포함
+// 폼 제출 이벤트 리스너 내부
 const projectForm = document.getElementById('projectForm');
 if (projectForm) {
   projectForm.addEventListener('submit', function (e) {
@@ -262,37 +263,18 @@ if (projectForm) {
 
     const formData = new FormData(projectForm); // 기존 form의 input 값 포함
 
-    // 불필요한 필드 제거 (파일 필드는 직접 추가할 것이므로)
+    // taskList 및 projectEmpVOList 관련 데이터 제거
+    for (const key of [...formData.keys()]) {
+      if (key.startsWith('taskList') || key.startsWith('projectEmpVOList')) {
+        formData.delete(key);
+      }
+    }
+
+    // 파일 입력 필드 제거
     formData.delete('uploadFiles');
 
-    // 업무 목록 및 파일 추가
-    taskList.forEach(({ id, chargerEmpNm, files, ...rest }, index) => {
-      // 기본 필드 추가
-		Object.entries(rest).forEach(([key, value]) => {
-		  // null 또는 "null" 문자열이면 무시
-		  if (key === "upperTaskNo" && (value === null || value === "null" || value === "")) {
-		    return; // append 하지 않음
-		  }
-		  formData.append(`taskList[\${index}].\${key}`, value);
-		});
-
-      // 파일 업로드 처리
-      if (files && files.length > 0) {
-        console.log(`업무 \${index}의 파일 개수:`, files.length);
-        
-        files.forEach((file, fileIndex) => {
-          console.log(`파일 \${fileIndex} 정보:`, file.name, file.size);
-          
-          // 실제 File 객체인지 확인
-          if (file instanceof File && file.size > 0) {
-        	  formData.append(`uploadFiles_task_\${index}`, file);
-          }
-        });
-      }
-    });
-
-    // 참여자 정보
-    let empIndex = 0;
+    // 참여자 정보를 JSON으로 변환
+    const projectEmpList = [];
     for (const role in selectedMembers) {
       const roleCode = {
         responsibleManager: '00',
@@ -301,14 +283,49 @@ if (projectForm) {
       }[role];
 
       selectedMembers[role].forEach(member => {
-        formData.append(`projectEmpVOList[\${empIndex}].prtcpntEmpno`, member.id);
-        formData.append(`projectEmpVOList[\${empIndex}].prtcpntRole`, roleCode);
-        empIndex++;
+        projectEmpList.push({
+          prtcpntEmpno: member.id,
+          prtcpntRole: roleCode
+        });
       });
     }
-    console.log('전송 직전 taskList:', taskList);
-    console.log(JSON.stringify(taskList, null, 2));
+    
+    // 참여자 정보 JSON 추가
+    formData.append('projectEmpListJson', JSON.stringify(projectEmpList));
 
+ // 업무 목록을 JSON 문자열로 변환하는 부분
+    const processedTaskList = taskList.map((task, index) => {
+      // 필요한 필드만 추출
+      const { chargerEmpNm, files, ...rest } = task;
+      
+      // parentIndex가 실제 JavaScript 배열의 인덱스인지 확인
+      console.log(`업무 \${index}(\${task.taskNm})의 상위 업무 인덱스:`, task.parentIndex);
+      
+      return {
+        ...rest,
+        chargerEmpno: task.chargerEmpno,
+        // 배열 인덱스를 그대로 사용
+        tempParentIndex: task.parentIndex !== null && task.parentIndex !== undefined ? String(task.parentIndex) : null
+      };
+    });
+    
+    const tasksJson = JSON.stringify(processedTaskList);
+    formData.append('projectTasksJson', tasksJson);
+    
+    // 파일 처리를 별도로 수행
+    taskList.forEach((task, index) => {
+      if (task.files && task.files.length > 0) {
+        task.files.forEach(file => {
+          if (file instanceof File && file.size > 0) {
+            formData.append(`uploadFiles_task_\${index}`, file);
+          }
+        });
+      }
+    });
+
+    console.log('전송 직전 projectEmpList:', projectEmpList);
+    console.log('전송 직전 processedTaskList:', processedTaskList);
+    
     // 서버 전송
     fetch('/project/insert', {
       method: 'POST',

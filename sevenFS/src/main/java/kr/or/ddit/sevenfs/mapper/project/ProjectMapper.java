@@ -23,6 +23,6 @@ public interface ProjectMapper {
 	public ProjectVO projectDetail(int prjctNo);
 	public int insertProject(ProjectVO projectVO);
 	public int insertProjectEmpBatch(@Param("list") List<ProjectEmpVO> projectEmpVOList);
-	public List<ProjectTaskVO> selectProjectTasks(int prjctNo);
+	
 
 }

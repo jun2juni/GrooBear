@@ -22,6 +22,12 @@ public interface ProjectTaskService {
     
 	public boolean deleteTask(Long taskNo);
 
-    
+	// TASK_NO 반환하는 메서드
+	public Long insertProjectTaskAndGetId(ProjectTaskVO taskVO);
+
+	// 상위 업무 관계 업데이트 메서드
+	public void updateTaskParent(Long taskNo, Long parentTaskNo);
+	
+	public void updateTaskParentRelations(List<ProjectTaskVO> tasks);
     
 }

@@ -12,6 +12,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>${title}</title>
   <%@ include file="../layout/prestyle.jsp" %>
+  <style>
+  .badge-danger-custom {
+    background-color: #dc3545 !important;
+    color: white !important;
+  }
+  
+  .badge-primary-custom {
+    background-color: #0d6efd !important;
+    color: white !important;
+  }
+  
+  .badge-secondary-custom {
+    background-color: #6c757d !important;
+    color: white !important;
+  }
+</style>
 </head>
 <body>
 <%@ include file="../layout/sidebar.jsp" %>
@@ -108,39 +124,38 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <c:forEach var="task" items="${project.taskList}">
-                    <tr class="${not empty task.parentTaskNm ? 'table-light' : ''}" style="cursor:pointer" onclick="openTaskModal(${task.taskNo})">
-						<td>
-						  <div style="margin-left:${task.depth != null ? task.depth * 20 : 30}px;">
-						    <c:if test="${not empty task.upperTaskNo}">
-						      <i class="fas fa-level-up-alt fa-rotate-90 me-2 text-primary"></i>
-						    </c:if>
-						    <strong>${task.taskNm}</strong>
-						  </div>
-						</td>
-
-                      <td class="text-center">
-                        <c:choose>
-                          <c:when test="${task.role == '00'}"><span class="badge bg-danger">${task.chargerEmpNm}</span></c:when>
-                          <c:when test="${task.role == '01'}"><span class="badge bg-primary">${task.chargerEmpNm}</span></c:when>
-                          <c:otherwise><span class="badge bg-secondary">${task.chargerEmpNm}</span></c:otherwise>
-                        </c:choose>
-                      </td>
-                      <td class="text-center"><fmt:formatDate value="${task.taskBeginDt}" pattern="yyyy-MM-dd" /> ~ 
-											  <fmt:formatDate value="${task.taskEndDt}" pattern="yyyy-MM-dd" /></td>
-                      <td class="text-center">
-                        <c:choose>
-                          <c:when test="${task.priort == '00'}"><span class="badge bg-success">낮음</span></c:when>
-                          <c:when test="${task.priort == '01'}"><span class="badge bg-info">보통</span></c:when>
-                          <c:when test="${task.priort == '02'}"><span class="badge bg-warning">높음</span></c:when>
-                          <c:when test="${task.priort == '03'}"><span class="badge bg-danger">긴급</span></c:when>
-                          <c:otherwise>-</c:otherwise>
-                        </c:choose>
-                      </td>
-                      <td class="text-center">${task.taskGrad}</td>
-                    </tr>
-                  </c:forEach>
-                </tbody>
+					<c:forEach var="task" items="${project.taskList}">
+					  <tr class="${not empty task.parentTaskNm ? 'table-light' : ''}" style="cursor:pointer" onclick="openTaskModal(${task.taskNo})">
+					    <td>
+							<div style="margin-left:${(task.depth != null && task.depth > 0) ? task.depth * 20 : 15}px;">
+							  <c:if test="${not empty task.upperTaskNo}">
+							    <i class="fas fa-level-up-alt fa-rotate-90 me-2 text-primary"></i>
+							  </c:if>
+							  <strong>${task.taskNm}</strong>
+							</div>
+					    </td>
+				      <td class="text-center">
+				        <c:choose>
+				          <c:when test="${task.role == '00'}"><span class="badge bg-danger">${task.chargerEmpNm}</span></c:when>
+				          <c:when test="${task.role == '01'}"><span class="badge bg-primary">${task.chargerEmpNm}</span></c:when>
+				          <c:otherwise><span class="badge bg-secondary">${task.chargerEmpNm}</span></c:otherwise>
+				        </c:choose>
+				      </td>
+				      <td class="text-center"><fmt:formatDate value="${task.taskBeginDt}" pattern="yyyy-MM-dd" /> ~ 
+				                              <fmt:formatDate value="${task.taskEndDt}" pattern="yyyy-MM-dd" /></td>
+				      <td class="text-center">
+				        <c:choose>
+				          <c:when test="${task.priort == '00'}"><span class="badge bg-success">낮음</span></c:when>
+				          <c:when test="${task.priort == '01'}"><span class="badge bg-info">보통</span></c:when>
+				          <c:when test="${task.priort == '02'}"><span class="badge bg-warning">높음</span></c:when>
+				          <c:when test="${task.priort == '03'}"><span class="badge bg-danger">긴급</span></c:when>
+				          <c:otherwise>-</c:otherwise>
+				        </c:choose>
+				      </td>
+				      <td class="text-center">${task.taskGrad}</td>
+				    </tr>
+				  </c:forEach>
+				</tbody>
               </table>
             </div>
 

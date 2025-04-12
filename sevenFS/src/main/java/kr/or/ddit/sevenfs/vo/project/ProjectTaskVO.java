@@ -25,7 +25,7 @@ public class ProjectTaskVO {
     private int taskDaycnt;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date taskEndDt;
-    private int taskNo;
+    private long taskNo;
     private long prjctNo;
     private Long upperTaskNo;
     private String chargerEmpno;
@@ -42,6 +42,16 @@ public class ProjectTaskVO {
     private List<MultipartFile> files;
     private List<AttachFileVO> attachFileList;
 
+ // ProjectTaskVO.java
+    private String tempParentIndex; // 임시 필드, DB 컬럼 없음
 
+    // getter, setter 추가
+    public String getTempParentIndex() {
+        return tempParentIndex;
+    }
+
+    public void setTempParentIndex(String tempParentIndex) {
+        this.tempParentIndex = tempParentIndex;
+    }
 
 }

@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.mapper.project;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -22,5 +23,8 @@ public interface ProjectTaskMapper {
 
 	public int deleteTask(Long taskNo);
 
+	public List<ProjectTaskVO> selectProjectTasks(int prjctNo);
 
+	public void updateTaskParent(Map<String, Object> params);
+	
 }

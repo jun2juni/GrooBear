@@ -1,5 +1,6 @@
 package kr.or.ddit.sevenfs.service.project.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +83,47 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
         return task;
     }
 
+    @Override
+    public Long insertProjectTaskAndGetId(ProjectTaskVO taskVO) {
+        if (taskVO.getTaskBeginDt() != null && taskVO.getTaskEndDt() != null) {
+            long diffInMillies = taskVO.getTaskEndDt().getTime() - taskVO.getTaskBeginDt().getTime();
+            int daycnt = (int) (diffInMillies / (1000 * 60 * 60 * 24)) + 1;
+            taskVO.setTaskDaycnt(daycnt);
+        }
+        
+        // 업무 기본 설정
+        taskVO.setTaskSttus("00");
+        taskVO.setProgrsrt(0);
+        
+        projectTaskMapper.insertProjectTask(taskVO);
+        return (long) taskVO.getTaskNo(); // MyBatis에서 생성된 키 반환
+    }
 
+    @Override
+    public void updateTaskParent(Long taskNo, Long parentTaskNo) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("taskNo", taskNo);
+        params.put("parentTaskNo", parentTaskNo);
+        projectTaskMapper.updateTaskParent(params);
+    }
+
+    @Transactional
+    public void updateTaskParentRelations(List<ProjectTaskVO> tasks) {
+        for (ProjectTaskVO task : tasks) {
+            if (task.getTempParentIndex() != null && !task.getTempParentIndex().isEmpty()) {
+                int parentIndex = Integer.parseInt(task.getTempParentIndex());
+                if (parentIndex >= 0 && parentIndex < tasks.size()) {
+                    ProjectTaskVO parentTask = tasks.get(parentIndex);
+                    
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("taskNo", task.getTaskNo());
+                    params.put("parentTaskNo", parentTask.getTaskNo());
+                    
+                    projectTaskMapper.updateTaskParent(params);
+                }
+            }
+        }
+    }
 	@Override
 	public boolean deleteTask(Long taskNo) {
 	    return projectTaskMapper.deleteTask(taskNo) > 0;

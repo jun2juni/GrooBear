@@ -21,7 +21,9 @@
 		<collection property="projectEmpVOList" ofType="projectEmpVO" column="PRJCT_NO" select="selectProjectEmps"/>
 				
 		<!-- 프로젝트 과제 컬렉션 매핑 -->
-		<collection property="projectTaskVOList" ofType="projectTaskVO" column="PRJCT_NO" select="selectProjectTasks"/>
+		<collection property="projectTaskVOList" ofType="projectTaskVO" column="PRJCT_NO" 
+            select="kr.or.ddit.sevenfs.mapper.project.ProjectTaskMapper.selectProjectTasks"/>
+
 	</resultMap>
 	
 	<!-- 프로젝트 참여자 ResultMap -->
@@ -113,29 +115,6 @@
         )
     </select>
 	
-	<!-- 프로젝트 번호로 업무 목록 조회 -->
-	<select id="selectProjectTasks" resultType="ProjectTaskVO" parameterType="int">
-	  SELECT 
-	    PT.TASK_NO,
-	    PT.PRJCT_NO,
-	    PT.TASK_NM,
-	    PT.CHARGER_EMPNO,
-	    E.EMPL_NM AS CHARGER_EMPNM,
-	    PT.TASK_BEGIN_DT,
-	    PT.TASK_END_DT,
-	    PT.PRIORT,
-	    PT.TASK_GRAD,
-	    PT.TASK_CN,
-	    PT.TASK_STTUS,
-	    PT.PROGRSRT,
-	    PT.UPPER_TASK_NO,
-	    PT.TASK_DAYCNT,
-	    PT.ATCH_FILE_NO
-	  FROM PROJECT_TASK PT
-	  LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
-	  WHERE PT.PRJCT_NO = #{prjctNo}
-	  ORDER BY PT.UPPER_TASK_NO NULLS FIRST, PT.TASK_NO
-	</select>
 	
 	
 	<!-- 프로젝트 참여자 조회 (프로젝트 번호 기준) -->
