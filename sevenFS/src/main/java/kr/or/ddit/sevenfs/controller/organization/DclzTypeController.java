@@ -305,12 +305,12 @@ public class DclzTypeController {
 		//log.info("controller잔여연차 : " + remain);
 		
 		model.addAttribute("emplVacation",emplVacation);
-		//log.info("연차내역 : " + emplVacation);
+		log.info("연차내역 : " + emplVacation);
 		
 		// 공통코드가 연차에 해당하는 사원의 모든 년도 데이터 가져오기
 		List<DclzTypeVO> emplCmmnVacationList = dclztypeService.emplVacationDataList(map);
 		model.addAttribute("emplCmmnVacationList" , emplCmmnVacationList);
-		log.info("사원의 모든 연차 사용내역 : " + emplCmmnVacationList);
+		//log.info("사원의 모든 연차 사용내역 : " + emplCmmnVacationList);
 		
 		return "organization/dclz/vacation";
 	}

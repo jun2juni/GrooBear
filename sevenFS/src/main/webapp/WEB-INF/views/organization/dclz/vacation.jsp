@@ -25,8 +25,19 @@
 	<section class="section">
 		<div class="container-fluid">
 			<%-- ${emplVacation} --%>
+			 <div>
+                  <c:set var="beginDt" value="${emplVacation.yrycUseBeginDate}"></c:set>
+               <c:set var="bgYear" value="${beginDt.substring(0,4)}"></c:set>
+               <c:set var="bgMonth" value="${beginDt.substring(4,6)}"></c:set>
+               <c:set var="bgDay" value="${beginDt.substring(6,8)}"></c:set>
+               <c:set var="endDt" value="${emplVacation.yrycUseEndDate}"></c:set>
+               <c:set var="edYear" value="${endDt.substring(0,4)}"></c:set>
+               <c:set var="edMonth" value="${endDt.substring(4,6)}"></c:set>
+               <c:set var="edDay" value="${endDt.substring(6,8)}"></c:set>
+               <h3><p class="text-center mb-3">${bgYear}.${bgMonth}.${bgDay} ~ ${edYear}.${edMonth}.${edDay}</p></h3>
+             </div>
 			<div class="row">			
-				<div class="col-3">
+				<%-- <div class="col-3">
 	              <div class="icon-card mb-30">
 	                <div class="content mx-auto">
 	                  <div class="mx-auto text-center mb-2">
@@ -46,8 +57,34 @@
 	                </div>
 	              </div>
 	              <!-- End Icon Cart -->
+	            </div> --%>
+	            <div class="col-2">
+	              <div class="icon-card mb-30">
+	                <div class="content mx-auto">
+	                  <div>
+	                  	<h3><span class="status-btn success-btn mb-2 text-dark">성과 보상 연차</span></h3>
+	                  </div>
+	                  <div>
+	                    <p class="text-center">${emplVacation.excessWorkYryc}개</p>
+	                  </div>
+	                </div>
+	              </div>
+	              <!-- End Icon Cart -->
 	            </div>
-				<div class="col-3">
+				<div class="col-2">
+	              <div class="icon-card mb-30">
+	                <div class="content mx-auto">
+	                  <div>
+	                  	<h3><span class="status-btn success-btn mb-2 text-dark">근무 보상 연차</span></h3>
+	                  </div>
+	                  <div>
+	                    <p class="text-center">${emplVacation.cmpnstnYryc}개</p>
+	                  </div>
+	                </div>
+	              </div>
+	              <!-- End Icon Cart -->
+	            </div>
+				<div class="col-2">
 	              <div class="icon-card mb-30">
 	                <div class="content mx-auto">
 	                  <div>
@@ -86,6 +123,7 @@
 	              </div>
 	              <!-- End Icon Cart -->
 	            </div>
+				
 			</div>
 		<div>
           <div class="">

@@ -145,12 +145,12 @@
          		  <div class="input-style-1 form-group col-2" style="margin-left: 15%">
 		            <label for="anslry" class="form-label required" style="margin-left: 10px;">급여<span class="text-danger">*</span></label>
 		            <input type="text" name="anslry" class="form-control" id="anslry" required>
-		            <div class="invalid-feedback"></div>
+		            <div class="invalid-feedback">급여를 등록해주세요.</div>
 		          </div>
          		  <div class="input-style-1 form-group col-3" style="margin-left: 10px;">
 		            <label for="acnutno" class="form-label required">계좌번호<span class="text-danger"> *</span></label>
 		            <input type="text" name="acnutno" class="form-control" id="acnutno" required>
-		            <div class="invalid-feedback"></div>
+		            <div class="invalid-feedback">계좌번호를 등록해주세요.</div>
 		          </div>
 		          <div class="input-style-1 form-group col-4" style="margin-left: 10px;">
 					<label class="form-label required">은행명<span class="text-danger">*</span></label>
@@ -219,8 +219,29 @@ $(function(){
 			}); 
 		}); */
 		
+	// 급여 입력시 쉼표처리
+	const salaryInput = document.getElementById("anslry");
+	
+	salaryInput.addEventListener("input", function (e) {
+	    // 숫자만 남기고, 앞에 0 제거
+	    let value = e.target.value.replace(/[^0-9]/g, '').replace(/^0+/, '');
+
+	    // 세 자리마다 쉼표 넣기
+	    if (value) {
+	      e.target.value = Number(value).toLocaleString("ko-KR");
+	    } else {
+	      e.target.value = "";
+	    }
+	  });
+		
 $('#emplInsertBtn').on('click', function(e){
 	e.preventDefault();
+	
+	let anslryId = $('#anslry').val();
+	let anslry = anslryId.replaceAll(',' , '');
+	console.log("입력한 급여 : " , anslry);
+	// 쉼표를 제거한 값으로 변경해주기
+	$('#anslry').val(anslry);
 	
 	// 이메일 앞부분
 	const emailId = $('#emailId').val().trim();

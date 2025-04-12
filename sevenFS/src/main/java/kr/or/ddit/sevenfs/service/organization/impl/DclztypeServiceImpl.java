@@ -118,6 +118,12 @@ public class DclztypeServiceImpl implements DclztypeService {
 	public List<DclzTypeVO> emplVacationDataList(Map<String, Object> map) {
 		return dclztypeMapper.emplVacationDataList(map);
 	}
+	
+	// 사원 계정 부여시 기본 연차 지급
+	@Override
+	public int basicVacInsert(VacationVO vacationVO) {
+		return dclztypeMapper.basicVacInsert(vacationVO);
+	}
 
 	// 추가 연차지급시 update
 	@Override
@@ -160,6 +166,8 @@ public class DclztypeServiceImpl implements DclztypeService {
 	public List<DclzTypeVO> allEmplVacList(Map<String, Object> map) {
 		return this.dclztypeMapper.allEmplVacList(map);
 	}
+
+
 
 
 }

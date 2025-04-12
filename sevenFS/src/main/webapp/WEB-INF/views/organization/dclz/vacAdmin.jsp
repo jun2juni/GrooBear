@@ -75,9 +75,9 @@
 				  	<form action="/dclz/vacAdmin" method="get" id="selSearchNm">
 				  	<div class="ml-10 d-flex">
 				  	    <div class="rounded mb-3" style="width : 150px;">
-				            <input type="search" class="form-control rounded" placeholder="이름 입력" aria-label="Search" name="keyword" aria-describedby="search-addon" id="schName" onkeydown="fSchEnder(event)">
+				            <input type="search" class="form-control rounded" placeholder="이름 입력" aria-label="Search" name="keyword" aria-describedby="search-addon" id="shName" onkeydown="scEnter(event)">
 				        </div>
-				        <span class="input-group-text border-0" id="search-addon" style="height:40px" onclick="fSch()">
+				        <span class="input-group-text border-0" id="search-addon" style="height:40px">
 				            <i class="fas fa-search" aria-hidden="true"></i>
 				        </span>
 			        </div>
@@ -349,12 +349,13 @@ $(function(){
 	 })
 	 
 	 // 이름 검색하고 엔터 눌렀을시
-	  function fSchEnder(e) {
+	   function scEnter(e) {
         if (e.code === "Enter") {
         	const schName = $('#schName').val();
         }
-    }
-	
+    } 
+	 
+	 
 	 // 이름 검색하고 돋보기 눌렀을시
 	/*  function fSch(){
 		 alert('dkfjdl');

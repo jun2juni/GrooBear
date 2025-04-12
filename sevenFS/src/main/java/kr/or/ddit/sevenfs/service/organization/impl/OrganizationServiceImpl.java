@@ -13,11 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import kr.or.ddit.sevenfs.mapper.organization.DclztypeMapper;
 import kr.or.ddit.sevenfs.mapper.organization.OrganizationMapper;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.organization.OrganizationVO;
+import kr.or.ddit.sevenfs.vo.organization.VacationVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 
 	@Autowired
 	OrganizationMapper organizationMapper;
+	@Autowired
+	DclztypeMapper dclztypeMapper;
 	@Autowired
 	NotificationService notificationService;
 	@Autowired
@@ -42,7 +46,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 		// 전체 부서 조회
 		List<CommonCodeVO> departmentList = depList();
 		log.info("controller->depList : " + departmentList);
-		
+		 
 		// 전체 사원 조회
 		List<EmployeeVO> employeeList = empList();
 		
@@ -179,12 +183,45 @@ public class OrganizationServiceImpl implements OrganizationService {
 		
 		// 사원 등록
 		int result = organizationMapper.emplInsert(employeeVO);
-	
-		log.info("등록한 데이터 : " + employeeVO);
-
-		// 사원 번호 가져오기 ? null이겠지
+		
+		// 사원 번호 가져오기
 		String emplNo = employeeVO.getEmplNo();
 		log.info("emp insert -> emplNo : " + emplNo);
+		
+		log.info("등록한 데이터 : " + employeeVO);
+		
+		// 사원 등록시 직급코드(clsfCode)가 날라옴
+		// 등록하려는 사원코드
+		String clsfCode = employeeVO.getClsfCode();
+		log.info("insert -> 사원코드 : " + clsfCode);
+		
+		// 직급 코드에 해당하는 연차 갯수 등록하기
+		Map<String, Integer> clsfMap = new HashMap<>();
+		clsfMap.put("00", 0);  // 인턴
+		clsfMap.put("01", 15); // 사원
+		clsfMap.put("02", 16); // 대리
+		clsfMap.put("03", 18); // 과장
+		clsfMap.put("04", 18); // 부장
+		clsfMap.put("05", 20); // 이사
+		clsfMap.put("06", 22); // 상무
+		clsfMap.put("07", 22); // 전무
+		clsfMap.put("08", 25); // 부사장
+
+		VacationVO vacationVO = new VacationVO();
+		vacationVO.setEmplNo(emplNo);
+		
+		// 등록 사원코드와 같으면 해당 총 연차개수 부여하기
+		int yrycCnt;
+		if(clsfMap.containsKey(clsfCode)) {
+			yrycCnt = (int) clsfMap.get(clsfCode);
+			vacationVO.setTotYrycDaycnt(yrycCnt);
+		}else {
+			yrycCnt = 0;
+		}
+		
+		// 사원 등록시 연차까지 등록 basicVacInsert()
+		int vacResult = dclztypeMapper.basicVacInsert(vacationVO);
+		log.info("사원 등록시 연차부여 res : " + vacResult);
 		
 		// 사원이 등록되면 권한 테이블에도 업로드 되어야한다
 		if(result == 1) {

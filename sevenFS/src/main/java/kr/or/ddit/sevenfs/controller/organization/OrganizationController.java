@@ -289,7 +289,6 @@ public class OrganizationController {
 		
 		organizationService.emplInsert(employeeVO);
 		
-		
 		return "redirect:/orglistAdmin";
 	}
 	

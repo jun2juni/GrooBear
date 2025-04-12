@@ -261,7 +261,7 @@ WITH U AS(
 </select>
 
 <!-- 기본연차 지급 -->
-<insert id="basicVacInsert" parameterType="String">
+<insert id="basicVacInsert" parameterType="kr.or.ddit.sevenfs.vo.organization.VacationVO">
 	INSERT INTO vacation(
             EMPL_NO
            , YRYC_YEAR
@@ -281,7 +281,7 @@ WITH U AS(
         ,TO_CHAR(SYSDATE, 'YYYY')
         ,TO_CHAR(SYSDATE, 'YYYY') || '0101'
         ,TO_CHAR(SYSDATE, 'YYYY') || '1231'
-        ,#{TOT_YRYC_DAYCNT}
+        ,#{totYrycDaycnt}
         ,0
         ,0
         ,0
