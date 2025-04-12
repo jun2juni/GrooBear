@@ -247,6 +247,9 @@ public class BbsController {
         bbsService.bulkDelete(ids); // 서비스에 위임
         return ResponseEntity.ok().build();
     }
+    
+    
+    
 
 
 

@@ -54,7 +54,6 @@
                                 </div>
                                 <br>
                                 <div>
-                                    작성자
                                     <input type="hidden" name="emplName" value="${bbsVO.emplNm}" class="form-control" readonly/>
                                 </div>
                                 <br>
