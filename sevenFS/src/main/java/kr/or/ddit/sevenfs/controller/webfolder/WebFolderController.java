@@ -6,14 +6,21 @@ import kr.or.ddit.sevenfs.service.webfolder.WebFolderService;
 
 import kr.or.ddit.sevenfs.utils.AttachFile;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
+import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderFileVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +38,7 @@ import java.util.zip.ZipOutputStream;
 
 @Slf4j
 @RestController
-@RequestMapping("/webFolder")
+@RequestMapping("/api/webFolder")
 public class WebFolderController {
     @Value("${file.save.abs.path}")
     String dir;
@@ -150,4 +157,6 @@ public class WebFolderController {
 
         return stringStringMap;
     }
+
+
 }

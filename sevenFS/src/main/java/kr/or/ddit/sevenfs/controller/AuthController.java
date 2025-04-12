@@ -15,6 +15,8 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +52,7 @@ public class AuthController {
             String password = reqEmployeeVO.getPassword();
 
             // 로그인 인증을 처리하는 spring security 객체
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(reqEmployeeVO.getEmplNo(), password));
+            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(reqEmployeeVO.getEmplNo(), password));
 
             CustomUser user = (CustomUser) this.userDetailService.loadUserByUsername(reqEmployeeVO.getEmplNo());
             EmployeeVO employeeVO = user.getEmpVO();
@@ -58,7 +60,7 @@ public class AuthController {
 
             boolean matches = this.bCryptPasswordEncoder.matches(password, employeeVO.getPassword());
 
-            log.debug(" {}", matches);
+            log.debug("matches {}", matches);
             // 비밀번호가 맞으면 로그인 성공
             if (matches) {
                 String generateToken = jwtTokenProvider.generateToken(user);
@@ -71,6 +73,8 @@ public class AuthController {
                 ResponseCookie refreshTokenCookie = jwtTokenProvider.createCookie("refreshToken", refreshToken, 7 * 24 * 60 * 6); // 7일 유지
                 response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
+                // 시큐리티에 계정 정보 저장
+                SecurityContextHolder.getContext().setAuthentication(authenticate);
 
                 return ResponseEntity.ok(
                     Map.of(
