@@ -78,7 +78,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="atrzDetailappBtn" class="main-btn danger-btn rounded-full btn-hover small-btn">반려</button>
+                    <button type="button" id="atrzDetailComBtn" class="main-btn danger-btn rounded-full btn-hover small-btn">반려</button>
                     <button type="button" class="main-btn light-btn rounded-full btn-hover small-btn" data-bs-dismiss="modal">취소</button>
                 </div>
             </div>

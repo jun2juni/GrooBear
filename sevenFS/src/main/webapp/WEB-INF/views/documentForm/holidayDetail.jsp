@@ -402,17 +402,6 @@ $("#atrzDetailappBtn").on("click", function() {
     const approvalMessage = $("#approvalMessage").val(); // 결재 의견 가져오기
     const authorStatus = $("#authorStatus").is(":checked"); // 전결 여부 가져오기
 
-	 // 유효성 검사
-	//  if (!approvalMessage) {
-    //     swal({
-    //         title: "결재 실패",
-    //         text: "결재의견을 입력해주세요.",
-    //         icon: "warning",
-    //         button: "확인",
-    //     });
-    //     return;
-    // }
-
     // 서버로 전송할 데이터 구성
     const approvalData = {
         "atrzDocNo": atrzDocNo,
@@ -435,17 +424,19 @@ $("#atrzDetailappBtn").on("click", function() {
         url: "/atrz/selectForm/atrzDetailUpdate", // 서버의 결재 상태 업데이트 API
         type: "POST",
         data: approvalData,
-		dataType: "json",
+		dataType: "text",
         success: function (response) {
-            swal({
-                title: "결재 완료",
-                text: "결재가 성공적으로 처리되었습니다.",
-                icon: "success",
-                button: "확인",
-            }).then(() => {
-                // 결재 완료 후 페이지를 새로고침하거나 목록 페이지로 이동
-                window.location.href = "/atrz/approval";
-            });
+			if (response == "success") {
+				swal({
+					title: "결재 완료",
+					text: "결재가 성공적으로 처리되었습니다.",
+					icon: "success",
+					button: "확인",
+				}).then(() => {
+					// 결재 완료 후 페이지를 새로고침하거나 목록 페이지로 이동
+					window.location.href = "/atrz/home";
+				});
+			}
         },
         error: function (error) {
             swal({
@@ -456,8 +447,23 @@ $("#atrzDetailappBtn").on("click", function() {
             });
         },
     });
-	
 });
+
+$("#atrzDetailComBtn").on("click",function(){
+	const atrzDocNo = $("#atrzDocNo").val(); // 문서 번호 가져오기
+	const companionMessage = $("#companionMessage").val(); // 반려 의견 가져오기
+
+	// 서버로 전송할 데이터 구성
+	const companionData = {
+		"atrzDocNo": atrzDocNo,
+		"atrzLineVOList[0].sanctnOpinion": companionMessage,
+		"sanctnProgrsSttusCode": "20", // 결재 상태를 "반려"로 설정
+	};
+	console.log("companionData : ", companionData);
+	
+})
+
+
 
 </script>
 </body>
