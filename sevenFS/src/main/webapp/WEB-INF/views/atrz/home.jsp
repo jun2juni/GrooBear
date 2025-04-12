@@ -5,7 +5,7 @@
 
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
 <c:set var="title" scope="application" value="title" />
-
+<c:set var="copyLight" scope="application" value="by 길준희" />
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,6 +31,10 @@
 	color: white;
 	border-radius: 0 0 5px 5px;
 	width: 100%;
+	height: 60px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .actBtn {
@@ -83,7 +87,16 @@
 	white-space: nowrap;
 	
 }
+.newAtrzDocBtn{
+	padding: 0.5rem 1rem; 
+	font-size: 0.875rem;
+}
 
+.emptyList{
+	padding: 50px 0; 
+	font-size: 1.2rem; 
+	color: gray;
+}
 </style>
 <body>
 <%@ include file="../layout/sidebar.jsp" %>
@@ -111,7 +124,7 @@
 
 							<!-- 오른쪽: 검색창 -->
 							<div class="table_search d-flex align-items-center gap-2">
-								<button id="s_eap_btn" class="btn btn-primary"
+								<button id="s_eap_btn" class="main-btn active-btn rounded-full btn-hover newAtrzDocBtn"
 									data-bs-toggle="modal" data-bs-target="#newAtrzDocModal">
 									새 결재 진행</button>
 								<select id="duration" class="form-select w-auto">
@@ -181,73 +194,77 @@
 										<!-- <p>${myEmpInfo}</p> -->
 							<div class="atrzTabCont" style="margin-top: 0px; overflow-x: auto;">
 								<div class="container mt-2 homeContainer">
-									<div class="row flex-nowrap">
-										<!-- <p>atrzLineVOList</p> -->
-										<!-- <p>atrzVOList : ${atrzVOList}</p> -->
-										<!-- <p>atrzApprovalList : ${atrzApprovalList}</p> -->
-										<!-- <p>atrzApprovalList[0] : ${atrzApprovalList[0]}</p> -->
-										<!-- <p>atrzSubmitList : ${atrzSubmitList}</p> -->
-										<!-- <p>atrzCompletedList : ${atrzCompletedList}</p> -->
-										
-										<input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
-										<c:forEach var="atrzVO" items="${atrzApprovalList}" begin="0" end="9">
-											<div class="col-sm-3">
-												<div class="card" >
-													<div class="card-header" style="height: 36px;">
-														<div class="row g-0 text-center">
-															<!-- 진행 반려 완료 회수 취소 -->
-															<!--결재상태코드에 따른 조건 시작-->
-															<c:choose>
-																<c:when test="${atrzVO.atrzSttusCode == '00' }">
-																	<span
-																		class="status-btn close-btn actBtn col-sm-6 col-md-4"
-																		style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
-																</c:when>
-																<c:when test="${atrzVO.atrzSttusCode == '10' }">
-																	<span
-																		class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
-																</c:when>
-																<c:when test="${atrzVO.atrzSttusCode == '20' }">
-																	<span
-																		class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
-																</c:when>
-																<c:when test="${atrzVO.atrzSttusCode == '30' }">
-																	<span
-																		class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
-																</c:when>
-																<c:otherwise>
-																	<span
-																		class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4"
-																		style="background-color: pink; color: #ed268a;">취소</span>
-																</c:otherwise>
-															</c:choose>
-															<!--결재상태코드에 따른 조건 끝-->
-															<!-- <p>${documHolidayVO}</p> -->
-															<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="col-6 col-md-8">
-																<h5 class="homeFr">${atrzVO.atrzSj}</h5>
-															</a>
+									<div style="display: flex; justify-content: space-between; align-items: center;" class="mb-10">
+										<h6 class="mb-10 pt-20 pl-20">결재대기문서</h6>
+										<a href="/atrz/approval" class="text-sm fw-bolder" style="color: #4a6cf7;">
+											더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
+										</a>
+									</div>
+									<c:choose>
+										<c:when test="${empty atrzApprovalList}">
+											<div class="text-center emptyList">
+												결재할 문서가 없습니다.
+											</div>
+										</c:when>
+										<c:otherwise>
+											<div class="row flex-nowrap">
+												<input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
+												<c:forEach var="atrzVO" items="${atrzApprovalList}" begin="0" end="9">
+													<div class="col-sm-3">
+														<div class="card" style="height: 250px; width: 300px;">
+															<div class="card-header pt-3" style="height: 50px;">
+																<div class="row g-0 text-center">
+																	<c:choose>
+																		<c:when test="${atrzVO.atrzSttusCode == '00' }">
+																			<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
+																		</c:when>
+																		<c:when test="${atrzVO.atrzSttusCode == '10' }">
+																			<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
+																		</c:when>
+																		<c:when test="${atrzVO.atrzSttusCode == '20' }">
+																			<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
+																		</c:when>
+																		<c:when test="${atrzVO.atrzSttusCode == '30' }">
+																			<span class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																		</c:when>
+																		<c:otherwise>
+																			<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4" style="background-color: pink; color: #ed268a;">취소</span>
+																		</c:otherwise>
+																	</c:choose>
+																	<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="col-6 col-md-8">
+																		<h5 class="homeFr">${atrzVO.atrzSj}</h5>
+																	</a>
+																</div>
+															</div>
+															<div class="card-body">
+																<p class="card-text">기안자&nbsp;&nbsp; :&nbsp;&nbsp;  ${atrzVO.drafterEmpnm}&nbsp;&nbsp;[${atrzVO.deptCodeNm}]</p>
+																<p class="card-text">기안일시&nbsp;&nbsp; :&nbsp;&nbsp; 
+																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																	<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
+																<p class="card-text">결재양식&nbsp;&nbsp; :&nbsp;&nbsp; 
+																	<c:choose>
+																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'H')}">연차신청서</c:when>
+																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'S')}">지출결의서</c:when>
+																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'D')}">기안서</c:when>
+																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'A')}">급여명세서</c:when>
+																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'B')}">급여계좌변경신청서</c:when>
+																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'C')}">재직증명서</c:when>
+																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'R')}">퇴직증명서</c:when>
+																		<c:otherwise>알 수 없는 문서유형</c:otherwise>
+																	</c:choose>
+																</p>
+															</div>
+															<div class="col text-center">
+																<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="main-btn secondary-btn-outline btn-hover" style="width: 100%; border: none; border-top: 1px solid lightgray;">결재하기</a>
+															</div>
 														</div>
 													</div>
-													<div class="card-body">
-														<!-- <p>${atrzVO}</p> -->
-														<p class="card-text">기안자&nbsp;&nbsp; :&nbsp;&nbsp;  ${atrzVO.drafterEmpnm}
-																					&nbsp;&nbsp;[${atrzVO.deptCodeNm}]</p>
-														<p class="card-text">기안일시&nbsp;&nbsp; :&nbsp;&nbsp; 
-															<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
-															<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
-															<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
-														</div>
-														<div class="col text-center">
-															<a href="/atrz/selectForm/holidayDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="btn btn-default wdBtn">결재하기</a>
-														</div>
-												</div>
+												</c:forEach>
 											</div>
-										</c:forEach>
-									</div>
+										</c:otherwise>
+									</c:choose>
 								</div>
-								<!--추가-->
-								<!-- </div> -->
-								<!--완료문서 문서 끝-->
 							</div>
 							<div class="atrzTabCont">
 								<div class="col-lg-12">
@@ -258,232 +275,233 @@
 												더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
 											</a>
 										</div>
-										<!-- <p>atrzSubmitList[0] : ${atrzSubmitList[0]}</p> -->
-										<div class="table-wrapper table-responsive">
-											<table class="table striped-table">
-												<thead>
-													<!-- <p>${atrzSubmitList}</p> -->
-													<tr>
-														<th>
-															<h6 class="fw-bolder" style="text-align: center;">기안일시</h6>
-														</th>
-														<th>
-															<h6 class="fw-bolder" style="text-align: center;">양식유형</h6>
-														</th>
-														<th>
-															<h6 class="fw-bolder" style="padding-left: 120px;">제목</h6>
-														</th>
-														<th>
-															<h6 class="fw-bolder" style="text-align: center;">진행부서</h6>
-														</th>
-														<th>
-															<h6 class="fw-bolder" style="text-align: center;">진행자</h6>
-														</th>
-														<th>
-															<h6 class="fw-bolder">결재상태</h6>
-														</th>
-													</tr>
-												</thead>
-												<!-- <p>${atrzVOList}</p> -->
-												<c:forEach var="atrzVO" items="${atrzSubmitList}">
-													<tbody>
-														<tr>
-															<td style="padding-top: 10px; padding-bottom: 10px;" >
-																<p class="text-sm" style="text-align: center;">
-																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
-																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
-																	<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
-															</td>
-															<td style="padding-top: 0px;">
-																<p class="fw-bolder" style="text-align: center;">
-																	<c:choose>
-																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'H')}">연차신청서</c:when>
-																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'S')}">지출결의서</c:when>
-																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'B')}">급여계좌변경신청서</c:when>
-																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'A')}">급여명세서</c:when>
-																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'D')}">기안서</c:when>
-																		<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'C')}">재직증명서</c:when>
-																		<c:otherwise>퇴사신청서</c:otherwise>
-																	</c:choose>
-																</p>
-															</td>
-															<td style="text-align: left; padding-top: 0px;">
-																<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
-																<c:choose>
-																	<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
-																		<span class="material-symbols-outlined" style="margin-right: 5px;">
-																		attach_file
-																		</span>
-																	</c:when>
-																	<c:otherwise>
-																		<!-- 빈 span으로 공간 확보 -->
-																		<span class="material-symbols-outlined" style="margin-right: 5px; visibility: hidden;">
-																		attach_file
-																		</span>
-																	</c:otherwise>
-																</c:choose>
-																${atrzVO.atrzSj}
-																</a>
-															</td>
-															<td style="padding-top: 0px;">
-																<p class="fw-bolder" style="text-align: center;">${atrzVO.deptCodeNm}</p>
-															</td>
-															<td style="padding-top: 0px;" >
-																<p class="fw-bolder" style="text-align: center;">${atrzVO.drafterEmpnm}</p>
-															</td>
-															
-															<td  style="padding-top: 0px;">
-																<h6 class="text-sm">
-																	<p>
+										<c:choose>
+											<c:when test="${empty atrzSubmitList}">
+												<div class="text-center emptyList">
+													진행중인 문서가 없습니다.
+												</div>
+											</c:when>
+											<c:otherwise>
+												<div class="table-wrapper table-responsive">
+													<table class="table striped-table">
+														<thead>
+															<tr>
+																<th>
+																	<h6 class="fw-bolder" style="text-align: center;">기안일시</h6>
+																</th>
+																<th>
+																	<h6 class="fw-bolder" style="text-align: center;">양식유형</h6>
+																</th>
+																<th>
+																	<h6 class="fw-bolder" style="padding-left: 120px;">제목</h6>
+																</th>
+																<th>
+																	<h6 class="fw-bolder" style="text-align: center;">진행부서</h6>
+																</th>
+																<th>
+																	<h6 class="fw-bolder" style="text-align: center;">진행자</h6>
+																</th>
+																<th>
+																	<h6 class="fw-bolder">결재상태</h6>
+																</th>
+															</tr>
+														</thead>
+														<c:forEach var="atrzVO" items="${atrzSubmitList}">
+															<tbody>
+																<tr>
+																	<td style="padding-top: 10px; padding-bottom: 10px;" >
+																		<p class="text-sm" style="text-align: center;">
+																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																			<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
+																	</td>
+																	<td style="padding-top: 0px;">
+																		<p class="fw-bolder" style="text-align: center;">
+																			<c:choose>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'H')}">연차신청서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'S')}">지출결의서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'B')}">급여계좌변경신청서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'A')}">급여명세서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'D')}">기안서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'C')}">재직증명서</c:when>
+																				<c:otherwise>퇴사신청서</c:otherwise>
+																			</c:choose>
+																		</p>
+																	</td>
+																	<td style="text-align: left; padding-top: 0px;">
+																		<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
 																		<c:choose>
-																			<c:when test="${atrzVO.atrzSttusCode == '00' }">
-																				<span
-																					class="status-btn close-btn actBtn col-sm-6 col-md-4"
-																					style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
-																			</c:when>
-																			<c:when test="${atrzVO.atrzSttusCode == '10' }">
-																				<span
-																					class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
-																			</c:when>
-																			<c:when test="${atrzVO.atrzSttusCode == '20' }">
-																				<span
-																					class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
-																			</c:when>
-																			<c:when test="${atrzVO.atrzSttusCode == '30' }">
-																				<span
-																					class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																			<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
+																				<span class="material-symbols-outlined" style="margin-right: 5px;">
+																				attach_file
+																				</span>
 																			</c:when>
 																			<c:otherwise>
-																				<span
-																					class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4"
-																					style="background-color: pink; color: #ed268a;">취소</span>
+																				<span class="material-symbols-outlined" style="margin-right: 5px; visibility: hidden;">
+																				attach_file
+																				</span>
 																			</c:otherwise>
 																		</c:choose>
-																	</p>
-																</h6>
-															</td>
-														</tr>
-													</tbody>
-												</c:forEach>
-											</table>
-											<!-- end table -->
-										</div>
+																		${atrzVO.atrzSj}
+																		</a>
+																	</td>
+																	<td style="padding-top: 0px;">
+																		<p class="fw-bolder" style="text-align: center;">${atrzVO.deptCodeNm}</p>
+																	</td>
+																	<td style="padding-top: 0px;" >
+																		<p class="fw-bolder" style="text-align: center;">${atrzVO.drafterEmpnm}</p>
+																	</td>
+																	
+																	<td  style="padding-top: 0px;">
+																		<h6 class="text-sm">
+																			<p>
+																				<c:choose>
+																					<c:when test="${atrzVO.atrzSttusCode == '00' }">
+																						<span
+																							class="status-btn close-btn actBtn col-sm-6 col-md-4"
+																							style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
+																					</c:when>
+																					<c:when test="${atrzVO.atrzSttusCode == '10' }">
+																						<span
+																							class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
+																					</c:when>
+																					<c:when test="${atrzVO.atrzSttusCode == '20' }">
+																						<span
+																							class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
+																					</c:when>
+																					<c:when test="${atrzVO.atrzSttusCode == '30' }">
+																						<span
+																							class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																					</c:when>
+																					<c:otherwise>
+																						<span
+																							class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4"
+																							style="background-color: pink; color: #ed268a;">취소</span>
+																					</c:otherwise>
+																				</c:choose>
+																			</p>
+																		</h6>
+																	</td>
+																</tr>
+															</tbody>
+														</c:forEach>
+													</table>
+												</div>
+											</c:otherwise>
+										</c:choose>
 									</div>
-									<!-- end card -->
 								</div>
-
-
 							</div>
 							<div class="atrzTabCont">
 								<div class="col-lg-12">
 									<div class="card-style mb-30 docList">
 										<div style="display: flex; justify-content: space-between; align-items: center;" class="mb-10">
-										<h6 class="mb-10">완료문서</h6>
-										<a href="/atrz/document" class="text-sm fw-bolder" style="color: #4a6cf7;">
-											더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
-										</a>
+											<h6 class="mb-10">완료문서</h6>
+											<a href="/atrz/document" class="text-sm fw-bolder" style="color: #4a6cf7;">
+												더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
+											</a>
 										</div>
-											<div class="table-wrapper table-responsive">
-												<table class="table striped-table">
-													<thead>
-														<!-- <p>${atrzVO}</p> -->
-														<!-- <p>${atrzVOList}</p> -->
-														<tr>
-															<th >
-																<h6 class="fw-bolder" style="text-align: center;">기안일시</h6>
-															</th>
-															<th>
-																<h6 class="fw-bolder" style="text-align: center;">완료일시</h6>
-															</th>
-															<th>
-																<h6 class="fw-bolder" style="padding-left: 120px;">제목</h6>
-															</th>
-															<th>
-																<h6 class="fw-bolder" style="text-align: center;">기안부서</h6>
-															</th>
-															<th>
-																<h6 class="fw-bolder" style="text-align: center;">기안자</h6>
-															</th>
-															<th>
-																<h6 class="fw-bolder">결재상태</h6>
-															</th>
-														</tr>
-													</thead>
-													<c:forEach var="atrzVO" items="${atrzCompletedList}">
-														<tbody>
+										<c:choose>
+											<c:when test="${empty atrzCompletedList}">
+												<div class="text-center emptyList">
+													완료된 문서가 없습니다.
+												</div>
+											</c:when>
+											<c:otherwise>
+												<div class="table-wrapper table-responsive">
+													<table class="table striped-table">
+														<thead>
 															<tr>
-																<td style="padding-top: 10px; padding-bottom: 10px;" >
-																	<p class="text-sm" style="text-align: center;">
-																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
-																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
-																		<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
-																</td>
-																<td style="padding-top: 10px; padding-bottom: 10px;" >
-																	<p class="text-sm" style="text-align: center;">
-																		<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="yyyy-MM-dd" var="onlyDate" />
-																		<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="HH:mm:ss" var="onlyTime" />
-																		<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
-																</td>
-																<td style="text-align: left; padding-top: 0px;">
-																	<a href="#" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
-																	<c:choose>
-																		<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
-																			<span class="material-symbols-outlined" style="margin-right: 5px;">
-																			attach_file
-																			</span>
-																		</c:when>
-																		<c:otherwise>
-																			<!-- 빈 span으로 공간 확보 -->
-																			<span class="material-symbols-outlined" style="margin-right: 5px; visibility: hidden;">
-																			attach_file
-																			</span>
-																		</c:otherwise>
-																	</c:choose>
-																	${atrzVO.atrzSj}
-																	</a>
-																</td>
-																<td style="padding-top: 0px;">
-																	<p class="fw-bolder" style="text-align: center;">${atrzVO.deptCodeNm}</p>
-																</td>
-																<td style="padding-top: 0px;" >
-																	<p class="fw-bolder" style="text-align: center;">${atrzVO.drafterEmpnm}</p>
-																</td>
-																
-																<td  style="padding-top: 0px;">
-																	<h6 class="text-sm">
-																		<p>
+																<th>
+																	<h6 class="fw-bolder" style="text-align: center;">기안일시</h6>
+																</th>
+																<th>
+																	<h6 class="fw-bolder" style="text-align: center;">완료일시</h6>
+																</th>
+																<th>
+																	<h6 class="fw-bolder" style="padding-left: 120px;">제목</h6>
+																</th>
+																<th>
+																	<h6 class="fw-bolder" style="text-align: center;">기안부서</h6>
+																</th>
+																<th>
+																	<h6 class="fw-bolder" style="text-align: center;">기안자</h6>
+																</th>
+																<th>
+																	<h6 class="fw-bolder">결재상태</h6>
+																</th>
+															</tr>
+														</thead>
+														<c:forEach var="atrzVO" items="${atrzCompletedList}">
+															<tbody>
+																<tr>
+																	<td style="padding-top: 10px; padding-bottom: 10px;">
+																		<p class="text-sm" style="text-align: center;">
+																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																			<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}
+																		</p>
+																	</td>
+																	<td style="padding-top: 10px; padding-bottom: 10px;">
+																		<p class="text-sm" style="text-align: center;">
+																			<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																			<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="HH:mm:ss" var="onlyTime" />
+																			<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}
+																		</p>
+																	</td>
+																	<td style="text-align: left; padding-top: 0px;">
+																		<a href="#" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
 																			<c:choose>
-																				<c:when test="${atrzVO.atrzSttusCode == '00' }">
-																					<span
-																						class="status-btn close-btn actBtn col-sm-6 col-md-4"
-																						style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
-																				</c:when>
-																				<c:when test="${atrzVO.atrzSttusCode == '10' }">
-																					<span
-																						class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
-																				</c:when>
-																				<c:when test="${atrzVO.atrzSttusCode == '20' }">
-																					<span
-																						class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
-																				</c:when>
-																				<c:when test="${atrzVO.atrzSttusCode == '30' }">
-																					<span
-																						class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																				<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
+																					<span class="material-symbols-outlined" style="margin-right: 5px;">
+																						attach_file
+																					</span>
 																				</c:when>
 																				<c:otherwise>
-																					<span
-																						class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4"
-																						style="background-color: pink; color: #ed268a;">취소</span>
+																					<span class="material-symbols-outlined" style="margin-right: 5px; visibility: hidden;">
+																						attach_file
+																					</span>
 																				</c:otherwise>
 																			</c:choose>
-																		</p>
-																	</h6>
-																</td>
-															</tr>
-														</tbody>
-													</c:forEach>
-												</table>
-											</div>
+																			${atrzVO.atrzSj}
+																		</a>
+																	</td>
+																	<td style="padding-top: 0px;">
+																		<p class="fw-bolder" style="text-align: center;">${atrzVO.deptCodeNm}</p>
+																	</td>
+																	<td style="padding-top: 0px;">
+																		<p class="fw-bolder" style="text-align: center;">${atrzVO.drafterEmpnm}</p>
+																	</td>
+																	<td style="padding-top: 0px;">
+																		<h6 class="text-sm">
+																			<p>
+																				<c:choose>
+																					<c:when test="${atrzVO.atrzSttusCode == '00'}">
+																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
+																					</c:when>
+																					<c:when test="${atrzVO.atrzSttusCode == '10'}">
+																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
+																					</c:when>
+																					<c:when test="${atrzVO.atrzSttusCode == '20'}">
+																						<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
+																					</c:when>
+																					<c:when test="${atrzVO.atrzSttusCode == '30'}">
+																						<span class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																					</c:when>
+																					<c:otherwise>
+																						<span class="status-btn info-btn actBtn col-sm-6 col-md-4" style="background-color: pink; color: #ed268a;">취소</span>
+																					</c:otherwise>
+																				</c:choose>
+																			</p>
+																		</h6>
+																	</td>
+																</tr>
+															</tbody>
+														</c:forEach>
+													</table>
+												</div>
+											</c:otherwise>
+										</c:choose>
 									</div>
 								</div>
 							</div>

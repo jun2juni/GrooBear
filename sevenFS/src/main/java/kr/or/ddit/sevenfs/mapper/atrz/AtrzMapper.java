@@ -63,7 +63,7 @@ public interface AtrzMapper {
 	//전자결재 문서 상세보기 수정(업데이트)
 	public int atrzDetailAppUpdate(AtrzVO atrzVO);
 	
-	//현재결재선 업데이트 
+	//현재결재선 업데이트 (승인시)
 	public void atrzDetailAppUpdate(AtrzLineVO currentLine);
 	//전자결재 문서 상태 업데이트 (최종결재자인경우)
 	public int atrzStatusFinalUpdate(AtrzVO atrzVO);
@@ -71,6 +71,11 @@ public interface AtrzMapper {
 	public int getMaxStep(AtrzVO atrzVO);
 	//나의 전자결재선 상황(1행)
 	public AtrzLineVO getAtrzLineInfo(AtrzVO atrzVO);
+	
+	//현재결재선 업데이트 (반려시)
+	public int atrzDetilCompUpdate(AtrzVO atrzVO);
+	//전자결재 문서 상태 업데이트 (반려시)
+	public int atrzStatusCompFinalUpdate(AtrzVO atrzVO);
 	
 	
 	

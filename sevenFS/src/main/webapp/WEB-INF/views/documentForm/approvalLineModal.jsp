@@ -2,6 +2,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<style>
+.modalBtn{
+	padding: 10px 20px;
+	font-size: 1.1em;
+}
+</style>
 <!-- 결재선 지정 모달창 시작 -->
 	<div class="modal fade" id="atrzLineModal" tabindex="-1"
 		aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -89,9 +95,9 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary"
+					<button type="button" class="main-btn light-btn rounded-full btn-hover modalBtn"
 						data-bs-dismiss="modal">취소</button>
-					<button id="s_add_appLine_list" type="button" class="btn btn-primary">확인</button>
+					<button id="s_add_appLine_list" type="button" class="main-btn primary-btn rounded-full btn-hover modalBtn">확인</button>
 				</div>
 			</div>
 		</div>

@@ -2,7 +2,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
+<style>
+.modalBtn{
+	padding: 10px 20px;
+	font-size: 1.1em;
+}
+</style>
 <!--새결재 진행-->
 <div class="modal fade" id="newAtrzDocModal" tabindex="-1"
 aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
@@ -36,9 +41,9 @@ aria-labelledby="newAtrzDocModalLabel" aria-hidden="true">
 			</div>
 		</div>
 		<div class="modal-footer">
-			<button type="button" class="btn btn-secondary"
+			<button type="button" class="main-btn light-btn rounded-full btn-hover modalBtn"
 				data-bs-dismiss="modal" id="s_cancel_btn">취소</button>
-			<button type="button" class="btn btn-primary"
+			<button type="button" class="main-btn primary-btn rounded-full btn-hover modalBtn"
 				id="liveAlertBtn">확인</button>
 		</div>
 	</div>

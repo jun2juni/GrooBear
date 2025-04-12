@@ -119,18 +119,26 @@ public class AtrzController {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
-
-		List<AtrzVO> atrzVOList = this.atrzService.homeList(emplNo);
+		
+		//결재대기문서
+		List<AtrzVO> atrzApprovalList = this.atrzService.atrzApprovalList(emplNo);
 
 		EmployeeVO employeeVO;
-		for (AtrzVO atrzVO : atrzVOList) {
+		for (AtrzVO atrzVO : atrzApprovalList) {
 			employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
 			atrzVO.setClsfCodeNm(employeeVO.getPosNm());
 			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
 		}
-		model.addAttribute("atrzVOList", atrzVOList);
+		model.addAttribute("atrzApprovalList", atrzApprovalList);
 		model.addAttribute("title", "결재대기문서");
 
+		//참조대기문서
+		
+		//결재예정문서
+		
+		
+		
+		
 		return "atrz/approval";
 
 	}
@@ -316,39 +324,35 @@ return viewName;
 	//전자결재 승인시 상세보기 get
 	//전자결재 승인시
 	@ResponseBody
-	@PostMapping("selectForm/atrzDetailUpdate")
-	public String atrzDetailUpdate(AtrzVO atrzVO,
+	@PostMapping("selectForm/atrzDetailAppUpdate")
+	public String atrzDetailAppUpdate(AtrzVO atrzVO,
 			Model model,@AuthenticationPrincipal CustomUser customUser) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
 		
 		atrzVO.setEmplNo(emplNo);
-		//여기서 파라미터로 문서번호를 넘겨줘야한다.
-		//결재한사람의 정보를 받아온다. 
-		//모달창에서 승인을 누르면 업데이트가 되어야한다.
-		/*
-		 AtrzVO(atrzDocNo=H_20250411_00003, drafterEmpno=null, drafterClsf=null, drafterEmpnm=null, drafterDept=null, bkmkYn=null, 
-		 atchFileNo=0, atrzSj=null, atrzCn=null, atrzOpinion=null, atrzTmprStreDt=null, atrzDrftDt=null, atrzComptDt=null, atrzRtrvlDt=null, atrzSttusCode=null, 
-		 eltsgnImage=null, docFormNo=0, atrzDeleteYn=null, schdulRegYn=null, docFormNm=null, emplNoArr=null, emplNo=20250000, emplNm=null, clsfCode=null, clsfCodeNm=null,
-         deptCode=null, deptCodeNm=null, uploadFile=null, 
-		  	atrzLineVOList=[AtrzLineVO(atrzDocNo=null, atrzLnSn=0, sanctnerEmpno=null, sanctnerClsfCode=null, contdEmpno=null, 
-			  contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=null, sanctnProgrsSttusCode=null, dcrbAuthorYn=null, contdAuthorYn=null, sanctnOpinion=승인합니다., 
-			  eltsgnImage=null, sanctnConfmDt=null, atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null)
-			  ], 
-		 holidayVO=null, spendingVO=null, salaryVO=null, 
-		 bankAccountVO=null, draftVO=null, emplDetailList=null, authorStatus=false, sanctnProgrsSttusCode=10)
-		 */
 		
-		//
 		int atrzUpdateResult = atrzService.atrzDetailAppUpdate(atrzVO);
 		
 		log.info("atrzDetailUpdate-> atrzVO : "+atrzVO);
-		//전자결재 승인시 다음결재권자로 넘어간다.
+
+		return "success";
+	}
+	
+	//전자결재 반려시 
+	@PostMapping("selectForm/atrzDetilCompUpdate")
+	public String atrzDetilCompUpdate(AtrzVO atrzVO, Model model
+			,@AuthenticationPrincipal CustomUser customUser	) {
 		
-		//전자결재 반려시 반려처리가된다.
-		//이러고 어디로 가야할지 모르겠다.
-//		return "redirect:/selectForm/atrzDetail?atrzDocNo=" + atrzVO.getAtrzDocNo();
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String emplNo = empVO.getEmplNo();
+		
+		atrzVO.setEmplNo(emplNo);
+		int atrzUpdateResult = atrzService.atrzDetilCompUpdate(atrzVO);
+		
+		log.info("atrzDetilCompUpdate-> atrzVO : "+atrzVO);
 		return "success";
 	}
 	

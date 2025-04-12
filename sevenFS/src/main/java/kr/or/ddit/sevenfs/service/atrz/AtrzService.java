@@ -54,8 +54,11 @@ public interface AtrzService {
 	//연차신청서 상세보기
 	public HolidayVO holidayDetail(String atrzDocNo);
 	
-	//전자결재 문서 상세보기 결재라인 수정(업데이트)
+	//전자결재 문서 상세보기 결재라인 수정(업데이트) 승인시
 	public int atrzDetailAppUpdate(AtrzVO atrzVO);
+	
+	//전자결재 문서 상세보기 결재라인 수정(업데이트) 반려시
+	public int atrzDetilCompUpdate(AtrzVO atrzVO);
 	
 	
 	

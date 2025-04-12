@@ -128,7 +128,7 @@ public class AtrzServiceImpl implements AtrzService {
 		return this.atrzMapper.holidayDetail(atrzDocNo);
 	}
 	
-	//전자결재 상세 업데이트
+	//전자결재 상세 업데이트(승인시)
 	@Override
 	public int atrzDetailAppUpdate(AtrzVO atrzVO) {
 		String atrzDocNo = atrzVO.getAtrzDocNo();
@@ -172,8 +172,44 @@ public class AtrzServiceImpl implements AtrzService {
 		return 1;
 		
 	}
-	
-	
+	//전자결재 상세 업데이트(반려시)
+	@Override
+	public int atrzDetilCompUpdate(AtrzVO atrzVO) {
+		//문서번호  
+		String atrzDocNo = atrzVO.getAtrzDocNo();
+		
+		//사원번호
+		String emplNo = atrzVO.getEmplNo();
+		//결재의견
+		String atrzOption = atrzVO.getAtrzOpinion();
+		
+		
+		log.info("atrzDetilCompUpdate->atrzVO : "+atrzVO);
+		log.info("atrzDetilCompUpdate->atrzDocNo : "+atrzDocNo);
+		
+		
+		//현재 결재에서 결재한 사람 찾기
+		AtrzLineVO currentLine = null;
+		log.info("atrzDetilCompUpdate->currentLine: "+currentLine);
+
+		//나의 전자결재선 상황(1행)
+		AtrzLineVO emplAtrzLineInfo = this.atrzMapper.getAtrzLineInfo(atrzVO);
+		
+		//H_20250411_00003 문서의 결재선 총 스탭수
+		//0 : 마지막 결재자가 아님
+		//0이 아닌 경우 : 마지막 결재자임
+		int maxStep = atrzMapper.getMaxStep(atrzVO);
+		log.info("atrzDetailAppUpdate-> maxStep : "+maxStep);
+
+		//I. ATRZ_LINE 결재 처리
+		int result = atrzMapper.atrzDetilCompUpdate(atrzVO);
+		
+		atrzVO.setAtrzSttusCode("10");
+		result += atrzMapper.atrzStatusCompFinalUpdate(atrzVO);
+		
+		
+		return 1;
+	}
 	
 	
 }

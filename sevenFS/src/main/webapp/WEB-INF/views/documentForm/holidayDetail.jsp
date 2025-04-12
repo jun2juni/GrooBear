@@ -421,7 +421,7 @@ $("#atrzDetailappBtn").on("click", function() {
 
     // AJAX 요청
     $.ajax({
-        url: "/atrz/selectForm/atrzDetailUpdate", // 서버의 결재 상태 업데이트 API
+        url: "/atrz/selectForm/atrzDetailAppUpdate", // 서버의 결재 상태 업데이트 API
         type: "POST",
         data: approvalData,
 		dataType: "text",
@@ -460,7 +460,34 @@ $("#atrzDetailComBtn").on("click",function(){
 		"sanctnProgrsSttusCode": "20", // 결재 상태를 "반려"로 설정
 	};
 	console.log("companionData : ", companionData);
-	
+	//ajax 요청
+	$.ajax({
+		url: "/atrz/selectForm/atrzDetailUpdate", // 서버의 결재 상태 업데이트 API
+		type: "POST",
+		data: companionData,
+		dataType: "text",
+		success: function (response) {
+			if (response == "success") {
+				swal({
+					title: "반려 완료",
+					text: "반려가 성공적으로 처리되었습니다.",
+					icon: "success",
+					button: "확인",
+				}).then(() => {
+					// 반려 완료 후 페이지를 새로고침하거나 목록 페이지로 이동
+					window.location.href = "/atrz/home";
+				});
+			}
+		},
+		error: function (error) {
+			swal({
+				title: "반려 실패",
+				text: "반려 처리 중 오류가 발생했습니다. 다시 시도해주세요.",
+				icon: "error",
+				button: "확인",
+			});
+		},
+	});
 })
 
 
