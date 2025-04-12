@@ -97,10 +97,11 @@
       
       $('#mailWrite').on('click',function(){
         console.log('클릭 확인');
-        $('.email-section').hide();
-        console.log($('.email-section'))
-        $('.email-section write').show();
-        console.log($('.email-section write'))
+        // $('.email-section').hide();
+        // console.log($('.email-section'));
+        // $('.email-section write').show();
+        // console.log($('.email-section write'));
+        window.location.href="mail/mailSend";
       })
 
       // 탭 클릭 이벤트
@@ -305,7 +306,7 @@
 
         <!-- 이메일 write 페이지 시작 -->
         <div class="email-section email-section-write">
-          
+          <c:import url="mailSend.jsp" />
         </div>
         <!-- 이메일 write 페이지 끝 -->
         

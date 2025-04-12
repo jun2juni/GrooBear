@@ -53,8 +53,8 @@ public class MailVO {
 	// 송신 이메일 ( 해당 메일을 작성하여 보내는 사람의 이메일)
 	private String trnsmitEmail;
 	
-	// 수신이메일 ( 해당 메일을 받는 사람의 이메일)
-	private String recptnEmail;
+	// 수신이메일 ( 해당 메일을 받는 사람의 이메일)(복수개 가능)
+	private List<String> recptnEmail;
 	
 	// 메일 제목
 	private String emailSj;

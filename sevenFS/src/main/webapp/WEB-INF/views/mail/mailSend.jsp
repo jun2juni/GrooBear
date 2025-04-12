@@ -73,7 +73,7 @@
         overflow-y: auto;
         margin-bottom: 15px;
     }
-    #hiddenRefEmail, #refEmail{
+    #hiddenRefEmail, #refEmail, #recpEmail{
         margin-right: 3px;
         margin-bottom: 3px;
         width: 1px; /* 초기 너비를 최소화 */
@@ -93,6 +93,15 @@
         background-color: #f9f9f9;
     }
     #hiddenRefEmailList > div:not(#hiddenRefEmailTemp) {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 2px 5px;
+        margin: 2px;
+        background-color: #f9f9f9;
+    }
+    #recpEmailList > div:not(#recpEmailTemp) {
         display: inline-flex;
         align-items: center;
         border: 1px solid #ddd;
@@ -137,20 +146,34 @@
                                     <!-- 송신 이메일 -->
                                     <input type="hidden" id="trnsmitEmail" name="trnsmitEmail" class="form-control" placeholder="hidden처리할 예정" readonly>
                                     <!-- 수신 이메일 -->
-                                    <div class="mb-3" >
-                                        <label class="form-label" >수신 이메일</label>
+                                    <div class="mb-3" id="recpInp" >
+                                        <label class="form-label">수신 이메일</label>
+                                        <div class="form-control" id="recpEmailList">
+                                            <div class="emailListDiv"  name="recpEmailTemp" id="recpEmailTemp">
+                                                <span id="recpEmailInpSpan"></span>
+                                                <input type="text" id="cloneInp" style="border: 0px; width: 1px;" class="form-control">
+                                                <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                                <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                            </div>
+                                            <input type="text" name="recpEmailInp" id="recpEmailInp" style="margin: 3px; border: 1px;" >
+                                        </div>
+                                        <button class="emailTreeBtn" type="button" data-event="recpEmailInp">주소록</button>
+                                    </div>
+                                    <!-- 원본 -->
+                                    <!-- <div class="mb-3" >
                                         <span id="recptnEmailSpan"></span>
                                         <input type="text" id="recptnEmail" name="recptnEmail" class="form-control emailInput" required>
                                         <button class="emailTreeBtn" type="button" data-event="recptnEmail">주소록</button>
-                                    </div>
-                                    
+                                    </div> -->
+
+                                    <!-- 참조 -->
                                     <div class="mb-3" id="refInp" >
                                         <div class="form-label">
-                                            <span id="hiddenIconSpan" style="margin-right: 5px;"><i class='fas fa-chevron-down' id="hiddenRefBtn" style="cursor: pointer;"></i></span><label >참조</label>
+                                            <span id="hiddenIconSpan" style="margin-right: 5px;"><i class='fas fa-chevron-down' id="hiddenRefBtn" style="cursor: pointer;"></i></span><label>참조</label>
                                         </div>
                                         <div class="form-control" id="refEmailList" >
                                             <div class="emailListDiv"  name="refEmailTemp" id="refEmailTemp">
-                                                <span id="recptnEmailSpan"></span>
+                                                <span id="refEmailInpSpan"></span>
                                                 <input type="text" id="cloneInp" style="border: 0px; width: 1px;" class="form-control">
                                                 <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                                 <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
@@ -159,11 +182,12 @@
                                         </div>
                                         <button class="emailTreeBtn" type="button" data-event="refEmailInp">주소록</button>
                                     </div>
+                                    <!-- 숨은 참조 -->
                                     <div class="mb-3" id="hiddenRefInp"  >
                                         <label class="form-label">숨은 참조</label>
                                         <div class="form-control" id="hiddenRefEmailList">
                                             <div class="emailListDiv" name="hiddenRefEmailTemp" id="hiddenRefEmailTemp">
-                                                <span id="hiddenRefEmailInp"></span>
+                                                <span id="hiddenRefEmailInpSpan"></span>
                                                 <input type="text" id="cloneInp" style="border: 0px; width: 1px;" class="form-control">
                                                 <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                                 <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
@@ -178,7 +202,7 @@
                                     <div id="orgTree" style=" display: block;">
                                         <c:import url="../organization/orgList.jsp" />
                                     </div>
-                                    <input id="btnEvent" value="ss" />
+                                    <input id="btnEvent" type="hidden" value="ss" />
                                     <button id="emailTreeClose" type="button">닫기</button>
                                 </div>
                             </div>
@@ -211,8 +235,8 @@
                                 contextPath="${pageContext.request.contextPath}"
                             ></file-upload>
 
-                            <!-- 게시글 추가 버튼 -->
-                            <button type="button" id="sendMail" class="btn btn-primary">추가</button>
+                            <!-- 전송 버튼 -->
+                            <button type="button" id="sendMail" class="btn btn-primary">전송</button>
                             <button type="button" id="toList" class="btn btn-secondary">목록</button>
 						</div>
 					</div>
@@ -240,11 +264,77 @@
         $('#hiddenRefInp').hide();
         $('#emailTree').hide();
         $('#trnsmitEmail').val("${myEmpInfo.email}")
-
-        $('#sendMail').on('click',function(){
-            let mail = new FormData();
-            mail.append()
+        $(".ck-blurred").keydown(function(){
+            console.log("str : ", window.editor.getData());
+            $("#emailCn").val(window.editor.getData());
         })
+        $(".ck-blurred").on("focusout",function(){
+            $("#emailCn").val(window.editor.getData());
+        })
+
+        $('#sendMail').on('click', function() {
+            if($('#recpEmail').get().length==0){
+                alert('수신 이메일을 작성해주세요')
+                return 
+            }
+            let mailForm = new FormData();
+            let trnsmitEmail = $('#trnsmitEmail').val();
+            mailForm.append('trnsmitEmail', trnsmitEmail);
+
+             // 여러 이메일을 처리하는 방법 수정
+            $('.recpEmailInp').each(function() {  // 클래스로 가정, 실제 구조에 맞게 수정 필요
+                mailForm.append('recptnEmail', $(this).val());
+                console.log('recptnEmail : ', $(this).val());
+            });
+            
+            $('.refEmailInp').each(function() {  // 클래스로 가정, 실제 구조에 맞게 수정 필요
+                mailForm.append('refEmail', $(this).val());
+                console.log('refEmail : ', $(this).val());
+            });
+            
+            $('.hiddenRefEmailInp').each(function() {  // 클래스로 가정, 실제 구조에 맞게 수정 필요
+                mailForm.append('hiddenRefEmail', $(this).val());
+                console.log('hiddenRefEmail : ', $(this).val());
+            });
+            
+            let emailClTy = $('#emailClTy').val();
+            mailForm.append('emailClTy', emailClTy);  // # 기호 제거
+            
+            let emailSj = $('#emailSj').val();  // # 기호 추가
+            mailForm.append('emailSj', emailSj);
+            
+            let emailCn = $('#emailCn').val();
+            mailForm.append('emailCn', emailCn);
+            // 0 보낸메일
+            mailForm.append('emailClTy', '0');
+
+            // let fileInp = $("input[name='uploadFile']")[0];
+            // console.log('fileInp',fileInp.value);
+
+            $("input[name='uploadFile']").each(function(index,element){
+                console.log('element : ',index," : ", element);
+                console.log('element.value : ',index," : ",element.value);
+                console.log('element.value type : ', typeof(element.value));
+                // mailForm.append('uploadFile', element);
+                mailForm.append('uploadFile', element.value);
+            })
+
+            console.log("mailForm : ", mailForm);
+            
+            $.ajax({
+                url: "/mail/sendMail",
+                type: 'post',
+                data: mailForm,
+                processData: false,  // FormData 처리 시 필요
+                contentType: false,  // FormData 처리 시 필요
+                success: function(resp) {
+                    console.log(resp);
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        });
 
         let refBtnIcon = `<i class='fas fa-chevron-up' id="hiddenRefBtn" style="cursor: pointer;"></i>`;
         // $('#hiddenRefBtn').on('click',function(){
@@ -257,18 +347,21 @@
         })
 
         // 기존 이벤트 핸들러 변경
-        $('#refEmailList, #hiddenRefEmailList').on('click', function(e) {
+        $('#refEmailList, #hiddenRefEmailList, #recpEmailList').on('click', function(e) {
             // 클릭된 요소가 refEmail 또는 hiddenRefEmail이거나 그 자식 요소인 경우 이벤트 처리 중단
-            if ($(e.target).is('#refEmail, #hiddenRefEmail, #editEmail, #delEmail') || 
-                $(e.target).closest('#refEmail, #hiddenRefEmail').length) {
+            console.log('$(e.target) : ',$(e.target));
+            if ($(e.target).is('#refEmailTemp, #hiddenRefEmailTemp, #recpEmailTemp, #editEmail, #delEmail') || 
+                $(e.target).closest('#refEmail, #hiddenRefEmail, #recpEmail').length) {
                 return;
             }
             
             // 그 외의 경우 원래대로 동작
             if(this.id == 'refEmailList') {
                 $('#refEmailInp').focus();
-            } else {
+            } else if(this.id == 'hiddenRefEmailList') {
                 $('#hiddenRefEmailInp').focus();
+            }else{
+                $('#recpEmailInp').focus();
             }
         });
         $(document).on('click', '#refEmail, #hiddenRefEmail', function(e) {
@@ -285,31 +378,74 @@
         }
         
         // 수신 이메일
-        $('#recptnEmail').on('change',function(){
-            let email = $('#recptnEmail').val();
-            $('#recptnEmail').val('');
+        $('#recpEmailInp').on('change',function(){
+            let email = $('#recpEmailInp').val();
+            let emplNm = $('#recpEmailInpSpan').text();
+            $('#recpEmailInp').val('');
+            $('#recpEmailInpSpan').text('');
+            
+            console.log('recpEmailInp 값 변경 감지',email);
+            console.log('recpEmailInp 값 변경 감지 emplNm : ',emplNm);
             let myMail = $('#trnsmitEmail').val();
-            if(email==myMail){
+            if(email == myMail){
                 alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
+                $('#recptnEmail').val('');
                 return 
             }
-            if(email!='' && !(isValidEmail(email))){
+            if(email != '' && !(isValidEmail(email))){
                 alert('알맞지 않는 형식입니다.');
                 $('#recptnEmail').val('');
                 return
             }
-            if(email!='' && validateDupl(email).length!=0){
+            if(email != '' && validateDupl(email).length!=0){
                 alert('이미 작성한 이메일입니다.');
-                console.log('이거 실행되면 안됨')
-                $('#recptnEmail').val('')
+                console.log('이거 실행되면 안됨');
+                $('#recptnEmail').val('');
                 return;
             }
-            $('#recptnEmail').val(email);
+            // $('#recptnEmail').val(email);
+            
+            let inpDiv = $('#recpEmailTemp').clone();
+            console.log('수신 이메일 inpDiv',inpDiv)
+            inpDiv.css('display', 'inline-flex');
+            inpDiv.css('border', '1px solid #ddd');
+            inpDiv.css('border-radius', '4px');
+            inpDiv.css('padding', '2px 5px');
+            inpDiv.css('margin', '2px');
+            inpDiv.css('align-items', 'center');
+            
+            if(emplNm != ''&& emplNm != null){
+                let inpSpan = inpDiv.children('span');
+                inpSpan.text(emplNm+" / ");
+            }
+
+            let inp = inpDiv.children('input');
+            inp.prop('id','recpEmail');
+            inp.prop('name','recpEmail');
+            inp.prop('class','recpEmailInp emailInput');
+            inp.prop('readonly',true);
+            inp.val(email);
+            console.log('inp : ',inp);
+
+            // 텍스트 길이에 맞게 정확한 너비 설정
+            const font = getComputedStyle(inp[0]).font;
+            const width = getTextWidth(email, font);
+            inp.css('width', width + 'px');
+
+            $('#recpEmailInp').before(inpDiv);
+            $('#recpEmailInp').val('');
+            inp.trigger('change');
+            setTimeout(function(){
+                $('#recpEmailInp').focus();
+            },10);
         })
 
         // 참조 이메일
         $('#refEmailInp').on('change',function(){
             let email = $('#refEmailInp').val();
+            let emplNm = $('#refEmailInpSpan').text();
+            $('#refEmailInp').val('');
+            $('#refEmailInpSpan').text('');
             // console.log('refEmailInp 값 변경 감지',email);
             let myMail = $('#trnsmitEmail').val();
             if(email==myMail){
@@ -333,11 +469,16 @@
             inpDiv.css('padding', '2px 5px');
             inpDiv.css('margin', '2px');
             inpDiv.css('align-items', 'center');
-            
+            console.log('emplNm : ',emplNm);
+            if(emplNm != ''&&emplNm != null){
+                let inpSpan = inpDiv.children('span');
+                inpSpan.text(emplNm+" / ");
+            }
+
             let inp = inpDiv.children('input');
             inp.prop('id','refEmail');
             inp.prop('name','refEmail');
-            inp.prop('class','emailInput');
+            inp.prop('class','refEmailInp emailInput');
             inp.prop('readonly',true);
             inp.val(email);
             console.log('inp : ',inp);
@@ -358,6 +499,9 @@
         // 숨은 참조 이메일
         $('#hiddenRefEmailInp').on('change',function(){
             let email = $('#hiddenRefEmailInp').val();
+            $('#hiddenRefEmailInp').val('');
+            let emplNm = $('#hiddenRefEmailInpSpan').text();
+            $('#hiddenRefEmailInpSpan').text('');
             // console.log('hiddenRefEmailInp 값 변경 감지',email);
             let myMail = $('#trnsmitEmail').val();
             if(email==myMail){
@@ -382,10 +526,15 @@
             inpDiv.css('margin', '2px');
             inpDiv.css('align-items', 'center');
             
+            if(emplNm != '' && emplNm!=null){
+                let inpSpan = inpDiv.children('span');
+                inpSpan.text(emplNm+" / ");
+            }
+
             let inp = inpDiv.children('input');
             inp.prop('id','hiddenRefEmail');
             inp.prop('name','hiddenRefEmail');
-            inp.prop('class','emailInput');
+            inp.prop('class','hiddenRefEmailInp emailInput');
             inp.prop('readonly',true);
             inp.val(email);
             console.log('inp : ',inp);
@@ -409,6 +558,9 @@
         // <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
         // <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
 
+        // 수정 전 값들
+        let emailState = '';
+        let emplNmState='';
         // 편집 아이콘 클릭 이벤트
         $(document).on('click', '#editEmail', function(e) {
             e.stopPropagation(); // 클릭 이벤트 전파 중단
@@ -416,7 +568,10 @@
             // 현재 요소의 부모 요소(이메일 아이템) 찾기
             let emailItem = $(this).parent();
             let inputField = emailItem.find('input');
-            
+            emailState = inputField.val();
+            let spanField = emailItem.find('span');
+            emplNmState = spanField.text();
+            spanField.text('');
             // readonly 속성 제거하고 포커스
             inputField.prop('readonly', false);
             inputField.focus();
@@ -434,9 +589,39 @@
             $(this).parent().remove();
         });
         // 편집 완료 처리 (포커스 아웃 시)
-        $(document).on('blur', '#refEmail, #hiddenRefEmail', function() {
+        $(document).on('blur', '#refEmail, #hiddenRefEmail, #recpEmail', function() {
+            console.log(this)
+            let myMail = $('#trnsmitEmail').val();
             $(this).prop('readonly', true);
-            
+            let email = $(this).val();
+            let emailField = $(this);
+            let spanField = $(this).siblings('span');
+            console.log('spanField : ',spanField)
+            console.log('emailState : ',emailState)
+            console.log('emplNmState : ',emplNmState)
+            if(email==emailState){
+                spanField.text(emplNmState);
+            }
+            if(email==myMail){
+                alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
+                spanField.text(emplNmState);
+                emailField.val(emailState);
+                return;
+            }
+            if(emailState!='' && !(isValidEmail(email))){
+                alert('알맞지 않는 형식입니다.');
+                spanField.text(emplNmState);
+                emailField.val(emailState);
+                return;
+            }
+            if((emailState!='' && validateDupl(email).length!=0) && email != emailState){
+                alert(' 수정 : 이미 작성한 이메일입니다.');
+                spanField.text(emplNmState);
+                emailField.val(emailState);
+                return;
+            }
+            emailState = '';
+            emplNmState = '';
             // 텍스트 길이에 맞게 너비 업데이트
             const font = getComputedStyle(this).font;
             const width = getTextWidth($(this).val(), font);
@@ -484,8 +669,10 @@
                     success:function(resp){
                         console.log("email 요청 결과 : ",resp);
                         if(validateDupl(resp.email).length==0){
+                            console.log('spanId : ',spanId)
+                            console.log('resp.emplNm : ',resp.emplNm)
                             $(sel).val(resp.email);
-                            $(spanId).text(resp.emplNm+"/");
+                            $(spanId).text(resp.emplNm);
                             $(sel).val(resp.email).trigger('change');
                         }else{
                             alert('이미 작성한 이메일입니다.');
@@ -495,23 +682,7 @@
                 })
             }
         })
-        // $(document).on('change',"#recptnEmail,#refEmail,#hiddenRefEmail",function(){
-        // $(document).on('change', '#recptnEmail,#refEmail,#hiddenRefEmail', function(){
-            
-        //     // console.log('감지감지', this);
-        //     // console.log('바뀐 값:', $(this).val());
-        //     let emailInp = $(this).val();
-        //     console.log('기입 된 email : ',emailInp);
-        //     let emails = $('.emailInput').get();
-        //     console.log('기입되어있는 email',emails);
-        //     let chkEmail = emails.filter(email=>{
-        //         // console.log($(email).val());
-        //         return $(email).val() == emailInp;
-        //     }) 
-        //     console.log(chkEmail);
 
-        // });
-        // validation(중복체크 - 다른 곳에 입력되어있는지, 자신의 이메일이 들어갔는지)
         function validateDupl(emailInp){
             console.log('기입 된 email : ',emailInp);
             let emails = $('.emailInput').get();
@@ -521,6 +692,7 @@
                 return $(email).val() == emailInp;
             }) 
             console.log('chkEmail : ',chkEmail);
+            console.log('chkEmail.length : ',chkEmail.length);
             return chkEmail;
         }
 
@@ -530,17 +702,15 @@
         }
 
 
-        // $(".ck-blurred").keydown(function(){
-        //     console.log("str : ", window.editor.getData());
-        //     $("#content").val(window.editor.getData());
-        // })
-        // $(".ck-blurred").on("focusout",function(){
-        //     $("#content").val(window.editor.getData());
-        // })
+        
         $('#toList').on('click',function(){
             console.log('toList 버튼 눌림.');
+            window.location.href="/mail"
         })
     });
+    $(window).unload(function() {
+        // 언로드시 임시저장 (적힌게 있다면 y/n으로 물어보고 y면 저장 아니면 날림)
+    })
 
 </script>
 </body>
