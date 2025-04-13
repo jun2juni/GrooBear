@@ -30,7 +30,7 @@
 		<div class="container-fluid">
 			<div class="row">
 			<div class="col-4">
-				<div class="card-style">
+				<div class="card-style overflow-scroll" style="max-height: 90vh;">
 					<%@ include file="orgList.jsp" %>
 				</div>
 		 	</div>
@@ -117,7 +117,7 @@ function clickEmp(data) {
        $("#emplDetail").html(res);
        
    
-	// 삭제 클릭한 경우
+	// 사원 삭제 클릭한 경우
 	  $(function(){
 	     $("#emplDeleteBtn").on("click", function(){
 	    	 swal({

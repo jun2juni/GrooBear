@@ -182,6 +182,35 @@ public class OrganizationController {
 	}
 	
 
+	// 사원상세 Header - jsp return
+	@GetMapping("/emplDetailHeader")
+	public String emplDetailHeader(@RequestParam(value = "emplNo") String emplNo
+			, Model model) {
+		
+		//log.info("사원번호 와라와라 : " + emplNo);
+		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
+		log.info("사원상세 : " + empDetail);
+		
+		// 사원 파일 번호 가져오기
+		int fileNo = empDetail.getAtchFileNo();
+		
+		AttachFileVO attachFileVO = new AttachFileVO();
+		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
+		String empFileName = fileAttachList.get(0).getFileStrePath();
+		
+		// 사원 프로필 url가져오기
+		empDetail.setProflPhotoUrl(empFileName);
+		log.info("사원상세 프로필 url : " + empFileName);
+		
+		//model.addAttribute("empFileName" , empFileName);
+		
+		model.addAttribute("title" , "사원 정보");
+		
+		model.addAttribute("empDetail", empDetail);
+		
+		return "organization/employeeDetailHeader";
+	}
+	
 	// 사용자가 선택한 사원상세 - jsp return
 	@GetMapping("/emplDetail")
 	public String emplDetail(@RequestParam(value = "emplNo") String emplNo

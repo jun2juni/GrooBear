@@ -7,6 +7,7 @@
 <!-- 검색 -->
 <div>
     <div class="input-group rounded mb-3">
+    	<sec:authentication property="principal.empVO" var="emp" />
         <input type="search" class="form-control rounded" placeholder="이름 입력" aria-label="Search"
                aria-describedby="search-addon" id="schName"
                onkeydown="fSchEnder(event)"
@@ -51,6 +52,7 @@
                 if (typeof clickEmp === "function") {
                     clickEmp(data);
                 }
+                
             }
             
             // 클릭한게 부서일때
@@ -61,7 +63,6 @@
                 }
             }
         } // end function
-        
 
         // 비동기로 조직도 데이터 가져오기
         fetch("/organization", {
@@ -146,6 +147,7 @@
     function fSch() {
         console.log("검색");
         $('#jstree').jstree(true).search($("#schName").val());
+        
     }
     
     function fSchEnder(e) {

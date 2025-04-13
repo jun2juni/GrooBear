@@ -4,11 +4,11 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <div class="card-style chat-about h-100">
   <h6 class="text-sm text-medium"></h6>
-  <div class="chat-about-profile">
+  <div class="chat-about-profile text-center">
 	  <div class="image mx-auto chat-about chat-about-profile image">
     	<img src="/upload/${empDetail.proflPhotoUrl}" alt="" style="border-radius: 50%; width:150px; height: 150px; ">
       </div> 
-      <h4><span class="text-dark mb-3">${empDetail.emplNm}</span></h4>
+      <h4><span class="text-dark mb-3 text-center">${empDetail.emplNm}</span></h4>
       <div class="content text-center">
 		<span class="status-btn info-btn">${empDetail.posNm}</span>
 		<span class="status-btn success-btn">${empDetail.deptNm}</span>
@@ -17,7 +17,7 @@
    <div class="activity-meta text-start" style="margin-top: 20px;">
      <ul>
        <li class="row">
-         <span class="col-4" >입사일자</span>
+         <span class="col-4 text-end" >입사일자</span>
          <c:set var="year" value="${empDetail.ecnyDate.substring(0,4)}"></c:set>
          <c:set var="month" value="${empDetail.ecnyDate.substring(4,6)}"></c:set>
          <c:set var="day" value="${empDetail.ecnyDate.substring(6,8)}"></c:set>
@@ -25,12 +25,12 @@
        </li>
        <hr>
        <li class="row">
-         <span class="col-4">이메일</span>
+         <span class="col-4 text-end">이메일</span>
          <span class="col-8 text-medium text-dark">${empDetail.email}</span>
        </li>
        <hr>
        <li class="row">
-         <span class="col-4">전화번호</span>
+         <span class="col-4 text-end">전화번호</span>
          <c:set var="telno1" value="${empDetail.telno.substring(0,3)}"></c:set>
          <c:set var="telno2" value="${empDetail.telno.substring(3,7)}"></c:set>
          <c:set var="telno3" value="${empDetail.telno.substring(7,11)}"></c:set>
@@ -38,7 +38,7 @@
        </li>
        <hr>
        <li class="row">
-         <span class="col-4">생년월일</span>
+         <span class="col-4 text-end">생년월일</span>
          <c:set var="year" value="${empDetail.brthdy.substring(0,4)}"></c:set>
          <c:set var="month" value="${empDetail.brthdy.substring(4,6)}"></c:set>
          <c:set var="day" value="${empDetail.brthdy.substring(6,8)}"></c:set>
@@ -46,18 +46,18 @@
        </li>
        <hr>
        <li class="row">
-         <span class="col-4">성별</span>
+         <span class="col-4 text-end">성별</span>
          <span class="col-8 text-medium text-dark">${empDetail.genderCodeNm}</span>
        </li>
        <hr>
        <li class="row">
-         <span class="col-4">주소</span>
+         <span class="col-4 text-end">주소</span>
          <span class="col-8 text-medium text-dark">${empDetail.adres}<br/>
          	${empDetail.detailAdres}</span>
        </li>
      </ul>
    </div>
-   <div class="profile-info">
+   <div class="profile-info text-center">
      <ul>
        <li>
        <hr>

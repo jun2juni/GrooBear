@@ -122,7 +122,8 @@
               </li>
               <li class="divider"></li>
               <li>
-                <a href="#0">
+               <sec:authentication property="principal.empVO" var="emp" />
+                <a href="/emplDetailHeader?emplNo=${emp.emplNo}">
                   <i class="lni lni-user"></i> View Profile
                 </a>
               </li>
