@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -72,31 +74,34 @@ public class ProjectController {
 	
 	@GetMapping("/projectList")
 	public String projectList(Model model, ProjectVO projectVO,
-			@RequestParam(value="currentPage", required = false, defaultValue = "1") int currentPage, 
-			@RequestParam(value = "keyword", required = false, defaultValue = "") String keyword) {
-		
-		//파라미터 맵 생성
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("currentPage", currentPage);
-		map.put("keyword", keyword);
-		map.put("size", 5);
-		
-		//전체 프로젝트 개수 조회
-		int total = projectService.getTotal(map);
-		
-		List<ProjectVO> projectList = projectService.projectList(map);
-		
-		ArticlePage<ProjectVO> articlePage = new ArticlePage<ProjectVO>(total, currentPage, 5);
-		articlePage.setSearchVo(projectVO);
-		
-	    System.out.println("Total records: " + total);
-	    System.out.println("Total pages: " + articlePage.getTotalPages());
-	    
-		model.addAttribute("articlePage", articlePage);
-		model.addAttribute("projectList", projectList);
-		
-		return "project/projectList";
+	    @RequestParam(value = "currentPage", required = false, defaultValue = "1") int currentPage,
+	    @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword) {
+
+	    Map<String, Object> map = new HashMap<>();
+	    map.put("currentPage", currentPage);
+	    map.put("keyword", keyword);
+	    int size = 5;
+	    map.put("size", size);
+
+	    int total = projectService.getTotal(map);
+	    List<ProjectVO> projectList = projectService.projectList(map);
+
+	    ArticlePage<ProjectVO> articlePage = new ArticlePage<>(total, currentPage, size);
+	    articlePage.setSearchVo(projectVO);
+
+	    // 최신순 순번 계산
+	    int startNumber = total - ((currentPage - 1) * size);
+	    model.addAttribute("startNumber", startNumber);
+
+	    model.addAttribute("articlePage", articlePage);
+	    model.addAttribute("projectList", projectList);
+	    model.addAttribute("totalProjectCount", total);
+
+	    return "project/projectList";
 	}
+
+
+
 	
 
 	@GetMapping("/insert")
@@ -158,7 +163,9 @@ public class ProjectController {
 	        return "redirect:/project/insert";
 	    }
 
-	    return "redirect:/project/projectDetail?prjctNo=" + projectVO.getPrjctNo();
+	    redirectAttrs.addFlashAttribute("successMessage", "프로젝트가 성공적으로 등록되었습니다!");
+	    return "redirect:/project/projectTab?tab=list&highlight=" + projectVO.getPrjctNo();
+
 	}
 
 	// 업무 계층 구조 업데이트 메서드
@@ -222,7 +229,16 @@ public class ProjectController {
 	}
 
 
-	
+	@PostMapping("/delete")
+	@ResponseBody
+	public ResponseEntity<?> deleteProject(@RequestParam("prjctNo") int prjctNo) {
+	    try {
+	        projectService.deleteProject(prjctNo);
+	        return ResponseEntity.ok("삭제 성공");
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 실패");
+	    }
+	}
 
 	
 	

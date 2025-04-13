@@ -12,22 +12,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>${title}</title>
   <%@ include file="../layout/prestyle.jsp" %>
-  <style>
-  .badge-danger-custom {
-    background-color: #dc3545 !important;
-    color: white !important;
-  }
-  
-  .badge-primary-custom {
-    background-color: #0d6efd !important;
-    color: white !important;
-  }
-  
-  .badge-secondary-custom {
-    background-color: #6c757d !important;
-    color: white !important;
-  }
-</style>
 </head>
 <body>
 <%@ include file="../layout/sidebar.jsp" %>
@@ -36,14 +20,14 @@
   <%@ include file="../layout/header.jsp" %>
   <section class="section">
     <div class="container-fluid">
-    <div class="card bg-white border-0 shadow-sm p-4">
-<div class="row">
-  <div class="col-md-8">
-    <div class="form-step">
-      <div class="row">
-        <div class="col-12">
-          <div class="card border p-4">
-            <h4 class="fw-bold mb-3"><i class="fas fa-folder-open me-2 text-primary"></i>프로젝트 상세</h4>
+      <div class="card bg-white border-0 shadow-sm p-4">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="form-step">
+              <div class="row">
+                <div class="col-12">
+                  <div class="card border p-4">
+                    <h4 class="fw-bold mb-3"><i class="fas fa-folder-open me-2 text-primary"></i>프로젝트 상세</h4>
 
             <!-- 1. 기본 정보 -->
             <h5 class="mt-4 fw-semibold mb-2">1. 기본 정보</h5>
@@ -111,8 +95,15 @@
             </div>
 
             <!-- 3. 등록된 업무 -->
-            <h5 class="mt-5 fw-semibold mb-2">3. 등록된 업무</h5>
-            <div class="mb-4">
+            <h5 class="mt-5 fw-semibold mb-2 d-flex justify-content-between align-items-center">
+			  3. 등록된 업무
+			  <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#taskAddModal">
+			    <i class="fas fa-plus me-1"></i> 업무 추가
+			  </button>
+			</h5>
+			<div id="taskListSection"></div>
+			
+<%--              <div class="mb-4">
               <table class="table table-sm table-bordered">
                 <thead class="table-light">
                   <tr>
@@ -157,8 +148,8 @@
 				  </c:forEach>
 				</tbody>
               </table>
-            </div>
-
+            </div> --%>
+ 
             <!-- 업무 상세 모달 -->
             <div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailLabel" aria-hidden="true">
               <div class="modal-dialog modal-lg">
@@ -211,14 +202,35 @@
 </div>
 </div>
 </div>
+    <%@ include file="taskAddModal.jsp" %>
 	</section>
   <%@ include file="../layout/footer.jsp" %>
 </main>
 <%@ include file="../layout/prescript.jsp" %>
-</body>
-</html>
+
 <script>
-function openTaskModal(taskNo) {
+document.addEventListener("DOMContentLoaded", function () {
+	  refreshTaskList();
+	});
+
+	function refreshTaskList() {
+	  const prjctNo = "${project.prjctNo}";
+
+	  fetch(`/projectTask/partialList?prjctNo=\${prjctNo}`)
+	    .then(res => res.text())
+	    .then(html => {
+	      const container = document.getElementById("taskListSection");
+	      if (container) {
+	        container.innerHTML = html;
+	      }
+	    })
+	    .catch(err => {
+	      console.error("업무 목록 갱신 실패:", err);
+	      alert("업무 목록을 불러오지 못했습니다.");
+	    });
+	}
+
+	function openTaskModal(taskNo) {
 	  const modal = new bootstrap.Modal(document.getElementById('taskDetailModal'));
 	  const contentEl = document.getElementById('taskDetailContent');
 	  contentEl.innerHTML = '로딩 중...';
@@ -234,19 +246,15 @@ function openTaskModal(taskNo) {
 	    });
 	}
 
-
-
-function editTask() {
+	function editTask() {
 	  const taskDetailEl = document.querySelector('#taskDetailContent [data-task-no]');
 	  if (!taskDetailEl) {
 	    alert("업무 정보가 없습니다.");
 	    return;
 	  }
-
 	  const taskNo = taskDetailEl.getAttribute('data-task-no');
 	  location.href = `/projectTask/editForm?taskNo=\${taskNo}`;
 	}
-
-
-
-</script>
+	</script>
+	</body>
+</html>

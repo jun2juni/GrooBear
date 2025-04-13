@@ -187,6 +187,12 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 
+	@Override
+	public void deleteProject(int prjctNo) {
+		
+		
+	}
+
 
 }
 

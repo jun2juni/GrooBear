@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -93,11 +94,35 @@ public class ProjectTaskController {
 	    
 	    return "redirect:/project/projectDetail?prjctNo=" + taskVO.getPrjctNo();
 	}
+	
 	@GetMapping("/download")
 	@ResponseBody
 	public ResponseEntity<Resource> downloadFile(@RequestParam String fileName) {
 	    return attachFileService.downloadFile(fileName);
 	}
+
+	@PostMapping("/insert")
+	@ResponseBody
+	public ResponseEntity<?> insertTask(ProjectTaskVO taskVO,
+	                                    @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles) {
+	    try {
+	        Long taskNo = projectTaskService.insertProjectTaskWithFiles(taskVO, uploadFiles);
+	        return ResponseEntity.ok(taskNo); // 프론트에 taskNo 넘겨줌
+	    } catch (Exception e) {
+	        log.error("업무 등록 중 오류", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
+	    }
+	}
+
+	// 업무 부분 조회 
+	@GetMapping("/partialList")
+	public String getPartialTaskList(@RequestParam int prjctNo, Model model) {
+	    ProjectVO project = projectService.projectDetail(prjctNo);
+	    model.addAttribute("project", project);
+	    return "project/taskListPartial"; 
+	}
+
+
 
 
 

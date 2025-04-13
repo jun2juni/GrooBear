@@ -3,6 +3,8 @@ package kr.or.ddit.sevenfs.service.project;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
 
@@ -30,4 +32,6 @@ public interface ProjectTaskService {
 	
 	public void updateTaskParentRelations(List<ProjectTaskVO> tasks);
     
+	public Long insertProjectTaskWithFiles(ProjectTaskVO taskVO, MultipartFile[] uploadFiles);
+
 }

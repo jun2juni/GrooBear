@@ -1414,7 +1414,6 @@ function validateDates(startDateSelector, endDateSelector, customMessage) {
 }
 
 
-
 </script>
 </body>
 </html>

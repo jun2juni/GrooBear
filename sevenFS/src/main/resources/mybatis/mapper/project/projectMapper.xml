@@ -66,33 +66,35 @@
 
 <!-- 프로젝트 목록 조회 -->
 	<select id="projectList" resultType="kr.or.ddit.sevenfs.vo.project.ProjectVO" parameterType="java.util.Map">
-        WITH A AS (
-            SELECT ROW_NUMBER() OVER(ORDER BY P.PRJCT_NO DESC) RNUM,
-                   P.PRJCT_NO, C.CTGRY_NM, P.PRJCT_NM,
-                   NVL(P_STATUS.CMMN_CODE_NM, '미정') AS PRJCT_STTUS_NM,
-                   P.PRJCT_GRAD, P.PRJCT_BEGIN_DATE, P.PRJCT_END_DATE,
-                   NVL(LISTAGG(E.EMPL_NM, ', ') WITHIN GROUP (ORDER BY E.EMPL_NM), '') AS PRTCPNT_NM
-            FROM PROJECT P
-            JOIN PROJECT_CATEGORY C ON P.CTGRY_NO = C.CTGRY_NO
-            LEFT JOIN PROJECT_EMP PE ON P.PRJCT_NO = PE.PRJCT_NO AND PE.PRTCPNT_ROLE = '00'
-            LEFT JOIN EMPLOYEE E ON PE.PRTCPNT_EMPNO = E.EMPL_NO
-            LEFT JOIN COMMON_CODE P_STATUS
-            ON P_STATUS.CMMN_CODE_GROUP = 'PRJCT_STTUS'
-            AND P.PRJCT_STTUS = P_STATUS.CMMN_CODE
-            WHERE 1=1
-            <if test="keyword != null and keyword != ''">
-                AND (
-                    P.PRJCT_NM LIKE '%' || #{keyword} || '%'
-                    OR C.CTGRY_NM LIKE '%' || #{keyword} || '%'
-                    OR E.EMPL_NM LIKE '%' || #{keyword} || '%'
-                )
-            </if>
-            GROUP BY P.PRJCT_NO, C.CTGRY_NM, P.PRJCT_NM, P_STATUS.CMMN_CODE_NM, P.PRJCT_GRAD, P.PRJCT_BEGIN_DATE, P.PRJCT_END_DATE
-        )
-        SELECT A.*
-        FROM A
-        WHERE A.RNUM BETWEEN (#{currentPage} * #{size})-(#{size}-1) AND (#{currentPage} * #{size})
-    </select>
+	    WITH A AS (
+	        SELECT ROW_NUMBER() OVER (ORDER BY P.PRJCT_NO DESC) AS RNUM,
+	               P.PRJCT_NO, C.CTGRY_NM, P.PRJCT_NM,
+	               NVL(P_STATUS.CMMN_CODE_NM, '미정') AS PRJCT_STTUS_NM,
+	               P.PRJCT_GRAD, P.PRJCT_BEGIN_DATE, P.PRJCT_END_DATE,
+	               NVL(LISTAGG(E.EMPL_NM, ', ') WITHIN GROUP (ORDER BY E.EMPL_NM), '') AS PRTCPNT_NM
+	        FROM PROJECT P
+	        JOIN PROJECT_CATEGORY C ON P.CTGRY_NO = C.CTGRY_NO
+	        LEFT JOIN PROJECT_EMP PE ON P.PRJCT_NO = PE.PRJCT_NO AND PE.PRTCPNT_ROLE = '00'
+	        LEFT JOIN EMPLOYEE E ON PE.PRTCPNT_EMPNO = E.EMPL_NO
+	        LEFT JOIN COMMON_CODE P_STATUS ON P_STATUS.CMMN_CODE_GROUP = 'PRJCT_STTUS'
+	                                     AND P.PRJCT_STTUS = P_STATUS.CMMN_CODE
+	        WHERE 1=1
+	        <if test="keyword != null and keyword != ''">
+	            AND (
+	                P.PRJCT_NM LIKE '%' || #{keyword} || '%'
+	                OR C.CTGRY_NM LIKE '%' || #{keyword} || '%'
+	                OR E.EMPL_NM LIKE '%' || #{keyword} || '%'
+	            )
+	        </if>
+	        GROUP BY P.PRJCT_NO, C.CTGRY_NM, P.PRJCT_NM, P_STATUS.CMMN_CODE_NM, 
+	                 P.PRJCT_GRAD, P.PRJCT_BEGIN_DATE, P.PRJCT_END_DATE
+	    )
+	    SELECT A.*
+	    FROM A
+	    WHERE A.RNUM BETWEEN (#{currentPage} * #{size}) - (#{size} - 1)
+	                  AND (#{currentPage} * #{size})
+	</select>
+
     
     <!-- 프로젝트 전체 개수 조회 -->
     <select id="getTotal" resultType="int" parameterType="java.util.Map">
