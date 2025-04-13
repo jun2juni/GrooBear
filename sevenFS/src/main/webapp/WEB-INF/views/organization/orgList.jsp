@@ -7,7 +7,6 @@
 <!-- 검색 -->
 <div>
     <div class="input-group rounded mb-3">
-    	<sec:authentication property="principal.empVO" var="emp" />
         <input type="search" class="form-control rounded" placeholder="이름 입력" aria-label="Search"
                aria-describedby="search-addon" id="schName"
                onkeydown="fSchEnder(event)"

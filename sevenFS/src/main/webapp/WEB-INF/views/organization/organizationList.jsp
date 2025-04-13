@@ -165,9 +165,12 @@
 			 deptList = res.deptList;
 			 //console.log('전체 부서 : ' , deptList);
 			 
+			 let found = false;
+			 
 			 // 사원 검색했을경우
 			 empList.forEach(emp => {
 				 if(emp.emplNm === inputName){
+					 found = true;
 					 
 					 schEmplNo = emp.emplNo;
 					 
@@ -185,17 +188,13 @@
 			        	 //console.log('엔터치고 받은 결과 : ' , res);
 			        	 $("#emplDetail").html(res);
 			         })
-				 }else{
-					 swal('해당 사원을 찾을 수 없습니다.')
-					 .then((value) => {
-						 $("#schName").focus();
-					 })
 				 }
 			 })
-	
+			
 	         // 부서 검색했을경우
 	         deptList.forEach(dep => {
 	        	 if(dep.cmmnCodeNm === inputName){
+	        		 found = true;
 	        		 
 	        		 schDeptNo = dep.cmmnCode;
 	        		 
@@ -214,6 +213,11 @@
 		         })
 	        	 }
         	 })
+        	 
+        	 if(!found){
+				 swal('해당 사원을 찾을 수 없습니다.')
+			 }
+	
 		 })
       }
   }
