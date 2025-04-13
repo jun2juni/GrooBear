@@ -59,7 +59,7 @@ public class AtrzController {
 	private AttachFileService attachFileService;
 
 	@GetMapping("/home")
-	public String homeList(Model model, @AuthenticationPrincipal CustomUser customUser) {
+	public String home(Model model, @AuthenticationPrincipal CustomUser customUser) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		log.info("empVO : ", empVO);
@@ -94,15 +94,17 @@ public class AtrzController {
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
 		
-		//결재대기문서
-		List<AtrzVO> atrzApprovalList = this.atrzService.atrzApprovalList(emplNo);
+		
+		// 결재대기문서목록
+		List<AtrzVO> atrzApprovalList = atrzService.atrzApprovalList(emplNo);
 		model.addAttribute("atrzApprovalList", atrzApprovalList);
-		model.addAttribute("title", "결재대기문서");
-
+		
 		//참조대기문서
-		
+		List<AtrzVO> atrzReferList = atrzService.atrzReferList(emplNo);
+		model.addAttribute("atrzReferList", atrzReferList);
 		//결재예정문서
-		
+		List<AtrzVO> atrzExpectedList = atrzService.atrzExpectedList(emplNo);
+		model.addAttribute("atrzExpectedList", atrzExpectedList);
 		
 		return "atrz/approval";
 
@@ -118,14 +120,17 @@ public class AtrzController {
 		//여기에 표시될것
 		//기안문서함
 		//기안문서함의 경우에는 내가 기안 한  목록이 표시된다.
+		List<AtrzVO> atrzAllSubmitList = atrzService.atrzAllSubmitList(emplNo);
+		model.addAttribute("atrzAllSubmitList",atrzAllSubmitList);
+		
 		//임시저장함(로그인한 사람의 아이디를 받아서 select한다.)
 		List<AtrzVO> atrzStorageList = this.atrzService.atrzStorageList(emplNo);
-		
-		log.info("documentList->atrzStorageList : "+atrzStorageList);
 		model.addAttribute("atrzStorageList",atrzStorageList);
 		//결재문서함
 		//결재문서함의 경우에는 결재선에 내가 포함되어있는 문서만 확인된다.
-
+		List<AtrzVO> atrzAllApprovalList = atrzService.atrzAllApprovalList(emplNo);
+		model.addAttribute("atrzAllApprovalList",atrzAllApprovalList);
+		
 		model.addAttribute("title", "전자결재문서함");
 		return "atrz/documentBox";
 	}

@@ -53,28 +53,28 @@
 	</select>
 
 
-	<!-- 결재 대기중인 문서리스트 -->
+	<!-- 결재 대기중인 문서리스트 (결재대기문서)-->
 	<select id="atrzApprovalList" resultMap="atrzMap">
 		SELECT  /* AtrzMapper.atrzApprovalList */
-		    A.ATRZ_DOC_NO
-		  , A.DRAFTER_EMPNO
-		  , A.DRAFTER_CLSF
-		  , A.DRAFTER_EMPNM
-		  , A.DRAFTER_DEPT
-		  , A.BKMK_YN
-		  , A.ATCH_FILE_NO
-		  , A.ATRZ_SJ
-		  , A.ATRZ_CN
-		  , A.ATRZ_OPINION
-		  , A.ATRZ_TMPR_STRE_DT
-		  , A.ATRZ_DRFT_DT
-		  , A.ATRZ_COMPT_DT
-		  , A.ATRZ_RTRVL_DT
-		  , A.ATRZ_STTUS_CODE
-		  , A.ELTSGN_IMAGE
-		  , A.DOC_FORM_NO
-		  , A.ATRZ_DELETE_YN
-		  , A.SCHDUL_REG_YN
+		    A.atrz_doc_no
+		  , A.drafter_empno
+		  , A.drafter_clsf
+		  , A.drafter_empnm
+		  , A.drafter_dept
+		  , A.bkmk_yn
+		  , A.atch_file_no
+		  , A.atrz_sj
+		  , A.atrz_cn
+		  , A.atrz_opinion
+		  , A.atrz_tmpr_stre_dt
+		  , A.atrz_drft_dt
+		  , A.atrz_compt_dt
+		  , A.atrz_rtrvl_dt
+		  , A.atrz_sttus_code
+		  , A.eltsgn_image
+		  , A.doc_form_no
+		  , A.atrz_delete_yn
+		  , A.schdul_reg_yn
 		  , L.atrz_ln_sn
 		  , L.sanctner_empno
 		  , L.sanctn_progrs_sttus_code
@@ -82,10 +82,10 @@
 		  , L.dcrb_author_yn
 		
 		FROM atrz A
-		LEFT JOIN atrz_line L
-		    ON A.atrz_doc_no = L.atrz_doc_no
-		
-		WHERE A.atrz_compt_dt IS NULL
+			LEFT JOIN atrz_line L
+			    ON A.atrz_doc_no = L.atrz_doc_no
+		WHERE 1 = 1
+		  AND A.atrz_compt_dt IS NULL
 		  AND L.sanctner_empno = #{emplNo}
 		  AND L.sanctn_progrs_sttus_code = '00'
 		  AND NOT EXISTS (
@@ -98,32 +98,33 @@
 		ORDER BY A.atrz_drft_dt DESC
 	</select>
 	
-	<!-- 기안중인 문서리스트 문서리스트 -->
+	<!-- 기안중인 문서리스트 문서리스트 (기안진행문서) -->
 	<select id="atrzSubmitList" resultMap="atrzMap" parameterType="string">
 		SELECT 	/* AtrzMapper.atrzSubmitList */
-	        a.atrz_doc_no,
-	        a.atrz_sj,
-	        a.atrz_cn,
-	        a.atrz_drft_dt,
-	        a.atrz_compt_dt,
-	        a.atrz_rtrvl_dt,
-	        a.atrz_sttus_code,
-	        a.drafter_empno,
-	        a.drafter_empnm,
-	        a.drafter_clsf,
-	        a.drafter_dept,
-	        l.atrz_ln_sn,
-	        l.sanctner_empno,
-	        l.sanctn_progrs_sttus_code
+	        A.atrz_doc_no,
+	        A.atrz_sj,
+	        A.atrz_cn,
+	        A.atrz_drft_dt,
+	        A.atrz_compt_dt,
+	        A.atrz_rtrvl_dt,
+	        A.atrz_sttus_code,
+	        A.drafter_empno,
+	        A.drafter_empnm,
+	        A.drafter_clsf,
+	        A.drafter_dept,
+	        L.atrz_ln_sn,
+	        L.sanctner_empno,
+	        L.sanctn_progrs_sttus_code
 	    FROM atrz A
 	    LEFT JOIN atrz_line L
 	        on A.atrz_doc_no = L.atrz_doc_no
-	    WHERE A.drafter_empno = #{emplNo}
-	    AND A.atrz_sttus_code = '00'
+	    WHERE 1 = 1
+	     AND A.drafter_empno = #{emplNo}
+	     AND A.atrz_sttus_code = '00'
 	    ORDER BY A.atrz_drft_dt desc
 	</select>
 	
-	<!-- 기안완료된 문서리스트 -->
+	<!-- 기안완료된 문서리스트(결재완료문서) -->
 	<select id="atrzCompletedList" resultMap="atrzMap" parameterType="string">
 		SELECT 	/* AtrzMapper.atrzCompletedList */
 	        A.atrz_doc_no,
@@ -138,13 +139,118 @@
 	        A.drafter_clsf,
 	        A.drafter_dept
 	    FROM atrz A
-	    WHERE A.drafter_empno = #{emplNo}
+	    WHERE  1 = 1
+	      AND A.drafter_empno = #{emplNo}
 	      AND A.atrz_sttus_code = '20'
 	    ORDER BY A.atrz_compt_dt desc
 	</select>
 	
+	<!-- 참조대기문서 -->
+	<select id="atrzReferList" resultMap="atrzMap" parameterType="string">
+		SELECT 		/* AtrzMapper.atrzReferList */ 
+		       A.atrz_doc_no,
+		       A.drafter_empno,
+		       A.drafter_clsf,
+		       A.drafter_empnm,
+		       A.drafter_dept,
+		       A.bkmk_yn,
+		       A.atch_file_no,
+		       A.atrz_sj,
+		       A.atrz_cn,
+		       A.atrz_opinion,
+		       A.atrz_tmpr_stre_dt,
+		       A.atrz_drft_dt,
+		       A.atrz_compt_dt,
+		       A.atrz_rtrvl_dt,
+		       A.atrz_sttus_code,
+		       A.eltsgn_image,
+		       A.doc_form_no,
+		       A.atrz_delete_yn,
+		       A.schdul_reg_yn,
+		       L.atrz_ln_sn,
+		       L.sanctner_empno,
+		       L.atrz_ty,
+		       L.sanctn_progrs_sttus_code
+		  FROM atrz A
+		  LEFT JOIN atrz_line L
+		    ON A.atrz_doc_no = L.atrz_doc_no
+		 WHERE 1 = 1 
+		   AND A.atrz_delete_yn = 'N'
+		   AND A.atrz_sttus_code = '00'         
+		   AND L.sanctner_empno = #{emplNo}      
+		   AND L.atrz_ty = 'Y'                  
+		 ORDER BY A.atrz_drft_dt DESC
+	</select>
+	<!-- 결재예정문서 -->
+	<select id="atrzExpectedList" resultMap="atrzMap" parameterType="string">
+		SELECT  /* AtrzMapper.atrzExpectedList */ 
+		       A.atrz_doc_no,
+		       A.drafter_empno,
+		       A.drafter_clsf,
+		       A.drafter_empnm,
+		       A.drafter_dept,
+		       A.bkmk_yn,
+		       A.atch_file_no,
+		       A.atrz_sj,
+		       A.atrz_cn,
+		       A.atrz_opinion,
+		       A.atrz_tmpr_stre_dt,
+		       A.atrz_drft_dt,
+		       A.atrz_compt_dt,
+		       A.atrz_rtrvl_dt,
+		       A.atrz_sttus_code,
+		       A.eltsgn_image,
+		       A.doc_form_no,
+		       A.atrz_delete_yn,
+		       A.schdul_reg_yn,
+		       L.atrz_ln_sn,
+		       L.sanctner_empno,
+		       L.sanctn_progrs_sttus_code,
+		       L.atrz_ty,
+		       L.dcrb_author_yn
+		  FROM atrz A
+		       LEFT JOIN atrz_line L
+		         ON A.atrz_doc_no = L.atrz_doc_no
+		 WHERE 1 = 1
+		   AND A.atrz_compt_dt IS NULL
+		   AND A.atrz_sttus_code = '00'
+		   AND L.sanctner_empno = #{emplNo}   
+		   AND L.ATRZ_TY = 'N'        
+		 ORDER BY A.atrz_drft_dt DESC
+	</select>
 	
-	<!-- 임시저장한 문서리스트 -->
+	<!-- 기안문서함 -->	
+	<select id="atrzAllSubmitList" resultMap="atrzMap" parameterType="string">
+		SELECT 
+		      A.ATRZ_DOC_NO,
+		      A.DRAFTER_EMPNO,
+		      A.DRAFTER_CLSF,
+		      A.DRAFTER_EMPNM,
+		      A.DRAFTER_DEPT,
+		      A.BKMK_YN,
+		      A.ATCH_FILE_NO,
+		      A.ATRZ_SJ,
+		      A.ATRZ_CN,
+		      A.ATRZ_OPINION,
+		      A.ATRZ_TMPR_STRE_DT,
+		      A.ATRZ_DRFT_DT,
+		      A.ATRZ_COMPT_DT,
+		      A.ATRZ_RTRVL_DT,
+		      A.ATRZ_STTUS_CODE,
+		      A.ELTSGN_IMAGE,
+		      A.DOC_FORM_NO,
+		      A.ATRZ_DELETE_YN,
+		      A.SCHDUL_REG_YN
+		FROM ATRZ A
+		     LEFT JOIN ATRZ_LINE L
+		       ON A.ATRZ_DOC_NO = L.ATRZ_DOC_NO
+		WHERE 1=1
+		  AND A.DRAFTER_EMPNO = #{emplNo}
+		  AND A.ATRZ_DELETE_YN = 'N'
+		  ORDER BY A.ATRZ_DRFT_DT ASC
+	</select>
+
+	<!-- 임시저장한 문서리스트 (임시저장함) -->
 	<select id="atrzStorageList"  resultMap="atrzMap" parameterType="string">
 		SELECT /* AtrzMapper.atrzStorageList */
 		         atrz_doc_no
@@ -169,18 +275,38 @@
 		WHERE 1 = 1
 			AND drafter_empno= #{emplNo}
 			AND atrz_sttus_code	='99'
+		ORDER BY atrz_tmpr_stre_dt desc
 	</select>
 	
-	  <resultMap id="EmployeeResultMap" type="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
-        <id property="emplNo" column="EMPL_NO"/>
-       <result property="emplNm" column="EMPL_NM"/>
-        <result property="deptCode" column="DEPT_CODE"/>
-        <result property="clsfCode" column="CLSF_CODE"/>
-        <!-- 전자결재 리스트 -->
-        <collection property="EmplAtrzList" ofType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO" resultMap="atrzMap"/>
-    </resultMap>
-
-	
+	<!-- 결재문서함 -->
+	<select id="atrzAllApprovalList" resultMap="atrzMap" parameterType="string">
+		SELECT 	/* AtrzMapper.atrzAllApprovalList */
+		      A.atrz_doc_no
+		    , A.drafter_empno
+		    , A.drafter_clsf
+		    , A.drafter_empnm
+		    , A.drafter_dept
+		    , A.bkmk_yn
+		    , A.atch_file_no
+		    , A.atrz_sj
+		    , A.atrz_cn
+		    , A.atrz_opinion
+		    , A.atrz_tmpr_stre_dT
+		    , A.atrz_drft_dt
+		    , A.atrz_compt_dt
+		    , A.atrz_rtrvl_dt
+		    , A.atrz_sttus_code
+		    , A.eltsgn_image
+		    , A.doc_form_no
+		    , A.atrz_delete_yn
+		    , A.schdul_reg_yn
+		FROM atrz A
+		        LEFT JOIN atrz_line L
+		         ON A.atrz_doc_no = L.atrz_doc_no
+		    WHERE 1=1
+		    AND L.sanctner_empno = #{emplNo}
+		    AND A.atrz_delete_yn = 'N'
+	</select>
 
 	<!-- 전자결재테이블 등록(결재선 지정 시 전자결재문서 번호를 생성해줌) 
 			SELECT CREATE_DOC_NO(#{docFormNm}) AS CREATE_DOC_NO FROM DUAL
@@ -682,6 +808,16 @@
 		<result property="eltsgnImage" column="ELTSGN_IMAGE"/>
 		<result property="sanctnConfmDt" column="SANCTN_CONFM_DT"/>
 	</resultMap>
+	
+	<!-- 사원 -->
+	<resultMap id="EmployeeResultMap" type="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
+       <id property="emplNo" column="EMPL_NO"/>
+      <result property="emplNm" column="EMPL_NM"/>
+       <result property="deptCode" column="DEPT_CODE"/>
+       <result property="clsfCode" column="CLSF_CODE"/>
+       <!-- 전자결재 리스트 -->
+       <collection property="EmplAtrzList" ofType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO" resultMap="atrzMap"/>
+    </resultMap>
 	
 	
 </mapper>

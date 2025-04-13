@@ -172,7 +172,7 @@
 											<h6 class="mb-10">기안문서함</h6>
 											<div class="table-wrapper table-responsive">
 												<c:choose>
-													<c:when test="${empty atrzApprovalList}">
+													<c:when test="${empty atrzAllSubmitList}">
 														<div class="text-center emptyList" >
 															기안 문서함에 문서가 없습니다.
 														</div>
@@ -200,7 +200,7 @@
 															</th>
 														</tr>
 													</thead>
-													<c:forEach var="atrzVO" items="${atrzVOList}">
+													<c:forEach var="atrzVO" items="${atrzAllSubmitList}">
 														<tbody>
 															<tr>
 																<td class="text-center"
@@ -309,7 +309,7 @@
 											<h6 class="mb-10">임시저장함</h6>
 											<div class="table-wrapper table-responsive">
 												<c:choose>
-													<c:when test="${empty atrzVOList}">
+													<c:when test="${empty atrzStorageList}">
 														<div class="text-center emptyList" >
 															임시저장한 문서가 없습니다.
 														</div>
@@ -344,8 +344,8 @@
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
 																			<p>
-																				<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
-																				<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																				<fmt:formatDate value="${atrzVO.atrzTmprStreDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																				<fmt:formatDate value="${atrzVO.atrzTmprStreDt}" pattern="HH:mm:ss" var="onlyTime" />
 																				<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}
 																			</p>
 																		</td>
@@ -453,7 +453,7 @@
 											<h6 class="mb-10">결재문서함</h6>
 											<div class="table-wrapper table-responsive">
 												<c:choose>
-													<c:when test="${empty atrzApprovalList}">
+													<c:when test="${empty atrzAllApprovalList}">
 														<div class="text-center emptyList" >
 															결재 문서함에 문서가 없습니다.
 														</div>
@@ -467,7 +467,7 @@
 																<h6 class="fw-bolder">기안일시</h6>
 															</th>
 															<th class="text-center">
-																<h6 class="fw-bolder">완료일시</h6>
+																<h6 class="fw-bolder">완료(반려)일시</h6>
 															</th>
 															<th class="text-center">
 																<h6 class="fw-bolder">결재양식</h6>
@@ -486,7 +486,7 @@
 															</th>
 														</tr>
 													</thead>
-													<c:forEach var="atrzVO" items="${atrzVOList}">
+													<c:forEach var="atrzVO" items="${atrzAllApprovalList}">
 														<tbody>
 															<tr>
 																<td class="text-center" style="padding-top: 10px; padding-bottom: 10px;">

@@ -185,7 +185,7 @@
 													<tbody>
 														<!-- 결재자: atrzTy = 'N' -->
 														<tr>
-															<th rowspan="4">결재</th>
+															<th rowspan="3">결재</th>
 															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
 																	<!-- <p>${atrzLineVO}</p> -->
@@ -219,12 +219,18 @@
 															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
 																	<td style="font-size: 0.8em;">
-																		<span style="color: <c:if test='${atrzLineVO.sanctnProgrsSttusCode eq "20"}'>red</c:if>;">
-																			<fmt:formatDate value="${atrzLineVO.sanctnConfmDt}" pattern="yyyy-MM-dd" />
-																		</span>
-																		<!-- <span style="font-size: 1;">
-																			<fmt:formatDate value="${atrzLineVO.sanctnConfmDt}" pattern="HH:mm:ss" />
-																		</span> -->
+																		<c:choose>
+																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '20'}">
+																				<span style="color: red;">
+																					<fmt:formatDate value="${atrzLineVO.sanctnConfmDt}" pattern="yyyy-MM-dd" />
+																				</span>
+																			</c:when>
+																			<c:otherwise>
+																				<span style="color: black;">
+																					<fmt:formatDate value="${atrzLineVO.sanctnConfmDt}" pattern="yyyy-MM-dd" />
+																				</span>
+																			</c:otherwise>
+																		</c:choose>
 																	</td>
 																</c:if>
 															</c:forEach>
@@ -289,9 +295,7 @@
 															<label class="form-check-label" for="flexRadioDefault2">오후반차</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio"
-																name="holiCode" id="flexRadioDefault1" disabled
-																value="22" <c:if test="${atrzVO.holidayVO.holiCode eq '22'}">checked</c:if>> 
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault1" disabled value="22" <c:if test="${atrzVO.holidayVO.holiCode eq '22'}">checked</c:if>> 
 																<label class="form-check-label"	for="flexRadioDefault1">연차</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">

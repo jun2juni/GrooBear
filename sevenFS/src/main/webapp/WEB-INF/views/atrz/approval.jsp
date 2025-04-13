@@ -243,9 +243,6 @@
 																		<h6 class="fw-bolder">기안자</h6>
 																	</th>
 																	<th class="text-center">
-																		<h6 class="fw-bolder">첨부</h6>
-																	</th>
-																	<th class="text-center">
 																		<h6 class="fw-bolder">결재상태</h6>
 																	</th>
 																</tr>
@@ -267,20 +264,28 @@
 																				<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
 																				<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p></p>
 																		</td>
-																		<td class="text-center" style="padding-top: 0px;">
-																			<a href="#" class="fw-bolder">${atrzVO.atrzSj}</a>
+																		<td style="text-align: left; padding-top: 0px;">
+																			<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
+																				<c:choose>
+																					<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
+																						<span class="material-symbols-outlined" style="margin-right: 5px;">
+																							attach_file
+																						</span>
+																					</c:when>
+																					<c:otherwise>
+																						<span class="material-symbols-outlined" style="margin-right: 5px; visibility: hidden;">
+																							attach_file
+																						</span>
+																					</c:otherwise>
+																				</c:choose>
+																				${atrzVO.atrzSj}
+																			</a>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
 																			<p class="fw-bolder">${atrzVO.deptCodeNm}</p>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
 																			<p class="fw-bolder">${atrzVO.drafterEmpnm}</p>
-																		</td>
-																		<td class="text-center" style="padding-top: 0px;">
-																			<p>
-																				<span class="material-symbols-outlined">
-																					attach_file </span>
-																			</p>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
 																			<p>
@@ -324,7 +329,7 @@
 					</div>
 					<!-- 컨텐츠1 끝 -->
 
-					<!-- 컨텐츠2(결재대기문서) 시작 -->
+					<!-- 컨텐츠2(참조대기문서) 시작 -->
 					<div class="tab-content" id="myTabContent">
 						<div class="tab-pane fade" id="contact2-tab-pane" role="tabpanel"
 							aria-labelledby="contact2-tab" tabindex="0">
@@ -336,7 +341,7 @@
 											<h6 class="mb-10">참조대기문서</h6>
 											<div class="table-wrapper table-responsive">
 												<c:choose>
-													<c:when test="${empty atrzVOList}">
+													<c:when test="${empty atrzReferList}">
 														<div class="text-center py-5">
 															<div class="text-center emptyList">
 																참조 대기중인 문서가 없습니다.
@@ -348,75 +353,100 @@
 															<thead>
 																<tr>
 																	<th class="text-center">
-																		<h6 class="fw-bolder">기안일</h6>
+																		<h6 class="fw-bolder">기안일시</h6>
+																	</th>
+																	<th class="text-center">
+																		<h6 class="fw-bolder">완료일시</h6>
+																	</th>
+																	<th class="text-center">
+																		<h6 class="fw-bolder">결재양식</h6>
 																	</th>
 																	<th class="text-center">
 																		<h6 class="fw-bolder">제목</h6>
 																	</th>
 																	<th class="text-center">
-																		<h6 class="fw-bolder">기안부서</h6>
-																	</th>
-																	<th class="text-center">
 																		<h6 class="fw-bolder">기안자</h6>
 																	</th>
 																	<th class="text-center">
-																		<h6 class="fw-bolder">첨부파일</h6>
+																		<h6 class="fw-bolder">문서번호</h6>
 																	</th>
 																	<th class="text-center">
 																		<h6 class="fw-bolder">결재상태</h6>
 																	</th>
 																</tr>
 															</thead>
-															<c:forEach var="atrzVO" items="${atrzVOList}">
+															<c:forEach var="atrzVO" items="${atrzReferList}">
 																<tbody>
 																	<tr>
-																		<td class="text-center"
-																			style="padding-top: 10px; padding-bottom: 10px;">
+																		<td class="text-center" style="padding-top: 10px; padding-bottom: 10px;">
 																			<p class="text-sm fw-bolder">
 																				<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
 																				<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
 																				<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p></p>
 																		</td>
-																		<td class="text-center" style="padding-top: 0px;">
-																			<a href="#" class="text-sm fw-bolder">${atrzVO.atrzSj}</a>
+																		<td class="text-center" style="padding-top: 10px; padding-bottom: 10px;">
+																			<p class="text-sm fw-bolder">
+																				<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																				<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="HH:mm:ss" var="onlyTime" />
+																				<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p></p>
+																		</td>
+																		<td class="text-center" style="padding-top: 10px; padding-bottom: 10px;">
+																			<p class="fw-bolder" style="text-align: center;">
+																				<c:choose>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'H')}">연차신청서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'S')}">지출결의서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'B')}">급여계좌변경신청서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'A')}">급여명세서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'D')}">기안서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'C')}">재직증명서</c:when>
+																					<c:otherwise>퇴사신청서</c:otherwise>
+																				</c:choose>
+																			</p>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
-																			<p class="text-sm fw-bolder">${atrzVO.deptCodeNm}</p>
+																			<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
+																				<c:choose>
+																					<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
+																						<span class="material-symbols-outlined" style="margin-right: 5px;">
+																						attach_file
+																						</span>
+																					</c:when>
+																					<c:otherwise>
+																						<span class="material-symbols-outlined" style="margin-right: 5px; visibility: hidden;">
+																						attach_file
+																						</span>
+																					</c:otherwise>
+																				</c:choose>
+																			${atrzVO.atrzSj}
+																			</a>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
 																			<p class="text-sm fw-bolder">${atrzVO.drafterEmpnm}</p>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
-																			<p class="text-sm fw-bolder">
-																				<span class="material-symbols-outlined">
-																					attach_file </span>
-																			</p>
+																			<p class="text-sm fw-bolder">${atrzVO.atrzDocNo}</p>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
 																			<h6 class="text-sm">
 																				<p>
 																					<c:choose>
 																						<c:when test="${atrzVO.atrzSttusCode == '00' }">
-																							<span
-																								class="status-btn close-btn actBtn col-sm-6 col-md-4"
-																								style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
+																							<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
 																						</c:when>
 																						<c:when test="${atrzVO.atrzSttusCode == '10' }">
-																							<span
-																								class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
+																							<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
 																						</c:when>
 																						<c:when test="${atrzVO.atrzSttusCode == '20' }">
-																							<span
-																								class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
+																							<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
 																						</c:when>
 																						<c:when test="${atrzVO.atrzSttusCode == '30' }">
-																							<span
-																								class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																							<span class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																						</c:when>
+																						<c:when test="${atrzVO.atrzSttusCode == '40' }">
+																							<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4" style="background-color: pink; color: #ed268a;">취소</span>
 																						</c:when>
 																						<c:otherwise>
-																							<span
-																								class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4"
-																								style="background-color: pink; color: #ed268a;">취소</span>
+																							<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4">임시저장</span>
 																						</c:otherwise>
 																					</c:choose>
 																				</p>
@@ -449,7 +479,7 @@
 											<h6 class="mb-10">결재예정문서</h6>
 											<div class="table-wrapper table-responsive">
 												<c:choose>
-													<c:when test="${empty atrzVOList}">
+													<c:when test="${empty atrzExpectedList}">
 														<div class="text-center py-5">
 															<div class="text-center emptyList">
 																결재 예정인 문서가 없습니다.
@@ -470,17 +500,11 @@
 																		<h6 class="fw-bolder">제목</h6>
 																	</th>
 																	<th class="text-center">
-																		<h6 class="fw-bolder">기안부서</h6>
-																	</th>
-																	<th class="text-center">
 																		<h6 class="fw-bolder">기안자</h6>
-																	</th>
-																	<th class="text-center">
-																		<h6 class="fw-bolder">첨부파일</h6>
 																	</th>
 																</tr>
 															</thead>
-															<c:forEach var="atrzVO" items="${atrzVOList}">
+															<c:forEach var="atrzVO" items="${atrzExpectedList}">
 																<tbody>
 																	<tr>
 																		<td class="text-center"
@@ -491,22 +515,37 @@
 																				<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p></p>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
-																			<p class="text-sm fw-bolder">결재양식</p>
+																			<p>
+																				<c:choose>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'H')}">연차신청서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'S')}">지출결의서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'B')}">급여계좌변경신청서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'A')}">급여명세서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'D')}">기안서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'C')}">재직증명서</c:when>
+																					<c:otherwise>퇴사신청서</c:otherwise>
+																				</c:choose>
+																			</p>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
-																			<a href="#" class="text-sm fw-bolder">${atrzVO.atrzSj}</a>
-																		</td>
-																		<td class="text-center" style="padding-top: 0px;">
-																			<p class="text-sm fw-bolder">${atrzVO.deptCodeNm}</p>
+																			<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
+																				<c:choose>
+																					<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
+																						<span class="material-symbols-outlined" style="margin-right: 5px;">
+																						attach_file
+																						</span>
+																					</c:when>
+																					<c:otherwise>
+																						<span class="material-symbols-outlined" style="margin-right: 5px; visibility: hidden;">
+																						attach_file
+																						</span>
+																					</c:otherwise>
+																				</c:choose>
+																			${atrzVO.atrzSj}
+																			</a>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
 																			<p class="text-sm fw-bolder">${atrzVO.drafterEmpnm}</p>
-																		</td>
-																		<td class="text-center" style="padding-top: 0px;">
-																			<p class="text-sm fw-bolder">
-																				<span class="material-symbols-outlined">
-																					attach_file </span>
-																			</p>
 																		</td>
 																	</tr>
 																</tbody>

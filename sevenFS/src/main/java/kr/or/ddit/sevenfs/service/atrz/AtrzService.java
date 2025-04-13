@@ -21,14 +21,23 @@ public interface AtrzService {
 	//기안완료된 문서리스트
 	public List<AtrzVO> atrzCompletedList(String emplNo);
 		
-	//목록 출력
-	public List<AtrzVO> homeList(String emplNo);
+	//참조대기문서 목록
+	public List<AtrzVO> atrzReferList(String emplNo);
+	//결재예정문서 목록
+	public List<AtrzVO> atrzExpectedList(String emplNo);
+	
+	
+	//기안문서함
+	public List<AtrzVO> atrzAllSubmitList(String emplNo);
+	//임시저장함 
+	public List<AtrzVO> atrzStorageList(String emplNo);
+	//결재문서함
+	public List<AtrzVO> atrzAllApprovalList(String emplNo);
 	
 	//기안문서 상세보기
 	public DraftVO draftDetail(String draftNo);
 	
-	//임시저장 문서리스트
-	public List<AtrzVO> atrzStorageList(String emplNo);
+	
 	
 	
 	//전자결재 테이블 등록
@@ -62,6 +71,9 @@ public interface AtrzService {
 	
 	//전자결재 문서 상세보기 결재라인 수정(업데이트) 반려시
 	public int atrzDetilCompUpdate(AtrzVO atrzVO);
+	
+	
+
 	
 	
 	

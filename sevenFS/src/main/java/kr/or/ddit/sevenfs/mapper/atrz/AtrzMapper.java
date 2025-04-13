@@ -16,20 +16,25 @@ import kr.or.ddit.sevenfs.vo.atrz.SpendingVO;
 
 @Mapper
 public interface AtrzMapper {
-	//결재 대기중인 문서리스트
+	//결재대기문서
 	public List<AtrzVO> atrzApprovalList(String emplNo);
-	//기안 올린 문서리스트
+	//기안진행문서
 	public List<AtrzVO> atrzSubmitList(String emplNo);
-	//기안완료된 문서리스트
+	//결재완료문서
 	public List<AtrzVO> atrzCompletedList(String emplNo);
 	
-	//임시저장 문서리스트
+	//참조대기문서
+	public List<AtrzVO> atrzReferList(String emplNo);
+	//결재예정문서
+	public List<AtrzVO> atrzExpectedList(String emplNo);
+	
+	//기안문서함
+	public List<AtrzVO> atrzAllSubmitList(String emplNo);
+	//임시저장함
 	public List<AtrzVO> atrzStorageList(String emplNo);
-	
-	
-	//목록 출력
-	public List<AtrzVO> homeList(String emplNo);
-	
+	//결재문서힘
+	public List<AtrzVO> atrzAllApprovalList(String emplNo);
+
 	//기안문서 detail
 	public DraftVO draftDetail(String draftNo);
 	
@@ -82,6 +87,10 @@ public interface AtrzMapper {
 //	public int atrzStatusCompFinalUpdate(AtrzVO atrzVO);
 	
 	public AtrzVO getAtrzDetail(String atrzDocNo);
+	
+
+	
+
 	
 	
 	

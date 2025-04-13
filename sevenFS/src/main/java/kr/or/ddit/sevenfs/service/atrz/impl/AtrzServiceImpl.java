@@ -73,9 +73,96 @@ public class AtrzServiceImpl implements AtrzService {
 		return atrzCompletedList;
 	}
 	
-	//목록 출력
-	public List<AtrzVO> homeList(String emplNo) {
-		return this.atrzMapper.homeList(emplNo);
+	//참조대기문서
+	@Override
+	public List<AtrzVO> atrzReferList(String emplNo) {
+		List<AtrzVO> atrzReferList = atrzMapper.atrzReferList(emplNo);
+		
+		for (AtrzVO atrzVO : atrzReferList) {
+			EmployeeVO employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
+			if(employeeVO != null) {
+				atrzVO.setClsfCodeNm(employeeVO.getPosNm());
+				atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+				log.info("atrzReferList-> atrzReferList : "+atrzReferList);
+				
+			}
+			
+		}
+		
+		return atrzReferList;
+	}
+	//결재예정문서
+	@Override
+	public List<AtrzVO> atrzExpectedList(String emplNo) {
+		List<AtrzVO> atrzExpectedList = atrzMapper.atrzExpectedList(emplNo);
+		
+		for (AtrzVO atrzVO : atrzExpectedList) {
+			EmployeeVO employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
+			if(employeeVO != null) {
+				atrzVO.setClsfCodeNm(employeeVO.getPosNm());
+				atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+				log.info("atrzExpectedList-> atrzExpectedList : "+atrzExpectedList);
+				
+			}
+			
+		}
+		return atrzExpectedList;
+	}
+	
+	//기안문서함
+	@Override
+	public List<AtrzVO> atrzAllSubmitList(String emplNo) {
+		List<AtrzVO> atrzAllSubmitList = atrzMapper.atrzAllSubmitList(emplNo);
+				
+		for (AtrzVO atrzVO : atrzAllSubmitList) {
+			EmployeeVO employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
+			if(employeeVO != null) {
+				atrzVO.setClsfCodeNm(employeeVO.getPosNm());
+				atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+				log.info("atrzAllSubmitList-> atrzAllSubmitList : "+atrzAllSubmitList);
+				
+			}
+			
+		}
+		
+		return atrzAllSubmitList;
+	}
+	
+	//임시저장 문서리스트
+	@Override
+	public List<AtrzVO> atrzStorageList(String emplNo) {
+		List<AtrzVO> atrzStorageList = atrzMapper.atrzStorageList(emplNo);
+		
+		for (AtrzVO atrzVO : atrzStorageList) {
+			EmployeeVO employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
+			if(employeeVO != null) {
+				atrzVO.setClsfCodeNm(employeeVO.getPosNm());
+				atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+				log.info("atrzStorageList-> atrzStorageList : "+atrzStorageList);
+				
+			}
+			
+		}
+		
+		return atrzStorageList;
+	}
+	
+	//결재문서함
+	@Override
+	public List<AtrzVO> atrzAllApprovalList(String emplNo) {
+		List<AtrzVO> atrzAllApprovalList = atrzMapper.atrzAllApprovalList(emplNo);
+		
+		for (AtrzVO atrzVO : atrzAllApprovalList) {
+			EmployeeVO employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
+			if(employeeVO != null) {
+				atrzVO.setClsfCodeNm(employeeVO.getPosNm());
+				atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+				log.info("atrzAllApprovalList-> atrzAllApprovalList : "+atrzAllApprovalList);
+				
+			}
+		}
+		return atrzAllApprovalList;
+		
 	}
 	
 	//기안서 상세
@@ -235,26 +322,8 @@ public class AtrzServiceImpl implements AtrzService {
 		
 		return 1;
 	}
-	//임시저장 문서리스트
-	@Override
-	public List<AtrzVO> atrzStorageList(String emplNo) {
-		
-		
-		List<AtrzVO> atrzStorageList = atrzMapper.atrzStorageList(emplNo);
-		
-		for (AtrzVO atrzVO : atrzStorageList) {
-			EmployeeVO employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
-			if(employeeVO != null) {
-				atrzVO.setClsfCodeNm(employeeVO.getPosNm());
-				atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
-				log.info("atrzStorageList-> atrzStorageList : "+atrzStorageList);
-				
-			}
-			
-		}
-		
-		return atrzStorageList;
-	}
+
+	
 	
 	
 }
