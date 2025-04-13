@@ -263,6 +263,8 @@ $('#emplInsertBtn').on('click', function(e){
 	
 	document.getElementById('emplInsertForm').requestSubmit();
 	
+	
+	
 	return true;
 })
 

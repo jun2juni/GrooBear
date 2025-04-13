@@ -51,7 +51,7 @@ public class DclztypeServiceImpl implements DclztypeService {
 		return empDclzList;
 	}
 	
-	// 사원 근태 갯수
+	// 대분류에 따른 사원 근태 갯수
 	@Override
 	public List<DclzTypeDetailVO> empDetailDclzTypeCnt (String emplNo) {
 		return dclztypeMapper.empDetailDclzTypeCnt(emplNo);
@@ -73,6 +73,11 @@ public class DclztypeServiceImpl implements DclztypeService {
 	@Override
 	public DclzTypeVO getTodayWorkTime(DclzTypeVO dclzTypeVO) {
 		return dclztypeMapper.getTodayWorkTime(dclzTypeVO);
+	}
+	
+	@Override
+	public int addEmplBeginWorkInsert(String emplNo) {
+		return dclztypeMapper.addEmplBeginWorkInsert(emplNo);
 	}
 
 	// 선택한 년도의 데이터 가져오기
@@ -166,6 +171,8 @@ public class DclztypeServiceImpl implements DclztypeService {
 	public List<DclzTypeVO> allEmplVacList(Map<String, Object> map) {
 		return this.dclztypeMapper.allEmplVacList(map);
 	}
+
+	
 
 
 

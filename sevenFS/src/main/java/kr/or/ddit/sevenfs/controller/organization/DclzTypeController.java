@@ -62,12 +62,11 @@ public class DclzTypeController {
 		ArticlePage<DclzTypeVO> articlePage = new ArticlePage<>(total, currentPage, size);
 		log.info("articlePage : " + articlePage);
 		
-		
 		// 근태현황 대분류 개수
 		DclzTypeVO dclzCnt = dclztypeService.dclzCnt(emplNo);
 		log.info("dclzCnt : " + dclzCnt);
 		model.addAttribute("dclzCnt" , dclzCnt);
-		// 사원 상세 근태현황 목록
+		// 대분류에 따른 사원 상세 근태현황 목록
 		List<DclzTypeDetailVO> empDetailDclzTypeCnt = dclztypeService.empDetailDclzTypeCnt(emplNo);
 		log.info("empDetailDclzTypeCnt" + empDetailDclzTypeCnt);
 		model.addAttribute("empDetailDclzTypeCnt", empDetailDclzTypeCnt);		
@@ -77,7 +76,6 @@ public class DclzTypeController {
 		log.info("empDclzList : " + empDclzList);
 		model.addAttribute("empDclzList",empDclzList);
 		model.addAttribute("articlePage" , articlePage);
-		
 		
 		String dclzCode = empDclzList.get(0).getDclzCode();
 		log.info("dclzCode : " + dclzCode);

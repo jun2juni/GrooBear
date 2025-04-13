@@ -223,6 +223,10 @@ public class OrganizationServiceImpl implements OrganizationService {
 		int vacResult = dclztypeMapper.basicVacInsert(vacationVO);
 		log.info("사원 등록시 연차부여 res : " + vacResult);
 		
+		// 사원 등록시 근태현황 출퇴근으로 등록해주기 ( 그래야 근태현황이 보임 )
+		int emplBeginWorkInsert = dclztypeMapper.addEmplBeginWorkInsert(emplNo);
+		log.info("등록됐니 ?????? ");
+		
 		// 사원이 등록되면 권한 테이블에도 업로드 되어야한다
 		if(result == 1) {
 			organizationMapper.empAuthInsert(emplNo);

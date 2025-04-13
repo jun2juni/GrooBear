@@ -86,7 +86,7 @@
 	WHERE U.RNUM BETWEEN (#{currentPage} * #{size})-(#{size}-1) AND (#{currentPage}* #{size})
 </select>
 
-<!-- 사원 상세 근태현황 목록 -->
+<!-- 대분류에 따른 사원 상세 근태현황 목록 -->
 <select id="empDetailDclzTypeCnt" parameterType="String" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeDetailVO">
 	SELECT  cc.cmmn_code,
 	        dt.empl_no,
@@ -123,8 +123,7 @@
            	 ,dclz_begin_dt
            	 ,dclz_end_dt)
     VALUES (#{emplNo}
-             ,(TO_CHAR(SYSDATE
-             ,'YYYYmmDD'))
+             ,(TO_CHAR(SYSDATE,'YYYYmmDD'))
              ,#{dclzCode}
              ,SYSTIMESTAMP
              ,NULL)
@@ -149,6 +148,22 @@
  	   AND dclz_code = #{dclzCode}
 	   AND dclz_no = TO_CHAR(SYSDATE, 'YYYYmmDD')
 </select>
+
+<!-- 사원 등록시 출근 자동으로 등록해주기 -->
+<insert id="addEmplBeginWorkInsert" parameterType="String">
+		INSERT INTO dclz_type
+           	(empl_no, 
+           	 dclz_no
+           	 ,dclz_code
+           	 ,dclz_begin_dt
+           	 ,dclz_end_dt)
+    VALUES (#{emplNo}
+             ,(TO_CHAR(SYSDATE,'YYYYmmDD'))
+             ,'11'
+             ,TO_DATE(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' 09:00:00', 'YYYY-MM-DD HH24:MI:SS')
+             ,NULL)
+</insert>
+
 
 <!-- 선택한 년도의 데이터 가져오기 -->
 <select id="getSelectYear" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">

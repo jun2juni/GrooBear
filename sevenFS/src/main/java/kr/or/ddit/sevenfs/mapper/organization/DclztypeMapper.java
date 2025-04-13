@@ -29,7 +29,7 @@ public interface DclztypeMapper {
 	// 사원의 출퇴근 현황 목록
 	public List<DclzTypeVO> emplDclzTypeList(Map<String, Object> map);
 	
-	// 사원 근태 갯수
+	// 대분류에 따른 사원 근태 갯수
 	public List<DclzTypeDetailVO> empDetailDclzTypeCnt(String emplNo);
 	
 	// 출근시간 등록
@@ -40,6 +40,9 @@ public interface DclztypeMapper {
 	
 	// 오늘 등록한 출퇴근 시간 가져오기
 	public DclzTypeVO getTodayWorkTime(DclzTypeVO dclzTypeVO);
+	
+	// 사원 등록시 출근 자동으로 등록해주기
+	public int addEmplBeginWorkInsert(String emplNo);
 	
 	// 선택한 년도의 데이터 가져오기
 	public List<DclzTypeVO> getSelectYear(Map<String, Object> map);
