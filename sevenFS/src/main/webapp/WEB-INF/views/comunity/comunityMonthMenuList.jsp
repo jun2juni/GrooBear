@@ -3,9 +3,9 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-
+R
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
-<c:set var="title" scope="application" value="게시판리스트" />
+<%-- <c:set var="title" scope="application" value="게시판리스트" /> --%>
 
 
 <!DOCTYPE html>
@@ -13,7 +13,7 @@
 <head>
 	<meta charset="UTF-8" />
 	
- 	<meta name="viewport"
+ 	<meta name="viewport"	
 		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 	
@@ -108,7 +108,7 @@ table.table-hover.align-middle.text-center tbody tr td {
               <input type="hidden" value="${bbsVO.bbsCtgryNo}" name="bbsCtgryNo">
                 <!-- 카테고리 선택 드롭다운 -->
                 <select name="category" class="form-select me-2" style="width: 100px;">
-				  <option value="bbscttSj"
+				  <option value="bbscttSj"	
 				    <c:if test="${selectedCategory == 'bbscttSj'}">selected</c:if>
 				  >제목</option>
 				
@@ -143,7 +143,7 @@ table.table-hover.align-middle.text-center tbody tr td {
               </thead>
               <tbody>
                 <c:forEach var="bbsVO" items="${bbsList}">
-                  	<tr onClick="location.href='/bbs/bbsDetail?bbsSn=${bbsVO.bbsSn}'" style="cursor:pointer;">
+                  	<tr onClick="location.href='/comunity/comunityMonthMenuDetail?bbsSn=${bbsVO.bbsSn}'" style="cursor:pointer;">
                     <td style="border-bottom:1px solid #efefef;">${bbsVO.rowNumber}</td>
                     <td style="border-bottom:1px solid #efefef;">
                     	<c:if test="${bbsVO.upendFixingYn == 'Y'}">

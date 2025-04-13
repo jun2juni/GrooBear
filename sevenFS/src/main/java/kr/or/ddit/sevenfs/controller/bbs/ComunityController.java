@@ -23,6 +23,7 @@ import kr.or.ddit.sevenfs.service.bbs.ComunityService;
 import kr.or.ddit.sevenfs.service.bbs.Impl.ComunityServiceImpl;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.utils.AttachFile;
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
 
 
@@ -97,13 +98,15 @@ public class ComunityController {
 
         // 게시글 리스트 조회
         List<BbsVO> bbsList = comunityServiceImpl.comunityMonthMenuList(articlePage);
-        int startRowNumber = total - (currentPage - 1) * size;
+        int startRowNumber = (currentPage - 1) * size;
+        
+        log.info("가자잇",startRowNumber);
 
         for (int i = 0; i < bbsList.size(); i++) {
-            bbsList.get(i).setRowNumber(startRowNumber - i); // 게시글 번호
+            bbsList.get(i).setRowNumber(startRowNumber + i + 1); // 게시글 번호 (정순)
         }
 		
-     // 뷰에 전달할 모델 속성 설정
+     // 뷰에 전달할 모델 속성 설정s
         model.addAttribute("selectedCategory", bbsVO.getCategory());
         model.addAttribute("articlePage", articlePage);
         model.addAttribute("bbsList", bbsList);
@@ -112,6 +115,60 @@ public class ComunityController {
 		return "comunity/comunityMonthMenuList";	
 	} // comunityMonthMenuList 월별 식단표 메뉴 목록 출력 
 	
+	 /**
+     * 게시글 상세 조회
+     */
+    @GetMapping("/comunityMonthMenuDetail")
+    public String comunityMonthMenuDetail(Model model, @RequestParam("bbsSn") int bbsSn) {
+        log.info("게시글 상세 조회: " + bbsSn);
+		
+        BbsVO bbsVO = comunityServiceImpl.comunityMonthMenuDetail(bbsSn);
+        List<AttachFileVO> FileList = attachFileService.getFileAttachList(bbsVO.getAtchFileNo());
+        model.addAttribute("bbsVO", bbsVO);
+        model.addAttribute("fileList", FileList);
+        
+        attachFileService.downloadFile("파일 경로를 넘겨줘야함");
+
+        return "comunity/comunityMonthMenuDetail";
+    }
+
+	
+    /**
+     * 게시글 수정 폼
+     */
+    @GetMapping("/comunityMonthMenuUpdate")
+    public String bbsUpdateForm(Model model, @RequestParam("bbsSn") int bbsSn) {
+        log.info("게시글 수정 폼: " + bbsSn);
+
+        BbsVO bbsVO = comunityServiceImpl.comunityMonthMenuDetail(bbsSn);
+        model.addAttribute("bbsVO", bbsVO);
+
+        return "comunity/comunityMonthMenuUpdate";
+    }
+	
+    /**
+     * 게시글 수정 처리
+     */
+    @PostMapping("/comunityMonthMenuUpdate")
+    public String comunityMonthMenuUpdate(@ModelAttribute BbsVO bbsVO,MultipartFile[] updateFile,AttachFileVO attachFileVO) {
+        log.info("게시글 수정 요청: " + bbsVO);
+        
+        attachFileVO.setAtchFileNo(bbsVO.getAtchFileNo());
+        
+        log.info("업데이트 파일 : " + updateFile);
+        
+        log.info("삭제 파일 테스트 : " + attachFileVO);
+        
+        long attachFileNm = attachFileService.updateFileList("updateFile", updateFile, attachFileVO);
+        log.info("어테치파일 넘버 : " + attachFileNm);
+        
+        int update = comunityServiceImpl.comunityMonthMenuUpdate(bbsVO);
+        log.info("업데이트 : " + update);
+        
+        
+        
+        return "redirect:/comunity/comunityMonthMenuDetail?bbsSn=" + bbsVO.getBbsSn();
+    }
 	
 	// 월별 메뉴 인서트 페이지 
 	@GetMapping("/comunityMonthMenuInsert")

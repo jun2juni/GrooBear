@@ -39,6 +39,14 @@ public class ComunityServiceImpl implements ComunityService{
 		log.info("아티클페이지 : " + articlePage);
 		return comunityMapper.comunityMonthMenuList(articlePage);
 	}
+	@Override
+	public BbsVO comunityMonthMenuDetail(int bbsSn) {
+		return comunityMapper.comunityMonthMenuDetail(bbsSn);
+	}
+	@Override
+	public int comunityMonthMenuUpdate(BbsVO bbsVO) {
+		return comunityMapper.comunityMonthMenuUpdate(bbsVO);
+	}
 	
 
 }

@@ -16,4 +16,8 @@ public interface ComunityService {
 	public int getTotal(Map<String, Object> map);
 
 	public List<BbsVO> comunityMonthMenuList(ArticlePage<BbsVO> articlePage);
+
+	public BbsVO comunityMonthMenuDetail(int bbsSn);
+
+	public int comunityMonthMenuUpdate(BbsVO bbsVO);
 }

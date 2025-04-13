@@ -17,4 +17,8 @@ public interface ComunityMapper {
 	public int comunityMenuInsert(BbsVO bbsVO);
 	//월별 메뉴 조회
 	public List<BbsVO> comunityMonthMenuList(@Param("articlePage") ArticlePage<BbsVO> articlePage);
+	//월별 메뉴 상세 조회 
+	public BbsVO comunityMonthMenuDetail(int bbsSn);
+	//월별 메뉴 업데이트 
+	public int comunityMonthMenuUpdate(BbsVO bbsVO);
 }

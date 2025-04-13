@@ -132,7 +132,7 @@
 	</select>
 
 	<!-- 게시글 상세 조회 -->
-	<select id="bbsDetail" resultMap="BbsResultMap" parameterType="int">
+	<select id="comunityMonthMenuDetail" resultMap="BbsResultMap" parameterType="int">
 	    SELECT
 	        B.BBS_SN,
 	        B.BBS_CTGRY_NO,
@@ -171,7 +171,7 @@
 		
 
 	<!-- 게시글 수정 -->
-	<update id="bbsUpdate"
+	<update id="comunityMonthMenuUpdate"
 		parameterType="kr.or.ddit.sevenfs.vo.bbs.BbsVO">
 		UPDATE BBS
 		SET
@@ -224,12 +224,6 @@
 		)
 	</select>
 
-	<update id="bbsDelete" parameterType="int">
-		UPDATE BBS
-		SET
-		BBSCTT_USE_YN = 'N'
-		WHERE BBS_SN = #{bbsSn}
-	</update>
 
 	<!-- 글의 수 구하기->페이징 블록을 좌우함 public int getTotal(Map<String, Object> map) -->
 	<select id="getTotal" parameterType="hashMap" resultType="int">
