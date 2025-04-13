@@ -21,7 +21,7 @@ public class AtrzLineVO {
 	private String contdAuthorYn;
 	private String sanctnOpinion;
 	private String eltsgnImage;
-	private Date sanctnConfmDt;
+	private Date sanctnConfmDt;  //결재완료일시
 	
 	private List<AtrzLineVO> atrzLineList;    //전자결재선 리스트
 	

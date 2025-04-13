@@ -66,69 +66,36 @@ public class AtrzController {
 		String emplNo = empVO.getEmplNo();
 		log.info("emplNo : ", emplNo);
 
-		// 여기는 결재 대기문서
+		// 결재대기문서목록
 		List<AtrzVO> atrzApprovalList = atrzService.atrzApprovalList(emplNo);
-		// 결재대기문서의 기안자상세정보 따로 코드를 통해 넣어줘야 함
-		EmployeeVO employeeVO;
-		for (AtrzVO atrzVO : atrzApprovalList) {
-			String drafterEmpNo = atrzVO.getDrafterEmpno();
-			employeeVO = organizationService.emplDetail(drafterEmpNo);
-//			log.info("employeeVO (기안자 상세정보를 위하여): "+employeeVO);
-			// 직급코드 atrzVO담기
-			atrzVO.setClsfCodeNm(employeeVO.getClsfCodeNm());
-			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
-//			log.info("atrzVO (기안자 상세정보 추가): "+atrzVO);
-
-		}
-		// 여기는 내가 결재차례인경우에 해당
 		model.addAttribute("atrzApprovalList", atrzApprovalList);
 
-		// 가안중에 문서에 해당 기안일시 최신순으로 10개만 출력
+		// 기안진행 문서 기안중에 문서에 해당 기안일시 최신순으로 10개만 출력
 		List<AtrzVO> atrzSubmitList = atrzService.atrzSubmitList(emplNo);
-		for (AtrzVO atrzVO : atrzSubmitList) {
-			String drafterEmpNo = atrzVO.getDrafterEmpno();
-			employeeVO = organizationService.emplDetail(drafterEmpNo);
-			atrzVO.setClsfCodeNm(employeeVO.getClsfCodeNm());
-			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
-		}
 		model.addAttribute("atrzSubmitList", atrzSubmitList);
 
 		// 기안완료된 문서에 해당 완료일시 최신순으로 10개만 출력
 		List<AtrzVO> atrzCompletedList = atrzService.atrzCompletedList(emplNo);
-		for (AtrzVO atrzVO : atrzCompletedList) {
-			String drafterEmpNo = atrzVO.getDrafterEmpno();
-			employeeVO = organizationService.emplDetail(drafterEmpNo);
-			atrzVO.setClsfCodeNm(employeeVO.getClsfCodeNm());
-			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
-		}
-
 		model.addAttribute("atrzCompletedList", atrzCompletedList);
 
 		model.addAttribute("title", "전자결재");
 		return "atrz/home";
 	}
 
-	// 결재대기문서 페이징 처리중
+	// 전자결재 문서함
 	@GetMapping("/approval")
 	public String approvalList(Model model, @AuthenticationPrincipal CustomUser customUser,
 			@RequestParam(defaultValue = "1") int total, @RequestParam(defaultValue = "1") int currentPage,
 			@RequestParam(defaultValue = "10") int size) {
-
-		ArticlePage<AttachFileVO> articlePage = new ArticlePage<>(total, currentPage, size);
-		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(1);
+		//페이징 처리를 위한 
+//		ArticlePage<AttachFileVO> articlePage = new ArticlePage<>(total, currentPage, size);
+//		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(1);
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
 		
 		//결재대기문서
 		List<AtrzVO> atrzApprovalList = this.atrzService.atrzApprovalList(emplNo);
-
-		EmployeeVO employeeVO;
-		for (AtrzVO atrzVO : atrzApprovalList) {
-			employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
-			atrzVO.setClsfCodeNm(employeeVO.getPosNm());
-			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
-		}
 		model.addAttribute("atrzApprovalList", atrzApprovalList);
 		model.addAttribute("title", "결재대기문서");
 
@@ -137,29 +104,28 @@ public class AtrzController {
 		//결재예정문서
 		
 		
-		
-		
 		return "atrz/approval";
 
 	}
 
 	@GetMapping("/document")
-	public String documentList(Model model, HttpServletRequest req, @AuthenticationPrincipal CustomUser customUser) {
+	public String documentList(Model model, @AuthenticationPrincipal CustomUser customUser) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
+		log.info("documentList-> emplNo : "+emplNo);
 
-		List<AtrzVO> atrzVOList = this.atrzService.homeList(emplNo);
+		//여기에 표시될것
+		//기안문서함
+		//기안문서함의 경우에는 내가 기안 한  목록이 표시된다.
+		//임시저장함(로그인한 사람의 아이디를 받아서 select한다.)
+		List<AtrzVO> atrzStorageList = this.atrzService.atrzStorageList(emplNo);
+		
+		log.info("documentList->atrzStorageList : "+atrzStorageList);
+		model.addAttribute("atrzStorageList",atrzStorageList);
+		//결재문서함
+		//결재문서함의 경우에는 결재선에 내가 포함되어있는 문서만 확인된다.
 
-		EmployeeVO employeeVO;
-		for (AtrzVO atrzVO : atrzVOList) {
-			employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
-			atrzVO.setClsfCodeNm(employeeVO.getPosNm());
-			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
-		}
-
-		log.info("homeList -> atrzVOList : " + atrzVOList);
-		model.addAttribute("atrzVOList", atrzVOList);
 		model.addAttribute("title", "전자결재문서함");
 		return "atrz/documentBox";
 	}
@@ -333,7 +299,7 @@ return viewName;
 		
 		atrzVO.setEmplNo(emplNo);
 		
-		int atrzUpdateResult = atrzService.atrzDetailAppUpdate(atrzVO);
+		int atrzAppUpdateResult = atrzService.atrzDetailAppUpdate(atrzVO);
 		
 		log.info("atrzDetailUpdate-> atrzVO : "+atrzVO);
 
@@ -341,6 +307,7 @@ return viewName;
 	}
 	
 	//전자결재 반려시 
+	@ResponseBody
 	@PostMapping("selectForm/atrzDetilCompUpdate")
 	public String atrzDetilCompUpdate(AtrzVO atrzVO, Model model
 			,@AuthenticationPrincipal CustomUser customUser	) {
@@ -350,7 +317,7 @@ return viewName;
 		String emplNo = empVO.getEmplNo();
 		
 		atrzVO.setEmplNo(emplNo);
-		int atrzUpdateResult = atrzService.atrzDetilCompUpdate(atrzVO);
+		int atrzCompUpdateResult = atrzService.atrzDetilCompUpdate(atrzVO);
 		
 		log.info("atrzDetilCompUpdate-> atrzVO : "+atrzVO);
 		return "success";

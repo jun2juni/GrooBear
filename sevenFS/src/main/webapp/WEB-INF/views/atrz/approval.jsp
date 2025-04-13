@@ -286,26 +286,22 @@
 																			<p>
 																				<c:choose>
 																					<c:when test="${atrzVO.atrzSttusCode == '00' }">
-																						<span
-																							class="status-btn close-btn actBtn col-sm-6 col-md-4"
-																							style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
+																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
 																					</c:when>
 																					<c:when test="${atrzVO.atrzSttusCode == '10' }">
-																						<span
-																							class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
+																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
 																					</c:when>
 																					<c:when test="${atrzVO.atrzSttusCode == '20' }">
-																						<span
-																							class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
+																						<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
 																					</c:when>
 																					<c:when test="${atrzVO.atrzSttusCode == '30' }">
-																						<span
-																							class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																						<span class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																					</c:when>
+																					<c:when test="${atrzVO.atrzSttusCode == '40' }">
+																						<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4" style="background-color: pink; color: #ed268a;">취소</span>
 																					</c:when>
 																					<c:otherwise>
-																						<span
-																							class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4"
-																							style="background-color: pink; color: #ed268a;">취소</span>
+																						<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4">임시저장</span>
 																					</c:otherwise>
 																				</c:choose>
 																			</p>

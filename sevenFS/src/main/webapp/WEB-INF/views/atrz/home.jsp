@@ -194,7 +194,7 @@
 										<!-- <p>${myEmpInfo}</p> -->
 							<div class="atrzTabCont" style="margin-top: 0px; overflow-x: auto;">
 								<div class="container mt-2 homeContainer">
-									<div style="display: flex; justify-content: space-between; align-items: center;" class="mb-10">
+									<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;" class="mb-10">
 										<h6 class="mb-10 pt-20 pl-20">결재대기문서</h6>
 										<a href="/atrz/approval" class="text-sm fw-bolder" style="color: #4a6cf7;">
 											더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
@@ -357,26 +357,22 @@
 																			<p>
 																				<c:choose>
 																					<c:when test="${atrzVO.atrzSttusCode == '00' }">
-																						<span
-																							class="status-btn close-btn actBtn col-sm-6 col-md-4"
-																							style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
+																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
 																					</c:when>
 																					<c:when test="${atrzVO.atrzSttusCode == '10' }">
-																						<span
-																							class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
+																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
 																					</c:when>
 																					<c:when test="${atrzVO.atrzSttusCode == '20' }">
-																						<span
-																							class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
+																						<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
 																					</c:when>
 																					<c:when test="${atrzVO.atrzSttusCode == '30' }">
-																						<span
-																							class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																						<span class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																					</c:when>
+																					<c:when test="${atrzVO.atrzSttusCode == '40' }">
+																						<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4" style="background-color: pink; color: #ed268a;">취소</span>
 																					</c:when>
 																					<c:otherwise>
-																						<span
-																							class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4"
-																							style="background-color: pink; color: #ed268a;">취소</span>
+																						<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4" style="color: #20b2aa  ;" >임시저장</span>
 																					</c:otherwise>
 																				</c:choose>
 																			</p>
@@ -396,7 +392,7 @@
 								<div class="col-lg-12">
 									<div class="card-style mb-30 docList">
 										<div style="display: flex; justify-content: space-between; align-items: center;" class="mb-10">
-											<h6 class="mb-10">완료문서</h6>
+											<h6 class="mb-10">결재완료문서</h6>
 											<a href="/atrz/document" class="text-sm fw-bolder" style="color: #4a6cf7;">
 												더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
 											</a>
@@ -450,7 +446,7 @@
 																		</p>
 																	</td>
 																	<td style="text-align: left; padding-top: 0px;">
-																		<a href="#" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
+																		<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
 																			<c:choose>
 																				<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
 																					<span class="material-symbols-outlined" style="margin-right: 5px;">
@@ -476,20 +472,23 @@
 																		<h6 class="text-sm">
 																			<p>
 																				<c:choose>
-																					<c:when test="${atrzVO.atrzSttusCode == '00'}">
+																					<c:when test="${atrzVO.atrzSttusCode == '00' }">
 																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
 																					</c:when>
-																					<c:when test="${atrzVO.atrzSttusCode == '10'}">
+																					<c:when test="${atrzVO.atrzSttusCode == '10' }">
 																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
 																					</c:when>
-																					<c:when test="${atrzVO.atrzSttusCode == '20'}">
+																					<c:when test="${atrzVO.atrzSttusCode == '20' }">
 																						<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
 																					</c:when>
-																					<c:when test="${atrzVO.atrzSttusCode == '30'}">
+																					<c:when test="${atrzVO.atrzSttusCode == '30' }">
 																						<span class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
 																					</c:when>
+																					<c:when test="${atrzVO.atrzSttusCode == '40' }">
+																						<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4" style="background-color: pink; color: #ed268a;">취소</span>
+																					</c:when>
 																					<c:otherwise>
-																						<span class="status-btn info-btn actBtn col-sm-6 col-md-4" style="background-color: pink; color: #ed268a;">취소</span>
+																						<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4">임시저장</span>
 																					</c:otherwise>
 																				</c:choose>
 																			</p>

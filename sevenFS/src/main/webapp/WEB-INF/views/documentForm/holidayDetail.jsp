@@ -25,6 +25,7 @@
 	padding: 5px;
 	border: 1px solid;
 	font-size: .9em;
+	font-weight: bold;
 }
 #s_eap_draft_info tr th,
 #s_eap_draft tr th,
@@ -184,7 +185,7 @@
 													<tbody>
 														<!-- 결재자: atrzTy = 'N' -->
 														<tr>
-															<th rowspan="3">결재</th>
+															<th rowspan="4">결재</th>
 															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
 																	<!-- <p>${atrzLineVO}</p> -->
@@ -195,30 +196,40 @@
 														<tr>
 															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
-																	<td>
-																		${atrzLineVO.sanctnerEmpNm}
+																	<td style="text-align: center;">
+																		<c:choose>
+																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '10'}">
+																				<img src="/assets/images/atrz/afterRe.png" style="width: 50px; display: block; margin: 0 auto;">
+																			</c:when>
+																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '20'}">
+																				<img src="/assets/images/atrz/return.png" style="width: 50px; display: block; margin: 0 auto;">
+																			</c:when>
+																			<c:otherwise>
+																				<img src="/assets/images/atrz/beforGR.png" style="width: 50px; display: block; margin: 0 auto;">
+																			</c:otherwise>
+																		</c:choose>
+																		<span style="display: block; margin-top: 5px;">${atrzLineVO.sanctnerEmpNm}</span>
 																		<input type="hidden" name="atrzLnSn" value="${atrzLineVO.atrzLnSn}" />
 																		<input type="hidden" name="sanctnerEmpno" value="${atrzLineVO.sanctnerEmpno}" />
 																	</td>
 																</c:if>
 															</c:forEach>
 														</tr>
-														<tr>
+														<tr style="height: 30px;">
 															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
-																	<td>
-																		<c:choose>
-																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '10'}">
-																				<img src="/assets/images/atrz/afterRe.png" style="width: 50px;">
-																			</c:when>
-																			<c:otherwise>
-																				<img src="/assets/images/atrz/beforGR.png" style="width: 50px;">
-																			</c:otherwise>
-																		</c:choose>
+																	<td style="font-size: 0.8em;">
+																		<span style="color: <c:if test='${atrzLineVO.sanctnProgrsSttusCode eq "20"}'>red</c:if>;">
+																			<fmt:formatDate value="${atrzLineVO.sanctnConfmDt}" pattern="yyyy-MM-dd" />
+																		</span>
+																		<!-- <span style="font-size: 1;">
+																			<fmt:formatDate value="${atrzLineVO.sanctnConfmDt}" pattern="HH:mm:ss" />
+																		</span> -->
 																	</td>
 																</c:if>
 															</c:forEach>
 														</tr>
+
 												
 														<!-- 참조자: atrzTy = 'Y' -->
 														<c:set var="hasReference" value="false" />
@@ -449,9 +460,19 @@ $("#atrzDetailappBtn").on("click", function() {
     });
 });
 
-$("#atrzDetailComBtn").on("click",function(){
+$("#atrzDetailComBtn").on("click", function () {
 	const atrzDocNo = $("#atrzDocNo").val(); // 문서 번호 가져오기
 	const companionMessage = $("#companionMessage").val(); // 반려 의견 가져오기
+	
+	// 반려 의견이 비어있는지 확인
+	if (!companionMessage.trim()) {
+		swal({
+			title: "반려시 반려의견은 필수입니다.",
+			icon: "warning",
+			button: "확인",
+		});
+		return; // 의견이 없으면 함수 종료
+	}
 
 	// 서버로 전송할 데이터 구성
 	const companionData = {
@@ -460,9 +481,10 @@ $("#atrzDetailComBtn").on("click",function(){
 		"sanctnProgrsSttusCode": "20", // 결재 상태를 "반려"로 설정
 	};
 	console.log("companionData : ", companionData);
-	//ajax 요청
+
+	// AJAX 요청
 	$.ajax({
-		url: "/atrz/selectForm/atrzDetailUpdate", // 서버의 결재 상태 업데이트 API
+		url: "/atrz/selectForm/atrzDetilCompUpdate", // 결재 반려 시
 		type: "POST",
 		data: companionData,
 		dataType: "text",
@@ -488,7 +510,8 @@ $("#atrzDetailComBtn").on("click",function(){
 			});
 		},
 	});
-})
+});
+
 
 
 

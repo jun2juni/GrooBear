@@ -27,6 +27,9 @@ public interface AtrzService {
 	//기안문서 상세보기
 	public DraftVO draftDetail(String draftNo);
 	
+	//임시저장 문서리스트
+	public List<AtrzVO> atrzStorageList(String emplNo);
+	
 	
 	//전자결재 테이블 등록
 	public int insertAtrz(AtrzVO atrzVO);
@@ -59,6 +62,8 @@ public interface AtrzService {
 	
 	//전자결재 문서 상세보기 결재라인 수정(업데이트) 반려시
 	public int atrzDetilCompUpdate(AtrzVO atrzVO);
+	
+	
 	
 	
 	

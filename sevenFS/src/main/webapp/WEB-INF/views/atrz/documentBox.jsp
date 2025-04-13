@@ -65,6 +65,11 @@
 	padding: 10px 20px;
 	font-size: 1.1em;
 }
+.emptyList{
+	padding: 50px 0; 
+	font-size: 1.2rem; 
+	color: gray;
+}
 </style>
 <body>
 <%@ include file="../layout/sidebar.jsp" %>
@@ -166,6 +171,13 @@
 										<div class="card-style">
 											<h6 class="mb-10">기안문서함</h6>
 											<div class="table-wrapper table-responsive">
+												<c:choose>
+													<c:when test="${empty atrzApprovalList}">
+														<div class="text-center emptyList" >
+															기안 문서함에 문서가 없습니다.
+														</div>
+													</c:when>
+													<c:otherwise>
 												<table class="table striped-table">
 													<thead>
 														<tr>
@@ -242,26 +254,22 @@
 																	<p>
 																		<c:choose>
 																			<c:when test="${atrzVO.atrzSttusCode == '00' }">
-																				<span
-																					class="status-btn close-btn actBtn col-sm-6 col-md-4"
-																					style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
+																				<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
 																			</c:when>
 																			<c:when test="${atrzVO.atrzSttusCode == '10' }">
-																				<span
-																					class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
+																				<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
 																			</c:when>
 																			<c:when test="${atrzVO.atrzSttusCode == '20' }">
-																				<span
-																					class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
+																				<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
 																			</c:when>
 																			<c:when test="${atrzVO.atrzSttusCode == '30' }">
-																				<span
-																					class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																				<span class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																			</c:when>
+																			<c:when test="${atrzVO.atrzSttusCode == '40' }">
+																				<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4" style="background-color: pink; color: #ed268a;">취소</span>
 																			</c:when>
 																			<c:otherwise>
-																				<span
-																					class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4"
-																					style="background-color: pink; color: #ed268a;">취소</span>
+																				<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4">임시저장</span>
 																			</c:otherwise>
 																		</c:choose>
 																	</p>
@@ -270,6 +278,8 @@
 														</tbody>
 													</c:forEach>
 												</table>
+											</c:otherwise>
+										</c:choose>
 											</div>
 										</div>
 									</div>
@@ -300,8 +310,8 @@
 											<div class="table-wrapper table-responsive">
 												<c:choose>
 													<c:when test="${empty atrzVOList}">
-														<div class="text-center py-5"></div>
-															<h5>임시저장함의 문서가 없습니다.</h5>
+														<div class="text-center emptyList" >
+															임시저장한 문서가 없습니다.
 														</div>
 													</c:when>
 													<c:otherwise>
@@ -324,7 +334,7 @@
 																	</th>
 																</tr>
 															</thead>
-															<c:forEach var="atrzVO" items="${atrzVOList}">
+															<c:forEach var="atrzVO" items="${atrzStorageList}">
 																<tbody>
 																	<tr>
 																		<td class="text-center" style="padding-top: 10px; padding-bottom: 10px;">
@@ -385,8 +395,11 @@
 																					<c:when test="${atrzVO.atrzSttusCode == '30' }">
 																						<span class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
 																					</c:when>
-																					<c:otherwise>
+																					<c:when test="${atrzVO.atrzSttusCode == '40' }">
 																						<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4" style="background-color: pink; color: #ed268a;">취소</span>
+																					</c:when>
+																					<c:otherwise>
+																						<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4">임시저장</span>
 																					</c:otherwise>
 																				</c:choose>
 																			</p>
@@ -439,6 +452,13 @@
 										<div class="card-style">
 											<h6 class="mb-10">결재문서함</h6>
 											<div class="table-wrapper table-responsive">
+												<c:choose>
+													<c:when test="${empty atrzApprovalList}">
+														<div class="text-center emptyList" >
+															결재 문서함에 문서가 없습니다.
+														</div>
+													</c:when>
+													<c:otherwise>
 												<table class="table striped-table">
 													<thead>
 														<tr>
@@ -551,6 +571,8 @@
 														</tbody>
 													</c:forEach>
 												</table>
+											</c:otherwise>
+										</c:choose>
 											</div>
 										</div>
 									</div>

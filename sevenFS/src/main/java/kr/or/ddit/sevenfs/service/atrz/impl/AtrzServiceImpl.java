@@ -1,24 +1,22 @@
 package kr.or.ddit.sevenfs.service.atrz.impl;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
-import kr.or.ddit.sevenfs.utils.ArticlePage;
-import kr.or.ddit.sevenfs.vo.AttachFileVO;
+import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
 import kr.or.ddit.sevenfs.vo.atrz.BankAccountVO;
+import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 import kr.or.ddit.sevenfs.vo.atrz.HolidayVO;
 import kr.or.ddit.sevenfs.vo.atrz.SalaryVO;
 import kr.or.ddit.sevenfs.vo.atrz.SpendingVO;
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
-import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 
 @Slf4j
 @Service
@@ -27,20 +25,52 @@ public class AtrzServiceImpl implements AtrzService {
 	@Autowired
 	AtrzMapper atrzMapper;
 	
+	// 사원 정보를 위해 가져온것
+	@Autowired
+	private OrganizationService organizationService;
+	
 	//결재 대기중인 문서리스트
 	@Override
 	public List<AtrzVO> atrzApprovalList(String emplNo) {
-		return this.atrzMapper.atrzApprovalList(emplNo);
+		
+		List<AtrzVO> atrzApprovalList = atrzMapper.atrzApprovalList(emplNo);
+		for (AtrzVO atrzVO : atrzApprovalList) {
+			String drafterEmpNo = atrzVO.getDrafterEmpno();
+			EmployeeVO employeeVO = organizationService.emplDetail(drafterEmpNo);
+			atrzVO.setClsfCodeNm(employeeVO.getClsfCodeNm());
+			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+		}
+		
+		return atrzApprovalList;
 	}
 	//기안중인 문서리스트
 	@Override
 	public List<AtrzVO> atrzSubmitList(String emplNo) {
-		return this.atrzMapper.atrzSubmitList(emplNo);
+		
+		List<AtrzVO> atrzSubmitList = atrzMapper.atrzSubmitList(emplNo);
+		
+		for (AtrzVO atrzVO : atrzSubmitList) {
+			String drafterEmpNo = atrzVO.getDrafterEmpno();
+			EmployeeVO employeeVO = organizationService.emplDetail(drafterEmpNo);
+			atrzVO.setClsfCodeNm(employeeVO.getClsfCodeNm());
+			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+		}
+		
+		return atrzSubmitList;
 	}
 	//기안완료된 문서리스트
 	@Override
 	public List<AtrzVO> atrzCompletedList(String emplNo) {
-		return this.atrzMapper.atrzCompletedList(emplNo);
+		
+		List<AtrzVO> atrzCompletedList = atrzMapper.atrzCompletedList(emplNo);
+		
+		for (AtrzVO atrzVO : atrzCompletedList) {
+			String drafterEmpNo = atrzVO.getDrafterEmpno();
+			EmployeeVO employeeVO = organizationService.emplDetail(drafterEmpNo);
+			atrzVO.setClsfCodeNm(employeeVO.getClsfCodeNm());
+			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+		}
+		return atrzCompletedList;
 	}
 	
 	//목록 출력
@@ -162,8 +192,7 @@ public class AtrzServiceImpl implements AtrzService {
 		//2) nextStep : 나 다음에 결재할 사람
 		//3) meStep : 내 결재 순서번호
 		//최종결재자인경우
-		if(maxStep==0){
-			
+		if(maxStep!=0){
 			//III. ATRZ의 완료 및 일시 처리
 			atrzVO.setAtrzSttusCode("20");
 			result += atrzMapper.atrzStatusFinalUpdate(atrzVO);
@@ -204,11 +233,27 @@ public class AtrzServiceImpl implements AtrzService {
 		//I. ATRZ_LINE 결재 처리
 		int result = atrzMapper.atrzDetilCompUpdate(atrzVO);
 		
-		atrzVO.setAtrzSttusCode("10");
-		result += atrzMapper.atrzStatusCompFinalUpdate(atrzVO);
-		
-		
 		return 1;
+	}
+	//임시저장 문서리스트
+	@Override
+	public List<AtrzVO> atrzStorageList(String emplNo) {
+		
+		
+		List<AtrzVO> atrzStorageList = atrzMapper.atrzStorageList(emplNo);
+		
+		for (AtrzVO atrzVO : atrzStorageList) {
+			EmployeeVO employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
+			if(employeeVO != null) {
+				atrzVO.setClsfCodeNm(employeeVO.getPosNm());
+				atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+				log.info("atrzStorageList-> atrzStorageList : "+atrzStorageList);
+				
+			}
+			
+		}
+		
+		return atrzStorageList;
 	}
 	
 	

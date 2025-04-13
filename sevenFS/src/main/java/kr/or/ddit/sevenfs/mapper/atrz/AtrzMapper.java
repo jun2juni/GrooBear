@@ -23,6 +23,10 @@ public interface AtrzMapper {
 	//기안완료된 문서리스트
 	public List<AtrzVO> atrzCompletedList(String emplNo);
 	
+	//임시저장 문서리스트
+	public List<AtrzVO> atrzStorageList(String emplNo);
+	
+	
 	//목록 출력
 	public List<AtrzVO> homeList(String emplNo);
 	
@@ -75,7 +79,11 @@ public interface AtrzMapper {
 	//현재결재선 업데이트 (반려시)
 	public int atrzDetilCompUpdate(AtrzVO atrzVO);
 	//전자결재 문서 상태 업데이트 (반려시)
-	public int atrzStatusCompFinalUpdate(AtrzVO atrzVO);
+//	public int atrzStatusCompFinalUpdate(AtrzVO atrzVO);
+	
+	public AtrzVO getAtrzDetail(String atrzDocNo);
+	
+	
 	
 	
 	
