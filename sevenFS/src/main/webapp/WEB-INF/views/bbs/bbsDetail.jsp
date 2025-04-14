@@ -214,7 +214,7 @@
 	                `;
 
 	                // 댓글 작성자일 때만 버튼 보여주기 
-	                if (answer.emplNo == loginUserEmplNo || loginUserEmplNo == '20250006') {
+	                if (answer.emplNo == loginUserEmplNo || loginUserEmplNo == '20250000') {
 	                    html += `
 	                        <div class="mt-2 d-flex justify-content-end">
 	                            <button class="btn btn btn-outline-warning me-2"
@@ -302,7 +302,6 @@
 	            type: "POST",
 	            data: { bbsSn: bbsSn },
 	            success: function (res) {
-	                alert("삭제되었습니다.");
 	                window.location.href = "/bbs/bbsList?bbsCtgryNo=" + bbsCtgryNo;
 	            },
 	            error: function (xhr) {
