@@ -25,13 +25,11 @@
 	<section class="section">
 	  <div class="container-fluid">
 	  	<div class="row">
-	  	 <div style="">
 		  <div class="col-4">
  		  	<c:import url="../organization/searchBar.jsp"></c:import>
 			<div class="card-style overflow-scroll" style="max-height: 90vh;" >
 		  		<c:import url="../organization/orgList.jsp" />
 			</div>
-		  </div>
 		  </div>
 		  
 		  <!-- 사원상세 페이지 -->
