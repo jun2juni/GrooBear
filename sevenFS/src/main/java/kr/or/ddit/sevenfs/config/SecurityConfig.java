@@ -19,6 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 
 
 import javax.sql.DataSource;
@@ -83,8 +84,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 프리플라이트 OPTIONS 허용 (JSON 요청을 받으려고)
                         // 허가
                         .requestMatchers("/auth/login", "/signup",
-                                 "/error",  "/images/**",  "/layout/**", "/assets/**",
-                                "/api/login", "/ws/**", "/api/token/refresh"
+                                 "/error",  "/images/**",  "/layout/**",
+                                "/assets/**", "/ws/**",
+                                "/api/login","/api/token/invalid", "/api/token/refresh" // 여기는 비동기 로그인 관련
                         ).permitAll()
                         .requestMatchers("/api/**").authenticated() // 나머지 API는 인증 필요
                         // .requestMatchers("/ceo/**").hasRole("ROLE_ADMIN")

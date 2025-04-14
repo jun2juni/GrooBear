@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.filter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 import jakarta.servlet.FilterChain;
@@ -34,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String requestURI = request.getRequestURI();
 
-        // 🔹 `/api`로 시작하는 요청만 필터 실행
+        // `/api`로 시작하는 요청만 필터 실행
         if (!requestURI.startsWith("/api") || requestURI.contains("/api/login")
                 || requestURI.contains("/api/token/refresh") || requestURI.contains("/api/token/logout")
         ) {
@@ -45,41 +46,38 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Cookie[] cookies = request.getCookies();
         String accessToken = getAccessToken(cookies);
 
+        log.debug("requestURI: {}", requestURI);
         log.debug("Access token: {}", accessToken);
         log.debug("tokenProvider.validateToken(accessToken): {}", tokenProvider.validateToken(accessToken));
-        // 엑서스 토큰이 있고 && 토큰이 사용한 경우
-        if (accessToken != null && tokenProvider.validateToken(accessToken)) {
-            // access 토큰 사용 가능
-            log.debug("토큰 로그인 성공~");
-            // 토큰이 유효하면 인증 정보 설정
-            Authentication authentication = tokenProvider.getAuthentication(accessToken);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
 
-        // 엑서스 토큰이 있고, 사용 불가능한 경우
-        if (accessToken != null && !tokenProvider.validateToken(accessToken)) {
+        if (accessToken.equals("")) {
             // 여기서 토큰 벨리데이션에 걸린 경우 뒤로 되돌리기
             // 리프레시 토큰을 가지고 새로 발급 받기
             // 리프레시 토큰도 사용 불가능 한경우 다시 로그인
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access token is missing");
+            return;
+        }
+
+        if (!tokenProvider.validateToken(accessToken)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid or expired token");
             return;
         }
+
+        log.debug("토큰 사용 가능");
+        // 로그인 검증
+        Authentication authentication = tokenProvider.getAuthentication(accessToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // 엑서스 토큰이 없는 경우는 올수가 없음
         filterChain.doFilter(request, response);
     }
 
     private String getAccessToken(Cookie[] cookies) {
-        String result = "";
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("accessToken".equals(cookie.getName())) {
-                    result = cookie.getValue();
-                    break;
-                }
-            }
-        }
-
-        return result;
+        if (cookies == null) return "";
+        return Arrays.stream(cookies)
+                .filter(cookie -> "accessToken".equals(cookie.getName()))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElse("");
     }
 }

@@ -115,15 +115,17 @@ public class AuthController {
     @PostMapping("/api/token/invalid")
     public ResponseEntity<?> tokenInvalid(@CookieValue(value = "accessToken", required = false) String accessToken) {
 
-        log.debug("accessToken: {}", accessToken);
+        log.debug("/api/token/invalid: {}", accessToken);
         Claims userNameFromJwt = this.jwtTokenProvider.getUserNameFromJwt(accessToken);
         String emplNo = userNameFromJwt.getSubject();
 
         CustomUser user = (CustomUser) this.userDetailService.loadUserByUsername(emplNo);
         EmployeeVO employeeVO = user.getEmpVO();
 
+        log.debug("employeeVO: {}", employeeVO);
+
         return  ResponseEntity.ok(Map.of(
-                "user", employeeVO
+            "user", employeeVO
         ));
     }
 
@@ -148,8 +150,8 @@ public class AuthController {
         List<CommonCodeVO> commonCodeVOS = this.orgService.depList();
         map.put("commonCodeVOS", commonCodeVOS);
 
-        log.debug("refreshToken: {}", refreshToken);
-        log.debug("accessToken: {}", accessToken);
+//        log.debug("refreshToken: {}", refreshToken);
+//        log.debug("accessToken: {}", accessToken);
 
         return map;
     }

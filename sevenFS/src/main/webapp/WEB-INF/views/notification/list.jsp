@@ -28,11 +28,6 @@
         <jsp:useBean id="notificationVOList" scope="request" type="java.util.List" />
         <c:forEach var="notification" items="${notificationVOList}">
           <div class="single-notification">
-<%--            <div class="checkbox">--%>
-<%--              <div class="form-check checkbox-style mb-20">--%>
-<%--                <input class="form-check-input" type="checkbox" value="" id="checkbox-1">--%>
-<%--              </div>--%>
-<%--            </div>--%>
             <div class="notification">
               <div class="image ${notification.notificationColor}">
                 ${notification.notificationIcon}
@@ -47,21 +42,18 @@
                 </span>
               </a>
             </div>
+  
             <div class="action">
-              <%-- 삭제 버튼 --%>
-              <button class="delete-btn" data-empl-no="${notification.emplNo}" data-ntcn-sn="${notification.ntcnSn}">
-                <i class="lni lni-trash-can"></i>
-              </button>
               <%--설정 버튼?--%>
               <button class="more-btn dropdown-toggle" id="moreAction" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="lni lni-more-alt"></i>
               </button>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction" style="">
                 <li class="dropdown-item">
-                  <a href="#0" class="text-gray">Mark as Read</a>
-                </li>
-                <li class="dropdown-item">
-                  <a href="#0" class="text-gray">Reply</a>
+                <a href="#" class="text-gray" data-empl-no="${notification.emplNo}" data-ntcn-sn="${notification.ntcnSn}">
+                  <i class="lni lni-trash-can"></i>
+                  <span>삭제</span>
+                </a>
                 </li>
               </ul>
             </div>
