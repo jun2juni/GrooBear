@@ -25,10 +25,13 @@
 	<section class="section">
 	  <div class="container-fluid">
 	  	<div class="row">
+	  	 <div style="">
 		  <div class="col-4">
+ 		  	<c:import url="../organization/searchBar.jsp"></c:import>
 			<div class="card-style overflow-scroll" style="max-height: 90vh;" >
-			  <c:import url="../organization/orgList.jsp" />
+		  		<c:import url="../organization/orgList.jsp" />
 			</div>
+		  </div>
 		  </div>
 		  
 		  <!-- 사원상세 페이지 -->
@@ -62,7 +65,7 @@
       .then(resp => resp.text())
       .then(res => {
         console.log("사원상세정보 : " , res);
-        $("#emplDetail").html(empList);
+        $("#emplDetail").html();
       })
   }
   
@@ -159,7 +162,7 @@
 		 
 			 // 전체사원 목록
 			 empList = res.empList;
-			 //console.log('전체사원 : ' , empList);
+			 console.log('전체사원 : ' , empList);
 			 
 			 // 전체부서 목록
 			 deptList = res.deptList;
@@ -216,6 +219,9 @@
         	 
         	 if(!found){
 				 swal('해당 사원을 찾을 수 없습니다.')
+				 .then((result) => {
+					 $("#schName").focus();
+				 })
 			 }
 	
 		 })
