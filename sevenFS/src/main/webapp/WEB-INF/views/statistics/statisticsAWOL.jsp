@@ -194,11 +194,11 @@
 															<label for="endYearsY" class="form-label"> 종료년도 </label>
 															<select name="endYearsY" class="form-select" id="endYearsY">
 																<option selected="" disabled="" readonly="" value="endYearsY">조회를 종료 할 년도를 선택해주세요</option>
-																<option value="202101">2021</option>
-																<option value="202201">2022</option>
-																<option value="202301">2023</option>
-																<option value="202401">2024</option>
-																<option value="202501">2025</option>
+																<option value="202112">2021</option>
+																<option value="202212">2022</option>
+																<option value="202312">2023</option>
+																<option value="202412">2024</option>
+																<option value="202512">2025</option>
 															</select>
 														</div>
 														<!--셀렉트 끝  -->
@@ -217,11 +217,11 @@
 															<label for="startYearsM" class="form-label"> 시작년도</label> 
 															<select name="startYearsM" class="form-select mb-2" id="startYearsM">
 																<option selected="" readonly="" value="">조회 년도를 선택 해주세요</option>
-																<option value="202101">2021</option>
-																<option value="202201">2022</option>
-																<option value="202301">2023</option>
-																<option value="202401">2024</option>
-																<option value="202501">2025</option>
+																<option value="2021">2021</option>
+																<option value="2022">2022</option>
+																<option value="2023">2023</option>
+																<option value="2024">2024</option>
+																<option value="2025">2025</option>
 															</select>
 															<label for="startYearsM" class="form-label"> 시작월</label>
 															<select name="startMonths" class="form-select mb-2" id="startMonths">
@@ -326,7 +326,7 @@
 								</div>
 								<!--제목 및 가로 세로 축 제목 적는 곳   -->
 									
-								<div id="chart_div" style="width: 900px; height: 500px;"></div>
+								<div id="chart_div" style="width: 1500px; height: 700px;"></div>
 							</div>
 							<!-- 카드끝 -->
 						</div> <!-- 그래프 조회버튼 위 카드/ -->
