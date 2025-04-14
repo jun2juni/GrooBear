@@ -59,9 +59,9 @@
 <%--                                <div><label for="remember-me" style>로그인 유지</label>--%>
 <%--                                    <input type="checkbox" id="remember-me" name="remember-me" /></div>--%>
                                 
-                                <c:if test="${not empty message}" >
+                                <c:if test="${param.error == 'true'}">
                                     <div class="alert alert-danger text-center">
-                                        <strong>${message}</strong>
+                                        <strong>로그인 실패했습니다.</strong>
                                     </div>
                                 </c:if>
                                 

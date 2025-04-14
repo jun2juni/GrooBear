@@ -44,10 +44,10 @@ public class SecurityConfig {
      * 정적 리소스만 스프링 시큐리티 사용을 비활성화 하는 데 static 하위 경로에 있는 리소스를
      * 대상으로 ignoring() 메서드를 사용함
      */
+    @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
-                .requestMatchers(
-                        "/assets/**", "/images/**", "/layout/**", "/ws/**");
+                .requestMatchers("/assets/**", "/images/**", "/layout/**", "/ws/**", "/upload/**");
     }
 
     /**
@@ -93,9 +93,15 @@ public class SecurityConfig {
                         // .requestMatchers("/manager/**").hasAnyRole("ROLE_ADMIN", "ROLE_MANAGER")
                         .anyRequest().authenticated()
                 )
-                .formLogin(formLogin -> formLogin.loginPage("/auth/login").defaultSuccessUrl("/", false))
+                .formLogin(formLogin -> formLogin.loginPage("/auth/login")
+                        .defaultSuccessUrl("/", false)
+                        .failureHandler((request, response, e) -> {
+                            response.sendRedirect("/auth/login?error=true");
+                        })
+                )
                 .sessionManagement(session -> session.maximumSessions(1))
-                .logout(logout -> logout.logoutSuccessUrl("/auth/login").invalidateHttpSession(true))
+                .logout(logout -> logout.logoutSuccessUrl("/auth/login")
+                        .invalidateHttpSession(true))
 //               // 임시로 사용 - 개발 시 로그인 유지를 위해 (서버 재 시작시)
                 .rememberMe(rememberMe -> rememberMe
                         .key(System.getenv("REMEMBER_ME_KEY"))
