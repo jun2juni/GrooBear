@@ -59,11 +59,7 @@ table.table-hover.align-middle.text-center tbody tr td {
 
 </style>
 </head>
-<c:if test="${not empty errorMessage}">
-    <script>
-        alert("${errorMessage}");
-    </script>
-</c:if>
+
 <body>
 
 <%@ include file="../layout/sidebar.jsp" %>
@@ -76,7 +72,7 @@ table.table-hover.align-middle.text-center tbody tr td {
 		    <h3 class="text-dark">게시판</h3>
 		    <div>
 		        <a href="/bbs/bbsInsert?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-primary me-2">게시글 추가</a>
-		        <c:if test="${myEmpInfo.emplNo == bbsVO.emplNo || myEmpInfo.emplNo == '20250006'}"><!-- 아직 권한 추가 안함 -->
+		        <c:if test="${myEmpInfo.emplNo == bbsVO.emplNo || myEmpInfo.emplNo == '20250000'}"><!-- 아직 권한 추가 안함 -->
 			        <button type="button" id="bulkToggleBtn" class="btn btn-outline-secondary me-2">일괄관리</button>
 			        <button type="button" id="bulkDeleteBtn" class="btn btn-danger" style="display:none;">선택 삭제</button>
 				</c:if>

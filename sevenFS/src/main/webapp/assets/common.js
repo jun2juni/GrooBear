@@ -97,7 +97,7 @@ class Pagination extends HTMLElement {
       value = value?.trim(); // 값의 공백 제거
 
       // 조건에 맞는 파라미터만 URL에 추가
-      if (value && value !== "null" && value !== "0") {
+      if (value && value !== "null") {
         url += `${key}=${value}&`;
       }
     });
