@@ -93,7 +93,6 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
 
-        log.debug("claims {}", claims.getSubject());
         return claims;
     }
 
