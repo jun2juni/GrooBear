@@ -247,11 +247,12 @@
 		
 		<div class="col-3">
 		  <div class="card">
-			<div id="orgList" class="card-body">
+			<div class="p-1 pb-3">
+			  <c:import url="../organization/searchBar.jsp" />
+			</div>
+			<div id="orgList" class="card-body mt-3">
 			  <c:import url="../organization/orgList.jsp" />
 			</div>
-			
-			
 		  </div>
 		</div>
 	  </div>
