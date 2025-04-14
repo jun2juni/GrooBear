@@ -25,25 +25,23 @@
 	<section class="section">
 	  <div class="container-fluid">
 	  	<div class="row">
-		  <div class="col-4">
+		  <div class="col-4 flex-grow-1">
+		  <div>
  		  	<c:import url="../organization/searchBar.jsp"></c:import>
-			<div class="card-style overflow-scroll" style="max-height: 90vh;" >
-		  		<c:import url="../organization/orgList.jsp" />
+ 		  </div>
+			<div class="s_scroll" style="flex-grow: 1; overflow-y:auto;">
+		  			<c:import url="../organization/orgList.jsp" />
 			</div>
 		  </div>
-		  
 		  <!-- 사원상세 페이지 -->
 		  <div class="col-8">
 			<div id="emplDetail" style="text-align: center;">
-			  
 			  <p id="employeeDetail" style="margin-top: 150px;">
 				<span  class="material-symbols-outlined">person_check</span>
 				사원을 선택하면 상세조회가 가능합니다.
 			  </p>
-			
 			</div>
 		  </div>
-		  
 		</div>
 	  </div>
 	</section>

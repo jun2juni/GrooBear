@@ -25,7 +25,7 @@
     
    
     <!-- 조직도 -->
-    <div id="jstree" class="mb-2"></div>
+    <div id="jstree" style="height:400px;" class="mb-2"></div>
 
 
 
