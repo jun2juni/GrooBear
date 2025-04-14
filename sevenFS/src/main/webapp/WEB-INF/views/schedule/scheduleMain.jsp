@@ -35,9 +35,16 @@
 			center : 'title',
 			right : 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
 		};
-	
 
 		const calendarOption = {
+		 buttonText: {
+			    today: '오늘',
+			    month: '월',
+			    week: '주',
+			    day: '일',
+			    list: '목록'
+			  },	
+				
 			handleWindowResize:true,
 			height: '100%', // ✅ 부모 높이에 맞춤
 			contentHeight: 60,
