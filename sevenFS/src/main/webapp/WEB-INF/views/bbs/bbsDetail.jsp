@@ -85,7 +85,7 @@
 									</a>
 									<!-- 오른쪽 버튼 (수정/삭제) -->
 									<div>
-										<c:if test="${myEmpInfo.emplNo == bbsVO.emplNo || myEmpInfo.emplNo == '20250006'}">
+										<c:if test="${myEmpInfo.emplNo == bbsVO.emplNo || myEmpInfo.emplNo == '20250000'}">
 											<button type="submit" class="btn btn-outline-warning me-2">수정</button>
 											<button type="button" class="btn btn-outline-danger" onclick="bbsDelete(${bbsVO.bbsSn})">삭제</button>
 										</c:if>

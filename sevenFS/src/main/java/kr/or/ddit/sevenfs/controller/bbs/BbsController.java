@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.bbs.BbsService;
@@ -47,6 +49,9 @@ public class BbsController {
 	
 	@Autowired
 	AttachFile attachFile;
+	
+	@Autowired
+	BbsSecurityUtil securityUtil;
 	
 	
     @GetMapping("/bbs")
@@ -192,12 +197,18 @@ public class BbsController {
      * 게시글 수정 폼
      */
     @GetMapping("/bbsUpdate")
-    public String bbsUpdateForm(Model model, @RequestParam("bbsSn") int bbsSn) {
+    public String bbsUpdateForm(Model model, @RequestParam("bbsSn") int bbsSn, Authentication authentication, RedirectAttributes redirectAttrs) {
         log.info("게시글 수정 폼: " + bbsSn);
 
         BbsVO bbsVO = bbsService.bbsDetail(bbsSn);
+        
+        if (!securityUtil.canEdit(authentication, bbsVO)) {
+            redirectAttrs.addFlashAttribute("errorMessage", "수정 권한이 없습니다.");
+            return "redirect:/bbs/bbsDetail?bbsSn=" + bbsSn;
+        }
+        
         model.addAttribute("bbsVO", bbsVO);
-
+        
         return "bbs/bbsUpdate";
     }
 
@@ -226,11 +237,17 @@ public class BbsController {
     }
     
     @PostMapping("/bbsDelete")
-    public String bbsDelete(@RequestParam(value = "bbsSn", required = false)int bbsSn, Model model, BbsVO bbsVO) {
+    public String bbsDelete(@RequestParam(value = "bbsSn", required = false)int bbsSn, Model model, BbsVO bbsVO, Authentication authentication, RedirectAttributes redirectAttrs) {
     	log.info("삭제하는 게시글 번호 : " + bbsSn);
     	
-    	int delete = bbsService.bbsDelete(bbsSn);
+    	BbsVO bbs = bbsService.bbsDetail(bbsSn);
     	
+    	if (!securityUtil.canDelete(authentication, bbs)) {
+            redirectAttrs.addFlashAttribute("errorMessage", "삭제 권한이 없습니다.");
+            return "redirect:/bbs/bbsDetail?bbsSn=" + bbsSn;
+        }
+    	
+    	int delete = bbsService.bbsDelete(bbsSn);
     	log.info("삭제 댐? : " + delete);
     	
     	return "redirect:/bbs/bbsList?bbsCtgryNo="+bbsVO.getBbsCtgryNo();
