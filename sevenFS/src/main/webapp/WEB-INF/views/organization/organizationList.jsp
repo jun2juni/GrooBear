@@ -25,14 +25,13 @@
 	<section class="section">
 	  <div class="container-fluid">
 	  	<div class="row">
-		  <div class="col-4 flex-grow-1">
-		  <div>
- 		  	<c:import url="../organization/searchBar.jsp"></c:import>
- 		  </div>
-			<div class="s_scroll" style="flex-grow: 1; overflow-y:auto;">
-		  			<c:import url="../organization/orgList.jsp" />
+		 <div class="col-4">
+			<c:import url="../organization/searchBar.jsp"></c:import>
+			<div class="card-style overflow-scroll mt-15" style="max-height: 90vh;">
+			<c:import url="../organization/orgList.jsp" />	
 			</div>
-		  </div>
+	 	</div>
+		  			
 		  <!-- 사원상세 페이지 -->
 		  <div class="col-8">
 			<div id="emplDetail" style="text-align: center;">

@@ -239,7 +239,6 @@
 		    TELNO=#{telno},
 		    ACNUTNO=#{acnutno},
 		    BANK_NM=#{bankNm},
-		    EMAIL=#{email},
 		    ADRES=#{adres},
 		    DETAIL_ADRES=#{detailAdres},
 		    ECNY_DATE=#{ecnyDate},

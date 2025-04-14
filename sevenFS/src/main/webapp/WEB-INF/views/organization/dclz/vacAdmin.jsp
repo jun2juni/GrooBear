@@ -24,7 +24,6 @@
 	<section class="section">
 		<div class="container-fluid">
        		<!-- Button trigger modal -->
-			
 			<div class="row">
             <div class="col-lg-12">
             <div class="d-flex justify-content-start">
@@ -168,7 +167,12 @@
 		      </div>
 		      <div class="modal-body d-flex">
 		      	<div class="overflow-scroll" style="max-height: 80vh; width:400px;">
-		        	<%@ include file="../orgList.jsp" %>
+			      	<div>
+						<c:import url="../searchBar.jsp"></c:import>
+				 	</div>
+					<div class="card-style overflow-scroll mt-15" style="max-height: 90vh;">
+						<c:import url="../orgList.jsp" />	
+					</div>
 		        </div>
 		        <!-- 화살표 버튼 -->
 		        <div style="padding-left: 30px;">
@@ -184,7 +188,7 @@
 					</div>
 		        </div>
 		        <!-- 화살표 버튼 -->
-		        <div class="card-style w-100">
+		        <div class="card-style w-80">
 		        <div class="d-flex">
 	        	 <div class="input-style-1 form-group mr-20">
 		            <label for="username" class="form-label required">사원<span class="text-danger">*</span></label>
@@ -247,7 +251,7 @@ function clickEmp(data){
 	 })
 	 .then(resp => resp.json())
 	 .then(res => {
-		 //console.log('fetch결과 : ' ,res);
+		 console.log('fetch결과 : ' ,res);
 		 selectEmpl = res;
 	  }) 
 }
@@ -326,6 +330,11 @@ $(function(){
 	 	 }) // end fetch
 	 	 .then(resp => resp.text())
 	 	 .then(res => {
+	 		 swal('연차 지급이 완료되었습니다.')
+	 		 .then((value)=>{
+	 			 $('#exampleModal').modal('hide');
+	 		 })
+	 		 
 	 		 //console.log('연차 추가하고 받은 결과 : ' , res);
 	 	 })
 	 })

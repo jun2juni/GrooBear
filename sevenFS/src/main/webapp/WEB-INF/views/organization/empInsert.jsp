@@ -34,6 +34,19 @@
   <%@ include file="../layout/header.jsp" %>
 	<section class="section">
 		<div class="container-fluid">
+			<!-- 기본 정보 입력 안내 -->
+			<div class="card border rounded-3 shadow-sm mb-1" 
+				style="position:sticky; top: 90px; z-index:800; max-height: 999px; background-color: white; overflow: auto;">
+		      <div class="card-body p-4">
+		        <h5 class="card-title fw-bold mb-1">
+		          <i class="fas fa-info-circle text-primary me-2" aria-hidden="true"></i>사원 등록 입력 안내
+		        </h5>
+		        <ul class="mb-0 ps-3">
+		          <li class="mb-2 text-dark"><span class="text-danger">*</span>&nbsp;&nbsp;사원의 초기 비밀번호는 java로 부여됩니다.</li>
+		        </ul>
+		      </div>
+   			</div>
+   			<!-- 기본 정보 입력 안내 -->
 		<div class="card-style chat-about h-100" style="justify-content: center;">
 			<input type="hidden" name="emplNo" value="${emplDetail.emplNo}">
 				<form action="/emplInsertPost" method="post" id="emplInsertForm" class="needs-validation" novalidate>
@@ -84,11 +97,12 @@
 				    </div>
 				  </div>
 	             </div>
-	             <div class="input-style-1 form-group col-8" style="margin-left:15%;">
+	             <!-- input 창 없애고 알림으로 주기(프로젝트 참고) -->
+	             <input type="hidden" name="password" class="form-control" id="password" value="java">
+	             <!-- <div class="input-style-1 form-group col-8" style="margin-left:15%;">
 		             <label for="password" class="form-label required">비밀번호 <span class="text-danger">*초기 비밀번호는 java로 부여됩니다.</span></label>
-		             <input type="text" name="password" class="form-control" id="password" value="java">
 		             <div class="invalid-feedback"></div>
-	  	          </div>
+	  	          </div> -->
 	  	          <div class="col-12" style="display: flex;">
 		  	          <div class="input-style-1 form-group col-2" style="margin-left:15%;">
 			            <label for="brthdy" class="form-label required">생년월일<span class="text-danger">*</span></label>
@@ -239,7 +253,7 @@ $('#emplInsertBtn').on('click', function(e){
 	
 	let anslryId = $('#anslry').val();
 	let anslry = anslryId.replaceAll(',' , '');
-	console.log("입력한 급여 : " , anslry);
+	//console.log("입력한 급여 : " , anslry);
 	// 쉼표를 제거한 값으로 변경해주기
 	$('#anslry').val(anslry);
 	
@@ -248,22 +262,23 @@ $('#emplInsertBtn').on('click', function(e){
 	// 이메일 @도메인
 	const domain = $('#selEmail').val();
 	const fullEmail = emailId + domain;
-	console.log("이메일 전체 : " , fullEmail);
+	//console.log("이메일 전체 : " , fullEmail);
 	$('#email').val(fullEmail);
 	
+	// 입사일자 하이픈 없애는 처리
 	const selEcnyDate = $('#selEcnyDate').val();
 	const cleanDate = selEcnyDate.replaceAll('-', '');
 	$('#ecnyDate').val(cleanDate);
-	
+	// 생년월일 하이픈 없애는 처리
 	const selBirth = $('#selBirth').val();
 	const cleanBirth = selBirth.replaceAll('-', '');
 	$('#brthdy').val(cleanBirth);
+	//console.log($('#brthdy').val());
 	
-	console.log($('#brthdy').val());
-	
-	document.getElementById('emplInsertForm').requestSubmit();
-	
-	
+	swal('등록되었습니다.')
+	.then((result) => {
+		document.getElementById('emplInsertForm').requestSubmit();
+	})
 	
 	return true;
 })

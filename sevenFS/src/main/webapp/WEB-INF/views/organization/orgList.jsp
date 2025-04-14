@@ -22,12 +22,8 @@
 	        </c:if>
         </div>
     </div>
-    
-   
     <!-- 조직도 -->
     <div id="jstree" style="height:400px;" class="mb-2"></div>
-
-
 
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
@@ -38,7 +34,6 @@
                 if (typeof clickEmp === "function") {
                     clickEmp(data);
                 }
-                
             }
             
             // 클릭한게 부서일때
@@ -95,7 +90,6 @@
                         "check_callback" : true
                     }
             })
-
         };
 
       	// 트리 더블 클릭 기능

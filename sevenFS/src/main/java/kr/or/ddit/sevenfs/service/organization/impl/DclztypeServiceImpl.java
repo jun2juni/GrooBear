@@ -146,6 +146,10 @@ public class DclztypeServiceImpl implements DclztypeService {
 		// 선택사원의 총 연차일수
 		int totalVac = emplVacCnt.getTotYrycDaycnt();
 		
+		// 기본지급으로 받은 연차
+		int basicWorkVac = vacationVO.getYrycMdatDaycnt();
+		emplVacCnt.setYrycMdatDaycnt(basicWorkVac);
+		
 		// 초과근무로 받은 연차
 		int addWorkVac = vacationVO.getExcessWorkYryc();
 		emplVacCnt.setExcessWorkYryc(addWorkVac);
@@ -155,7 +159,7 @@ public class DclztypeServiceImpl implements DclztypeService {
 		emplVacCnt.setCmpnstnYryc(cmpnVac);
 		
 		// 추가로 받은 연차 계산 , 총연차일수+받은연차일수
-		int sumTotalVac = totalVac+addWorkVac+cmpnVac;
+		int sumTotalVac = totalVac+addWorkVac+cmpnVac+basicWorkVac;
 		log.info("계산된 총 연차일수 : " + sumTotalVac);
 		emplVacCnt.setTotYrycDaycnt(sumTotalVac);
 		

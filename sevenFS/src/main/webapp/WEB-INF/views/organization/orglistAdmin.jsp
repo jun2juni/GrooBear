@@ -30,7 +30,8 @@
 		<div class="container-fluid">
 			<div class="row">
 			<div class="col-4">
-				<div class="card-style overflow-scroll" style="max-height: 90vh;">
+				<c:import url="../organization/searchBar.jsp"></c:import>
+				<div class="card-style overflow-scroll mt-15" style="max-height: 90vh;">
 					<%@ include file="orgList.jsp" %>
 				</div>
 		 	</div>
@@ -223,6 +224,95 @@ function clickDept(data) {
       }); // end function
     }); // end del function
   })
+}
+
+
+//엔터치면 검색 + 상세보기 창 열림
+function fSchEnder(e) {
+    if (e.code === "Enter") {
+       $('#jstree').jstree(true).search($("#schName").val());
+       
+       let empList = "";
+       let inputName = $("#schName").val();
+       let schEmplNo = "";
+       let schDeptNo = "";
+       
+       //console.log(inputName);
+       
+       // 검색한 사원의 사원번호 넘겨주기
+       fetch('/organization',{
+      	 method : 'get',
+      	 headers : {
+      		 "Content-Type": "application/json"
+      	 }
+       })
+       .then(resp => resp.json())
+		 .then(res => {
+			 //console.log(res);
+		 
+			 // 전체사원 목록
+			 empList = res.empList;
+			 //console.log('전체사원 : ' , empList);
+			 
+			 // 전체부서 목록
+			 deptList = res.deptList;
+			 //console.log('전체 부서 : ' , deptList);
+			 
+			 let found = false;
+			 
+			 // 사원 검색했을경우
+			 empList.forEach(emp => {
+				 if(emp.emplNm === inputName){
+					 found = true;
+					 
+					 schEmplNo = emp.emplNo;
+					 
+					 let emplNo = schEmplNo;
+					 //console.log('검색한 사원번호 : ' , emplNo);
+					 
+					 fetch('/emplDetail?emplNo='+emplNo,{
+			        	 method : 'get',
+			        	 headers : {
+			        		 "Content-Type": "application/json"
+			        	 }
+			         })
+			         .then(resp => resp.text())
+			         .then(res => {
+			        	 //console.log('엔터치고 받은 결과 : ' , res);
+			        	 $("#emplDetail").html(res);
+			         })
+				 }
+			 })
+			
+	         // 부서 검색했을경우
+	         deptList.forEach(dep => {
+	        	 if(dep.cmmnCodeNm === inputName){
+	        		 found = true;
+	        		 
+	        		 schDeptNo = dep.cmmnCode;
+	        		 
+		        	 let deptNo = schDeptNo;
+		        	 
+		        	 fetch("/deptDetail?cmmnCode=" + deptNo, {
+		        	      method : "get",
+		        	      headers : {
+		        	        "Content-Type": "application/json"
+		        	      }
+		        	    })
+	        	       .then(resp => resp.text())
+	        	       .then(res => {
+	        	        //console.log("부서상세정보 : " , res);
+	        	        $("#emplDetail").html(res);
+		         })
+	        	 }
+      	 })
+      	 
+      	 if(!found){
+				 swal('해당 사원을 찾을 수 없습니다.')
+			 }
+	
+		 })
+    }
 }
  
 

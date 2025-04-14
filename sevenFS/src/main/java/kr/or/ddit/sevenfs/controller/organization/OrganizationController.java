@@ -1,6 +1,8 @@
 package kr.or.ddit.sevenfs.controller.organization;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -262,6 +264,9 @@ public class OrganizationController {
 		empDetail.setProflPhotoUrl(empFileName);
 		log.info("사원상세 프로필 url : " + empFileName);
 		
+		// 사원 비밀번호 공백으로 보내주기
+		empDetail.setPassword("");
+		
 		empMap.put("empFileName", empFileName);
 		empMap.put("empDetail", empDetail);
 		//empMap.put("empFileName", empFileName);
@@ -347,6 +352,20 @@ public class OrganizationController {
 		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
 		log.info("기존파일정보(수정) ->  fileAttachList : " + fileAttachList);
 		
+		// 입사일자, 생년월일 가져와서 date 형식으로 바꿔주기
+		String birthDt = emplDetail.getBrthdy();
+		String ecnyDt = emplDetail.getEcnyDate();
+		// 날짜 형식으로 만들어주기
+		String formattedBrthdy = birthDt.substring(0,4) + "-" +
+							     birthDt.substring(4,6) + "-" +
+							     birthDt.substring(6,8);
+		String formattedEncy = ecnyDt.substring(0,4) + "-" +
+							   ecnyDt.substring(4,6) + "-" +
+							   ecnyDt.substring(6,8);
+		model.addAttribute("formattedBrthdy", formattedBrthdy);
+		model.addAttribute("formattedEncy", formattedEncy);
+		
+		
 		Map<String, Object> emplDetailData = new HashMap<>();
 		emplDetailData.put("emplDet", emplDetail);
 		emplDetailData.put("posList", posList);
@@ -358,8 +377,6 @@ public class OrganizationController {
 		model.addAttribute("emplDetail", emplDetailData);
 		
 		model.addAttribute("fileAttachList" , fileAttachList);
-		
-		
 		
 		return "organization/empUpdate";
 	}
@@ -374,21 +391,30 @@ public class OrganizationController {
 
 		// 프로필사진 수정
 		// 수정한 파일넘버로 set 해주기
-		int fileNo = employeeVO.getAtchFileNo();
-		attachFileVO.setAtchFileNo(fileNo);
+		//int fileNo = employeeVO.getAtchFileNo();
+		//attachFileVO.setAtchFileNo(fileNo);
 	
-		attachFileService.updateFileList("organization", uploadFile, attachFileVO);
-		//AttachFileVO insertFile = attachFileService.insertFile("organization", uploadFile);
-		//log.info("수정시 등록된파일 : " + insertFile);
+		// file insert로 수정하기
+		//attachFileService.updateFileList("organization", uploadFile, attachFileVO);
+		AttachFileVO insertFile = attachFileService.insertFile("organization", uploadFile);
+		log.info("수정시 등록된파일 : " + insertFile);
+		long fileNoL = insertFile.getAtchFileNo();
+		log.info("수정시 등록된 파일 번호 : " + fileNoL);
+		
+		int fileNo = (int) fileNoL;
+		employeeVO.setAtchFileNo(fileNo);
+		
+		String fileNm = insertFile.getFileStrePath();
+		employeeVO.setProflPhotoUrl(fileNm);
 		
 		// 수정한 파일 리스트 가져오기
-		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
-		log.info("수정파일정보 ->  fileAttachList : " + fileAttachList);
+		//List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
+		//log.info("수정파일정보 ->  fileAttachList : " + fileAttachList);
 		// 실제 저장된 경로 가져오기
-		String savePath = fileAttachList.get(0).getFileStrePath();
+		//String savePath = fileAttachList.get(0).getFileStrePath();
 		
 		// 파일 실제저장경로 set해주기
-		employeeVO.setProflPhotoUrl(savePath);
+		//employeeVO.setProflPhotoUrl(savePath);
 		
 		//log.info("jsp에서 넘긴 수정 정보 : " + employeeVO);
 		

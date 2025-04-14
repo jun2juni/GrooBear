@@ -58,6 +58,7 @@
      </ul>
    </div>
    <div class="profile-info text-center">
+     <sec:authorize access="hasRole('ROLE_ADMIN')">
      <ul>
        <li>
        <hr>
@@ -72,6 +73,7 @@
 		</c:choose>
        </li>
      </ul>
+     </sec:authorize>
      
      <!-- 로그인한 계정과 사원번호가 일치할경우에만 보이게 -->
      <!-- emplNo가 관리자일 경우에만 보이게 -->
