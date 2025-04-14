@@ -6,16 +6,6 @@
 
 <!-- 검색 -->
 <div>
-    <div class="input-group rounded mb-3">
-        <input type="search" class="form-control rounded" placeholder="이름 입력" aria-label="Search"
-               aria-describedby="search-addon" id="schName"
-               onkeydown="fSchEnder(event)"
-        />
-        <span class="input-group-text border-0" id="search-addon"
-              onclick="fSch()">
-            <i class="fas fa-search"></i>
-        </span>
-    </div>
     
     <div class="d-flex justify-content-between">
         <button type="button" id="allBtn" class="main-btn dark-btn rounded-full btn-hover btn-xs"
@@ -132,17 +122,6 @@
     })
     
     // 검색기능
-    function fSch() {
-        console.log("검색");
-        $('#jstree').jstree(true).search($("#schName").val());
-    }
-    
-    function fSchEnder(e) {
-        if (e.code === "Enter") {
-            $('#jstree').jstree(true).search($("#schName").val());
-        }
-    }
-    
     function openTree() {
         let bTreeOpen = $('#allBtn').html() === "전체";
         if(bTreeOpen){

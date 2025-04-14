@@ -22,13 +22,14 @@
 					<div class="row">
 						<!-- 좌측 결재선사원선택부분 시작 -->
 						<div class="col-md-3 flex-grow-1">
-							<div class="s_scroll"
-								style="float: left; border: 1px solid lightgray; height: 500px; padding: 20px; border-radius: 10px; overflow: auto;">
-								<div class="row">
-								<!-- 버튼 -->
+							<div class="s_scroll" style="float: left; border: 1px solid lightgray; height: 500px; padding: 20px; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
+								<!-- 검색창 -->
+								<div style="flex-shrink: 0; margin-bottom: 20px;">
+									<c:import url="../organization/searchBar.jsp"></c:import>
+								</div>
 								<!-- 조직도 -->
+								<div style="flex-grow: 1; overflow: auto;">
 									<c:import url="../atrz/orgList.jsp"></c:import>
-								
 								</div>
 							</div>
 						</div>
