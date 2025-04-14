@@ -18,6 +18,11 @@
 	<title>${title}</title>
 	<c:import url="../layout/prestyle.jsp" />
 </head>
+<c:if test="${not empty errorMessage}">
+    <script>
+        alert("${errorMessage}");
+    </script>
+</c:if>
 <style>
     .col-sm-12 img {
         width: 100px;

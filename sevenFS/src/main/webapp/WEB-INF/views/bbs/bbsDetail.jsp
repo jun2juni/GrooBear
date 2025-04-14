@@ -16,6 +16,11 @@
     const loginUserEmplNo = "${myEmpInfo.emplNo}";
 </script>
 </head>
+<c:if test="${not empty errorMessage}">
+    <script>
+        alert("${errorMessage}");
+    </script>
+</c:if>
 <style>
     img {
         width: 100px;
