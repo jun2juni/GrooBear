@@ -6,7 +6,6 @@
 
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
 <c:set var="title" scope="application" value="통계" />
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -184,22 +183,22 @@
 															</label> 
 															<select name="startYearsY" class="form-select" id="startYearsY">
 																<option selected="" disabled="" readonly="" value="startYearsY">조회를 시작 할 년도를 선택해주세요</option>
-																<option value="2025">2025</option>
-																<option value="2024">2024</option>
-																<option value="2023">2023</option>
-																<option value="2022">2022</option>
-																<option value="2021">2021</option>
+																<option value="202101">2021</option>
+																<option value="202201">2022</option>
+																<option value="202301">2023</option>
+																<option value="202401">2024</option>
+																<option value="202501">2025</option>
 															</select>
 														</div>
 														<div class="select-style-1 form-group w-fit">
 															<label for="endYearsY" class="form-label"> 종료년도 </label>
 															<select name="endYearsY" class="form-select" id="endYearsY">
 																<option selected="" disabled="" readonly="" value="endYearsY">조회를 종료 할 년도를 선택해주세요</option>
-																<option value="2025">2025</option>
-																<option value="2024">2024</option>
-																<option value="2023">2023</option>
-																<option value="2022">2022</option>
-																<option value="2021">2021</option>
+																<option value="202101">2021</option>
+																<option value="202201">2022</option>
+																<option value="202301">2023</option>
+																<option value="202401">2024</option>
+																<option value="202501">2025</option>
 															</select>
 														</div>
 														<!--셀렉트 끝  -->
@@ -215,14 +214,14 @@
 													</div>
 													<div class="card-body">
 														<div class="select-style-1 form-group w-fit">
-															<label for="startYears" class="form-label"> 시작년도</label> 
+															<label for="startYearsM" class="form-label"> 시작년도</label> 
 															<select name="startYearsM" class="form-select mb-2" id="startYearsM">
 																<option selected="" readonly="" value="">조회 년도를 선택 해주세요</option>
-																<option value="2025">2025</option>
-																<option value="2024">2024</option>
-																<option value="2023">2023</option>
-																<option value="2022">2022</option>
-																<option value="2021">2021</option>
+																<option value="202101">2021</option>
+																<option value="202201">2022</option>
+																<option value="202301">2023</option>
+																<option value="202401">2024</option>
+																<option value="202501">2025</option>
 															</select>
 															<label for="startYearsM" class="form-label"> 시작월</label>
 															<select name="startMonths" class="form-select mb-2" id="startMonths">
@@ -326,8 +325,7 @@
 									<button type="button" id="btnSubmit" tabindex="1" class="btn submit btn-primary col-2 mt-3" onclick="drawVisualization()">그래프 조회</button>
 								</div>
 								<!--제목 및 가로 세로 축 제목 적는 곳   -->
-
-								<div>${result}</div>	<!-- erase remove delete replaceAll필요 -->							
+									
 								<div id="chart_div" style="width: 900px; height: 500px;"></div>
 							</div>
 							<!-- 카드끝 -->
@@ -351,27 +349,30 @@
     let checkedDeptArr = ["MONTH"]; // 내가 선택한 부서 담는 배열
 	/* 구글차트 패키지모음******* */
 	google.charts.load('current', {'packages':['corechart']});
-	google.charts.setOnLoadCallback(drawVisualization);
+	/* google.charts.setOnLoadCallback(drawVisualization); */
 	/* 구글차트 패키지모음********* */ 
 	
 	
 	  // 구글 차트api에서 차트를 그려주는 펑션 function
 	  async function drawVisualization() {
 	  // 여기서 비동기 요청
-	  const response = await fetch('/statistics/statisticsAWOL?'+ new URLSearchParams({
-		    started: document.querySelector('#startYearsY').value+'01',
-		    ended : document.querySelector('#endYearsY').value+'12'
+	  const response = await fetch('/statistics/resultAWOL?'+ new URLSearchParams({
+		    started: document.querySelector('#startYearsY').value,
+		    ended : document.querySelector('#endYearsY').value
 		}).toString()); // 여기에 파라미터 추가 하기
 		console.log("확인 좀 해보자",response);
 	  // document.queryselector(#startYearsM).value  //밸류가 맞는진 확인 해봐야겠다 -> 쿼리스트링으로 넘겨야함 
 	  // document.queryselector(#endYearsM).value => 넘겨야함 쿼리스트링 ()
 	  const fetchData = await response.json();
 	  
+	  console.log("페치데이터",fetchData);
+	  
       let AWOL = fetchData.AWOL;
       
 	  let chartList = [];
 	  // let header = ["MONTH", "인사부", "임원진"];
       chartList.push(checkedDeptArr);
+      
       
       AWOL.forEach((item) => {
         let wrap = []

@@ -44,10 +44,11 @@
 	   /*  materialChart  - 세로막대그래프 시작 */
 	   var materialData = google.visualization.arrayToDataTable([
 	        ['Year', '매출목표', '매출실적', '실수익'],
-	        ['2014', 800, 400, 200,],
-	        ['2015', 800, 400, 200,],
-	        ['2016', 800, 400, 200,],
-	        ['2017', 800, 400, 200,],
+	        ['2020', 800, 500, 300,],
+	        ['2021', 800, 350, 250,],
+	        ['2022', 800, 600, 250,],
+	        ['2023', 800, 900, 300,],
+	        ['2024', 800, 1000, 400,],
 
 	    ]);
 	
@@ -67,14 +68,18 @@
 	    /* Donut chart = 도넛차트 - 도넛차트시작 */
 	    var donutData = google.visualization.arrayToDataTable([
 	          ['Task', 'Hours per Day'],
-	          ['백현명',     3],
-	          ['박현준',      4],
+	          ['HJ건설',     3],
+	          ['DH리테일',      4],
+	          ['SS로지스',      6],
+	          ['HSN아트',      1],
+	          ['SS로지스',      5],
+	          ['SJ푸드',      2],
 	          ['기타',  2],
 	        ]);
 
 	        var donutOptions = {
-	          title: '개발 1팀 지각비율',
-	          pieHole: 0.4,
+	          title: '영업 이익 비율',
+	          pieHole: 0.1,
 	        };
 
 	        var donutChart = new google.visualization.PieChart(document.getElementById('donutChart'));
@@ -153,7 +158,7 @@
 	          </li>
 	          <!-- 지각-조퇴율, AttendLateChart  -->
 	          <li class="nav-item">
-	            <a class="nav-link" href="#">지각/조퇴</a>
+	            <a class="nav-link" href="http://localhost/statistics/statisticsLATE">지각/조퇴</a>
 	          </li>
 	        </ul>
 	      </div>

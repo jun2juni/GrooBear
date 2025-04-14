@@ -52,7 +52,35 @@ public class StatisticsConrtoller {
 //		return "/statisticsAWOL.jsp";
 //	}
 	
-	// 통계 AWOL
+	// 통계 LATE 지각
+	@GetMapping("/statisticsLATE")
+	public String statisticsLATE() {
+		
+		return "statistics/statisticsLATE";
+	}
+	
+	// ResponseBody -> json으로내보낼 때 필요한 어노테이션 
+	@ResponseBody
+	@GetMapping("/resultLATE")	
+	public Map<String, Object> resultLATE(Model model
+									,@RequestParam(value ="started",required=false) String started
+									,@RequestParam(value ="ended",required=false)String ended) {
+			
+			log.info("스타트" +started+"엔디드"+ended);
+			
+			Map<String, Object> result = new HashMap<>();
+	        String[] header = {"인사부","경영지원부","영업부","생산부","구매부","품질부","디자인부","연구소"};
+	        String[] dclzArr = {"01", "03"};
+	        List<Map<String, Object>> AWOL = statisticsServiceImpl.getAWOL(started,ended, header);
+	        result.put("AWOL", AWOL);
+			  
+	        model.addAttribute("result",result);
+//	        model.addAttribute("AWOL",AWOL);
+	        
+			return result ;
+		}
+	
+	// 통계 AWOL결근
 	@GetMapping("/statisticsAWOL")
 	public String statisticsAWOL() {
 		
