@@ -89,9 +89,9 @@
 								<div class="tab-pane fade show active" id="content2"
 									role="tabpanel">
 									<ul class="nav nav-pills">
-										<li class="nav-item"><a class="nav-link active" href="http://localhost/statistics/statisticsAWOL">결근</a>
+										<li class="nav-item"><a class="nav-link" href="http://localhost/statistics/statisticsAWOL">결근</a>
 											<!-- active 클래스 위치 수정 --></li>
-										<li class="nav-item"><a class="nav-link" href="http://localhost/statistics/statisticsLATE">지각/조퇴</a>
+										<li class="nav-item"><a class="nav-link active" href="http://localhost/statistics/statisticsLATE">지각/조퇴</a>
 										</li>
 									</ul>
 								</div>
@@ -385,7 +385,6 @@
     			const respEndDays = document.querySelector('#endDays');
     			
     			
-    			
     			/*
     			<input id="startDays" name="startDays" type="date" data-listener-added_846ff8c4="true" data-listener-added_1334955c="true">
     			<input id="endDays" name="endDays" type="date" data-listener-added_846ff8c4="true">
@@ -433,7 +432,7 @@
     			*/
     			console.log("data : ",data);	
     			
-    			const response = await fetch('/statistics/resultAWOL?'+ new URLSearchParams(data).toString()); // 여기에 파라미터 추가 하기
+    			const response = await fetch('/statistics/resultLATE?'+ new URLSearchParams(data).toString()); // 여기에 파라미터 추가 하기
     			
     			if (!response.ok) {
     				throw new Error(`HTTP error! status: ${response.status}`);
@@ -446,16 +445,16 @@
 
     			console.log("페치데이터",fetchData);
 
-    			let AWOL = fetchData.AWOL;
+    			let LATE = fetchData.LATE;
 
-    			console.log("AWOL입니다.",AWOL);
+    			console.log("LATE입니다.",LATE);
 
     			let chartList = [];
     			// let header = ["MONTH", "인사부", "임원진"];
     			chartList.push(checkedDeptArr);
 
 
-    			AWOL.forEach((item) => {
+    			LATE.forEach((item) => {
     			let wrap = []
     			for(const head of checkedDeptArr) {
     			wrap.push(item[head]);
@@ -528,37 +527,6 @@
       console.log("현재 배열 상태 !!",checkedDeptArr);
     }
 
-//     $(function(){
-//       $("#btnSubmit").on("click",function(){
-
-        //object -> 요청파라미터 string
-        //1. 연간
-        //interval=year&chartType=line&startYearsY=2024&endYearsY=2025&startYearsM=&startDays=&endDays=&dept=%EC%9D%B8%EC%82%AC%EB%B6%80&dept=%EC%98%81%EC%97%85%EB%B6%80
-
-        //2. 월간
-        //interval=month&chartType=line&startYearsM=2025&startMonths=01&endMonths=05&startDays=&endDays=&dept=%EC%83%9D%EC%82%B0%EB%B6%80&dept=%EA%B5%AC%EB%A7%A4%EB%B6%80
-
-        //3. 일간
-        //interval=day&chartType=bars&startYearsM=&startDays=2025-04-04&endDays=2025-04-30&dept=%ED%92%88%EC%A7%88%EB%B6%80&dept=%EC%97%B0%EA%B5%AC%EC%86%8C
-//         let frm = $("#frm").serialize();
-//         console.log("frm : ", frm);
-
-//         $.ajax({
-//           url:"/statistics/statisticsAWOL/AWOLAjax",
-//           data:frm,
-//           type:"post",
-//           dataType:"json",
-//           success:function(result){
-//             console.log("result : ", result);
-//             //매개
-
-//             let AWOL = result;
-
-//             google.charts.setOnLoadCallback(drawStuff(AWOL))
-//           }
-//         });
-//       });//end btnSubmit
-//     });//end 달러function
 </script>
 
 <script>

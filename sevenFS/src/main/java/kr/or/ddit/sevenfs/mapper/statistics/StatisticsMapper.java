@@ -14,4 +14,8 @@ public interface StatisticsMapper {
 	public List<Map<String, Object>> getAWOL(@Param("started") String started,
 											 @Param("ended") String ended,
 											 @Param("dclzCodeList") String[] dclzCodeList);
+
+	public List<Map<String, Object>> getLATE(@Param("started") String started,
+											 @Param("ended") String ended,
+											 @Param("dclzCodeList") String[] dclzCodeList);
 }

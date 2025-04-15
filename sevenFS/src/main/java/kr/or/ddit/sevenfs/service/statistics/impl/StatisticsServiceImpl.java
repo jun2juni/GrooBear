@@ -24,6 +24,13 @@ public class StatisticsServiceImpl implements StatisticsService {
 		 log.debug("rawList: {}", rawList);
 		return rawList;
 	}
+	
+	@Override
+	public List<Map<String, Object>> getLATE(String started, String ended, String[] dclzCodeList) {
+			List<Map<String, Object>> rawList = statisticsMapper.getLATE(started, ended, dclzCodeList);
+			log.debug("rawList: {}", rawList);
+		return rawList;
+	}
 
 	
 	

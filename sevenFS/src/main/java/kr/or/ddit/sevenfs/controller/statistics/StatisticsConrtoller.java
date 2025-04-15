@@ -38,19 +38,6 @@ public class StatisticsConrtoller {
 		return "statistics/statisticsHome";
 	}
 	
-	//통계 직원관리 -> 결근 
-	// Absent without leave 결근 약자 
-//	@GetMapping("/statisticsAWOL")	
-//	public Map<String, Object> statisticsAWOL() {
-//		
-//		Map<String, Object> result = new HashMap<>();
-//		String[] header = {"인사부","경영지원부","영업부","생산부","구매부","품질부","디자인부","연구소"};
-//		String[] dclzArr = {"01", "03"};
-//		List<Map<String, Object>> AWOL = statisticsServiceImpl.getAWOL("202401", "202512", header);
-//		result.put("AWOL", AWOL);
-//		
-//		return "/statisticsAWOL.jsp";
-//	}
 	
 	// 통계 LATE 지각
 	@GetMapping("/statisticsLATE")
@@ -70,12 +57,11 @@ public class StatisticsConrtoller {
 			
 			Map<String, Object> result = new HashMap<>();
 	        String[] header = {"인사부","경영지원부","영업부","생산부","구매부","품질부","디자인부","연구소"};
-	        String[] dclzArr = {"01", "03"};
-	        List<Map<String, Object>> AWOL = statisticsServiceImpl.getAWOL(started,ended, header);
-	        result.put("AWOL", AWOL);
+	        String[] dclzArr = {"02"};
+	        List<Map<String, Object>> LATE = statisticsServiceImpl.getLATE(started,ended, header);
+	        result.put("LATE", LATE);
 			  
 	        model.addAttribute("result",result);
-//	        model.addAttribute("AWOL",AWOL);
 	        
 			return result ;
 		}

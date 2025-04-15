@@ -152,11 +152,11 @@
 	      </div>
 	      <div class="tab-pane fade" id="content2" role="tabpanel">
 	        <ul class="nav nav-pills">
-	        <!-- Absenteeism Rate 결근율 -->
+	        <!-- 결근율 -->
 	          <li class="nav-item">
 	            <a class="nav-link " href="http://localhost/statistics/statisticsAWOL">결근</a>
 	          </li>
-	          <!-- 지각-조퇴율, AttendLateChart  -->
+	          <!-- 지각-조퇴율  -->
 	          <li class="nav-item">
 	            <a class="nav-link" href="http://localhost/statistics/statisticsLATE">지각/조퇴</a>
 	          </li>
