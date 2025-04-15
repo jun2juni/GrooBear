@@ -316,7 +316,12 @@ public class OrganizationController {
 	public String emplInsertPost(EmployeeVO employeeVO) {
 		
 		log.info("암호화 전 데이터 : " + employeeVO);
+		String deptCode = employeeVO.getDeptCode();
 
+		if(deptCode=="#") {
+			return "organization/empInsert";
+		}
+		
 		// 비밀번호 암호화
 		String encode = bCryptPasswordEncoder.encode(employeeVO.getPassword());
 		employeeVO.setPassword(encode);

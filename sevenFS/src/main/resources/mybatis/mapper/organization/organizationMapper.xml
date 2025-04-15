@@ -52,10 +52,35 @@
 	
 	<!-- 전체 사원 조회 -->
 	<select id="empList" resultType="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
-		SELECT EMPL_NO, PASSWORD, ENABLED, EMPL_NM, BRTHDY, TELNO, ACNUTNO, BANK_NM, EMAIL, POST_NO, ADRES, DETAIL_ADRES, ECNY_DATE, RETIRE_DATE, ATCH_FILE_NO, ELCTRN_SIGN_IMAGE_URL,
-       			 PROFL_PHOTO_URL, DEPT_CODE, CLSF_CODE, GENDER_CODE, EMPL_STTUS_CODE, ANSLRY, PARTCLR_MATTER, CONTD_EMPNO
-		FROM EMPLOYEE
-		WHERE ENABLED='1'
+		SELECT emp.EMPL_NO
+           , emp.PASSWORD
+           , emp.ENABLED
+           , emp.EMPL_NM
+           , emp.BRTHDY
+           , emp.TELNO
+           , emp.ACNUTNO
+           , emp.BANK_NM
+           , emp.EMAIL
+           , emp.POST_NO
+           , emp.ADRES
+           , emp.DETAIL_ADRES
+           , emp.ECNY_DATE
+           , emp.RETIRE_DATE
+           , emp.ATCH_FILE_NO
+           , emp.ELCTRN_SIGN_IMAGE_URL
+           , emp.PROFL_PHOTO_URL
+           , emp.DEPT_CODE
+           , emp.CLSF_CODE
+           , emp.GENDER_CODE
+           , emp.EMPL_STTUS_CODE
+           , emp.ANSLRY
+           , emp.PARTCLR_MATTER
+           , emp.CONTD_EMPNO
+           , cc.cmmn_code_nm
+	    FROM EMPLOYEE emp 
+	    LEFT JOIN common_code cc ON emp.clsf_code = cc.cmmn_code
+	    AND cc.cmmn_code_group='POSITION'
+	    WHERE ENABLED='1'
 	</select>
 	
 	<!-- 사원 상세보기 -->
