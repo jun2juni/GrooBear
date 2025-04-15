@@ -27,4 +27,10 @@ public interface ProjectTaskMapper {
 
 	public void updateTaskParent(Map<String, Object> params);
 	
+	public void deleteTasksByProjectNo(int prjctNo);
+
+	public void deleteProjectTasksByProject(int prjctNo);
+
+
+
 }

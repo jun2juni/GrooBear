@@ -38,10 +38,15 @@
 		<result property="evlWritngDt" column="EVL_WRITNG_DT"/>
 		<result property="evlUpdtDt" column="EVL_UPDT_DT"/>
 		<result property="secsnYn" column="SECSN_YN"/>
-		<!-- 추가적인 직원 정보 -->
-		<result property="empNm" column="EMP_NM"/>
+	
+		<!-- 직원 정보 추가 -->
+		<result property="emplNm" column="EMPL_NM"/>
+		<result property="telno" column="TELNO"/>
+		<result property="email" column="EMAIL"/>
 		<result property="deptNm" column="DEPT_NM"/>
+		<result property="posNm" column="POS_NM"/>
 	</resultMap>
+
 	
 	<!-- 프로젝트 과제 ResultMap -->
 	<resultMap type="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO" id="projectTaskResultMap">
@@ -133,14 +138,21 @@
 		PE.EVL_UPDT_DT,
 		PE.SECSN_YN,
 		E.EMPL_NM AS EMPL_NM,
+		E.TELNO AS TELNO,
+		E.EMAIL AS EMAIL,
+		DEPT.CMMN_CODE_NM AS DEPT_NM,
 		POS.CMMN_CODE_NM AS POS_NM
 	FROM PROJECT_EMP PE
 	LEFT JOIN EMPLOYEE E ON PE.PRTCPNT_EMPNO = E.EMPL_NO
+	LEFT JOIN COMMON_CODE DEPT 
+		ON E.DEPT_CODE = DEPT.CMMN_CODE
+		AND DEPT.CMMN_CODE_GROUP = 'DEPARTMENT'
 	LEFT JOIN COMMON_CODE POS 
 		ON E.CLSF_CODE = POS.CMMN_CODE
 		AND POS.CMMN_CODE_GROUP = 'POSITION'
 	WHERE PE.PRJCT_NO = #{prjctNo}
 </select>
+
 	
 	<!-- 프로젝트 조회  -->
 	<select id="projectDetail" parameterType="int" resultMap="projectResultMap">
@@ -201,31 +213,26 @@
  
 	<!-- 프로젝트 직원 등록  -->
 	<insert id="insertProjectEmpBatch" parameterType="java.util.List">
-	  INSERT INTO PROJECT_EMP (
-	    PRJCT_NO,
-	    PRTCPNT_EMPNO,
-	    PRTCPNT_ROLE,
-	    PRJCT_AUTHOR,
-	    EVL_MAN_EMPNO,
-	    EVL_CN,
-	    EVL_GRAD,
-	    EVL_WRITNG_DT,
-	    SECSN_YN
-	  )
-	  <foreach collection="list" item="emp" separator="UNION ALL">
-	    SELECT
-	      #{emp.prjctNo},
-	      #{emp.prtcpntEmpno},
-	      #{emp.prtcpntRole},
-	      #{emp.prjctAuthor},
-	      #{emp.evlManEmpno},
-	      #{emp.evlCn},
-	      #{emp.evlGrad},
-	      SYSDATE,
-	      #{emp.secsnYn}
-	    FROM DUAL
-	  </foreach>
+	  BEGIN
+	    <foreach collection="list" item="emp" separator=" ">
+	      INSERT INTO PROJECT_EMP (
+	        PRJCT_NO, PRTCPNT_EMPNO, PRTCPNT_ROLE, PRJCT_AUTHOR,
+	        EVL_MAN_EMPNO, EVL_CN, EVL_GRAD, EVL_WRITNG_DT, SECSN_YN
+	      )
+	      SELECT
+	        #{emp.prjctNo}, #{emp.prtcpntEmpno}, #{emp.prtcpntRole}, #{emp.prjctAuthor},
+	        #{emp.evlManEmpno}, #{emp.evlCn}, #{emp.evlGrad}, SYSDATE, #{emp.secsnYn}
+	      FROM DUAL
+	      WHERE NOT EXISTS (
+	        SELECT 1 FROM PROJECT_EMP
+	        WHERE PRJCT_NO = #{emp.prjctNo}
+	        AND PRTCPNT_EMPNO = #{emp.prtcpntEmpno}
+	      );
+	    </foreach>
+	  END;
 	</insert>
+
+
 
 
 		
@@ -248,29 +255,58 @@
 	</insert>
 	
 	
-	<!-- 프로젝트 수정 -->
-	<update id="updateProject" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
-			UPDATE PROJECT
-			SET CTGRY_NO = #{ctgryNo},
-			   PRJCT_NM = #{prjctNm},
-			   PRJCT_CN = #{prjctCn},
-			   PRJCT_STTUS = #{prjctSttus},
-			   PRJCT_GRAD = #{prjctGrad},
-			   PRJCT_ADRES = #{prjctAdres},
-			   PRJCT_URL = #{prjctUrl},
-			   PRJCT_RCVORD_AMOUNT = #{prjctRcvordAmount},
-			   PRJCT_BEGIN_DATE = #{prjctBeginDate},
-			   PRJCT_END_DATE = #{prjctEndDate}
-			WHERE PRJCT_NO = #{prjctNo}
-	</update>
+
 	
 	<!-- 프로젝트 삭제 -->
-	<delete id="deleteProject" parameterType="long">
-		DELETE FROM PROJECT
-		WHERE PRJCT_NO = #{prjctNo}
+	<delete id="deleteProject" parameterType="int">
+	  DELETE FROM PROJECT WHERE PRJCT_NO = #{prjctNo}
+	</delete>
+	
+	<!-- 프로젝트 참여자 삭제 -->
+	<delete id="deleteProjectEmpsByProjectNo" parameterType="int">
+	  DELETE FROM PROJECT_EMP WHERE PRJCT_NO = #{prjctNo}
+	</delete>
+
+	<!-- 프로젝트 수정 -->
+	<update id="updateProject" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
+	    UPDATE PROJECT
+	    SET CTGRY_NO = #{ctgryNo},
+	        PRJCT_NM = #{prjctNm},
+	        PRJCT_CN = #{prjctCn},
+	        PRJCT_STTUS = #{prjctSttus},
+	        PRJCT_GRAD = #{prjctGrad},
+	        PRJCT_ADRES = #{prjctAdres},
+	        PRJCT_URL = #{prjctUrl},
+	        PRJCT_RCVORD_AMOUNT = #{prjctRcvordAmount},
+	        PRJCT_BEGIN_DATE = #{prjctBeginDate},
+	        PRJCT_END_DATE = #{prjctEndDate}
+	    WHERE PRJCT_NO = #{prjctNo}
+	</update>
+	
+	<delete id="deleteProjectEmpsByProject" parameterType="int">
+	  DELETE FROM PROJECT_EMP WHERE PRJCT_NO = #{prjctNo}
 	</delete>
 	
 	
+	
+		<!-- 카테고리 리스트 -->
+	<select id="getProjectCategoryList" resultType="map">
+	  SELECT CTGRY_NO, CTGRY_NM FROM PROJECT_CATEGORY ORDER BY CTGRY_NO
+	</select>
+	
+	<!-- 프로젝트 상태 리스트 (공통코드 PRJCT_STTUS) -->
+	<select id="getProjectStatusList" resultType="map">
+	  SELECT CMMN_CODE, CMMN_CODE_NM FROM COMMON_CODE
+	  WHERE CMMN_CODE_GROUP = 'PRJCT_STTUS'
+	  ORDER BY CMMN_CODE
+	</select>
+	
+	<!-- 프로젝트 등급 리스트 (공통코드 PRJCT_GRAD) -->
+	<select id="getProjectGradeList" resultType="map">
+	  SELECT CMMN_CODE, CMMN_CODE_NM FROM COMMON_CODE
+	  WHERE CMMN_CODE_GROUP = 'PRJCT_GRAD'
+	  ORDER BY CMMN_CODE
+	</select>
 	
 	
 	

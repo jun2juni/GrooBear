@@ -24,5 +24,11 @@ public interface ProjectMapper {
 	public int insertProject(ProjectVO projectVO);
 	public int insertProjectEmpBatch(@Param("list") List<ProjectEmpVO> projectEmpVOList);
 	public void deleteProject(int prjctNo);
+	public void deleteProjectEmpsByProjectNo(int prjctNo);
+	public void updateProject(ProjectVO projectVO);
+	public void deleteProjectEmpsByProject(int prjctNo);
+	public List<Map<String, Object>> getProjectCategoryList();
+	public List<Map<String, Object>> getProjectStatusList();
+	public List<Map<String, Object>> getProjectGradeList();
 
 }

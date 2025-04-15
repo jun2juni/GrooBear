@@ -185,6 +185,16 @@
 	 <delete id="deleteTask" parameterType="long">
 	  DELETE FROM PROJECT_TASK WHERE TASK_NO = #{taskNo}
 	</delete>
+	
+	<!-- 프로젝트를 삭제할때 진행하는 업무 삭제  -->
+	<delete id="deleteTasksByProjectNo" parameterType="int">
+	  DELETE FROM PROJECT_TASK WHERE PRJCT_NO = #{prjctNo}
+	</delete>
+
+	<delete id="deleteProjectTasksByProject" parameterType="int">
+	  DELETE FROM PROJECT_TASK WHERE PRJCT_NO = #{prjctNo}
+	</delete>
+	
  
 
    

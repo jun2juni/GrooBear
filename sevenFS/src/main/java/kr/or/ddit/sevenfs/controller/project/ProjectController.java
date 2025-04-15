@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -229,17 +230,66 @@ public class ProjectController {
 	}
 
 
-	@PostMapping("/delete")
+	/*
+	 * @PostMapping("/delete")
+	 * 
+	 * @ResponseBody public ResponseEntity<String>
+	 * deleteProject(@RequestParam("prjctNo") int prjctNo) {
+	 * log.info(" 삭제 요청 도착: {}", prjctNo); try {
+	 * projectService.deleteProject(prjctNo); return ResponseEntity.ok("삭제 성공"); }
+	 * catch (Exception e) { log.error(" 삭제 실패", e); return
+	 * ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 실패"); } }
+	 */
+	// ProjectController.java
+
+	@DeleteMapping("/delete/{prjctNo}")
 	@ResponseBody
-	public ResponseEntity<?> deleteProject(@RequestParam("prjctNo") int prjctNo) {
+	public ResponseEntity<String> deleteProject(@PathVariable int prjctNo) {
 	    try {
-	        projectService.deleteProject(prjctNo);
+	        projectService.deleteProject(prjctNo);  // 서비스 호출
 	        return ResponseEntity.ok("삭제 성공");
 	    } catch (Exception e) {
+	        e.printStackTrace();
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 실패");
 	    }
 	}
 
-	
+
+
+	@GetMapping("/editForm")
+	public String editForm(@RequestParam("prjctNo") int prjctNo, Model model) {
+	    ProjectVO project = projectService.projectDetail(prjctNo);
+	    model.addAttribute("project", project);
+	    return "project/editForm";
+	}
+
+	@PostMapping("/update")
+	public String updateProject(ProjectVO projectVO, Model model,
+	                            @RequestParam("emp_no") String[] empNos,
+	                            @RequestParam("emp_role") String[] empRoles,
+	                            @RequestParam(value = "emp_auth", required = false) String[] empAuths) {
+		model.addAttribute("categoryList", projectService.getProjectCategoryList());
+		model.addAttribute("projectStatusList", projectService.getProjectStatusList());
+		model.addAttribute("projectGradeList", projectService.getProjectGradeList());
+
+	    // 참여자 리스트 재구성
+	    List<ProjectEmpVO> empList = new ArrayList<>();
+	    for (int i = 0; i < empNos.length; i++) {
+	        ProjectEmpVO empVO = new ProjectEmpVO();
+	        empVO.setPrtcpntEmpno(empNos[i]);
+	        empVO.setPrtcpntRole(empRoles[i]);
+	        empVO.setPrjctAuthor("0000");
+	        empVO.setEvlManEmpno(empNos[i]);
+	        empVO.setEvlCn("수정됨");
+	        empVO.setEvlGrad("1");
+	        empVO.setPrjctNo(projectVO.getPrjctNo());
+	        empList.add(empVO);
+	    }
+
+	    projectVO.setProjectEmpVOList(empList);
+	    projectService.updateProject(projectVO);
+	    return "redirect:/project/projectDetail?prjctNo=" + projectVO.getPrjctNo();
+	}
+
 	
 }

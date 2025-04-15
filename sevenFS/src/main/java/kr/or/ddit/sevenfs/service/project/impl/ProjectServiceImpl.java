@@ -190,9 +190,50 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public void deleteProject(int prjctNo) {
 		
-		
+	    // 1. 업무 먼저 삭제
+	    projectTaskMapper.deleteProjectTasksByProject(prjctNo);
+
+	    // 2. 인원 삭제
+	    projectMapper.deleteProjectEmpsByProject(prjctNo);
+
+	    // 3. 프로젝트 삭제
+	    projectMapper.deleteProject(prjctNo);
 	}
 
+	@Override
+	public void updateProject(ProjectVO projectVO) {
+	    // 1. 프로젝트 정보 업데이트
+	    projectMapper.updateProject(projectVO);
+
+	    // 2. 새 참여자 목록에서만 insert 처리
+	    List<ProjectEmpVO> newEmpList = projectVO.getProjectEmpVOList();
+	    if (newEmpList != null && !newEmpList.isEmpty()) {
+	        projectMapper.insertProjectEmpBatch(newEmpList); // 중복제거 미리 됐다고 가정
+	    }
+
+
+	}
+
+
+
+
+
+
+
+	@Override
+	public List<Map<String, Object>> getProjectCategoryList() {
+	    return projectMapper.getProjectCategoryList();
+	}
+
+	@Override
+	public List<Map<String, Object>> getProjectStatusList() {
+	    return projectMapper.getProjectStatusList();
+	}
+
+	@Override
+	public List<Map<String, Object>> getProjectGradeList() {
+	    return projectMapper.getProjectGradeList();
+	}
 
 }
 

@@ -38,6 +38,7 @@ public class ProjectTaskVO {
     private Integer depth; // 계층 구조 들여쓰기용
     private String role; // 예: 업무 담당자의 역할 등
     private String chargerEmpNm;
+
     
     private List<MultipartFile> files;
     private List<AttachFileVO> attachFileList;
@@ -54,4 +55,5 @@ public class ProjectTaskVO {
         this.tempParentIndex = tempParentIndex;
     }
 
+    
 }

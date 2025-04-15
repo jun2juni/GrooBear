@@ -48,9 +48,9 @@
               <div class="row g-3">
                 <div class="col-md-12">
                   <div class="border-top pt-3">
-                    <span class="badge btn-danger mb-2 px-2 py-1">
-                      <i class="fas fa-user-tie me-1"></i> 책임자
-                    </span>
+<span class="badge bg-danger text-white mb-2 px-2 py-1">
+  <i class="fas fa-user-tie me-1"></i> 책임자
+</span>
                     <div class="d-flex flex-wrap gap-2 small text-muted">
                       <c:forEach var="emp" items="${project.responsibleList}">
                         <button type="button" class="btn btn-outline-danger rounded-3 text-start shadow-sm" style="min-width: 120px; font-size: 0.85rem; border-width: 1px;">
@@ -63,9 +63,9 @@
                 </div>
                 <div class="col-md-12">
                   <div class="border-top pt-3">
-                    <span class="badge btn-primary mb-2 px-2 py-1">
-                      <i class="fas fa-user-check me-1"></i> 참여자
-                    </span>
+<span class="badge bg-primary text-white mb-2 px-2 py-1">
+  <i class="fas fa-user-check me-1"></i> 참여자
+</span>
                     <div class="d-flex flex-wrap gap-2 small text-muted">
                       <c:forEach var="emp" items="${project.participantList}">
                         <button type="button" class="btn btn-outline-primary rounded-3 text-start shadow-sm" style="min-width: 120px; font-size: 0.85rem; border-width: 1px;">
@@ -78,9 +78,9 @@
                 </div>
                 <div class="col-md-12">
                   <div class="border-top pt-3">
-                    <span class="badge btn-secondary mb-2 px-2 py-1">
-                      <i class="fas fa-user-clock me-1"></i> 참조자
-                    </span>
+<span class="badge bg-secondary text-white mb-2 px-2 py-1">
+  <i class="fas fa-user-clock me-1"></i> 참조자
+</span>
                     <div class="d-flex flex-wrap gap-2 small text-muted">
                       <c:forEach var="emp" items="${project.observerList}">
                         <button type="button" class="btn btn-outline-secondary rounded-3 text-start shadow-sm" style="min-width: 120px; font-size: 0.85rem; border-width: 1px;">
@@ -180,6 +180,9 @@
             </table>
           </div>
           <div class="d-flex justify-content-end m-3">
+             <button class="btn btn-outline-danger me-2" onclick="deleteCurrentProject(${project.prjctNo})">
+				 <i class="fas fa-trash-alt"></i> 삭제
+			 </button>
 			  <a href="/project/editForm?prjctNo=${project.prjctNo}" class="btn btn-warning me-2">수정</a>
 			  <a href="/project/tab" class="btn btn-secondary">목록</a>
 			</div>
@@ -255,6 +258,23 @@ document.addEventListener("DOMContentLoaded", function () {
 	  const taskNo = taskDetailEl.getAttribute('data-task-no');
 	  location.href = `/projectTask/editForm?taskNo=\${taskNo}`;
 	}
+	
+	function deleteCurrentProject(prjctNo) {
+		  if (!confirm("정말 삭제하시겠습니까?")) return;
+
+		  fetch(`/project/delete/\${prjctNo}`, {
+		    method: 'DELETE'
+		  })
+		  .then(res => {
+		    if (!res.ok) throw new Error("삭제 실패");
+		    alert("삭제 완료!");
+		    location.href = "/project/tab?tab=list";
+		  })
+		  .catch(err => {
+		    alert("삭제 실패!");
+		    console.error(err);
+		  });
+		}
 	</script>
 	</body>
 </html>
