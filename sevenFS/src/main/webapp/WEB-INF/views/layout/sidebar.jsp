@@ -40,7 +40,7 @@
         
         <%-- 메인 --%>
         <li class="nav-item ${fn:contains(currentURL, '/home') ? 'active' : ''}">
-          <a href="/">
+          <a href="/main/home">
             <span class="icon material-symbols-outlined">home</span>
             <span class="text">메인</span>
           </a>

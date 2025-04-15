@@ -17,6 +17,15 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 	<title>${title}</title>
   <%@ include file="../../layout/prestyle.jsp" %>
+  
+<style>
+	.s_ho_cnt {
+	border-right: 1px solid;
+	height: 90px;
+	float: left;
+	margin: 0px;
+}
+</style>
 </head>
 <body>
 <%@ include file="../../layout/sidebar.jsp" %>
@@ -26,7 +35,7 @@
 		<div class="container-fluid">
 			<%-- ${emplVacation} --%>
 			 <div>
-                  <c:set var="beginDt" value="${emplVacation.yrycUseBeginDate}"></c:set>
+               <c:set var="beginDt" value="${emplVacation.yrycUseBeginDate}"></c:set>
                <c:set var="bgYear" value="${beginDt.substring(0,4)}"></c:set>
                <c:set var="bgMonth" value="${beginDt.substring(4,6)}"></c:set>
                <c:set var="bgDay" value="${beginDt.substring(6,8)}"></c:set>
@@ -36,6 +45,7 @@
                <c:set var="edDay" value="${endDt.substring(6,8)}"></c:set>
                <h3><p class="text-center mb-3">${bgYear}.${bgMonth}.${bgDay} ~ ${edYear}.${edMonth}.${edDay}</p></h3>
              </div>
+            <div class="card-style mb-3" style="height:130px;'">
 			<div class="row">			
 				<%-- <div class="col-3">
 	              <div class="icon-card mb-30">
@@ -58,73 +68,68 @@
 	              </div>
 	              <!-- End Icon Cart -->
 	            </div> --%>
-	            <div class="col-2">
-	              <div class="icon-card mb-30">
-	                <div class="content mx-auto">
+	            <div class="col-2" style="border:none;">
+	                <div class="mx-auto text-center">
 	                  <div>
-	                  	<h3><span class="status-btn success-btn mb-2 text-dark">성과 보상 연차</span></h3>
+	                  	<h3><span class="status-btn success-btn mb-2 text-dark">성과 보상</span></h3>
 	                  </div>
 	                  <div>
-	                    <p class="text-center">${emplVacation.excessWorkYryc}개</p>
+	                    <h4><span class="text-center">${emplVacation.excessWorkYryc}개</span></h4>
 	                  </div>
 	                </div>
-	              </div>
-	              <!-- End Icon Cart -->
 	            </div>
-				<div class="col-2">
-	              <div class="icon-card mb-30">
-	                <div class="content mx-auto">
+	            
+				<div class="col-2" style="border:none;">
+	          	<div class="s_ho_cnt"></div>
+	                <div class="mx-auto text-center ml-5">
 	                  <div>
 	                  	<h3><span class="status-btn success-btn mb-2 text-dark">근무 보상 연차</span></h3>
 	                  </div>
 	                  <div>
-	                    <p class="text-center">${emplVacation.cmpnstnYryc}개</p>
+	                    <h4><span class="text-center">${emplVacation.cmpnstnYryc}개</span></h4>
 	                  </div>
 	                </div>
-	              </div>
 	              <!-- End Icon Cart -->
 	            </div>
-				<div class="col-2">
-	              <div class="icon-card mb-30">
-	                <div class="content mx-auto">
+	            
+				<div class="col-2" style="border:none;">
+				<div class="s_ho_cnt"></div>
+	                <div class="mx-auto text-center mt-1">
 	                  <div>
 	                   <h4><span class="status-btn secondary-btn mb-2 text-dark">총 연차 수</span></h4>
 	                  </div>
 	                  <div>
-	                    <p class="text-center"> ${emplVacation.totYrycDaycnt}개</p>
+	                    <h4><span class="text-center"> ${emplVacation.totYrycDaycnt}개</span></h4>
 	                  </div>
 	                </div>
-	              </div>
 	              <!-- End Icon Cart -->
 	            </div>
-				<div class="col-3">
-	              <div class="icon-card mb-30">
-	                <div class="content mx-auto">
+				<div class="col-3" style="border:none;">
+				 <div class="s_ho_cnt"></div>
+	                <div class="mx-auto text-center">
 	                  <div>
 	                  	<h3><span class="status-btn secondary-btn mb-2 text-dark">사용 연차 수</span></h3>
 	                  </div>
 	                  <div>
-	                    <p class="text-center">${emplVacation.yrycUseDaycnt}개</p>
+	                    <h4><span class="text-center">${emplVacation.yrycUseDaycnt}개</span></h4>
 	                  </div>
 	                </div>
-	              </div>
 	              <!-- End Icon Cart -->
 	            </div>
-				<div class="col-3">
-	              <div class="icon-card mb-30">
-	                <div class="content mx-auto">
+				<div class="col-3" style="border:none;">
+				 <div class="s_ho_cnt"></div>
+	                <div class="mx-auto text-center">
 	                  <div>
 	                  	<h3><span class="status-btn secondary-btn mb-2 text-dark">잔여 연차 수</span></h3>
 	                  </div>
 	                  <div>
-	                    <p class="text-center">${emplVacation.yrycRemndrDaycnt}개</p>
+	                    <h4><span class="text-center">${emplVacation.yrycRemndrDaycnt}개</span></h4>
 	                  </div>
 	                </div>
-	              </div>
 	              <!-- End Icon Cart -->
 	            </div>
-				
 			</div>
+		</div>
 		<div>
           <div class="">
             <div class="card-style  mb-30 col-12">

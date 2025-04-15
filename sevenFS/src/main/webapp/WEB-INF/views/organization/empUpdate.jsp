@@ -226,14 +226,14 @@
 								</select>
 								<div class="invalid-feedback">은행을 선택헤주세요.</div>
 				          	</div> --%>
-				          	
+
 				          	<c:set var="bankList" value="${['KB국민은행','신한은행','우리은행','하나은행','IBK기업은행','NH농협은행','지역농협','카카오뱅크','토스뱅크','SC제일은행','씨티은행']}"/>
 					          <div class="input-style-1 form-group col-2" style="margin-left: 10px;">
 								<label class="form-label required">은행명<span class="text-danger">*</span></label>
 								<select class="form-select" name="bankNm" id="bankNm">
 									 <option value="">은행 선택</option>
 									  <c:forEach var="bank" items="${bankList}">
-									    <option value="${bank}"
+									    <option value="${emp.bankNm}"
 											<c:if test="${emp.bankNm eq bank}">selected</c:if>>
 											${bank}
 										</option>
@@ -283,16 +283,13 @@
   <%@ include file="../layout/prescript.jsp" %>
  <script type="text/javascript">
 $(function(){
-	
-	
-/* 	$('#fmtEcnyDt').on('change', function(){
-		// 입사일자 하이픈 없애는 처리
-		let fmtEcnyDt = $('#fmtEcnyDt').val();
-		console.log("입사일자 : " ,fmtEcnyDt);	
-		let replaceEncy = fmtEcnyDt.replaceAll('-', '');
-		 //hidden input으로 값 바꿔주기
-		$('#ecnyDate').val(replaceEncy);
-	}) */
+
+	let fmtEncyDt = $('#fmtEncyDt').val();
+	console.log("입사일자 : " ,fmtEncyDt);	
+	let replaceEncy = fmtEncyDt.replaceAll('-', '');
+	 //hidden input으로 값 바꿔주기
+	$('#ecnyDate').val(replaceEncy);
+
 	
 	let ecnyDate = $('#ecnyDate').val();
 	let replaceEncyDt = ecnyDate.replaceAll('-', '');

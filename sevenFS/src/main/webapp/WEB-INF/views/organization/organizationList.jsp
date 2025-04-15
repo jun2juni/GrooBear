@@ -4,7 +4,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
-<c:set var="title" scope="application" value="메인" />
+<c:set var="title" scope="application" value="조직도" />
+<c:set var="copyLight" scope="application" value="by 박호산나" />
 
 <!DOCTYPE html>
 <html lang="en">
@@ -60,7 +61,7 @@
       .then(resp => resp.text())
       .then(res => {
         console.log("사원상세정보 : " , res);
-        $("#emplDetail").html();
+        $("#emplDetail").html(res);
       })
   }
   

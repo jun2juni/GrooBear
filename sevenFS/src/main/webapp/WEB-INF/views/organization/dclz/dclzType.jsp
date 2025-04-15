@@ -5,6 +5,7 @@
 
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
 <c:set var="title" scope="application" value="메인" />
+<c:set var="copyLight" scope="application" value="by 박호산나" />
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,27 +26,10 @@
 	
 	<section class="section">
 		<div class="container-fluid">
-			<!-- 출퇴근 버튼 -->
 		   <div class="row">
-			<div class="col-4 mb-30">
-				<div class="card-style text-center">
-					<span class="status-btn dark-btn text-center mt-50">${today}</span>
-					
-					<div class="text-center d-flex mb-30 mt-60 ml-60">
-						<div class="content mr-30">
-					       	<button type="button" id="${todayWorkTime != null ? '' : 'workStartButton'}" class="btn-sm main-btn success-btn-light rounded-full btn-hover">출근</button>
-							<p id="startTime">${todayWorkTime != null ? todayWorkTime : '출근 전'}</p>
-					    </div>
-					    <div class="content">
-					       	<button type="button" id="${todayWorkEndTime != null ? '' : 'workEndButton'}" class="btn-sm main-btn danger-btn-light rounded-full btn-hover">퇴근</button>
-							<p id="endTime">${todayWorkEndTime != null ? todayWorkEndTime : '퇴근 전'}</p>
-					    </div>
-					</div>
-				</div>
-			</div> 
-			<div class="col-8">
+			<div class="col-12">
 			<div class="row">
-	          <div class="col-6">
+	          <div class="col-3">
 	            <div class="icon-card mb-30">
 	              <div class="icon orange">
 	                <i class="lni lni-user"></i>
@@ -54,14 +38,14 @@
 		              <h6>근무</h6>
 		                <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.work == null ? 0 : dclzCnt.work}건</h3>
 	                <p class="text-sm text-success">
-	                  <span class="text-gray"></span>
+	                <span></span>
 	                </p>
 	              </div>
 	            </div>
 	            <!-- End Icon Cart -->
 	          </div>
 	          <!-- End Col -->
-	          <div class="col-6">
+	          <div class="col-3">
 	            <div class="icon-card mb-30">
 	              <div class="icon success">
 	                <i class="lni lni-users"></i>
@@ -80,15 +64,16 @@
 						</c:choose>
 					</c:forEach>
 					</p>
+					<span></span>
 	              </div>
 	            </div>
 	            <!-- End Icon Cart -->
 	          </div>
 	          <!-- End Col -->
-            </div>
+            <!-- </div> -->
 	          <!-- End Col -->
-	         <div class="row">
-	          <div class="col-6">
+	         <!-- <div class="row"> -->
+	          <div class="col-3">
 	            <div class="icon-card mb-30">
 	              <div class="icon orange">
 	                <i class="lni lni-smile"></i>
@@ -112,7 +97,7 @@
 	            </div>
 	            <!-- End Icon Cart -->
 	          </div>
-	          <div class="col-6">
+	          <div class="col-3">
 	            <div class="icon-card">
 	              <div class="icon primary">
 	                <i class="lni lni-alarm-clock"></i>
@@ -137,7 +122,7 @@
 	            <!-- End Icon Cart -->
 	          </div>
 	          <!-- End Col -->
-	        </div>
+	        <!-- </div> -->
 	        </div>
 	        </div>
         
@@ -275,7 +260,7 @@
 	<c:import url="../../layout/footer.jsp" />
 </main>
 <c:import url="../../layout/prescript.jsp" />
-<c:import url="./workButton.jsp"></c:import>
+
 <script type="text/javascript">
 $(function(){
 	$("#yearSelect").on("change", function(){

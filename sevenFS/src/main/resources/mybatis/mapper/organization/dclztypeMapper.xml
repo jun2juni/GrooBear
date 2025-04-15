@@ -86,6 +86,20 @@
 	WHERE U.RNUM BETWEEN (#{currentPage} * #{size})-(#{size}-1) AND (#{currentPage}* #{size})
 </select>
 
+<!-- 메인페이지에서 필요한 사원의 근태현황 조회 -->
+<select id="mainEmplDclzList" parameterType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
+	 SELECT dt.EMPL_NO
+        , dt.DCLZ_NO
+        , dt.DCLZ_CODE
+        , TO_CHAR(dt.DCLZ_BEGIN_DT ,'HH24:MI:SS') as work_begin_time
+        , TO_CHAR(dt.DCLZ_END_DT, 'HH24:MI:SS') as work_end_time
+        , cc.cmmn_code_nm
+        FROM   dclz_type dt
+        RIGHT OUTER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
+        WHERE cmmn_code_group='ATTEND'
+        AND EMPL_NO=#{emplNo}
+</select>
+
 <!-- 대분류에 따른 사원 상세 근태현황 목록 -->
 <select id="empDetailDclzTypeCnt" parameterType="String" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeDetailVO">
 	SELECT  cc.cmmn_code,
@@ -163,7 +177,6 @@
              ,TO_DATE(TO_CHAR(SYSDATE, 'YYYY-MM-DD') || ' 09:00:00', 'YYYY-MM-DD HH24:MI:SS')
              ,NULL)
 </insert>
-
 
 <!-- 선택한 년도의 데이터 가져오기 -->
 <select id="getSelectYear" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">

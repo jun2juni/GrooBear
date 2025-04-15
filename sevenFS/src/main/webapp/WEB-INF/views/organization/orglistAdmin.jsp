@@ -1,8 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-
-
-
-
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -10,7 +6,8 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
-<c:set var="title" scope="application" value="메인" />
+<c:set var="title" scope="application" value="조직관리" />
+<c:set var="copyLight" scope="application" value="by 박호산나" />
 
 <!DOCTYPE html>
 <html lang="en">
