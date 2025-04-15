@@ -15,9 +15,9 @@ public class AtrzLineVO {
 	private String contdClsfCode;
 	private String dcrbManEmpno;
 	private String dcrbManClsfCode;
-	private String atrzTy;//0 결재 1 참조*
-	private String sanctnProgrsSttusCode;//00 대기중, 10 승인, 20 반려, 30 전결, 40 대결 *
-	private String dcrbAuthorYn;//Y / N 전결권한여부 *
+	private String atrzTy;//N 결재 Y 참조*
+	private String sanctnProgrsSttusCode;//00 대기중/ 10 승인 / 20 반려 / 30 회수(상신취소) / 50 전결 / 60 대결 
+	private String dcrbAuthorYn;//0 / 1 전결권한여부 *
 	private String contdAuthorYn;
 	private String sanctnOpinion;
 	private String eltsgnImage;

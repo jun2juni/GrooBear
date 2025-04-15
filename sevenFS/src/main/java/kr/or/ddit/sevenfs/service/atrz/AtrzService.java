@@ -16,11 +16,16 @@ import kr.or.ddit.sevenfs.vo.atrz.SpendingVO;
 public interface AtrzService {
 	//결재 대기중인 문서리스트
 	public List<AtrzVO> atrzApprovalList(String emplNo);
+	//기안진행문서 최신순 5개
+	public List<AtrzVO> atrzMinSubmitList(String emplNo);
+	//기안완료문서 최신순 5개
+	public List<AtrzVO> atrzMinCompltedList(String emplNo);
 	//기안중인 문서리스트
 	public List<AtrzVO> atrzSubmitList(String emplNo);
 	//기안완료된 문서리스트
 	public List<AtrzVO> atrzCompletedList(String emplNo);
 		
+	
 	//참조대기문서 목록
 	public List<AtrzVO> atrzReferList(String emplNo);
 	//결재예정문서 목록
@@ -71,6 +76,9 @@ public interface AtrzService {
 	
 	//전자결재 문서 상세보기 결재라인 수정(업데이트) 반려시
 	public int atrzDetilCompUpdate(AtrzVO atrzVO);
+	//전자결재 기안취소
+	public int atrzCancelUpdate(AtrzVO atrzVO);
+
 	
 	
 

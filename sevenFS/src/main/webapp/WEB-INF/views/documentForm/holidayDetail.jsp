@@ -103,18 +103,43 @@
 						<!-- 결재요청 | 임시저장 | 결재선지정 | 취소  -->
 						<div class="col card-body" id="approvalBtn">
 							<!-- 새로운 버튼 -->
+							<!--choose-->
 							<div class="tool_bar">
+								
+								<sec:authentication property="principal.empVO" var="emp" />
+								<!-- <p>${emp.emplNo}?????</p> -->
 								<div class="critical d-flex gap-2 mb-3">
-									<button id="atrzAppBtnTo" type="button" 
-										class="btn btn-outline-success d-flex align-items-center gap-1 atrzAppBtn" 
-										data-bs-toggle="modal" data-bs-target="#atrzApprovalModal">
-										<span class="material-symbols-outlined fs-5">note_alt</span> 결재
-									</button>
-									<a id="atrzComBtnTo" type="button"
-										class="btn btn-outline-danger d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzCompanModal"> <span
-										class="material-symbols-outlined fs-5 atrzComBtn">keyboard_return</span> 반려
-									</a> 
+									<!--[AtrzLineVO(atrzDocNo=H_20250414_00025, atrzLnSn=1, sanctnerEmpno=20250004, sanctnerClsfCode=02
+										, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=N
+										, sanctnProgrsSttusCode=00, dcrbAuthorYn=0, contdAuthorYn=null, sanctnOpinion=null
+										, eltsgnImage=null, sanctnConfmDt=null, atrzLineList=null, sanctnerClsfNm=대리, sanctnerEmpNm=길준희
+										, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null
+										, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0)]-->
+										<!-- 기안자일때만 보이게 하기 -->
+										
+										<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+											<c:if test="${atrzLineVO.sanctnerEmpno == emp.emplNo
+															&& atrzLineVO.atrzTy eq 'N'
+															&& atrzLineVO.atrzLnSn == curAtrzLnSn}">
+												<button id="atrzAppBtnTo" type="button" 
+													class="btn btn-outline-success d-flex align-items-center gap-1 atrzAppBtn" 
+													data-bs-toggle="modal" data-bs-target="#atrzApprovalModal">
+													<span class="material-symbols-outlined fs-5">note_alt</span> 결재
+												</button>
+												<a id="atrzComBtnTo" type="button"
+													class="btn btn-outline-danger d-flex align-items-center gap-1"
+													data-bs-toggle="modal" data-bs-target="#atrzCompanModal"> <span
+													class="material-symbols-outlined fs-5 atrzComBtn">keyboard_return</span> 반려
+												</a>
+											</c:if>
+										</c:forEach>
+										<!-- <p>${atrzVO}</p> -->
+										<c:if test="${atrzVO.drafterEmpno == emp.emplNo  && atrzVO.atrzSttusCode!=10 && atrzVO.atrzSttusCode!=20 && atrzVO.atrzSttusCode!=30}">
+											<a id="atrzCancelBtnTo" type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzCancelBtn"> 
+											<span class="material-symbols-outlined fs-5 atrzComBtn">keyboard_return</span> 기안취소
+										</a>
+										</c:if>
+										
 									<a type="button"
 										class="btn btn-outline-secondary d-flex align-items-center gap-1"
 										href="/atrz/approval"> <span
@@ -133,6 +158,7 @@
 									<!-- 기능 시작 -->
 									<!-- 전자결재 양식 수정도 가능 시작 -->
 									<!-- <p>${atrzVO}</p> -->
+									<!-- <p>${atrzVO.atrzLineVOList}</p> -->
 									<div id="s_eap_content_box_left" class="s_scroll">
 										<div class="s_div_container s_scroll">
 											<div
@@ -204,6 +230,9 @@
 																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '20'}">
 																				<img src="/assets/images/atrz/return.png" style="width: 50px; display: block; margin: 0 auto;">
 																			</c:when>
+																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '30'}">
+																				<img src="/assets/images/atrz/cancel.png" style="width: 50px; display: block; margin: 0 auto;">
+																			</c:when>
 																			<c:otherwise>
 																				<img src="/assets/images/atrz/beforGR.png" style="width: 50px; display: block; margin: 0 auto;">
 																			</c:otherwise>
@@ -224,6 +253,9 @@
 																				<span style="color: red;">
 																					<fmt:formatDate value="${atrzLineVO.sanctnConfmDt}" pattern="yyyy-MM-dd" />
 																				</span>
+																			</c:when>
+																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '30'}">
+																				<span style="display: block; width: 100%; height: 1px; background-color: gray; transform: rotate(-15deg); margin: 10px auto;"></span>
 																			</c:when>
 																			<c:otherwise>
 																				<span style="color: black;">
@@ -377,16 +409,28 @@
 							<!-- 상하 버튼 추가 -->
 							<div class="tool_bar">
 								<div class="critical d-flex gap-2 mb-3 mt-3">
-									<button id="atrzAppBtnBo" type="button" 
-										class="btn btn-outline-success d-flex align-items-center gap-1 atrzAppBtn" 
-										data-bs-toggle="modal" data-bs-target="#atrzApprovalModal">
-										<span class="material-symbols-outlined fs-5">note_alt</span> 결재
-									</button>
-									<a id="atrzComBtnBo" type="button"
-										class="btn btn-outline-danger d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzCompanModal"> <span
-										class="material-symbols-outlined fs-5 atrzComBtn">keyboard_return</span> 반려
-									</a> 
+									<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+										<c:if test="${atrzLineVO.sanctnerEmpno == emp.emplNo
+														&& atrzLineVO.atrzTy eq 'N'
+														&& atrzLineVO.atrzLnSn == curAtrzLnSn}">
+											<button id="atrzAppBtnBo" type="button" 
+												class="btn btn-outline-success d-flex align-items-center gap-1 atrzAppBtn" 
+												data-bs-toggle="modal" data-bs-target="#atrzApprovalModal">
+												<span class="material-symbols-outlined fs-5">note_alt</span> 결재
+											</button>
+											<a id="atrzComBtnBo" type="button"
+												class="btn btn-outline-danger d-flex align-items-center gap-1"
+												data-bs-toggle="modal" data-bs-target="#atrzCompanModal"> <span
+												class="material-symbols-outlined fs-5 atrzComBtn">keyboard_return</span> 반려
+											</a>
+										</c:if>
+									</c:forEach>
+									<!-- <p>${atrzVO}</p> -->
+									<c:if test="${atrzVO.drafterEmpno == emp.emplNo  && atrzVO.atrzSttusCode!=10 && atrzVO.atrzSttusCode!=20}">
+										<a id="atrzCancelBtnBo" type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzCancelBtn"> 
+										<span class="material-symbols-outlined fs-5 atrzComBtn">keyboard_return</span> 기안취소
+									</a>
+									</c:if>
 									<a type="button"
 										class="btn btn-outline-secondary d-flex align-items-center gap-1"
 										href="/atrz/approval"> <span
@@ -516,8 +560,74 @@ $("#atrzDetailComBtn").on("click", function () {
 	});
 });
 
+//기안취소버튼을 누르면  atrzCancelBtnTo
+$(".atrzCancelBtn").on("click",function(){
+	const atrzDocNo = $("#s_dfNo").text(); // 문서 번호 가져오기
 
+	//정말로 결재 기안취소하시겠습니까 ?
+	swal({
+		title: "기안취소",
+		text: "정말로 기안취소하시겠습니까?",
+		icon: "warning",
+		buttons: {
+			cancel: {
+				text: "취소",
+				value: null,
+				visible: true,
+				closeModal: true
+			},
+			confirm: {
+				text: "확인",
+				value: true,
+				closeModal: true
+			}
+		}
+	}).then((willDelete) => {
+		if (willDelete) {
+			// 서버로 전송할 데이터 구성
+			const cancelData = {
+				"drafterEmpno": "${empVO.emplNo}", // 기안자 사원번호
+				"atrzDocNo": atrzDocNo,
+				"sanctnProgrsSttusCode": "30", // 결재 상태를 "기안취소"로 설정
+			};
+			console.log("cancelData : ", cancelData);
 
+			// AJAX 요청
+			$.ajax({
+				url: "/atrz/selectForm/atrzCancelUpdate", // 서버의 기안취소 API
+				type: "POST",
+				data: cancelData,
+				dataType: "text",
+				success: function (response) {
+					if (response == "success") {
+						swal({
+							title: "기안취소 완료",
+							text: "기안취소가 성공적으로 처리되었습니다.",
+							icon: "success",
+							button: "확인",
+						}).then(() => {
+							// 기안취소 완료 후 페이지를 새로고침하거나 목록 페이지로 이동
+							window.location.href = "/atrz/home";
+						});
+					}
+				},
+				error: function (error) {
+					swal({
+						title: "기안취소 실패",
+						text: "기안취소 처리 중 오류가 발생했습니다. 다시 시도해주세요.",
+						icon: "error",
+						button: "확인",
+					});
+				},
+			});
+		} else {
+			swal("기안취소가 취소되었습니다.");
+		}
+	});
+
+	
+
+})
 
 </script>
 </body>

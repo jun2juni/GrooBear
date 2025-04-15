@@ -25,11 +25,11 @@ public class AtrzVO {
 	private Date atrzDrftDt; // 진행중
 	private Date atrzComptDt; // 완료/반려/취소 일시
 	private Date atrzRtrvlDt; // 회수 일시
-	private String atrzSttusCode; // 상태 코드 (00 진행중 / 10 반려 등)
+	private String atrzSttusCode; // 상태 코드 00 진행중 / 10 완료 / 20 반려  / 30 회수(상신취소) / 40 취소 / 99 임시저장
 	private String eltsgnImage; // 전자 서명 이미지 (BASE64)
 	private int docFormNo; // 문서 양식 번호
 	private String atrzDeleteYn; // 삭제 여부
-	private String schdulRegYn; //일정등록 추가 여부  (결재완료 되었을경우에 버튼활성화)
+	private String schdulRegYn; //일정등록 추가 여부  (결재완료 되었을경우에 버튼활성화) 
 	
 	private String docFormNm; // 문서 양식 번호
 	
@@ -44,6 +44,7 @@ public class AtrzVO {
 	private String deptCode;	//부서코드
 	private String deptCodeNm;	//부서코드명
 	
+	private Boolean authorize; //권한
 	//페이징 처리를 위한것
 	
 	//파일첨부

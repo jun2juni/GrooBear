@@ -55,48 +55,119 @@
 
 	<!-- 결재 대기중인 문서리스트 (결재대기문서)-->
 	<select id="atrzApprovalList" resultMap="atrzMap">
-		SELECT  /* AtrzMapper.atrzApprovalList */
-		    A.atrz_doc_no
-		  , A.drafter_empno
-		  , A.drafter_clsf
-		  , A.drafter_empnm
-		  , A.drafter_dept
-		  , A.bkmk_yn
-		  , A.atch_file_no
-		  , A.atrz_sj
-		  , A.atrz_cn
-		  , A.atrz_opinion
-		  , A.atrz_tmpr_stre_dt
-		  , A.atrz_drft_dt
-		  , A.atrz_compt_dt
-		  , A.atrz_rtrvl_dt
-		  , A.atrz_sttus_code
-		  , A.eltsgn_image
-		  , A.doc_form_no
-		  , A.atrz_delete_yn
-		  , A.schdul_reg_yn
-		  , L.atrz_ln_sn
-		  , L.sanctner_empno
-		  , L.sanctn_progrs_sttus_code
-		  , L.atrz_ty
-		  , L.dcrb_author_yn
-		
+		WITH my_turn_lines AS (					/* AtrzMapper.atrzApprovalList */
+		    SELECT L.*
+		    FROM atrz_line L
+		    WHERE L.sanctner_empno = #{emplNo}
+		      AND L.sanctn_progrs_sttus_code = '00'
+		      AND L.atrz_ty = 'N'
+		      AND NOT EXISTS (
+		          SELECT 1
+		          FROM atrz_line L2
+		          WHERE L2.atrz_doc_no = L.atrz_doc_no
+		            AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
+		            AND L2.atrz_ty = 'N'
+		            AND L2.sanctn_progrs_sttus_code NOT IN ('10', '60')
+		      )
+		)
+		SELECT  
+		      A.atrz_doc_no,
+		      A.drafter_empno,
+		      A.drafter_clsf,
+		      A.drafter_empnm,
+		      A.drafter_dept,
+		      A.bkmk_yn,
+		      A.atch_file_no,
+		      A.atrz_sj,
+		      A.atrz_cn,
+		      A.atrz_opinion,
+		      A.atrz_tmpr_stre_dt,
+		      A.atrz_drft_dt,
+		      A.atrz_compt_dt,
+		      A.atrz_rtrvl_dt,
+		      A.atrz_sttus_code,
+		      A.eltsgn_image,
+		      A.doc_form_no,
+		      A.atrz_delete_yn,
+		      A.schdul_reg_yn,
+		      L.atrz_ln_sn,
+		      L.sanctner_empno,
+		      L.sanctn_progrs_sttus_code,
+		      L.atrz_ty,
+		      L.dcrb_author_yn
 		FROM atrz A
-			LEFT JOIN atrz_line L
-			    ON A.atrz_doc_no = L.atrz_doc_no
-		WHERE 1 = 1
-		  AND A.atrz_compt_dt IS NULL
-		  AND L.sanctner_empno = #{emplNo}
-		  AND L.sanctn_progrs_sttus_code = '00'
-		  AND NOT EXISTS (
-		        SELECT 1
-		        FROM atrz_line L2
-		        WHERE L2.atrz_doc_no = A.atrz_doc_no
-		          AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
-		          AND L2.sanctn_progrs_sttus_code = '00'
-		    )
+		JOIN my_turn_lines L
+		  ON A.atrz_doc_no = L.atrz_doc_no
+		WHERE A.atrz_compt_dt IS NULL
 		ORDER BY A.atrz_drft_dt DESC
 	</select>
+	
+	<!-- 기안진행문서 최신순5개 -->
+	<select id="atrzMinSubmitList" resultMap="atrzMap" parameterType="string">
+		SELECT 		/* AtrzMapper.atrzMinSubmitList */
+		      a.atrz_doc_no,
+		      a.drafter_empno,
+		      a.drafter_clsf,
+		      a.drafter_empnm,
+		      a.drafter_dept,
+		      a.bkmk_yn,
+		      a.atch_file_no,
+		      a.atrz_sj,
+		      a.atrz_cn,
+		      a.atrz_opinion,
+		      a.atrz_tmpr_stre_dt,
+		      a.atrz_drft_dt,
+		      a.atrz_compt_dt,
+		      a.atrz_rtrvl_dt,
+		      a.atrz_sttus_code,
+		      a.eltsgn_image,
+		      a.doc_form_no,
+		      a.atrz_delete_yn,
+		      a.schdul_reg_yn,
+		      l.atrz_ln_sn,
+		      l.sanctner_empno,
+		      l.sanctn_progrs_sttus_code
+		FROM (
+		    SELECT *
+		    FROM (
+		        SELECT *
+		        FROM atrz
+		        WHERE drafter_empno = #{emplNo}
+		          AND atrz_delete_yn = 'N'
+		          AND atrz_sttus_code = '00'
+		        ORDER BY atrz_drft_dt DESC
+		    )
+		    WHERE ROWNUM &lt;= 5
+		) a
+		LEFT JOIN atrz_line l
+		  ON a.atrz_doc_no = l.atrz_doc_no
+		ORDER BY a.atrz_drft_dt DESC
+	</select>
+	
+	<!-- 기안완료문서 최신순5개 -->
+	<select id="atrzMinCompltedList" resultMap="atrzMap" parameterType="string">
+		SELECT *   /* AtrzMapper.atrzMinCompltedList */
+			FROM (
+			  SELECT 	
+			        A.atrz_doc_no,
+			        A.atrz_sj,
+			        A.atrz_cn,
+			        A.atrz_drft_dt,
+			        A.atrz_compt_dt,
+			        A.atrz_rtrvl_dt,
+			        A.atrz_sttus_code,
+			        A.drafter_empno,
+			        A.drafter_empnm,
+			        A.drafter_clsf,
+			        A.drafter_dept
+			    FROM atrz A
+			    WHERE A.drafter_empno = #{emplNo}
+			      AND A.atrz_sttus_code = '10'
+			    ORDER BY A.atrz_compt_dt DESC
+			)
+			WHERE ROWNUM &lt;= 5
+	</select>
+	
 	
 	<!-- 기안중인 문서리스트 문서리스트 (기안진행문서) -->
 	<select id="atrzSubmitList" resultMap="atrzMap" parameterType="string">
@@ -141,7 +212,7 @@
 	    FROM atrz A
 	    WHERE  1 = 1
 	      AND A.drafter_empno = #{emplNo}
-	      AND A.atrz_sttus_code = '20'
+	      AND A.atrz_sttus_code = '10'
 	    ORDER BY A.atrz_compt_dt desc
 	</select>
 	
@@ -208,46 +279,54 @@
 		       L.sanctn_progrs_sttus_code,
 		       L.atrz_ty,
 		       L.dcrb_author_yn
-		  FROM atrz A
-		       LEFT JOIN atrz_line L
-		         ON A.atrz_doc_no = L.atrz_doc_no
-		 WHERE 1 = 1
-		   AND A.atrz_compt_dt IS NULL
-		   AND A.atrz_sttus_code = '00'
-		   AND L.sanctner_empno = #{emplNo}   
-		   AND L.ATRZ_TY = 'N'        
-		 ORDER BY A.atrz_drft_dt DESC
+		FROM atrz A
+		     LEFT JOIN atrz_line L ON A.atrz_doc_no = L.atrz_doc_no
+		WHERE 1 = 1
+		  AND A.atrz_compt_dt IS NULL
+		  AND A.atrz_sttus_code = '00'
+		  AND L.sanctner_empno = #{emplNo}
+		  AND L.atrz_ty = 'N'
+		  AND EXISTS (
+		      SELECT 1
+		      FROM atrz_line L2
+		      WHERE L2.atrz_doc_no = A.atrz_doc_no
+		        AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
+		        AND L2.atrz_ty = 'N'
+		        AND L2.sanctn_progrs_sttus_code = '00'
+		  )
+		ORDER BY A.atrz_drft_dt DESC
 	</select>
 	
 	<!-- 기안문서함 -->	
 	<select id="atrzAllSubmitList" resultMap="atrzMap" parameterType="string">
 		SELECT 
-		      A.ATRZ_DOC_NO,
-		      A.DRAFTER_EMPNO,
-		      A.DRAFTER_CLSF,
-		      A.DRAFTER_EMPNM,
-		      A.DRAFTER_DEPT,
-		      A.BKMK_YN,
-		      A.ATCH_FILE_NO,
-		      A.ATRZ_SJ,
-		      A.ATRZ_CN,
-		      A.ATRZ_OPINION,
-		      A.ATRZ_TMPR_STRE_DT,
-		      A.ATRZ_DRFT_DT,
-		      A.ATRZ_COMPT_DT,
-		      A.ATRZ_RTRVL_DT,
-		      A.ATRZ_STTUS_CODE,
-		      A.ELTSGN_IMAGE,
-		      A.DOC_FORM_NO,
-		      A.ATRZ_DELETE_YN,
-		      A.SCHDUL_REG_YN
+		      A.atrz_doc_no,
+		      A.drafter_empno,
+		      A.drafter_clsf,
+		      A.drafter_empnm,
+		      A.drafter_dept,
+		      A.bkmk_yn,
+		      A.atch_file_no,
+		      A.atrz_sj,
+		      A.atrz_cn,
+		      A.atrz_opinion,
+		      A.atrz_tmpr_stre_dt,
+		      A.atrz_drft_dt,
+		      A.atrz_compt_dt,
+		      A.atrz_rtrvl_dt,
+		      A.atrz_sttus_code,
+		      A.eltsgn_image,
+		      A.doc_form_no,
+		      A.atrz_delete_yn,
+		      A.schdul_reg_yn
 		FROM ATRZ A
-		     LEFT JOIN ATRZ_LINE L
-		       ON A.ATRZ_DOC_NO = L.ATRZ_DOC_NO
+		     LEFT JOIN atrz_line L
+		       ON A.atrz_doc_no = L.atrz_doc_no
 		WHERE 1=1
-		  AND A.DRAFTER_EMPNO = #{emplNo}
-		  AND A.ATRZ_DELETE_YN = 'N'
-		  ORDER BY A.ATRZ_DRFT_DT ASC
+		  AND A.drafter_empno = #{emplNo}
+		  AND A.atrz_delete_yn = 'N'
+		   AND A.atrz_sttus_code IN ('00', '10', '20', '30', '40')
+		ORDER BY a.atrz_drft_dt DESC
 	</select>
 
 	<!-- 임시저장한 문서리스트 (임시저장함) -->
@@ -271,14 +350,14 @@
 		        , doc_form_no
 		        , atrz_delete_yn
 		        , schdul_reg_yn
-		FROM atrz
+		FROM ATRZ
 		WHERE 1 = 1
 			AND drafter_empno= #{emplNo}
 			AND atrz_sttus_code	='99'
-		ORDER BY atrz_tmpr_stre_dt desc
+		ORDER BY atrz_tmpr_stre_dt DESC
 	</select>
 	
-	<!-- 결재문서함 -->
+	<!-- 결재문서함 내가 결재한 문서의 한해서 결재 대기인 경우는 보이지않음-->
 	<select id="atrzAllApprovalList" resultMap="atrzMap" parameterType="string">
 		SELECT 	/* AtrzMapper.atrzAllApprovalList */
 		      A.atrz_doc_no
@@ -300,12 +379,15 @@
 		    , A.doc_form_no
 		    , A.atrz_delete_yn
 		    , A.schdul_reg_yn
-		FROM atrz A
+		FROM ATRZ A
 		        LEFT JOIN atrz_line L
 		         ON A.atrz_doc_no = L.atrz_doc_no
 		    WHERE 1=1
 		    AND L.sanctner_empno = #{emplNo}
 		    AND A.atrz_delete_yn = 'N'
+		    AND L.atrz_ty = 'N'
+		    AND L.sanctn_progrs_sttus_code IN ('10','20','60')
+		ORDER BY A.atrz_drft_dt DESC    
 	</select>
 
 	<!-- 전자결재테이블 등록(결재선 지정 시 전자결재문서 번호를 생성해줌) 
@@ -622,7 +704,6 @@
 		         , (SELECT MAX(B.ATRZ_LN_SN) FROM ATRZ_LINE B WHERE B.ATRZ_DOC_NO = #{atrzDocNo} AND B.DCRB_AUTHOR_YN = '0') MAX_ATRZ_LN_SN
 		    FROM   ATRZ_LINE A
 		    WHERE  A.ATRZ_DOC_NO = #{atrzDocNo}
-		    AND    A.DCRB_AUTHOR_YN = '0'
 		)
 		SELECT T.*
 		FROM T
@@ -644,14 +725,12 @@
 		    SELECT ATRZ_LN_SN, ATRZ_DOC_NO
 		    FROM   ATRZ_LINE
 		    WHERE  ATRZ_DOC_NO = #{atrzDocNo}
-		    AND    DCRB_AUTHOR_YN = '0'
 		    AND    SANCTNER_EMPNO = #{emplNo}
 		) ME,
 		(
 		    SELECT MAX(ATRZ_LN_SN) TOT_ATRZ_LN_SN, ATRZ_DOC_NO
 		    FROM   ATRZ_LINE
 		    WHERE  ATRZ_DOC_NO = #{atrzDocNo}
-		    AND    DCRB_AUTHOR_YN = '0'
 		    GROUP BY ATRZ_DOC_NO
 		) TOT
 		WHERE ME.ATRZ_DOC_NO = TOT.ATRZ_DOC_NO
@@ -699,13 +778,44 @@
 		WHERE ATRZ_DOC_NO = #{atrzDocNo} 
 		AND SANCTNER_EMPNO = #{emplNo};
 		
-		UPDATE atrz
-		SET ATRZ_STTUS_CODE = 10
+		UPDATE ATRZ
+		SET ATRZ_STTUS_CODE = 20
 			,ATRZ_COMPT_DT = SYSDATE
 			,ATRZ_OPINION = #{atrzLineVOList[0].sanctnOpinion}
 		WHERE ATRZ_DOC_NO = #{atrzDocNo};
 		END;
 	</update>
+	
+	 <!-- 기안취소시 전자결재선   -->
+	<update id="atrzLineCancelUpdate" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+		UPDATE ATRZ_LINE
+		SET 
+		    sanctn_progrs_sttus_code = '30',
+		    sanctn_confm_dt = SYSDATE
+		WHERE atrz_doc_no = #{atrzDocNo}
+		  AND EXISTS (
+		      SELECT 1
+		      FROM DUAL
+		      WHERE EXISTS (
+		          SELECT 1 FROM ATRZ
+		          WHERE atrz_doc_no = #{atrzDocNo}
+		            AND drafter_empno = #{emplNo}
+		      )
+		  )
+	</update>
+	
+	<!-- 기안취소시 전자결재   -->
+	<update id="atrzCancelUpdate" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+			UPDATE ATRZ
+			SET 
+			    atrz_sttus_code = '30',
+			    atrz_rtrvl_dt = SYSDATE
+			WHERE atrz_doc_no = #{atrzDocNo}
+			  AND drafter_empno = #{emplNo}
+	</update>
+	
+	
+	
 	
 	<!-- 연차신청서 resultMap 사용 -->
 	<resultMap id="holidayDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.HolidayVO" >

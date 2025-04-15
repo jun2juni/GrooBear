@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
@@ -43,6 +44,38 @@ public class AtrzServiceImpl implements AtrzService {
 		
 		return atrzApprovalList;
 	}
+	//기안진행문서 최신순 5개
+	@Override
+	public List<AtrzVO> atrzMinSubmitList(String emplNo) {
+		List<AtrzVO> atrzMinSubmitList = atrzMapper.atrzMinSubmitList(emplNo);
+		for (AtrzVO atrzVO : atrzMinSubmitList) {
+			String drafterEmpNo = atrzVO.getDrafterEmpno();
+			EmployeeVO employeeVO = organizationService.emplDetail(drafterEmpNo);
+			atrzVO.setClsfCodeNm(employeeVO.getClsfCodeNm());
+			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+		}
+		
+		return atrzMinSubmitList;
+	}
+	
+	//기안완료문서 최신순 5개
+	@Override
+	public List<AtrzVO> atrzMinCompltedList(String emplNo) {
+		List<AtrzVO> atrzMinCompltedList = atrzMapper.atrzMinCompltedList(emplNo);
+		for (AtrzVO atrzVO : atrzMinCompltedList) {
+			String drafterEmpNo = atrzVO.getDrafterEmpno();
+			EmployeeVO employeeVO = organizationService.emplDetail(drafterEmpNo);
+			atrzVO.setClsfCodeNm(employeeVO.getClsfCodeNm());
+			atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+		}
+		
+		return atrzMinCompltedList;
+	}
+	
+	
+	
+	
+	
 	//기안중인 문서리스트
 	@Override
 	public List<AtrzVO> atrzSubmitList(String emplNo) {
@@ -80,13 +113,11 @@ public class AtrzServiceImpl implements AtrzService {
 		
 		for (AtrzVO atrzVO : atrzReferList) {
 			EmployeeVO employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
-			if(employeeVO != null) {
+		
 				atrzVO.setClsfCodeNm(employeeVO.getPosNm());
 				atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
 				log.info("atrzReferList-> atrzReferList : "+atrzReferList);
 				
-			}
-			
 		}
 		
 		return atrzReferList;
@@ -266,11 +297,17 @@ public class AtrzServiceImpl implements AtrzService {
 		//나의 전자결재선 상황(1행)
 		AtrzLineVO emplAtrzLineInfo = this.atrzMapper.getAtrzLineInfo(atrzVO);
 		
+		//나의 결재 순번 구하기
+		int myStep = emplAtrzLineInfo.getAtrzLnSn();
+		
+		
+		
 		//H_20250411_00003 문서의 결재선 총 스탭수
 		//0 : 마지막 결재자가 아님
 		//0이 아닌 경우 : 마지막 결재자임
 		int maxStep = atrzMapper.getMaxStep(atrzVO);
 		log.info("atrzDetailAppUpdate-> maxStep : "+maxStep);
+		log.info("atrzDetailAppUpdate-> 나의순번 : "+myStep + "최종순번 : "+maxStep);
 
 		//I. ATRZ_LINE 결재 처리
 		int result = atrzMapper.atrzDetailAppUpdate(atrzVO);
@@ -279,9 +316,9 @@ public class AtrzServiceImpl implements AtrzService {
 		//2) nextStep : 나 다음에 결재할 사람
 		//3) meStep : 내 결재 순서번호
 		//최종결재자인경우
-		if(maxStep!=0){
+		if(myStep==maxStep){
 			//III. ATRZ의 완료 및 일시 처리
-			atrzVO.setAtrzSttusCode("20");
+			atrzVO.setAtrzSttusCode("10");
 			result += atrzMapper.atrzStatusFinalUpdate(atrzVO);
 		}
 		
@@ -322,6 +359,32 @@ public class AtrzServiceImpl implements AtrzService {
 		
 		return 1;
 	}
+	
+	//전자결재 기안취소
+	@Override
+	@Transactional    //오토커밋을 막는다.!(세트 중 하나라도 실패했을경우에 커밋을 하지않는다.)
+	public int atrzCancelUpdate(AtrzVO atrzVO) {
+		
+		//문서번호  
+		String atrzDocNo = atrzVO.getAtrzDocNo();
+		//사원번호
+		String emplNo = atrzVO.getEmplNo();
+		
+		log.info("atrzDetilCompUpdate->atrzVO : "+atrzVO);
+		log.info("atrzDetilCompUpdate->atrzDocNo : "+atrzDocNo);
+		List<AtrzLineVO> atrzLineVOList = atrzVO.getAtrzLineVOList(); 
+		log.info("atrzCancelUpdate->atrzLineVOList : "+atrzLineVOList);
+		String drafterEmpNo = atrzVO.getDrafterEmpno();
+		int result = 0;
+		//그 문서번호의 내가 기안자인경우에 삭제 로직이 활성화
+		if(emplNo.equals(drafterEmpNo)) {
+			result += atrzMapper.atrzLineCancelUpdate(atrzVO);
+			result += atrzMapper.atrzCancelUpdate(atrzVO);
+		}
+		
+		return result > 0 ? 1 : 0;
+	}
+
 
 	
 	

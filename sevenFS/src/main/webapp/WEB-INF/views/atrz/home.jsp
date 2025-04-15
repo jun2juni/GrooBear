@@ -191,15 +191,15 @@
 					<div class="tab-content" id="myTabContent">
 						<div class="tab-pane fade show active" id="contact1-tab-pane"
 							role="tabpanel" aria-labelledby="contact1-tab" tabindex="0">
-										<!-- <p>${myEmpInfo}</p> -->
+								<!-- <p>${myEmpInfo}</p> -->
+								<div style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding-left: 20px;padding-right: 40px;" class="mb-10">
+									<h6 class="mb-10 mr-8 ml-8 pt-20 pl-20">결재대기문서</h6>
+									<a href="/atrz/approval" class="text-sm fw-bolder" style="color: #4a6cf7;">
+										더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
+									</a>
+								</div>
 							<div class="atrzTabCont" style="margin-top: 0px; overflow-x: auto;">
 								<div class="container mt-2 homeContainer">
-									<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;" class="mb-10">
-										<h6 class="mb-10 pt-20 pl-20">결재대기문서</h6>
-										<a href="/atrz/approval" class="text-sm fw-bolder" style="color: #4a6cf7;">
-											더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
-										</a>
-									</div>
 									<c:choose>
 										<c:when test="${empty atrzApprovalList}">
 											<div class="text-center emptyList">
@@ -209,7 +209,7 @@
 										<c:otherwise>
 											<div class="row flex-nowrap">
 												<input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
-												<c:forEach var="atrzVO" items="${atrzApprovalList}" begin="0" end="9">
+												<c:forEach var="atrzVO" items="${atrzApprovalList}">
 													<div class="col-sm-3">
 														<div class="card" style="height: 250px; width: 300px;">
 															<div class="card-header pt-3" style="height: 50px;">
@@ -219,10 +219,10 @@
 																			<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
 																		</c:when>
 																		<c:when test="${atrzVO.atrzSttusCode == '10' }">
-																			<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
+																			<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
 																		</c:when>
 																		<c:when test="${atrzVO.atrzSttusCode == '20' }">
-																			<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
+																			<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
 																		</c:when>
 																		<c:when test="${atrzVO.atrzSttusCode == '30' }">
 																			<span class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
@@ -271,12 +271,12 @@
 									<div class="card-style mb-30 docList">
 										<div style="display: flex; justify-content: space-between; align-items: center;" class="mb-10">
 											<h6 class="mb-10">기안진행문서</h6>
-											<a href="/atrz/approval" class="text-sm fw-bolder" style="color: #4a6cf7;">
+											<a href="/atrz/document" class="text-sm fw-bolder" style="color: #4a6cf7;">
 												더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
 											</a>
 										</div>
 										<c:choose>
-											<c:when test="${empty atrzSubmitList}">
+											<c:when test="${empty atrzMinSubmitList}">
 												<div class="text-center emptyList">
 													진행중인 문서가 없습니다.
 												</div>
@@ -306,8 +306,9 @@
 																</th>
 															</tr>
 														</thead>
-														<c:forEach var="atrzVO" items="${atrzSubmitList}">
+														<c:forEach var="atrzVO" items="${atrzMinSubmitList}">
 															<tbody>
+																<!-- <p>${atrzMinSubmitList}</p> -->
 																<tr>
 																	<td style="padding-top: 10px; padding-bottom: 10px;" >
 																		<p class="text-sm" style="text-align: center;">
@@ -360,10 +361,10 @@
 																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
 																					</c:when>
 																					<c:when test="${atrzVO.atrzSttusCode == '10' }">
-																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
+																						<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
 																					</c:when>
 																					<c:when test="${atrzVO.atrzSttusCode == '20' }">
-																						<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
+																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
 																					</c:when>
 																					<c:when test="${atrzVO.atrzSttusCode == '30' }">
 																						<span class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
@@ -398,7 +399,7 @@
 											</a>
 										</div>
 										<c:choose>
-											<c:when test="${empty atrzCompletedList}">
+											<c:when test="${empty atrzMinCompltedList}">
 												<div class="text-center emptyList">
 													완료된 문서가 없습니다.
 												</div>
@@ -428,7 +429,7 @@
 																</th>
 															</tr>
 														</thead>
-														<c:forEach var="atrzVO" items="${atrzCompletedList}">
+														<c:forEach var="atrzVO" items="${atrzMinCompltedList}">
 															<tbody>
 																<tr>
 																	<td style="padding-top: 10px; padding-bottom: 10px;">
@@ -476,10 +477,10 @@
 																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
 																					</c:when>
 																					<c:when test="${atrzVO.atrzSttusCode == '10' }">
-																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
+																						<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
 																					</c:when>
 																					<c:when test="${atrzVO.atrzSttusCode == '20' }">
-																						<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
+																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
 																					</c:when>
 																					<c:when test="${atrzVO.atrzSttusCode == '30' }">
 																						<span class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>

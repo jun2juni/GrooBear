@@ -18,6 +18,12 @@ import kr.or.ddit.sevenfs.vo.atrz.SpendingVO;
 public interface AtrzMapper {
 	//결재대기문서
 	public List<AtrzVO> atrzApprovalList(String emplNo);
+	
+	//기안진행문서 최신순 5개
+	public List<AtrzVO> atrzMinSubmitList(String emplNo);
+	//기안완료문서 최신순 5개
+	public List<AtrzVO> atrzMinCompltedList(String emplNo);
+	
 	//기안진행문서
 	public List<AtrzVO> atrzSubmitList(String emplNo);
 	//결재완료문서
@@ -87,6 +93,13 @@ public interface AtrzMapper {
 //	public int atrzStatusCompFinalUpdate(AtrzVO atrzVO);
 	
 	public AtrzVO getAtrzDetail(String atrzDocNo);
+
+	//기안취소시(전자결재 테이블)
+	public int atrzCancelUpdate(AtrzVO atrzVO);
+	//기안취소시(전자결재선 테이블)
+	public int atrzLineCancelUpdate(AtrzVO atrzVO);
+	
+	
 	
 
 	

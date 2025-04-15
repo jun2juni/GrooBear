@@ -74,6 +74,18 @@ public class AtrzController {
 		List<AtrzVO> atrzSubmitList = atrzService.atrzSubmitList(emplNo);
 		model.addAttribute("atrzSubmitList", atrzSubmitList);
 
+		//기안진행문서 최신순 5개만 보여주기
+		List<AtrzVO> atrzMinSubmitList = atrzService.atrzMinSubmitList(emplNo);
+		model.addAttribute("atrzMinSubmitList",atrzMinSubmitList);
+		
+		//기안완료문서 최신순 5개만 보여주기
+		List<AtrzVO> atrzMinCompltedList = atrzService.atrzMinCompltedList(emplNo);
+		model.addAttribute("atrzMinCompltedList",atrzMinCompltedList);
+		
+		
+		
+		
+		
 		// 기안완료된 문서에 해당 완료일시 최신순으로 10개만 출력
 		List<AtrzVO> atrzCompletedList = atrzService.atrzCompletedList(emplNo);
 		model.addAttribute("atrzCompletedList", atrzCompletedList);
@@ -102,6 +114,9 @@ public class AtrzController {
 		//참조대기문서
 		List<AtrzVO> atrzReferList = atrzService.atrzReferList(emplNo);
 		model.addAttribute("atrzReferList", atrzReferList);
+		//참조대기의 경우에는 권한을 확인해서 버튼이 보이지 않게 만들어야한다.
+		
+		
 		//결재예정문서
 		List<AtrzVO> atrzExpectedList = atrzService.atrzExpectedList(emplNo);
 		model.addAttribute("atrzExpectedList", atrzExpectedList);
@@ -207,39 +222,92 @@ public class AtrzController {
 	
 	
 	
-	// 연차신청서 상세보기
+	// 전자결재 상세보기
 	@GetMapping("/selectForm/atrzDetail")
-	public String selectAtrzDetail(@RequestParam String atrzDocNo, Model model) {
-		if (atrzDocNo == null || atrzDocNo.length() < 1) {
+	public String selectAtrzDetail(@RequestParam String atrzDocNo, Model model
+			,@AuthenticationPrincipal CustomUser customUser) {
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String empNo = empVO.getEmplNo();
+		log.info("로그인 사용자 사번: "+ empNo); 
+		
+		if (atrzDocNo == null || atrzDocNo.isEmpty()) {
 			return "redirect:/error"; // 유효하지 않은 문서번호
 		}
 
 		char docPrefix = atrzDocNo.charAt(0); // 예: H, S, D, A, B, C, R
-
+		//상세정보를 가져오기 위한것
 		AtrzVO atrzVO = atrzService.getAtrzDetail(atrzDocNo);
 		log.info("selectAtrzDetail->atrzVO: " + atrzVO);
-		String emplNo = atrzVO.getDrafterEmpno();
-		log.info("selectAtrzDetail->emplNo: " + emplNo);
-		EmployeeVO employeeVO = organizationService.emplDetail(emplNo);
-		log.info("selectAtrzDetail->employeeVO: " + employeeVO);
-		atrzVO.setEmplNm(employeeVO.getEmplNm());
 		
-		//직급 코드를 통해 직급 얻기
+		String drafterEmplNo = atrzVO.getDrafterEmpno();
+		EmployeeVO drafterInfo = organizationService.emplDetail(drafterEmplNo);
+		atrzVO.setEmplNm(drafterInfo.getEmplNm());
+		
+		//직급 코드를 통해 직급 얻기  직급명 , 부서명셋팅
 		String drafClsf = atrzVO.getDrafterClsf();
 		String ClsfCodeNm = CommonCode.PositionEnum.INTERN.getLabelByCode(drafClsf);
 		atrzVO.setClsfCodeNm(ClsfCodeNm);
-		atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+		atrzVO.setDeptCodeNm(drafterInfo.getDeptNm());
 		
-		atrzVO.getAtrzLineVOList();
+		//기본권한 여부 :  기안자
+		Boolean isAuthorize = false;   								//결재권한
+		Boolean canView = empNo.equals(atrzVO.getDrafterEmpno());   //열람가능
+		
+		//결재선 처리  + 권한 체크
 		List<AtrzLineVO> atrzLineVOList = atrzVO.getAtrzLineVOList();
-		log.info("atrzLineVOList : "+atrzLineVOList);
-		
 		List<EmployeeVO> sanEmplVOList = new ArrayList<>();
+		
+		
+		log.info("atrzLineVOList : "+atrzLineVOList);
 		for(AtrzLineVO atrzLineVO : atrzLineVOList) {
+			String atrzTy = atrzLineVO.getAtrzTy();    //N이면 결재자  Y면 참조자
+			//결재자, 대결재, 전결자 권한 체크 
+			//접근 해지
+			
+			if("N".equals(atrzTy)) {
+				if(	empNo.equals(atrzLineVO.getSanctnerEmpno())
+				|| empNo.equals(atrzLineVO.getContdEmpno())
+				|| empNo.equals(atrzLineVO.getDcrbManEmpno())) {
+					log.info("결재 권한 있음 - 사용자 사번: "+ empNo);
+					isAuthorize = true;
+				}
+			} else {
+				if(empNo.equals(atrzLineVO.getSanctnerEmpno())
+				|| empNo.equals(atrzLineVO.getContdEmpno())
+				|| empNo.equals(atrzLineVO.getDcrbManEmpno())){
+					log.info("결재 권한 있음 - 사용자 사번: "+ empNo);
+					isAuthorize = true;
+				}
+			}
+			log.info("ATRZ_TY: "+ atrzLineVO.getAtrzTy());
+			log.info("결재자 사번(SANCTNER_EMPNO): "+ atrzLineVO.getSanctnerEmpno());
+			log.info("대결자 사번(CONTD_EMPNO): "+ atrzLineVO.getContdEmpno());
+			log.info("전결자 사번(DCRB_MAN_EMPNO): "+ atrzLineVO.getDcrbManEmpno());
+			//참조자든 결재자든 누구든 열람가능
+			if(!canView &&(
+					empNo.equals(atrzLineVO.getAftSanctnerEmpno())
+					|| empNo.equals(atrzLineVO.getContdEmpno())
+					|| empNo.equals(atrzLineVO.getDcrbManEmpno()))) {
+				log.info("문서 열람 권한 있음 - 사용자 사번: "+ empNo);
+				canView = true;
+			}
+			
+			if(!canView && "N".equals(atrzTy)) {
+				canView = true; //참조자의 경우에는 열람만 가능
+			}
+			
+//			//열람 권한이 없는 경우만 막기
+//			if(!canView) {
+//				return "redirect:/error";
+//			}
+			
+			//결재자 이름 / 직급 셋팅
 			String sancterEmpNo = atrzLineVO.getSanctnerEmpno();
 			EmployeeVO sanEmplVO =organizationService.emplDetail(sancterEmpNo);
+			sanEmplVOList.add(sanEmplVO);
 			
-			
+			//직급명 이름 설정
 			String sanctClsfCd = atrzLineVO.getSanctnerClsfCode();
 			String sanctClsfNm = CommonCode.PositionEnum.INTERN.getLabelByCode(sanctClsfCd);
 			atrzLineVO.setSanctnerClsfNm(sanctClsfNm);
@@ -250,17 +318,27 @@ public class AtrzController {
 			
 			log.info("sanEmplVO : "+sanEmplVO);
 			log.info("sancterEmpNo : "+sancterEmpNo);
+			
 		}
 		
-		// 
+		int curAtrzLnSn = atrzLineVOList.stream()
+			    .filter(vo -> "N".equals(vo.getAtrzTy()) && "00".equals(vo.getSanctnProgrsSttusCode()))
+			    .mapToInt(AtrzLineVO::getAtrzLnSn)
+			    .min()
+			    .orElse(-1); // -1이면 더 이상 결재할 사람 없음
+
+			model.addAttribute("curAtrzLnSn", curAtrzLnSn);
+		
+		
+		//연차상세정보 셋팅
 		atrzVO.setHolidayVO(atrzService.holidayDetail(atrzDocNo));
-		
-		
+		//권한 여부는 model로 넘겨서  화면에서 결재버튼 노출여부 조절
+		model.addAttribute("isAuthorize", isAuthorize);
 		model.addAttribute("sanEmplVOList",sanEmplVOList);
-		
 		model.addAttribute("atrzVO", atrzVO);
-		model.addAttribute("employeeVO", employeeVO);
+		model.addAttribute("employeeVO", drafterInfo);
 		
+		//제목설정을 위한것
 		String title = switch (docPrefix) {
 		case 'H' -> "연차신청서";
 		case 'S' -> "지출결의서";
@@ -272,7 +350,8 @@ public class AtrzController {
 		default -> "전자결재상세보기";
 	};
 	model.addAttribute("title", title);
-
+	
+	//뷰설정을 위한것
 	String viewName = switch (docPrefix) {
 	case 'H' -> "documentForm/holidayDetail";            // 연차신청서
 	case 'S' -> "documentForm/spendingDetail";           // 지출결의서
@@ -284,11 +363,8 @@ public class AtrzController {
 	default -> "redirect:/error";                        // 알 수 없는 양식
 	};
 	
-return viewName;
+	return viewName;
 }
-	
-
-
 	
 	
 
@@ -327,6 +403,25 @@ return viewName;
 		log.info("atrzDetilCompUpdate-> atrzVO : "+atrzVO);
 		return "success";
 	}
+	
+	//전자결재 기안취소
+	@ResponseBody
+	@PostMapping("selectForm/atrzCancelUpdate")
+	public String atrzCancelUpdate(AtrzVO atrzVO, Model model
+			,@AuthenticationPrincipal CustomUser customUser) {
+		
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String emplNo = empVO.getEmplNo();
+		atrzVO.setEmplNo(emplNo);
+		
+		int atrzCancelResult= atrzService.atrzCancelUpdate(atrzVO);
+		log.info("atrzCancleUpdate-> atrzCancelResult : "+atrzCancelResult);
+		
+		
+		return atrzCancelResult > 0 ? "success" : "fail";
+	}
+	
 	
 	
 	
