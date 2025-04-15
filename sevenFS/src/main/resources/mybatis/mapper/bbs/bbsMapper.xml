@@ -48,9 +48,9 @@
 	            <when test="articlePage.searchVo.category == 'bbscttSj'">
 	                AND B.BBSCTT_SJ LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
 	            </when>
-	            <when test="articlePage.searchVo.category == 'bbscttCn'">
-	                AND B.BBSCTT_CN LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
-	            </when>
+	            <when test="articlePage.searchVo.category == 'emplNm'">
+			        AND E.EMPL_NM LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
+			    </when>
 	            <otherwise>
 	                AND (
 	                    B.BBSCTT_SJ LIKE '%' || #{articlePage.searchVo.searchKeyword} || '%'
@@ -238,6 +238,7 @@
 	<select id="getTotal" parameterType="hashMap" resultType="int">
 		SELECT COUNT(*)
 		FROM BBS B
+		JOIN EMPLOYEE E ON B.EMPL_NO = E.EMPL_NO
 		WHERE 1 = 1
 		AND B.BBSCTT_USE_YN = 'Y'
 		<if test="bbsCtgryNo != null and bbsCtgryNo != 0">
@@ -249,9 +250,9 @@
 				<when test="category == 'bbscttSj'">
 					AND B.BBSCTT_SJ LIKE '%' || #{searchKeyword} || '%'
 				</when>
-				<when test="category == 'bbscttCn'">
-					AND B.BBSCTT_CN LIKE '%' || #{searchKeyword} || '%'
-				</when>
+				<when test="category == 'emplNm'">
+		            AND E.EMPL_NM LIKE '%' || #{searchKeyword} || '%'
+		        </when>
 				<otherwise>
 					AND (
 					B.BBSCTT_SJ LIKE '%' || #{searchKeyword} || '%'

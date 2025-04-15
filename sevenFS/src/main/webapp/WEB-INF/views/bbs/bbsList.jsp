@@ -72,8 +72,8 @@ table.table-hover.align-middle.text-center tbody tr td {
 		    <h3 class="text-dark">게시판</h3>
 		    <div>
 		        <a href="/bbs/bbsInsert?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-primary me-2">게시글 추가</a>
-		        <c:if test="${myEmpInfo.emplNo == bbsVO.emplNo || myEmpInfo.emplNo == '20250000'}"><!-- 아직 권한 추가 안함 -->
-			        <button type="button" id="bulkToggleBtn" class="btn btn-outline-secondary me-2">일괄관리</button>
+		        <c:if test="${myEmpInfo.emplNo == bbsVO.emplNo || myEmpInfo.emplNo == '20250000'}"><!-- 마동석이면 보이게 -->
+			        <button type="button" id="bulkToggleBtn" class="btn btn-outline-secondary me-2">일괄삭제</button>
 			        <button type="button" id="bulkDeleteBtn" class="btn btn-danger" style="display:none;">선택 삭제</button>
 				</c:if>
 		    </div>
@@ -90,9 +90,9 @@ table.table-hover.align-middle.text-center tbody tr td {
 				    <c:if test="${selectedCategory == 'bbscttSj'}">selected</c:if>
 				  >제목</option>
 				
-				  <option value="bbscttCn"
-				    <c:if test="${selectedCategory == 'bbscttCn'}">selected</c:if>
-				  >내용</option>
+				  <option value="emplNm"
+				    <c:if test="${selectedCategory == 'emplNm'}">selected</c:if>
+				  >작성자</option>
 				</select>
 
 
