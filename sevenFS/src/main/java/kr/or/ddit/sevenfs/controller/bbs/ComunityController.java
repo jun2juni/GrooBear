@@ -54,6 +54,14 @@ public class ComunityController {
 		return "comunity/comunityHome";	
 	} // comunityHome
 	
+	@GetMapping("/comunityClubList")
+	public String comunityClubList(
+			) {
+		
+		// 동아리 카테고리
+		return "comunity/comunityClubList";	
+	} // comunityHome
+	
 	
 	@GetMapping("/comunityMonthMenuList")
 	public String comunityMonthMenuList(Model model
