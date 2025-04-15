@@ -38,9 +38,12 @@ public interface AtrzMapper {
 	public List<AtrzVO> atrzAllSubmitList(String emplNo);
 	//임시저장함
 	public List<AtrzVO> atrzStorageList(String emplNo);
-	//결재문서힘
+	//결재문서함
 	public List<AtrzVO> atrzAllApprovalList(String emplNo);
 
+	//반려문서함
+	public List<AtrzVO> atrzCompanionList(String emplNo);
+	
 	//기안문서 detail
 	public DraftVO draftDetail(String draftNo);
 	
@@ -98,6 +101,20 @@ public interface AtrzMapper {
 	public int atrzCancelUpdate(AtrzVO atrzVO);
 	//기안취소시(전자결재선 테이블)
 	public int atrzLineCancelUpdate(AtrzVO atrzVO);
+	
+	//연차신청서 임시저장 인서트
+	public void atrzHolidayStorage(AtrzVO atrzVO);
+	//전자결재 업데이트
+	public int storageHolidayUpdate(AtrzVO atrzVO);
+	//연차신청서 테이블 임시저장(MERGE INTO)
+	public void insertOrUpdateHoliday(HolidayVO documHolidayVO);
+	//결재선 삭제!
+	public void deleteAtrzLineByDocNo(String atrzDocNo);
+	
+	//임시저장후 get
+	public AtrzVO getAtrzStorage(String atrzDocNo);
+	
+
 	
 	
 	

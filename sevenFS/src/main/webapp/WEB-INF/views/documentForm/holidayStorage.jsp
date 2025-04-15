@@ -298,6 +298,7 @@ select.ui-datepicker-year {
 						<div class="col card-body" id="approvalBtn">
 							<!-- 새로운 버튼 -->
 							<div class="tool_bar">
+								
 								<div class="critical d-flex gap-2 mb-3">
 									<!--성진스 버튼-->
 									<button id="s_eap_app_top" type="button" 
@@ -373,7 +374,7 @@ select.ui-datepicker-year {
 													</tr>
 													<tr>
 														<th>문서번호</th>
-														<td id="s_dfNo">${resultDoc.df_no}</td>
+														<td id="s_dfNo">${atrzVO.atrzDocNo}</td>
 													</tr>
 												</table>
 											</div>
@@ -391,10 +392,102 @@ select.ui-datepicker-year {
 											</div>
 
 
-											<div style="float: right;  margin-right: 10px;"
-												id=s_eap_draft_app>
+											<div style="float: right; margin-right: 20px;" id="s_eap_draft_app">
+												<table border="1" class="s_eap_draft_app">
+													<tbody>
+														<p>${atrzVO}</p>
+														<!-- 결재자: atrzTy = 'N' -->
+														<tr>
+															<th rowspan="3">결재</th>
+															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
+																	<!-- <p>${atrzLineVO}</p> -->
+																	<td>${atrzLineVO.sanctnerClsfNm}</td>
+																</c:if>
+															</c:forEach>
+														</tr>
+														<tr>
+															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
+																	<td style="text-align: center;">
+																		<c:choose>
+																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '10'}">
+																				<img src="/assets/images/atrz/afterRe.png" style="width: 50px; display: block; margin: 0 auto;">
+																			</c:when>
+																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '20'}">
+																				<img src="/assets/images/atrz/return.png" style="width: 50px; display: block; margin: 0 auto;">
+																			</c:when>
+																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '30'}">
+																				<img src="/assets/images/atrz/cancel.png" style="width: 50px; display: block; margin: 0 auto;">
+																			</c:when>
+																			<c:otherwise>
+																				<img src="/assets/images/atrz/beforGR.png" style="width: 50px; display: block; margin: 0 auto;">
+																			</c:otherwise>
+																		</c:choose>
+																		<span style="display: block; margin-top: 5px;">${atrzLineVO.sanctnerEmpNm}</span>
+																		<input type="hidden" name="atrzLnSn" value="${atrzLineVO.atrzLnSn}" />
+																		<input type="hidden" name="sanctnerEmpno" value="${atrzLineVO.sanctnerEmpno}" />
+																	</td>
+																</c:if>
+															</c:forEach>
+														</tr>
+														<tr style="height: 30px;">
+															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
+																	<td style="font-size: 0.8em;">
+																		<c:choose>
+																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '20'}">
+																				<span style="color: red;">
+																					<fmt:formatDate value="${atrzLineVO.sanctnConfmDt}" pattern="yyyy-MM-dd" />
+																				</span>
+																			</c:when>
+																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '30'}">
+																				<span style="display: block; width: 100%; height: 1px; background-color: gray; transform: rotate(-15deg); margin: 10px auto;"></span>
+																			</c:when>
+																			<c:otherwise>
+																				<span style="color: black;">
+																					<fmt:formatDate value="${atrzLineVO.sanctnConfmDt}" pattern="yyyy-MM-dd" />
+																				</span>
+																			</c:otherwise>
+																		</c:choose>
+																	</td>
+																</c:if>
+															</c:forEach>
+														</tr>
+
 												
-												</div>
+														<!-- 참조자: atrzTy = 'Y' -->
+														<c:set var="hasReference" value="false" />
+														<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+															<c:if test="${atrzLineVO.atrzTy eq 'Y'}">
+																<c:set var="hasReference" value="true" />
+															</c:if>
+														</c:forEach>
+												
+														<c:if test="${hasReference eq true}">
+															<tr>
+																<th rowspan="2">참조</th>
+																<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+																	<c:if test="${atrzLineVO.atrzTy eq 'Y'}">
+																		<td>${atrzLineVO.sanctnerClsfNm}</td>
+																	</c:if>
+																</c:forEach>
+															</tr>
+															<tr>
+																<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+																	<c:if test="${atrzLineVO.atrzTy eq 'Y'}">
+																		<td>
+																			${atrzLineVO.sanctnerEmpNm}
+																			<input type="hidden" name="atrzLnSn" value="${atrzLineVO.atrzLnSn}" />
+																			<input type="hidden" name="sanctnerEmpno" value="${atrzLineVO.sanctnerEmpno}" />
+																		</td>
+																	</c:if>
+																</c:forEach>
+															</tr>
+														</c:if>
+													</tbody>
+												</table>
+											</div>
 
 											<div style="padding: 50px 10px 20px; clear: both;">
 												<div

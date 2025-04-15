@@ -149,6 +149,28 @@ public class AtrzController {
 		model.addAttribute("title", "전자결재문서함");
 		return "atrz/documentBox";
 	}
+	
+	
+	
+	
+	@GetMapping("/companion")
+	public String companionList(Model model, @AuthenticationPrincipal CustomUser customUser) {
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String emplNo = empVO.getEmplNo();
+		log.info("documentList-> emplNo : "+emplNo);
+		
+		List<AtrzVO> atrzCompanionList = atrzService.atrzCompanionList(emplNo);
+		model.addAttribute("atrzCompanionList",atrzCompanionList);
+		
+		
+		
+		model.addAttribute("title", "반려문서함");
+		return "atrz/companion";
+		
+	}
+	
+	
 
 	// 문서양식번호 생성
 	// 양식선택후 확인 클릭시 입력폼 뿌려지고, DB의 데이터를 가져오는 작업
@@ -570,7 +592,36 @@ public class AtrzController {
 		return atrzVO;
 
 	}
-
+	//연차신청서 임시저장 불러오기 
+	@GetMapping("selectForm/getAtrzStorage")
+	public String getAtrzStorage(@RequestParam String atrzDocNo, Model model
+			,@AuthenticationPrincipal CustomUser customUser) {
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String empNo = empVO.getEmplNo();
+		log.info("로그인 사용자 사번: "+ empNo); 
+		
+		AtrzVO atrzVO = atrzService.getAtrzDetail(atrzDocNo);
+		
+		model.addAttribute("atrzVO",atrzVO);
+		model.addAttribute("empVO",empVO);
+		
+		char docPrefix = atrzDocNo.charAt(0); // 예: H, S, D, A, B, C, R
+		
+		String viewName = switch (docPrefix){
+		case 'H' -> "documentForm/holidayStorage";            // 연차신청서
+		case 'S' -> "documentForm/spendingStorage";           // 지출결의서
+		case 'D' -> "documentForm/draftStorage";              // 기안서
+		case 'A' -> "documentForm/salaryStorage";         // 급여명세서
+		case 'B' -> "documentForm/bankAccountStorage";      // 급여계좌변경신청서
+		case 'C' -> "documentForm/employmentCertStorage";     // 재직증명서
+		case 'R' -> "documentForm/resignStorage";             // 퇴직신청서
+		default -> "redirect:/error";                        // 알 수 없는 양식
+		};
+		
+		return viewName;
+	}
+	
 	// 연차신청서 등록(문서번호가 이미 있는 상태임)
 	@ResponseBody
 	@PostMapping(value = "atrzHolidayInsert")
@@ -603,20 +654,6 @@ public class AtrzController {
 		 * spendingVO=null, emplDetailList=null)
 		 */
 		log.info("insertAppLineList-> atrzVO(사원추가후) : " + atrzVO);
-//			organizationService.emplDetail(atrzVO.get)
-		// 전자결재 테이블 등록
-//		int atrzResult = atrzService.insertAtrz(atrzVO);
-
-		// 문서번호등록
-//		String atrzDocNo = atrzVO.getAtrzDocNo();
-//		log.info("atrzDocNo :  문서번호 등록 : "+atrzDocNo);
-		// 변수에 있는 문서번호를 넣어주기 atrzLineVO에 넣어주기
-//		for(AtrzLineVO atrzLineVO : atrzLineList) {
-//			atrzLineVO.setAtrzDocNo(atrzDocNo);
-//			log.info("atrzLineVO :  문서번호 등록후 : "+atrzLineVO);	
-//			atrzService.insertAtrzLine(atrzLineVO);
-//
-//		}
 
 		// 문서번호등록
 		documHolidayVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
@@ -679,6 +716,29 @@ public class AtrzController {
 
 		return "쭈니성공";
 	}
+	//연차신청서 임시저장
+	@ResponseBody
+	@PostMapping(value = "atrzHolidayStorage")
+	public String atrzHolidayStorage(
+			AtrzVO atrzVO
+			, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList
+			, @RequestPart("docHoliday") HolidayVO documHolidayVO
+			) {
+		log.info("atrzHolidayStorage->atrzVO : " + atrzVO);
+		log.info("atrzHolidayStorage->atrzLineList : " + atrzLineList);
+		log.info("atrzHolidayStorage->documHolidayVO : " + documHolidayVO);
+		
+		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
+		// 여기서 VO를 하나 씩 담아야 하는건가...싶다.
+		atrzVO.setClsfCode(emplDetail.getClsfCode());
+		atrzVO.setDeptCode(emplDetail.getDeptCode());
+		
+		int result = atrzService.atrzHolidayStorage(atrzVO, atrzLineList, documHolidayVO);
+		
+		return result > 0 ? "임시저장 성공" : "실패";
+	}
+	
+	
 
 	// 지출결의서 등록
 	@ResponseBody

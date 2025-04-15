@@ -120,7 +120,7 @@
 										<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 											<c:if test="${atrzLineVO.sanctnerEmpno == emp.emplNo
 															&& atrzLineVO.atrzTy eq 'N'
-															&& atrzLineVO.atrzLnSn == curAtrzLnSn}">
+															&& atrzLineVO.atrzLnSn == curAtrzLnSn && atrzVo.atrzSttusCode eq '00'}">
 												<button id="atrzAppBtnTo" type="button" 
 													class="btn btn-outline-success d-flex align-items-center gap-1 atrzAppBtn" 
 													data-bs-toggle="modal" data-bs-target="#atrzApprovalModal">
@@ -412,7 +412,7 @@
 									<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 										<c:if test="${atrzLineVO.sanctnerEmpno == emp.emplNo
 														&& atrzLineVO.atrzTy eq 'N'
-														&& atrzLineVO.atrzLnSn == curAtrzLnSn}">
+														&& atrzLineVO.atrzLnSn == curAtrzLnSn && atrzVo.atrzSttusCode eq '00'}">
 											<button id="atrzAppBtnBo" type="button" 
 												class="btn btn-outline-success d-flex align-items-center gap-1 atrzAppBtn" 
 												data-bs-toggle="modal" data-bs-target="#atrzApprovalModal">
@@ -624,9 +624,6 @@ $(".atrzCancelBtn").on("click",function(){
 			swal("기안취소가 취소되었습니다.");
 		}
 	});
-
-	
-
 })
 
 </script>

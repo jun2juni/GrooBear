@@ -39,6 +39,9 @@ public interface AtrzService {
 	//결재문서함
 	public List<AtrzVO> atrzAllApprovalList(String emplNo);
 	
+	//반려문서함
+	public List<AtrzVO> atrzCompanionList(String emplNo);
+	
 	//기안문서 상세보기
 	public DraftVO draftDetail(String draftNo);
 	
@@ -78,6 +81,15 @@ public interface AtrzService {
 	public int atrzDetilCompUpdate(AtrzVO atrzVO);
 	//전자결재 기안취소
 	public int atrzCancelUpdate(AtrzVO atrzVO);
+	
+	//연차신청서 임시저장
+	public int atrzHolidayStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, HolidayVO documHolidayVO);
+	
+	//연차신청서 임시저장후 get
+	public AtrzVO getAtrzStorage(String atrzDocNo);
+	
+	
+
 
 	
 	

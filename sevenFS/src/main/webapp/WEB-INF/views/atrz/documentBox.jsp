@@ -363,7 +363,7 @@
 																			</p>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
-																			<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
+																			<a href="/atrz/selectForm/getAtrzStorage?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
 																				<c:choose>
 																					<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
 																						<span class="material-symbols-outlined" style="margin-right: 5px;">

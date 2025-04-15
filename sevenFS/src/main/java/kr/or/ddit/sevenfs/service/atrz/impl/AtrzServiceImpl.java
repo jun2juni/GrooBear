@@ -1,5 +1,8 @@
 package kr.or.ddit.sevenfs.service.atrz.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
+import kr.or.ddit.sevenfs.utils.CommonCode;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
 import kr.or.ddit.sevenfs.vo.atrz.BankAccountVO;
@@ -196,6 +200,23 @@ public class AtrzServiceImpl implements AtrzService {
 		
 	}
 	
+	//반려문서함
+	@Override
+	public List<AtrzVO> atrzCompanionList(String emplNo) {
+		List<AtrzVO> atrzCompanionList = atrzMapper.atrzCompanionList(emplNo);
+		for (AtrzVO atrzVO : atrzCompanionList) {
+			EmployeeVO employeeVO = organizationService.emplDetail(atrzVO.getDrafterEmpno());
+			if(employeeVO != null) {
+				atrzVO.setClsfCodeNm(employeeVO.getPosNm());
+				atrzVO.setDeptCodeNm(employeeVO.getDeptNm());
+				log.info("atrzCompanionList-> atrzCompanionList : "+atrzCompanionList);
+				
+			}
+		}
+		return atrzCompanionList;
+	}
+	
+	
 	//기안서 상세
 	@Override
 	public DraftVO draftDetail(String draftNo) {
@@ -231,6 +252,56 @@ public class AtrzServiceImpl implements AtrzService {
 	public int insertHoliday(HolidayVO documHolidayVO) {
 		return this.atrzMapper.insertHoliday(documHolidayVO);
 	}
+	
+	//연차신청서 임시저장
+	@Override
+	@Transactional
+	public int atrzHolidayStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, HolidayVO documHolidayVO) {
+		log.info("atrzHolidayStorage->임시저장 : "+atrzVO);
+		
+		 // 1. 날짜 합치기
+	    try {
+	        String holiStartStr = String.join(" ", documHolidayVO.getHoliStartArr()) + ":00";
+	        String holiEndStr = String.join(" ", documHolidayVO.getHoliEndArr()) + ":00";
+
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	        documHolidayVO.setHoliStart(sdf.parse(holiStartStr));
+	        documHolidayVO.setHoliEnd(sdf.parse(holiEndStr));
+	    } catch (ParseException e) {
+	        throw new RuntimeException("날짜 파싱 실패", e);
+	    }
+	    // 2. ATRZ 테이블 임시저장 상태로 업데이트 (예: sanctnProgrsSttusCode = '00')
+	    atrzVO.setSanctnProgrsSttusCode("99"); // 임시저장 상태
+	    
+	    int updateCount=  atrzMapper.storageHolidayUpdate(atrzVO);
+	    
+	    // 3.ATRZ테이블에 insert처리
+	    if(updateCount==0) {
+	    	atrzMapper.atrzHolidayStorage(atrzVO);
+	    }
+	    
+	    // 4. 연차 신청서 테이블에도 등록 (임시)
+	    documHolidayVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
+	    atrzMapper.insertOrUpdateHoliday(documHolidayVO); // insert/update 구분해서
+	    
+	    
+	    //결재선은 기본의 것을 삭제후 새로 저장하는 방식 권장(중복방지)
+	    //여기서 새로 결재선 선택시 다시 업데이트 해줘야함
+	    atrzMapper.deleteAtrzLineByDocNo(atrzVO.getAtrzDocNo()); // 새로 추가할 것
+	    // 4. 결재선 정보도 같이 저장
+	    for (AtrzLineVO atrzLineVO : atrzLineList) {
+	    	atrzLineVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
+	    	atrzLineVO.setSanctnProgrsSttusCode("00"); // 대기중
+	        atrzMapper.insertAtrzLine(atrzLineVO); // insert 로직
+	    }
+	    
+	    // 연차정보 등록
+	    log.info("atrzHolidayStorage->임시저장 완료 문서번호 : "+atrzVO.getAtrzDocNo());
+		
+	    return 1;  //성공여부 반환
+	}
+
+	
 	
 	
 	//지출결의서 등록
@@ -384,6 +455,60 @@ public class AtrzServiceImpl implements AtrzService {
 		
 		return result > 0 ? 1 : 0;
 	}
+	//연차신청서 임시저장후 get
+	@Override
+	public AtrzVO getAtrzStorage(String atrzDocNo) {
+		AtrzVO atrzVO = atrzMapper.getAtrzStorage(atrzDocNo);
+		
+		if (atrzVO == null || !"99".equals(atrzVO.getAtrzSttusCode())) {
+	        throw new IllegalArgumentException("임시저장된 문서가 아닙니다.");
+	    }
+		
+		// 기안자 정보 추가
+	    EmployeeVO drafter = organizationService.emplDetail(atrzVO.getDrafterEmpno());
+	    atrzVO.setDrafterEmpnm(drafter.getEmplNm());
+	    atrzVO.setDrafterDept(drafter.getDeptNm());
+	    
+	    //결재자 정보추가
+	    List<AtrzLineVO> atrzLineVOList = atrzVO.getAtrzLineVOList();
+	    List<EmployeeVO> sanEmplVOList = new ArrayList<>();
+	    
+	    for(AtrzLineVO atrzLineVO : atrzLineVOList) {
+	    	
+	    	EmployeeVO sanctner = organizationService.emplDetail(atrzLineVO.getAftSanctnerEmpno());
+	    	atrzLineVO.setSanctnerEmpNm(sanctner.getEmplNm()); 
+	    	//나길준희 여기서부터 시작이다. 4월 15일 끝
+	    	//결재자 이름 / 직급 셋팅
+			String sancterEmpNo = atrzLineVO.getSanctnerEmpno();
+			EmployeeVO sanEmplVO =organizationService.emplDetail(sancterEmpNo);
+			sanEmplVOList.add(sanEmplVO);
+			
+			//직급명 이름 설정
+			String sanctClsfCd = atrzLineVO.getSanctnerClsfCode();
+			String sanctClsfNm = CommonCode.PositionEnum.INTERN.getLabelByCode(sanctClsfCd);
+			atrzLineVO.setSanctnerClsfNm(sanctClsfNm);
+			//결재자의 이름 담기
+			atrzLineVO.setSanctnerEmpNm(sanEmplVO.getEmplNm());
+			
+			log.info("getAtrzStorage->sanctClsfNm : "+sanctClsfNm);
+			//여기서 하나하나 담긴애들을 리스트로 보내야한다.
+			
+			log.info("getAtrzStorage->sanEmplVO : "+sanEmplVO);
+			log.info("getAtrzStorage->sancterEmpNo : "+sancterEmpNo);
+	    }
+	    
+	    // 문서 폼별 서브 객체 추가
+	    switch (atrzVO.getAtrzDocNo().charAt(0)) {
+	        case 'H' -> atrzVO.setHolidayVO(atrzMapper.holidayDetail(atrzDocNo));
+//	        case 'S' -> atrzVO.setSpendingVO(atrzMapper.spendingDetail(atrzDocNo));
+	        case 'D' -> atrzVO.setDraftVO(atrzMapper.draftDetail(atrzDocNo));
+	        // 필요 시 다른 타입도 추가
+	    }
+
+	    return atrzVO;
+	}
+	
+	
 
 
 	

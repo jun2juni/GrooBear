@@ -78,6 +78,9 @@
             <li>
               <a href="/atrz/document" class="${fn:contains(currentURL, '/atrz/document') ? 'active' : ''}"> 전자결재 문서함 </a>
             </li>
+            <li>
+              <a href="/atrz/companion" class="${fn:contains(currentURL, '/atrz/companion') ? 'active' : ''}"> 반려문서함 </a>
+            </li>
           </ul>
         </li>
         <%--전자결재 사이드 바 --%>
