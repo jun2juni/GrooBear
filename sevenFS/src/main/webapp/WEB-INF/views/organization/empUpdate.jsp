@@ -43,7 +43,6 @@
 					       <span class="text-medium text-dark"></span>
 					     </div>
 				   </div>
-				   
 				  <sec:authorize access="hasRole('ROLE_ADMIN')">
 				  <c:set var="emp" value="${emplDetail.emplDet}"></c:set>
 				  <div class="input-style-1 form-group col-12" style="display: flex;">
@@ -83,7 +82,7 @@
 					   <input type="hidden" name="genderCode" value="${emp.genderCode}"/>
 					   <input type="hidden" name="clsfCode" value="${emp.clsfCode}"/>
 					   <input type="hidden" name="deptCode" value="${emp.deptCode}"/>
-					   <input type="hidden" name="ecnyDate" value="${emp.ecnyDate}"/>
+					   <input type="hidden" name="ecnyDate" id="ecnyDate" value="${formattedEncy}"/>
 					   <input type="hidden" name="retireDate" value="${emp.retireDate}"/>
 					   <input type="hidden" name="anslry" value="${emp.anslry}"/>
 					   <input type="hidden" name="acnutno" value="${emp.acnutno}"/>
@@ -172,7 +171,7 @@
 				          <sec:authorize access="hasRole('ROLE_ADMIN')">
 				          	<div class="col-12" style="display: flex;">
 			          		 <div class="input-style-1 form-group col-2" style="margin-left:15%;">
-					            <label for="fmtEncyDt" class="form-label required">입사일자 <span class="text-danger"> *</span></label>
+					            <label for="fmtEncyDt" class="form-label required">입사일자<span class="text-danger"> *</span></label>
 					            <input type="date" class="form-control" id="fmtEncyDt" value="${formattedEncy}" required>
 					            <div class="invalid-feedback"></div>
 					            <input type="hidden" name="ecnyDate" id="ecnyDate">
@@ -285,50 +284,46 @@
  <script type="text/javascript">
 $(function(){
 	
-	/* const fullEmail = $('#email').val();
-	console.log('전체 이메일 : ' , fullEmail);
 	
-	const splitEmail = fullEmail.split('@');
-	console.log('자른 이메일 : ' , splitEmail);
+/* 	$('#fmtEcnyDt').on('change', function(){
+		// 입사일자 하이픈 없애는 처리
+		let fmtEcnyDt = $('#fmtEcnyDt').val();
+		console.log("입사일자 : " ,fmtEcnyDt);	
+		let replaceEncy = fmtEcnyDt.replaceAll('-', '');
+		 //hidden input으로 값 바꿔주기
+		$('#ecnyDate').val(replaceEncy);
+	}) */
 	
-	const splitId = splitEmail[0];
-	const splitDomain = splitEmail[1];
-	console.log(splitId); */
+	let ecnyDate = $('#ecnyDate').val();
+	let replaceEncyDt = ecnyDate.replaceAll('-', '');
+	console.log(replaceEncyDt);
+	$('#ecnyDate').val(replaceEncyDt);
 	
-	// 앞부분 값
-	//$('#email').val(splitId);
-	
-	$("#emplUpdateBtn").on("click", function(){
-		
-	// 입사일자 하이픈 없애는 처리
-	let fmtEncy = $('#fmtEncyDt').val();
-	let replaceEncy = fmtEncy.replaceAll('-', '');
-	//console.log(replaceEncy);	
-	// hidden input으로 값 바꿔주기
-	$('#ecnyDate').val(replaceEncy);
 	
 	// 생년월일 하이픈 없애는 처리
 	let fmtBirth = $('#fmtBirth').val();
 	let replaceBirth = fmtBirth.replaceAll('-', '');
-	$('#brthdy').val(replaceBirth);
+	let brthdy = $('#brthdy').val(replaceBirth);
+	console.log(brthdy.val());	
 	
+$("#emplUpdateBtn").on("click", function(){
 	// alert창 수정하기ㅡㅡ
-	
+
 	/* 	if(!$('input[name="deptCode"]:checked').val()){
-			swal("하위 부서를 선택해주세요.");
-			return;
-		}else{ */
-			//document.getElementById('emplUpdateForm').requestSubmit();
-			swal({
-			  title: "수정되었습니다.",
-			  icon: "success",
-			  draggable: true
-			})
-			.then((value) =>{
-				$("#emplUpdateForm").submit();
-			})
-		/* } */
-		});
+		swal("하위 부서를 선택해주세요.");
+		return;
+	}else{ */
+		//document.getElementById('emplUpdateForm').requestSubmit();
+		swal({
+		  title: "수정되었습니다.",
+		  icon: "success",
+		  draggable: true
+		})
+		.then((value) =>{
+			$("#emplUpdateForm").submit();
+		})
+	/* } */
+	});
 
 $("#upperDept").on("change", function(){
 	const upperCmmnCode = this.value;
