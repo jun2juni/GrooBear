@@ -26,44 +26,46 @@
 		  <div class="row">
 		  <div class="col-md-3">
 		    <!-- 출퇴근-->
-		    <div class="card-style mb-3" style="box-shadow: 1px 1px 20px 1px rgba(0,0,0,0.3); backdrop-filter: blur(15px);">
+		    <div class="card-style mb-3" style="box-shadow: 1px 1px 20px 1px rgba(0,0,2,0.1);">
 		      <c:import url="./organization/dclz/workButton.jsp" />
 		    </div>
 		    <!-- 출퇴근 -->
 
 			<!-- 메일 + 일정 -->		    
-		    <div class="card-style mb-3" style="box-shadow: 1px 1px 20px 1px rgba(0,0,0,0.3); backdrop-filter: blur(15px);">
-		    <!-- 메일 위젯 -->
-		    <div class="mb-4 text-center">
-		    	<div class="rounded-4" style="background-color : rgb(230,230,250,0.3);">
-			  	   	<a href="/mail/mailSend" class="btn-sm main-btn square-btn btn-hover mr-10 text-dark">
-				  	   	<i class="lni lni-envelope"></i>
-				  	   	메일쓰기
-				  	</a>
-			  	</div>
-			    <div class="d-flex flex-column text-center">
-			    	<p>미확인 <span class="text-medium text-dark ml-10">0건</span></p>
+		    <div class="card-style mb-3 d-flex flex justify-content-center" style="box-shadow: 1px 1px 20px 1px rgba(0,0,2,0.1); backdrop-filter: blur(15px);">
+			    <div class="d-flex justify-content-center">
+			    <!-- 메일 위젯 -->
+			    <div class="text-center mr-15">
+			    	 <div class="rounded-4" style="background-color : rgb(230,230,250,0.5); display: inline-block;"> 
+				  	   	<a href="/mail/mailSend" class="btn-sm main-btn square-btn btn-hover text-dark" style="padding:8px;">
+					  	   	<i class="lni lni-envelope"></i>
+					  	   	메일쓰기
+					  	</a>
+				  	 </div>
+				    <!-- <div class="d-flex flex-column text-center"> -->
+				    	<p>미확인 <span class="text-sm text-dark ml-2">0건</span></p>
+				    <!-- </div> -->
 			    </div>
-		    </div>
-		    <!-- 메일 위젯 -->
-		    <!-- 일정 위젯 -->
-		    <div class="text-center">
-		    	<div class="rounded-4" style="background-color : rgb(230,230,250,0.3);">
-			  	   	<a href="/mail/mailSend" class="btn-sm main-btn square-btn btn-hover mr-10 text-dark ">
-				  	   	<i class="lni lni-calendar"></i>
-				  	   	일정등록
-				  	</a>
-			  	</div>
-			    <div class="d-flex flex-column text-center">
-			    	<p>오늘 일정 <span class="text-medium text-dark ml-10">2건</span></p>
+			    <!-- 메일 위젯 -->
+			    <!-- 일정 위젯 -->
+			    <div class="text-center">
+			    	<div class="rounded-4" style="background-color : rgb(230,230,250,0.5); display: inline-block;">
+				  	   	<a href="/mail/mailSend" class="btn-sm main-btn square-btn btn-hover mr-10 text-dark" style="padding:8px;">
+					  	   	<i class="lni lni-calendar"></i>
+					  	   	일정등록
+					  	</a>
+				  	 </div>
+				    <!-- <div class="d-flex flex-column text-center"> -->
+				    	<p>오늘 일정 <span class="text-sm text-dark ml-2">2건</span></p>
+				    <!-- </div> -->
 			    </div>
-		    </div>
-		    <!-- 일정 위젯 -->
-		    </div>
+			    <!-- 일정 위젯 -->
+			    </div>
 		    <!-- 메일 + 일정 -->
+		    </div>
 		    
 		   <!-- 알림 -->
-	       <div style="box-shadow: 1px 1px 20px 1px rgba(0,0,0,0.3); backdrop-filter: blur(15px);">
+	       <div style="box-shadow: 1px 1px 20px 1px rgba(0,0,2,0.1); backdrop-filter: blur(15px);">
 			<div class="card-style mb-3	">
 				<div class="row mb-4">
 				<div class="text-bold">
@@ -82,6 +84,7 @@
 	                </span>
 	              </a>
                  </div>
+                 <hr/>
                  <div class="mb-4">
 	              <a href="#0" class="content">
 	                <span class="text-black text-sm">
@@ -92,7 +95,8 @@
 	                </span>
 	              </a>
                  </div>
-                 <div class="mb-4">
+                 <hr/>
+                 <div class="">
 	              <a href="#0" class="content">
 	                <span class="text-black text-sm">
 					'모바일 쿠폰 서비스
@@ -106,7 +110,7 @@
 	  	  </div>
 	  	  <!-- 알림 -->
 	  	  <!-- todo list -->
-	  	  <div class="card-style mb-3">
+	  	  <div class="card-style mb-3" style="box-shadow: 1px 1px 20px 1px rgba(0,0,2,0.1);">
 	  	  	일정 목록
 	  	  </div>
 	  	  <!-- todo list-->
@@ -116,7 +120,7 @@
 		  <div class="col-md-9">
 	   	   <!-- 전자결재 -->
 			<div class="row">
-	          <div class="col-6">
+	          <div class="col-3">
 	            <div class="icon-card mb-30">
 	              <div class="icon orange">
 	                <i class="lni lni-more"></i>
@@ -133,7 +137,7 @@
 	            <!-- End Icon Cart -->
 	          </div>
 	          <!-- End Col -->
-	          <div class="col-6">
+	          <div class="col-3">
 	            <div class="icon-card mb-30">
 	              <div class="icon purple">
 	                <i class="lni lni-spinner"></i>
@@ -150,10 +154,10 @@
 	            <!-- End Icon Cart -->
 	          </div>
 	          <!-- End Col -->
-            </div>
+           <!--  </div> -->
 	          <!-- End Col -->
-	         <div class="row">
-	          <div class="col-6">
+	        <!--  <div class="row"> -->
+	          <div class="col-3">
 	            <div class="icon-card mb-30">
 	              
 	              <div class="icon success">
@@ -170,7 +174,7 @@
 	            </div>
 	            <!-- End Icon Cart -->
 	          </div>
-	          <div class="col-6">
+	          <div class="col-3">
 	            <div class="icon-card">
 	              <div class="icon orange" style="background-color : #ffe4e1; color:red;">
 	                <i class="lni lni-cross-circle"></i>
@@ -188,13 +192,15 @@
 	            <!-- End Icon Cart -->
 	          </div>
 	          <!-- End Col -->
-	        </div>
+	        <!--    </div> -->
 	        <!-- 전자결재 -->
 	        
 	        <!-- 프로젝트 -->
-			 <div class="card-style mb-3">
-			 	프로젝트
-		    </div>
+	        <div class="col-lg-12">
+              <div class="card-style mb-30">
+              	프로젝트 목록
+               </div>
+             </div>
 	        <!-- 프로젝트 -->
 	        
 		    <!-- 게시판 -->
@@ -245,9 +251,11 @@
             </div>
             <!-- 게시판 -->
 		    <!-- 통계 -->
-		    <div class="card-style">
-		     	통계
-		    </div>
+		    <div class="col-lg-12">
+              <div class="card-style mb-30">
+              	통계
+               </div>
+             </div>
 		    <!-- 통계 -->
 		  </div>
 		</div>
