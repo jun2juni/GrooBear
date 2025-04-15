@@ -104,43 +104,20 @@
         <%--문서함 사이드 바 --%>
         
         <%--일정 사이드 바 --%>
-        <li class="nav-item nav-item-has-children">
-          <a href="#4" class="${fn:contains(currentURL, '/schdule') ? '' : 'collapsed'}"
-             data-bs-toggle="collapse" data-bs-target="#schdule"
-             aria-controls="schdule" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="icon material-symbols-outlined">
-            today
-            </span>
-            <span class="text">일정</span>
+        <li class="nav-item ${fn:contains(currentURL, '/project') ? 'active' : ''}">
+          <a href="/myCalendar">
+            <span class="icon material-symbols-outlined">today</span>
+            <span class="text">내 일정</span>
           </a>
-          <ul id="schdule" class="dropdown-nav collapse" style="">
-            <li>
-              <a href="/myCalendar"> 내 일정 </a>
-            </li>
-            <li>
-            </li>
-          </ul>
         </li>
         <%--일정 사이드 바 --%>
         
         <%--메일 사이드 바 --%>
-        <li class="nav-item nav-item-has-children">
-          <a href="#5" class="${fn:contains(currentURL, '/mail') ? '' : 'collapsed'}"
-             data-bs-toggle="collapse" data-bs-target="#mail"
-             aria-controls="mail" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="icon material-symbols-outlined">
-            drafts
-            </span>
+        <li class="nav-item ${fn:contains(currentURL, '/project') ? 'active' : ''}">
+          <a href="/mail">
+            <span class="icon material-symbols-outlined">drafts</span>
             <span class="text">메일</span>
           </a>
-          <ul id="mail" class="dropdown-nav collapse" style="">
-            <li>
-              <a href="/mail"> 1뎁스 </a>
-            </li>
-            <li>
-              <a href="/mail"> 2뎁스 </a>
-            </li>
-          </ul>
         </li>
         <%--메일 사이드 바 --%>
         

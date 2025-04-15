@@ -11,7 +11,6 @@
 .modal-content {
 	border: none;
 	border-radius: 12px;
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 	overflow: hidden;
 }
 
@@ -95,6 +94,15 @@
 	gap: 8px;
 	margin-left: 10px;
 	margin-bottom: 10px;
+}
+.date-time-container {
+    display: flex;
+    gap: 20px;
+}
+
+.date-time-container .date-time-group {
+    flex: 1;
+    width: 50%;
 }
 /* 체크박스 스타일 */
 .checkbox-wrapper {
@@ -187,87 +195,87 @@
 	color: #cbd5e0;
 	opacity: 1;
 }
+textarea {
+    width: 100%;
+    height: 6.25em;
+    border: none;
+    resize: none;
+  }
 </style>
 	<!-- 모달 배경 오버레이 -->
-	<div class="modal fade" id="myModal" tabindex="-1"
-		style="display: none; padding-right: 17px;">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">일정 등록</h5>
-					<button type="button" class="btn-close" onclick="fMClose()"
-						style="background: none; border: none; color: white; font-size: 20px; padding: 0; cursor: pointer;">
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-							viewBox="0 0 24 24" fill="none" stroke="currentColor"
-							stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-							<line x1="18" y1="6" x2="6" y2="18"></line>
-							<line x1="6" y1="6" x2="18" y2="18"></line>
-						</svg>
-					</button>
-				</div>
-				<div class="modal-body">
-					<form id="calAddFrm" name="calFrm" action="">
-						<div class="form-grid">
-							<input type="hidden" name="addUpt" id="addUpt" value="">
-							<input type="hidden" name="schdulNo" id="schdulNo" value="">
-							<div class="input-style-1 full-width">
-								<label>제목</label> 
-								<input type="text" id="schTitle" name="schdulSj" value="" placeholder="일정 제목을 입력하세요">
-							</div>
-							<div class="input-style-1 full-width">
-								<label>내용</label> 
-								<input type="text" id="schContent" name="content" value="" placeholder="일정 내용을 입력하세요">
-							</div>
-							<div class="date-time-group full-width">
-								<div class="input-style-1">
-									<div>
-										<label>시작일</label>
-										<input class="dateInput w-fit" type="date" id="schStart" name="start" value="" >
-									</div>
-									<div>
-										<label>시간</label>
-										<input class="dateInput w-fit" type="time" id="schStartTime" name="startTime" value="">
-									</div>
-								</div>
-							</div>
-							<div class="date-time-group full-width">
-								<div class="input-style-1">
-									<label>종료일</label>
-									<input class="dateInput w-fit" type="date" id="schEnd" name="end" value="">
-									<label>시간</label>
-									<input class="dateInput w-fit" type="time" id="schEndTime" name="endTime" value="" >
-								</div>
-							</div>
-							<div class="input-style-1">
-								<div class="checkbox-wrapper">
-									<label>하루종일</label>
-									  <input type="checkbox" id="allDay" name="allDay" class="checkbox-style">
-								</div>
-							</div>
-              				<div class="select-style-1">
-								<label>공개유형</label>
-								<div class="select-position">
-									<select id="schdulTy" name="schdulTy">
-										<option value="0">개인</option>
-										<option value="1">부서</option>
-										<!-- <option value="2">전체</option> 이건 추후에 관리자만 보이게 할것! -->
-									</select>
-								</div>
-							</div>
-							<div class="select-style-1 full-width">
-								<label>라벨 선택</label>
-								<div class="select-position">
-								  <select id="scheduleLabel" name="lblNo"></select>
-								</div>
-							</div>
-						</div>
-						<div class="button-group" style="margin-top: 1px;">
-							<button id="modalSubmit" type="button" class="main-btn primary-btn btn-hover"
-								onclick="fCalAdd(event)"></button>
-							<button type="button" class="main-btn danger-btn btn-hover" onclick="fMClose()">취소</button>
-						</div>
-					</form>
-				</div>
-			</div>
+	<!-- 일정 등록 모달 -->
+<div class="modal fade" id="myModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+	  <div class="modal-content">
+		<div class="modal-header bg-primary">
+		  <h5 class="modal-title text-white">일정 등록</h5>
+		  <button type="button" class="btn-close text-white" onclick="fMClose()" aria-label="Close"></button>
 		</div>
+		<div class="modal-body">
+		  <form id="calAddFrm" name="calFrm" action="">
+			<input type="hidden" name="addUpt" id="addUpt" />
+			<input type="hidden" name="schdulNo" id="schdulNo" />
+  
+			<div class="row g-4">
+			  <!-- 제목 -->
+			  <div class="col-12">
+				<label class="form-label fw-semibold text-dark">제목</label>
+				<input type="text" id="schTitle" name="schdulSj" class="form-control" placeholder="일정 제목을 입력하세요" />
+			  </div>
+  
+			  <!-- 내용 -->
+			  <div class="col-12">
+				<label class="form-label fw-semibold text-dark">내용</label>
+				<!-- <input type="text" id="schContent" name="content" class="form-control" placeholder="일정 내용을 입력하세요" /> -->
+				<textarea type="text" name="content" id="schContent" class="form-control" placeholder="일정 내용을 입력하세요"></textarea>
+			  </div>
+  
+			  <!-- 시작/종료 일시 -->
+			  <div class="col-md-6">
+				<label class="form-label fw-semibold text-dark">시작일</label>
+				<div class="d-flex gap-2">
+				  <input type="date" id="schStart" name="start" class="form-control" />
+				  <input type="time" id="schStartTime" name="startTime" class="form-control" />
+				</div>
+			  </div>
+  
+			  <div class="col-md-6">
+				<label class="form-label fw-semibold text-dark">종료일</label>
+				<div class="d-flex gap-2">
+				  <input type="date" id="schEnd" name="end" class="form-control" />
+				  <input type="time" id="schEndTime" name="endTime" class="form-control" />
+				</div>
+			  </div>
+  
+			  <!-- 하루종일 체크 -->
+			  <div class="col-12 d-flex align-items-center">
+				<input type="checkbox" id="allDay" name="allDay" class="form-check-input me-2" />
+				<label for="allDay" class="form-check-label text-dark fw-semibold">하루종일</label>
+			  </div>
+  
+			  <!-- 공개유형, 라벨 -->
+			  <div class="col-md-6">
+				<label class="form-label fw-semibold text-dark">공개유형</label>
+				<select id="schdulTy" name="schdulTy" class="form-select">
+				  <option value="0">개인</option>
+				  <option value="1">부서</option>
+				</select>
+			  </div>
+			  <div class="col-md-6">
+				<label class="form-label fw-semibold text-dark">라벨 선택</label>
+				<select id="scheduleLabel" name="lblNo" class="form-select"></select>
+			  </div>
+			</div>
+  
+			<!-- 버튼 -->
+			<div class="d-flex justify-content-end gap-2 mt-4" id="btnGroup">
+			  <button id="modalSubmit" type="button" class="btn btn-primary" onclick="fCalAdd(event)">저장</button>
+			  <button id="deleteBtn" type="button" class="btn btn-danger" style="display: none;" onclick="fCalDel(event)">삭제</button>
+			  <button type="button" class="btn btn-outline-secondary" onclick="fMClose()">취소</button>
+			</div>
+		  </form>
+		</div>
+	  </div>
 	</div>
+  </div>
+  

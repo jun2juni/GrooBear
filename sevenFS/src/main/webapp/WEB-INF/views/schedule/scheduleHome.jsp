@@ -21,7 +21,7 @@
 <main class="main-wrapper">
   <%@ include file="../layout/header.jsp" %>
   <section class="section">
-    <div class="container-fluid">
+    <div class="container-fluid" style="padding: 0;">
       
       <c:import url="./scheduleMain.jsp"></c:import>
     

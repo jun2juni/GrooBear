@@ -37,17 +37,18 @@
 		};
 
 		const calendarOption = {
-		 buttonText: {
-			    today: '오늘',
-			    month: '월',
-			    week: '주',
-			    day: '일',
-			    list: '목록'
-			  },	
-				
+			// dragScroll:true,
+		//  slotHeight:25,
+			buttonText: {
+					today: '오늘',
+					month: '월',
+					week: '주',
+					day: '일',
+					list: '목록'
+				},
 			handleWindowResize:true,
-			height: '100%', // ✅ 부모 높이에 맞춤
-			contentHeight: 60,
+			// height: 'auto', // ✅ 부모 높이에 맞춤
+			contentHeight: 650,
 			expandRows : false,
 			headerToolbar : headerToolbar,
 			initialView : 'dayGridMonth',
@@ -60,7 +61,7 @@
 			eventDurationEditable:true,
 			eventStartEditable:true,
 			eventResizableFromStart: true,
-			dayMaxEventRows : 3,
+			dayMaxEventRows : true,
 			nowIndicator : true,
 			droppable : true,
 			eventOverlap : true,
@@ -214,13 +215,15 @@
 			
 			// 모달 표시
 			insModal.show();
+			$('#schTitle').val('');
+			$('#schContent').val('');
 			$('#addUpt').val("add");
 			$('#schdulNo').val("");
 			$('.modal-title').text("일정 등록");
 			$("#modalSubmit").text("추가");
-			if($("#deleteBtn").length){
-				$("#deleteBtn").remove();
-			}
+			// if($("#deleteBtn").length){
+			$("#deleteBtn").hide();
+			// }
 			// console.log("Selected date" + info.startStr + " to " + info.endStr);
 			console.log("select -> info : ", info);
 			let startDate;
@@ -287,7 +290,7 @@
 	// 클릭 및 드래그 선택 이벤트 끝
 		let clickTimeout = null;
 		let lastClickTime = 0;
-		const doubleClickDelay = 500; // 밀리초
+		const doubleClickDelay = 200; // 밀리초
 		function checkDblClk(){
 			// console.log("클릭");
 			const currentTime = new Date().getTime();
@@ -362,9 +365,9 @@
 				selectEvent(info);
 				$('.modal-title').text("일정 등록");
 				$("#modalSubmit").text("등록");
-				if($("#deleteBtn").length){
-					$("#deleteBtn").remove();
-				}
+				// if($("#deleteBtn").length){
+				$("#deleteBtn").hide();
+				// }
 			}else{
 				// console.log('날짜 싱글클릭:', info.dateStr);
 			}
@@ -495,17 +498,18 @@
 			let chk = checkDblClkSel();
 			let startDate = new Date(info.start);
 			let endDate = new Date(info.end);
+
 			// $('#schdulTy').prop('disabeld',false);
 			// $('#scheduleLabel').prop('disabeld',false);
-			console.log($('sssssssssssssssssssssss','#scheduleLabel').prop())
+			// console.log($('sssssssssssssssssssssss','#scheduleLabel').prop());
 			if(info.view.type=='timeGridDay'||info.view.type=='timeGridWeek'){
 				console.log("dragSel : ",info.view.type,info);
 				selectEvent(info);
 				$('.modal-title').text("일정 등록");
 				$("#modalSubmit").text("등록");
-				if($("#deleteBtn").length){
-					$("#deleteBtn").remove();
-				}
+				// if($("#deleteBtn").length){
+				$("#deleteBtn").hide();
+				// }
 			}
 			// 더블 클릭 아닌 것(드래그)
 			if(!chk){
@@ -514,9 +518,9 @@
 					selectEvent(info);
 					$('.modal-title').text("일정 등록");
 					$("#modalSubmit").text("등록");
-					if($("#deleteBtn").length){
-						$("#deleteBtn").remove();
-					}
+					// if($("#deleteBtn").length){
+						$("#deleteBtn").hide();
+					// }
 				}
 			}
 		})
@@ -539,9 +543,11 @@
 			insModal.show();
 			$('.modal-title').text("일정 상세");
 			$("#modalSubmit").text("수정");
-			if($("#deleteBtn").length==0){
-				$(".button-group").append('<button type="button" id="deleteBtn" class="main-btn btn btn-danger btn-hover" onclick="fCalDel(event)">삭제</button>');
-			}
+			// $('#deleteBtn').css('display','block');
+			$('#deleteBtn').show();
+			// if($("#deleteBtn").length==0){
+				// $("#btnGroup").append('<button type="button" id="deleteBtn" class="main-btn btn btn-danger btn-hover" onclick="fCalDel(event)">삭제</button>');
+			// }
 			let start = info.event.start;
 			let end = info.event.end;
 			$('#addUpt').val("update");
@@ -636,7 +642,7 @@
 			let status = $('#addUpt').val();
 			let postUrl = '';
 			
-			// console.log("event : ",e);
+			console.log("event : ",e);
 			// console.log("event -> form : ",e.target.form);
 			// console.log("event -> input.start : ",e.target.form.start.value);
 			// console.log("event -> input.start : ",e.target.form.startTime.value);
@@ -727,7 +733,10 @@
 				}
 			})
 		};
-
+		calendar.on("eventMouseEnter",function(info){
+			// console.log(info)
+		})
+		
 		window.fMClose = function() {
 			$('#calAddFrm input').val('');
 			$('#schdulTy').val(0);
@@ -737,6 +746,40 @@
 			$('#scheduleLabel').prop('disabled',false);
 			insModal.hide();
 		};
+		// let btnclass = $('.fc-button').attr('class');
+		// $('.fc-button').attr('class',btnclass+' btn-primary');
+		// $('.fc-button').prop('class','btn btn-primary');
+		$('.fc-button').css('background-color','#0d6efd');
+		$('.fc-button').css('border','0px');
+		$('.fc-daygrid-day-number').css('text-decoration','none');
+		$('.fc-col-header-cell-cushion').css('text-decoration','none');
+
+		// 이벤트 위임을 사용하여 문제 해결
+		$(document).on('mouseenter', '.fc-daygrid-day-frame', function() {
+			let code = `<div class="fc-daygrid-bg-harness" style="left: 0px; right: 0px;"><div class="fc-highlight"></div></div>`;
+			$(this).find('.fc-daygrid-day-bg').append(code);
+		});
+
+		$(document).on('mouseleave', '.fc-daygrid-day-frame', function() {
+			$(this).find('.fc-daygrid-bg-harness').remove();
+		});
+		$("#myCalendar").on('wheel',function(event){
+			// console.log(event);
+			if(event.originalEvent.deltaY<0){
+				// console.log('위로');
+				$('.fc-prev-button').trigger('click');
+			}else{
+				// console.log('아래로');
+				$('.fc-next-button').trigger('click');
+
+			}
+		})
+		$('#myCalendar').mousedown(function(e){
+			if(e.which == 2){
+				e.preventDefault();
+				$('.fc-today-button').trigger('click');
+			}
+		})
 	})
 </script>
 </head>
@@ -749,8 +792,39 @@
 	
 </body>
 <style>
-	#calendarContainer{
-		height:700px;
+	.fc-date:hover{
+		background-color: #BCE8F14D;
 	}
+	.promo-box{
+		display: none;
+	}
+	#calendarContainer{
+		height: 80vh;
+		position: relative;
+		top: -20px;
+	}
+	#calendarContent{
+		background-color: white;
+	}
+
+	:is(.fc-day-mon, .fc-day-tue, .fc-day-wed, .fc-day-thu, .fc-day-fri) .fc-daygrid-day-number,
+	:is(.fc-day-mon, .fc-day-tue, .fc-day-wed, .fc-day-thu, .fc-day-fri) .fc-col-header-cell-cushion,
+	:is(.fc-day-mon, .fc-day-tue, .fc-day-wed, .fc-day-thu, .fc-day-fri) .fc-list-day-text,
+	:is(.fc-day-mon, .fc-day-tue, .fc-day-wed, .fc-day-thu, .fc-day-fri) .fc-list-day-side-text {
+		color: black;
+	}
+	.fc-day-sun .fc-col-header-cell-cushion,
+	.fc-day-sun .fc-list-day-text,
+	.fc-day-sun .fc-daygrid-day-number{
+		color : red;
+	}
+
+	.fc-day-sat .fc-col-header-cell-cushion,
+	.fc-day-sat .fc-list-day-text,
+	.fc-day-sat .fc-daygrid-day-number {
+		color : blue;
+	}
+	/* .fc-timegrid-slot .fc-daygrid-day-frame:hover {
+	} */
 </style>
 </html>

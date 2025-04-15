@@ -16,30 +16,6 @@
         <div class="filter-section">
             <h3>일정 필터</h3>
             <button type="button" id="filterAll" class="btn btn-primary">전체 보기</button>
-            <div id="filterSection">
-                <div class="checkbox-container">
-                    <label>전체 일정
-                        <input type="checkbox" class="event-filter" value="2" checked>
-                    </label>
-                </div>
-                <div class="checkbox-container">
-                    <label>부서 일정
-                        <input type="checkbox" class="event-filter" value="1" checked>
-                    </label>
-                </div>
-                <div class="checkbox-container">
-                    <label>개인 일정
-                        <input type="checkbox" class="event-filter" value="0" checked>
-                    </label>
-                </div>
-            </div>
-        </div>
-        <!-- 라벨 섹션도 JavaScript에서 생성될 때 동일한 구조로 만들어야 합니다 -->
-
-        <!-- 라벨 필터 -->
-        <div class="label-section">
-            <h3>라벨</h3>
-            <button type="button" id="labelAll" class="btn btn-primary">전체 보기</button>
             <button id="addLabelBtn" type="button" class="btn btn-primary">추가</button>
             <!-- 라벨 추가 팝업 -->
             <div id="labelPopup" class="label-popup input-style-1" style="display: none;">
@@ -59,12 +35,32 @@
                     <button id="delLabelBtn" class="btn btn-danger" onclick="delLabel(event)" style="display:none;">삭제</button>
                 </div>
             </div>
-            <div class="label-container">
-                <div id="labelSection" style="display: inline;">
-                    <!-- 여기에 라벨이 동적으로 추가됩니다 -->
+            <div id="filterSection">
+                <div class="checkbox-container">
+                    <label>전체 일정
+                        <input type="checkbox" class="event-filter" value="2" checked>
+                    </label>
+                </div>
+                <div class="checkbox-container">
+                    <label>부서 일정
+                        <input type="checkbox" class="event-filter" value="1" checked>
+                    </label>
+                </div>
+                <div class="checkbox-container" id="personalLabel">
+                    <label>개인 일정
+                        <i class='fas fa-chevron-left event-filter' id="leftArrIcon" style="cursor: pointer; display: none;"></i>
+                        <i class='fas fa-chevron-down event-filter' id="downArrIcon" style="cursor: pointer;"></i>
+                        <!-- <input type="checkbox" id="labelAll" class="event-filter" value="0" checked> -->
+                    </label>
+                </div>
+                <div class="label-container" id="labelAccordion">
+                    <div id="labelSection" style="display: inline;">
+                        <!-- 여기에 라벨이 동적으로 추가됩니다 -->
+                    </div>
                 </div>
             </div>
         </div>
+        <!-- 라벨 섹션도 JavaScript에서 생성될 때 동일한 구조로 만들어야 합니다 -->
     </div>
 
     <!-- 캘린더 영역 -->
@@ -75,7 +71,15 @@
 
 <!-- 스타일 -->
 <style>
-    #saveLabelBtn, #delLabelBtn, #addLabelBtn, #labelAll, #filterAll{
+    /* 아코디언 시작 */
+    .labelSection{
+        overflow: hidden;
+        padding-left: 10px;
+        display: none;
+    }
+    /* 아코디언 끝 */
+
+    #saveLabelBtn, #delLabelBtn, #addLabelBtn, #filterAll{
         padding: 4px 8px; /* 내부 여백 줄이기 */
         font-size: 12px; /* 글자 크기 줄이기 */
         width: auto; /* 자동 크기 조정 */
@@ -89,7 +93,7 @@
         background: white;
         border: 1px solid #ccc;
         padding: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        /* box-shadow: 0 2px 8px rgba(0,0,0,0.15); */
         z-index: 1000;
         width: 200px;
         border-radius: 5px;
@@ -141,7 +145,7 @@
         background: #f8f9fa;
         padding: 15px;
         border-right: 1px solid #ddd;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        /* box-shadow: 2px 0 5px rgba(0,0,0,0.1); */
         overflow-y: auto; /* 내용이 많을 경우 스크롤 표시 */
     }
 
@@ -187,7 +191,7 @@
     }
 
     /* 버튼 크기 통일 및 정렬 */
-    .btn {
+    /* .btn {
         padding: 4px 8px;
         font-size: 12px;
         height: 30px;
@@ -195,11 +199,11 @@
         margin-bottom: 5px;
         border-radius: 4px;
         transition: all 0.2s ease;
-    }
+    } */
 
     .btn:hover {
         transform: translateY(-1px);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        /* box-shadow: 0 2px 5px rgba(0,0,0,0.1); */
     }
 
     /* 체크박스 컨테이너 스타일 */
@@ -227,6 +231,12 @@
 
     /* 체크박스 스타일 */
     .checkbox-container input[type="checkbox"] {
+        margin-left: auto;
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+    }
+    #leftArrIcon, #downArrIcon{
         margin-left: auto;
         cursor: pointer;
         width: 16px;
@@ -288,11 +298,33 @@
 
     #calendarSidebar {
         position: relative;
+        background-color: #FFFFFF;
     }
 
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        /* 아코디언 시작 */
+        // $('.personal-schedule-header').on('click', function() {
+        //     var $icon = $(this).find('.accordion-icon');
+        //     var $content = $('#personalLabelsAccordion');
+            
+        //     if ($content.is(':visible')) {
+        //         $content.slideUp(300);
+        //         $icon.css('transform', 'rotate(0deg)');
+        //     } else {
+        //         $content.slideDown(300);
+        //         $icon.css('transform', 'rotate(180deg)');
+        //     }
+        // });
+        /* 아코디언 끝 */
+
+        $('#personalLabel').on('click',function(){
+            $('#labelAccordion').toggle();
+            $('#leftArrIcon').toggle();
+            $('#downArrIcon').toggle();
+        })
+
         $('#openModalBtn').on('click',function(){
             $("#schStart").removeAttr('max')
             $("#schEnd").removeAttr('min')
@@ -302,11 +334,9 @@
             $('.modal-title').text("일정 등록");
 			$("#modalSubmit").text("등록");
             console.log('$("#deleteBtn")',$("#deleteBtn"))
-			if($("#deleteBtn").length){
-				$("#deleteBtn").remove();
-			}
             
             insModal.show();
+			$("#deleteBtn").css('display','none');
         })
     // 사이드바 라벨 관련 요소
         const addLabelBtn = document.getElementById('addLabelBtn');
