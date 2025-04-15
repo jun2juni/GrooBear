@@ -3,6 +3,7 @@ package kr.or.ddit.sevenfs.mapper.webfolder;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderFileVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -10,7 +11,11 @@ import java.util.List;
 public interface WebFolderMapper {
     public int insertFiles(List<WebFolderFileVO> webFolderFileVOList);
 
-    public List<WebFolderVO> getFolderList(String upperFolderNo);
+    public List<WebFolderVO> getFolderList(
+            @Param(value = "upperFolderNo") String upperFolderNo,
+            @Param(value = "folderTy") String folderTy,
+            @Param(value = "deptCode") String deptCode
+    );
 
     public List<WebFolderFileVO> getFileList(String folderNo);
 
@@ -18,7 +23,8 @@ public interface WebFolderMapper {
 
     WebFolderVO getFolder(int folderNo);
 
-    List<WebFolderVO> getWebFolderList();
+    List<WebFolderVO> getWebFolderList(@Param(value = "folderTy") String folderTy,
+                                       @Param(value = "deptCode") String deptCode);
 
     int deleteFiles(long[] deleteFileIdList);
 
