@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.project.DashboardMapper">
+
+  <!--  프로젝트 상태 통계 (공통코드 기반 매핑) -->
+  <select id="countProjectByStatus" resultType="map">
+    SELECT
+      CC.CMMN_CODE_NM AS STATUS_NM,
+      COUNT(P.PRJCT_STTUS) AS CNT
+    FROM PROJECT P
+    JOIN COMMON_CODE CC
+      ON P.PRJCT_STTUS = CC.CMMN_CODE
+     AND CC.CMMN_CODE_GROUP = 'PRJCT_STTUS'
+    GROUP BY CC.CMMN_CODE_NM
+  </select>
+
+  <!-- 업무 상태 통계 (진행중/완료/피드백/변경만) -->
+	<select id="countTaskMainStatus" resultType="map">
+	  SELECT
+	    CC.CMMN_CODE,
+	    CC.CMMN_CODE_NM AS STATUS_NM,
+	    COUNT(T.TASK_STTUS) AS CNT
+	  FROM PROJECT_TASK T
+	  JOIN COMMON_CODE CC
+	    ON T.TASK_STTUS = CC.CMMN_CODE
+	   AND CC.CMMN_CODE_GROUP = 'TASK_STTUS'
+	   AND CC.CMMN_CODE IN ('01','02','03','04')
+	  GROUP BY CC.CMMN_CODE, CC.CMMN_CODE_NM
+	  ORDER BY CC.CMMN_CODE
+	</select>
+
+
+  <!-- 업무 등급별 통계 -->
+	<select id="countTaskByGrade" resultType="map">
+	  SELECT TASK_GRAD, COUNT(*) AS CNT
+	  FROM PROJECT_TASK
+	  WHERE TASK_GRAD IS NOT NULL
+	  GROUP BY TASK_GRAD
+	  ORDER BY TASK_GRAD ASC
+	</select>
+
+
+  <!-- 업무 진행률 통계 -->
+  <select id="countTaskByProgressGroup" resultType="map">
+    SELECT
+      CASE
+        WHEN PROGRSRT = 0 THEN '시작전'
+        WHEN PROGRSRT BETWEEN 1 AND 99 THEN '진행중'
+        WHEN PROGRSRT = 100 THEN '완료'
+        ELSE '기타'
+      END AS PROGRESS_GROUP,
+      COUNT(*) AS CNT
+    FROM PROJECT_TASK
+    GROUP BY
+      CASE
+        WHEN PROGRSRT = 0 THEN '시작전'
+        WHEN PROGRSRT BETWEEN 1 AND 99 THEN '진행중'
+        WHEN PROGRSRT = 100 THEN '완료'
+        ELSE '기타'
+      END
+  </select>
+
+  <!-- 업무 종료일 기준 7일 이내 임박 업무 -->
+<!-- 	<select id="selectUrgentTasks" resultType="ProjectTaskVO">
+	  SELECT
+	    T.TASK_NO,
+	    T.TASK_NM,
+	    T.TASK_END_DT,
+	    T.PROGRSRT,
+	    T.TASK_GRAD,
+	    T.PRIORT,
+	    E.EMPL_NM AS CHARGER_EMP_NM
+	  FROM PROJECT_TASK T
+	  LEFT JOIN EMPLOYEE E ON T.CHARGER_EMPNO = E.EMPL_NO
+	  WHERE T.TASK_END_DT BETWEEN SYSDATE AND SYSDATE + 7
+	  ORDER BY T.TASK_END_DT ASC
+	</select> -->
+	<select id="selectUrgentTasks" resultType="ProjectTaskVO">
+	  SELECT
+	    T.TASK_NO,
+	    T.TASK_NM,
+	    T.TASK_END_DT,
+	    T.PROGRSRT,
+	    T.TASK_GRAD,
+	    T.PRIORT,
+	    E.EMPL_NM AS CHARGER_EMP_NM
+	  FROM PROJECT_TASK T
+	  LEFT JOIN EMPLOYEE E ON T.CHARGER_EMPNO = E.EMPL_NO
+	  WHERE T.TASK_END_DT IS NOT NULL
+	    AND T.TASK_END_DT BETWEEN SYSDATE AND SYSDATE + 7
+	  ORDER BY T.TASK_END_DT ASC
+	</select>
+	
+
+
+
+  <!-- 내가 참여한 프로젝트 -->
+	<select id="selectMyProjects" parameterType="int" resultType="ProjectVO">
+	  SELECT 
+	    P.*,
+	    CC.CMMN_CODE_NM AS PRJCT_STTUS_NM,
+	    PC.CTGRY_NM
+	  FROM PROJECT P
+	  JOIN PROJECT_EMP PE ON P.PRJCT_NO = PE.PRJCT_NO
+	  LEFT JOIN COMMON_CODE CC 
+	    ON P.PRJCT_STTUS = CC.CMMN_CODE 
+	   AND CC.CMMN_CODE_GROUP = 'PRJCT_STTUS'
+	  LEFT JOIN PROJECT_CATEGORY PC 
+	    ON P.CTGRY_NO = PC.CTGRY_NO
+	  WHERE PE.PRTCPNT_EMPNO = #{emplNo}
+	  ORDER BY P.PRJCT_NO DESC
+	</select>
+
+	<!-- 전체 공통 코드 그룹별로 불러오기 -->
+	<select id="selectCommonCodes" resultType="map">
+	  SELECT
+	    CMMN_CODE_GROUP,
+	    CMMN_CODE,
+	    CMMN_CODE_NM
+	  FROM COMMON_CODE
+	  WHERE USE_YN = 'Y'
+	</select>
+	
+	<!-- 중요도별 업무 통계 -->
+	<select id="countTaskByPriort" resultType="map">
+	  SELECT
+	    T.PRIORT,
+	    COUNT(*) AS CNT
+	  FROM PROJECT_TASK T
+	  GROUP BY T.PRIORT
+	  ORDER BY T.PRIORT
+	</select>
+	
+
+
+</mapper>

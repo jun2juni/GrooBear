@@ -160,7 +160,31 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
   }
+  
+  loadDashboard();
 });
+
+
+
+//==================================================================================
+// 탭1 대시보드 탭 클릭 시 불러오기
+document.querySelector('[data-bs-target="#tab1"]')?.addEventListener("shown.bs.tab", function () {
+  loadDashboard();
+});
+
+function loadDashboard() {
+  fetch("/dashboard")
+    .then(res => res.text())
+    .then(html => {
+      document.querySelector("#tab1").innerHTML = html;
+    })
+    .catch(err => {
+      console.error("대시보드 로드 실패:", err);
+      document.querySelector("#tab1").innerHTML = "<p class='text-danger'>대시보드를 불러오지 못했습니다.</p>";
+    });
+}
+
+	
 </script>
 </body>
 </html>
