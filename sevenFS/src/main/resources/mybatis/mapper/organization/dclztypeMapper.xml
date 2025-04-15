@@ -98,6 +98,7 @@
         RIGHT OUTER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
         WHERE cmmn_code_group='ATTEND'
         AND EMPL_NO=#{emplNo}
+        ORDER BY dt.dclz_no DESC
 </select>
 
 <!-- 대분류에 따른 사원 상세 근태현황 목록 -->

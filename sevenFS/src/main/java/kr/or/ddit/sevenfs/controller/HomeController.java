@@ -29,25 +29,47 @@ public class HomeController {
 	DclztypeService dclztypeService;
 	
 	@GetMapping("/home")
-	public String main(Model model, DclzTypeVO dclzTypeVO) {
-
+	public String main(Model model, DclzTypeVO dclzTypeVO, Principal principal) {
+		
+		String emplNo = principal.getName();
+		dclzTypeVO.setEmplNo(emplNo);
+		
+		// 사원 출근 시간 가져오기
+		// mainEmplDclzList 호출
+		List<DclzTypeVO> mainEmplDclzList = dclztypeService.mainEmplDclzList(emplNo);
+		
+		// 사원 근태코드 가져오기
+		String dclzCode = mainEmplDclzList.get(0).getDclzCode();
+		dclzTypeVO.setDclzCode(dclzCode);
+		dclzTypeVO.setEmplNo(emplNo);
+		
+		// 오늘 등록된 출,퇴근 시간 가져오기
+		DclzTypeVO workTime = dclztypeService.getTodayWorkTime(dclzTypeVO);
+		log.info("workTime : " + workTime);
+		if(workTime == null) {
+			return "home";
+		}
+		
+		String todayWorkTime = workTime.getTodayWorkStartTime();
+		String todayWorkEndTime = workTime.getTodayWorkEndTime();
+     	model.addAttribute("todayWorkTime", todayWorkTime);
+     	model.addAttribute("todayWorkEndTime", todayWorkEndTime);
+     	log.info("todayWorkTime : " + todayWorkTime);
+     	log.info("todayWorkEndTime : " + todayWorkEndTime);
+		
 		
 		return "home";
 	}
 	
 	// 출퇴근 버튼 jsp
-//	@GetMapping
-//	public String main(Model model) {
-//		// 오늘날짜
-//		Date today = new Date();
-//		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//		dateFormat.applyPattern("yyyy년 MM월 dd일");
-//		log.info("today : " + dateFormat.format(today));
-//		model.addAttribute("today" , dateFormat.format(today));
+//	@GetMapping("/workButton")
+//	public String main(Model model, Principal principal , DclzTypeVO dclzTypeVO) {
 //		
-//		return "/organization/dclz/workButton";
+//		
+//		
+//		return "home";
 //	}
-//	
+	
 	// 출근 버튼 눌렀을때 실행
 	@ResponseBody
 	@GetMapping("/todayWorkStart")
@@ -134,8 +156,5 @@ public class HomeController {
 		}
 		return "실패";
 	}
-	
-	
-	
 
 }

@@ -5,33 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-<!-- 디지털 시계 -->
-<%
-	java.util.Date now = new java.util.Date();
-	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm:ss");
-	java.text.SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	dateFormat.applyPattern("yyyy년 MM월 dd일");
-	String serverTime = sdf.format(now);
-	String serverDate = dateFormat.format(now);
-%>
 
-<!-- 출퇴근 버튼 -->
-<div class="">
-	<div class=" text-center">
-		<span class="status-btn dark-btn text-center mt-30"><%= serverDate %></span>
-		<div id="clock" style="font-size: 24px; font-weight: bold;"></div>
-		<div class="d-flex mb-30 mt-3 justify-content-center">
-			<div class="content mr-30">
-		       	<button type="button" id="${todayWorkTime != null ? '' : 'workStartButton'}" class="btn-sm main-btn primary-btn-light rounded-full btn-hover">출근</button>
-				<p id="startTime">${todayWorkTime != null ? todayWorkTime : '출근 전'}</p>
-		    </div>
-		    <div class="content">
-		       	<button type="button" id="${todayWorkEndTime != null ? '' : 'workEndButton'}" class="btn-sm main-btn danger-btn-light rounded-full btn-hover">퇴근</button>
-				<p id="endTime">${todayWorkEndTime != null ? todayWorkEndTime : '퇴근 전'}</p>
-		    </div>
-		</div>
-	</div>
-</div> 
 
 
 <script type="text/javascript">
@@ -107,35 +81,7 @@
 }); // end fn		
 
 
-//디지털시계
-  let timeParts = '<%= serverTime %>'.split(':');
-  let hours = parseInt(timeParts[0]);
-  let minutes = parseInt(timeParts[1]);
-  let seconds = parseInt(timeParts[2]);
 
-  function updateClock() {
-    seconds++;
-    if (seconds >= 60) {
-      seconds = 0;
-      minutes++;
-    }
-    if (minutes >= 60) {
-      minutes = 0;
-      hours++;
-    }
-    if (hours >= 24) {
-      hours = 0;
-    }
-
-    const formattedTime = 
-      String(hours).padStart(2, '0') + ':' +
-      String(minutes).padStart(2, '0') + ':' +
-      String(seconds).padStart(2, '0');
-
-    document.getElementById('clock').textContent = formattedTime;
-  }
-
-  setInterval(updateClock, 1000);
 </script>
 
 

@@ -85,18 +85,18 @@ public class DclzTypeController {
 		dclzTypeVO.setDclzCode(dclzCode);
 		
 		// 오늘 등록된 출,퇴근 시간 가져오기
-		DclzTypeVO workTime = dclztypeService.getTodayWorkTime(dclzTypeVO);
-		log.info("workTime : " + workTime);
-		if(workTime == null) {
-			return "organization/dclz/dclzType";
-		}
-		
-		String todayWorkTime = workTime.getTodayWorkStartTime();
-		String todayWorkEndTime = workTime.getTodayWorkEndTime();
-     	model.addAttribute("todayWorkTime", todayWorkTime);
-     	model.addAttribute("todayWorkEndTime", todayWorkEndTime);
-     	log.info("todayWorkTime : " + todayWorkTime);
-     	log.info("todayWorkEndTime : " + todayWorkEndTime);
+//		DclzTypeVO workTime = dclztypeService.getTodayWorkTime(dclzTypeVO);
+//		log.info("workTime : " + workTime);
+//		if(workTime == null) {
+//			return "/main/home";
+//		}
+//		
+//		String todayWorkTime = workTime.getTodayWorkStartTime();
+//		String todayWorkEndTime = workTime.getTodayWorkEndTime();
+//     	model.addAttribute("todayWorkTime", todayWorkTime);
+//     	model.addAttribute("todayWorkEndTime", todayWorkEndTime);
+//     	log.info("todayWorkTime : " + todayWorkTime);
+//     	log.info("todayWorkEndTime : " + todayWorkEndTime);
      	
 		return "organization/dclz/dclzType";
 	}

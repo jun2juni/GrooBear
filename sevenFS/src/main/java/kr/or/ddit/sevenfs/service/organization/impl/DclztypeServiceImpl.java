@@ -176,6 +176,12 @@ public class DclztypeServiceImpl implements DclztypeService {
 		return this.dclztypeMapper.allEmplVacList(map);
 	}
 
+	// 메인페이지에서 필요한 사원의 근태현황
+	@Override
+	public List<DclzTypeVO> mainEmplDclzList(String emplNo) {
+		return dclztypeMapper.mainEmplDclzList(emplNo);
+	}
+
 	
 
 

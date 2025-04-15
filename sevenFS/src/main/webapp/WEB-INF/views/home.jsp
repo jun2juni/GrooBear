@@ -1,3 +1,4 @@
+<%@page import="java.text.SimpleDateFormat"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -6,6 +7,16 @@
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
 <c:set var="title" scope="application" value="메인" />
 <c:set var="copyLight" scope="application" value="7FS" />
+
+<!-- 디지털 시계 -->
+<%
+	java.util.Date now = new java.util.Date();
+	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm:ss");
+	java.text.SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	dateFormat.applyPattern("yyyy년 MM월 dd일");
+	String serverTime = sdf.format(now);
+	String serverDate = dateFormat.format(now);
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -28,6 +39,23 @@
 		    <!-- 출퇴근-->
 		    <div class="card-style mb-3" style="box-shadow: 1px 1px 20px 1px rgba(0,0,2,0.1);">
 		      <c:import url="./organization/dclz/workButton.jsp" />
+		      <!-- 출퇴근 버튼 -->
+			<div class="">
+				<div class=" text-center">
+					<span class="status-btn dark-btn text-center mt-30"><%= serverDate %></span>
+					<div id="clock" style="font-size: 24px; font-weight: bold;"></div>
+					<div class="d-flex mb-30 mt-3 justify-content-center">
+						<div class="content mr-30">
+					       	<button type="button" id="${todayWorkTime != null ? '' : 'workStartButton'}" class="btn-sm main-btn primary-btn-light rounded-full btn-hover">출근</button>
+							<p id="startTime">${todayWorkTime != null ? todayWorkTime : '출근 전'}</p>
+					    </div>
+					    <div class="content">
+					       	<button type="button" id="${todayWorkEndTime != null ? '' : 'workEndButton'}" class="btn-sm main-btn danger-btn-light rounded-full btn-hover">퇴근</button>
+							<p id="endTime">${todayWorkEndTime != null ? todayWorkEndTime : '퇴근 전'}</p>
+					    </div>
+					</div>
+				</div>
+			</div> 
 		    </div>
 		    <!-- 출퇴근 -->
 
@@ -266,5 +294,37 @@
   <%@ include file="./layout/footer.jsp" %>
 </main>
 <%@ include file="./layout/prescript.jsp" %>
+
+<script type="text/javascript">
+//디지털시계
+let timeParts = '<%= serverTime %>'.split(':');
+let hours = parseInt(timeParts[0]);
+let minutes = parseInt(timeParts[1]);
+let seconds = parseInt(timeParts[2]);
+
+function updateClock() {
+  seconds++;
+  if (seconds >= 60) {
+    seconds = 0;
+    minutes++;
+  }
+  if (minutes >= 60) {
+    minutes = 0;
+    hours++;
+  }
+  if (hours >= 24) {
+    hours = 0;
+  }
+
+  const formattedTime = 
+    String(hours).padStart(2, '0') + ':' +
+    String(minutes).padStart(2, '0') + ':' +
+    String(seconds).padStart(2, '0');
+
+  document.getElementById('clock').textContent = formattedTime;
+}
+
+setInterval(updateClock, 1000);
+</script>
 </body>
 </html>

@@ -61,4 +61,7 @@ public interface DclztypeService {
 	// 모든 사원의 연차 현황
 	public List<DclzTypeVO> allEmplVacList(Map<String, Object> map);
 	
+	// 메인페이지에서 필요한 사원의 근태현황 조회
+	public List<DclzTypeVO> mainEmplDclzList(String emplNo);
+	
 }
