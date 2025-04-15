@@ -107,7 +107,8 @@ public class AuthController {
 
             return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
         } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid refresh token");
+            // 401에러 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
         }
     }
 

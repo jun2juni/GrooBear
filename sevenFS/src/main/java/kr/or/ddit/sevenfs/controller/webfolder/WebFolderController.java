@@ -1,12 +1,14 @@
 package kr.or.ddit.sevenfs.controller.webfolder;
 
 import jakarta.servlet.http.HttpServletResponse;
+import kr.or.ddit.sevenfs.config.jwt.JwtTokenProvider;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.webfolder.WebFolderService;
 
 import kr.or.ddit.sevenfs.utils.AttachFile;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.CustomUser;
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderFileVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO;
 import lombok.extern.slf4j.Slf4j;
@@ -48,13 +50,14 @@ public class WebFolderController {
     private AttachFileService attachFileService;
 
     @GetMapping("/list")
-    public Map<String, Object> getFolder(String upperFolderNo) {
+    public Map<String, Object> getFolder(String upperFolderNo, String folderTy, String deptCode) {
         Map<String, Object> resultMap = new HashMap<>();
+
 
         // 파일 목록 가져오기
         log.debug("upperFolderNo: {}", upperFolderNo);
         long totalVolume = webFolderService.getTotalVolume();
-        List<WebFolderVO> folderVOList = webFolderService.getFolderList(upperFolderNo);
+        List<WebFolderVO> folderVOList = webFolderService.getFolderList(upperFolderNo, folderTy, deptCode);
         List<WebFolderFileVO> fileListVOList = webFolderService.getFileList(upperFolderNo);
 
         resultMap.put("totalVolume", totalVolume);
@@ -65,11 +68,11 @@ public class WebFolderController {
     }
 
     @GetMapping("/folderList")
-    public Map<String, Object> getFolderList() {
+    public Map<String, Object> getFolderList(String folderTy, String deptCode) {
         Map<String, Object> resultMap = new HashMap<>();
 
         // 파일 목록 가져오기
-        List<WebFolderVO> webFolderList = this.webFolderService.getWebFolderList();
+        List<WebFolderVO> webFolderList = this.webFolderService.getWebFolderList(folderTy, deptCode);
         resultMap.put("folderList", webFolderList);
 
         return resultMap;

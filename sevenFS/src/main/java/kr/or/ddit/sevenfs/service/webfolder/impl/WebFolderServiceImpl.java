@@ -5,6 +5,7 @@ import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.webfolder.WebFolderService;
 import kr.or.ddit.sevenfs.utils.AttachFile;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderFileVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +35,8 @@ public class WebFolderServiceImpl implements WebFolderService {
     }
 
     @Override
-    public List<WebFolderVO> getWebFolderList() {
-        return webFolderMapper.getWebFolderList();
+    public List<WebFolderVO> getWebFolderList(String folderTy, String deptCode) {
+        return webFolderMapper.getWebFolderList(folderTy, deptCode.charAt(0) + "0");
     }
 
     @Override
@@ -49,8 +50,12 @@ public class WebFolderServiceImpl implements WebFolderService {
     }
 
     @Override
-    public List<WebFolderVO> getFolderList(String upperFolderNo) {
-        return webFolderMapper.getFolderList(upperFolderNo);
+    public List<WebFolderVO> getFolderList(String upperFolderNo, String folderTy, String deptCode) {
+
+//        String deptCode = employeeVO.getDeptCode();
+
+        log.debug("deptCode: {}", deptCode.charAt(0) + "0");
+        return webFolderMapper.getFolderList(upperFolderNo, folderTy, deptCode.charAt(0) + "0");
     }
 
     @Override

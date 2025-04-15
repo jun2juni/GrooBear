@@ -1,5 +1,6 @@
 package kr.or.ddit.sevenfs.service.webfolder;
 
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderFileVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,7 +14,7 @@ public interface WebFolderService {
     public long getTotalVolume();
 
     // 폴더 구조 가져오기
-    public List<WebFolderVO> getWebFolderList();
+    public List<WebFolderVO> getWebFolderList(String folderTy, String deptCode);
 
     // 폴더 정보가져오기
     public WebFolderVO getFolder(int folderNo);
@@ -22,7 +23,7 @@ public interface WebFolderService {
     public List<WebFolderFileVO> getFileList(String folderNo);
 
     // 폴더 목록
-    public List<WebFolderVO> getFolderList(String upperFolderNo);
+    public List<WebFolderVO> getFolderList(String upperFolderNo, String folderTy, String deptCode);
 
     // 파일 업로드
     public int insertFiles(MultipartFile[] uploadFile, WebFolderVO webFolderVO, String emplNo);

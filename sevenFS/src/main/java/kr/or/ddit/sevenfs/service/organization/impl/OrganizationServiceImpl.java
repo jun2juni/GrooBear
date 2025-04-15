@@ -7,6 +7,7 @@ import java.util.Map;
 
 import kr.or.ddit.sevenfs.service.chat.ChatService;
 import kr.or.ddit.sevenfs.service.notification.NotificationService;
+import kr.or.ddit.sevenfs.service.setting.SettingService;
 import kr.or.ddit.sevenfs.vo.chat.ChatRoomVO;
 import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 	NotificationService notificationService;
 	@Autowired
 	ChatService chatService;
+	@Autowired
+	SettingService settingService;
 
 	
 	@Override
@@ -230,6 +233,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 		// 사원이 등록되면 권한 테이블에도 업로드 되어야한다
 		if(result == 1) {
 			organizationMapper.empAuthInsert(emplNo);
+			settingService.insetSkillAuth(emplNo);
 		}
 		
 		return result;

@@ -84,6 +84,10 @@
                FOLDER_CREAT_EMPNO
         FROM FOLDER
         WHERE UPPER_FOLDER_NO = #{upperFolderNo}
+          AND FOLDER_TY = #{folderTy}
+          <if test="folderTy != null and folderTy == 1 and deptCode != null and deptCode != ''">
+              AND DEPT_CODE = #{deptCode}
+          </if>
           AND FOLDER_DELETE_YN = 'N'
         ORDER BY FOLDER_CREAT_DT DESC
     </select>
@@ -118,6 +122,11 @@
         SELECT LPAD(' ', LEVEL, '-') || FOLDER_NM AS  FOLDER_NM, FOLDER_NO, FOLDER_PATH
         FROM FOLDER
         WHERE FOLDER_DELETE_YN = 'N'
+          AND FOLDER_TY = #{folderTy}
+          AND FOLDER_NO != 1 /* 루트 폴더 제외 */
+          <if test="folderTy != null and folderTy == 1 and deptCode != null and deptCode != ''">
+            AND DEPT_CODE = #{deptCode}
+          </if>
         START WITH UPPER_FOLDER_NO IS NULL
         CONNECT BY PRIOR FOLDER_NO = UPPER_FOLDER_NO
     </select>
@@ -127,6 +136,7 @@
         FROM FOLDER_FILE FF
         LEFT JOIN ATTATCH_FILE AF ON (FF.ATCH_FILE_NO = AF.ATCH_FILE_NO)
     </select>
+
 
     <!-- 밑에는 전체 다 가져오는 경우에 사용 -->
     <!-- 파일 목록  -->

@@ -59,11 +59,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (!tokenProvider.validateToken(accessToken)) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid or expired token");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
             return;
         }
 
         log.debug("토큰 사용 가능");
+
         // 로그인 검증
         Authentication authentication = tokenProvider.getAuthentication(accessToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
