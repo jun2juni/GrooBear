@@ -117,8 +117,24 @@ public class ProjectTaskController {
 	public ResponseEntity<?> insertTask(@ModelAttribute ProjectTaskVO taskVO,
 	                                    @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles) {
 	    try {
+	        log.info("프로젝트 업무 등록 시작");
 	        log.info("업무명: {}", taskVO.getTaskNm());
 
+	        
+	        // 파일 확인 로깅
+	        if (uploadFiles != null) {
+	            log.info("첨부 파일 개수: {}", uploadFiles.length);
+	            for (int i = 0; i < uploadFiles.length; i++) {
+	                MultipartFile file = uploadFiles[i];
+	                log.info("파일[{}]: 이름={}, 크기={}, 타입={}", 
+	                       i, 
+	                       file.getOriginalFilename(), 
+	                       file.getSize(),
+	                       file.getContentType());
+	            }
+	        } else {
+	            log.info("첨부 파일 없음");
+	        }
 	        // 반드시 직접 attachFileNo를 먼저 설정해줘야 함
 	        if (uploadFiles != null && uploadFiles.length > 0) {
 	            long atchFileNo = attachFileService.getAttachFileNo(); // 시퀀스 미리 생성

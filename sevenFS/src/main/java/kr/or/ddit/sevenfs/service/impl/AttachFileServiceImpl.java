@@ -7,6 +7,8 @@ import kr.or.ddit.sevenfs.utils.AttachFile;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderFileVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -24,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
+@Slf4j
 @Service
 public class AttachFileServiceImpl implements AttachFileService {
     @Autowired
@@ -71,6 +73,15 @@ public class AttachFileServiceImpl implements AttachFileService {
         int[] removeFileId = attachFileVO.getRemoveFileId();
         if (removeFileId != null && removeFileId.length > 0) {
             attachFileMapper.removeFileList(attachFileVO);
+        }
+        // 디버그 출력 코드  - 채성실
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                MultipartFile file = files[i];
+                log.debug("파일[{}]: 이름={}, 크기={}", i, 
+                          file != null ? file.getOriginalFilename() : "null", 
+                          file != null ? file.getSize() : -1);
+            }
         }
 
         // 파일 추가 처리

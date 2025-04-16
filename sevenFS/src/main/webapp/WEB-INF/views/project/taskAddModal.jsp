@@ -6,7 +6,7 @@
 <div class="modal fade" id="taskAddModal" tabindex="-1" aria-labelledby="taskAddModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content shadow-lg">
-      <form id="taskAddForm" enctype="multipart/form-data">
+      <form id="taskAddForm" method="POST" action="/projectTask/insert" enctype="multipart/form-data">
         <div class="modal-header bg-primary text-white">
           <h5 class="modal-title fw-bold" id="taskAddModalLabel"><i class="fas fa-plus-circle me-2"></i>업무 추가</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="닫기"></button>
@@ -97,11 +97,11 @@
           </div>
 
           <!-- 파일 업로드 -->
-          <div class="mb-3">
-            <label for="uploadFiles" class="form-label fw-semibold">첨부파일 (최대 5개)</label>
-            <input type="file" class="form-control" name="uploadFiles" id="uploadFiles" multiple />
-            <ul class="list-group mt-2" id="fileNameList"></ul>
-          </div>
+			<div class="mb-3">
+			  <label for="uploadFilesField" class="form-label fw-semibold">첨부파일 (최대 5개)</label>
+			  <input type="file" class="form-control" name="uploadFiles" id="uploadFilesField" multiple />
+			  <ul class="list-group mt-2" id="fileNameList"></ul>
+			</div>
         </div>
 
         <div class="modal-footer bg-light">
@@ -115,53 +115,106 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  // 상위 업무 선택 반영
-  document.getElementById("upperTaskSelect").addEventListener("change", function () {
-    document.getElementById("upperTaskNo").value = this.value;
-  });
+	  // 상위 업무 선택 반영
+	  document.getElementById("upperTaskSelect").addEventListener("change", function () {
+	    document.getElementById("upperTaskNo").value = this.value;
+	  });
 
-  // 파일 리스트 표시
-  $('#taskAddModal').on('shown.bs.modal', function () {
-    const uploadInput = document.getElementById("uploadFiles");
-    if (uploadInput) {
-      uploadInput.addEventListener("change", function () {
-        const list = document.getElementById("fileNameList");
-        list.innerHTML = "";
-        Array.from(this.files).forEach(file => {
-          const li = document.createElement("li");
-          li.className = "list-group-item";
-          li.textContent = file.name;
-          list.appendChild(li);
-        });
-      });
-    }
-  });
+	  // 파일 리스트 표시
+	  const uploadInput = document.getElementById("uploadFilesField");
+	  if (uploadInput) {
+	    uploadInput.addEventListener("change", function () {
+	      const list = document.getElementById("fileNameList");
+	      list.innerHTML = "";
+	      
+	      console.log("선택된 파일 수:", this.files.length);
+	      
+	      Array.from(this.files).forEach(file => {
+	        console.log("파일:", file.name, "크기:", file.size);
+	        const li = document.createElement("li");
+	        li.className = "list-group-item";
+	        li.textContent = file.name + " (" + (file.size / 1024).toFixed(1) + " KB)";
+	        list.appendChild(li);
+	      });
+	    });
+	  }
 
-  // 업무 등록 AJAX
-  document.getElementById("taskAddForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const formData = new FormData(this);
-    fetch("/projectTask/insert", {
-      method: "POST",
-      body: formData
-    })
-    .then(res => res.json())
-    .then(result => {
-      if (result.success || !isNaN(Number(result.taskNo))) {
-        alert("업무가 성공적으로 등록되었습니다.");
-        bootstrap.Modal.getInstance(document.getElementById("taskAddModal")).hide();
-        this.reset();
-        document.getElementById("fileNameList").innerHTML = "";
-        window.location.href = `/project/projectDetail?prjctNo=\${result.prjctNo}`;
-      } else {
-        alert("업무 등록에 실패했습니다.");
-      }
-    })
-    .catch(err => {
-      console.error("업무 등록 실패:", err);
-      alert("업무 등록 중 오류가 발생했습니다.");
-    });
-  });
-});
+	  // 업무 등록 폼 제출
+	  const taskAddForm = document.getElementById("taskAddForm");
+	  if (taskAddForm) {
+	    taskAddForm.addEventListener("submit", function (e) {
+	      e.preventDefault();
+	      
+	      // 폼 데이터 로깅
+	      const formData = new FormData(this);
+	      const fileInput = document.getElementById("uploadFilesField");
+	      
+	      console.log("폼 제출 - 파일 필드:", fileInput);
+	      console.log("폼 제출 - 파일 수:", fileInput ? fileInput.files.length : 0);
+	      
+	      if (fileInput && fileInput.files.length > 0) {
+	        console.log("첫 번째 파일 이름:", fileInput.files[0].name);
+	        console.log("첫 번째 파일 크기:", fileInput.files[0].size);
+	      }
+	      
+	      // 서버로 전송
+	      fetch("/projectTask/insert", {
+	        method: "POST",
+	        body: formData
+	      })
+	      .then(res => res.json())
+	      .then(result => {
+	        if (result.success || !isNaN(Number(result.taskNo))) {
+	          alert("업무가 성공적으로 등록되었습니다.");
+	          bootstrap.Modal.getInstance(document.getElementById("taskAddModal")).hide();
+	          this.reset();
+	          document.getElementById("fileNameList").innerHTML = "";
+	          window.location.href = `/project/projectDetail?prjctNo=\${result.prjctNo}`;
+	        } else {
+	          alert("업무 등록에 실패했습니다.");
+	        }
+	      })
+	      .catch(err => {
+	        console.error("업무 등록 실패:", err);
+	        alert("업무 등록 중 오류가 발생했습니다.");
+	      });
+	    });
+	  }
+	});
+	
+$('#taskAddModal').on('shown.bs.modal', function () {
+	  // 폼 초기화
+	  document.getElementById("taskAddForm").reset();
+	  document.getElementById("fileNameList").innerHTML = "";
+	  
+	  // 파일 입력 필드 재생성 (브라우저 캐시 방지)
+	  const fileInputContainer = document.querySelector('.mb-3:has(#uploadFilesField)');
+	  const oldInput = document.getElementById("uploadFilesField");
+	  const newInput = document.createElement("input");
+	  newInput.type = "file";
+	  newInput.className = "form-control";
+	  newInput.name = "uploadFiles";
+	  newInput.id = "uploadFilesField";
+	  newInput.multiple = true;
+	  
+	  if (oldInput && fileInputContainer) {
+	    oldInput.parentNode.replaceChild(newInput, oldInput);
+	    
+	    // 이벤트 리스너 재설정
+	    newInput.addEventListener("change", function () {
+	      const list = document.getElementById("fileNameList");
+	      list.innerHTML = "";
+	      
+	      Array.from(this.files).forEach(file => {
+	        const li = document.createElement("li");
+	        li.className = "list-group-item";
+	        li.textContent = file.name + " (" + (file.size / 1024).toFixed(1) + " KB)";
+	        list.appendChild(li);
+	      });
+	    });
+	  }
+	});	
+	
+	
+	
 </script>

@@ -153,25 +153,49 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
         }
 
         // 2. 파일 저장
+        log.debug("파일 업로드 시작 - 파일 개수: {}", uploadFiles != null ? uploadFiles.length : 0);
+        
         if (uploadFiles != null && uploadFiles.length > 0) {
             boolean hasValidFile = false;
+            
+            // 유효한 파일만 필터링
+            List<MultipartFile> validFiles = new ArrayList<>();
+            
             for (MultipartFile file : uploadFiles) {
-                if (file != null && !file.isEmpty() && file.getSize() > 0) {
+                if (file != null && !file.isEmpty() && file.getSize() > 0 && file.getOriginalFilename() != null && !file.getOriginalFilename().trim().isEmpty()) {
                     log.info(">> 유효한 파일: {}, 크기: {}", file.getOriginalFilename(), file.getSize());
                     hasValidFile = true;
+                    validFiles.add(file);
                 } else {
                     log.warn(">> 무시된 파일: {}, 크기: {}", 
                         (file != null ? file.getOriginalFilename() : "null"), 
                         (file != null ? file.getSize() : -1));
                 }
             }
-
+            
+            // 유효한 파일이 있을 경우에만 처리
             if (hasValidFile) {
-                long atchFileNo = attachFileService.getAttachFileNo();
+                MultipartFile[] validFileArray = validFiles.toArray(new MultipartFile[0]);
+                log.debug(">> 유효한 파일 {} 개를 처리합니다.", validFileArray.length);
+                
+                // atchFileNo가 없으면 생성
+                if (taskVO.getAtchFileNo() == 0) {
+                    long atchFileNo = attachFileService.getAttachFileNo();
+                    taskVO.setAtchFileNo(atchFileNo);
+                }
+                
                 AttachFileVO fileVO = new AttachFileVO();
-                fileVO.setAtchFileNo(atchFileNo);
-                attachFileService.updateFileList("project/task", uploadFiles, fileVO);
-                taskVO.setAtchFileNo(atchFileNo);
+                fileVO.setAtchFileNo(taskVO.getAtchFileNo());
+                
+                try {
+                    int result = attachFileService.updateFileList("project/task", validFileArray, fileVO);
+                    log.debug(">> 파일 저장 결과: {}", result);
+                } catch (Exception e) {
+                    log.error("파일 저장 중 오류 발생", e);
+                }
+            } else {
+                // 유효한 파일이 없으면 atchFileNo를 null로 설정
+                taskVO.setAtchFileNo(0);
             }
         }
 
@@ -182,9 +206,6 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
         return (long) taskVO.getTaskNo();
     }
-
-
-
 
 
  
