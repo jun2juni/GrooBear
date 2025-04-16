@@ -5,6 +5,7 @@ import kr.or.ddit.sevenfs.utils.SkilAuth;
 import kr.or.ddit.sevenfs.vo.auth.EmpAuthVO;
 import kr.or.ddit.sevenfs.vo.chat.ChatRoomVO;
 import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
+import kr.or.ddit.sevenfs.vo.setting.SkillAuthVO;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -57,7 +58,7 @@ public class EmployeeVO implements UserDetails {
 	private List<ChatRoomVO> chatRoomVOList;
 
 	// 권한 정보 허성진
-	private List<SkilAuth> skillAuth;
+	private List<SkillAuthVO> skillAuth;
 	
 	// 성별코드에 맞는 성별 반환
 	public void setGenderCode(String genderCode) {
