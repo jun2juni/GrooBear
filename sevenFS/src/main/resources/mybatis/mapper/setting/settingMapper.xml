@@ -15,4 +15,11 @@
         LEFT JOIN COMMON_CODE CC ON (SA.SKLL_CODE = CC.CMMN_CODE AND CC.CMMN_CODE_GROUP = 'SKILL')
         WHERE EMPL_NO = #{emplNo}
     </select>
+
+    <update id="updateSkillAuth" parameterType="skillAuthVO">
+        UPDATE SKILL_AUTH
+        SET SKLL_AUTHOR_CODE = #{skllAuthorCode}
+        WHERE EMPL_NO = #{emplNo}
+          AND SKLL_CODE = #{skllCode}
+    </update>
 </mapper>

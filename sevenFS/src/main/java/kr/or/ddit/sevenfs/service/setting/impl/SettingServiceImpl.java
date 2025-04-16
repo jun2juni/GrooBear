@@ -22,4 +22,14 @@ public class SettingServiceImpl implements SettingService {
     public List<SkillAuthVO> getSkillAuth(String emplNo) {
         return settingMapper.getSkillAuth(emplNo);
     }
+
+    @Override
+    public int updateSkillAuth(List<SkillAuthVO> skillAuth) {
+        int result = 0;
+        for (SkillAuthVO skillAuthVO : skillAuth) {
+            result += settingMapper.updateSkillAuth(skillAuthVO);
+        }
+
+        return result;
+    }
 }

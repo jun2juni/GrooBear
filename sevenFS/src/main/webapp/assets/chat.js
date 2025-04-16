@@ -448,8 +448,8 @@ function getNotification() {
   fetch("/getNotification")
     .then(res => res.json())
     .then((result) => {
-      console.log(result.chatList);
-      console.log(result.notification);
+      // console.log(result.chatList);
+      // console.log(result.notification);
 
       // 읽지 않은 채팅이 있는 경우
       if (result.chatList.length > 0) {

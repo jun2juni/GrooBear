@@ -12,4 +12,5 @@ public interface SettingService {
     public List<SkillAuthVO> getSkillAuth(String emplNo);
 
     // 권한 수정
+    public int updateSkillAuth(List<SkillAuthVO> skillAuth);
 }

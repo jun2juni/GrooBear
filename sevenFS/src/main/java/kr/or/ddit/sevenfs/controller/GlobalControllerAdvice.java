@@ -38,29 +38,29 @@ public class GlobalControllerAdvice {
     }
 
     // 모델에 게시판 정보 추가해주기
-    @ModelAttribute("bbsCategory")
-    public List<BbsCategoryVO> getCategories() {
-        List<BbsCategoryVO> list = this.bbsService.bbsCategoryList();
-        log.debug("bbsCategoryVOS: {}", list);
-        Map<Integer, BbsCategoryVO> map = list.stream()
-                .collect(Collectors.toMap(BbsCategoryVO::getBbsCtgryNo, c -> c));
-
-            List<BbsCategoryVO> tree = new ArrayList<>();
-
-            for (BbsCategoryVO category : list) {
-                Integer parentNo = category.getUpperCtgryNo();
-                if (parentNo == null || parentNo == 0) {
-                    tree.add(category); // 상위 카테고리
-                } else {
-                    BbsCategoryVO parent = map.get(parentNo);
-                    if (parent != null) {
-                        parent.getChildren().add(category);
-                    }
-                }
-            }
-
-            log.debug("bbsCategory Tree: {}", tree);
-            return tree; // 트리 구조로 반환
-    }
+//    @ModelAttribute("bbsCategory")
+//    public List<BbsCategoryVO> getCategories() {
+//        List<BbsCategoryVO> list = this.bbsService.bbsCategoryList();
+//        log.debug("bbsCategoryVOS: {}", list);
+//        Map<Integer, BbsCategoryVO> map = list.stream()
+//                .collect(Collectors.toMap(BbsCategoryVO::getBbsCtgryNo, c -> c));
+//
+//            List<BbsCategoryVO> tree = new ArrayList<>();
+//
+//            for (BbsCategoryVO category : list) {
+//                Integer parentNo = category.getUpperCtgryNo();
+//                if (parentNo == null || parentNo == 0) {
+//                    tree.add(category); // 상위 카테고리
+//                } else {
+//                    BbsCategoryVO parent = map.get(parentNo);
+//                    if (parent != null) {
+//                        parent.getChildren().add(category);
+//                    }
+//                }
+//            }
+//
+//            log.debug("bbsCategory Tree: {}", tree);
+//            return tree; // 트리 구조로 반환
+//    }
 }
 

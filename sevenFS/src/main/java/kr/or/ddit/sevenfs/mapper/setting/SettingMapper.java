@@ -10,4 +10,6 @@ public interface SettingMapper {
     void insertSkillAuth(String emplNo);
 
     List<SkillAuthVO> getSkillAuth(String emplNo);
+
+    int updateSkillAuth(SkillAuthVO skillAuth);
 }

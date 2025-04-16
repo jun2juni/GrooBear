@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.vo.organization;
 
 import kr.or.ddit.sevenfs.utils.CommonCode;
+import kr.or.ddit.sevenfs.utils.SkilAuth;
 import kr.or.ddit.sevenfs.vo.auth.EmpAuthVO;
 import kr.or.ddit.sevenfs.vo.chat.ChatRoomVO;
 import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
@@ -55,8 +56,8 @@ public class EmployeeVO implements UserDetails {
 	// 채팅창 목록 (읽지 않은 채팅 방들 만)
 	private List<ChatRoomVO> chatRoomVOList;
 
-	// 권한 정보
-	private String skillAuth;
+	// 권한 정보 허성진
+	private List<SkilAuth> skillAuth;
 	
 	// 성별코드에 맞는 성별 반환
 	public void setGenderCode(String genderCode) {
