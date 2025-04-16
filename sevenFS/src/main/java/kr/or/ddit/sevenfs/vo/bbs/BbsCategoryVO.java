@@ -1,8 +1,10 @@
 package kr.or.ddit.sevenfs.vo.bbs;
 
-import lombok.Data;
-
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class BbsCategoryVO {
@@ -12,4 +14,5 @@ public class BbsCategoryVO {
     private Date ctgryCreatDt;
     private String ctgryUseYn;
     private String deptCode;
+    private List<BbsCategoryVO> children = new ArrayList<>();
 }

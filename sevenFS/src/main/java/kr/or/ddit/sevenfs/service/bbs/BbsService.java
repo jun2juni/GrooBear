@@ -22,7 +22,6 @@ public interface BbsService {
 	//글의 수 구하기->페이징 블록을 좌우함
 	public int getTotal(Map<String, Object> map);
 	
-	
 	// 게시판 카테고리 가죠오기
 	public List<BbsCategoryVO> bbsCategoryList();
 

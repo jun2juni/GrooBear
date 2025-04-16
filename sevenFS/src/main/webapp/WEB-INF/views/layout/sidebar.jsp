@@ -3,8 +3,14 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-
 <c:set var="currentURL" value="${pageContext.request.requestURI}" />
+
+<style>
+/* 자식이 없을때 화살표 제거 */
+.nav-item-has-children:not(:has(ul)) > a::after {
+  display: none !important;
+}
+</style>
 
 <div id="preloader">
   <div class="spinner"></div>
@@ -161,24 +167,78 @@
         </li>
         <%--통계 사이드 바 --%>
         
+        
+
+        
+        
         <%--게시판 사이드 바 --%>
-        <li class="nav-item nav-item-has-children">
-          <a href="#1" class="${fn:contains(currentURL, '/bbs') ? '' : 'collapsed'}"
-             data-bs-toggle="collapse" data-bs-target="#bbs"
-             aria-controls="bbs" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="icon material-symbols-outlined">
-            auto_stories
-            </span>
-            <span class="text">게시판</span>
-          </a>
-          <ul id="bbs" class="dropdown-nav collapse ${fn:contains(currentURL, '/bbs') ? 'show' : ''}" style="">
-            <c:forEach var="category" items="${bbsCategory}">
-              <li>
-                <a class="${param.get('bbsCtgryNo') == category.bbsCtgryNo ? 'active' : ''}" href="/bbs/bbsList?bbsCtgryNo=${category.bbsCtgryNo}">${category.ctgryNm}</a>
-              </li>
-            </c:forEach>
-          </ul>
-        </li>
+        <c:set var="selectedCtgryNo" value="${param.get('bbsCtgryNo')}" />
+
+		<li class="nav-item nav-item-has-children">
+		  <a href="#1" class="${fn:contains(currentURL, '/bbs') ? '' : 'collapsed'}"
+		     data-bs-toggle="collapse" data-bs-target="#bbs"
+		     aria-controls="bbs" aria-expanded="false" aria-label="Toggle navigation">
+		    <span class="icon material-symbols-outlined">auto_stories</span>
+		    <span class="text">게시판</span>
+		  </a>
+		
+		  <ul id="bbs" class="dropdown-nav collapse ${fn:contains(currentURL, '/bbs') ? 'show' : ''}">
+		    <c:set var="selectedCtgryNo" value="${param.get('bbsCtgryNo')}" />
+
+			<c:forEach var="category" items="${bbsCategory}">
+			  <c:set var="hasSelectedChild" value="false" />
+			  <c:forEach var="child" items="${category.children}">
+			    <c:if test="${selectedCtgryNo == child.bbsCtgryNo}">
+			      <c:set var="hasSelectedChild" value="true" />
+			    </c:if>
+			  </c:forEach>
+			
+			  <li class="nav-item 
+			             nav-item-has-children 
+			             ${fn:length(category.children) == 0 ? 'no-toggle' : ''}">
+			
+			    <c:choose>
+			      <c:when test="${fn:length(category.children) > 0}">
+			        <!-- 하위 있음 -->
+			        <a href="#cat${category.bbsCtgryNo}"
+			           class="d-flex justify-content-between align-items-center collapsed
+			           ${(selectedCtgryNo == category.bbsCtgryNo or hasSelectedChild) ? 'active fw-bold text-dark' : 'text-muted'}"
+			           data-bs-toggle="collapse"
+			           data-bs-target="#cat${category.bbsCtgryNo}"
+			           aria-expanded="${hasSelectedChild}">
+			          <span>${category.ctgryNm}</span>
+			        </a>
+			
+			        <ul id="cat${category.bbsCtgryNo}"
+			            class="dropdown-nav collapse ${hasSelectedChild ? 'show' : ''}">
+			          <c:forEach var="child" items="${category.children}">
+			            <li>
+			              <a href="/bbs/bbsList?bbsCtgryNo=${child.bbsCtgryNo}"
+			                 class="${selectedCtgryNo == child.bbsCtgryNo ? 'active fw-bold text-dark' : 'text-muted'}">
+			                ${child.ctgryNm}
+			              </a>
+			            </li>
+			          </c:forEach>
+			        </ul>
+			      </c:when>
+			
+			      <c:otherwise>
+			        <!-- 하위 없음 -->
+			        <a href="/bbs/bbsList?bbsCtgryNo=${category.bbsCtgryNo}"
+			           class="d-flex justify-content-between align-items-center
+			           ${selectedCtgryNo == category.bbsCtgryNo ? 'active fw-bold text-dark' : 'text-muted'}">
+			          <span>${category.ctgryNm}</span>
+			        </a>
+			      </c:otherwise>
+			    </c:choose>
+			  </li>
+			</c:forEach>
+
+
+		  </ul>
+		</li>
+
+
         <%--게시판 사이드 바 --%>
         
         <%--근태현황 사이드 바 --%>

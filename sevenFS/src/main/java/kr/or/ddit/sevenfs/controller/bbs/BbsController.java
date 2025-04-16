@@ -59,6 +59,7 @@ public class BbsController {
     	return "bbs/bbs";
     }
     
+    
     /**
      * 게시판 리스트 페이지를 반환하는 컨트롤러 메서드
      * 

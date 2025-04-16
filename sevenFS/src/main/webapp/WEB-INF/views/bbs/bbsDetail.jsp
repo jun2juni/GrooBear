@@ -22,10 +22,6 @@
     </script>
 </c:if>
 <style>
-    img {
-        width: 100px;
-        height: 100px;
-    }
     
     .board-detail {
         max-width: 100%;
