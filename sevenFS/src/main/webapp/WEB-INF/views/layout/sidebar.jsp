@@ -108,7 +108,7 @@
         <%--문서함 사이드 바 --%>
         <c:if test="${readWebFolder}">
         <li class="nav-item ${fn:contains(currentURL, '/myCalendar') ? 'active' : ''}">
-          <a href="/myCalendar">
+          <a href="http://localhost:3000" target="_blank">
             <span class="icon material-symbols-outlined">create_new_folder</span>
             <span class="text">문서함</span>
           </a>
@@ -181,10 +181,6 @@
         </li>
         </c:if>
         <%--통계 사이드 바 --%>
-        
-        
-
-        
         
         <%--게시판 사이드 바 --%>
         <c:set var="selectedCtgryNo" value="${param.get('bbsCtgryNo')}" />
