@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.mail.MailMapper">
+
+<select id="getList" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO" parameterType="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
+SELECT E.EMPL_NM
+    ,M.email_no
+    ,M.empl_no
+    ,M.lbl_no
+    ,M.email_trnsmis_ty
+    ,M.email_cl_ty
+    ,M.trnsmit_email
+    ,M.recptn_email
+    ,M.email_sj
+    ,M.email_cn
+    ,M.atch_file_no
+    ,M.trnsmit_dt
+    ,M.readng_at
+    ,M.email_group_no
+FROM MAIL M
+INNER JOIN EMPLOYEE E ON M.EMPL_NO = E.EMPL_NO
+WHERE M.EMPL_NO=#{emplNo}
+</select>
+
+<select id="emailDetail" parameterType="kr.or.ddit.sevenfs.vo.mail.MailVO" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO">
+	
+</select>
+
+
+<select id="getMailNos" parameterType="int" resultType="int">
+select SEQ_MAIL.nextval from dual
+CONNECT BY LEVEL &lt;= #{count}
+</select>
+<select id="getEmailGroupNo" resultType="int">
+	select nvl(max(email_group_no),0)+1 from mail
+</select>
+
+<insert id="sendMail" parameterType="list">
+        INSERT ALL
+            <foreach collection="mailVOList" item="mail" >
+                INTO mail(email_no,
+					    empl_no,
+					    <if test="mail.lblNo!=0">
+						    lbl_no,
+					    </if>
+					    email_trnsmis_ty,
+					    email_cl_ty,
+					    trnsmit_email,
+					    recptn_email,
+					    email_sj,
+					    email_cn,
+					    atch_file_no,
+					    email_group_no)
+                VALUES (
+                    #{mail.emailNo},
+                    #{mail.emplNo},
+                    <if test="mail.lblNo!=0">
+	                    #{mail.lblNo},
+					</if>
+                    #{mail.emailTrnsmisTy},
+                    #{mail.emailClTy},
+                    #{mail.trnsmitEmail},
+                    #{mail.recptnEmail},
+                    #{mail.emailSj},
+                    #{mail.emailCn},
+                    #{mail.atchFileNo},
+                    #{mail.emailGroupNo}
+                )
+            </foreach>
+    	SELECT * FROM dual
+    </insert>
+</mapper>

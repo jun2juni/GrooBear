@@ -1,9 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<%--해당 파일에 타이틀 정보를 넣어준다--%>
 <c:set var="title" scope="application" value="메인" />
 
 <!DOCTYPE html>
@@ -157,7 +152,7 @@
                                             </div>
                                             <input type="text" name="recpEmailInp" id="recpEmailInp" style="margin: 3px; border: 1px;" >
                                         </div>
-                                        <button class="emailTreeBtn btn btn-primary" type="button" data-event="recpEmailInp">주소록</button>
+                                        <button class="emailTreeBtn btn btn-secondary type="button" data-event="recpEmailInp">주소록</button>
                                     </div>
                                     <!-- 원본 -->
                                     <!-- <div class="mb-3" >
@@ -180,7 +175,7 @@
                                             </div>
                                             <input type="text" name="refEmailInp" id="refEmailInp" style="margin: 3px; border: 1px;" >
                                         </div>
-                                        <button class="emailTreeBtn btn btn-primary" type="button" data-event="refEmailInp">주소록</button>
+                                        <button class="emailTreeBtn btn btn-secondary" type="button" data-event="refEmailInp">주소록</button>
                                     </div>
                                     <!-- 숨은 참조 -->
                                     <div class="mb-3" id="hiddenRefInp"  >
@@ -194,7 +189,7 @@
                                             </div>
                                             <input type="text" name="hiddenRefEmailInp" id="hiddenRefEmailInp" style="margin: 3px; border: 0px;" >
                                         </div>
-                                        <button class="emailTreeBtn btn btn-primary" type="button" data-event="hiddenRefEmailInp">주소록</button>
+                                        <button class="emailTreeBtn btn btn-secondary" type="button" data-event="hiddenRefEmailInp">주소록</button>
                                     </div>
                                 </div>
                                 <!-- 조직도 -->
@@ -264,6 +259,8 @@
         $('#hiddenRefInp').hide();
         $('#emailTree').hide();
         $('#trnsmitEmail').val("${myEmpInfo.email}")
+
+        // ckeditor5 시작
         $(".ck-blurred").keydown(function(){
             console.log("str : ", window.editor.getData());
             $("#emailCn").val(window.editor.getData());
@@ -271,6 +268,7 @@
         $(".ck-blurred").on("focusout",function(){
             $("#emailCn").val(window.editor.getData());
         })
+        // ckeditor5 끝
 
         $('#sendMail').on('click', function() {
             if($('#recpEmail').get().length==0){
@@ -278,24 +276,39 @@
                 return 
             }
             let mailForm = new FormData();
+
             let trnsmitEmail = $('#trnsmitEmail').val();
             mailForm.append('trnsmitEmail', trnsmitEmail);
+            let emplNo = $('input[name="emplNo"]').val();
+            mailForm.append('emplNo', emplNo);
 
              // 여러 이메일을 처리하는 방법 수정
             $('.recpEmailInp').each(function() {  // 클래스로 가정, 실제 구조에 맞게 수정 필요
-                mailForm.append('recptnEmail', $(this).val());
-                console.log('recptnEmail : ', $(this).val());
+                let recEmail = $(this).val();
+                let recEmplNo = $(this).attr('data-emplNo')|| "";
+                mailForm.append('recptnEmailList', recEmplNo+"_"+recEmail);
+                console.log('recptnEmail : ', recEmplNo+"_"+recEmail);
+                // recpEmails.push(emailEmplNo);
             });
             
             $('.refEmailInp').each(function() {  // 클래스로 가정, 실제 구조에 맞게 수정 필요
-                mailForm.append('refEmail', $(this).val());
-                console.log('refEmail : ', $(this).val());
+                let recEmail = $(this).val();
+                let recEmplNo = $(this).attr('data-emplNo')|| "";
+                mailForm.append('refEmailList', recEmplNo+"_"+recEmail);
+                console.log('refEmail : ', recEmplNo+"_"+recEmail);
+                // recpEmails.push(refEmails);
             });
             
             $('.hiddenRefEmailInp').each(function() {  // 클래스로 가정, 실제 구조에 맞게 수정 필요
-                mailForm.append('hiddenRefEmail', $(this).val());
-                console.log('hiddenRefEmail : ', $(this).val());
+                let recEmail = $(this).val();
+                let recEmplNo = $(this).attr('data-emplNo')|| "";
+                mailForm.append('hiddenRefEmailList', recEmplNo+"_"+recEmail);
+                console.log('hiddenRefEmail : ', recEmplNo+"_"+recEmail);
+                // recpEmails.push(hiddenRefEmails);
             });
+            // mailForm.append('recptnEmailList', JSON.stringify(recpEmails));
+            // mailForm.append('refEmailList', JSON.stringify(refEmails));
+            // mailForm.append('hiddenRefEmailList', JSON.stringify(hiddenRefEmails));
             
             let emailClTy = $('#emailClTy').val();
             mailForm.append('emailClTy', emailClTy);  // # 기호 제거
@@ -328,6 +341,7 @@
                 contentType: false,  // FormData 처리 시 필요
                 success: function(resp) {
                     console.log(resp);
+                    window.location.href=resp;
                 },
                 error: function(err) {
                     console.log(err);
@@ -380,11 +394,13 @@
         $('#recpEmailInp').on('change',function(){
             let email = $('#recpEmailInp').val();
             let emplNm = $('#recpEmailInpSpan').text();
+            let emplNo = $('#recpEmailInp').attr("data-emplNo");
             $('#recpEmailInp').val('');
             $('#recpEmailInpSpan').text('');
-            
+            $('#recpEmailInp').removeAttr("data-emplNo");
             console.log('recpEmailInp 값 변경 감지',email);
             console.log('recpEmailInp 값 변경 감지 emplNm : ',emplNm);
+            console.log('recpEmailInp 값 변경 감지 emplNo : ',emplNo);
             let myMail = $('#trnsmitEmail').val();
             if(email == myMail){
                 alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
@@ -422,6 +438,7 @@
             inp.prop('id','recpEmail');
             inp.prop('name','recpEmail');
             inp.prop('class','recpEmailInp emailInput');
+            inp.attr('data-emplNo',emplNo);
             inp.prop('readonly',true);
             inp.val(email);
             console.log('inp : ',inp);
@@ -443,8 +460,10 @@
         $('#refEmailInp').on('change',function(){
             let email = $('#refEmailInp').val();
             let emplNm = $('#refEmailInpSpan').text();
+            let emplNo = $('#refEmailInp').attr("data-emplNo");
             $('#refEmailInp').val('');
             $('#refEmailInpSpan').text('');
+            $('#refEmailInp').removeAttr("data-emplNo");
             // console.log('refEmailInp 값 변경 감지',email);
             let myMail = $('#trnsmitEmail').val();
             if(email==myMail){
@@ -479,6 +498,7 @@
             inp.prop('name','refEmail');
             inp.prop('class','refEmailInp emailInput');
             inp.prop('readonly',true);
+            inp.attr('data-emplNo',emplNo);
             inp.val(email);
             console.log('inp : ',inp);
 
@@ -498,9 +518,11 @@
         // 숨은 참조 이메일
         $('#hiddenRefEmailInp').on('change',function(){
             let email = $('#hiddenRefEmailInp').val();
-            $('#hiddenRefEmailInp').val('');
             let emplNm = $('#hiddenRefEmailInpSpan').text();
+            let emplNo = $('#hiddenRefEmailInp').attr("data-emplNo");
+            $('#hiddenRefEmailInp').val('');
             $('#hiddenRefEmailInpSpan').text('');
+            $('#refEmailInp').removeAttr("data-emplNo");
             // console.log('hiddenRefEmailInp 값 변경 감지',email);
             let myMail = $('#trnsmitEmail').val();
             if(email==myMail){
@@ -535,6 +557,7 @@
             inp.prop('name','hiddenRefEmail');
             inp.prop('class','hiddenRefEmailInp emailInput');
             inp.prop('readonly',true);
+            inp.attr('data-emplNo',emplNo);
             inp.val(email);
             console.log('inp : ',inp);
 
@@ -671,7 +694,11 @@
                             console.log('spanId : ',spanId)
                             console.log('resp.emplNm : ',resp.emplNm)
                             $(sel).val(resp.email);
+                            // $(sel).data('emplNo',selId);
+                            $(sel).attr('data-emplNo', resp.emplNo);
                             $(spanId).text(resp.emplNm);
+                            console.log("사번 확인1",resp.emplNo);
+                            console.log("사번 확인2",$(sel).attr('data-emplNo'));
                             $(sel).val(resp.email).trigger('change');
                         }else{
                             alert('이미 작성한 이메일입니다.');

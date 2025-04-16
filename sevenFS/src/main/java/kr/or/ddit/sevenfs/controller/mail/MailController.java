@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.mail.MailService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
+import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.mail.MailVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
@@ -42,13 +45,24 @@ public class MailController {
 	@Autowired
 	OrganizationService organizationService;
 	
-	@Autowired
-	AttachFileService attachFileService;
-
+	
 	@GetMapping("")
-	public String mailHome(Model model) {
+	public String mailHome(Model model, @AuthenticationPrincipal CustomUser customUser) {
+		EmployeeVO employeeVO = customUser.getEmpVO();
+		log.info("CustomUser -> employeeVO" + employeeVO);
 		model.addAttribute("title","메일함");
+		List<MailVO> mailVOList = mailService.getList(employeeVO);
+		log.info("mailHome -> getList() -> mailVOList : "+mailVOList);
+		model.addAttribute("mailVOList",mailVOList);
 		return "mail/mailHome";
+	}
+	
+	@GetMapping("/emailDetail")
+	public String emailDetail(@RequestParam(value = "emailNo") int emailNo) {
+		log.info("emailDetail -> emailNo : "+emailNo);
+		MailVO mailVO = new MailVO(emailNo);
+		mailVO = mailService.emailDetail(mailVO);
+		return "mail/mailDetailLayout";
 	}
 	
 	@GetMapping("/mailSend")
@@ -64,25 +78,30 @@ public class MailController {
 		employeeVO = organizationService.emplDetail(employeeVO.getEmplNo());
 		String email = employeeVO.getEmail();
 		String emplNm = employeeVO.getEmplNm();
+		String emplNo = employeeVO.getEmplNo();
 		log.info("selEmail -> emplDetail -> email : "+email);
 		log.info("selEmail -> emplDetail -> emplNm : "+emplNm);
+		log.info("selEmail -> emplDetail -> emplNo : "+emplNo);
 		Map<String,String> map = new HashMap<>();
 		map.put("email", email);
 		map.put("emplNm", emplNm);
+		map.put("emplNo", emplNo);
 		return map;
 	}
+	
 	@PostMapping("/sendMail")
-	@ResponseBody
 	public String sendEmail(@ModelAttribute MailVO mailVO,
 							@RequestParam(value = "uploadFile",required = false) MultipartFile[] uploadFile) {
 		log.info("sendEmail");
 		log.info("sendEmail -> mailVO : " + mailVO);
-		log.info("sendEmail -> uploadFile : " + uploadFile);
-		for(MultipartFile file : uploadFile) {
-			log.info(file.getOriginalFilename());
+		if(uploadFile!=null) {
+			log.info("sendEmail -> uploadFile : " + uploadFile);
+			for(MultipartFile file : uploadFile) {
+				log.info(file.getOriginalFilename());
+			}
 		}
-//		attachFileService.insertFile("test", uploadFile);
-		return "success";
+		int result = mailService.sendMail(mailVO,uploadFile);
+		return "/mail";
 	}
 	
 	@ResponseBody

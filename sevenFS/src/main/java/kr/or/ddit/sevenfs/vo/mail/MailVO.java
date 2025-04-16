@@ -2,6 +2,7 @@ package kr.or.ddit.sevenfs.vo.mail;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,7 +10,6 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-
 public class MailVO {
 	/**
 	 * <pre>
@@ -25,7 +25,7 @@ public class MailVO {
 	 * 
 	 * 
 	 * == 서버에서 처리(넣어줄) 데이터 ==
-	 * emplNo (시퀀스로 자동 생성)
+	 * emailNo (시퀀스로 자동 생성)
 	 * atchFileNo
 	 * (송수신 이메일은 보낸 사람의 이메일, 받는 사람의 이메일 처리시)
 	 * trnsmitEmail (송신 이메일)
@@ -36,25 +36,27 @@ public class MailVO {
 	 * */
 	// primary key
 	private int emailNo;
+	// 1회 송수신에 대한 groupNo
+	private int emailGroupNo;
 	
-	// 접속자와 매핑될 사원번호 ( 해당 메일을 열럼할 수 있는 사원 ) 
+	// 접속자와 매핑될 사원번호 ( 해당 메일을 열람할 수 있는 사원 ) 
 	private String emplNo;
 	
 	// 메일 라벨 번호
 	private int lblNo;
 	
-	// 전송타입 0 보낸메일, 1 받은메일, 2 참조, 3 숨은 참조
-	// 전송타입 0 참조x, 1 참조, 2 숨은 참조
+	// 전송타입 0 참조x, 1 참조, 2 숨은 참조 ==
 	private String emailTrnsmisTy;
 	
-	// 메일함분류시 사용 0 보낸메일, 1 받은메일, 2 임시메일, 3 스팸함, 4 휴지통
+	// 메일함 분류시 사용 0 보낸메일, 1 받은메일, 2 임시메일, 3 스팸함, 4 휴지통 ==
 	private String emailClTy;
 	
 	// 송신 이메일 ( 해당 메일을 작성하여 보내는 사람의 이메일)
 	private String trnsmitEmail;
 	
 	// 수신이메일 ( 해당 메일을 받는 사람의 이메일)(복수개 가능)
-	private List<String> recptnEmail;
+	private List<String> recptnEmailList;
+	private String recptnEmail;
 	
 	// 메일 제목
 	private String emailSj;
@@ -63,7 +65,7 @@ public class MailVO {
 	private String emailCn;
 	
 	// 첨부파일 번호
-	private int atchFileNo;
+	private long atchFileNo;
 	
 	// 전송 날짜
 	private String trnsmitDt;
@@ -73,7 +75,30 @@ public class MailVO {
 	
 	// 서버에서 처리시 refEmail존재여부,hiddenRefEmail 존재여부,둘다 없음 3가지로 분기처리된다.
 	// 참조 이메일 리스트
-	private List<String>  refEmail;
+	private List<String>  refEmailList;
 	// 숨은 참조 이메일 리스트
-	private List<String> hiddenRefEmail;
+	private List<String> hiddenRefEmailList;
+	
+	public MailVO() {}
+	public MailVO(int emailNo) {
+		this.emailNo = emailNo;
+	}
+	public MailVO(MailVO mailVO){
+		this.emailNo = mailVO.getEmailNo();
+		this.atchFileNo = mailVO.getAtchFileNo();
+		this.emailClTy = mailVO.getEmailClTy();
+		this.emailSj = mailVO.getEmailSj();
+		this.emailCn = mailVO.getEmailCn();
+		this.emailTrnsmisTy = mailVO.getEmailTrnsmisTy();
+		this.emplNo = mailVO.getEmplNo();
+		this.hiddenRefEmailList = mailVO.getHiddenRefEmailList();
+		this.lblNo = mailVO.getLblNo();
+		this.readngAt = mailVO.getReadngAt();
+		this.recptnEmail = mailVO.getRecptnEmail();
+		this.recptnEmailList = mailVO.getRecptnEmailList();
+		this.refEmailList = mailVO.getRefEmailList();
+		this.trnsmitDt = mailVO.getTrnsmitDt();
+		this.trnsmitEmail = mailVO.getTrnsmitEmail();
+		
+	}
 }

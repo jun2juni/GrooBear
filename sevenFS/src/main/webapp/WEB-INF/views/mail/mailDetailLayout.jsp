@@ -22,7 +22,7 @@
   <%@ include file="../layout/header.jsp" %>
   <section class="section">
     <div class="container-fluid">
-       <%@ include file="./mailMain.jsp" %>
+      <c:import url="./mailDetail.jsp"></c:import>
     </div>
   </section>
   <%@ include file="../layout/footer.jsp" %>
