@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import kr.or.ddit.sevenfs.service.MainService;
 import kr.or.ddit.sevenfs.service.organization.DclztypeService;
 import kr.or.ddit.sevenfs.service.project.DashboardService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
+import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
 import kr.or.ddit.sevenfs.vo.organization.DclzTypeVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import lombok.extern.slf4j.Slf4j;
@@ -36,12 +38,24 @@ public class HomeController {
 	MainService mainService;
 	
 	@GetMapping("/home")
-	public String main(Model model, DclzTypeVO dclzTypeVO, Principal principal) {
+	public String main(Model model, DclzTypeVO dclzTypeVO, Principal principal
+						, @RequestParam(defaultValue="1") int currentPage
+						, @RequestParam(defaultValue = "3") int size) {
+		
+		// 공지사항 총 게시글 수
+		int total = mainService.noticeAllCnt();
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("currentPage", currentPage);
+		map.put("size", size);
+
+		// 공지사항 페이지네이션
+		ArticlePage<BbsVO> articlePage = new ArticlePage<>(total, currentPage, size);
+		model.addAttribute("articlePage",articlePage);
 		
 		String emplNo = principal.getName();
 		log.info("사원번호 : " + emplNo);
 		dclzTypeVO.setEmplNo(emplNo);
-		
 		
 		// 프로젝트 리스트 가져오기
      	List<ProjectTaskVO> urgentTasks = dashboardService.selectUrgentTasks(); 
@@ -49,7 +63,6 @@ public class HomeController {
         model.addAttribute("urgentTasks", urgentTasks);
         model.addAttribute("commonCodes", commonCodes);
         log.info("프로젝트까지 왔니 ???? ");
-        
         
      	// 전자결재 갯수 가져오기
         // 결재대기
@@ -65,8 +78,11 @@ public class HomeController {
         model.addAttribute("atrzCompletedCnt", atrzCompletedCnt);
         model.addAttribute("atrzRejectedCnt", atrzRejectedCnt);
         
+        // 공지사항 게시글 가져오기
+        List<BbsVO> noticeList = mainService.getBbsNoticeList(map);
+        model.addAttribute("noticeList", noticeList);
+        log.info("공지사항 게시글 : " + noticeList);
         
-		
 		// 사원 출퇴근 시간 가져오기
 		// mainEmplDclzList 호출
 		List<DclzTypeVO> mainEmplDclzList = dclztypeService.mainEmplDclzList(emplNo);
@@ -88,6 +104,36 @@ public class HomeController {
      	log.info("todayWorkEndTime : " + todayWorkEndTime);
         
 		return "home";
+	}
+	
+	// 비동기 공지사항 가져오기
+	@ResponseBody
+	@GetMapping("/noticeList")
+	public Map<String, Object> noticeList(@RequestParam(defaultValue = "1") int currentPage,
+							 @RequestParam(defaultValue = "3") int size) {
+		
+		// 공지사항 총 게시글 수
+		int total = mainService.noticeAllCnt();
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("currentPage", currentPage);
+		map.put("size", size);
+		
+		Map<String, Object> noticeMap = new HashMap<>();
+		// 공지사항 페이지네이션
+		ArticlePage<BbsVO> articlePage = new ArticlePage<>(total, currentPage, size);
+		//model.addAttribute("articlePage",articlePage);
+		noticeMap.put("articlePage", articlePage);
+		
+		 // 공지사항 게시글 가져오기
+        List<BbsVO> noticeList = mainService.getBbsNoticeList(map);
+        //model.addAttribute("noticeList", noticeList);
+        log.info("공지사항 게시글 : " + noticeList);
+        noticeMap.put("noticeList", noticeList);
+        
+        log.info("noticeMap : " + noticeMap); 
+		
+		return noticeMap;
 	}
 	
 	// 출퇴근 버튼 jsp

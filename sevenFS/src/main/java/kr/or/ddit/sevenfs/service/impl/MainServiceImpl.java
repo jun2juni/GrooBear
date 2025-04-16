@@ -1,10 +1,14 @@
 package kr.or.ddit.sevenfs.service.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.or.ddit.sevenfs.mapper.MainMapper;
 import kr.or.ddit.sevenfs.service.MainService;
+import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
 
 @Service
 public class MainServiceImpl implements MainService {
@@ -34,6 +38,18 @@ public class MainServiceImpl implements MainService {
 	@Override
 	public int getAtrzRejectedCnt(String emplNo) {
 		return mainMapper.getAtrzRejectedCnt(emplNo);
+	}
+
+	// 공지사항 게시글 가져오기
+	@Override
+	public List<BbsVO> getBbsNoticeList(Map<String, Object> map) {
+		return mainMapper.getBbsNoticeList(map);
+	}
+
+	// 공지사항 총 게시글 수
+	@Override
+	public int noticeAllCnt() {
+		return mainMapper.noticeAllCnt();
 	}
 	
 }

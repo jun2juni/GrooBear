@@ -170,7 +170,6 @@
 	  	  <!-- todo list-->
 	  </div>
 		
-		  <!-- 오른쪽: 나머지 콘텐츠 카드 (약 3/4 비율) -->
 		  <div class="col-md-9">
 	   	   <!-- 전자결재 -->
 			<div class="row">
@@ -283,54 +282,69 @@
 	           </div>
 	         </div>
            <!-- 프로젝트 -->
-	        
-		    <!-- 게시판 -->
+	       
+	        <input type="hidden" id="currentPage" value="${articlePage.currentPage}">
+		    <!-- 게시판 시작 -->
             <div class="col-lg-12">
               <div class="card-style mb-30">
-                <h6 class="mb-10">전사게시판 최근글</h6>
-                <div class="bd-example"> 
-				<ul class="nav nav-tabs">
-				  <li class="nav-item">
-				    <a class="nav-link active" aria-current="page" href="#">공지사항</a>
+                <h6 class="mb-30">전사게시판 최근글</h6>
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+				  <li class="nav-item" role="presentation">
+				    <button class="nav-link active" id="notice-tab" data-bs-toggle="tab" data-bs-target="#notice" type="button" role="tab" aria-controls="notice" aria-selected="true">공지사항</button>
 				  </li>
-				  <li class="nav-item">
-				    <a class="nav-link" href="#">오늘의 식단</a>
+				  <li class="nav-item" role="presentation">
+				    <button class="nav-link" id="cummunity-tab" data-bs-toggle="tab" data-bs-target="#cummunity" type="button" role="tab" aria-controls="cummunity" aria-selected="false">커뮤니티</button>
 				  </li>
-				  <li class="nav-item">
-				    <a class="nav-link" href="#">Link</a>
+				  <li class="nav-item" role="presentation">
+				    <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu" type="button" role="tab" aria-controls="menu" aria-selected="false">오늘의 식단표</button>
 				  </li>
 				</ul>
+				<div class="tab-content" id="myTabContent">
+				  <div class="tab-pane fade show active mt-20" id="notice" role="tabpanel" aria-labelledby="notice-tab">
+					<div>
+	                    <div id="bbsDiv">
+		                    <c:forEach var="bbsNoticeList" items="${noticeList}">
+	                             <div class="text-dark text-bold mb-3">
+		                           	<c:if test="${bbsNoticeList.upendFixingYn == 'Y'}">
+							        	<span style="color: red; font-weight: bold;">[고정]</span>
+							    	</c:if>
+	                             	 ${bbsNoticeList.bbscttSj}
+	                            	<p class="text-sm">${bbsNoticeList.bbscttUpdtDt} ${bbsNoticeList.emplNm}</p>
+	                             </div>
+		                    </c:forEach>
+	                    </div>
+                    </div>
+					<nav aria-label="Page navigation example">
+					  <ul class="pagination d-flex justify-content-center">
+					    <li class="page-item">
+					      <%-- <c:set var="prevPage" value="${articlePage.currentPage - 1}"></c:set>  --%>
+					      <%-- <a class="page-link" href="/main/home?currentPage=${prevPage}" aria-label="Previous">
+					        <span aria-hidden="true"><</span>
+					      </a> --%>
+					      <button class="page-link"  id="prevBtn">
+					        <span aria-hidden="true"><</span>
+					      </button>
+					    </li>
+					    <li class="page-item">
+					    <%--  ${articlePage} --%>
+					     <%-- <c:set var="nextPage" value="${articlePage.currentPage + 1}"></c:set>
+					      <a class="page-link" href="/main/home?currentPage=${nextPage}" aria-label="Next">
+					        <span aria-hidden="true">></span>
+					      </a> --%>
+					      <button class="page-link"  id="nextPage">
+					        <span aria-hidden="true">></span>
+					      </button>
+					    </li>
+					  </ul>
+					</nav>
+				  </div>
+				  <div class="tab-pane fade" id="cummunity" role="tabpanel" aria-labelledby="cummunity-tab">커뮤니티 내용</div>
+				  <div class="tab-pane fade" id="menu" role="tabpanel" aria-labelledby="menu-tab">오늘의 식단표 내용</div>
 				</div>
-                <hr/>
-                <div class="table-wrapper table-responsive">
-                  <table class="table">
-                    <tbody>
-                         <div class="lead">
-                           <div class="lead-image">
-                             <img src="assets/images/lead/lead-1.png" alt="">
-                           </div>
-                           <div class="lead-text">
-                             <span class="text-dark text-bold text-sm">🖥 - 전자결재 '이것' 하나면 업무가 훨씬 가벼워져요! 바로 다우오피스의 전자결재 기능인데요🤗 원하는대로 양식을 편집하고, 클릭 한 번으로 언제 </span>
-                           </div>
-                            <p>2024-02-02 14:25 한성준 과장</p>
-                         </div>
-                         <div class="lead">
-                           <div class="lead-image">
-                             <img src="assets/images/lead/lead-1.png" alt="">
-                           </div>
-                           <div class="lead-text">
-                             <span class="text-dark text-bold text-sm">📧메일 기능 메일 이렇게 쓰면 센스있단 소리 들어요! 다우오피스의 메일 기능 한 눈에 알아보기👀자동 분류, 자동 검색, 보안 메일, 대용량 신속 발송까지! </span>
-                           </div>
-                            <p>2024-02-01 11:20 한성준 과장</p>
-                         </div>
-                    </tbody>
-                  </table>
-                  <!-- end table -->
-                </div>
               </div>
-              <!-- end card -->
             </div>
-            <!-- 게시판 -->
+            <!-- 게시판 끝 -->
+            
 		    <!-- 통계 -->
 		    <div class="col-lg-12">
               <div class="card-style mb-30">
@@ -377,11 +391,108 @@ function updateClock() {
 
   document.getElementById('clock').textContent = formattedTime;
 }
-
 updateClock();
 setInterval(updateClock, 1000);
 
-})
+// 공지사항 페이지네이션
+// 이전 화살표 눌렀을때 비동기로 이동
+$('#prevBtn').on('click', function(){
+	const currentVal = $('#currentPage').val();
+	const prevPage = currentVal - 1;
+	console.log('현재페이지 : ' , currentVal-1);
+	// 이전 화살표 버튼 눌렀을때 
+	fetch('/main/noticeList?currentPage='+prevPage , {
+		method : 'get',
+		headers : {
+			 "Content-Type": "application/json"
+		}
+	})
+	.then(resp => resp.json())
+	.then(res => {
+		console.log('받은 결과 : ' , res);
+		const noticeList = res.noticeList;
+		const articlePage = res.articlePage;
+		console.log('noticeList : ' , noticeList);
+		
+		const bbsDiv = document.querySelector('#bbsDiv');
+		console.log('tbody : ' , bbsDiv);
+		bbsDiv.innerHTML = "";
+		// 현재페이지
+		let currentPage = articlePage.currentPage;
+		// 첫번째 페이지
+		let startPage = articlePage.startPage;
+		// 현재페이지 바꿔주기
+		$('#currentPage').val(currentPage);
+		noticeList.map((item) => {
+			//const newDiv = document.createElement('div');
+			const isFixed = item.upendFixingYn === 'Y' ? '<span style="color: red; font-weight: bold;">[고정]</span>' : '';
+			const newData = `
+					<div class="text-dark text-bold mb-3">
+	               	 \${isFixed}
+	             	 \${item.bbscttSj}
+	            	<p class="text-sm">\${item.bbscttUpdtDt} \${item.emplNm}</p>
+	             </div>
+				`
+			bbsDiv.innerHTML += newData;		
+		}) // end map
+		if (currentPage <= 1) {
+		    $('#prevBtn').prop('disabled', true);
+		}else{
+			$('#prevBtn').prop('disabled', false);
+		}
+	}) // end res
+}) // 이전 화살표 눌렀을때 비동기로 이동 끝
+// 다음 화살표 눌렀을때 비동기로 이동
+$('#nextPage').on('click', function(){
+	const currentVal = Number($('#currentPage').val());
+	console.log('현재페이지 : ' , currentVal);
+	const nextPage = currentVal + 1 ; 
+	console.log('다음페이지 : ' , nextPage);
+	
+	fetch('/main/noticeList?currentPage='+nextPage , {
+		method : 'get',
+		headers : {
+			 "Content-Type": "application/json"
+		}
+	})
+	.then(resp => resp.json())
+	.then(res => {
+		console.log('받은 결과 : ' , res);
+		const noticeList = res.noticeList;
+		const articlePage = res.articlePage;
+		console.log('noticeList : ' , noticeList);
+		
+		const bbsDiv = document.querySelector('#bbsDiv');
+		console.log('tbody : ' , bbsDiv);
+		bbsDiv.innerHTML = "";
+		// 현재페이지
+		let currentPage = articlePage.currentPage;
+		// 마지막 페이지
+		let totalPages = articlePage.totalPages;
+		// 현재페이지 바꿔주기
+		$('#currentPage').val(currentPage);
+		
+		noticeList.map((item) => {
+			//const newDiv = document.createElement('div');
+			const isFixed = item.upendFixingYn === 'Y' ? '<span style="color: red; font-weight: bold;">[고정]</span>' : '';
+			const newData = `
+					<div class="text-dark text-bold mb-3">
+	               	 \${isFixed}
+	             	 \${item.bbscttSj}
+	            	<p class="text-sm">\${item.bbscttUpdtDt} \${item.emplNm}</p>
+	             </div>
+				`
+			bbsDiv.innerHTML += newData;		
+		}) // end map
+		if (currentPage >= totalPages) {
+		    $('#nextPage').prop('disabled', true);
+		}else{
+			$('#nextPage').prop('disabled', false);
+		}
+	}) // end res
+}) // 다음 화살표 눌렀을때 비동기로 이동 끝
+// 공지사항 페이지네이션 끝
+}) // end function
 </script>
 
 </body>

@@ -53,6 +53,110 @@
 	   AND atrz_sttus_code = '10'
 	   AND atrz_delete_yn = 'N'
 </select>
-	
+
+<!-- 공지사항 목록 가져오기 (size 3) -->
+<select id="getBbsNoticeList" parameterType="hashMap" resultMap="BbsResultMap">
+	SELECT
+    B.BBS_SN,
+    B.BBS_CTGRY_NO,
+    CT.Ctgry_NM AS BBS_CTGRY_NM, 
+    B.EMPL_NO,
+    E.EMPL_NM,                   
+    B.BBSCTT_SJ,
+    B.BBSCTT_CN,
+    B.BBSCTT_CREAT_DT,
+    B.BBSCTT_UPDT_DT,
+    B.RDCNT,
+    B.BBSCTT_USE_YN,
+    B.UPEND_FIXING_YN,
+    B.ATCH_FILE_NO,
+
+    -- 첨부파일 수
+    (SELECT COUNT(1) 
+     FROM ATTATCH_FILE F 
+     WHERE B.ATCH_FILE_NO = F.ATCH_FILE_NO) AS ATCH_CNT,
+
+    -- 댓글 수
+    (SELECT COUNT(*) 
+     FROM BBS_ANSWER A 
+     WHERE A.BBS_SN = B.BBS_SN 
+       AND A.BBS_CTGRY_NO = B.BBS_CTGRY_NO) AS COMMENT_CNT,
+       
+    -- 좋아요 수 
+    (SELECT COUNT(*) 
+     FROM BBS_LIKE L 
+     WHERE L.BBS_SN = B.BBS_SN 
+       AND L.BBS_CTGRY_NO = B.BBS_CTGRY_NO) AS LIKE_CNT
+
+	FROM BBS B
+	JOIN EMPLOYEE E ON B.EMPL_NO = E.EMPL_NO
+	JOIN BBS_CTGRY CT ON B.BBS_CTGRY_NO = CT.BBS_CTGRY_NO
+	WHERE B.BBSCTT_USE_YN = 'Y'
+	AND B.BBS_CTGRY_NO = '1'
+	 ORDER BY
+	    DECODE(B.UPEND_FIXING_YN, 'Y', 0, 1),
+	    B.BBSCTT_CREAT_DT DESC
+	    OFFSET (#{currentPage} - 1) * 3 ROWS
+	    FETCH NEXT 3 ROWS ONLY
+</select>
+
+	<resultMap type="kr.or.ddit.sevenfs.vo.bbs.BbsVO"
+		id="BbsResultMap">
+		<!-- 게시글 정보 매핑 -->
+		<id property="bbsSn" column="BBS_SN" />
+		<result property="bbsCtgryNo" column="BBS_CTGRY_NO" />
+		<result property="bbsCtgryNm" column="BBS_CTGRY_NM"/>
+		<result property="emplNo" column="EMPL_NO" />
+		<result property="emplNm" column="EMPL_NM"/>
+		<result property="bbscttSj" column="BBSCTT_SJ" />
+		<result property="bbscttCn" column="BBSCTT_CN" />
+		<result property="bbscttCreatDt" column="BBSCTT_CREAT_DT" />
+		<result property="bbscttUpdtDt" column="BBSCTT_UPDT_DT" />
+		<result property="rdcnt" column="RDCNT" />
+		<result property="bbscttUseYn" column="BBSCTT_USE_YN" />
+		<result property="upendFixingYn" column="UPEND_FIXING_YN" />
+		<result property="atchFileNo" column="ATCH_FILE_NO" />
+		<result property="commentCnt" column="COMMENT_CNT"/>
+		<result property="likeCnt" column="LIKE_CNT"/>
+
+		<!-- 첨부 파일 정보 매핑 -->
+		<collection property="files"
+			ofType="kr.or.ddit.sevenfs.vo.AttachFileVO" column="ATCH_FILE_NO"
+			select="selectAttachFiles" />
+	</resultMap>
+
+	<!-- 첨부 파일 조회를 위한 쿼리 -->
+	<select id="selectAttachFiles"
+		resultType="kr.or.ddit.sevenfs.vo.AttachFileVO">
+		SELECT
+		ATCH_FILE_NO,
+		FILE_SN,
+		FILE_STRE_PATH,
+		FILE_NM,
+		FILE_STRE_NM,
+		FILE_EXTSN,
+		FILE_MIME,
+		FILE_SIZE,
+		FILE_VIEW_SIZE,
+		DWLD_CO,
+		EMPL_NO,
+		FILE_USE_YN,
+		FILE_CREAT_DT
+		FROM ATTATCH_FILE
+		WHERE ATCH_FILE_NO = #{atchFileNo}
+		AND FILE_USE_YN = 'Y'
+	</select>	
+
+<!-- 공지사항 총 게시글 수 -->
+<select id="noticeAllCnt" resultType="int">
+	SELECT
+    COUNT(*)
+	FROM BBS B
+	JOIN EMPLOYEE E ON B.EMPL_NO = E.EMPL_NO
+	JOIN BBS_CTGRY CT ON B.BBS_CTGRY_NO = CT.BBS_CTGRY_NO
+	WHERE B.BBSCTT_USE_YN = 'Y'
+	AND B.BBS_CTGRY_NO = '1'
+</select>
+
 
 </mapper>
