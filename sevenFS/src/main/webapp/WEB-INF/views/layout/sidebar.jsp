@@ -15,6 +15,7 @@
 <c:set var="readChat" value="${myEmpInfo.skillAuth.get(6).skllAuthorCode.substring(0, 1) == '1'}" />
 <c:set var="readNotification" value="${myEmpInfo.skillAuth.get(7).skllAuthorCode.substring(0, 1) == '1'}" />
 <c:set var="readStatics" value="${myEmpInfo.skillAuth.get(8).skllAuthorCode.substring(0, 1) == '1'}" />
+<%-- 읽기 권한 확인 --%>
 
 <style>
 /* 자식이 없을때 화살표 제거 */

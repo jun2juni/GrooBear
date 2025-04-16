@@ -46,11 +46,11 @@ public class HomeController {
 		
 		// 공지사항 총 게시글 수
 		int total = mainService.noticeAllCnt();
-		
-		
+
 		Map<String, Object> map = new HashMap<>();
 		map.put("currentPage", currentPage);
 		map.put("size", size);
+		map.put("bbsCtgryNo", "1");
 
 		// 공지사항 페이지네이션
 		ArticlePage<BbsVO> articlePage = new ArticlePage<>(total, currentPage, size);
@@ -114,15 +114,19 @@ public class HomeController {
 	@ResponseBody
 	@GetMapping("/noticeList")
 	public Map<String, Object> noticeList(@RequestParam(defaultValue = "1") int currentPage,
-							 @RequestParam(defaultValue = "3") int size) {
-		
+							 @RequestParam(defaultValue = "3") int size,
+							 @RequestParam(defaultValue = "1") int bbsCtgryNo
+	) {
+
+
 		// 공지사항 총 게시글 수
 		int total = mainService.noticeAllCnt();
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("currentPage", currentPage);
 		map.put("size", size);
-		
+		map.put("bbsCtgryNo", bbsCtgryNo);
+
 		Map<String, Object> noticeMap = new HashMap<>();
 		// 공지사항 페이지네이션
 		ArticlePage<BbsVO> articlePage = new ArticlePage<>(total, currentPage, size);

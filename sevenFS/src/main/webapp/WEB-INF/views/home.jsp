@@ -285,62 +285,67 @@
 	       
 	        <input type="hidden" class="currentPage" value="${articlePage.currentPage}">
 		    <!-- 게시판 시작 -->
-            <div class="col-lg-12">
+            <div id="mainBbs" class="col-lg-12">
               <div class="card-style mb-30">
                 <h6 class="mb-30">전사게시판 최근글</h6>
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
 				  <!-- 공지사항 -->
-				  <form action="/main/home" method="get" id="noticeForm">
-					  <li class="nav-item" role="presentation">
-					    <input type="hidden" value="1" name="bbsCtgryNo">
-					    <button type="submit" class="nav-link active" id="notice-tab" data-bs-toggle="tab"
-					    data-bs-target="#notice" type="button" role="tab" aria-controls="notice" aria-selected="true">공지사항</button>
-					  </li>
-				  </form>
+				  <%--bbsCtgryNo --%>
+				  <li class="nav-item" role="presentation" data-bbs-ctgry-no="1">
+					<button type="submit" class="nav-link active" id="notice-tab" data-bs-toggle="tab"
+					data-bs-target="#notice" type="button" role="tab" aria-controls="notice" aria-selected="true">공지사항</button>
+				  </li>
+				  
 				  <!-- 커뮤니티 -->
-				  <li class="nav-item" role="presentation">
+				  <li class="nav-item" role="presentation" data-bbs-ctgry-no="2">
 				    <button class="nav-link" id="cummunity-tab" data-bs-toggle="tab" data-bs-target="#cummunity" type="button" role="tab" aria-controls="cummunity" aria-selected="false">커뮤니티</button>
 				  </li>
 				  <!-- 식단표 -->
-				  <li class="nav-item" role="presentation">
+				  <li class="nav-item" role="presentation" data-bbs-ctgry-no="3">
 				    <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu" type="button" role="tab" aria-controls="menu" aria-selected="false">오늘의 식단표</button>
 				  </li>
 				</ul>
 				<div class="tab-content" id="myTabContent">
 				  <div class="tab-pane fade show active mt-20" id="notice" role="tabpanel" aria-labelledby="notice-tab">
-					<div>
-	                    <div id="bbsDiv">
-		                    <c:forEach var="bbsNoticeList" items="${noticeList}">
-	                             <div class="text-dark text-bold mb-3">
-		                           	<c:if test="${bbsNoticeList.upendFixingYn == 'Y'}">
-							        	<span style="color: red; font-weight: bold;">[고정]</span>
-							    	</c:if>
-	                             	 <a href="/bbs/bbsDetail?bbsSn=${bbsNoticeList.bbsSn}" class="text-dark">
-	                             	 	${bbsNoticeList.bbscttSj}</a>
-	                            	<p class="text-sm">${bbsNoticeList.bbscttUpdtDt} ${bbsNoticeList.emplNm}</p>
-	                             </div>
-		                    </c:forEach>
-	                    </div>
-                    </div>
-                    <!-- 공지사항 페이지네이션 -->
-					<nav aria-label="Page navigation example">
-					  <ul class="pagination d-flex justify-content-center">
-					    <li class="page-item">
-					      <button class="page-link prevBtn">
-					        <span aria-hidden="true"><</span>
-					      </button>
-					    </li>
-					    <li class="page-item">
-					      <button class="page-link nextPage">
-					        <span aria-hidden="true">></span>
-					      </button>
-					    </li>
-					  </ul>
-					</nav>
-					<!-- 공지사항 페이지네이션 -->
+					  <div class="bbsDiv">
+						  <c:forEach var="bbsNoticeList" items="${noticeList}">
+							   <div class="text-dark text-bold mb-3">
+								  <c:if test="${bbsNoticeList.upendFixingYn == 'Y'}">
+									  <span style="color: red; font-weight: bold;">[고정]</span>
+								  </c:if>
+								   <a href="/bbs/bbsDetail?bbsSn=${bbsNoticeList.bbsSn}" class="text-dark">
+									  ${bbsNoticeList.bbscttSj}</a>
+								  <p class="text-sm">${bbsNoticeList.bbscttUpdtDt} ${bbsNoticeList.emplNm}</p>
+							   </div>
+						  </c:forEach>
+					  </div>
 				  </div>
-				  <div class="tab-pane fade" id="cummunity" role="tabpanel" aria-labelledby="cummunity-tab">커뮤니티 내용</div>
-				  <div class="tab-pane fade" id="menu" role="tabpanel" aria-labelledby="menu-tab">오늘의 식단표 내용</div>
+				  <div class="tab-pane fade mt-20" id="cummunity" role="tabpanel" aria-labelledby="cummunity-tab">
+					<div class="bbsDiv">
+					
+					</div>
+				  </div>
+				  <div class="tab-pane fade mt-20" id="menu" role="tabpanel" aria-labelledby="menu-tab">
+					<div class="bbsDiv">
+					</div>
+				  </div>
+				  
+				  <!-- 공지사항 페이지네이션 -->
+				  <nav aria-label="Page navigation example">
+					<ul class="pagination d-flex justify-content-center">
+					  <li class="page-item">
+						<button class="page-link prevBtn">
+						  <span aria-hidden="true"><</span>
+						</button>
+					  </li>
+					  <li class="page-item">
+						<button class="page-link nextPage">
+						  <span aria-hidden="true">></span>
+						</button>
+					  </li>
+					</ul>
+				  </nav>
+				  <!-- 공지사항 페이지네이션 -->
 				</div>
               </div>
             </div>
@@ -403,15 +408,78 @@ function updateClock() {
 }
 updateClock();
 setInterval(updateClock, 1000);
+// ----------------------------------------------- 여기 부터는 비동기 게시판 불러오가
+let categoryNo  = 1;
+let bbsDiv = document.querySelector('#notice .bbsDiv');
+
+document.querySelectorAll("#mainBbs .nav-item").forEach(dom => {
+  dom.addEventListener("click", (e) => {
+    	categoryNo = dom.dataset.bbsCtgryNo;
+      if (categoryNo == 1) {
+        bbsDiv = document.querySelector('#notice .bbsDiv');
+	  }
+      if (categoryNo == 2) {
+        bbsDiv = document.querySelector('#cummunity .bbsDiv');
+        
+	  }
+      if (categoryNo == 3) {
+        bbsDiv = document.querySelector('#menu .bbsDiv');
+        
+	  }
+
+    fetch('/main/noticeList?currentPage=' + 1 + "&bbsCtgryNo=" + categoryNo  , {
+      method : 'get',
+      headers : {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(resp => resp.json())
+      .then(res => {
+        console.log('받은 결과 : ' , res);
+        const noticeList = res.noticeList;
+        const articlePage = res.articlePage;
+        console.log('noticeList : ' , noticeList);
+
+        console.log('tbody : ' , bbsDiv);
+        bbsDiv.innerHTML = "";
+        // 현재페이지
+        let currentPage = articlePage.currentPage;
+        // 첫번째 페이지
+        let startPage = articlePage.startPage;
+        // 현재페이지 바꿔주기
+        $('.currentPage').val(currentPage);
+        noticeList.map((item) => {
+          //const newDiv = document.createElement('div');
+          const isFixed = item.upendFixingYn === 'Y' ? '<span style="color: red; font-weight: bold;">[고정]</span>' : '';
+          const newData = `
+					<div class="text-dark text-bold mb-3">
+	               	 \${isFixed}
+	             	 	<a href="/bbs/bbsDetail?bbsSn=\${item.bbsSn}" class="text-dark">\${item.bbscttSj}</a>
+	            	<p class="text-sm">\${item.bbscttUpdtDt} \${item.emplNm}</p>
+	             </div>
+				`
+          bbsDiv.innerHTML += newData;
+        }) // end map
+
+        if (currentPage <= 1) {
+          $('.prevBtn').prop('disabled', true);
+          $('.nextPage').prop('disabled', false);
+        } else {
+          $('.prevBtn').prop('disabled', false);
+        }
+      }) // end res
+  });
+})
 
 // 공지사항 페이지네이션
 // 이전 화살표 눌렀을때 비동기로 이동
 $('.prevBtn').on('click', function(){
 	const currentVal = $('.currentPage').val();
+  	// const  = $('.currentPage').val();
 	const prevPage = currentVal - 1;
 	console.log('현재페이지 : ' , currentVal-1);
 	// 이전 화살표 버튼 눌렀을때 
-	fetch('/main/noticeList?currentPage='+prevPage , {
+	fetch('/main/noticeList?currentPage=' + prevPage + "&bbsCtgryNo=" + categoryNo  , {
 		method : 'get',
 		headers : {
 			 "Content-Type": "application/json"
@@ -424,7 +492,6 @@ $('.prevBtn').on('click', function(){
 		const articlePage = res.articlePage;
 		console.log('noticeList : ' , noticeList);
 		
-		const bbsDiv = document.querySelector('#bbsDiv');
 		console.log('tbody : ' , bbsDiv);
 		bbsDiv.innerHTML = "";
 		// 현재페이지
@@ -445,21 +512,26 @@ $('.prevBtn').on('click', function(){
 				`
 			bbsDiv.innerHTML += newData;		
 		}) // end map
+	 
 		if (currentPage <= 1) {
 		    $('.prevBtn').prop('disabled', true);
-		}else{
+          	$('.nextPage').prop('disabled', false);
+		} else {
 			$('.prevBtn').prop('disabled', false);
 		}
 	}) // end res
 }) // 이전 화살표 눌렀을때 비동기로 이동 끝
+
 // 다음 화살표 눌렀을때 비동기로 이동
 $('.nextPage').on('click', function(){
 	const currentVal = Number($('.currentPage').val());
 	console.log('현재페이지 : ' , currentVal);
 	const nextPage = currentVal + 1 ; 
 	console.log('다음페이지 : ' , nextPage);
-	
-	fetch('/main/noticeList?currentPage='+nextPage , {
+
+  
+
+    fetch('/main/noticeList?currentPage=' + nextPage + "&bbsCtgryNo=" + categoryNo , {
 		method : 'get',
 		headers : {
 			 "Content-Type": "application/json"
@@ -472,7 +544,6 @@ $('.nextPage').on('click', function(){
 		const articlePage = res.articlePage;
 		console.log('noticeList : ' , noticeList);
 		
-		const bbsDiv = document.querySelector('#bbsDiv');
 		console.log('tbody : ' , bbsDiv);
 		bbsDiv.innerHTML = "";
 		// 현재페이지
@@ -496,13 +567,19 @@ $('.nextPage').on('click', function(){
 		}) // end map
 		if (currentPage >= totalPages) {
 		    $('.nextPage').prop('disabled', true);
+          $('.prevBtn').prop('disabled', false);
 		}else{
 			$('.nextPage').prop('disabled', false);
 		}
 	}) // end res
 }) // 다음 화살표 눌렀을때 비동기로 이동 끝
 // 공지사항 페이지네이션 끝
+// ----------------------------------------------- 여기 부터는 비동기 게시판 불러오가
+
+
+
 }) // end function
+
 </script>
 
 </body>

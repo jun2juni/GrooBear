@@ -14,6 +14,7 @@
         FROM SKILL_AUTH SA
         LEFT JOIN COMMON_CODE CC ON (SA.SKLL_CODE = CC.CMMN_CODE AND CC.CMMN_CODE_GROUP = 'SKILL')
         WHERE EMPL_NO = #{emplNo}
+        ORDER BY SKLL_CODE
     </select>
 
     <update id="updateSkillAuth" parameterType="skillAuthVO">
