@@ -330,15 +330,18 @@
             $("#schEnd").removeAttr('min')
             $("#schStartTime").removeAttr('max')
             $("#schEndTime").removeAttr('min')
-            
+            $("#schTitle").val('');
+            $("#schContent").val('');
+            $('#addUpt').val('add');
             $('.modal-title').text("일정 등록");
 			$("#modalSubmit").text("등록");
-            console.log('$("#deleteBtn")',$("#deleteBtn"))
+//             console.log('$("#deleteBtn")',$("#deleteBtn"))
             
             insModal.show();
 			$("#deleteBtn").css('display','none');
         })
-    // 사이드바 라벨 관련 요소
+        
+    	// 사이드바 라벨 관련 요소
         const addLabelBtn = document.getElementById('addLabelBtn');
         const labelPopup = document.getElementById('labelPopup');
         const saveLabelBtn = document.getElementById('saveLabelBtn');
