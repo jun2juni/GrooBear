@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import kr.or.ddit.sevenfs.service.MainService;
 import kr.or.ddit.sevenfs.service.organization.DclztypeService;
+import kr.or.ddit.sevenfs.service.project.DashboardService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.organization.DclzTypeVO;
+import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -27,37 +30,63 @@ public class HomeController {
 	
 	@Autowired
 	DclztypeService dclztypeService;
+	@Autowired
+	DashboardService dashboardService;
+	@Autowired
+	MainService mainService;
 	
 	@GetMapping("/home")
 	public String main(Model model, DclzTypeVO dclzTypeVO, Principal principal) {
 		
 		String emplNo = principal.getName();
+		log.info("사원번호 : " + emplNo);
 		dclzTypeVO.setEmplNo(emplNo);
 		
-		// 사원 출근 시간 가져오기
+		
+		// 프로젝트 리스트 가져오기
+     	List<ProjectTaskVO> urgentTasks = dashboardService.selectUrgentTasks(); 
+        Map<String, Map<String, String>> commonCodes = dashboardService.getCommonCodes(); 
+        model.addAttribute("urgentTasks", urgentTasks);
+        model.addAttribute("commonCodes", commonCodes);
+        log.info("프로젝트까지 왔니 ???? ");
+        
+        
+     	// 전자결재 갯수 가져오기
+        // 결재대기
+        int atrzApprovalCnt = mainService.getAtrzApprovalCnt(emplNo);
+        // 결재진행
+        int atrzSubmitCnt = mainService.getAtrzSubminCnt(emplNo);
+        // 결재완료
+        int atrzCompletedCnt = mainService.getAtrzCompletedCnt(emplNo);
+        // 결재반려
+        int atrzRejectedCnt = mainService.getAtrzRejectedCnt(emplNo);
+        model.addAttribute("atrzApprovalCnt", atrzApprovalCnt);
+        model.addAttribute("atrzSubmitCnt", atrzSubmitCnt);
+        model.addAttribute("atrzCompletedCnt", atrzCompletedCnt);
+        model.addAttribute("atrzRejectedCnt", atrzRejectedCnt);
+        
+        
+		
+		// 사원 출퇴근 시간 가져오기
 		// mainEmplDclzList 호출
 		List<DclzTypeVO> mainEmplDclzList = dclztypeService.mainEmplDclzList(emplNo);
-		
 		// 사원 근태코드 가져오기
 		String dclzCode = mainEmplDclzList.get(0).getDclzCode();
 		dclzTypeVO.setDclzCode(dclzCode);
 		dclzTypeVO.setEmplNo(emplNo);
-		
 		// 오늘 등록된 출,퇴근 시간 가져오기
 		DclzTypeVO workTime = dclztypeService.getTodayWorkTime(dclzTypeVO);
 		log.info("workTime : " + workTime);
 		if(workTime == null) {
 			return "home";
 		}
-		
 		String todayWorkTime = workTime.getTodayWorkStartTime();
 		String todayWorkEndTime = workTime.getTodayWorkEndTime();
      	model.addAttribute("todayWorkTime", todayWorkTime);
      	model.addAttribute("todayWorkEndTime", todayWorkEndTime);
      	log.info("todayWorkTime : " + todayWorkTime);
      	log.info("todayWorkEndTime : " + todayWorkEndTime);
-		
-		
+        
 		return "home";
 	}
 	

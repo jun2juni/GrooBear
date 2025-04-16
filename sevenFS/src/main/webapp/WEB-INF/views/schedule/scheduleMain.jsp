@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,6 +7,7 @@
 <title>Insert title here</title>
 <script type="text/javascript">
 	document.addEventListener('DOMContentLoaded', function() {
+		
 		
 		let emplNo = "${myEmpInfo.emplNo}";
 		let deptCode = "${myEmpInfo.deptCode}";
@@ -25,6 +27,15 @@
 
 		console.log("insModal", insModal);
 
+		// ** 박호산나 추가함 
+		// 메인에서 일정등록 눌렀을시에만 실행 (myCalendar?openModal=true 일 때)
+		let openModal = "${param.openModal}";
+		console.log("openModal : ", openModal);
+		if(openModal){
+			insModal.show();
+		}
+		// 박호산나 추가함 **
+		
 		//     var calendarEl = document.getElementById('myCalendar');
 		var calendarEl = $('#myCalendar')[0];
 		// 	console.log("calendarEl",calendarEl);
@@ -786,45 +797,48 @@
 <body>
 	<jsp:include page="scheduleSidebar.jsp"></jsp:include>
 	<jsp:include page="scheduleFormModal.jsp"></jsp:include>
-	<div id="contentContainer" style="height:100%;" >
-		<div id='myCalendar' style="height:100%;" ></div>
+	<div id="contentContainer" style="height: 100%;">
+		<div id='myCalendar' style="height: 100%;"></div>
 	</div>
-	
+
 </body>
 <style>
-	.fc-date:hover{
-		background-color: #BCE8F14D;
-	}
-	.promo-box{
-		display: none;
-	}
-	#calendarContainer{
-		height: 80vh;
-		position: relative;
-		top: -20px;
-	}
-	#calendarContent{
-		background-color: white;
-	}
+.fc-date:hover {
+	background-color: #BCE8F14D;
+}
 
-	:is(.fc-day-mon, .fc-day-tue, .fc-day-wed, .fc-day-thu, .fc-day-fri) .fc-daygrid-day-number,
+.promo-box {
+	display: none;
+}
+
+#calendarContainer {
+	height: 80vh;
+	position: relative;
+	top: -20px;
+}
+
+#calendarContent {
+	background-color: white;
+}
+
+:is(.fc-day-mon, .fc-day-tue, .fc-day-wed, .fc-day-thu, .fc-day-fri) .fc-daygrid-day-number,
 	:is(.fc-day-mon, .fc-day-tue, .fc-day-wed, .fc-day-thu, .fc-day-fri) .fc-col-header-cell-cushion,
 	:is(.fc-day-mon, .fc-day-tue, .fc-day-wed, .fc-day-thu, .fc-day-fri) .fc-list-day-text,
-	:is(.fc-day-mon, .fc-day-tue, .fc-day-wed, .fc-day-thu, .fc-day-fri) .fc-list-day-side-text {
-		color: black;
-	}
-	.fc-day-sun .fc-col-header-cell-cushion,
-	.fc-day-sun .fc-list-day-text,
-	.fc-day-sun .fc-daygrid-day-number{
-		color : red;
-	}
+	:is(.fc-day-mon, .fc-day-tue, .fc-day-wed, .fc-day-thu, .fc-day-fri) .fc-list-day-side-text
+	{
+	color: black;
+}
 
-	.fc-day-sat .fc-col-header-cell-cushion,
-	.fc-day-sat .fc-list-day-text,
+.fc-day-sun .fc-col-header-cell-cushion, .fc-day-sun .fc-list-day-text,
+	.fc-day-sun .fc-daygrid-day-number {
+	color: red;
+}
+
+.fc-day-sat .fc-col-header-cell-cushion, .fc-day-sat .fc-list-day-text,
 	.fc-day-sat .fc-daygrid-day-number {
-		color : blue;
-	}
-	/* .fc-timegrid-slot .fc-daygrid-day-frame:hover {
+	color: blue;
+}
+/* .fc-timegrid-slot .fc-daygrid-day-frame:hover {
 	} */
 </style>
 </html>

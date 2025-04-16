@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.MainMapper">
+
+<!-- 결재 대기중인 갯수 가져오기 -->
+<select id="getAtrzApprovalCnt" parameterType="String" resultType="int">
+	WITH my_turn_lines AS (					
+		    SELECT L.*
+		    FROM atrz_line L
+		    WHERE L.sanctner_empno = #{emplNo}
+		      AND L.sanctn_progrs_sttus_code = '00'
+		      AND L.atrz_ty = 'N'
+		      AND NOT EXISTS (
+		          SELECT 1
+		          FROM atrz_line L2
+		          WHERE L2.atrz_doc_no = L.atrz_doc_no
+		            AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
+		            AND L2.atrz_ty = 'N'
+		            AND L2.sanctn_progrs_sttus_code NOT IN ('10', '60')
+		      )
+		)
+		SELECT  COUNT(*)
+		FROM atrz A
+		JOIN my_turn_lines L
+		  ON A.atrz_doc_no = L.atrz_doc_no
+		WHERE A.atrz_compt_dt IS NULL
+		ORDER BY A.atrz_drft_dt DESC
+</select>	
+
+<!-- 결재 진행중 갯수 -->
+<select id="getAtrzSubminCnt" parameterType="String" resultType="int">
+	SELECT COUNT(*)
+	  FROM atrz
+	 WHERE drafter_empno = #{emplNo}
+	   AND atrz_sttus_code = '00'
+	   AND atrz_delete_yn = 'N'
+</select>
+
+<!-- 결재 완료 갯수  -->
+<select id="getAtrzCompletedCnt" parameterType="String" resultType="int">
+	SELECT COUNT(*)
+	  FROM atrz
+	 WHERE drafter_empno = #{emplNo}
+	   AND atrz_sttus_code = '20'
+	   AND atrz_delete_yn = 'N'
+</select>
+
+<!-- 결재 반려 갯수 -->
+<select id="getAtrzRejectedCnt" parameterType="String" resultType="int">
+	SELECT COUNT(*)
+	  FROM atrz
+	 WHERE drafter_empno = #{emplNo}
+	   AND atrz_sttus_code = '10'
+	   AND atrz_delete_yn = 'N'
+</select>
+	
+
+</mapper>

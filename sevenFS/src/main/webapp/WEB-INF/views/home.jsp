@@ -17,10 +17,36 @@
 	String serverTime = sdf.format(now);
 	String serverDate = dateFormat.format(now);
 %>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  
+ <style>
+.badge {
+   display: inline-block; 
+   padding: 0.35em 0.65em;
+   font-size: 0.85em;
+   font-weight: 600;
+   line-height: 1;
+   color: black;
+   text-align: center;
+   white-space: nowrap;
+   vertical-align: baseline;
+   border-radius: 0.375rem;
+ } 
+ 
+.grade-A { background-color: #99ccff; color: #004085; } /* 더 진한 하늘색 */
+.grade-B { background-color: #a3d9a5; color: #155724; } /* 더 진한 연두색 */
+.grade-C { background-color: #ffe08a; color: #856404; } /* 더 진한 노란색 */
+.grade-D { background-color: #ffcc80; color: #8a6d3b; } /* 더 진한 오렌지 */
+.grade-E { background-color: #d6d6d6; color: #333; }     /* 더 진한 회색 */
+
+.priort-00 { background-color: #c8cbcf; color: #0c5460; }  /* 진한 회색 텍스트 */
+.priort-01 { background-color: #9fd4db; color: #0c5460; }  /* 진한 청록 텍스트 */
+.priort-02 { background-color: #ffdf7e; color: #0c5460; }  /* 더 어두운 갈색 텍스트 */
+.priort-03 { background-color: #f1aeb5; color: #0c5460; }  /* 더 짙은 빨강 계열 텍스트 */
+  
+</style>
   <meta charset="UTF-8" />
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
@@ -71,20 +97,20 @@
 					  	</a>
 				  	 </div>
 				    <!-- <div class="d-flex flex-column text-center"> -->
-				    	<p>미확인 <span class="text-sm text-dark ml-2">0건</span></p>
+				    	<p class="text-sm">미확인 <span class="text-xl text-bold text-dark ml-2">0</span>건</p>
 				    <!-- </div> -->
 			    </div>
 			    <!-- 메일 위젯 -->
 			    <!-- 일정 위젯 -->
 			    <div class="text-center">
 			    	<div class="rounded-4" style="background-color : rgb(230,230,250,0.5); display: inline-block;">
-				  	   	<a href="/mail/mailSend" class="btn-sm main-btn square-btn btn-hover mr-10 text-dark" style="padding:8px;">
+				  	   	<a href="/myCalendar?openModal=true" class="btn-sm main-btn square-btn btn-hover mr-10 text-dark" style="padding:8px;">
 					  	   	<i class="lni lni-calendar"></i>
 					  	   	일정등록
 					  	</a>
 				  	 </div>
 				    <!-- <div class="d-flex flex-column text-center"> -->
-				    	<p>오늘 일정 <span class="text-sm text-dark ml-2">2건</span></p>
+				    	<p class="text-sm">오늘 일정 <span class="text-xl text-bold text-dark ml-2">2</span>건</p>
 				    <!-- </div> -->
 			    </div>
 			    <!-- 일정 위젯 -->
@@ -101,36 +127,36 @@
 			    	<span class="text-dark text-bold ml-3">최근 알림</span>
                  </div>
 				</div>
-				<div class=" row d-flex">
+				<div class=" ">
                   <div class="mb-4">
-	              <a href="#0" class="content">
+	              <a href="#0" class="d-flex flex-column">
 	              	<span class="text-black text-sm">
 	              		게시판 알림
 	              	</span>
 	                <span class="text-sm text-gray">
-	               		"2025.04.15. 01:33"
+	               		2025.04.15. 01:33
 	                </span>
 	              </a>
                  </div>
                  <hr/>
                  <div class="mb-4">
-	              <a href="#0" class="content">
+	              <a href="#0" class="d-flex flex-column">
 	                <span class="text-black text-sm">
 	                	공지 알림
 	                </span>
 	                <span class="text-sm text-gray">
-	               	    "2025.04.15. 01:33"
+	               	    2025.04.15. 01:33
 	                </span>
 	              </a>
                  </div>
                  <hr/>
-                 <div class="">
-	              <a href="#0" class="content">
+                 <div class="mb-4">
+	              <a href="#0" class="d-flex flex-column">
 	                <span class="text-black text-sm">
 					'모바일 쿠폰 서비스
 					임직원을 위한 맞춤형 쿠폰 발송, ONE-STOP으로 해결!</h6>
 	                </span>
-	                  <span class="text-sm text-gray">"2025.04.15. 01:33"</span>
+	                  <span class="text-sm text-gray">2025.04.15. 01:33</span>
 	              </a>
                  </div>
               </div>
@@ -156,7 +182,8 @@
 	              <div class="content">
 		              <h6>결재 대기중</h6>
 		                <h4>
-		                	<a href="/atrz/approval" style="margin-top: 20px;" class="text-bold mb-10">0건</a>
+		                	<a href="/atrz/home" style="margin-top: 20px;" class="text-bold mb-10">
+		                	${atrzApprovalCnt != null ? atrzApprovalCnt : '0'}<span class="text-sm">건</span></a>
 		                </h4>
 	                <p class="text-sm text-success">
 	                </p>
@@ -173,7 +200,8 @@
 	              <div class="content">
 	                <h6>결재 진행중</h6>
 		                 <h4>
-		                	<a href="/atrz/home" style="margin-top: 20px;" class="text-bold mb-10">0건</a>
+		                	<a href="/atrz/home" style="margin-top: 20px;" class="text-bold mb-10">
+		                	${atrzSubmitCnt != null ? atrzSubmitCnt : '0'}<span class="text-sm">건</span></a>
 		                </h4>
 	                <p class="text-sm text-success">
 					</p>
@@ -194,7 +222,8 @@
 	              <div class="content">
 	                <h6>결재 완료</h6>
 		                 <h4>
-		                 	<a href="#0" style="margin-top: 20px;" class="text-bold mb-10">0건</a>
+		                 	<a href="/atrz/home" style="margin-top: 20px;" class="text-bold mb-10">
+		                 	${atrzCompletedCnt != null ? atrzCompletedCnt : '0'}<span class="text-sm">건</span></a>
 		                 </h4>
 	                <p class="text-sm text-success">
 	                </p>
@@ -210,7 +239,9 @@
 	              <div class="content">
 	                <h6>결재 반려</h6>
 		              	  <h4>
-		              	  	<a href="#0" style="margin-top: 20px;" class="text-bold mb-10">0건</a>
+		              	    <!-- 반려 목록 페이지로 이동시키기 -->
+		              	  	<a href="/atrz/companion" style="margin-top: 20px;" class="text-bold mb-10">
+		              	  	${atrzRejectedCnt != null ? atrzRejectedCnt : '0'}<span class="text-sm">건</span></a>
 		              	  </h4>
 	                <p class="text-sm text-danger">
 	               
@@ -223,19 +254,41 @@
 	        <!--    </div> -->
 	        <!-- 전자결재 -->
 	        
-	        <!-- 프로젝트 -->
-	        <div class="col-lg-12">
-              <div class="card-style mb-30">
-              	프로젝트 목록
-               </div>
-             </div>
-	        <!-- 프로젝트 -->
+            <!-- 프로젝트 -->
+	         <div class="col-lg-12">
+	           <div class="card-style mb-30">
+	             <h6 class="mb-10">진행중인 프로젝트 업무</h6>
+	             <div class="card-body scroll-table" style="max-height: 350px; overflow-y: auto;">
+	              <table class="table table-bordered text-center hover-highlight" id="urgentTaskTable">
+	                 <thead class="table-light">
+	                   <tr>
+	                     <th>업무명</th>
+	                     <th>등급</th>
+	                     <th>중요도</th>
+	                     <th>종료일</th>
+	                   </tr>
+	                 </thead>
+	                 <tbody>
+	                   <c:forEach var="t" items="${urgentTasks}">
+	                     <tr>
+	                       <td class="text-start ps-2">${t.taskNm}</td>
+	                       <td><span class="badge grade-${t.taskGrad}">${t.taskGrad}</span></td>
+	                       <td><span class="badge priort-${t.priort}">${commonCodes['PRIORT'][t.priort]}</span></td>
+	                       <td><fmt:formatDate value="${t.taskEndDt}" pattern="yyyy-MM-dd"/></td>
+	                     </tr>
+	                   </c:forEach>
+	                 </tbody>
+	               </table>
+	             </div>
+	           </div>
+	         </div>
+           <!-- 프로젝트 -->
 	        
 		    <!-- 게시판 -->
             <div class="col-lg-12">
               <div class="card-style mb-30">
                 <h6 class="mb-10">전사게시판 최근글</h6>
-                <div class="bd-example">
+                <div class="bd-example"> 
 				<ul class="nav nav-tabs">
 				  <li class="nav-item">
 				    <a class="nav-link active" aria-current="page" href="#">공지사항</a>
@@ -302,6 +355,7 @@ let hours = parseInt(timeParts[0]);
 let minutes = parseInt(timeParts[1]);
 let seconds = parseInt(timeParts[2]);
 
+$(function(){	
 function updateClock() {
   seconds++;
   if (seconds >= 60) {
@@ -324,7 +378,11 @@ function updateClock() {
   document.getElementById('clock').textContent = formattedTime;
 }
 
+updateClock();
 setInterval(updateClock, 1000);
+
+})
 </script>
+
 </body>
 </html>
