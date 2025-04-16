@@ -13,6 +13,8 @@ import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 import kr.or.ddit.sevenfs.vo.atrz.HolidayVO;
 import kr.or.ddit.sevenfs.vo.atrz.SalaryVO;
 import kr.or.ddit.sevenfs.vo.atrz.SpendingVO;
+import kr.or.ddit.sevenfs.vo.organization.DclzTypeVO;
+import kr.or.ddit.sevenfs.vo.organization.VacationVO;
 
 @Mapper
 public interface AtrzMapper {
@@ -120,6 +122,13 @@ public interface AtrzMapper {
 	public void updateHolidayAtrz(AtrzVO atrzVO);
 	//임시저장후 결재선 인서트(업데이트처럼 활용)
 	public void updateAtrzLine(AtrzLineVO atrzLineVO);
+	
+	//연차신청서 기안완료 select 셀렉트
+	public HolidayVO selectHolidayByDocNo(String atrzDocNo);
+	//연차신청서 기안완료시 근태현황에 인서트 
+	public void holidayDclzUpdate(DclzTypeVO dclzTypeVO);
+	//연차갯수 소진하기
+	public void updateVacationUseDays(VacationVO vacationVO);
 	
 
 	

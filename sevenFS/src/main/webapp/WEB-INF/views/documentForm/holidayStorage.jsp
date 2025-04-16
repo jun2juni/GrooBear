@@ -1259,8 +1259,15 @@ $(document).ready(function() {
 			data: formData,
 			dataType:"json",
 			success : function(atrzVO){
+				swal({
+					title: "결재선이 지정되었습니다.",
+					text: "",
+					icon: "success",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
 				$(".btn-close").trigger('click');
-				alert("결재선이 지정되었습니다.");
+				// alert("결재선이 지정되었습니다.");
 				//새로고침
 				location.href = location.href;
 				console.log("atrzVO : ", atrzVO);

@@ -19,7 +19,9 @@ import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 import kr.or.ddit.sevenfs.vo.atrz.HolidayVO;
 import kr.or.ddit.sevenfs.vo.atrz.SalaryVO;
 import kr.or.ddit.sevenfs.vo.atrz.SpendingVO;
+import kr.or.ddit.sevenfs.vo.organization.DclzTypeVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
+import kr.or.ddit.sevenfs.vo.organization.VacationVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -390,9 +392,44 @@ public class AtrzServiceImpl implements AtrzService {
 			//III. ATRZ의 완료 및 일시 처리
 			atrzVO.setAtrzSttusCode("10");
 			result += atrzMapper.atrzStatusFinalUpdate(atrzVO);
+			//길주늬 여기서 시작해라
+			 // 💡 결재 완료 → 근태 등록
+	        HolidayVO holidayVO =  atrzMapper.selectHolidayByDocNo(atrzDocNo);
+			if(holidayVO!=null &&holidayVO.getAtrzVO() !=null) {
+				String DrafterEmpNo = holidayVO.getAtrzVO().getDrafterEmpno(); //사원번호추출
+				// 날짜 포맷 정의
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+				// 날짜를 원하는 포맷의 문자열로 변환
+				String dateStr = sdf.format(holidayVO.getHoliStart());
+				
+				DclzTypeVO dclzTypeVO = new DclzTypeVO();
+				dclzTypeVO.setEmplNo(DrafterEmpNo);
+				dclzTypeVO.setDclzNo(dateStr);   //여기에서 날짜만 20250416형태로 추출해서 넣어야 한다.
+				dclzTypeVO.setDclzCode(holidayVO.getHoliCode());
+				dclzTypeVO.setDclzBeginDt(holidayVO.getHoliStart());
+				dclzTypeVO.setDclzEndDt(holidayVO.getHoliEnd());
+				dclzTypeVO.setDclzReason(holidayVO.getAtrzVO().getAtrzCn());
+				
+				atrzMapper.holidayDclzUpdate(dclzTypeVO);
+				log.info("atrzDetailAppUpdate->dclzTypeVO : "+dclzTypeVO);
+				//연차코드
+				int useDays = Integer.parseInt(holidayVO.getHoliUseDays());
+				
+				VacationVO vacationVO = new VacationVO();
+				vacationVO.setEmplNo(holidayVO.getAtrzVO().getDrafterEmpno());   //사원번호 추출 
+				log.info("holidayVO.getAtrzVO().getDrafterEmpno() "+holidayVO.getAtrzVO().getDrafterEmpno());
+				int holiUseDays = Integer.parseInt(holidayVO.getHoliUseDays());
+				vacationVO.setYrycUseDaycnt(vacationVO.getYrycUseDaycnt()+holiUseDays);   		//사용일수
+				vacationVO.setYrycRemndrDaycnt(vacationVO.getYrycRemndrDaycnt()-holiUseDays);    //잔여일수
+				
+				// 연차 업데이트 처리
+				atrzMapper.updateVacationUseDays(vacationVO);
+				
+			}
+			
 		}
 		
-		return 1;
+		return result;
 		
 	}
 	//전자결재 상세 업데이트(반려시)

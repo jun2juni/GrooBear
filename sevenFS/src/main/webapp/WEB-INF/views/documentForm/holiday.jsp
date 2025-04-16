@@ -1150,8 +1150,14 @@ $(document).ready(function() {
 			data: formData,
 			dataType:"json",
 			success : function(atrzVO){
+				swal({
+					title: "결재선 지정이 완료되었습니다.",
+					text: "",
+					icon: "success",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
 				$(".btn-close").trigger('click');
-				
 				console.log("atrzVO : ", atrzVO);
 
 				//문서번호 채우기

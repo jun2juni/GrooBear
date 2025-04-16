@@ -1030,7 +1030,7 @@
 	
 	 <!-- 기안취소시 전자결재선   -->
 	<update id="atrzLineCancelUpdate" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
-		UPDATE ATRZ_LINE
+		UPDATE ATRZ_LINE  	/* AtrzMapper.atrzLineCancelUpdate */
 		SET 
 		    sanctn_progrs_sttus_code = '30',
 		    sanctn_confm_dt = SYSDATE
@@ -1048,7 +1048,7 @@
 	
 	<!-- 기안취소시 전자결재   -->
 	<update id="atrzCancelUpdate" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
-			UPDATE ATRZ
+			UPDATE ATRZ			/* AtrzMapper.atrzCancelUpdate */
 			SET 
 			    atrz_sttus_code = '30',
 			    atrz_rtrvl_dt = SYSDATE
@@ -1056,8 +1056,101 @@
 			  AND drafter_empno = #{emplNo}
 	</update>
 	
+	<!-- 연차신청서 최종 결재 완료시 -->
+<!--  기본연차지급 -->
+<!-- 	<insert id="basicVacInsert" parameterType="kr.or.ddit.sevenfs.vo.organization.VacationVO"> -->
+<!-- 		INSERT INTO vacation( -->
+<!-- 	            EMPL_NO -->
+<!-- 	           , YRYC_YEAR -->
+<!-- 	           , YRYC_USE_BEGIN_DATE -->
+<!-- 	           , YRYC_USE_END_DATE -->
+<!-- 	           , TOT_YRYC_DAYCNT -->
+<!-- 	           , YRYC_USE_DAYCNT -->
+<!-- 	           , YRYC_MDAT_DAYCNT -->
+<!-- 	           , YRYC_REMNDR_DAYCNT -->
+<!-- 	           , EXCESS_WORK_YRYC -->
+<!-- 	           , CMPNSTN_YRYC -->
+<!-- 	           , YRYC_CODE -->
+<!-- 	           , YRYC_DETAIL -->
+<!-- 	           ) -->
+<!-- 	    VALUES( -->
+<!-- 	        #{emplNo} -->
+<!-- 	        ,TO_CHAR(SYSDATE, 'YYYY') -->
+<!-- 	        ,TO_CHAR(SYSDATE, 'YYYY') || '0101' -->
+<!-- 	        ,TO_CHAR(SYSDATE, 'YYYY') || '1231' -->
+<!-- 	        ,#{totYrycDaycnt} -->
+<!-- 	        ,0 -->
+<!-- 	        ,0 -->
+<!-- 	        ,0 -->
+<!-- 	        ,0 -->
+<!-- 	        ,0 -->
+<!-- 	        ,'20' -->
+<!-- 	        ,'기본연차 지급' -->
+<!-- 	    ) -->
+<!-- 	</insert> -->
+	<select id="selectHolidayByDocNo" resultMap="holidayDetailMap">
+	    SELECT 				/* AtrzMapper.selectHolidayByDocNo */
+	        H.HOLI_ACTPLN_NO,
+	        H.ATRZ_DOC_NO,
+	        H.HOLI_CODE,
+	        H.HOLI_START,
+	        H.HOLI_END,
+	        H.HOLI_USE_DAYS,
 	
+	        /* AtrzVO에 필요한 컬럼들 (resultMap에서 참조하는 것들) */
+	        A.ATCH_FILE_NO,
+	        A.ATRZ_CN,
+	        A.ATRZ_COMPT_DT,
+	        A.ATRZ_DELETE_YN,
+	        A.ATRZ_DRFT_DT,
+	        A.ATRZ_OPINION,
+	        A.ATRZ_RTRVL_DT,
+	        A.ATRZ_SJ,
+	        A.ATRZ_STTUS_CODE,
+	        A.ATRZ_TMPR_STRE_DT,
+	        A.BKMK_YN,
+	        A.DOC_FORM_NO,
+	        A.DRAFTER_CLSF,
+	        A.DRAFTER_DEPT,
+	        A.DRAFTER_EMPNM,
+	        A.DRAFTER_EMPNO,
+	        A.ELTSGN_IMAGE,
+	        A.SCHDUL_REG_YN
 	
+	    FROM DOCUM_HOLIDAY H
+	    LEFT JOIN ATRZ A ON H.ATRZ_DOC_NO = A.ATRZ_DOC_NO
+	    WHERE H.ATRZ_DOC_NO = #{atrzDocNo}
+	</select>
+
+
+	<!-- 연차신청서 기안완료시 근태현황 인서트 -->
+	<insert id="holidayDclzUpdate" parameterType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
+		    INSERT INTO  /* AtrzMapper.holidayDclzUpdate */
+		    DCLZ_TYPE 
+		    (		
+		        EMPL_NO,
+		        DCLZ_NO,
+		        DCLZ_CODE,
+		        DCLZ_BEGIN_DT,
+		        DCLZ_END_DT,
+		        DCLZ_REASON
+		    ) VALUES (
+		        #{emplNo},
+		        #{dclzNo},
+		        #{dclzCode},
+		        #{dclzBeginDt},
+		        #{dclzEndDt},
+		        #{dclzReason}
+		    )
+	</insert>
+	<!-- 연차신청서 기안완료시 연차갯수 소진시키기 -->
+	<update id="updateVacationUseDays" parameterType="kr.or.ddit.sevenfs.vo.organization.VacationVO">
+	    UPDATE vacation
+		    SET 
+		        yryc_use_daycnt =  #{yrycUseDaycnt},
+		        yryc_remndr_daycnt =  #{yrycUseDaycnt}
+		    WHERE empl_no = #{emplNo}
+	</update>
 	
 	<!-- 연차신청서 resultMap 사용 -->
 	<resultMap id="holidayDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.HolidayVO" >
