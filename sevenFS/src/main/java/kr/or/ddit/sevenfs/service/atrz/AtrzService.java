@@ -88,6 +88,11 @@ public interface AtrzService {
 	//연차신청서 임시저장후 get
 	public AtrzVO getAtrzStorage(String atrzDocNo);
 	
+	//연차신청서 임시저장후 post보내는것
+	public void updateHoliday(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, HolidayVO documHolidayVO) throws Exception;
+	//임시저장후 결재선 인서트(업데이트처럼 활용)
+	public void updateAtrzLine(AtrzLineVO atrzLineVO);
+	
 	
 
 

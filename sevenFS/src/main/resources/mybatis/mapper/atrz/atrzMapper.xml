@@ -521,7 +521,8 @@
 			, #{holiUseDays}
 			)
 	</insert>
-	<!-- 전자결재 update -->
+	
+	<!-- 전자결재 임시저장 update -->
 	<update id="storageHolidayUpdate" parameterType="AtrzVO">
 	    UPDATE ATRZ
 	    SET
@@ -531,7 +532,33 @@
 	        ATRZ_STTUS_CODE = '99'
 	    WHERE ATRZ_DOC_NO = #{atrzDocNo}
 	</update>
-	<!-- 전자결재 인서트 -->
+	<!-- 임시저장 결재선 인서트 -->
+		<!-- 전자결재결재선 등록 -->
+		<insert id="updateAtrzLine" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
+			INSERT INTO  /* AtrzMapper.insertAtrzLine */
+				atrz_line 
+				(
+				  atrz_doc_no
+				, atrz_ln_sn
+				, sanctner_empno
+				, sanctner_clsf_code
+				, atrz_ty
+				, sanctn_progrs_sttus_code
+				, dcrb_author_yn
+				)
+			VALUES
+				(
+				#{atrzDocNo}
+				, #{atrzLnSn}
+				, #{sanctnerEmpno}
+				, #{sanctnerClsfCode}
+				, #{atrzTy}
+				, '00'
+				, #{dcrbAuthorYn}
+				)	
+		</insert>
+	
+	<!-- 전자결재 임시저장 인서트 -->
 	<insert id="atrzHolidayStorage" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
 	       INSERT INTO 
 	       			ATRZ (
@@ -591,13 +618,118 @@
 	        )
 	</insert>
 	
+	
 	<!-- 결재선 삭제 -->
 	<delete id="deleteAtrzLineByDocNo" parameterType="string">
 	    DELETE FROM ATRZ_LINE WHERE ATRZ_DOC_NO = #{atrzDocNo}
 	</delete>
 	
+	<!-- 임시저장 select조회 상세보기 -->
+		<!-- 전자결재 상세조회 -->
+	<select id="getAtrzStorage" parameterType="string" resultMap="atrzMap">
+		SELECT 	/* AtrzMapper.getAtrzStorage */
+		    A.ATRZ_DOC_NO,
+		    A.DRAFTER_EMPNO,
+		    A.DRAFTER_CLSF,
+		    A.DRAFTER_EMPNM,
+		    A.DRAFTER_DEPT,
+		    A.BKMK_YN,
+		    A.ATCH_FILE_NO,
+		    A.ATRZ_SJ,
+		    A.ATRZ_CN,
+		    A.ATRZ_OPINION,
+		    A.ATRZ_TMPR_STRE_DT,
+		    A.ATRZ_DRFT_DT,
+		    A.ATRZ_COMPT_DT,
+		    A.ATRZ_RTRVL_DT,
+		    A.ATRZ_STTUS_CODE,
+		    A.ELTSGN_IMAGE,
+		    A.DOC_FORM_NO,
+		    A.ATRZ_DELETE_YN,
+		    A.SCHDUL_REG_YN,
+		
+		    H.HOLI_ACTPLN_NO, H.HOLI_CODE, H.HOLI_START, H.HOLI_END, H.HOLI_USE_DAYS,
+		    S.SPENDING_REPORT_NO, S.EXPENSE_ORDER, S.EXPENSE_DATE, S.ITEM_DESCRIPTION, S.ITEM_QUANTITY, S.ITEM_AMOUNT, S.PAYMENT_METHOD,
+		    SL.SALARY_NO, SL.BASE_SALARY, SL.MEAL_ALLOWANCE, SL.INCOME_TAX, SL.LOCAL_TAX, SL.PENSION, SL.EMPLOYMENT_INS, SL.HEALTH_INS, SL.CARE_INS, SL.PAY_DATE,
+		    B.BANK_ACC_NO, B.OLD_BANK, B.OLD_ACC_NO, B.NEW_BANK, B.NEW_ACC_NO, B.REASON,
+		    D.DRAFT_NO,
+		    EC.EMP_CERT_NO,
+		    R.RESIGNATION_NO,
+		
+		    L.ATRZ_LN_SN,
+		    L.SANCTNER_EMPNO,
+		    L.SANCTNER_CLSF_CODE,
+		    L.CONTD_EMPNO,
+		    L.CONTD_CLSF_CODE,
+		    L.DCRB_MAN_EMPNO,
+		    L.DCRB_MAN_CLSF_CODE,
+		    L.ATRZ_TY,
+		    L.SANCTN_PROGRS_STTUS_CODE,
+		    L.DCRB_AUTHOR_YN,
+		    L.CONTD_AUTHOR_YN,
+		    L.SANCTN_OPINION,
+		    L.ELTSGN_IMAGE AS LINE_ELTSGN_IMAGE,
+		    L.SANCTN_CONFM_DT
+		
+		FROM ATRZ A
+		LEFT JOIN DOCUM_HOLIDAY H ON A.ATRZ_DOC_NO = H.ATRZ_DOC_NO
+		LEFT JOIN DOCUM_SPENDING S ON A.ATRZ_DOC_NO = S.ATRZ_DOC_NO
+		LEFT JOIN DOCUM_SALARY SL ON A.ATRZ_DOC_NO = SL.ATRZ_DOC_NO
+		LEFT JOIN DOCUM_BANK_ACCOUNT B ON A.ATRZ_DOC_NO = B.ATRZ_DOC_NO
+		LEFT JOIN DOCUM_DRAFT D ON A.ATRZ_DOC_NO = D.ATRZ_DOC_NO
+		LEFT JOIN DOCUM_EMP_CERTIFICATE EC ON A.ATRZ_DOC_NO = EC.ATRZ_DOC_NO
+		LEFT JOIN DOCUM_RESIGNATION R ON A.ATRZ_DOC_NO = R.ATRZ_DOC_NO
+		LEFT JOIN ATRZ_LINE L ON A.ATRZ_DOC_NO = L.ATRZ_DOC_NO
+		
+		WHERE A.ATRZ_DOC_NO = #{atrzDocNo}
+	</select>
+	
+	<!-- 연차신청서 임시저장후 업데이트 -->
+	<update id="updateHolidayAtrz" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+		    UPDATE ATRZ
+		    SET ATRZ_SJ = #{atrzSj},
+		        ATRZ_CN = #{atrzCn},
+		        DRAFTER_CLSF = #{clsfCode},
+		        DRAFTER_DEPT = #{deptCode},
+		        ATRZ_DRFT_DT = SYSDATE,
+		        ATRZ_STTUS_CODE = '10'
+		    WHERE ATRZ_DOC_NO = #{atrzDocNo}
+	</update>
 	
 	
+	<!-- 연차신청서 임시저장상세정보 가져온후 다시 insert를 위한것 murge into -->
+	<insert id="updateOrInsertHoliday" parameterType="kr.or.ddit.sevenfs.vo.atrz.HolidayVO">
+	    MERGE INTO DOCUM_HOLIDAY A
+	    USING (SELECT #{atrzDocNo} AS ATRZ_DOC_NO FROM dual) B
+	    ON (A.ATRZ_DOC_NO = B.ATRZ_DOC_NO)
+	    WHEN MATCHED THEN
+	        UPDATE SET
+	            HOLI_CODE = #{holiCode},
+	            HOLI_START = #{holiStart},
+	            HOLI_END = #{holiEnd},
+	            HOLI_USE_DAYS = #{holiUseDays}
+	    WHEN NOT MATCHED THEN
+	        INSERT (
+	        	  HOLI_ACTPLN_NO
+	            , ATRZ_DOC_NO
+	            , HOLI_CODE
+	            , HOLI_START
+	            , HOLI_END
+	            , HOLI_USE_DAYS
+	        ) VALUES (
+		         #{holiActplnNo}
+				, #{atrzDocNo}
+	            , #{holiCode}
+	            , #{holiStart}
+	            , #{holiEnd}
+	            , #{holiUseDays}
+	        )
+	</insert>
+	
+	
+	
+	
+	<!-- 지출결의서 인서트  -->
 	<insert id="insertSpending" parameterType="kr.or.ddit.sevenfs.vo.atrz.SpendingVO">
 		<selectKey resultType="int" order="BEFORE" keyProperty="spendingReportNo">
 			SELECT NVL(MAX(spending_report_no),0)+1 FROM docum_spending
@@ -774,15 +906,20 @@
 	
 	<!-- 연차신청서 상세보기 -->
 	<select id="holidayDetail" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.HolidayVO">
-		SELECT 	/* AtrzMapper.holidayDetail */
-				HOLI_ACTPLN_NO
-				, ATRZ_DOC_NO
-				, HOLI_CODE
-				, HOLI_START
-				, HOLI_END
-				, HOLI_USE_DAYS
-		FROM DOCUM_HOLIDAY
-		WHERE ATRZ_DOC_NO = #{atrzDocNo}
+		    SELECT *		/* AtrzMapper.holidayDetail */
+			    FROM (
+			        SELECT 
+			            HOLI_ACTPLN_NO,
+			            ATRZ_DOC_NO,
+			            HOLI_CODE,
+			            HOLI_START,
+			            HOLI_END,
+			            HOLI_USE_DAYS,
+			            ROW_NUMBER() OVER (ORDER BY HOLI_ACTPLN_NO DESC) AS RN
+			        FROM DOCUM_HOLIDAY
+			        WHERE ATRZ_DOC_NO = #{atrzDocNo}
+			    )
+			    WHERE RN = 1
 	</select>
 	
 	

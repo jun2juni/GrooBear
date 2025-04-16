@@ -772,7 +772,6 @@ $(document).ready(function() {
 					console.log("message: " + request.responseText)
 					console.log("error: " + error);
             }
-
 		$.ajax({
 			url:"/atrz/atrzHolidayInsert",
 			processData:false,
@@ -784,7 +783,16 @@ $(document).ready(function() {
 				console.log("체킁:",result);
 				if(result=="쭈니성공"){
 					//location.href = "컨트롤러주소";  //  .href 브라우져 성능 향상을 위해서 캐쉬가 적용 될 수도 있고, 안 될 수도 있어
-					location.replace("/atrz/home")
+					//여기서 swal을 이용해서 결재요청이 완료되었습니다. 라고 알림을 띄우고싶어
+					swal({
+						title: "결재요청이 완료되었습니다.",
+						text: "",
+						icon: "success",
+						closeOnClickOutside: false,
+						closeOnEsc: false
+					}).then(() => {
+						location.replace("/atrz/home")
+					});
 				}
 			},
 			error: junyError
@@ -827,8 +835,9 @@ $(document).ready(function() {
 			let atrzLine = {
 				atrzLnSn: auth.atrzLnSn ,
 				sanctnerEmpno: auth.emplNo,
-			    atrzTy: auth.flex,
-			    dcrbAuthorYn: auth.auth
+				atrzTy: auth.flex,
+				dcrbAuthorYn: auth.auth,
+				sanctnerClsfCode: auth.clsfCode,
 			}
 			atrzLineList.push(atrzLine);			
 		}
@@ -856,7 +865,7 @@ $(document).ready(function() {
 					console.log("code: " + request.status)
 					console.log("message: " + request.responseText)
 					console.log("error: " + error);
-            }
+			}
 
 		$.ajax({
 			url:"/atrz/atrzHolidayStorage",
@@ -867,9 +876,16 @@ $(document).ready(function() {
 			dataType:"text",
 			success : function(result){
 				console.log("체킁:",result);
-				if(result=="쭈니성공"){
-					//location.href = "컨트롤러주소";  //  .href 브라우져 성능 향상을 위해서 캐쉬가 적용 될 수도 있고, 안 될 수도 있어
-					location.replace("/atrz/home")
+				if(result=="임시저장성공"){
+					swal({
+						title: "임시저장이 완료되었습니다.",
+						text: "",
+						icon: "success",
+						closeOnClickOutside: false,
+						closeOnEsc: false
+					}).then(() => {
+						location.replace("/atrz/document");
+					});
 				}
 			},
 			error: junyError

@@ -345,7 +345,7 @@ select.ui-datepicker-year {
 									<!-- 여기다가 작성해주세요(준희) -->
 									<!-- 기능 시작 -->
 									<!-- 전자결재 양식 수정도 가능 시작 -->
-									
+									<!-- <p>${atrzVO}</p> -->
 									<div id="s_eap_content_box_left" class="s_scroll">
 										<div class="s_div_container s_scroll">
 											<div
@@ -395,7 +395,6 @@ select.ui-datepicker-year {
 											<div style="float: right; margin-right: 20px;" id="s_eap_draft_app">
 												<table border="1" class="s_eap_draft_app">
 													<tbody>
-														<p>${atrzVO}</p>
 														<!-- 결재자: atrzTy = 'N' -->
 														<tr>
 															<th rowspan="3">결재</th>
@@ -425,8 +424,9 @@ select.ui-datepicker-year {
 																			</c:otherwise>
 																		</c:choose>
 																		<span style="display: block; margin-top: 5px;">${atrzLineVO.sanctnerEmpNm}</span>
-																		<input type="hidden" name="atrzLnSn" value="${atrzLineVO.atrzLnSn}" />
+																		<input type="hidden" name="atrzLnSn" id="s_dfNo" value="${atrzLineVO.atrzLnSn}" />
 																		<input type="hidden" name="sanctnerEmpno" value="${atrzLineVO.sanctnerEmpno}" />
+																		<input type="hidden" name="atrzDocNo" value="${atrzLineVO.atrzDocNo}" />
 																	</td>
 																</c:if>
 															</c:forEach>
@@ -495,7 +495,7 @@ select.ui-datepicker-year {
 													:</div>
 												<input type="text" class="form-control" placeholder="제목을 입력해주세요"
 													style="display: inline-block; width: 90%; margin-left: 5px;"
-													id="s_ho_tt" name="atrzSj" required="required">
+													id="s_ho_tt" name="atrzSj" required="required" value="${atrzVO.atrzSj}">
 											</div>
 
 											<div style="border: 1px solid lightgray; margin: 10px;"></div>
@@ -505,25 +505,23 @@ select.ui-datepicker-year {
 													<div class="col-auto">
 														<div class="s_frm_title mb-2"><b>유형</b></div>
 														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2"  value="20">
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2" value="20" <c:if test="${atrzVO.holidayVO.holiCode eq '20'}">checked</c:if>>
 															<label class="form-check-label" for="flexRadioDefault2">오전반차</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2"  value="21">
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2" value="21"  <c:if test="${atrzVO.holidayVO.holiCode eq '21'}">checked</c:if>>
 															<label class="form-check-label" for="flexRadioDefault2">오후반차</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio"
-																name="holiCode" id="flexRadioDefault1" checked
-																value="22"> 
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault1" value="22" <c:if test="${atrzVO.holidayVO.holiCode eq '22'}">checked</c:if>> 
 																<label class="form-check-label"	for="flexRadioDefault1">연차</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault4" value="23">
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault4" value="23" <c:if test="${atrzVO.holidayVO.holiCode eq '23'}">checked</c:if>>
 															<label class="form-check-label" for="flexRadioDefault4">공가</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault3" value="24">
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault3" value="24" <c:if test="${atrzVO.holidayVO.holiCode eq '24'}">checked</c:if>>
 															<label class="form-check-label" for="flexRadioDefault3">병가</label>
 														</div>
 													</div>
@@ -535,22 +533,26 @@ select.ui-datepicker-year {
 															사용 가능한 휴가일수는 <span id="s_ho_use">${checkHo }</span>일 입니다.
 														</div> -->
 														<div>
+															<fmt:formatDate value="${atrzVO.holidayVO.holiStart}" pattern="yyyy-MM-dd" var="onlyStDate" />
+															<fmt:formatDate value="${atrzVO.holidayVO.holiStart}" pattern="HH:mm:ss" var="onlyStTime" />
 															<input type="text" placeholder="신청 시작 기간을 선택해주세요"
 																class="form-control s_ho_start d-inline-block"
-																style="width: 250px; cursor: context-menu;"
+																style="width: 250px; cursor: context-menu;" value=${onlyStDate}
 																id="s_ho_start" required="required" onchange="dateCnt();" name="holiStartArr">
 															<input type="time" class="form-control d-inline-block"
-																style="width: 150px; display: none;"
+																style="width: 150px; display: none;" value=${onlyStTime}
 																id="s_start_time" min="09:00:00" max="18:00:00" value="09:00:00"
 																disabled onchange="dateCnt();" name="holiStartArr"> 부터
 														</div>
 														<div>
+															<fmt:formatDate value="${atrzVO.holidayVO.holiEnd}" pattern="yyyy-MM-dd" var="onlyEnDate" />
+															<fmt:formatDate value="${atrzVO.holidayVO.holiEnd}" pattern="HH:mm:ss" var="onlyEnTime" />
 															<input type="text" placeholder="신청 종료 기간을 선택해주세요"
 																class="form-control s_ho_end d-inline-block mt-2"
-																style="width: 250px; cursor: context-menu;"
+																style="width: 250px; cursor: context-menu;" value=${onlyEnDate}
 																id="s_ho_end" required="required" onchange="dateCnt();" name="holiEndArr" />
 															<input type="time" class="form-control d-inline-block"
-																style="width: 150px; display: none;"
+																style="width: 150px; display: none;" value=${onlyEnTime}
 																id="s_end_time" min="09:00:00" max="18:00:00" value="18:00:00"
 																disabled onchange="dateCnt();" name="holiEndArr" /> 까지
 															<div class="d-inline-block" >
@@ -576,7 +578,7 @@ select.ui-datepicker-year {
 													<div class="s_frm_title mb-2">내용</div>
 													<textarea class="form-control s_scroll" placeholder="내용을 입력해주세요"
 														style="resize: none; height: 150px;" id="s_ho_co" name="atrzCn" 
-														required="required" rows="2" cols="20" wrap="hard"></textarea>
+														required="required" rows="2" cols="20" wrap="hard">${atrzVO.atrzCn}</textarea>
 												</div>
 
 												
@@ -796,7 +798,7 @@ $("input[name='holiCode']").on("change", function () {
 <script>
 //JSON Object List
 let authList = [];
-
+let atrzLineList = [];
 
 $(document).ready(function() {
 	//******* 폼 전송 *******
@@ -829,7 +831,7 @@ $(document).ready(function() {
 		}
 		*/
 		
-		let atrzLineList = [];
+		
 		for(let i=0; i< authList.length; i++){
 			let auth = authList[i];
 			let atrzLine = {
@@ -877,7 +879,15 @@ $(document).ready(function() {
 				console.log("체킁:",result);
 				if(result=="쭈니성공"){
 					//location.href = "컨트롤러주소";  //  .href 브라우져 성능 향상을 위해서 캐쉬가 적용 될 수도 있고, 안 될 수도 있어
-					location.replace("/atrz/home")
+					swal({
+						title: "결재요청이 완료되었습니다.",
+						text: "",
+						icon: "success",
+						closeOnClickOutside: false,
+						closeOnEsc: false
+					}).then(() => {
+						location.replace("/atrz/home")
+					});
 				}
 			},
 			error: junyError
@@ -960,9 +970,16 @@ $(document).ready(function() {
 			dataType:"text",
 			success : function(result){
 				console.log("체킁:",result);
-				if(result=="쭈니성공"){
-					//location.href = "컨트롤러주소";  //  .href 브라우져 성능 향상을 위해서 캐쉬가 적용 될 수도 있고, 안 될 수도 있어
-					location.replace("/atrz/home")
+				if(result=="임시저장성공"){
+					swal({
+						title: "임시저장이 완료되었습니다.",
+						text: "",
+						icon: "success",
+						closeOnClickOutside: false,
+						closeOnEsc: false
+					}).then(() => {
+						location.replace("/atrz/document");
+					});
 				}
 			},
 			error: junyError
@@ -1051,8 +1068,6 @@ $(document).ready(function() {
 					<input class="form-check-input flexCheckDefault" type="checkbox" value="Y" />
 				`;
 			}
-
-
 
 			let str = `
 					<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
@@ -1149,7 +1164,7 @@ $(document).ready(function() {
 		}
 		var appLineArr = [];
 		
-		//1)
+		//1) List<AtrzLineVO>  [{da},{fa},{af,afa}]
 		let formData = new FormData();
 		
 		//I. 결재자 정보
@@ -1188,21 +1203,34 @@ $(document).ready(function() {
 			flex -> dcrbAuthorYn
 			atrzLnSn : atrzLnSn
 			*/
+			let atrzDocNo = $("#s_dfNo").text(); // 여기서 가져온다!
+// 			if (!atrzDocNo) {
+// 				swal({ title: "문서번호가 없습니다", text: "먼저 문서를 저장하세요.", icon: "error" });
+// 				return;
+// 				log.info("atrzDocNo : 문서번호"+atrzDocNo);
+// }
+
 			data = {
 				"emplNo":$(this).parent().parent().children("th").eq(1).html(),
 				"clsfCode": $(this).parent().parent().find(".clsfCode").val(),
 				"auth":$(this).val(),
 				"flex":dcrbAuthorYn,
-				"atrzLnSn":(idx+1)
+				"atrzLnSn":(idx+1),
+				"atrzDocNo":$("#s_dfNo").text(),
+				"docFormNm":"H",
+				"docFormNo":1
 			};
 			//결재선 목록
-			authList.push(data);			
+			authList.push(data);
 
+			// formData.append("atrzLineVOList["+idx+"].atrzDocNo", atrzDocNo);
+			formData.append("atrzVO.atrzDocNo", $("#s_dfNo").val());
 			formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",data.emplNo);
 			formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",data.clsfCode);
 			formData.append("atrzLineVOList["+idx+"].atrzTy",data.flex);//Y / N
 			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.auth);//  1 / 0
 			formData.append("atrzLineVOList["+idx+"].atrzLnSn",data.atrzLnSn);
+			formData.append("authList", JSON.stringify(authList)); // 배열은 stringify해서 보내도 무방
 		});	
 		
 		//authList의 clsfCode를 가져와서 DB에 담기
@@ -1210,7 +1238,6 @@ $(document).ready(function() {
 		
 		formData.append("docFormNm","H");
 		formData.append("docFormNo",1);
-
 		/*
 		["20250008","20250010"]
 		*/
@@ -1218,9 +1245,14 @@ $(document).ready(function() {
 		//이게 굳이 필요있나 싶음
 		//결재선 리스트에 있는 사원번호를 가져와 결재선 jsp에 이름 부서 직책 찍기
 
+		// ❗ 여기 중요: JSON.stringify 후 Blob으로 넣기
+		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)], { type: "application/json" })
+		);
+		//결재선 인서트 하는 부분은 어떻게 해야하리 모르겠다.....
 		//asnyc를 써서 
+		//여기서 부터확인이 안되는듯 
 		$.ajax({
-			url:"/atrz/insertAtrzLine",
+			url:"/atrz/updateAtrzLine",
 			processData:false,
 			contentType:false,
 			type:"post",
@@ -1228,11 +1260,13 @@ $(document).ready(function() {
 			dataType:"json",
 			success : function(atrzVO){
 				$(".btn-close").trigger('click');
-				
+				alert("결재선이 지정되었습니다.");
+				//새로고침
+				location.href = location.href;
 				console.log("atrzVO : ", atrzVO);
 
 				//문서번호 채우기
-				$("#s_dfNo").html(atrzVO.atrzDocNo);
+				// $("#s_dfNo").html(atrzVO.atrzDocNo);
 
 				let result = atrzVO.emplDetailList;
 

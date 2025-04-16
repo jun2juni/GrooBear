@@ -1,6 +1,5 @@
 package kr.or.ddit.sevenfs.controller.atrz;
 
-import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,36 +8,36 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.math3.geometry.spherical.oned.ArcsSet.Split;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.servlet.http.HttpServletRequest;
+import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
-import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.utils.CommonCode;
-import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
 import kr.or.ddit.sevenfs.vo.atrz.BankAccountVO;
+import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 import kr.or.ddit.sevenfs.vo.atrz.HolidayVO;
 import kr.or.ddit.sevenfs.vo.atrz.SalaryVO;
 import kr.or.ddit.sevenfs.vo.atrz.SpendingVO;
-import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,7 +48,10 @@ public class AtrzController {
 
 	@Autowired
 	private AtrzService atrzService;
-
+	
+	@Autowired
+	private AtrzMapper atrzMapper;
+	
 	// 사원 정보를 위해 가져온것
 	@Autowired
 	private OrganizationService organizationService;
@@ -601,7 +603,7 @@ public class AtrzController {
 		String empNo = empVO.getEmplNo();
 		log.info("로그인 사용자 사번: "+ empNo); 
 		
-		AtrzVO atrzVO = atrzService.getAtrzDetail(atrzDocNo);
+		AtrzVO atrzVO = atrzService.getAtrzStorage(atrzDocNo);
 		
 		model.addAttribute("atrzVO",atrzVO);
 		model.addAttribute("empVO",empVO);
@@ -620,6 +622,27 @@ public class AtrzController {
 		};
 		
 		return viewName;
+	}
+	//결재선 업데이트
+	
+	
+	
+	//임시저장 연차신청서  업데이트()
+	@ResponseBody
+	@PostMapping("atrzHolidayUpdate")
+	public String updateHolidayForm(AtrzVO atrzVO, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList,
+			@RequestPart("docHoliday") HolidayVO documHolidayVO) {
+		
+		   // 서비스 호출로 로직 위임
+	    try {
+	        atrzService.updateHoliday(atrzVO, atrzLineList, documHolidayVO);
+	        return "성공적으로 등록되었습니다.";
+	    } catch (Exception e) {
+	        log.error("연차 기안 중 오류 발생", e);
+	        return "등록 중 오류가 발생했습니다.";
+	    }
+		
+		
 	}
 	
 	// 연차신청서 등록(문서번호가 이미 있는 상태임)
@@ -642,17 +665,6 @@ public class AtrzController {
 		atrzVO.setDeptCode(deptCode);
 //		atrzVO.setDrafterClsf(emplDetail.get);
 
-		/*
-		 * atrzSj, atrzCn, atrzDrftDt, atrzSttusCode AtrzVO(atrzDocNo=null,
-		 * drafterEmpno=null, drafterClsf=null, drafterEmpnm=null, drafterDept=null,
-		 * bkmkYn=null, atchFileNo=0, atrzSj=미리작성한 제목입니다., atrzCn=sfda,
-		 * atrzOpinion=null, atrzTmprStreDt=null, atrzDrftDt=null, atrzComptDt=null,
-		 * atrzRtrvlDt=null, atrzSttusCode=null, eltsgnImage=null, docFormNo=1,
-		 * atrzDeleteYn=null, schdulRegYn=null, docFormNm=H, emplNoArr=null,
-		 * emplNo=20250004, emplNm=길준희, clsfCode=02, clsfCodeNm=null, deptCode=91,
-		 * deptCodeNm=null, uploadFile=null, atrzLineVOList=null, holidayVO=null,
-		 * spendingVO=null, emplDetailList=null)
-		 */
 		log.info("insertAppLineList-> atrzVO(사원추가후) : " + atrzVO);
 
 		// 문서번호등록
@@ -685,27 +697,10 @@ public class AtrzController {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-
-		/*
-		 * HolidayVO(holiActplnNo=0, atrzDocNo=null, holiCode=22,
-		 * holiStartArr=[2025-04-08, 09:00:00], holiStart=Tue Apr 08 09:00:00 KST 2025,
-		 * holiEndArr=[2025-04-10, 18:00:00], holiEnd=Thu Apr 10 18:00:00 KST 2025,
-		 * atrzLineVOList=null, atrzVO=null)
-		 */
 		log.info("insertHolidayForm->documHolidayVO :  문서번호 등록후 : " + documHolidayVO);
 
 		// 1) atrz 테이블 update
-		/*
-		 * atrzSj, atrzCn, atrzDrftDt, atrzSttusCode AtrzVO(atrzDocNo=null,
-		 * drafterEmpno=null, drafterClsf=null, drafterEmpnm=null, drafterDept=null,
-		 * bkmkYn=null, atchFileNo=0, atrzSj=미리작성한 제목입니다., atrzCn=sfda,
-		 * atrzOpinion=null, atrzTmprStreDt=null, atrzDrftDt=null, atrzComptDt=null,
-		 * atrzRtrvlDt=null, atrzSttusCode=null, eltsgnImage=null, docFormNo=1,
-		 * atrzDeleteYn=null, schdulRegYn=null, docFormNm=H, emplNoArr=null,
-		 * emplNo=20250004, emplNm=길준희, clsfCode=02, clsfCodeNm=null, deptCode=91,
-		 * deptCodeNm=null, uploadFile=null, atrzLineVOList=null, holidayVO=null,
-		 * spendingVO=null, emplDetailList=null)
-		 */
+		
 		// 2) 결재선지정 후에 제목, 내용, 등록일자, 상태 update
 		int result = atrzService.insertUpdateAtrz(atrzVO);
 		log.info("insertHolidayForm->result : " + result);
@@ -716,6 +711,7 @@ public class AtrzController {
 
 		return "쭈니성공";
 	}
+	
 	//연차신청서 임시저장
 	@ResponseBody
 	@PostMapping(value = "atrzHolidayStorage")
@@ -735,7 +731,75 @@ public class AtrzController {
 		
 		int result = atrzService.atrzHolidayStorage(atrzVO, atrzLineList, documHolidayVO);
 		
-		return result > 0 ? "임시저장 성공" : "실패";
+		return result > 0 ? "임시저장성공" : "실패";
+	}
+	
+	//임시저장후 결재선 인서트(업데이트처럼 활용)
+	@ResponseBody
+	@PostMapping(value = "updateAtrzLine")
+	public AtrzVO updateAtrzLine(@ModelAttribute AtrzVO atrzVO 	, @RequestParam(required = false)String[] emplNoArr , Model model
+			,@RequestParam(required = false) String[] authList, @AuthenticationPrincipal CustomUser customUser) {
+		List<String> appLinelist = new ArrayList<String>();
+		log.debug("updateAtrzLine->emplNoArr : "+ Arrays.toString(emplNoArr)); // 결재자(o)
+		log.debug("updateAtrzLine->atrzVO : "+ atrzVO); // 결재문서
+		log.debug("updateAtrzLine->authList : "+ Arrays.toString(authList)); // 참조자
+		
+		
+		for (String emplNo : emplNoArr) {
+			// selectAppLineList->emplNo : 20250008
+			// selectAppLineList->emplNo : 20250016
+			log.info("updateAtrzLine->emplNo : " + emplNo);
+
+			appLinelist.add(emplNo);
+		}
+		String atrzDocNo = "";
+
+		for (String authListStr : authList) {
+		    try {
+		        ObjectMapper objectMapper = new ObjectMapper();
+		        List<Map<String, Object>> authMapList = objectMapper.readValue(authListStr, new TypeReference<List<Map<String, Object>>>() {});
+
+		        // 첫 번째 항목에서 문서번호 추출
+		        if (!authMapList.isEmpty() && atrzDocNo.isEmpty()) {
+		            Object docNoObj = authMapList.get(0).get("atrzDocNo");
+		            if (docNoObj != null) {
+		                atrzDocNo = docNoObj.toString();
+		                System.out.println("추출된 atrzDocNo: " + atrzDocNo);
+		            }
+		        }
+
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    }
+		}
+
+		log.info("updateAtrzLine->atrzDocNo : "+atrzDocNo);
+		
+		
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String empNo = empVO.getEmplNo();
+		//임시저장 문서번호 set하기 
+		atrzVO.setAtrzDocNo(atrzDocNo);
+		log.info("updateAtrzLine->atrzVO(문서번호 생성 후) : " + atrzVO);
+		
+		
+		atrzVO.setEmplNo(empNo);
+		//문서조회
+//		String atrzDocNo = atrzVO.getAtrzDocNo();
+		log.info("updateAtrzLine->atrzVO"+atrzVO);
+		List<AtrzLineVO> atrzLineList = atrzVO.getAtrzLineVOList();
+		atrzMapper.deleteAtrzLineByDocNo(atrzDocNo);
+		for(AtrzLineVO atrzLineVO : atrzLineList) {
+			atrzLineVO.setAtrzDocNo(atrzDocNo);
+			atrzService.updateAtrzLine(atrzLineVO);
+			log.info("📝 결재선 - empno: {}, code: {}, ty: {}, authorYn: {}, lnSn: {}",
+			atrzLineVO.getSanctnerEmpno(), atrzLineVO.getSanctnerClsfCode(),
+			atrzLineVO.getAtrzTy(), atrzLineVO.getDcrbAuthorYn(), atrzLineVO.getAtrzLnSn());
+			
+		}
+		log.info("updateAtrzLine->atrzVO : "+atrzVO);
+		return atrzService.getAtrzStorage(atrzDocNo);
 	}
 	
 	

@@ -114,6 +114,13 @@ public interface AtrzMapper {
 	//임시저장후 get
 	public AtrzVO getAtrzStorage(String atrzDocNo);
 	
+	//임시저장후 post update
+	public void updateOrInsertHoliday(HolidayVO documHolidayVO);
+	//연차신청서 post update
+	public void updateHolidayAtrz(AtrzVO atrzVO);
+	//임시저장후 결재선 인서트(업데이트처럼 활용)
+	public void updateAtrzLine(AtrzLineVO atrzLineVO);
+	
 
 	
 	
