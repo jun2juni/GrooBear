@@ -5,11 +5,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.ddit.sevenfs.mapper.setting.SettingMapper;
 import kr.or.ddit.sevenfs.service.chat.ChatService;
 import kr.or.ddit.sevenfs.service.notification.NotificationService;
 import kr.or.ddit.sevenfs.service.setting.SettingService;
 import kr.or.ddit.sevenfs.vo.chat.ChatRoomVO;
 import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
+import kr.or.ddit.sevenfs.vo.setting.SkillAuthVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -115,6 +117,10 @@ public class OrganizationServiceImpl implements OrganizationService {
 			emplDetail.setClsfCode("01");  // 사원 부서 코드 임시로 추가
 			emplDetail.setClsfCodeNm("사원");  // 사원 부서 이름 임시로 추가
 		}
+		
+		// 권한 추가
+		List<SkillAuthVO> skillAuth = settingService.getSkillAuth(emplDetail.getEmplNo());
+		emplDetail.setSkillAuth(skillAuth);
 
 		return emplDetail;
 	}
