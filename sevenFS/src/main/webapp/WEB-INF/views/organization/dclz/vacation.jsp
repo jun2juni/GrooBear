@@ -203,7 +203,7 @@
                         </div>
                       </td>
                       <td class="min-width">
-                      <h4><span class="status-btn warning-btn text-gray" id="vacData">${emplVacationData.cmmnCodeNm}</span></h4>
+                      <h4><span class="badge rounded-pill text-white" style="background-color:pink" id="vacData">${emplVacationData.cmmnCodeNm}</span></h4>
                       </td>
                       <td class="min-width">
                         <p><span class="text-medium text-dark">

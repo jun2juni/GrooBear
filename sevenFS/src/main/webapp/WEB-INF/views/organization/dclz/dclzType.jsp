@@ -213,7 +213,7 @@
 	                      </td>
 	                      <td>
 	                        <div>
-	                          <h4><span class="status-btn warning-btn text-gray">${dclzWork.cmmnCodeNm}</span></h4>
+	                          <h4><span class="badge rounded-pill text-white" style="background-color:pink">${dclzWork.cmmnCodeNm}</span></h4>
 	                        </div>
 	                      </td>
 	                      <td>

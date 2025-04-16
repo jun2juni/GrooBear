@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -40,10 +41,12 @@ public class HomeController {
 	@GetMapping("/home")
 	public String main(Model model, DclzTypeVO dclzTypeVO, Principal principal
 						, @RequestParam(defaultValue="1") int currentPage
-						, @RequestParam(defaultValue = "3") int size) {
+						, @RequestParam(defaultValue = "3") int size
+						) {
 		
 		// 공지사항 총 게시글 수
 		int total = mainService.noticeAllCnt();
+		
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("currentPage", currentPage);
@@ -78,6 +81,7 @@ public class HomeController {
         model.addAttribute("atrzCompletedCnt", atrzCompletedCnt);
         model.addAttribute("atrzRejectedCnt", atrzRejectedCnt);
         
+        // 공지사항 : 1 , 커뮤니티 : 2 , 식단표 : 3
         // 공지사항 게시글 가져오기
         List<BbsVO> noticeList = mainService.getBbsNoticeList(map);
         model.addAttribute("noticeList", noticeList);
@@ -135,15 +139,6 @@ public class HomeController {
 		
 		return noticeMap;
 	}
-	
-	// 출퇴근 버튼 jsp
-//	@GetMapping("/workButton")
-//	public String main(Model model, Principal principal , DclzTypeVO dclzTypeVO) {
-//		
-//		
-//		
-//		return "home";
-//	}
 	
 	// 출근 버튼 눌렀을때 실행
 	@ResponseBody

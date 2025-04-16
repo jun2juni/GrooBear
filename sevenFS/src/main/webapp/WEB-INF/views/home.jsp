@@ -154,7 +154,7 @@
 	              <a href="#0" class="d-flex flex-column">
 	                <span class="text-black text-sm">
 					'모바일 쿠폰 서비스
-					임직원을 위한 맞춤형 쿠폰 발송, ONE-STOP으로 해결!</h6>
+					임직원을 위한 맞춤형 쿠폰 발송, ONE-STOP으로 해결!
 	                </span>
 	                  <span class="text-sm text-gray">2025.04.15. 01:33</span>
 	              </a>
@@ -283,18 +283,25 @@
 	         </div>
            <!-- 프로젝트 -->
 	       
-	        <input type="hidden" id="currentPage" value="${articlePage.currentPage}">
+	        <input type="hidden" class="currentPage" value="${articlePage.currentPage}">
 		    <!-- 게시판 시작 -->
             <div class="col-lg-12">
               <div class="card-style mb-30">
                 <h6 class="mb-30">전사게시판 최근글</h6>
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
-				  <li class="nav-item" role="presentation">
-				    <button class="nav-link active" id="notice-tab" data-bs-toggle="tab" data-bs-target="#notice" type="button" role="tab" aria-controls="notice" aria-selected="true">공지사항</button>
-				  </li>
+				  <!-- 공지사항 -->
+				  <form action="/main/home" method="get" id="noticeForm">
+					  <li class="nav-item" role="presentation">
+					    <input type="hidden" value="1" name="bbsCtgryNo">
+					    <button type="submit" class="nav-link active" id="notice-tab" data-bs-toggle="tab"
+					    data-bs-target="#notice" type="button" role="tab" aria-controls="notice" aria-selected="true">공지사항</button>
+					  </li>
+				  </form>
+				  <!-- 커뮤니티 -->
 				  <li class="nav-item" role="presentation">
 				    <button class="nav-link" id="cummunity-tab" data-bs-toggle="tab" data-bs-target="#cummunity" type="button" role="tab" aria-controls="cummunity" aria-selected="false">커뮤니티</button>
 				  </li>
+				  <!-- 식단표 -->
 				  <li class="nav-item" role="presentation">
 				    <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu" type="button" role="tab" aria-controls="menu" aria-selected="false">오늘의 식단표</button>
 				  </li>
@@ -308,35 +315,29 @@
 		                           	<c:if test="${bbsNoticeList.upendFixingYn == 'Y'}">
 							        	<span style="color: red; font-weight: bold;">[고정]</span>
 							    	</c:if>
-	                             	 ${bbsNoticeList.bbscttSj}
+	                             	 <a href="/bbs/bbsDetail?bbsSn=${bbsNoticeList.bbsSn}" class="text-dark">
+	                             	 	${bbsNoticeList.bbscttSj}</a>
 	                            	<p class="text-sm">${bbsNoticeList.bbscttUpdtDt} ${bbsNoticeList.emplNm}</p>
 	                             </div>
 		                    </c:forEach>
 	                    </div>
                     </div>
+                    <!-- 공지사항 페이지네이션 -->
 					<nav aria-label="Page navigation example">
 					  <ul class="pagination d-flex justify-content-center">
 					    <li class="page-item">
-					      <%-- <c:set var="prevPage" value="${articlePage.currentPage - 1}"></c:set>  --%>
-					      <%-- <a class="page-link" href="/main/home?currentPage=${prevPage}" aria-label="Previous">
-					        <span aria-hidden="true"><</span>
-					      </a> --%>
-					      <button class="page-link"  id="prevBtn">
+					      <button class="page-link prevBtn">
 					        <span aria-hidden="true"><</span>
 					      </button>
 					    </li>
 					    <li class="page-item">
-					    <%--  ${articlePage} --%>
-					     <%-- <c:set var="nextPage" value="${articlePage.currentPage + 1}"></c:set>
-					      <a class="page-link" href="/main/home?currentPage=${nextPage}" aria-label="Next">
-					        <span aria-hidden="true">></span>
-					      </a> --%>
-					      <button class="page-link"  id="nextPage">
+					      <button class="page-link nextPage">
 					        <span aria-hidden="true">></span>
 					      </button>
 					    </li>
 					  </ul>
 					</nav>
+					<!-- 공지사항 페이지네이션 -->
 				  </div>
 				  <div class="tab-pane fade" id="cummunity" role="tabpanel" aria-labelledby="cummunity-tab">커뮤니티 내용</div>
 				  <div class="tab-pane fade" id="menu" role="tabpanel" aria-labelledby="menu-tab">오늘의 식단표 내용</div>
@@ -370,6 +371,15 @@ let minutes = parseInt(timeParts[1]);
 let seconds = parseInt(timeParts[2]);
 
 $(function(){	
+
+// 공지사항 눌렀을때 1전송
+$('#notice-tab').on('click', function(e){
+	e.preventDefault();
+	//alert('djfjhsadjhfkjsdahfkj');
+	$('#noticeForm').submit();
+})
+	
+	
 function updateClock() {
   seconds++;
   if (seconds >= 60) {
@@ -396,8 +406,8 @@ setInterval(updateClock, 1000);
 
 // 공지사항 페이지네이션
 // 이전 화살표 눌렀을때 비동기로 이동
-$('#prevBtn').on('click', function(){
-	const currentVal = $('#currentPage').val();
+$('.prevBtn').on('click', function(){
+	const currentVal = $('.currentPage').val();
 	const prevPage = currentVal - 1;
 	console.log('현재페이지 : ' , currentVal-1);
 	// 이전 화살표 버튼 눌렀을때 
@@ -422,29 +432,29 @@ $('#prevBtn').on('click', function(){
 		// 첫번째 페이지
 		let startPage = articlePage.startPage;
 		// 현재페이지 바꿔주기
-		$('#currentPage').val(currentPage);
+		$('.currentPage').val(currentPage);
 		noticeList.map((item) => {
 			//const newDiv = document.createElement('div');
 			const isFixed = item.upendFixingYn === 'Y' ? '<span style="color: red; font-weight: bold;">[고정]</span>' : '';
 			const newData = `
 					<div class="text-dark text-bold mb-3">
 	               	 \${isFixed}
-	             	 \${item.bbscttSj}
+	             	 	<a href="/bbs/bbsDetail?bbsSn=\${item.bbsSn}" class="text-dark">\${item.bbscttSj}</a>
 	            	<p class="text-sm">\${item.bbscttUpdtDt} \${item.emplNm}</p>
 	             </div>
 				`
 			bbsDiv.innerHTML += newData;		
 		}) // end map
 		if (currentPage <= 1) {
-		    $('#prevBtn').prop('disabled', true);
+		    $('.prevBtn').prop('disabled', true);
 		}else{
-			$('#prevBtn').prop('disabled', false);
+			$('.prevBtn').prop('disabled', false);
 		}
 	}) // end res
 }) // 이전 화살표 눌렀을때 비동기로 이동 끝
 // 다음 화살표 눌렀을때 비동기로 이동
-$('#nextPage').on('click', function(){
-	const currentVal = Number($('#currentPage').val());
+$('.nextPage').on('click', function(){
+	const currentVal = Number($('.currentPage').val());
 	console.log('현재페이지 : ' , currentVal);
 	const nextPage = currentVal + 1 ; 
 	console.log('다음페이지 : ' , nextPage);
@@ -470,7 +480,7 @@ $('#nextPage').on('click', function(){
 		// 마지막 페이지
 		let totalPages = articlePage.totalPages;
 		// 현재페이지 바꿔주기
-		$('#currentPage').val(currentPage);
+		$('.currentPage').val(currentPage);
 		
 		noticeList.map((item) => {
 			//const newDiv = document.createElement('div');
@@ -478,16 +488,16 @@ $('#nextPage').on('click', function(){
 			const newData = `
 					<div class="text-dark text-bold mb-3">
 	               	 \${isFixed}
-	             	 \${item.bbscttSj}
+	               		<a href="/bbs/bbsDetail?bbsSn=\${item.bbsSn}" class="text-dark">\${item.bbscttSj}</a>
 	            	<p class="text-sm">\${item.bbscttUpdtDt} \${item.emplNm}</p>
 	             </div>
 				`
 			bbsDiv.innerHTML += newData;		
 		}) // end map
 		if (currentPage >= totalPages) {
-		    $('#nextPage').prop('disabled', true);
+		    $('.nextPage').prop('disabled', true);
 		}else{
-			$('#nextPage').prop('disabled', false);
+			$('.nextPage').prop('disabled', false);
 		}
 	}) // end res
 }) // 다음 화살표 눌렀을때 비동기로 이동 끝
