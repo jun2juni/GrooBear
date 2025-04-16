@@ -150,24 +150,36 @@
               </table>
             </div> --%>
  
-            <!-- 업무 상세 모달 -->
-            <div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailLabel" aria-hidden="true">
-              <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="taskDetailLabel">업무 상세 정보</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <div id="taskDetailContent">로딩 중...</div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <button type="button" class="btn btn-warning" onclick="editTask()">수정하기</button>
-                  </div>
-                </div>
-              </div>
-            </div>
+			<!-- 업무 상세 모달 -->
+			<div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailLabel" aria-hidden="true">
+			  <div class="modal-dialog modal-lg">
+			    <div class="modal-content">
+			      
+			      <div class="modal-header">
+			        <h5 class="modal-title" id="taskDetailLabel">업무 상세 정보</h5>
+			        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			      </div>
+			      
+			      <div class="modal-body">
+			        <div id="taskDetailContent">로딩 중...</div>
+			      </div>
+			      
+			      <div class="modal-footer justify-content-between">
+			        <!-- 왼쪽: 닫기 -->
+			        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+			
+			        <div>
+			          <!-- 가운데: 수정 -->
+			          <button type="button" class="btn btn-outline-warning me-2" onclick="editTask()">수정하기</button>
+			          <!-- 오른쪽: 삭제 -->
+			          <button type="button" class="btn btn-danger" onclick="deleteTask()">삭제하기</button>
+			        </div>
+			      </div>
+			      
+			    </div>
+			  </div>
+			</div>
+
 
             <!-- 4. 세부 정보 -->
             <h5 class="mt-5 fw-semibold mb-2">4. 세부 정보</h5>

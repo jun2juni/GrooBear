@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
 
 <!-- 업무 추가 모달 -->
 <div class="modal fade" id="taskAddModal" tabindex="-1" aria-labelledby="taskAddModalLabel" aria-hidden="true">
@@ -33,7 +33,7 @@
           <!-- 업무명 -->
           <div class="mb-3">
             <label for="taskNm" class="form-label fw-semibold">업무명</label>
-            <input type="text" class="form-control" id="taskNm" name="taskNm" placeholder="업무명을 입력하세요" required />
+            <input type="text" class="form-control" id="taskNm" name="taskNm" required placeholder="업무명을 입력하세요" />
           </div>
 
           <!-- 담당자 선택 -->
@@ -65,7 +65,7 @@
             </div>
           </div>
 
-          <!-- 우선순위 / 등급 -->
+          <!-- 우선순위 및 등급 -->
           <div class="mb-3 row">
             <div class="col-6">
               <label for="priort" class="form-label fw-semibold">우선순위</label>
@@ -96,10 +96,10 @@
             <textarea class="form-control" id="taskCn" name="taskCn" rows="3" placeholder="업무 내용을 입력하세요"></textarea>
           </div>
 
-          <!-- 첨부파일 -->
+          <!-- 파일 업로드 -->
           <div class="mb-3">
-            <label for="uploadFiles" class="form-label fw-semibold">첨부파일</label>
-            <input class="form-control" type="file" name="uploadFiles" id="uploadFiles" multiple />
+            <label for="uploadFiles" class="form-label fw-semibold">첨부파일 (최대 5개)</label>
+            <input type="file" class="form-control" name="uploadFiles" id="uploadFiles" multiple />
             <ul class="list-group mt-2" id="fileNameList"></ul>
           </div>
         </div>
@@ -115,52 +115,47 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  // 파일명 리스트 출력
-  document.getElementById("uploadFiles").addEventListener("change", function () {
-    const list = document.getElementById("fileNameList");
-    list.innerHTML = "";
-    Array.from(this.files).forEach(file => {
-      const li = document.createElement("li");
-      li.className = "list-group-item";
-      li.textContent = file.name;
-      list.appendChild(li);
-    });
-  });
-
-  // 상위 업무 셀렉트 변경 → hidden input에 값 반영
+  // 상위 업무 선택 반영
   document.getElementById("upperTaskSelect").addEventListener("change", function () {
     document.getElementById("upperTaskNo").value = this.value;
   });
 
-  // 업무 등록
+  // 파일 리스트 표시
+  $('#taskAddModal').on('shown.bs.modal', function () {
+    const uploadInput = document.getElementById("uploadFiles");
+    if (uploadInput) {
+      uploadInput.addEventListener("change", function () {
+        const list = document.getElementById("fileNameList");
+        list.innerHTML = "";
+        Array.from(this.files).forEach(file => {
+          const li = document.createElement("li");
+          li.className = "list-group-item";
+          li.textContent = file.name;
+          list.appendChild(li);
+        });
+      });
+    }
+  });
+
+  // 업무 등록 AJAX
   document.getElementById("taskAddForm").addEventListener("submit", function (e) {
     e.preventDefault();
-    const formData = new FormData(this);
 
+    const formData = new FormData(this);
     fetch("/projectTask/insert", {
       method: "POST",
       body: formData
     })
-    .then(res => res.text())
+    .then(res => res.json())
     .then(result => {
-      if (result.includes("success") || !isNaN(Number(result))) {
-        // 업무 등록 성공 처리
+      if (result.success || !isNaN(Number(result.taskNo))) {
         alert("업무가 성공적으로 등록되었습니다.");
-
-        const modalEl = document.getElementById("taskAddModal");
-        let modal = bootstrap.Modal.getInstance(modalEl);
-        if (!modal) modal = new bootstrap.Modal(modalEl);
-        modal.hide();
-
+        bootstrap.Modal.getInstance(document.getElementById("taskAddModal")).hide();
         this.reset();
         document.getElementById("fileNameList").innerHTML = "";
-
-        if (typeof refreshTaskList === 'function') {
-          refreshTaskList();
-        }
-
+        window.location.href = `/project/projectDetail?prjctNo=\${result.prjctNo}`;
       } else {
-        alert("업무 등록에 실패했습니다. 서버 응답: " + result);
+        alert("업무 등록에 실패했습니다.");
       }
     })
     .catch(err => {

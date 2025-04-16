@@ -71,29 +71,40 @@ public class ProjectTaskController {
 	                         @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
 	                         @RequestParam(value = "removeFileId", required = false) int[] removeFileIds,
 	                         RedirectAttributes ra) {
-		log.info("받은 upperTaskNo: {}", taskVO.getUpperTaskNo());
-	    // 파일 수정 처리
+	    log.info("📌 업무 수정 요청 - taskNo: {}", taskVO.getTaskNo());
+
+	    // 첨부파일 정보 구성
 	    AttachFileVO fileVO = new AttachFileVO();
 	    fileVO.setAtchFileNo(taskVO.getAtchFileNo());
 	    fileVO.setRemoveFileId(removeFileIds);
 
-	    // 여기서 updateFileList가 새 번호를 설정해주지는 않기 때문에 수동으로 설정해야 함
-	    int result = 0;
-	    if (uploadFiles != null && uploadFiles.length > 0 || removeFileIds != null) {
-	        result = attachFileService.updateFileList("project/task", uploadFiles, fileVO);
+	    // 파일 수정 처리
+	    if ((uploadFiles != null && uploadFiles.length > 0) || removeFileIds != null) {
+	        int result = attachFileService.updateFileList("project/task", uploadFiles, fileVO);
+	        log.info("📂 파일 저장 결과: {}", result);
 
-	        // 파일 번호가 없으면 새로 발급됨 (서비스 내부에서 getAttachFileNo 사용)
-	        if (fileVO.getAtchFileNo() > 0) {
+	        // 저장된 파일 번호가 있으면 VO에 설정
+	        if (result > 0) {
 	            taskVO.setAtchFileNo(fileVO.getAtchFileNo());
 	        }
 	    }
 
-	    int update = projectTaskService.updateTask(taskVO);
-	    ra.addFlashAttribute("message", update > 0 ? "수정 성공" : "수정 실패");
+	    // 로그 출력
+	    log.info("📝 수정할 업무명: {}", taskVO.getTaskNm());
+	    log.info("📎 파일 수: {}", uploadFiles != null ? uploadFiles.length : 0);
+	    if (uploadFiles != null) {
+	        for (MultipartFile mf : uploadFiles) {
+	            log.info(" - {} ({} bytes)", mf.getOriginalFilename(), mf.getSize());
+	        }
+	    }
 
-	    
+	    // 업무 업데이트 수행
+	    int updated = projectTaskService.updateTask(taskVO);
+	    ra.addFlashAttribute("message", updated > 0 ? "수정 성공" : "수정 실패");
+
 	    return "redirect:/project/projectDetail?prjctNo=" + taskVO.getPrjctNo();
 	}
+
 	
 	@GetMapping("/download")
 	@ResponseBody
@@ -103,28 +114,51 @@ public class ProjectTaskController {
 
 	@PostMapping("/insert")
 	@ResponseBody
-	public ResponseEntity<?> insertTask(ProjectTaskVO taskVO,
+	public ResponseEntity<?> insertTask(@ModelAttribute ProjectTaskVO taskVO,
 	                                    @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles) {
 	    try {
+	        log.info("업무명: {}", taskVO.getTaskNm());
+
+	        // 반드시 직접 attachFileNo를 먼저 설정해줘야 함
+	        if (uploadFiles != null && uploadFiles.length > 0) {
+	            long atchFileNo = attachFileService.getAttachFileNo(); // 시퀀스 미리 생성
+	            taskVO.setAtchFileNo(atchFileNo);
+	        }
+
 	        Long taskNo = projectTaskService.insertProjectTaskWithFiles(taskVO, uploadFiles);
-	        return ResponseEntity.ok(taskNo); // 프론트에 taskNo 넘겨줌
+
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("success", true);
+	        response.put("taskNo", taskNo);
+	        response.put("prjctNo", taskVO.getPrjctNo());
+	        
+	        log.info("업무명: {}", taskVO.getTaskNm());
+	        log.info("파일 개수: {}", uploadFiles != null ? uploadFiles.length : 0);
+	        if (uploadFiles != null) {
+	            for (MultipartFile mf : uploadFiles) {
+	                log.info("파일 이름: {}, 크기: {}", mf.getOriginalFilename(), mf.getSize());
+	            }
+	        }
+
+
+	        return ResponseEntity.ok(response);
 	    } catch (Exception e) {
 	        log.error("업무 등록 중 오류", e);
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
+	        
+	        
 	    }
+
 	}
 
-	// 업무 부분 조회 
+
+
 	@GetMapping("/partialList")
-	public String getPartialTaskList(@RequestParam int prjctNo, Model model) {
-	    ProjectVO project = projectService.projectDetail(prjctNo);
+	public String partialTaskList(@RequestParam("prjctNo") Long prjctNo, Model model) {
+	    ProjectVO project = projectService.projectDetail(prjctNo); // ← taskList 포함
 	    model.addAttribute("project", project);
 	    return "project/taskListPartial"; 
 	}
-
-
-
-
 
 
 	
@@ -136,6 +170,7 @@ public class ProjectTaskController {
 	    ra.addFlashAttribute("message", success ? "업무가 삭제되었습니다." : "삭제 실패");
 	    return "redirect:/project/projectDetail?prjctNo=" + prjctNo;
 	}
+
 
 
 }

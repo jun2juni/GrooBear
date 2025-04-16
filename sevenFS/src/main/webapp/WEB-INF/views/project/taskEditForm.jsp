@@ -128,8 +128,6 @@
           <div class="card p-3 bg-light">
             <h6 class="mb-3 text-primary"><i class="fas fa-user-check me-2"></i>참여자 중에서 담당자 선택</h6>
 
-
-
             <c:if test="${not empty project}">
               <div class="mb-3">
                 <span class="badge btn-danger mb-2">책임자</span>

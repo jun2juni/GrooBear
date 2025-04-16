@@ -155,7 +155,7 @@
 
 	
 	<!-- 프로젝트 조회  -->
-	<select id="projectDetail" parameterType="int" resultMap="projectResultMap">
+	<select id="projectDetail" parameterType="long" resultMap="projectResultMap">
 	  SELECT 
 	    P.PRJCT_NO, 
 	    P.CTGRY_NO, 

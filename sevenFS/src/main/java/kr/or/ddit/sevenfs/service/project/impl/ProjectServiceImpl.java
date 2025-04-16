@@ -49,7 +49,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectVO projectDetail(int prjctNo) {
+    public ProjectVO projectDetail(long prjctNo) {
         ProjectVO projectVO = projectMapper.projectDetail(prjctNo);
 
         // 1. 참여자 역할 분리

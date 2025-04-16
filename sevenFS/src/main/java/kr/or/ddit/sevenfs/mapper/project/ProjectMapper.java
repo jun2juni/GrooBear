@@ -20,7 +20,7 @@ public interface ProjectMapper {
 	public int getTotal(Map<String, Object> map);
 
 	/* public int insertProjectEmpBatch(List<ProjectEmpVO> projectEmps); */
-	public ProjectVO projectDetail(int prjctNo);
+	public ProjectVO projectDetail(long prjctNo);
 	public int insertProject(ProjectVO projectVO);
 	public int insertProjectEmpBatch(@Param("list") List<ProjectEmpVO> projectEmpVOList);
 	public void deleteProject(int prjctNo);

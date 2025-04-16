@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.service.project.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,31 +141,50 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
     }
     
     @Override
+    @Transactional
     public Long insertProjectTaskWithFiles(ProjectTaskVO taskVO, MultipartFile[] uploadFiles) {
-        // 기본값 설정
-        if (taskVO.getTaskSttus() == null || taskVO.getTaskSttus().isBlank()) {
-            taskVO.setTaskSttus("00");
-        }
-        if (taskVO.getProgrsrt() == 0) {
-            taskVO.setProgrsrt(0);
-        }
+        // 1. 업무 기본 설정
+        taskVO.setTaskSttus("00");
+        taskVO.setProgrsrt(0);
 
-        // 기간 계산
         if (taskVO.getTaskBeginDt() != null && taskVO.getTaskEndDt() != null) {
             long diff = taskVO.getTaskEndDt().getTime() - taskVO.getTaskBeginDt().getTime();
-            taskVO.setTaskDaycnt((int)(diff / (1000 * 60 * 60 * 24)) + 1);
+            taskVO.setTaskDaycnt((int) (diff / (1000 * 60 * 60 * 24)) + 1);
         }
 
-        // 파일 처리
+        // 2. 파일 저장
         if (uploadFiles != null && uploadFiles.length > 0) {
-            AttachFileVO fileVO = new AttachFileVO();
-            int result = attachFileService.updateFileList("project/task", uploadFiles, fileVO);
-            taskVO.setAtchFileNo(fileVO.getAtchFileNo());
+            boolean hasValidFile = false;
+            for (MultipartFile file : uploadFiles) {
+                if (file != null && !file.isEmpty() && file.getSize() > 0) {
+                    log.info(">> 유효한 파일: {}, 크기: {}", file.getOriginalFilename(), file.getSize());
+                    hasValidFile = true;
+                } else {
+                    log.warn(">> 무시된 파일: {}, 크기: {}", 
+                        (file != null ? file.getOriginalFilename() : "null"), 
+                        (file != null ? file.getSize() : -1));
+                }
+            }
+
+            if (hasValidFile) {
+                long atchFileNo = attachFileService.getAttachFileNo();
+                AttachFileVO fileVO = new AttachFileVO();
+                fileVO.setAtchFileNo(atchFileNo);
+                attachFileService.updateFileList("project/task", uploadFiles, fileVO);
+                taskVO.setAtchFileNo(atchFileNo);
+            }
         }
 
+        // 3. 업무 저장
+        log.debug(">>> 업무 저장 직전 taskVO: {}", taskVO);
         projectTaskMapper.insertProjectTask(taskVO);
+        log.debug(">>> 업무 저장 완료 taskNo: {}", taskVO.getTaskNo());
+
         return (long) taskVO.getTaskNo();
     }
+
+
+
 
 
  

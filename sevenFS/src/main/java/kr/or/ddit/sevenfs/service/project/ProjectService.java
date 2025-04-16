@@ -15,13 +15,14 @@ public interface ProjectService {
 	public int getTotal(Map<String, Object> map);
 	public int insertProject(ProjectVO projectVO);
 	public int insertProjectEmpBatch(List<ProjectEmpVO> projectEmpList);
-	public ProjectVO projectDetail(int prjctNo);
+	public ProjectVO projectDetail(long prjctNo);
 	public int createProject(ProjectVO projectVO, List<ProjectTaskVO> taskList);
 	public void deleteProject(int prjctNo);
 	public void updateProject(ProjectVO projectVO);
 	public List<Map<String, Object>> getProjectCategoryList();
 	public List<Map<String, Object>> getProjectStatusList();
 	public List<Map<String, Object>> getProjectGradeList();
+
 
 
 	

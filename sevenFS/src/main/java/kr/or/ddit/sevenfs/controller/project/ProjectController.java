@@ -265,8 +265,8 @@ public class ProjectController {
 
 	@PostMapping("/update")
 	public String updateProject(ProjectVO projectVO, Model model,
-	                            @RequestParam("emp_no") String[] empNos,
-	                            @RequestParam("emp_role") String[] empRoles,
+	                            @RequestParam(value ="emp_no", required = false) String[] empNos,
+	                            @RequestParam(value ="emp_role", required = false) String[] empRoles,
 	                            @RequestParam(value = "emp_auth", required = false) String[] empAuths) {
 		model.addAttribute("categoryList", projectService.getProjectCategoryList());
 		model.addAttribute("projectStatusList", projectService.getProjectStatusList());
@@ -274,18 +274,19 @@ public class ProjectController {
 
 	    // 참여자 리스트 재구성
 	    List<ProjectEmpVO> empList = new ArrayList<>();
-	    for (int i = 0; i < empNos.length; i++) {
-	        ProjectEmpVO empVO = new ProjectEmpVO();
-	        empVO.setPrtcpntEmpno(empNos[i]);
-	        empVO.setPrtcpntRole(empRoles[i]);
-	        empVO.setPrjctAuthor("0000");
-	        empVO.setEvlManEmpno(empNos[i]);
-	        empVO.setEvlCn("수정됨");
-	        empVO.setEvlGrad("1");
-	        empVO.setPrjctNo(projectVO.getPrjctNo());
-	        empList.add(empVO);
+	    if(empNos != null && empNos.length > 0) {
+		    for (int i = 0; i < empNos.length; i++) {
+		        ProjectEmpVO empVO = new ProjectEmpVO();
+		        empVO.setPrtcpntEmpno(empNos[i]);
+		        empVO.setPrtcpntRole(empRoles[i]);
+		        empVO.setPrjctAuthor("0000");
+		        empVO.setEvlManEmpno(empNos[i]);
+		        empVO.setEvlCn("수정됨");
+		        empVO.setEvlGrad("1");
+		        empVO.setPrjctNo(projectVO.getPrjctNo());
+		        empList.add(empVO);
+		    }
 	    }
-
 	    projectVO.setProjectEmpVOList(empList);
 	    projectService.updateProject(projectVO);
 	    return "redirect:/project/projectDetail?prjctNo=" + projectVO.getPrjctNo();

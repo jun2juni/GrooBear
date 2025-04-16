@@ -53,7 +53,7 @@
 function refreshTaskList() {
   const prjctNo = "${project.prjctNo}";
 
-  fetch(`/projectTask/partialList?prjctNo=${prjctNo}`)
+  fetch(`/projectTask/partialList?prjctNo=\${prjctNo}`)
     .then(res => res.text())
     .then(html => {
       document.getElementById("taskListSection").innerHTML = html;
