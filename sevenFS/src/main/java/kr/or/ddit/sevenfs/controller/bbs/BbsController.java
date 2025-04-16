@@ -30,6 +30,7 @@ import kr.or.ddit.sevenfs.service.bbs.BbsService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.utils.AttachFile;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
+import kr.or.ddit.sevenfs.vo.bbs.BbsCategoryVO;
 import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,6 +52,7 @@ public class BbsController {
 	
 	@Autowired
 	BbsSecurityUtil securityUtil;
+	
 	
 	
     @GetMapping("/bbs")
@@ -76,6 +78,8 @@ public class BbsController {
                           @ModelAttribute BbsVO bbsVO,
                           @RequestParam(defaultValue = "1") int currentPage,
                           @RequestParam(defaultValue = "10") int size) {
+    	
+    	
 
         // 게시판 카테고리 번호 설정
         bbsVO.setBbsCtgryNo(bbsCtgryNo);
@@ -121,14 +125,12 @@ public class BbsController {
             bbsList.get(i).setRowNumber(startRowNumber + i + 1); // 게시글 번호 (정순)
         }
         
-        
-        
         // 뷰에 전달할 모델 속성 설정
         model.addAttribute("selectedCategory", bbsVO.getCategory());
         model.addAttribute("articlePage", articlePage);
         model.addAttribute("bbsList", bbsList);
         model.addAttribute("bbsCtgryNo", bbsCtgryNo);
-
+        
         // 게시판 목록 뷰 반환
         return "bbs/bbsList";
     }

@@ -5,7 +5,7 @@
 
 
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
-<c:set var="title" scope="application" value="게시판리스트" />
+<c:set var="title" scope="application" value="커뮤니티" />
 <c:set var="copyLight" scope="application" value="by 박현준" />
 
 
@@ -18,7 +18,7 @@
 		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 	
-	<title>게시판</title>
+	<title>${bbsVO.bbsCtgryNm}</title>
 	
   <%@ include file="../layout/prestyle.jsp" %>
 <style>
@@ -69,7 +69,7 @@ table.table-hover.align-middle.text-center tbody tr td {
       <div class="container-fluid">
         <div class="card-style mb-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
-		    <h3 class="text-dark">게시판</h3>
+		    <h3 class="text-dark">${bbsList[0].bbsCtgryNm}</h3>
 		    <div>
 		        <a href="/bbs/bbsInsert?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-primary me-2">게시글 추가</a>
 		        <c:if test="${myEmpInfo.emplNo == bbsVO.emplNo || myEmpInfo.emplNo == '20250000'}"><!-- 마동석이면 보이게 -->

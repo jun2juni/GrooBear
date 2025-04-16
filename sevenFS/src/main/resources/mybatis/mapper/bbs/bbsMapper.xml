@@ -39,7 +39,8 @@
 	
 	    FROM BBS B
 	    JOIN EMPLOYEE E ON B.EMPL_NO = E.EMPL_NO
-	    JOIN BBS_CTGRY CT ON B.BBS_CTGRY_NO = CT.BBS_CTGRY_NO
+	    LEFT JOIN BBS_CTGRY CT ON B.BBS_CTGRY_NO = CT.BBS_CTGRY_NO
+
 	
 	    <where>
 	        B.BBSCTT_USE_YN = 'Y'
@@ -266,6 +267,7 @@
 	<select id="bbsCategoryList" resultType="kr.or.ddit.sevenfs.vo.bbs.BbsCategoryVO">
 		SELECT BBS_CTGRY_NO, UPPER_CTGRY_NO, CTGRY_NM, CTGRY_CREAT_DT, CTGRY_USE_YN, DEPT_CODE
 		FROM BBS_CTGRY
+		WHERE CTGRY_USE_YN = 'Y'
 	</select>
 	
 	<!-- 게시글 일괄삭제 -->
