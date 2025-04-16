@@ -69,7 +69,7 @@ table.table-hover.align-middle.text-center tbody tr td {
       <div class="container-fluid">
         <div class="card-style mb-4">
 		  <!-- 상위탭 시작  -->
-							<div>
+							<div class="mb-20">
 								<ul class="nav nav-tabs" id="myTab" role="tablist">
 									<li class="nav-item" role="presentation">
 										<button class="nav-link" id="tab1" data-bs-toggle="tab"
@@ -80,21 +80,23 @@ table.table-hover.align-middle.text-center tbody tr td {
 									<li class="nav-item" role="presentation">
 										<button class="nav-link" id="tab2" data-bs-toggle="tab"
 											data-bs-target="#content2" type="button" role="tab"
-											aria-controls="content2" aria-selected="false">동호회1</button>
+											onClick="location.href='comunityClubList'"
+											aria-controls="content2" aria-controls="content2"
+											aria-selected="false">스느스</button>
 									</li>
 									<li class="nav-item" role="presentation">
 										<button class="nav-link" id="tab3" data-bs-toggle="tab"
 											data-bs-target="#content3" type="button" role="tab"
-											aria-controls="content3" aria-selected="false">동호회2</button>
+											onClick="location.href='comunitySurveyList'"	
+											aria-controls="content3" aria-selected="false">설문조사/투표</button>
 									</li>
 									<li class="nav-item" role="presentation">
-										<button class="nav-link" id="tab4" data-bs-toggle="tab"
-											data-bs-target="#content4" type="button" role="tab"
-											onClick="location.href='comunityMonthMenuList'"
-											aria-controls="content4" aria-selected="false">월별식단표</button>
+										<button class="nav-link" id="tab4" data-bs-toggle="tab" data-bs-target="#content4" type="button"
+											onClick="location.href='comunityMonthMenuList'" role="tab" aria-controls="content4" aria-selected="false">
+											월별식단표</button>
 									</li>
 								</ul>
-							</div><!-- 상위탭 끝  -->        
+							</div> <!--내부 탭 분리 지점   -->
 							
 							<!-- 게시판 시작  -->
 	          <div class="d-flex justify-content-between align-items-center mb-3">
@@ -126,7 +128,7 @@ table.table-hover.align-middle.text-center tbody tr td {
                 <button style="white-space: nowrap;" type="submit" class="btn btn-outline-primary">검색</button>
               </form>
             </div>
-          </nav>
+          </nav> <!-- navBar navBar-light 끝  -->
 
           <div class="table">
             <table class="table table-hover align-middle text-center" style="table-layout: fixed; width: 100%;">
@@ -187,7 +189,7 @@ table.table-hover.align-middle.text-center tbody tr td {
 					</div>
 				</div>
 			</div>
-          </div>
+          </div> <!-- 표 끝 -->
         </div>
       </div>
     </section>

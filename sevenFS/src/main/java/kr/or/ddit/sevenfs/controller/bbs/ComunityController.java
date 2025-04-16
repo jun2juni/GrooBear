@@ -60,7 +60,24 @@ public class ComunityController {
 		
 		// 동아리 카테고리
 		return "comunity/comunityClubList";	
-	} // comunityHome
+	} // comunityClubList
+	
+	// 투표리스트
+	@GetMapping("/comunitySurveyList")
+	public String comunitySurveyList(
+			) {
+		
+		// 동아리 카테고리
+		return "comunity/comunitySurveyList";	
+	} // comunitySurveyList
+	
+	@GetMapping("/comunitySurveyInsert")
+	public String comunitySurveyInsert(
+			) {
+		
+		// 동아리 카테고리
+		return "comunity/comunitySurveyInsert";	
+	} // comunitySurveyList
 	
 	
 	@GetMapping("/comunityMonthMenuList")

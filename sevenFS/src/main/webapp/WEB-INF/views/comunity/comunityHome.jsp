@@ -28,7 +28,7 @@
 					<div class="col-12">
 						<div class="card-style">
 							<!-- 상위탭 시작  -->
-							<div>
+							<div class="mb-20">
 								<ul class="nav nav-tabs" id="myTab" role="tablist">
 									<li class="nav-item" role="presentation">
 										<button class="nav-link" id="tab1" data-bs-toggle="tab"
@@ -41,12 +41,13 @@
 											data-bs-target="#content2" type="button" role="tab"
 											onClick="location.href='comunityClubList'"
 											aria-controls="content2" aria-controls="content2"
-											aria-selected="false">동호회1</button>
+											aria-selected="false">스느스</button>
 									</li>
 									<li class="nav-item" role="presentation">
 										<button class="nav-link" id="tab3" data-bs-toggle="tab"
 											data-bs-target="#content3" type="button" role="tab"
-											aria-controls="content3" aria-selected="false">동호회2</button>
+											onClick="location.href='comunitySurveyList'"	
+											aria-controls="content3" aria-selected="false">설문조사/투표</button>
 									</li>
 									<li class="nav-item" role="presentation">
 										<button class="nav-link" id="tab4" data-bs-toggle="tab"
@@ -55,7 +56,7 @@
 											aria-controls="content4" aria-selected="false">월별식단표</button>
 									</li>
 								</ul>
-							</div>
+							</div> <!--내부 탭 분리 지점   -->
 						</div>
 					</div>
 				</div>	
