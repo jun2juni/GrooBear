@@ -23,12 +23,13 @@ public interface ProjectMapper {
 	public ProjectVO projectDetail(long prjctNo);
 	public int insertProject(ProjectVO projectVO);
 	public int insertProjectEmpBatch(@Param("list") List<ProjectEmpVO> projectEmpVOList);
-	public void deleteProject(int prjctNo);
-	public void deleteProjectEmpsByProjectNo(int prjctNo);
+	public int deleteProject(long prjctNo);
+	public void deleteProjectEmpsByProjectNo(long prjctNo);
 	public void updateProject(ProjectVO projectVO);
-	public void deleteProjectEmpsByProject(int prjctNo);
+	public void deleteProjectEmpsByProject(long prjctNo);
 	public List<Map<String, Object>> getProjectCategoryList();
 	public List<Map<String, Object>> getProjectStatusList();
 	public List<Map<String, Object>> getProjectGradeList();
+	public int selectMaxProjectNo();
 
 }

@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -9,22 +9,16 @@
     <div class="col-md-8 col-lg-6 mx-auto">
       <form onsubmit="searchProjects(event)" class="input-group">
         <input type="text" id="keywordInput" class="form-control" placeholder="프로젝트명, 카테고리, 담당자 검색" value="${param.keyword}">
-        <button type="submit" class="btn btn-primary">
-          <span class="material-icons-outlined">search</span> 검색
+        <button type="submit" class="btn btn-primary d-flex align-items-center">
+          <span class="material-icons-outlined">search</span>
+          <span class="ms-1">검색</span>
         </button>
       </form>
     </div>
   </div>
 
-  <!-- 프로젝트 목록 -->
+  <!-- 프로젝트 목록 테이블 -->
   <div class="card shadow-sm border-0">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">프로젝트 목록</h5>
-      <a href="/project/insert" class="btn btn-sm btn-success">
-        <span class="material-icons-outlined align-middle" style="vertical-align: middle;">add</span> 신규 프로젝트
-      </a>
-    </div>
-
     <div class="card-body p-0">
       <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
@@ -70,111 +64,132 @@
                       <i class="material-icons-outlined">more_vert</i>
                     </button>
                     <ul class="dropdown-menu">
+                      <li><a class="dropdown-item gantt-tab-link" href="#" data-project-id="${project.prjctNo}">간트차트 보기</a></li>
                       <li><a class="dropdown-item" href="/project/projectDetail?prjctNo=${project.prjctNo}">상세보기</a></li>
                       <li><a class="dropdown-item" href="/project/edit/${project.prjctNo}">수정</a></li>
                       <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" data-project-id="${project.prjctNo}">삭제</a></li>
+                      <li><a href="#" class="dropdown-item text-danger delete-project-btn" data-project-id="${project.prjctNo}" onclick="confirmDelete(event, this)">삭제</a></li>
                     </ul>
                   </div>
                 </td>
               </tr>
             </c:forEach>
             <c:if test="${empty projectList}">
-              <tr>
-                <td colspan="8" class="text-center py-4 text-muted">등록된 프로젝트가 없습니다.</td>
-              </tr>
+              <tr><td colspan="8" class="text-center py-4 text-muted">등록된 프로젝트가 없습니다.</td></tr>
             </c:if>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- 페이징 및 총 개수 -->
-<div class="d-flex justify-content-center align-items-center flex-wrap gap-3 m-4">
-<%--   <div class="small text-muted">총 ${totalProjectCount}개의 프로젝트</div> --%>
-  
-  <nav>
-    <ul class="pagination pagination-sm mb-0">
-      <c:if test="${articlePage.currentPage > 1}">
-        <li class="page-item">
-          <a class="page-link" href="#" onclick="loadPage(1)">&laquo;</a>
-        </li>
-        <li class="page-item">
-          <a class="page-link" href="#" onclick="loadPage(${articlePage.currentPage - 1})">&lsaquo;</a>
-        </li>
-      </c:if>
+    <!-- 페이지네이션 -->
+    <div class="d-flex justify-content-center align-items-center flex-wrap gap-3 m-4">
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <c:if test="${articlePage.currentPage > 1}">
+            <li class="page-item"><a class="page-link" href="#" onclick="loadPage(1)">&laquo;</a></li>
+            <li class="page-item"><a class="page-link" href="#" onclick="loadPage(${articlePage.currentPage - 1})">&lsaquo;</a></li>
+          </c:if>
 
-      <c:forEach begin="${articlePage.startPage}" end="${articlePage.endPage}" var="i">
-        <li class="page-item ${i == articlePage.currentPage ? 'active' : ''}">
-          <a class="page-link" href="#" onclick="loadPage(${i})">${i}</a>
-        </li>
-      </c:forEach>
+          <c:forEach begin="${articlePage.startPage}" end="${articlePage.endPage}" var="i">
+            <li class="page-item ${i == articlePage.currentPage ? 'active' : ''}">
+              <a class="page-link" href="#" onclick="loadPage(${i})">${i}</a>
+            </li>
+          </c:forEach>
 
-      <c:if test="${articlePage.currentPage < articlePage.totalPages}">
-        <li class="page-item">
-          <a class="page-link" href="#" onclick="loadPage(${articlePage.currentPage + 1})">&rsaquo;</a>
-        </li>
-        <li class="page-item">
-          <a class="page-link" href="#" onclick="loadPage(${articlePage.totalPages})">&raquo;</a>
-        </li>
-      </c:if>
-    </ul>
-  </nav>
-</div>
-
-<!-- 삭제 확인 모달 -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header"><h5 class="modal-title">프로젝트 삭제</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
-      <div class="modal-body">
-        정말로 이 프로젝트를 삭제하시겠습니까?<br><span class="text-danger small">이 작업은 되돌릴 수 없습니다.</span>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-        <button class="btn btn-danger" id="confirmDelete">삭제</button>
-      </div>
+          <c:if test="${articlePage.currentPage < articlePage.totalPages}">
+            <li class="page-item"><a class="page-link" href="#" onclick="loadPage(${articlePage.currentPage + 1})">&rsaquo;</a></li>
+            <li class="page-item"><a class="page-link" href="#" onclick="loadPage(${articlePage.totalPages})">&raquo;</a></li>
+          </c:if>
+        </ul>
+      </nav>
     </div>
   </div>
 </div>
 
+<!-- 스크립트 영역 -->
 <script>
-let selectedProjectId = null;
+let currentPage = 1;
 
-// 삭제 모달 열릴 때 선택된 프로젝트 ID 기억
-document.querySelectorAll('[data-bs-target="#deleteModal"]').forEach(btn => {
-  btn.addEventListener('click', function () {
-    selectedProjectId = this.getAttribute('data-project-id');
-    console.log("선택된 삭제 프로젝트 ID:", selectedProjectId);
+function searchProjects(e) {
+  e.preventDefault();
+  loadPage(1);
+}
+
+function loadPage(page) {
+  currentPage = page;
+  const keyword = document.getElementById("keywordInput")?.value || '';
+  fetch(`/project/projectList?currentPage=\${page}&keyword=\${encodeURIComponent(keyword)}`)
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById("projectListContent").innerHTML = html;
+    });
+}
+
+function confirmDelete(event, el) {
+  event.preventDefault();
+  const prjctNo = el.getAttribute("data-project-id");
+  swal({
+    title: "정말로 삭제하시겠습니까?",
+    text: "이 작업은 되돌릴 수 없습니다.",
+    icon: "warning",
+    buttons: ["취소", "삭제"],
+    dangerMode: true,
+  }).then((willDelete) => {
+    if (willDelete) {
+      fetch(`/project/delete/\${prjctNo}`, {
+        method: 'DELETE'
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            swal("삭제 완료", data.message || "프로젝트가 삭제되었습니다.", "success")
+              .then(() => loadPage(currentPage));
+          } else {
+            swal("삭제 실패", data.message || "프로젝트를 삭제할 수 없습니다.", "error");
+          }
+        })
+        .catch(err => {
+          console.error("삭제 실패:", err);
+          swal("삭제 실패", err.message || "서버 오류가 발생했습니다.", "error");
+        });
+    }
   });
-});
+}
 
-// 삭제 확인 버튼 누르면 DELETE 요청
-document.getElementById('confirmDelete').addEventListener('click', function () {
-  if (!selectedProjectId) return;
+// 간트차트 탭 전환 및 로드
+// 간트차트 탭 전환 및 해당 프로젝트 로드
+$(document).on("click", ".gantt-tab-link", function (e) {
+  e.preventDefault();
+  const prjctNo = $(this).data("project-id");
 
-  fetch(`/project/delete/\${selectedProjectId}`, {
-    method: 'DELETE'
-  })
-    .then(res => {
-      if (res.ok) {
-        // 삭제 성공 시 UI에서 해당 row 제거
-        const row = document.getElementById(`project-row-\${selectedProjectId}`);
-        if (row) row.remove();
+  const ganttTabBtn = document.querySelector('[data-bs-target="#tab-gantt"]');
+  if (ganttTabBtn) {
+    new bootstrap.Tab(ganttTabBtn).show(); // 탭 전환
+  }
 
-        // 모달 닫기
-        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
-        modal.hide();
+  // 실제 차트 로드
+  const url = `/project/gantt?prjctNo=\${prjctNo}`;
+  fetch(url)
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById("ganttChartArea").innerHTML = html;
 
-        alert("삭제가 완료되었습니다.");
-      } else {
-        alert("삭제 실패: 서버 오류");
-      }
+      // 삽입된 <script> 수동 실행
+      const scripts = document.getElementById("ganttChartArea").querySelectorAll("script");
+      scripts.forEach(oldScript => {
+        const newScript = document.createElement("script");
+        if (oldScript.src) {
+          newScript.src = oldScript.src;
+        } else {
+          newScript.textContent = oldScript.textContent;
+        }
+        document.body.appendChild(newScript);
+      });
     })
     .catch(err => {
-      console.error("삭제 오류:", err);
-      alert("삭제 중 오류 발생");
+      console.error("간트차트 로드 실패:", err);
+      document.getElementById("ganttChartArea").innerHTML = "<p class='text-danger'>간트차트를 불러오지 못했습니다.</p>";
     });
 });
 

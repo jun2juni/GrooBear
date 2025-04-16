@@ -17,13 +17,11 @@ public interface ProjectService {
 	public int insertProjectEmpBatch(List<ProjectEmpVO> projectEmpList);
 	public ProjectVO projectDetail(long prjctNo);
 	public int createProject(ProjectVO projectVO, List<ProjectTaskVO> taskList);
-	public void deleteProject(int prjctNo);
+	public boolean deleteProject(Long prjctNo); 
 	public void updateProject(ProjectVO projectVO);
 	public List<Map<String, Object>> getProjectCategoryList();
 	public List<Map<String, Object>> getProjectStatusList();
 	public List<Map<String, Object>> getProjectGradeList();
+	public int selectMaxProjectNo();
 
-
-
-	
 }

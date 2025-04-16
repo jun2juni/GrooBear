@@ -258,12 +258,12 @@
 
 	
 	<!-- 프로젝트 삭제 -->
-	<delete id="deleteProject" parameterType="int">
+	<delete id="deleteProject" parameterType="long">
 	  DELETE FROM PROJECT WHERE PRJCT_NO = #{prjctNo}
 	</delete>
 	
 	<!-- 프로젝트 참여자 삭제 -->
-	<delete id="deleteProjectEmpsByProjectNo" parameterType="int">
+	<delete id="deleteProjectEmpsByProjectNo" parameterType="long">
 	  DELETE FROM PROJECT_EMP WHERE PRJCT_NO = #{prjctNo}
 	</delete>
 
@@ -283,7 +283,7 @@
 	    WHERE PRJCT_NO = #{prjctNo}
 	</update>
 	
-	<delete id="deleteProjectEmpsByProject" parameterType="int">
+	<delete id="deleteProjectEmpsByProject" parameterType="long">
 	  DELETE FROM PROJECT_EMP WHERE PRJCT_NO = #{prjctNo}
 	</delete>
 	
@@ -308,6 +308,10 @@
 	  ORDER BY CMMN_CODE
 	</select>
 	
+	<!-- 간트차트용  -->
+	<select id="selectMaxProjectNo" resultType="int">
+	  SELECT MAX(PRJCT_NO) FROM PROJECT
+	</select>
 	
 	
 </mapper>

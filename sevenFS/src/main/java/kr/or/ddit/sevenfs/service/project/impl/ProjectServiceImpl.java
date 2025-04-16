@@ -187,18 +187,19 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 
-	@Override
-	public void deleteProject(int prjctNo) {
-		
-	    // 1. 업무 먼저 삭제
-	    projectTaskMapper.deleteProjectTasksByProject(prjctNo);
+    @Override
+    public boolean deleteProject(Long prjctNo) {
+        try {
+            projectTaskMapper.deleteProjectTasksByProject(prjctNo);
+            projectMapper.deleteProjectEmpsByProject(prjctNo);
+            int result = projectMapper.deleteProject(prjctNo); // 성공 여부 체크
+            return result > 0;
+        } catch (Exception e) {
+            log.error("프로젝트 삭제 중 오류", e);
+            return false;
+        }
+    }
 
-	    // 2. 인원 삭제
-	    projectMapper.deleteProjectEmpsByProject(prjctNo);
-
-	    // 3. 프로젝트 삭제
-	    projectMapper.deleteProject(prjctNo);
-	}
 
 	@Override
 	public void updateProject(ProjectVO projectVO) {
@@ -215,11 +216,6 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 
-
-
-
-
-
 	@Override
 	public List<Map<String, Object>> getProjectCategoryList() {
 	    return projectMapper.getProjectCategoryList();
@@ -233,6 +229,11 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public List<Map<String, Object>> getProjectGradeList() {
 	    return projectMapper.getProjectGradeList();
+	}
+
+	@Override
+	public int selectMaxProjectNo() {
+	    return projectMapper.selectMaxProjectNo();
 	}
 
 }

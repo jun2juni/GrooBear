@@ -29,7 +29,9 @@ public interface ProjectTaskMapper {
 	
 	public void deleteTasksByProjectNo(int prjctNo);
 
-	public void deleteProjectTasksByProject(int prjctNo);
+	public void deleteProjectTasksByProject(long prjctNo);
+
+	public int countChildTasks(Long parentTaskNo);
 
 
 

@@ -187,15 +187,20 @@
 	</delete>
 	
 	<!-- 프로젝트를 삭제할때 진행하는 업무 삭제  -->
-	<delete id="deleteTasksByProjectNo" parameterType="int">
+	<delete id="deleteTasksByProjectNo" parameterType="long">
 	  DELETE FROM PROJECT_TASK WHERE PRJCT_NO = #{prjctNo}
 	</delete>
 
-	<delete id="deleteProjectTasksByProject" parameterType="int">
+	<delete id="deleteProjectTasksByProject" parameterType="long">
 	  DELETE FROM PROJECT_TASK WHERE PRJCT_NO = #{prjctNo}
 	</delete>
 	
- 
+	 <!-- 하위 업무 개수 조회 -->
+	<select id="countChildTasks" resultType="int" parameterType="long">
+	    SELECT COUNT(*)
+	    FROM PROJECT_TASK
+	    WHERE UPPER_TASK_NO = #{parentTaskNo}
+	</select>
 
    
 </mapper>

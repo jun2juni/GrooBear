@@ -182,39 +182,40 @@ document.addEventListener("DOMContentLoaded", function () {
 	  }
 	});
 	
-$('#taskAddModal').on('shown.bs.modal', function () {
-	  // 폼 초기화
-	  document.getElementById("taskAddForm").reset();
-	  document.getElementById("fileNameList").innerHTML = "";
-	  
-	  // 파일 입력 필드 재생성 (브라우저 캐시 방지)
-	  const fileInputContainer = document.querySelector('.mb-3:has(#uploadFilesField)');
-	  const oldInput = document.getElementById("uploadFilesField");
-	  const newInput = document.createElement("input");
-	  newInput.type = "file";
-	  newInput.className = "form-control";
-	  newInput.name = "uploadFiles";
-	  newInput.id = "uploadFilesField";
-	  newInput.multiple = true;
-	  
-	  if (oldInput && fileInputContainer) {
-	    oldInput.parentNode.replaceChild(newInput, oldInput);
-	    
-	    // 이벤트 리스너 재설정
-	    newInput.addEventListener("change", function () {
-	      const list = document.getElementById("fileNameList");
-	      list.innerHTML = "";
-	      
-	      Array.from(this.files).forEach(file => {
-	        const li = document.createElement("li");
-	        li.className = "list-group-item";
-	        li.textContent = file.name + " (" + (file.size / 1024).toFixed(1) + " KB)";
-	        list.appendChild(li);
-	      });
-	    });
-	  }
-	});	
-	
-	
+const taskAddModal = document.getElementById('taskAddModal');
+if (taskAddModal) {
+  taskAddModal.addEventListener('shown.bs.modal', function () {
+    // 폼 초기화
+    document.getElementById("taskAddForm").reset();
+    document.getElementById("fileNameList").innerHTML = "";
+    
+    // 파일 입력 필드 재생성 (브라우저 캐시 방지)
+    const fileInputContainer = document.querySelector('.mb-3 > #uploadFilesField').parentNode;
+    const oldInput = document.getElementById("uploadFilesField");
+    const newInput = document.createElement("input");
+    newInput.type = "file";
+    newInput.className = "form-control";
+    newInput.name = "uploadFiles";
+    newInput.id = "uploadFilesField";
+    newInput.multiple = true;
+    
+    if (oldInput && fileInputContainer) {
+      oldInput.parentNode.replaceChild(newInput, oldInput);
+      
+      // 이벤트 리스너 재설정
+      newInput.addEventListener("change", function () {
+        const list = document.getElementById("fileNameList");
+        list.innerHTML = "";
+        
+        Array.from(this.files).forEach(file => {
+          const li = document.createElement("li");
+          li.className = "list-group-item";
+          li.textContent = file.name + " (" + (file.size / 1024).toFixed(1) + " KB)";
+          list.appendChild(li);
+        });
+      });
+    }
+  });
+}
 	
 </script>

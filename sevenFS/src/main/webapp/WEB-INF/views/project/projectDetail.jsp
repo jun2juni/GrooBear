@@ -15,7 +15,17 @@
 </head>
 <body>
 <%@ include file="../layout/sidebar.jsp" %>
-
+<c:if test="${not empty message}">
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      Swal.fire({
+        icon: '${fn:contains(message, "실패") || fn:contains(message, "삭제할 수 없습니다") ? "error" : "success"}',
+        title: '알림',
+        text: "${message}"
+      });
+    });
+  </script>
+</c:if>
 <main class="main-wrapper">
   <%@ include file="../layout/header.jsp" %>
   <section class="section">
@@ -48,9 +58,9 @@
               <div class="row g-3">
                 <div class="col-md-12">
                   <div class="border-top pt-3">
-<span class="badge bg-danger text-white mb-2 px-2 py-1">
-  <i class="fas fa-user-tie me-1"></i> 책임자
-</span>
+					<span class="badge bg-danger text-white mb-2 px-2 py-1">
+					  <i class="fas fa-user-tie me-1"></i> 책임자
+					</span>
                     <div class="d-flex flex-wrap gap-2 small text-muted">
                       <c:forEach var="emp" items="${project.responsibleList}">
                         <button type="button" class="btn btn-outline-danger rounded-3 text-start shadow-sm" style="min-width: 120px; font-size: 0.85rem; border-width: 1px;">
@@ -63,9 +73,9 @@
                 </div>
                 <div class="col-md-12">
                   <div class="border-top pt-3">
-<span class="badge bg-primary text-white mb-2 px-2 py-1">
-  <i class="fas fa-user-check me-1"></i> 참여자
-</span>
+					<span class="badge bg-primary text-white mb-2 px-2 py-1">
+					  <i class="fas fa-user-check me-1"></i> 참여자
+					</span>
                     <div class="d-flex flex-wrap gap-2 small text-muted">
                       <c:forEach var="emp" items="${project.participantList}">
                         <button type="button" class="btn btn-outline-primary rounded-3 text-start shadow-sm" style="min-width: 120px; font-size: 0.85rem; border-width: 1px;">
@@ -78,9 +88,9 @@
                 </div>
                 <div class="col-md-12">
                   <div class="border-top pt-3">
-<span class="badge bg-secondary text-white mb-2 px-2 py-1">
-  <i class="fas fa-user-clock me-1"></i> 참조자
-</span>
+					<span class="badge bg-secondary text-white mb-2 px-2 py-1">
+					  <i class="fas fa-user-clock me-1"></i> 참조자
+					</span>
                     <div class="d-flex flex-wrap gap-2 small text-muted">
                       <c:forEach var="emp" items="${project.observerList}">
                         <button type="button" class="btn btn-outline-secondary rounded-3 text-start shadow-sm" style="min-width: 120px; font-size: 0.85rem; border-width: 1px;">
@@ -287,6 +297,59 @@ document.addEventListener("DOMContentLoaded", function () {
 		    console.error(err);
 		  });
 		}
+	
+	
+	function deleteTask() {
+		  const taskDetailEl = document.querySelector('#taskDetailContent [data-task-no]');
+		  if (!taskDetailEl) {
+		    Swal.fire({
+		      icon: 'error',
+		      title: '오류',
+		      text: '업무 정보가 없습니다.'
+		    });
+		    return;
+		  }
+		  
+		  const taskNo = taskDetailEl.getAttribute('data-task-no');
+		  const prjctNo = "${project.prjctNo}";
+		  
+		  // 하위 업무 존재 여부 확인
+		  fetch(`/projectTask/hasChildTasks?taskNo=\${taskNo}`)
+		    .then(res => res.json())
+		    .then(data => {
+		      if (data.hasChildren) {
+		        Swal.fire({
+		          icon: 'warning',
+		          title: '삭제 불가',
+		          text: '하위 업무가 있는 업무는 삭제할 수 없습니다. 먼저 하위 업무를 삭제해주세요.'
+		        });
+		      } else {
+		        Swal.fire({
+		          title: '업무 삭제',
+		          text: "정말 이 업무를 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.",
+		          icon: 'warning',
+		          showCancelButton: true,
+		          confirmButtonColor: '#d33',
+		          cancelButtonColor: '#3085d6',
+		          confirmButtonText: '삭제',
+		          cancelButtonText: '취소'
+		        }).then((result) => {
+		          if (result.isConfirmed) {
+		            location.href = `/projectTask/delete?taskNo=\${taskNo}\&prjctNo=\${prjctNo}`;
+		          }
+		        });
+		      }
+		    })
+		    .catch(err => {
+		      console.error("확인 실패:", err);
+		      Swal.fire({
+		        icon: 'error',
+		        title: '오류',
+		        text: '업무 확인 중 오류가 발생했습니다.'
+		      });
+		    });
+		}
+	
 	</script>
 	</body>
 </html>

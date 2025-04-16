@@ -213,5 +213,10 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 	public boolean deleteTask(Long taskNo) {
 	    return projectTaskMapper.deleteTask(taskNo) > 0;
 	}
+	
+	@Override
+	public boolean hasChildTasks(Long parentTaskNo) {
+	    return projectTaskMapper.countChildTasks(parentTaskNo) > 0;
+	}
 
 }

@@ -34,4 +34,5 @@ public interface ProjectTaskService {
     
 	public Long insertProjectTaskWithFiles(ProjectTaskVO taskVO, MultipartFile[] uploadFiles);
 
+	public boolean hasChildTasks(Long parentTaskNo);
 }

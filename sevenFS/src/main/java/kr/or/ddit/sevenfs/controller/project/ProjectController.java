@@ -35,8 +35,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
+import kr.or.ddit.sevenfs.mapper.common.CommonCodeMapper;
 import kr.or.ddit.sevenfs.mapper.project.ProjectTaskMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
+import kr.or.ddit.sevenfs.service.project.GanttService;
 import kr.or.ddit.sevenfs.service.project.ProjectService;
 import kr.or.ddit.sevenfs.service.project.ProjectTaskService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
@@ -65,13 +67,23 @@ public class ProjectController {
 	@Autowired
 	ProjectTaskMapper projectTaskMapper;
 	
+	@Autowired
+	CommonCodeMapper commonCodeMapper;
+	
+	@Autowired
+	GanttService ganttService;
+	
 	
 	@GetMapping("/tab")
-	public String projectTab(Model model){
-
-		
-		return "project/projectTab";
+	public String projectTab(@RequestParam(required = false) Integer prjctNo, Model model) {
+	    if (prjctNo != null) {
+	        ProjectVO project = projectService.projectDetail(prjctNo);
+	        model.addAttribute("project", project); 
+	    }
+	    return "project/projectTab";
 	}
+
+
 	
 	@GetMapping("/projectList")
 	public String projectList(Model model, ProjectVO projectVO,
@@ -244,13 +256,18 @@ public class ProjectController {
 
 	@DeleteMapping("/delete/{prjctNo}")
 	@ResponseBody
-	public ResponseEntity<String> deleteProject(@PathVariable int prjctNo) {
+	public ResponseEntity<?> deleteProject(@PathVariable Long prjctNo) {
 	    try {
-	        projectService.deleteProject(prjctNo);  // 서비스 호출
-	        return ResponseEntity.ok("삭제 성공");
+	        boolean success = projectService.deleteProject(prjctNo);
+	        if (success) {
+	        	return ResponseEntity.ok().body(Map.of("success", true, "message", "프로젝트가 삭제되었습니다."));
+	        } else {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body(Map.of("success", false, "message", "프로젝트 삭제 실패"));
+	        }
 	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 실패");
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	            .body(Map.of("success", false, "message", "오류: " + e.getMessage()));
 	    }
 	}
 
@@ -292,5 +309,5 @@ public class ProjectController {
 	    return "redirect:/project/projectDetail?prjctNo=" + projectVO.getPrjctNo();
 	}
 
-	
+
 }

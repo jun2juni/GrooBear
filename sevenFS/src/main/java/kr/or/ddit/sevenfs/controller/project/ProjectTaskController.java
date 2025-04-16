@@ -177,16 +177,28 @@ public class ProjectTaskController {
 	}
 
 
-	
 	@GetMapping("/delete")
 	public String deleteTask(@RequestParam("taskNo") Long taskNo,
 	                         @RequestParam("prjctNo") Long prjctNo,
 	                         RedirectAttributes ra) {
+	    // 하위 업무가 있는지 확인
+	    if (projectTaskService.hasChildTasks(taskNo)) {
+	        ra.addFlashAttribute("message", "하위 업무가 있는 업무는 삭제할 수 없습니다. 먼저 하위 업무를 삭제해주세요.");
+	        return "redirect:/project/projectDetail?prjctNo=" + prjctNo;
+	    }
+	    
 	    boolean success = projectTaskService.deleteTask(taskNo);
 	    ra.addFlashAttribute("message", success ? "업무가 삭제되었습니다." : "삭제 실패");
 	    return "redirect:/project/projectDetail?prjctNo=" + prjctNo;
 	}
 
-
+	// 하위업무 삭제해야 상위업무 삭제할 수 있는 엔드포인트임
+	@GetMapping("/hasChildTasks")
+	@ResponseBody
+	public Map<String, Boolean> hasChildTasks(@RequestParam("taskNo") Long taskNo) {
+	    Map<String, Boolean> response = new HashMap<>();
+	    response.put("hasChildren", projectTaskService.hasChildTasks(taskNo));
+	    return response;
+	}
 
 }

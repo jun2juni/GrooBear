@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.common.CommonCodeMapper">
+ <select id="selectCodesByGroup" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.CommonCodeVO">
+    SELECT 
+      CMMN_CODE_GROUP,
+      CMMN_CODE,
+      CMMN_CODE_NM,
+      USE_YN,
+      UPPER_CMMN_CODE,
+      CMMN_CODE_SN
+    FROM COMMON_CODE
+    WHERE CMMN_CODE_GROUP = #{groupCode}
+      AND USE_YN = 'Y'
+    ORDER BY CMMN_CODE_SN
+  </select>
+  
+    <select id="selectByGroup" parameterType="string" resultType="CommonCodeVO">
+	  SELECT * FROM COMMON_CODE
+	  WHERE CMMN_CODE_GROUP = #{groupId}
+	  AND USE_AT = 'Y'
+	  ORDER BY CMMN_CODE
+	</select>
+  
+  
+</mapper>
