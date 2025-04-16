@@ -24,7 +24,7 @@
 
 	<!-- 하위부서 조회 -->
 	<select id="lowerDepList" resultType="kr.or.ddit.sevenfs.vo.CommonCodeVO" parameterType="String">
-		SELECT CMMN_CODE, CMMN_CODE_NM
+		SELECT CMMN_CODE, CMMN_CODE_NM, CMMN_CODE_DC
 		FROM COMMON_CODE
 		WHERE UPPER_CMMN_CODE=#{upperCmmnCode}
 		AND CMMN_CODE_GROUP='DEPARTMENT'

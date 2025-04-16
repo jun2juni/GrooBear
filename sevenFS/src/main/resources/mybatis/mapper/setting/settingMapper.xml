@@ -5,5 +5,14 @@
         CALL pr_skill_auth(#{emplNo, mode=IN, jdbcType=VARCHAR})
     </insert>
 
-
+    <!-- 부서의 사원 정보랑 권한 가져오기 -->
+    <select id="getSkillAuth" resultType="kr.or.ddit.sevenfs.vo.setting.SkillAuthVO">
+        SELECT EMPL_NO,
+               SKLL_CODE,
+               SKLL_AUTHOR_CODE,
+               CC.CMMN_CODE_NM as SKILL_NAME
+        FROM SKILL_AUTH SA
+        LEFT JOIN COMMON_CODE CC ON (SA.SKLL_CODE = CC.CMMN_CODE AND CC.CMMN_CODE_GROUP = 'SKILL')
+        WHERE EMPL_NO = #{emplNo}
+    </select>
 </mapper>

@@ -54,6 +54,9 @@ public class EmployeeVO implements UserDetails {
 
 	// 채팅창 목록 (읽지 않은 채팅 방들 만)
 	private List<ChatRoomVO> chatRoomVOList;
+
+	// 권한 정보
+	private String skillAuth;
 	
 	// 성별코드에 맞는 성별 반환
 	public void setGenderCode(String genderCode) {
