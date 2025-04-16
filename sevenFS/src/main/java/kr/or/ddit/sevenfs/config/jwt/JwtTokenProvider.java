@@ -96,7 +96,6 @@ public class JwtTokenProvider {
         return claims;
     }
 
-
     public ResponseCookie createCookie(String key, String value, long maxAge) {
         return ResponseCookie.from(key, value)
                 .httpOnly(true)

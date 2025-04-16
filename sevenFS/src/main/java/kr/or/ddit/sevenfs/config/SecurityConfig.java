@@ -19,10 +19,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 
 
 import javax.sql.DataSource;
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -62,8 +67,24 @@ public class SecurityConfig {
         return tokenRepository;
     }
 
+    /**
+     * 스프링 시큐리티 내부에서 OPTIONS에는 쿠키를 담을수 없어서
+     * 해당 쿠키를 담기 위해서 cors관련을 OPTIONS에 쿠키를 담을 수 있게 열어준다
+     */
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        corsConfiguration.setAllowedHeaders(List.of("*"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH"));
+        corsConfiguration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        return source;
+    }
+
     // ** 2. 특정 HTTP 요청에 대한 웹 기반 보안 구성
-    /***
+    /**
      * 이 메서드에서 인증/인가 및 로그인, 로그아웃 관련 설정을 할 수 있음
      *
      * 클라이언트 ----> 필터1 ----> 필터2 ---> 필터3 ---> 서버 클라이언트 <---- 필터1 <---- 필터2 <--- 필터3 <--- 서버
@@ -77,12 +98,13 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
+                .cors((cors) -> cors
+                        .configurationSource(corsConfigurationSource())
+                )
                 .headers(config -> config.frameOptions(customizer -> customizer.sameOrigin()))
                 .httpBasic(hbasic -> hbasic.disable())
                 .authorizeHttpRequests(authz -> authz
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ASYNC).permitAll() // forward
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 프리플라이트 OPTIONS 허용 (JSON 요청을 받으려고)
-                        // 허가
                         .requestMatchers("/auth/login", "/signup",
                                  "/error",  "/images/**",  "/layout/**",
                                 "/assets/**", "/ws/**",

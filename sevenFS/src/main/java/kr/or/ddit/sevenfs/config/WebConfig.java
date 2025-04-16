@@ -1,23 +1,23 @@
 package kr.or.ddit.sevenfs.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@PropertySource("classpath:/config/project.properties")
 public class WebConfig implements WebMvcConfigurer {
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("http://localhost:3000") // or "*"
+//                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//                .allowedHeaders("*")
+//                .allowCredentials(true);
+//        // Access-Cross-Allow-Orgin : www.other.com
+//    }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOriginPatterns("*") // 모든 origin 허용 (IP 포함)
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true); // 쿠키 등 인증 정보 허용
-        ;
-    }
 
 //    @Bean
 //    public FilterRegistrationBean<Filter> filterRegistrationBean() {

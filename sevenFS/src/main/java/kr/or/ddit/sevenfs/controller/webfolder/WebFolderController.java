@@ -11,6 +11,7 @@ import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderFileVO;
 import kr.or.ddit.sevenfs.vo.webfolder.WebFolderVO;
+import kr.or.ddit.sevenfs.vo.webfolder.WebMoveVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +32,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -143,20 +145,21 @@ public class WebFolderController {
         attachFileService.downloadZip(attachFileVOList, folderName, response);
     }
 
+
     @PostMapping("/file-move")
-    public Map<String, String> fileMove(@RequestPart WebFolderVO targetFolder, @RequestPart WebFolderFileVO moveFile) throws IOException {
-        log.debug("targetFolder: {}", targetFolder);
-        log.debug("moveFile: {}", moveFile);
-        Map<String, String> stringStringMap = this.webFolderService.updateMoveFolder(targetFolder, moveFile);
+    public Map<String, String> fileMove(@RequestBody WebMoveVO webMoveVO) throws IOException {
+        log.debug("targetFolder: {}", webMoveVO.getTargetFolder());
+        log.debug("moveFile: {}", webMoveVO.getMoveFile());
+        Map<String, String> stringStringMap = this.webFolderService.updateMoveFolder(webMoveVO.getTargetFolder(), webMoveVO.getMoveFile());
 
         return stringStringMap;
     }
 
     @PostMapping("/folder-move")
-    public Map<String, String> folderMove(@RequestPart WebFolderVO targetFolder, @RequestPart WebFolderVO moveFolder) throws IOException {
-        log.debug("targetFolder: {}", targetFolder);
-        log.debug("moveFolder: {}", moveFolder);
-        Map<String, String> stringStringMap = this.webFolderService.updateMoveFolder(targetFolder, moveFolder);
+    public Map<String, String> folderMove(@RequestBody WebMoveVO webMoveVO) throws IOException {
+        log.debug("targetFolder: {}", webMoveVO.getTargetFolder());
+        log.debug("moveFolder: {}", webMoveVO.getMoveFolder());
+        Map<String, String> stringStringMap = this.webFolderService.updateMoveFolder(webMoveVO.getTargetFolder(), webMoveVO.getMoveFolder());
 
         return stringStringMap;
     }
