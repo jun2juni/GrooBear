@@ -68,10 +68,23 @@
 									<div>작성자<p>${bbsVO.emplNm}</p></div><br>
 									<div>작성일<p>${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}</p></div><br>
 									<c:set var="Efile" value="${bbsVO.files}" />
-									<div>파일
+									<div>파일<br>
 										<c:if test="${not empty Efile}">
 											<c:forEach var="file" items="${bbsVO.files}">
-												<a href="http://localhost/download?fileName=test/34e5c6bb8bd34d62a8eae92ef506005e_carnation-g75dae9d9b_1280.jpg" target="_blank">${file.fileStreNm}</a>
+												<c:set var="ext" value="${fn:toLowerCase(fn:substringAfter(file.fileNm, '.'))}" />
+												<c:choose>
+													<c:when test="${ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'gif' || ext == 'bmp'}">
+											            <img src="/upload/updateFile/${file.fileStreNm}" 
+											                 alt="${file.fileNm}" 
+											                 style="max-width: 300px; max-height: 300px;" />
+											        </c:when>
+											        
+											         <c:otherwise>
+											            <a href="http://localhost/download?fileName=${file.fileStrePath}">
+											                ${file.fileNm}
+											            </a>
+											        </c:otherwise>
+										        </c:choose>
 											</c:forEach>
 										</c:if>
 										<c:if test="${empty Efile}">

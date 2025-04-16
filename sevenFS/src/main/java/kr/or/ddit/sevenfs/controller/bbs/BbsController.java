@@ -176,7 +176,7 @@ public class BbsController {
      * 게시글 상세 조회
      */
     @GetMapping("/bbsDetail")
-    public String bbsDetail(Model model, @RequestParam("bbsSn") int bbsSn) {
+    public String bbsDetail(Model model, @RequestParam("bbsSn") int bbsSn,String fileName) {
         log.info("게시글 상세 조회: " + bbsSn);
 		
         BbsVO bbsVO = bbsService.bbsDetail(bbsSn);
@@ -184,8 +184,8 @@ public class BbsController {
         model.addAttribute("bbsVO", bbsVO);
         model.addAttribute("fileList", FileList);
         
-        attachFileService.downloadFile("파일 경로를 넘겨줘야함");
-
+        attachFileService.downloadFile(fileName);
+        
         return "bbs/bbsDetail";
     }
 
