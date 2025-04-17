@@ -71,8 +71,13 @@ table.table-hover.align-middle.text-center tbody tr td {
           <div class="d-flex justify-content-between align-items-center mb-3">
 		    <h3 class="text-dark">${bbsList[0].bbsCtgryNm}</h3>
 		    <div>
-		        <a href="/bbs/bbsInsert?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-primary me-2">게시글 추가</a>
-		        <c:if test="${myEmpInfo.emplNo == bbsVO.emplNo || myEmpInfo.emplNo == '20250000'}"><!-- 마동석이면 보이게 -->
+		    		<!-- 관리자이면 공지사항 게시판에서 보이고 관리자가 아니면 공지사항에는 안보이지만 나머지 카테고리에선 보여야함 -->
+		    	<c:if test="${myEmpInfo.emplNo == '20250000' || bbsVO.bbsCtgryNo != 1}">
+				  <a href="/bbs/bbsInsert?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-primary me-2">
+				    게시글 추가
+				  </a>
+				</c:if>
+		        <c:if test="${myEmpInfo.emplNo == '20250000'}"><!-- 마동석이면 보이게 -->
 			        <button type="button" id="bulkToggleBtn" class="btn btn-outline-secondary me-2">일괄삭제</button>
 			        <button type="button" id="bulkDeleteBtn" class="btn btn-danger" style="display:none;">선택 삭제</button>
 				</c:if>

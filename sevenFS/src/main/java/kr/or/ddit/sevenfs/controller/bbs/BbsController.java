@@ -141,7 +141,11 @@ public class BbsController {
      * 게시글 작성 폼
      */
     @GetMapping("/bbsInsert")
-    public String bbsInsertForm(@ModelAttribute BbsVO bbsVO, @RequestParam("bbsCtgryNo") int bbsCtgryNo) {
+    public String bbsInsertForm(@ModelAttribute BbsVO bbsVO, @RequestParam("bbsCtgryNo") int bbsCtgryNo, Authentication auth) {
+    	
+    	if (bbsCtgryNo == 1 && !securityUtil.canInsertNotice(auth)) {
+            return "error/403"; // 403 에러 페이지 or redirect:/accessDenied
+        }
     	
     	bbsVO.setBbsCtgryNo(bbsCtgryNo);
     	
@@ -152,10 +156,16 @@ public class BbsController {
      * 게시글 작성 처리
      */
     @PostMapping("/bbsInsert")
-    public String bbsInsert(@ModelAttribute BbsVO bbsVO, Model model,@RequestParam("bbsCtgryNo") int bbsCtgryNo, MultipartFile[] uploadFile, @RequestParam("uploadFile") MultipartFile file) {
+    public String bbsInsert(@ModelAttribute BbsVO bbsVO, Model model,
+    		@RequestParam("bbsCtgryNo") int bbsCtgryNo, MultipartFile[] uploadFile, 
+    		@RequestParam("uploadFile") MultipartFile file, Authentication auth) {
         log.info("게시글 등록 요청");
         
         bbsVO.setBbsCtgryNo(bbsCtgryNo);
+        
+        if (bbsCtgryNo == 1 && !securityUtil.canInsertNotice(auth)) {
+            return "error/403"; // 403 에러 페이지 or redirect:/accessDenied
+        }
 
         long attachFileNm = attachFileService.insertFileList("insertFile", uploadFile);
         bbsVO.setAtchFileNo(attachFileNm);
