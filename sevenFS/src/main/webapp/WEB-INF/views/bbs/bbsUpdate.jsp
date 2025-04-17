@@ -100,8 +100,8 @@
 								</div>
 								<br>
                                 <div>
-                                    <button type="submit" class="btn btn-warning">확인</button> &nbsp;
-                                    <a href="/bbs/bbsDetail?bbsSn=${bbsVO.bbsSn}" class="btn btn-secondary">취소</a>
+                                    <a href="javascript:history.back();" class="btn btn-outline-secondary">취소</a>&nbsp;
+                                    <button type="submit" class="btn btn-outline-warning">확인</button> 
                                 </div>
                             </form>
                         </div>

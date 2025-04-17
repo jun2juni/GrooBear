@@ -89,8 +89,8 @@
 								<input type="hidden" value="${bbsVO.bbsCtgryNo}" name="bbsCtgryNo">
 
 								<!-- 게시글 추가 버튼 -->
-								<button type="submit" class="btn btn-primary">추가</button>
-								<a href="/bbs/bbsList?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-secondary">취소</a>
+								<a href="javascript:history.back();" class="btn btn-outline-secondary">취소</a>&nbsp;
+								<button type="submit" class="btn btn-outline-primary">추가</button>
 							</form>
 						</div>
 					</div>

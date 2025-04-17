@@ -59,7 +59,11 @@ table.table-hover.align-middle.text-center tbody tr td {
 
 </style>
 </head>
-
+<c:if test="${not empty errorMessage}">
+    <script>
+        alert("${errorMessage}");
+    </script>
+</c:if>
 <body>
 
 <%@ include file="../layout/sidebar.jsp" %>

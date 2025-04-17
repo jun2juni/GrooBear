@@ -94,7 +94,7 @@
 								</div>
 								<div class="d-flex justify-content-between align-items-center">
 									<!-- 왼쪽 버튼 -->
-									<a href="/bbs/bbsList?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-secondary">
+									<a href="javascript:history.back();" class="btn btn-outline-secondary">
 										목록으로 돌아가기
 									</a>
 									<!-- 오른쪽 버튼 (수정/삭제) -->
