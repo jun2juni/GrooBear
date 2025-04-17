@@ -106,21 +106,20 @@ public class DclztypeServiceImpl implements DclztypeService {
 		log.info("service사원연차 : " + emplVacList);
 		
 		// 총 연차일수
-		double totalYryc = emplVacList.getTotYrycDaycnt();
+		//double totalYryc = emplVacList.getTotYrycDaycnt();
 		// 사용 연차일수
-		double useYryc = emplVacList.getYrycUseDaycnt();
+		//double useYryc = emplVacList.getYrycUseDaycnt();
 		// 잔여 연차일수 계산
-		double remainYryc = totalYryc - useYryc;
+		//double remainYryc = totalYryc - useYryc;
 		// 잔여 연차일수 set해주기
-		emplVacList.setYrycRemndrDaycnt(remainYryc);
-		log.info("impl 잔여연차 : " + remainYryc );
+		//emplVacList.setYrycRemndrDaycnt(remainYryc);
+		//log.info("impl 잔여연차 : " + remainYryc );
 		
-		VacationVO vacationVO = new VacationVO();
-		
+		//VacationVO vacationVO = new VacationVO();
 		// 잔여 연차update 해주기
-		vacationVO.setEmplNo(emplNo);
-		vacationVO.setYrycRemndrDaycnt(remainYryc);
-		dclztypeMapper.updateYrycRemndrDaycnt(vacationVO);
+		//vacationVO.setEmplNo(emplNo);
+		//vacationVO.setYrycRemndrDaycnt(remainYryc);
+		//dclztypeMapper.updateYrycRemndrDaycnt(vacationVO);
 		
 		// 연차코드가 23(공가), 24(병가)면 사용일수에서 차감 안되게하기
 		return emplVacList;

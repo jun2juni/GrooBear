@@ -210,9 +210,9 @@ public class DclzTypeController {
 		log.info("controller 연차현황 : " + emplVacation);
 		
 		// 잔여연차 계산된값 확인
-		double remain = emplVacation.getYrycRemndrDaycnt();
-		log.info("controller잔여연차 : " + remain);
-		emplVacation.setYrycRemndrDaycnt(remain);
+		//double remain = emplVacation.getYrycRemndrDaycnt();
+		//log.info("controller잔여연차 : " + remain);
+		//emplVacation.setYrycRemndrDaycnt(remain);
 		
 		model.addAttribute("emplVacation",emplVacation);
 		log.info("연차내역 : " + emplVacation);
