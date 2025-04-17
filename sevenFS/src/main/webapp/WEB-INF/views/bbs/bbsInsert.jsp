@@ -3,8 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<%--해당 파일에 타이틀 정보를 넣어준다--%>
-<c:set var="title" scope="application" value="메인" />
+<c:set var="title" scope="application" value="게시판 등록" />
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +14,7 @@
 			content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
 	/>
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-	<title>${title}</title>
+	<title>게시판 등록</title>
 	<c:import url="../layout/prestyle.jsp" />
 </head>
 <c:if test="${not empty errorMessage}">
@@ -45,7 +44,6 @@
 				<div class="row">
 					<div class="col-12">
 						<div class="card-style">
-							<h2 class="text-primary text-center">게시판 등록</h2>
 							<form action="/bbs/bbsInsert" method="post" name="newProduct"
 								enctype="multipart/form-data" class="mb-4">
 								<!-- 게시글 제목 -->

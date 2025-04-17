@@ -42,7 +42,6 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card-style">
-                            <h2 class="text-primary text-center">게시글 수정</h2>
                             <form action="/bbs/bbsUpdate" method="post" enctype="multipart/form-data">
                             	<input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
                                 <input type="hidden" name="bbsSn" value="${bbsVO.bbsSn}">

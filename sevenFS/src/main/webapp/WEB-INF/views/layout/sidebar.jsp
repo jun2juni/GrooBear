@@ -222,7 +222,7 @@
 			        </a>
 			
 			        <ul id="cat${category.bbsCtgryNo}"
-			            class="dropdown-nav collapse ${hasSelectedChild ? 'show' : ''}">
+			            class="dropdown-nav collapse ${hasSelectedChild ? 'show' : ''} ps-3">
 			          <c:forEach var="child" items="${category.children}">
 			            <li>
 			              <a href="/bbs/bbsList?bbsCtgryNo=${child.bbsCtgryNo}"

@@ -15,6 +15,8 @@
 <script>
     const loginUserEmplNo = "${myEmpInfo.emplNo}";
 </script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
 </head>
 <c:if test="${not empty errorMessage}">
     <script>
@@ -23,25 +25,9 @@
 </c:if>
 <style>
     
-    .board-detail {
-        max-width: 100%;
-        margin: 20px auto;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #f9f9f9;
-    }
-    .board-detail div {
-        padding: 10px 0;
-        border-bottom: 1px solid #ddd;
-    }
-    .board-detail div:last-child {
-        border-bottom: none;
-    }
-    .board-detail p {
-        margin: 5px 0;
-        font-weight: bold;
-    }
+    
+    
+    
 </style>
 <body>
 	<c:import url="../layout/sidebar.jsp" />
@@ -49,85 +35,103 @@
 		<c:import url="../layout/header.jsp" />
 
 		<section class="section">
-			<div class="container-fluid">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card-style p-4">
 
-				<div class="row">
-					<div class="col-12">
-						<div class="card-style">
-							<h2 class="text-primary text-center">게시글 상세</h2>
-							<form action="/bbs/bbsUpdate" method="get">
-								<input type="hidden" name="bbsSn" value="${bbsVO.bbsSn}">
-								<input type="hidden" value="${bbsVO.bbsCtgryNo}" name="bbsCtgryNo">
-								<div class="board-detail">
-									<div>제목<p>${bbsVO.bbscttSj}</p></div><br>
-									<div>내용<p>${bbsVO.bbscttCn}</p></div><br>
-									<div>작성자<p>${bbsVO.emplNm}</p></div><br>
-									<div>작성일<p>${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}</p></div><br>
-									<c:set var="Efile" value="${bbsVO.files}" />
-									<div>파일<br>
-										<c:if test="${not empty Efile}">
-											<c:forEach var="file" items="${bbsVO.files}">
-												<c:set var="ext" value="${fn:toLowerCase(fn:substringAfter(file.fileNm, '.'))}" />
-												<c:choose>
-													<c:when test="${ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'gif' || ext == 'bmp'}">
-											            <img src="/upload/updateFile/${file.fileStreNm}" 
-											                 alt="${file.fileNm}" 
-											                 style="max-width: 300px; max-height: 300px;" />
-											        </c:when>
-											        
-											         <c:otherwise>
-											            <a href="http://localhost/download?fileName=${file.fileStrePath}">
-											                ${file.fileNm}
-											            </a>
-											        </c:otherwise>
-										        </c:choose>
-											</c:forEach>
-										</c:if>
-										<c:if test="${empty Efile}">
-											<p>파일없음</p>
-										</c:if>
-									</div><br>
-									<button class="btn btn-outline-secondary" type="button" id="likeBtn" onclick="toggleLike()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
-  <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/>
-</svg></button>
-									<span id="likeCount">${bbsVO.likeCnt}</span>
-								</div>
-								<div class="d-flex justify-content-between align-items-center">
-									<!-- 왼쪽 버튼 -->
-									<a href="javascript:history.back();" class="btn btn-outline-secondary">
-										목록으로 돌아가기
-									</a>
-									<!-- 오른쪽 버튼 (수정/삭제) -->
-									<div>
-										<c:if test="${myEmpInfo.emplNo == bbsVO.emplNo || myEmpInfo.emplNo == '20250000'}">
-											<button type="submit" class="btn btn-outline-warning me-2">수정</button>
-											<button type="button" class="btn btn-outline-danger" onclick="bbsDelete(${bbsVO.bbsSn})">삭제</button>
-										</c:if>
-									</div>
-								</div>
-							</form>
-							<!-- 댓글 영역 -->
-								<div class="card-style mt-4">
-								    <h5 class="text-primary">💬 댓글</h5>
-								
-								    <!-- 댓글 입력창 -->
-								    <div class="mt-3">
-								        <textarea id="answerCn" rows="3" class="form-control" placeholder="댓글을 입력하세요." ></textarea>
-								        <div class="d-flex justify-content-end mt-2">
-								            <button type="button" class="btn btn-primary" onclick="submitComment()">댓글 등록</button>
-								        </div>
-								    </div>
-								
-								    <!-- 댓글 리스트 출력 영역 -->
-								    <div id="answerContent" class="mt-4">
-								        <%-- AJAX로 댓글 목록이 여기 들어올 예정 --%>
-								    </div>
-								</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
+          <form action="/bbs/bbsUpdate" method="get">
+            <input type="hidden" name="bbsSn" value="${bbsVO.bbsSn}">
+            <input type="hidden" name="bbsCtgryNo" value="${bbsVO.bbsCtgryNo}">
+
+            <!-- 게시글 본문 -->
+            <div class="mb-4">
+              <h3 class="mb-3 text-dark fw-bold">${bbsVO.bbscttSj}</h3>
+              <div class="text-muted mb-3">
+                <small>
+                  작성자: ${bbsVO.emplNm} · 작성일: ${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}
+                </small>
+              </div>
+              <div class="mb-3">
+                <p class="text-body">${bbsVO.bbscttCn}</p>
+              </div>
+
+              <!-- 첨부파일 -->
+              <div class="mb-3">
+                <h6 class="text-secondary fw-bold">📎 첨부파일</h6>
+                <c:if test="${not empty bbsVO.files}">
+                  <div class="d-flex flex-wrap gap-3 mt-2">
+                    <c:forEach var="file" items="${bbsVO.files}">
+                      <c:set var="ext" value="${fn:toLowerCase(fn:substringAfter(file.fileNm, '.'))}" />
+                      <c:choose>
+                        <c:when test="${ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'gif' || ext == 'bmp'}">
+                          <div class="border rounded p-3 bg-light d-inline-flex flex-column align-items-center" style="max-width: 200px;">
+							    <img src="/upload/${file.fileStrePath}" 
+							         alt="${file.fileNm}" 
+							         style="max-width: 150px; max-height: 150px; object-fit: cover;" />
+							
+							    <div class="mt-2 text-truncate w-100 text-center" style="max-width: 180px;" title="${file.fileNm}">
+							        ${file.fileNm}
+							    </div>
+							</div>
+                        </c:when>
+                        <c:otherwise>
+                          <div class="border p-2 rounded bg-light">
+                            <a href="http://localhost/download?fileName=${file.fileStrePath}" class="text-decoration-none text-primary">
+                              <i class="bi bi-file-earmark-text"></i> ${file.fileNm}
+                            </a>
+                          </div>
+                        </c:otherwise>
+                      </c:choose>
+                    </c:forEach>
+                  </div>
+                </c:if>
+                <c:if test="${empty bbsVO.files}">
+                  <p class="text-muted">첨부파일이 없습니다.</p>
+                </c:if>
+              </div>
+
+              <!-- 좋아요 버튼 -->
+              <div class="d-flex align-items-center gap-2 mt-4">
+                <i id="likeIcon" class="bi bi-hand-thumbs-up fs-3 text-secondary" onclick="toggleLike()" style="cursor: pointer;"></i>
+				<span id="likeCount">${bbsVO.likeCnt}</span>
+              </div>
+            </div>
+
+            <!-- 하단 버튼 -->
+            <div class="d-flex justify-content-between">
+              <a href="javascript:history.back();" class="btn btn-outline-secondary">← 목록</a>
+
+              <c:if test="${myEmpInfo.emplNo == bbsVO.emplNo || myEmpInfo.emplNo == '20250000'}">
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-outline-warning">수정</button>
+                  <button type="button" class="btn btn-outline-danger" onclick="bbsDelete(${bbsVO.bbsSn})">삭제</button>
+                </div>
+              </c:if>
+            </div>
+          </form>
+
+          <!-- 댓글 영역 -->
+          <div class="card-style mt-5">
+            <h5 class="text-primary mb-3">💬 댓글</h5>
+            <div>
+              <textarea id="answerCn" rows="3" class="form-control" placeholder="댓글을 입력하세요."></textarea>
+              <div class="d-flex justify-content-end mt-2">
+                <button type="button" class="btn btn-primary btn-sm" onclick="submitComment()">댓글 등록</button>
+              </div>
+            </div>
+
+            <div id="answerContent" class="mt-4">
+              <%-- AJAX로 댓글 목록 들어올 영역 --%>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 		<c:import url="../layout/footer.jsp" />
 	</main>
 
@@ -145,9 +149,9 @@
 	        bbsCtgryNo: bbsCtgryNo
 	    }, function (res) {
 	        if (res.liked) {
-	            $("#likeBtn").addClass("text-danger");
+	            $("#likeBtn").addClass("text-warning");
 	        } else {
-	            $("#likeBtn").removeClass("text-danger");
+	            $("#likeBtn").removeClass("text-warning");
 	        }
 	        $("#likeCount").text(res.likeCount);
 	    }).fail(function (xhr) {
@@ -228,16 +232,26 @@
 	                `;
 
 	                // 댓글 작성자일 때만 버튼 보여주기 
-	                if (answer.emplNo == loginUserEmplNo || loginUserEmplNo == '20250000') {
-	                    html += `
-	                        <div class="mt-2 d-flex justify-content-end">
-	                            <button class="btn btn btn-outline-warning me-2"
-	                                    onclick="editAnswer(` + answer.answerNo + `)">수정</button>
-	                            <button class="btn btn btn-outline-danger me-2"
-	                                    onclick="deleteAnswer(` + answer.answerNo + `)">삭제</button>
-	                        </div>
-	                    `;
-	                }
+	                if (answer.emplNo == loginUserEmplNo) {
+					    // 내가 쓴 댓글이면 수정 + 삭제
+					    html += `
+					        <div class="mt-2 d-flex justify-content-end">
+					            <button class="btn btn-outline-warning me-2"
+					                    onclick="editAnswer(` + answer.answerNo + `)">수정</button>
+					            <button class="btn btn-outline-danger me-2"
+					                    onclick="deleteAnswer(` + answer.answerNo + `)">삭제</button>
+					        </div>
+					    `;
+					} else if (loginUserEmplNo == '20250000') {
+					    // 관리자지만 내가 쓴 댓글은 아님 → 삭제만
+					    html += `
+					        <div class="mt-2 d-flex justify-content-end">
+					            <button class="btn btn-outline-danger me-2"
+					                    onclick="deleteAnswer(` + answer.answerNo + `)">삭제</button>
+					        </div>
+					    `;
+					}
+
 
 	                html += `
 	                        </div>
