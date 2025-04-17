@@ -2,6 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.mail.MailMapper">
 
+<select id="getAtchFile" parameterType="long" resultType="kr.or.ddit.sevenfs.vo.AttachFileVO">
+SELECT
+    atch_file_no,
+    file_sn,
+    file_stre_path,
+    file_nm,
+    file_stre_nm,
+    file_extsn,
+    file_mime,
+    file_size,
+    file_view_size,
+    dwld_co,
+    empl_no,
+    file_use_yn,
+    file_creat_dt
+FROM
+    attatch_file
+WHERE 
+    atch_file_no = #{atchFileNo}
+</select>
+
 <select id="getList" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO" parameterType="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
 SELECT E.EMPL_NM
     ,M.email_no
@@ -23,14 +44,40 @@ WHERE M.EMPL_NO=#{emplNo}
 </select>
 
 <select id="emailDetail" parameterType="kr.or.ddit.sevenfs.vo.mail.MailVO" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO">
-	
+SELECT
+	(select empl_nm from EMPLOYEE where empl_no=m.empl_no) empl_nm,
+    m.email_no,
+    m.empl_no,
+    m.lbl_no,
+    m.email_trnsmis_ty,
+    m.email_cl_ty,
+    m.trnsmit_email,
+    m.recptn_email,
+    m.email_sj,
+    m.email_cn,
+    m.atch_file_no,
+    m.trnsmit_dt,
+    m.readng_at,
+    m.email_group_no,
+    m.starred
+FROM mail m
+WHERE m.email_group_no = (
+    SELECT email_group_no
+    FROM mail
+    WHERE email_no = #{emailNo}
+)
 </select>
 
-
+<select id="getTotal" parameterType="hashmap" resultType="int">
+SELECT count(*)
+FROM mail m
+WHERE m.empl_no = #{emplNo}
+</select>
 <select id="getMailNos" parameterType="int" resultType="int">
 select SEQ_MAIL.nextval from dual
 CONNECT BY LEVEL &lt;= #{count}
 </select>
+
 <select id="getEmailGroupNo" resultType="int">
 	select nvl(max(email_group_no),0)+1 from mail
 </select>

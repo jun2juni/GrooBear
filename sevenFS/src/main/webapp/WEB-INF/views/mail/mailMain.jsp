@@ -39,10 +39,30 @@
         emailClTy = $(this).attr('data-emailClTy');
         console.log('emailClTy -> ',emailClTy);
       });
-      $('.email-item').on('click',function(){
-        let emailNo = $(this).attr('data-emailno');
+      // 리스트 클릭 이벤트
+      $('.email-content').on('click',function(){
+        let emailNo = $(this).closest('.email-item').attr('data-emailno');
         console.log('emailNo -> ',emailNo);
         window.location.href="/mail/emailDetail?emailNo="+emailNo;
+      })
+
+      $('.email-checkbox').change(function(){
+        let emailNoList = [];
+        console.log('클릭 확인 : ',this)
+        let chkList = $('.email-checkbox:checked').get();
+        console.log(chkList);
+        chkList.forEach(chk=>{
+          let emailNo = $(chk).closest('.email-item').attr('data-emailno');
+          emailNoList.push(emailNo)
+        })
+        console.log("체크된 리스트 : ",emailNoList);
+        if(emailNoList.length>1){
+          $("#tab-repl").prop('disabled',true);
+          $("#tab-trnsms").prop('disabled',true);
+        }else{
+          $("#tab-repl").prop('disabled',false);
+          $("#tab-trnsms").prop('disabled',false);
+        }
       })
     });
 </script>
@@ -116,13 +136,22 @@
                 <i class="fas fa-ellipsis-v"></i>
               </button>
               <div class="email-tabs">
-                <button class="tab">삭제</button>
-                <button class="tab">답장</button>
-                <button class="tab">전달</button>
+                <button class="tab" id="tab-del">삭제</button>
+                <button class="tab" id="tab-repl">답장</button>
+                <button class="tab" id="tab-trnsms">전달</button>
                 <select name="mailLbl" id="labeling">
                   <option value="1">테스트라벨1</option>
                   <option value="2">테스트라벨2</option>
                 </select>
+              </div>
+              <div style="display: flex; justify-content: flex-end;">
+                <select name="searchOption" id="searchOption">
+                  <option value="title">제목</option>
+                  <option value="content">내용</option>
+                  <option value="title&content">제목+내용</option>
+                  <option value="email">email</option>
+                </select>
+                <input type="text" name="keyword" id="search">
               </div>
             </div>
             <!-- 이메일 목록 - 여기에 스크롤이 적용됩니다 -->
@@ -156,6 +185,13 @@
           </div>
         </div>
         <!-- 이메일 listSection 끝 -->
+         <!-- 페이지네이션 -->
+          <page-navi
+            url="/mail?${articlePage.getSearchVo()}"
+            current="${articlePage.getCurrentPage()}"
+            show-max="5"
+            total="${articlePage.getTotalPages()}"
+          ></page-navi>
       </div>
     </div>
   </div>
@@ -182,7 +218,7 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  /* box-shadow: 0 4px 6px rgba(0,0,0,0.1); */
   overflow: hidden; /* 바깥쪽 스크롤 제거 */
 }
 
@@ -196,12 +232,11 @@ body {
 /* 사이드바 스타일 개선 */
 .email-sidebar {
   width: 260px;
-  background-color: #f8f9fa;
   border-right: 1px solid #e0e0e0;
   overflow-y: auto;
   transition: all 0.3s ease;
   padding-top: 12px;
-  box-shadow: 1px 0 5px rgba(0,0,0,0.05);
+  /* box-shadow: 1px 0 5px rgba(0,0,0,0.05); */
 }
 
 .sidebar-compose {
@@ -222,18 +257,18 @@ body {
   font-size: 15px;
   transition: all 0.2s;
   width: 100%;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  /* box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3); */
 }
 
 .compose-button:hover {
   background: linear-gradient(135deg, #3b6fe3, #2563eb);
-  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4);
+  /* box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4); */
   transform: translateY(-2px);
 }
 
 .compose-button:active {
   transform: translateY(0);
-  box-shadow: 0 2px 5px rgba(59, 130, 246, 0.2);
+  /* box-shadow: 0 2px 5px rgba(59, 130, 246, 0.2); */
 }
 
 .compose-button i {
@@ -395,6 +430,10 @@ body {
   background-color: #e1effe;
   font-weight: 500;
 }
+.tab:disabled{
+  opacity: 0.5;  /* 투명도를 낮춰 흐리게 보이게 */
+  cursor: not-allowed;  /* 마우스 커서를 '사용 불가' 형태로 변경 */
+}
 
 #labeling {
   margin-left: 8px;
@@ -415,7 +454,7 @@ body {
 
 #labeling:focus {
   border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  /* box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); */
 }
 
 /* 이메일 콘텐츠 영역 */
@@ -461,12 +500,14 @@ body {
   cursor: pointer;
   transition: all 0.15s ease;
   position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .email-item:hover {
   background-color: #f3f4f6;
   transform: translateY(-1px);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  /* box-shadow: 0 1px 3px rgba(0,0,0,0.05); */
 }
 
 .email-item.unread {
@@ -532,11 +573,12 @@ body {
 }
 
 .email-content {
-  flex-grow: 0.9;
+  flex-grow: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 16px;
+  min-width: 0;
 }
 
 .email-subject {
@@ -551,10 +593,14 @@ body {
 
 .email-date {
   width: 80px;
+  min-width: 160px;
   text-align: right;
   color: #6b7280;
   font-size: 13px;
   white-space: nowrap;
+  margin: auto;
+  flex-shrink: 0;
+  text-overflow: ellipsis;
 }
 
 .email-item.unread .email-date {
@@ -601,7 +647,7 @@ body {
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  /* box-shadow: 0 2px 8px rgba(0,0,0,0.15); */
 }
 
 .notification-actions {

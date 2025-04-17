@@ -60,10 +60,8 @@
 			OR (schdul_ty = '1' OR schdul_ty = '2')
 		    )
 	    </when>
-<!-- 	    <if test="lblNoList == null and lblNoList.size() == 0"> -->
 		<otherwise>
 	    	AND (lbl_no IS NULL AND schdul_ty != '0')
-<!-- 	    </if> -->
 		</otherwise>
 	</choose>
 </select>

@@ -26,6 +26,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.mail.MailService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
+import kr.or.ddit.sevenfs.utils.ArticlePage;
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.mail.MailVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
@@ -35,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping("/mail")
 public class MailController {
-	
+	// bum bum be-dum bum bum be-dum bum
 	@Value("${file.save.abs.path}")
 	private String saveDir;
 	
@@ -45,29 +47,56 @@ public class MailController {
 	@Autowired
 	OrganizationService organizationService;
 	
+	@Autowired
+	AttachFileService attachFileService;
+	
 	
 	@GetMapping("")
-	public String mailHome(Model model, @AuthenticationPrincipal CustomUser customUser) {
+	public String mailHome(Model model,@ModelAttribute MailVO mailVO, @AuthenticationPrincipal CustomUser customUser,
+							@RequestParam(defaultValue = "1") int currentPage) {
 		EmployeeVO employeeVO = customUser.getEmpVO();
 		log.info("CustomUser -> employeeVO" + employeeVO);
+		log.info("mailHome -> MailVO -> 검색을 위함" + mailVO);
+		
 		model.addAttribute("title","메일함");
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("emplNo", employeeVO.getEmplNo());
+		map.put("mailVO", mailVO);
+		map.put("currentPage", currentPage);
+		map.put("size", 10);
+		int total = mailService.getTotal(map);
+		log.info("mailService.getTotal(map) -> total : "+total);
 		List<MailVO> mailVOList = mailService.getList(employeeVO);
 		log.info("mailHome -> getList() -> mailVOList : "+mailVOList);
+		ArticlePage<MailVO> articlePage = new ArticlePage<MailVO>(total, currentPage, 10);
 		model.addAttribute("mailVOList",mailVOList);
+		model.addAttribute("articlePage", articlePage);
 		return "mail/mailHome";
 	}
 	
 	@GetMapping("/emailDetail")
-	public String emailDetail(@RequestParam(value = "emailNo") int emailNo) {
+	public String emailDetail(Model model ,@RequestParam(value = "emailNo") int emailNo, String fileName) {
 		log.info("emailDetail -> emailNo : "+emailNo);
 		MailVO mailVO = new MailVO(emailNo);
+		log.info("emailDetail -> mailVO : "+mailVO);
 		mailVO = mailService.emailDetail(mailVO);
+		log.info("emailDetail -> mailService.emailDetail -> mailVO : "+mailVO);
+		List<AttachFileVO> attachFileVOList = mailService.getAtchFile(mailVO.getAtchFileNo());
+		attachFileService.downloadFile(fileName);
+		model.addAttribute("mailVO",mailVO);
+		model.addAttribute("attachFileVOList",attachFileVOList);
 		return "mail/mailDetailLayout";
 	}
 	
 	@GetMapping("/mailSend")
-	public String mailSend(Model model) {
+	public String mailSend(Model model, @RequestParam(value = "emplNm",required = false) String emplNm,
+										@RequestParam(value = "email",required = false) String email) {
 		model.addAttribute("title","메일함");
+		model.addAttribute("emplNm",emplNm);
+		model.addAttribute("email",email);
+		log.info("mailSend get요청 -> emplNm : "+emplNm);
+		log.info("mailSend get요청 -> email : "+email);
 		return "mail/mailSend";
 	}
 	
@@ -101,8 +130,9 @@ public class MailController {
 			}
 		}
 		int result = mailService.sendMail(mailVO,uploadFile);
-		return "/mail";
+		return "mail";
 	}
+	
 	
 	@ResponseBody
 	@PostMapping("/upload")

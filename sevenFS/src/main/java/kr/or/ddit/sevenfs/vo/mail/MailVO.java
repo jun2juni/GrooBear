@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.vo.mail;
 
 import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -45,7 +46,7 @@ public class MailVO {
 	// 메일 라벨 번호
 	private int lblNo;
 	
-	// 전송타입 0 참조x, 1 참조, 2 숨은 참조 ==
+	// 전송타입 0 보낸, 1 받은, 2 참조, 3 숨은 참조 ==
 	private String emailTrnsmisTy;
 	
 	// 메일함 분류시 사용 0 보낸메일, 1 받은메일, 2 임시메일, 3 스팸함, 4 휴지통 ==
@@ -56,6 +57,7 @@ public class MailVO {
 	
 	// 수신이메일 ( 해당 메일을 받는 사람의 이메일)(복수개 가능)
 	private List<String> recptnEmailList;
+	private List<Map<String,Object>> recptnMapList;
 	private String recptnEmail;
 	
 	// 메일 제목
@@ -76,8 +78,17 @@ public class MailVO {
 	// 서버에서 처리시 refEmail존재여부,hiddenRefEmail 존재여부,둘다 없음 3가지로 분기처리된다.
 	// 참조 이메일 리스트
 	private List<String>  refEmailList;
+	private List<Map<String,Object>> refMapList;
 	// 숨은 참조 이메일 리스트
 	private List<String> hiddenRefEmailList;
+	private List<Map<String,Object>> hiddenRefMapList;
+	
+	private String emplNm;
+	
+	// 검색관련
+	private String searchOption;
+	private String keyword;
+
 	
 	public MailVO() {}
 	public MailVO(int emailNo) {

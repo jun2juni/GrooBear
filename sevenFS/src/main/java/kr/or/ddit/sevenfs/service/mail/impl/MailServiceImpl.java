@@ -1,10 +1,14 @@
 package kr.or.ddit.sevenfs.service.mail.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,6 +16,7 @@ import kr.or.ddit.sevenfs.mapper.mail.MailMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.mail.MailService;
 import kr.or.ddit.sevenfs.service.schedule.ScheduleLabelService;
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.mail.MailVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
@@ -71,14 +76,14 @@ public class MailServiceImpl implements MailService{
 		mailVO.setReadngAt("Y");
 		mailVOList.add(mailVO);
 		// 받은 메일함
-		if(refEmailList != null) {
+		if(recptnEmailList != null) {
 			for(int i = 0; i < recptnEmailList.size(); i++) {
 				MailVO vo = new MailVO(mailVO);
 				String[] emplNoEmail = recptnEmailList.get(i).split("_");
 				log.info("emplNoEmail"+emplNoEmail);
 				log.info("emplNoEmail[1] : "+emplNoEmail[1]);
 				log.info("emplNoEmail[0] : "+emplNoEmail[0]);
-				vo.setEmailTrnsmisTy("0");
+				vo.setEmailTrnsmisTy("1");
 				vo.setEmailClTy("1");
 				vo.setRecptnEmail(emplNoEmail[1]);
 				vo.setEmplNo(emplNoEmail[0]);
@@ -95,7 +100,7 @@ public class MailServiceImpl implements MailService{
 				String[] emplNoEmail = refEmailList.get(i).split("_");
 				log.info("emplNoEmail[1] : "+emplNoEmail[1]);
 				log.info("emplNoEmail[0] : "+emplNoEmail[0]);
-				vo.setEmailTrnsmisTy("1");
+				vo.setEmailTrnsmisTy("2");
 				vo.setEmailClTy("1");
 				vo.setRecptnEmail(emplNoEmail[1]);
 				vo.setEmplNo(emplNoEmail[0]);
@@ -112,7 +117,7 @@ public class MailServiceImpl implements MailService{
 				String[] emplNoEmail = hiddenRefEmailList.get(i).split("_");
 				log.info("emplNoEmail[1] : "+emplNoEmail[1]);
 				log.info("emplNoEmail[0] : "+emplNoEmail[0]);
-				vo.setEmailTrnsmisTy("2");
+				vo.setEmailTrnsmisTy("3");
 				vo.setEmailClTy("1");
 				vo.setRecptnEmail(emplNoEmail[1]);
 				vo.setEmplNo(emplNoEmail[0]);
@@ -129,12 +134,57 @@ public class MailServiceImpl implements MailService{
 
 	@Override
 	public List<MailVO> getList(EmployeeVO employeeVO) {
-		List<MailVO> mailVOLIst = mailMapper.getList(employeeVO);
-		return mailVOLIst;
+		List<MailVO> mailVOList = mailMapper.getList(employeeVO);
+		return mailVOList;
 	}
 
 	@Override
 	public MailVO emailDetail(MailVO mailVO) {
-		return mailMapper.emailDetail(mailVO);
+		// mailVO에 emailNo가 들어있음
+		List<MailVO> mailVOList = mailMapper.emailDetail(mailVO);
+//		Map<String, Object> returnMap = new HashMap<String, Object>();
+		log.info("MailServiceImpl emailDetail -> mailMapList : "+mailVOList);
+		List<Map<String, Object>> recptnList = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> refEmailList = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> hiddenRefEmailList = new ArrayList<Map<String, Object>>();
+		for(int i = 0; i < mailVOList.size(); i++ ) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			log.info("MailServiceImpl emailDetail -> map : "+mailVOList.get(i));
+			if(mailVOList.get(i).getEmailTrnsmisTy().equals("0")) {
+				mailVO = mailVOList.get(i);
+			}else if(mailVOList.get(i).getEmailTrnsmisTy().equals("1")) {
+				map.put("emplNm", (String)mailVOList.get(i).getEmplNm());
+				map.put("recptnEmail", (String)mailVOList.get(i).getRecptnEmail());
+				recptnList.add(map);
+			}else if(mailVOList.get(i).getEmailTrnsmisTy().equals("2")) {
+				map.put("emplNm", (String)mailVOList.get(i).getEmplNm());
+				map.put("recptnEmail", (String)mailVOList.get(i).getRecptnEmail());
+				refEmailList.add(map);
+			}else if(mailVOList.get(i).getEmailTrnsmisTy().equals("3")) {
+				map.put("emplNm", (String)mailVOList.get(i).getEmplNm());
+				map.put("recptnEmail", (String)mailVOList.get(i).getRecptnEmail());
+				hiddenRefEmailList.add(map);
+			}
+		}
+		mailVO.setRecptnMapList(recptnList);
+		mailVO.setRefMapList(refEmailList);
+//		mailVO.setHiddenRefMapList(hiddenRefEmailList);
+		log.info("MailServiceImpl emailDetail -> mailVO : "+mailVO);
+		return mailVO;
+	}
+
+	@Override
+	public List<AttachFileVO> getAtchFile(long atchFileNo) {
+		return mailMapper.getAtchFile(atchFileNo);
+	}
+
+	@Override
+	public void downloadFile(String fileName) {
+		ResponseEntity<Resource> entity = attachFileService.downloadFile(fileName);
+	}
+
+	@Override
+	public int getTotal(Map<String, Object> map) {
+		return mailMapper.getTotal(map);
 	}
 }

@@ -1,4 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="title" scope="application" value="메인" />
 
 <!DOCTYPE html>
@@ -39,35 +42,77 @@
     #emailTreeClose {
         display: block;
         margin-left: auto;
-        padding: 6px 12px;
-        background-color: #f5f5f5;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        padding: 8px 16px;
+        background-color: #4e73df;
+        color: white;
+        border: none;
+        border-radius: 6px;
         cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
     }
     #emailTreeClose:hover {
-        background-color: #e9e9e9;
+        background-color: #375ad3;
+        transform: translateY(-2px);
     }
-
     #emailTree{
+        border: 1px solid #e5e5e5;
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 400px; /* 원하는 크기로 조정 가능 */
-        max-width: 80%;
+        width: 500px; /* 원하는 크기로 조정 가능 */
+        max-width: 90%;
         margin: 0;
-        padding: 20px;
+        padding: 25px;
         background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
+        border-radius: 12px;
+        z-index: 1050;
+        display: none;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translate(-50%, -48%); }
+        to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+    /* 모달 배경 오버레이 */
+    .email-tree-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        display: none;
     }
     #orgTree {
-        max-height: 400px;
+        max-height: 450px;
         overflow-y: auto;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
+        padding: 12px;
+        border: 1px solid #e5e5e5;
+        border-radius: 8px;
+        /* background-color: #f8f9fc; */
     }
+    /* 스크롤바 스타일 */
+    #orgTree::-webkit-scrollbar {
+        width: 6px;
+    }
+    #orgTree::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 5px;
+    }
+
+    #orgTree::-webkit-scrollbar-thumb {
+        background: #b9bfcf;
+        border-radius: 5px;
+    }
+
+    #orgTree::-webkit-scrollbar-thumb:hover {
+        background: #8c92a3;
+    }
+
     #hiddenRefEmail, #refEmail, #recpEmail{
         margin-right: 3px;
         margin-bottom: 3px;
@@ -132,6 +177,8 @@
                   v * emailCn
                   v * 첨부파일
                 -->
+                <input type="hidden" id="modelEmplNm" value="${emplNm}">
+                <input type="hidden" id="modelEmail" value="${email}">
 				<div class="row">
 					<div class="col-12">
 						<div class="card-style">
@@ -152,7 +199,7 @@
                                             </div>
                                             <input type="text" name="recpEmailInp" id="recpEmailInp" style="margin: 3px; border: 1px;" >
                                         </div>
-                                        <button class="emailTreeBtn btn btn-secondary type="button" data-event="recpEmailInp">주소록</button>
+                                        <button class="emailTreeBtn btn btn-secondary" type="button" data-event="recpEmailInp">주소록</button>
                                     </div>
                                     <!-- 원본 -->
                                     <!-- <div class="mb-3" >
@@ -194,6 +241,9 @@
                                 </div>
                                 <!-- 조직도 -->
                                 <div style="width: 40%; float: right; margin-left: 30px;" id="emailTree">
+                                    <div id="searchBar">
+                                        <c:import url="../organization/searchBar.jsp" />
+                                    </div>
                                     <div id="orgTree" style=" display: block;">
                                         <c:import url="../organization/orgList.jsp" />
                                     </div>
@@ -259,6 +309,19 @@
         $('#hiddenRefInp').hide();
         $('#emailTree').hide();
         $('#trnsmitEmail').val("${myEmpInfo.email}")
+
+        // <input type="hidden" id="modelEmplNm" value="${emplNm}">
+        // <input type="hidden" id="modelEmail" value="${email}">
+        if($('#modelEmail').length&&$('#modelEmplNm').length){
+            let email = $('#modelEmail').val();
+            let emplNm = $('#modelEmplNm').val();
+            $('#modelEmail').remove();
+            $('#recpEmailInp').val(email);
+            $('#recpEmailInpSpan').text(emplNm);
+            setTimeout(function() {
+                $('#recpEmailInp').trigger('change');
+            }, 50);
+        }
 
         // ckeditor5 시작
         $(".ck-blurred").keydown(function(){
@@ -693,6 +756,7 @@
                         if(validateDupl(resp.email).length==0){
                             console.log('spanId : ',spanId)
                             console.log('resp.emplNm : ',resp.emplNm)
+                            console.log('sel : ',sel)
                             $(sel).val(resp.email);
                             // $(sel).data('emplNo',selId);
                             $(sel).attr('data-emplNo', resp.emplNo);
@@ -734,9 +798,9 @@
             window.location.href="/mail"
         })
     });
-    $(window).unload(function() {
-        // 언로드시 임시저장 (적힌게 있다면 y/n으로 물어보고 y면 저장 아니면 날림)
-    })
+    // $(window).unload(function() {
+    //     // 언로드시 임시저장 (적힌게 있다면 y/n으로 물어보고 y면 저장 아니면 날림)
+    // })
 
 </script>
 </body>

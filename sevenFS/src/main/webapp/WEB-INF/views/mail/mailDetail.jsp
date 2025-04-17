@@ -1,11 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <!-- <!DOCTYPE html>
-    <html>
-    <head>
-    <meta charset="UTF-8">
-    <title>이메일 클라이언트</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> -->
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
     <style type="text/css">
     * {
       margin: 0;
@@ -19,9 +16,10 @@
       color: #202124;
       line-height: 1.0;
     }
+
     .email-container {
       display: flex;
-      /* height: 100vh; */
+      height: 100vh;
       height: 100%;
       overflow: hidden;
     }
@@ -35,11 +33,13 @@
     /* 사이드바 스타일 개선 */
     .email-sidebar {
       width: 240px;
-      background-color: #f8f9fa;
+      /* background-color: #f8f9fa; */
       border-right: 1px solid #e0e0e0;
+      height: 100%;
       overflow-y: auto;
       transition: width 0.3s ease;
       padding-top: 12px;
+      flex-shrink: 0; /* 사이드바 너비 고정 */
     }
     
     .sidebar-compose {
@@ -143,6 +143,7 @@
       flex-direction: column;
       flex-grow: 1;
       overflow: hidden;
+      height: 100%; /* 높이 100% 설정 */
     }
     
     .email-section-detail {
@@ -152,7 +153,8 @@
       overflow-y: auto;
       border-radius: 8px;
       margin: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      /* box-shadow: 0 1px 3px rgba(0,0,0,0.1); */
+      flex-grow: 1;
     }
     
     .email-detail-toolbar {
@@ -203,6 +205,7 @@
     .email-detail-content {
       padding: 24px;
       overflow-y: auto;
+      flex-grow: 1;
     }
     
     .email-detail-header {
@@ -225,14 +228,6 @@
       align-items: center;
     }
     
-    .sender-info {
-      display: flex;
-      align-items: center;
-    }
-    
-    .sender-avatar {
-      margin-right: 12px;
-    }
     
     .avatar-circle {
       width: 40px;
@@ -247,22 +242,68 @@
       font-size: 16px;
     }
     
-    .sender-details {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .sender-name {
-      font-size: 16px;
-      font-weight: 500;
-      color: #111827;
-    }
-    
-    .sender-email {
-      font-size: 14px;
-      color: #6b7280;
-    }
-    
+    .email-participants {
+  margin-bottom: 20px;
+}
+
+.participant-row {
+  display: flex;
+  margin-bottom: 10px;
+  align-items: flex-start;
+}
+
+.participant-type {
+  width: 80px;
+  font-size: 13px;
+  color: #6b7280;
+  padding-top: 3px;
+}
+
+.participant-list {
+  flex-grow: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.participant-item {
+  display: flex;
+  align-items: center;
+  background-color: #f3f4f6;
+  border-radius: 16px;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.participant-avatar {
+  width: 24px;
+  height: 24px;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 11px;
+  margin-right: 8px;
+}
+
+.participant-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.participant-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.participant-email {
+  font-size: 12px;
+  color: #6b7280;
+}
     .email-detail-actions {
       display: flex;
       gap: 8px;
@@ -455,7 +496,7 @@
                   </button>
                 </div>
                 <div class="toolbar-actions-right">
-                  <span class="email-date-detail">2025년 4월 14일 오전 10:23</span>
+                  <span class="email-date-detail">${mailVO.trnsmitDt}</span>
                   <button class="toolbar-button">
                     <i class="fas fa-print"></i>
                   </button>
@@ -467,17 +508,75 @@
     
               <div class="email-detail-content">
                 <div class="email-detail-header">
-                  <h2 class="email-detail-subject">4월 팀 회의 일정 안내 및 프로젝트 진행 상황 공유</h2>
+                  <h2 class="email-detail-subject">${mailVO.emailSj}</h2>
                   <div class="email-detail-info">
-                    <div class="sender-info">
-                      <div class="sender-avatar">
-                        <div class="avatar-circle">KJ</div>
+                    <div class="email-participants">
+                      <!-- 보낸 사람 -->
+                      <div class="participant-row">
+                        <div class="participant-type">보낸 사람:</div>
+                        <div class="participant-list">
+                          <div class="participant-item">
+                            <div class="participant-avatar">
+                              ${fn:substring(mailVO.emplNm, 0, 1)}
+                            </div>
+                            <div class="participant-info">
+                              <div class="participant-name">${mailVO.emplNm}</div>
+                              <div class="participant-email">${mailVO.trnsmitEmail}</div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div class="sender-details">
-                        <div class="sender-name" style="margin-bottom: 5px;">김지훈 팀장</div>
-                        <div class="sender-email">jihoon.kim@example.com</div>
+                      
+                      <!-- 받는 사람 -->
+                      <div class="participant-row">
+                        <div class="participant-type">받는 사람:</div>
+                        <div class="participant-list">
+                          <c:forEach items="${mailVO.recptnMapList}" var="recp">
+                            <div class="participant-item participant-recptn">
+                              <div class="participant-avatar">
+                                ${fn:substring(recp.emplNm, 0, 1)}
+                              </div>
+                              <div class="participant-info">
+                                <div class="participant-name">${recp.emplNm}</div>
+                                <div class="participant-email">${recp.recptnEmail}</div>
+                              </div>
+                            </div>
+                          </c:forEach>
+                        </div>
                       </div>
+                      
+                      <!-- 참조자 - 참조자가 있을 경우만 표시 -->
+                      <c:if test="${not empty mailVO.refMapList}">
+                        <div class="participant-row">
+                          <div class="participant-type">참조:</div>
+                          <div class="participant-list">
+                            <c:forEach items="${mailVO.refMapList}" var="ref">
+                              <div class="participant-item participant-recptn">
+                                <div class="participant-avatar">
+                                  ${fn:substring(ref.emplNm, 0, 1)}
+                                </div>
+                                <div class="participant-info">
+                                  <div class="participant-name">${ref.emplNm}</div>
+                                  <div class="participant-email">${ref.recptnEmail}</div>
+                                </div>
+                              </div>
+                            </c:forEach>
+                          </div>
+                        </div>
+                      </c:if>
                     </div>
+                    
+                    <div class="email-detail-actions">
+                      <button class="reply-button">
+                        <i class="fas fa-reply"></i>
+                        <span>답장</span>
+                      </button>
+                      <button class="forward-button">
+                        <i class="fas fa-share"></i>
+                        <span>전달</span>
+                      </button>
+                    </div>
+                  </div>
                     <div class="email-detail-actions">
                       <button class="reply-button">
                         <i class="fas fa-reply"></i>
@@ -492,39 +591,24 @@
                 </div>
     
                 <div class="email-detail-body">
-                  <p>안녕하세요 여러분,</p>
-                  <br>
-                  <p>이번 달 정기 팀 회의 일정을 안내드립니다. 4월 18일 목요일 오후 2시부터 4시까지 회의실 A에서 진행될 예정입니다.</p>
-                  <br>
-                  <p>주요 안건은 다음과 같습니다:</p>
-                  <br>
-                  <p>1. 1분기 프로젝트 성과 리뷰<br>
-                  2. 2분기 신규 프로젝트 소개<br>
-                  3. 팀 목표 조정 및 역할 분담<br>
-                  4. 새로운 협업 툴 도입 관련 논의</p>
-                  <br>
-                  <p>회의 준비를 위해 각자 담당 업무에 대한 간략한 보고서를 미리 준비해 주시기 바랍니다. 특히 현재 진행 중인 '스마트 시티' 프로젝트의 진행 상황과 향후 일정에 대해 명확히 공유할 수 있도록 준비해 주세요.</p>
-                  <br>
-                  <p>회의 후에는 간단한 다과와 함께 팀 빌딩 활동이 있을 예정입니다.</p>
-                  <br>
-                  <p>질문이나 의견이 있으시면 언제든지 연락 주세요.</p>
-                  <br>
-                  <p>감사합니다.</p>
-                  <br>
-                  <p>김지훈 드림</p>
+                  ${mailVO.emailCn}
+                  mailVO : ${mailVO} <br/>
+                  attachFileVOList : ${attachFileVOList}
                 </div>
     
                 <div class="email-detail-attachments">
-                  <div class="attachment-title">첨부파일 (2)</div>
+                  <div class="attachment-title">첨부파일 (${attachFileVOList.size()})</div>
                   <div class="attachment-list">
-                    <div class="attachment-item">
-                      <i class="far fa-file-pdf attachment-icon"></i>
-                      <span class="attachment-name">회의_안건_상세.pdf (2.3 MB)</span>
-                    </div>
-                    <div class="attachment-item">
-                      <i class="far fa-file-excel attachment-icon"></i>
-                      <span class="attachment-name">1분기_프로젝트_현황.xlsx (1.8 MB)</span>
-                    </div>
+                    <c:forEach items="${attachFileVOList}" var="attachFileVO">
+                      <a class="attachment-item" href="/download?fileName=${attachFileVO.fileStrePath}">
+                        <i class="far fa-file-pdf attachment-icon"></i>
+                        <span class="attachment-name">${attachFileVO.fileNm} (${attachFileVO.fileViewSize})</span>
+                      </a>
+                      <!-- <div class="attachment-item">
+                        <i class="far fa-file-pdf attachment-icon"></i>
+                        <span class="attachment-name">${attachFileVO.fileNm} (${attachFileVO.fileViewSize})</span>
+                      </div> -->
+                    </c:forEach>
                   </div>
                 </div>
     
@@ -552,9 +636,9 @@
     <script>
       // 아바타 이니셜 생성
       document.addEventListener('DOMContentLoaded', function() {
-        const senderName = document.querySelector('.sender-name').textContent;
-        const initials = senderName.split(' ').map(name => name.charAt(0)).join('');
-        document.querySelector('.avatar-circle').textContent = initials;
+        //const senderName = document.querySelector('.sender-name').textContent;
+        //const initials = senderName.split(' ').map(name => name.charAt(0)).join('');
+        
         $('#toList').on('click',function(){
           window.location.href="/mail"
         })
@@ -566,6 +650,15 @@
             console.log('emailClTy -> ',emailClTy);
             window.location.href="/mail"
         });
+        $('.participant-recptn').on('click',function(){
+          let emplNm = $(this).find('.participant-name').text();
+          let emplEmail = $(this).find('.participant-email').text()
+
+          // console.log('.participant-recptn 클릭 : ',this);
+          console.log('.participant-recptn 클릭 : ',emplNm);
+          console.log('.participant-recptn 클릭 : ',emplEmail);
+          window.location.href=`/mail/mailSend?emplNm=\${emplNm}&&email=\${emplEmail}`;
+        })
 
       });
     </script>
