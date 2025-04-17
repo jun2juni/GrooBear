@@ -77,6 +77,7 @@ public class DclzTypeController {
 		model.addAttribute("empDclzList",empDclzList);
 		model.addAttribute("articlePage" , articlePage);
 		
+		
 		String dclzCode = empDclzList.get(0).getDclzCode();
 		log.info("dclzCode : " + dclzCode);
 		
