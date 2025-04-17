@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
+import kr.or.ddit.sevenfs.service.organization.DclztypeService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.utils.CommonCode;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
@@ -34,6 +35,11 @@ public class AtrzServiceImpl implements AtrzService {
 	// 사원 정보를 위해 가져온것
 	@Autowired
 	private OrganizationService organizationService;
+	
+	@Autowired
+	private DclztypeService dclztypeService;
+	
+	
 	
 	//결재 대기중인 문서리스트
 	@Override
@@ -416,9 +422,11 @@ public class AtrzServiceImpl implements AtrzService {
 				int useDays = Integer.parseInt(holidayVO.getHoliUseDays());
 				
 				VacationVO vacationVO = new VacationVO();
+				
 				vacationVO.setEmplNo(holidayVO.getAtrzVO().getDrafterEmpno());   //사원번호 추출 
 				log.info("holidayVO.getAtrzVO().getDrafterEmpno() "+holidayVO.getAtrzVO().getDrafterEmpno());
 				int holiUseDays = Integer.parseInt(holidayVO.getHoliUseDays());
+				vacationVO = dclztypeService.emplVacationCnt(emplNo);
 				vacationVO.setYrycUseDaycnt(vacationVO.getYrycUseDaycnt()+holiUseDays);   		//사용일수
 				vacationVO.setYrycRemndrDaycnt(vacationVO.getYrycRemndrDaycnt()-holiUseDays);    //잔여일수
 				
