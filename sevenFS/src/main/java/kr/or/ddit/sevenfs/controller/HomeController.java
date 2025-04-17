@@ -219,15 +219,19 @@ public class HomeController {
 		
 		ArticlePage<DclzTypeVO> articlePage = new ArticlePage<>(total, currentPage, size);
 
-		List<DclzTypeVO> empDclzList = dclztypeService.emplDclzTypeList(map);
+		//List<DclzTypeVO> empDclzList = dclztypeService.emplDclzTypeList(map);
 		//log.info("empDclzList : " + empDclzList);
-		String dclzCode = empDclzList.get(0).getDclzCode();
+		//String dclzCode = empDclzList.get(0).getDclzCode();
 		
+		List<DclzTypeVO> empDclzList = dclztypeService.mainEmplDclzList(emplNo);
+		String dclzCode = empDclzList.get(0).getDclzCode();
 		dclzTypeVO.setDclzCode(dclzCode);
 		
 		//log.info("퇴근한사람~~~~~ : " + emplNo);
 		
 		int result = dclztypeService.workEndInsert(dclzTypeVO);
+		log.info("퇴근한사람result : " + result);
+		
 		
 		// 퇴근시간 insert
 		if(result == 1) {

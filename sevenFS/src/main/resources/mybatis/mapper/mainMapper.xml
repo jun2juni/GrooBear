@@ -163,9 +163,12 @@
 <select id="getEmplTodayCalendar" parameterType="hashMap">
 	SELECT  COUNT(*)
 	FROM SCHEDULE
-         WHERE (SCHDUL_TY = '1' AND SCHDUL_TY = '0' OR DEPT_CODE = #{deptCode} AND EMPL_NO = #{emplNo})
-         AND TO_CHAR(SCHDUL_BEGIN_DT, 'YYYY-mm-DD')= TO_CHAR(SYSDATE, 'YYYY-mm-DD')
-         AND TO_CHAR(SCHDUL_END_DT, 'YYYY-mm-DD') = TO_CHAR(SYSDATE, 'YYYY-mm-DD')
+          WHERE (
+           (SCHDUL_TY = '1' AND DEPT_CODE = #{deptCode})
+        OR (SCHDUL_TY = '0' AND EMPL_NO = #{emplNo})
+           )
+       AND TO_CHAR(SCHDUL_BEGIN_DT, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+       AND TO_CHAR(SCHDUL_END_DT, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
 </select>
 
 

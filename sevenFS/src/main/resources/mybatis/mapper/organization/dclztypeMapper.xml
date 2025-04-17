@@ -78,6 +78,7 @@
 	        FROM   dclz_type dt
 	        RIGHT OUTER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
 	        WHERE cmmn_code_group='ATTEND'
+	        AND dt.dclz_code NOT IN ('22', '23', '24')
 	        AND EMPL_NO=#{emplNo}
 	    )D  
 	)
@@ -199,6 +200,7 @@ WITH U AS(
 	  FROM dclz_type dt
       RIGHT OUTER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
 	  WHERE cmmn_code_group='ATTEND'
+	  AND dt.dclz_code NOT IN ('22', '23', '24')
       AND dt.empl_no = #{emplNo}
       AND (TO_CHAR(dt.dclz_begin_dt, 'YYYY') LIKE #{workBeginDate})
       )
@@ -229,6 +231,7 @@ WITH U AS(
       RIGHT OUTER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
 	  WHERE cmmn_code_group='ATTEND'
       AND dt.empl_no = #{emplNo}
+      AND dt.dclz_code NOT IN ('22', '23', '24')
       AND (TO_CHAR(dt.dclz_begin_dt, 'YYYY') LIKE #{workBeginDate})
       AND (TO_CHAR(dt.dclz_end_dt, 'mm') LIKE #{workEndDate})
       )

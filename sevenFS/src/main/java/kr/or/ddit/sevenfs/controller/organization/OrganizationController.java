@@ -225,13 +225,13 @@ public class OrganizationController {
 		// 사원 파일 번호 가져오기
 		int fileNo = empDetail.getAtchFileNo();
 		
-		AttachFileVO attachFileVO = new AttachFileVO();
-		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
-		String empFileName = fileAttachList.get(0).getFileStrePath();
-
-		// 사원 프로필 url가져오기
-		empDetail.setProflPhotoUrl(empFileName);
-		log.info("사원상세 프로필 url : " + empFileName);
+//		AttachFileVO attachFileVO = new AttachFileVO();
+//		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
+//		String empFileName = fileAttachList.get(0).getFileStrePath();
+//
+//		// 사원 프로필 url가져오기
+//		empDetail.setProflPhotoUrl(empFileName);
+//		log.info("사원상세 프로필 url : " + empFileName);
 		
 		//model.addAttribute("empFileName" , empFileName);
 		

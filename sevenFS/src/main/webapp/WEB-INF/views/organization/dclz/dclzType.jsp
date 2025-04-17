@@ -1,3 +1,4 @@
+<%@page import="java.util.Calendar"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -23,6 +24,13 @@
 <c:import url="../../layout/sidebar.jsp" />
 <main class="main-wrapper">
 	<c:import url="../../layout/header.jsp" />
+	
+	
+<%
+    // 서버에서 현재 연도 구하기 (JSP 스크립틀릿 사용)
+    int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+    request.setAttribute("currentYear", currentYear);
+%>
 	
 	<section class="section">
 		<div class="container-fluid">
@@ -140,19 +148,15 @@
 	                  	<a href="/dclz/dclzType" class="btn-sm main-btn light-btn-light btn-hover mr-10 rounded-md">전체 목록 보기</a>
 	                    <div class="select-position select-sm">
 	                      <select class="light-bg" id="yearSelect">
-	                      <c:set var="prevYear" value="" />
-							<option>년도 선택</option>
-							<c:forEach var="dclzWork" items="${empDclzList}">
-							  <c:set var="currentYear" value="${dclzWork.dclzNo.substring(0, 4)}" />
-							  <c:if test="${currentYear != prevYear}">
-							    <option value="${currentYear}">${currentYear}</option>
-							    <c:set var="prevYear" value="${currentYear}" />
-							  </c:if>
-							</c:forEach>
-		                    <%-- <c:forEach var="dclzWork" items="${empDclzList}">
-		                        <option value="${dclzWork.workBeginDate}">${dclzWork.dclzNo.substring(0,4)}</option>
-	                        </c:forEach> --%>
-	                      </select>
+						  <c:set var="prevYear" value="" />
+						  <c:forEach var="dclzWork" items="${empDclzList}">
+						    <c:set var="year" value="${dclzWork.dclzNo.substring(0, 4)}" />
+						    <c:if test="${year != prevYear}">
+						      <option value="${year}" <c:if test="${year == currentYear}">selected</c:if>>${year}</option>
+						      <c:set var="prevYear" value="${year}" />
+						    </c:if>
+						  </c:forEach>
+						</select>
 	                    <c:set var="duplMonth" value="" />
 	                    </div>
 	                    <div class="select-position select-sm ml-10">
@@ -204,7 +208,6 @@
 	                  <c:set var="year" value="${dclzWork.dclzNo.substring(0,4)}"></c:set>
 			          <c:set var="month" value="${dclzWork.dclzNo.substring(4,6)}"></c:set>
 			          <c:set var="day" value="${dclzWork.dclzNo.substring(6,8)}"></c:set>
-		                   
 	                    <tr>
 	                      <td>
 	                        <div>
@@ -213,7 +216,27 @@
 	                      </td>
 	                      <td>
 	                        <div>
-	                          <h4><span class="badge rounded-pill text-white" style="background-color:pink">${dclzWork.cmmnCodeNm}</span></h4>
+	                        	<c:if test="${dclzWork.cmmnCodeNm == '지각'}">
+	                        		<h4><span class="badge rounded-pill text-white" style="background-color:salmon">${dclzWork.cmmnCodeNm}</span></h4>
+	                        	</c:if>
+	                        	<c:if test="${dclzWork.cmmnCodeNm == '결근'}">
+	                        		<h4><span class="badge rounded-pill text-white" style="background-color:salmon">${dclzWork.cmmnCodeNm}</span></h4>
+	                        	</c:if>
+	                          	<c:if test="${dclzWork.cmmnCodeNm == '출/퇴근'}">
+	                        		<h4><span class="badge rounded-pill text-white" style="background-color:mediumSeaGreen">${dclzWork.cmmnCodeNm}</span></h4>
+	                        	</c:if>
+	                          	<c:if test="${dclzWork.cmmnCodeNm == '출장'}">
+	                        		<h4><span class="badge rounded-pill text-white" style="background-color:lightBlue">${dclzWork.cmmnCodeNm}</span></h4>
+	                        	</c:if>
+	                          	<c:if test="${dclzWork.cmmnCodeNm == '외근'}">
+	                        		<h4><span class="badge rounded-pill text-white" style="background-color:lightBlue">${dclzWork.cmmnCodeNm}</span></h4>
+	                        	</c:if>
+	                          	<c:if test="${dclzWork.cmmnCodeNm == '조퇴'}">
+	                        		<h4><span class="badge rounded-pill text-white" style="background-color:thistle">${dclzWork.cmmnCodeNm}</span></h4>
+	                        	</c:if>
+	                          	<c:if test="${dclzWork.cmmnCodeNm == '반차'}">
+	                        		<h4><span class="badge rounded-pill text-white" style="background-color:pink">${dclzWork.cmmnCodeNm}</span></h4>
+	                        	</c:if>
 	                        </div>
 	                      </td>
 	                      <td>
@@ -263,10 +286,17 @@
 
 <script type="text/javascript">
 $(function(){
+	
+	// 페이징 처리하기 emlDclzTypeList 하나로 해보기
+	yearSelected = $('#yearSelect').val();
+	console.log('기본년도 값 ', yearSelect);
+	
 	$("#yearSelect").on("change", function(){
 		// 선택 년도 보내기
-		const yearSelect = this.value;
-		//console.log("selYear : " , yearSelect);
+		//const yearSelect = this.value;
+		
+		yearSelected = this.value;
+		console.log("바뀐년도 : " , yearSelected);
 		
 		const emplNo = ${emplNo}
 		//console.log("emplNo : " , emplNo)
@@ -300,6 +330,28 @@ $(function(){
 			//const nullEndTime = [];
 			selYearList.map((item) => {
 				
+				let badgeColor = '';
+				switch (item.cmmnCodeNm) {
+				  case '지각':
+				  case '결근':
+				    badgeColor = 'salmon';
+				    break;
+				  case '출/퇴근':
+				    badgeColor = 'mediumSeaGreen';
+				    break;
+				  case '출장':
+				  case '외근':
+				    badgeColor = 'lightBlue';
+				    break;
+				  case '반차':
+					badgeColor = 'pink';
+				  case '조퇴':
+				    badgeColor = 'thistle';
+				    break;
+				  default:
+				    badgeColor = 'gray';
+				}
+				
 				const tr = document.createElement('tr');
 				tr.innerHTML = `
 					 <td>
@@ -310,7 +362,7 @@ $(function(){
                   </td>
                   <td>
                     <div>
-                  	  <h4><span class="status-btn warning-btn text-gray">\${item.cmmnCodeNm}</span></h4>
+                  	  <h4><span class="badge rounded-pill text-white" style="background-color:\${badgeColor}">\${item.cmmnCodeNm}</span></h4>
                     </div>
                   </td>
                   <td>
@@ -393,7 +445,33 @@ $(document).on('change', '#monthSelect', function(e) {
 			dclzBody.html("");
 			page.html("");
 			
+			
+			
 			selMonList.map((item) => {
+				
+				let badgeColor = '';
+				switch (item.cmmnCodeNm) {
+				  case '지각':
+				  case '결근':
+				    badgeColor = 'salmon';
+				    break;
+				  case '출/퇴근':
+				    badgeColor = 'mediumSeaGreen';
+				    break;
+				  case '출장':
+				  case '외근':
+				    badgeColor = 'lightBlue';
+				    break;
+				  case '반차':
+					badgeColor = 'pink';
+				  case '조퇴':
+				    badgeColor = 'thistle';
+				    break;
+				  default:
+				    badgeColor = 'gray';
+				}
+				
+				
 				const tr = document.createElement('tr');
 				tr.innerHTML = `
 					 <td>
@@ -404,7 +482,7 @@ $(document).on('change', '#monthSelect', function(e) {
                   </td>
                   <td>
                     <div>
-                      <h4><span class="status-btn warning-btn text-gray">\${item.cmmnCodeNm}</span></h4>
+                      <h4><span class="badge rounded-pill text-white" style="background-color:\${badgeColor}">\${item.cmmnCodeNm}</span></h4>
                     </div>
                   </td>
                   <td>
