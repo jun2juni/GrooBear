@@ -92,7 +92,7 @@ public class HomeController {
      	// 사원 상세정보에서 부서코드 가져오기
      	EmployeeVO empDetailData = organizationService.emplDetail(emplNo);
      	String deptCode =  empDetailData.getDeptCode();
-     	
+     	log.info("사원 상세정보 main : " + deptCode);
      	Map<String, Object> calMap = new HashMap<>();
      	calMap.put("emplNo", emplNo);
      	calMap.put("deptCode", deptCode);
