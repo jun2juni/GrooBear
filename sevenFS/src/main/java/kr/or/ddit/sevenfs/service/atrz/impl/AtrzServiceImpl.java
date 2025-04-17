@@ -419,13 +419,13 @@ public class AtrzServiceImpl implements AtrzService {
 				atrzMapper.holidayDclzUpdate(dclzTypeVO);
 				log.info("atrzDetailAppUpdate->dclzTypeVO : "+dclzTypeVO);
 				//연차코드
-				int useDays = Integer.parseInt(holidayVO.getHoliUseDays());
+				Double useDays = Double.parseDouble(holidayVO.getHoliUseDays());
 				
 				VacationVO vacationVO = new VacationVO();
 				
 				vacationVO.setEmplNo(holidayVO.getAtrzVO().getDrafterEmpno());   //사원번호 추출 
 				log.info("holidayVO.getAtrzVO().getDrafterEmpno() "+holidayVO.getAtrzVO().getDrafterEmpno());
-				int holiUseDays = Integer.parseInt(holidayVO.getHoliUseDays());
+				Double holiUseDays = Double.parseDouble(holidayVO.getHoliUseDays());
 				vacationVO = dclztypeService.emplVacationCnt(emplNo);
 				vacationVO.setYrycUseDaycnt(vacationVO.getYrycUseDaycnt()+holiUseDays);   		//사용일수
 				vacationVO.setYrycRemndrDaycnt(vacationVO.getYrycRemndrDaycnt()-holiUseDays);    //잔여일수
