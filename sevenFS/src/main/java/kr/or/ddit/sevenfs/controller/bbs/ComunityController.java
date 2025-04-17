@@ -72,10 +72,16 @@ public class ComunityController {
 	} // comunitySurveyList
 	
 	@GetMapping("/comunitySurveyInsert")
+	public String comunitySurveyInsertForm(
+			) {
+		
+		return "comunity/comunitySurveyInsert";	
+	} // comunitySurveyInsert
+	
+	@PostMapping("/comunitySurveyInsert")
 	public String comunitySurveyInsert(
 			) {
 		
-		// 동아리 카테고리
 		return "comunity/comunitySurveyInsert";	
 	} // comunitySurveyList
 	
