@@ -208,7 +208,7 @@ public class DclzTypeController {
 		VacationVO emplVacation = dclztypeService.emplVacationCnt(emplNo);
 		
 		// 잔여연차 계산된값 확인
-		int remain = emplVacation.getYrycRemndrDaycnt();
+		double remain = emplVacation.getYrycRemndrDaycnt();
 		//log.info("controller잔여연차 : " + remain);
 		vacationVO.setYrycRemndrDaycnt(remain);
 		

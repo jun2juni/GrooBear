@@ -106,11 +106,11 @@ public class DclztypeServiceImpl implements DclztypeService {
 		log.info("service사원연차 : " + emplVacList);
 		
 		// 총 연차일수
-		int totalYryc = emplVacList.getTotYrycDaycnt();
+		double totalYryc = emplVacList.getTotYrycDaycnt();
 		// 사용 연차일수
-		int useYryc = emplVacList.getYrycUseDaycnt();
+		double useYryc = emplVacList.getYrycUseDaycnt();
 		// 잔여 연차일수 계산
-		int remainYryc = totalYryc - useYryc;
+		double remainYryc = totalYryc - useYryc;
 		// 잔여 연차일수 set해주기
 		emplVacList.setYrycRemndrDaycnt(remainYryc);
 		
@@ -144,22 +144,22 @@ public class DclztypeServiceImpl implements DclztypeService {
 		//log.info("선택사원의 연차정보 : " + emplVacCnt);
 		
 		// 선택사원의 총 연차일수
-		int totalVac = emplVacCnt.getTotYrycDaycnt();
+		double totalVac = emplVacCnt.getTotYrycDaycnt();
 		
 		// 기본지급으로 받은 연차
-		int basicWorkVac = vacationVO.getYrycMdatDaycnt();
+		double basicWorkVac = vacationVO.getYrycMdatDaycnt();
 		emplVacCnt.setYrycMdatDaycnt(basicWorkVac);
 		
 		// 초과근무로 받은 연차
-		int addWorkVac = vacationVO.getExcessWorkYryc();
+		double addWorkVac = vacationVO.getExcessWorkYryc();
 		emplVacCnt.setExcessWorkYryc(addWorkVac);
 		
 		// 성과로 받은 연차
-		int cmpnVac = vacationVO.getCmpnstnYryc();
+		double cmpnVac = vacationVO.getCmpnstnYryc();
 		emplVacCnt.setCmpnstnYryc(cmpnVac);
 		
 		// 추가로 받은 연차 계산 , 총연차일수+받은연차일수
-		int sumTotalVac = totalVac+addWorkVac+cmpnVac+basicWorkVac;
+		double sumTotalVac = totalVac+addWorkVac+cmpnVac+basicWorkVac;
 		log.info("계산된 총 연차일수 : " + sumTotalVac);
 		emplVacCnt.setTotYrycDaycnt(sumTotalVac);
 		

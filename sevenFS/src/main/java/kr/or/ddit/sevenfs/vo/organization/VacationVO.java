@@ -14,12 +14,12 @@ public class VacationVO {
 	private String yrycUseBeginDate; 
 	private String yrycUseEndDate; 
 	private String yrycDetail; 
-	private int totYrycDaycnt; // 총 연차일수
-	private int yrycUseDaycnt; // 사용 연차일수
-	private int yrycMdatDaycnt; // 연차조정일수
-	private int yrycRemndrDaycnt; // 연차 잔여일수
-	private int excessWorkYryc; // 초과근무연차
-	private int cmpnstnYryc; // 보상연차
+	private double totYrycDaycnt; // 총 연차일수
+	private double yrycUseDaycnt; // 사용 연차일수
+	private double yrycMdatDaycnt; // 연차조정일수
+	private double yrycRemndrDaycnt; // 연차 잔여일수
+	private double excessWorkYryc; // 초과근무연차
+	private double cmpnstnYryc; // 보상연차
 	
 	
 	// 사원이름
