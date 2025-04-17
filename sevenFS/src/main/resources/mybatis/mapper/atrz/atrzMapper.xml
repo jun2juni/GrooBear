@@ -523,6 +523,13 @@
 			)
 	</insert>
 	
+	
+	<select id="readHoCnt" parameterType="string" resultType="double">
+		SELECT YRYC_REMNDR_DAYCNT
+		FROM VACATION
+		WHERE EMPL_NO =#{empNo}
+	</select>
+	
 	<!-- 전자결재 임시저장 update -->
 	<update id="storageHolidayUpdate" parameterType="AtrzVO">
 	    UPDATE ATRZ
@@ -533,6 +540,8 @@
 	        ATRZ_STTUS_CODE = '99'
 	    WHERE ATRZ_DOC_NO = #{atrzDocNo}
 	</update>
+	
+	
 	<!-- 임시저장 결재선 인서트 -->
 		<!-- 전자결재결재선 등록 -->
 		<insert id="updateAtrzLine" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">

@@ -26,6 +26,7 @@
                         <input type="hidden" id="atrzDocNo" name="atrzDocNo" value="${atrzVO.atrzDocNo}">
                         <table class="table">
                             <tr>
+                                <!-- <td>${atrzVO}</td> -->
                                 <td>결재문서명</td>
                                 <td>${atrzVO.atrzSj}</td>
                             </tr>
@@ -33,14 +34,16 @@
                                 <td>결재의견</td>
                                 <td><textarea class="form-control" id="approvalMessage">승인합니다.</textarea></td>
                             </tr>
+                            
                             <tr>
                                 <td>결재옵션</td>
                                 <td>
                                     <input type="checkbox" id="authorStatus">
                                     <label for="authorStatus">전결</label>
-                                    <span>(체크시 결재가 종료됩니다)</span>
+                                    <span>(체크시 모든 결재가 완료처리 됩니다)</span>
                                 </td>
                             </tr>
+                            </c:forEach>
                         </table>
                     </form>
                 </div>

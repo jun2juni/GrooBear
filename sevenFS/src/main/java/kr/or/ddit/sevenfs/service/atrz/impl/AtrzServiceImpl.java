@@ -567,5 +567,10 @@ public class AtrzServiceImpl implements AtrzService {
 		this.atrzMapper.updateAtrzLine(atrzLineVO);
 		
 	}
+	//연차신청서 에서 남은 연차 갯수가져오기
+	@Override
+	public Double readHoCnt(String empNo) {
+		return atrzMapper.readHoCnt(empNo);
+	}
 	
 }

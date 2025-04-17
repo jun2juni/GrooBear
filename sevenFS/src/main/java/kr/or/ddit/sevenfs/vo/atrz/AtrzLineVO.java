@@ -22,6 +22,9 @@ public class AtrzLineVO {
 	private String sanctnOpinion;
 	private String eltsgnImage;
 	private Date sanctnConfmDt;  //결재완료일시
+	//마지막 결재자 순번을 위해 추가한것
+	private int atrzLastLnSn;//전자결재 선 순번*
+
 	
 	private List<AtrzLineVO> atrzLineList;    //전자결재선 리스트
 	

@@ -438,9 +438,6 @@ select.ui-datepicker-year {
 													<!--연차기간 선택 시작-->
 													<div class="col ms-4">
 														<div class="s_frm_title mb-2"><b>신청기간</b></div>
-														<!-- <div style="margin: 5px 0;">
-															사용 가능한 휴가일수는 <span id="s_ho_use">${checkHo }</span>일 입니다.
-														</div> -->
 														<div>
 															<input type="text" placeholder="신청 시작 기간을 선택해주세요"
 																class="form-control s_ho_start d-inline-block"
@@ -473,6 +470,9 @@ select.ui-datepicker-year {
 																<input class="form-check-input" type="radio" name="halfType" id="halfPm" value="PM">
 																<label class="form-check-label" for="halfPm">오후반차</label>
 															</div>
+														</div>
+														<div style="margin: 5px 0;">
+															사용 가능한 휴가일수는 <span id="s_ho_use">${checkHo}</span>일 입니다.
 														</div>
 													</div>	
 													<!--연차기간 선택 끝-->
@@ -544,15 +544,28 @@ select.ui-datepicker-year {
 
 <script>
 // 결재요청 클릭 시
-$("#s_eap_app").click(function() {
+$(".s_eap_app").click(function() {
 	var eap_title = $('#s_ho_tt').val();
 	var eap_content = $('#s_ho_co').val();
+
 	// textarea에 \r \n같은 문자를 <br>로 바꿔주기
 	eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
 	var ho_code = $('input[type=radio]:checked').val();
 	var ho_start = $('#s_ho_start').val() + " " + $('#s_start_time').val();
 	var ho_end = $('#s_ho_end').val() + " " + $('#s_end_time').val();
 	var ho_use_count = $('#s_date_cal').text();
+	
+	// 결재선 지정 여부 확인
+	if ($(".s_appLine_tbody_new .clsTr").length === 0) {
+		swal({
+			title: "결재선이 지정되지 않았습니다.",
+			text: "결재선을 지정해주세요.",
+			icon: "error",
+			closeOnClickOutside: false,
+			closeOnEsc: false
+		});
+		return;
+	}
 	
 	// 날짜 계산
 	var start = new Date($('#s_ho_start').val() + 'T' + $('#s_start_time').val());

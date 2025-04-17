@@ -238,18 +238,22 @@ public class AtrzController {
 
 	// 연차신청서 입력양식
 	@GetMapping("/selectForm/holiday")
-	public String selectHoliday(Model model) {
+	public String selectHoliday(Model model
+			,@AuthenticationPrincipal CustomUser customUser) {
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String empNo = empVO.getEmplNo();
+		//기안자의 연차정보가져오기
+		Double checkHo= atrzService.readHoCnt(empNo);
+		model.addAttribute("checkHo",checkHo);
 		model.addAttribute("title", "연차신청서");
 		return "documentForm/holiday";
 	}
-
-	
-	
 	
 	// 전자결재 상세보기
 	@GetMapping("/selectForm/atrzDetail")
 	public String selectAtrzDetail(@RequestParam String atrzDocNo, Model model
-			,@AuthenticationPrincipal CustomUser customUser) {
+			,@AuthenticationPrincipal CustomUser customUser,ModelAndView mav) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String empNo = empVO.getEmplNo();
@@ -284,8 +288,11 @@ public class AtrzController {
 		
 		
 		log.info("atrzLineVOList : "+atrzLineVOList);
+		//atrzLineVOList : 결재선(atrzTy : N/Y)
+		int lastAtrzLnSn=0;
 		for(AtrzLineVO atrzLineVO : atrzLineVOList) {
 			String atrzTy = atrzLineVO.getAtrzTy();    //N이면 결재자  Y면 참조자
+			
 			//결재자, 대결재, 전결자 권한 체크 
 			//접근 해지
 			
@@ -296,6 +303,7 @@ public class AtrzController {
 					log.info("결재 권한 있음 - 사용자 사번: "+ empNo);
 					isAuthorize = true;
 				}
+				lastAtrzLnSn++;
 			} else {
 				if(empNo.equals(atrzLineVO.getSanctnerEmpno())
 				|| empNo.equals(atrzLineVO.getContdEmpno())
@@ -344,14 +352,17 @@ public class AtrzController {
 			log.info("sancterEmpNo : "+sancterEmpNo);
 			
 		}
-		
+		//다음결재할사람이 없는것(결재자가 없는것)을 계산함
 		int curAtrzLnSn = atrzLineVOList.stream()
 			    .filter(vo -> "N".equals(vo.getAtrzTy()) && "00".equals(vo.getSanctnProgrsSttusCode()))
 			    .mapToInt(AtrzLineVO::getAtrzLnSn)
 			    .min()
 			    .orElse(-1); // -1이면 더 이상 결재할 사람 없음
-
+			//atrzLnSn :결재순번 (본인:로그인한사람)
+			//curAtrzLnSn : 결재선 마지막번호
 			model.addAttribute("curAtrzLnSn", curAtrzLnSn);
+			model.addAttribute("lastAtrzLnSn", lastAtrzLnSn);
+			
 		
 		
 		//연차상세정보 셋팅

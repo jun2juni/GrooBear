@@ -116,13 +116,14 @@
 										, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null
 										, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0)]-->
 										<!-- 기안자일때만 보이게 하기 -->
-										
 										<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+											<p>curAtrzLnSn : 여기야${curAtrzLnSn} / ${atrzLineVO.atrzLnSn}</p>
 											<c:if test="${atrzLineVO.sanctnerEmpno == emp.emplNo
 															&& atrzLineVO.atrzTy eq 'N'
 															&& atrzLineVO.atrzLnSn == curAtrzLnSn && atrzVO.atrzSttusCode eq '00'}">
 												<button id="atrzAppBtnTo" type="button" 
 													class="btn btn-outline-success d-flex align-items-center gap-1 atrzAppBtn" 
+													data-all-app-check="<c:if test='${lastAtrzLnSn==atrzLineVO.atrzLnSn}'>Y</c:if>" 
 													data-bs-toggle="modal" data-bs-target="#atrzApprovalModal">
 													<span class="material-symbols-outlined fs-5">note_alt</span> 결재
 												</button>
@@ -454,6 +455,10 @@
 
 
 <script>
+
+document.addEventListener("DOMContentLoaded", ()=>{
+
+
 	//결재하기 버튼을 눌러서 업데이트 진행하기 
 
 $("#atrzDetailappBtn").on("click", function() {
@@ -514,117 +519,130 @@ $("#atrzDetailComBtn").on("click", function () {
 	
 	// 반려 의견이 비어있는지 확인
 	if (!companionMessage.trim()) {
-		swal({
-			title: "반려시 반려의견은 필수입니다.",
-			icon: "warning",
-			button: "확인",
-		});
-		return; // 의견이 없으면 함수 종료
-	}
-
-	// 서버로 전송할 데이터 구성
-	const companionData = {
-		"atrzDocNo": atrzDocNo,
-		"atrzLineVOList[0].sanctnOpinion": companionMessage,
-		"sanctnProgrsSttusCode": "20", // 결재 상태를 "반려"로 설정
-	};
-	console.log("companionData : ", companionData);
-
-	// AJAX 요청
-	$.ajax({
-		url: "/atrz/selectForm/atrzDetilCompUpdate", // 결재 반려 시
-		type: "POST",
-		data: companionData,
-		dataType: "text",
-		success: function (response) {
-			if (response == "success") {
-				swal({
-					title: "반려 완료",
-					text: "반려가 성공적으로 처리되었습니다.",
-					icon: "success",
-					button: "확인",
-				}).then(() => {
-					// 반려 완료 후 페이지를 새로고침하거나 목록 페이지로 이동
-					window.location.href = "/atrz/home";
-				});
-			}
-		},
-		error: function (error) {
 			swal({
-				title: "반려 실패",
-				text: "반려 처리 중 오류가 발생했습니다. 다시 시도해주세요.",
-				icon: "error",
+				title: "반려시 반려의견은 필수입니다.",
+				icon: "warning",
 				button: "확인",
 			});
-		},
-	});
-});
-
-//기안취소버튼을 누르면  atrzCancelBtnTo
-$(".atrzCancelBtn").on("click",function(){
-	const atrzDocNo = $("#s_dfNo").text(); // 문서 번호 가져오기
-
-	//정말로 결재 기안취소하시겠습니까 ?
-	swal({
-		title: "기안취소",
-		text: "정말로 기안취소하시겠습니까?",
-		icon: "warning",
-		buttons: {
-			cancel: {
-				text: "취소",
-				value: null,
-				visible: true,
-				closeModal: true
-			},
-			confirm: {
-				text: "확인",
-				value: true,
-				closeModal: true
-			}
+			return; // 의견이 없으면 함수 종료
 		}
-	}).then((willDelete) => {
-		if (willDelete) {
-			// 서버로 전송할 데이터 구성
-			const cancelData = {
-				"drafterEmpno": "${empVO.emplNo}", // 기안자 사원번호
-				"atrzDocNo": atrzDocNo,
-				"sanctnProgrsSttusCode": "30", // 결재 상태를 "기안취소"로 설정
-			};
-			console.log("cancelData : ", cancelData);
 
-			// AJAX 요청
-			$.ajax({
-				url: "/atrz/selectForm/atrzCancelUpdate", // 서버의 기안취소 API
-				type: "POST",
-				data: cancelData,
-				dataType: "text",
-				success: function (response) {
-					if (response == "success") {
-						swal({
-							title: "기안취소 완료",
-							text: "기안취소가 성공적으로 처리되었습니다.",
-							icon: "success",
-							button: "확인",
-						}).then(() => {
-							// 기안취소 완료 후 페이지를 새로고침하거나 목록 페이지로 이동
-							window.location.href = "/atrz/home";
-						});
-					}
-				},
-				error: function (error) {
+		// 서버로 전송할 데이터 구성
+		const companionData = {
+			"atrzDocNo": atrzDocNo,
+			"atrzLineVOList[0].sanctnOpinion": companionMessage,
+			"sanctnProgrsSttusCode": "20", // 결재 상태를 "반려"로 설정
+		};
+		console.log("companionData : ", companionData);
+
+		// AJAX 요청
+		$.ajax({
+			url: "/atrz/selectForm/atrzDetilCompUpdate", // 결재 반려 시
+			type: "POST",
+			data: companionData,
+			dataType: "text",
+			success: function (response) {
+				if (response == "success") {
 					swal({
-						title: "기안취소 실패",
-						text: "기안취소 처리 중 오류가 발생했습니다. 다시 시도해주세요.",
-						icon: "error",
+						title: "반려 완료",
+						text: "반려가 성공적으로 처리되었습니다.",
+						icon: "success",
 						button: "확인",
+					}).then(() => {
+						// 반려 완료 후 페이지를 새로고침하거나 목록 페이지로 이동
+						window.location.href = "/atrz/home";
 					});
+				}
+			},
+			error: function (error) {
+				swal({
+					title: "반려 실패",
+					text: "반려 처리 중 오류가 발생했습니다. 다시 시도해주세요.",
+					icon: "error",
+					button: "확인",
+				});
+			},
+		});
+	});
+
+	//기안취소버튼을 누르면  atrzCancelBtnTo
+	$(".atrzCancelBtn").on("click",function(){
+		const atrzDocNo = $("#s_dfNo").text(); // 문서 번호 가져오기
+
+		//정말로 결재 기안취소하시겠습니까 ?
+		swal({
+			title: "기안취소",
+			text: "정말로 기안취소하시겠습니까?",
+			icon: "warning",
+			buttons: {
+				cancel: {
+					text: "취소",
+					value: null,
+					visible: true,
+					closeModal: true
 				},
-			});
+				confirm: {
+					text: "확인",
+					value: true,
+					closeModal: true
+				}
+			}
+		}).then((willDelete) => {
+			if (willDelete) {
+				// 서버로 전송할 데이터 구성
+				const cancelData = {
+					"drafterEmpno": "${empVO.emplNo}", // 기안자 사원번호
+					"atrzDocNo": atrzDocNo,
+					"sanctnProgrsSttusCode": "30", // 결재 상태를 "기안취소"로 설정
+				};
+				console.log("cancelData : ", cancelData);
+
+				// AJAX 요청
+				$.ajax({
+					url: "/atrz/selectForm/atrzCancelUpdate", // 서버의 기안취소 API
+					type: "POST",
+					data: cancelData,
+					dataType: "text",
+					success: function (response) {
+						if (response == "success") {
+							swal({
+								title: "기안취소 완료",
+								text: "기안취소가 성공적으로 처리되었습니다.",
+								icon: "success",
+								button: "확인",
+							}).then(() => {
+								// 기안취소 완료 후 페이지를 새로고침하거나 목록 페이지로 이동
+								window.location.href = "/atrz/home";
+							});
+						}
+					},
+					error: function (error) {
+						swal({
+							title: "기안취소 실패",
+							text: "기안취소 처리 중 오류가 발생했습니다. 다시 시도해주세요.",
+							icon: "error",
+							button: "확인",
+						});
+					},
+				});
+			} else {
+				swal("기안취소가 취소되었습니다.");
+			}
+		});
+	});//기안취소버튼을 누르면  atrzCancelBtnTo
+
+	//결재버튼 클릭 시 마지막 결재자일 경우 전결체크박스를 사라지게 처리함
+	$(".atrzAppBtn").on("click", function() {
+		const allAppCheck = $(this).data("all-app-check");
+		if (allAppCheck == "Y") {
+			$("#authorStatus").parent().parent().hide(); // 전결 체크박스 숨기기
 		} else {
-			swal("기안취소가 취소되었습니다.");
+			$("#authorStatus").parent().parent().show(); // 전결 체크박스 보이기
 		}
 	});
-})
+
+});//end DOMContentLoaded
+
 
 </script>
 </body>

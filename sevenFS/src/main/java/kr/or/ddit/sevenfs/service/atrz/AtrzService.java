@@ -93,6 +93,9 @@ public interface AtrzService {
 	//임시저장후 결재선 인서트(업데이트처럼 활용)
 	public void updateAtrzLine(AtrzLineVO atrzLineVO);
 	
+	//연차신청서에서 남은 연차 갯수 가져오기
+	public Double readHoCnt(String empNo);
+	
 	
 
 

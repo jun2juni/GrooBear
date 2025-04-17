@@ -130,20 +130,9 @@ public interface AtrzMapper {
 	//연차갯수 소진하기
 	public void updateVacationUseDays(VacationVO vacationVO);
 	
-
-	
-	
-	
-
+	//연차신청서 남은 연차갯수가져오기
+	public Double readHoCnt(String empNo);
 	
 
-	
-	
-	
-	
-	
-	
-
-	
 	
 }
