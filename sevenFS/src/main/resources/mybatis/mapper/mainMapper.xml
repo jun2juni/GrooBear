@@ -24,6 +24,7 @@
 		JOIN my_turn_lines L
 		  ON A.atrz_doc_no = L.atrz_doc_no
 		WHERE A.atrz_compt_dt IS NULL
+		  AND A.atrz_sttus_code IS NOT NULL
 		ORDER BY A.atrz_drft_dt DESC
 </select>	
 
