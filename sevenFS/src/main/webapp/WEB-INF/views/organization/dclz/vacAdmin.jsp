@@ -168,7 +168,7 @@
 		      <div class="modal-body d-flex">
 		      	<div class="overflow-scroll" style="max-height: 80vh; width:400px;">
 			      	<div>
-						<c:import url="../searchBar.jsp"></c:import>
+						<c:import url="../searchBar.jsp" />
 				 	</div>
 					<div class="card-style overflow-scroll mt-15" style="max-height: 90vh;">
 						<c:import url="../orgList.jsp" />	
@@ -358,11 +358,11 @@ $(function(){
 	 })
 	 
 	 // 이름 검색하고 엔터 눌렀을시
-	   function scEnter(e) {
+	  /*  function scEnter(e) {
         if (e.code === "Enter") {
         	const schName = $('#schName').val();
         }
-    } 
+    }  */
 	 
 	 
 	 // 이름 검색하고 돋보기 눌렀을시

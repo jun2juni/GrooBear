@@ -47,34 +47,22 @@
              </div>
             <div class="card-style mb-3" style="height:130px;'">
 			<div class="row">			
-				<%-- <div class="col-3">
-	              <div class="icon-card mb-30">
-	                <div class="content mx-auto">
-	                  <div class="mx-auto text-center mb-2">
-	                  	<h4><span class="status-btn secondary-btn text-dark">연차 사용 기간</span></h4>
-	                  </div>
-	                  <div>
-	                       <c:set var="beginDt" value="${emplVacation.yrycUseBeginDate}"></c:set>
-		                   <c:set var="bgYear" value="${beginDt.substring(0,4)}"></c:set>
-		                   <c:set var="bgMonth" value="${beginDt.substring(4,6)}"></c:set>
-		                   <c:set var="bgDay" value="${beginDt.substring(6,8)}"></c:set>
-		                   <c:set var="endDt" value="${emplVacation.yrycUseEndDate}"></c:set>
-		                   <c:set var="edYear" value="${endDt.substring(0,4)}"></c:set>
-		                   <c:set var="edMonth" value="${endDt.substring(4,6)}"></c:set>
-		                   <c:set var="edDay" value="${endDt.substring(6,8)}"></c:set>
-	                    <p class="text-center">${bgYear}.${bgMonth}.${bgDay} ~ ${edYear}.${edMonth}.${edDay}</p>
-	                  </div>
-	                </div>
-	              </div>
-	              <!-- End Icon Cart -->
-	            </div> --%>
 	            <div class="col-2" style="border:none;">
 	                <div class="mx-auto text-center">
 	                  <div>
 	                  	<h3><span class="status-btn success-btn mb-2 text-dark">성과 보상</span></h3>
 	                  </div>
 	                  <div>
-	                    <h4><span class="text-center">${emplVacation.excessWorkYryc}개</span></h4>
+	                    <c:choose>
+		                  	<c:when test="${emplVacation.excessWorkYryc % 1 == 0}">
+			                    <h4><span class="text-center">${emplVacation.excessWorkYryc.intValue()}개</span></h4>
+		                  	</c:when>
+		                  	<c:otherwise>
+			                    <h4><span class="text-center">
+			                    	${mplVacation.excessWorkYryc}개
+			                    </span></h4>
+		                  	</c:otherwise>
+	                  	</c:choose>
 	                  </div>
 	                </div>
 	            </div>
@@ -86,7 +74,18 @@
 	                  	<h3><span class="status-btn success-btn mb-2 text-dark">근무 보상 연차</span></h3>
 	                  </div>
 	                  <div>
-	                    <h4><span class="text-center">${emplVacation.cmpnstnYryc}개</span></h4>
+	                   <c:choose>
+		                  	<c:when test="${emplVacation.cmpnstnYryc % 1 == 0}">
+			                    <h4><span class="text-center">${emplVacation.cmpnstnYryc.intValue()}개</span></h4>
+		                  	</c:when>
+		                  	<c:otherwise>
+			                    <h4>
+			                     <span class="text-center">
+			                    	${emplVacation.cmpnstnYryc}개
+			                    </span>
+			                   </h4>
+		                  	</c:otherwise>
+	                  	</c:choose>
 	                  </div>
 	                </div>
 	              <!-- End Icon Cart -->
@@ -99,7 +98,18 @@
 	                   <h4><span class="status-btn secondary-btn mb-2 text-dark">총 연차 수</span></h4>
 	                  </div>
 	                  <div>
-	                    <h4><span class="text-center"> ${emplVacation.totYrycDaycnt}개</span></h4>
+	                   <c:choose>
+		                  	<c:when test="${emplVacation.totYrycDaycnt % 1 == 0}">
+			                    <h4><span class="text-center">${emplVacation.totYrycDaycnt.intValue()}개</span></h4>
+		                  	</c:when>
+		                  	<c:otherwise>
+			                    <h4>
+			                     <span class="text-center">
+			                    	${emplVacation.totYrycDaycnt}개
+			                    </span>
+			                   </h4>
+		                  	</c:otherwise>
+	                  	</c:choose>
 	                  </div>
 	                </div>
 	              <!-- End Icon Cart -->
@@ -111,7 +121,18 @@
 	                  	<h3><span class="status-btn secondary-btn mb-2 text-dark">사용 연차 수</span></h3>
 	                  </div>
 	                  <div>
-	                    <h4><span class="text-center">${emplVacation.yrycUseDaycnt}개</span></h4>
+	                    <c:choose>
+		                  	<c:when test="${emplVacation.yrycUseDaycnt % 1 == 0}">
+			                    <h4><span class="text-center">${emplVacation.yrycUseDaycnt.intValue()}개</span></h4>
+		                  	</c:when>
+		                  	<c:otherwise>
+			                    <h4>
+			                     <span class="text-center">
+			                    	${emplVacation.yrycUseDaycnt}개
+			                    </span>
+			                   </h4>
+		                  	</c:otherwise>
+	                  	</c:choose>
 	                  </div>
 	                </div>
 	              <!-- End Icon Cart -->
@@ -123,7 +144,18 @@
 	                  	<h3><span class="status-btn secondary-btn mb-2 text-dark">잔여 연차 수</span></h3>
 	                  </div>
 	                  <div>
-	                    <h4><span class="text-center">${emplVacation.yrycRemndrDaycnt}개</span></h4>
+	                    <c:choose>
+		                  	<c:when test="${emplVacation.yrycRemndrDaycnt % 1 == 0}">
+			                    <h4><span class="text-center">${emplVacation.yrycRemndrDaycnt.intValue()}개</span></h4>
+		                  	</c:when>
+		                  	<c:otherwise>
+			                    <h4>
+			                     <span class="text-center">
+			                    	${emplVacation.yrycRemndrDaycnt}개
+			                    </span>
+			                   </h4>
+		                  	</c:otherwise>
+	                  	</c:choose>
 	                  </div>
 	                </div>
 	              <!-- End Icon Cart -->

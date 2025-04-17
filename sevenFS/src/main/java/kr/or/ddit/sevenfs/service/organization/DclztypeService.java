@@ -55,6 +55,9 @@ public interface DclztypeService {
 	// 사원 계정 부여시 기본연차 지급
 	public int basicVacInsert(VacationVO vacationVO);
 	
+	// 연차신청서 결재 완료시 잔여연차 update
+	public int updateYrycRemndrDaycnt(VacationVO vacationVO);
+	
 	// 추가 연차지급시 update
 	public int addVacInsert(VacationVO vacationVO);
 	

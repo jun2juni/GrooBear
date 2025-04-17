@@ -321,6 +321,13 @@ WITH U AS(
     )
 </insert>
 
+<!-- 연차 신청서 결재 완료됐을시 잔여연차 update -->
+<update id="updateYrycRemndrDaycnt" parameterType="kr.or.ddit.sevenfs.vo.organization.VacationVO">
+	UPDATE vacation
+	SET YRYC_REMNDR_DAYCNT = #{yrycRemndrDaycnt}
+	WHERE empl_no=#{emplNo}
+</update>
+
 <!-- 추가 연차일수 -->
 <update id="addVacInsert" parameterType="kr.or.ddit.sevenfs.vo.organization.VacationVO">
 	UPDATE vacation
