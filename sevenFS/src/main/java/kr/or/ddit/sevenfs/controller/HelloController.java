@@ -32,7 +32,7 @@ public class HelloController {
 	public String index(Model model, HttpServletRequest request, @AuthenticationPrincipal CustomUser customUser) {
 
 
-		return "home";
+		return "redirect:/main/home";
 	}
 
 	@GetMapping("/demo")
@@ -66,7 +66,7 @@ public class HelloController {
 		Map<String, Object> resultMap = new HashMap<>();
 		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(1);
 
-		resultMap.put("items", fileAttachList);
+		resultMap.put("organization", fileAttachList);
 
 		return resultMap;
 	}
@@ -87,7 +87,7 @@ public class HelloController {
 	@PostMapping("/fileUpdate")
 	public String fileUpdate(MultipartFile[] uploadFile, AttachFileVO attachFileVO) {
 
-		attachFileService.updateFileList("test", uploadFile, attachFileVO);
+		attachFileService.updateFileList("organization", uploadFile, attachFileVO);
 
 		return "redirect:/demo";
 	}
