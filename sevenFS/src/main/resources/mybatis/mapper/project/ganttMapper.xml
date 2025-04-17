@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="kr.or.ddit.sevenfs.mapper.project.GanttdMapper">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.project.GanttMapper">
   
   <!-- 전체 업무 조회 (프로젝트별) -->
   <select id="selectAllTasksByProject" resultType="kr.or.ddit.sevenfs.vo.project.TaskVO" parameterType="int">

@@ -10,6 +10,8 @@
   <meta charset="UTF-8" />
   <title>${title}</title>
   <%@ include file="../layout/prestyle.jsp" %>
+    <link rel="stylesheet" href="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css">
+  <script src="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script>
   <style>
     .tab-grid {
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -73,6 +75,20 @@
         border-color: var(--tab-color);
       }
     }
+    
+  /* 간트차트 우선순위 색상 */
+  .task-priority-A .gantt_task_progress { background-color: #f44336; }
+  .task-priority-B .gantt_task_progress { background-color: #ff9800; }
+  .task-priority-C .gantt_task_progress { background-color: #ffeb3b; }
+  .task-priority-D .gantt_task_progress { background-color: #4caf50; }
+  .task-priority-E .gantt_task_progress { background-color: #2196f3; }
+  
+  /* 간트차트 컨테이너 스타일 */
+  #ganttChartContainer {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+  }    
   </style>
 </head>
 <body>
@@ -106,21 +122,16 @@
       </div>
       <div class="tab-pane fade" id="projectKanban" role="tabpanel">칸반보드 콘텐츠</div>
       <div class="tab-pane fade" id="taskKanban" role="tabpanel">업무보드 콘텐츠</div>
-      <div class="tab-pane fade" id="tab-gantt" role="tabpanel">
-        <div class="row">
-<!--           <div class="col-md-4">
-            <div id="ganttProjectList" class="border rounded p-3" style="max-height: 700px; overflow-y: auto;">
-              <h6 class="fw-bold mb-3">프로젝트 목록</h6>
-              <div id="ganttProjectListContent">목록을 불러오는 중...</div>
-            </div>
-          </div> -->
-          <div class="col">
-            <div id="ganttChartArea">
-              <div class="alert alert-info">좌측 프로젝트를 선택해주세요.</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      
+		<div class="tab-pane fade" id="tab-gantt" role="tabpanel">
+		  <div class="row">
+		    <div class="col">
+		      <div id="ganttChartArea">
+		        <div class="alert alert-info">프로젝트를 선택해주세요.</div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
     </div>
   </div>
 
@@ -131,12 +142,14 @@
 <%@ include file="../layout/prescript.jsp" %>
 <script>
 console.log("gantt.jsp 로딩됨");
+
 document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
   const tab = urlParams.get("tab");
   const prjctNo = urlParams.get("prjctNo");
   const highlightId = urlParams.get("highlight");
 
+  // 탭 간트 누름
   if (tab === "gantt") {
 	  const ganttTabButton = document.querySelector('[data-bs-target="#tab-gantt"]');
 	  if (ganttTabButton) {
@@ -167,9 +180,44 @@ document.addEventListener("DOMContentLoaded", function () {
 	  }
 	}
 
-
-
+  //간트차트 탭 클릭 이벤트
+/* document.querySelector('[data-bs-target="#tab-gantt"]').addEventListener('shown.bs.tab', function() {
+  console.log("간트차트 탭 선택됨");
   
+  // 기존 URL에서 프로젝트 번호를 가져오거나, 없으면 최신 프로젝트 엔드포인트 사용
+  const urlParams = new URLSearchParams(window.location.search);
+  const prjctNo = urlParams.get("prjctNo");
+  
+  // prjctNo가 있으면 해당 프로젝트의 간트차트 로드, 없으면 최신 프로젝트
+  const loadUrl = prjctNo ? `/project/gantt?prjctNo=\${prjctNo}` : "/project/gantt/latest";
+  
+  console.log("간트차트 로드 URL:", loadUrl);
+  
+  fetch(loadUrl)
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById("ganttChartArea").innerHTML = html;
+      
+      // 새로 삽입된 <script> 실행
+      const scripts = document.getElementById("ganttChartArea").querySelectorAll("script");
+      scripts.forEach(oldScript => {
+        const newScript = document.createElement("script");
+        if (oldScript.src) {
+          newScript.src = oldScript.src;
+        } else {
+          newScript.textContent = oldScript.textContent;
+        }
+        document.body.appendChild(newScript);
+      });
+    })
+    .catch(err => {
+      console.error("간트차트 로드 실패:", err);
+      document.getElementById("ganttChartArea").innerHTML = 
+        `<div class='alert alert-danger'>간트차트를 불러오지 못했습니다: \${err.message}</div>`;
+    });
+}); */
+
+  // 탭 목록 누름
   if (tab === "list") {
     const listTabButton = document.querySelector('[data-bs-target="#tab2"]');
     if (listTabButton) {
@@ -354,19 +402,124 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
   });
   
   
+	// 간트차트 불러옴
+// 간트차트 로드 함수 - 스크립트 상단에 정의
+function loadGanttChart(prjctNo) {
+  console.log("간트차트 로드 시작 - 프로젝트 번호:", prjctNo);
+  
+  // 간트차트 영역에 HTML 구조 추가
+  document.getElementById("ganttChartArea").innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">프로젝트 간트차트</h5>
+        <span class="badge bg-primary">프로젝트 번호: \${prjctNo}</span>
+      </div>
+      <div class="card-body">
+        <div id="ganttChartContainer" style="height: 600px; width: 100%;"></div>
+      </div>
+    </div>
+  `;
 
-	function loadGanttChart(prjctNo) {
-	  fetch(`/project/gantt?prjctNo=\${prjctNo}`)
-	    .then(res => res.text())
-	    .then(html => {
-	      document.getElementById("ganttChartArea").innerHTML = html;
-	    })
-	    .catch(err => {
-	      document.getElementById("ganttChartArea").innerHTML = "<p class='text-danger'>간트차트 로드 실패</p>";
-	    });
-	}
+  // dhtmlxGantt 라이브러리 로드 확인
+  if (typeof gantt === 'undefined') {
+    // 라이브러리가 없으면 동적 로드
+    const cssLink = document.createElement('link');
+    cssLink.rel = 'stylesheet';
+    cssLink.href = 'https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css';
+    document.head.appendChild(cssLink);
 
+    const script = document.createElement('script');
+    script.src = 'https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js';
+    script.onload = function() {
+      initGanttChart(prjctNo);
+    };
+    document.head.appendChild(script);
+  } else {
+    // 라이브러리가 이미 로드되어 있으면 바로 초기화
+    initGanttChart(prjctNo);
+  }
+}
 
+// 간트차트 초기화 함수
+function initGanttChart(prjctNo) {
+  console.log("간트차트 초기화 시작");
+  
+  // 간트차트 설정
+  gantt.config.xml_date = "%Y-%m-%d %H:%i";
+  gantt.config.date_format = "%Y-%m-%d %H:%i";
+  
+  // 작업 클래스 스타일링
+  gantt.templates.task_class = function(start, end, task) {
+    return "task-priority-" + (task.priority || "C");
+  };
+  
+  // 칼럼 설정
+  gantt.config.columns = [
+    { name: "text", label: "업무명", tree: true, width: "*" },
+    { name: "start_date", label: "시작일", align: "center", width: 80 },
+    { name: "end_date", label: "종료일", align: "center", width: 80 },
+    { name: "progress", label: "진행률", align: "center", width: 80, template: function(task) {
+      return Math.round((task.progress || 0) * 100) + "%";
+    }},
+    { name: "owner", label: "담당자", align: "center", width: 80 },
+    { name: "add", label: "", width: 44 }
+  ];
+  
+  try {
+    // 간트차트 초기화
+    gantt.init("ganttChartContainer");
+    console.log("간트차트 초기화 성공");
+    
+    // 실제 데이터 로드
+    console.log("실제 간트차트 데이터 로드 시작 - URL:", "/project/gantt/data?prjctNo=" + prjctNo);
+    gantt.load("/project/gantt/data?prjctNo=" + prjctNo, function() {
+      console.log("실제 간트차트 데이터 로드 완료");
+    });
+    
+    // 데이터프로세서 설정 (REST 방식)
+    const dp = new gantt.dataProcessor("/project/gantt");
+    dp.init(gantt);
+    dp.setTransactionMode("REST");
+    
+    console.log("간트차트 초기화 완료");
+  } catch (error) {
+    console.error("간트차트 초기화 실패:", error);
+    document.getElementById("ganttChartContainer").innerHTML = 
+      `<div class="alert alert-danger">간트차트 초기화 실패: \${error.message}</div>`;
+  }
+}
+	
+	
+	
+// 간트차트 탭 클릭 이벤트 핸들러
+document.querySelector('[data-bs-target="#tab-gantt"]').addEventListener('shown.bs.tab', function() {
+  console.log("간트차트 탭 선택됨");
+  
+  // URL 파라미터에서 프로젝트 번호 가져오기
+  const urlParams = new URLSearchParams(window.location.search);
+  const prjctNo = urlParams.get("prjctNo") || '71'; // 기본값 71
+  
+  // 간트차트 로드
+  loadGanttChart(prjctNo);
+});
+
+// 프로젝트 목록에서 간트차트 링크 클릭 이벤트 
+$(document).on("click", ".gantt-tab-link", function(e) {
+  e.preventDefault();
+  const prjctNo = $(this).data("project-id");
+  
+  // 간트차트 탭으로 전환
+  const ganttTabBtn = document.querySelector('[data-bs-target="#tab-gantt"]');
+  if (ganttTabBtn) {
+    new bootstrap.Tab(ganttTabBtn).show();
+  }
+  
+  // 간트차트 로드
+  loadGanttChart(prjctNo);
+});
+	
+	
+	
 
 </script>
 </body>

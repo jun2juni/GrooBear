@@ -1,25 +1,31 @@
 package kr.or.ddit.sevenfs.vo.project;
 
-import java.util.Date;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class TaskVO {
 
-    @JsonProperty("id")  // Gantt가 요구하는 필드명
+    @JsonProperty("id")
     private Long taskId; // TASK_NO
 
     @JsonProperty("text")
     private String taskText; // TASK_NM
 
+    @JsonIgnore
+    private Date startDate; // TASK_BEGIN_DT (내부용)
+
+    @JsonIgnore
+    private Date endDate; // TASK_END_DT (내부용)
+
     @JsonProperty("start_date")
-    private Date startDate; // TASK_BEGIN_DT
+    private String startDateStr; // Gantt에 넘기는 문자열 날짜
 
     @JsonProperty("end_date")
-    private Date endDate; // TASK_END_DT
+    private String endDateStr;   // Gantt에 넘기는 문자열 날짜
 
     @JsonProperty("progress")
     private Double progress; // PROGRSRT
@@ -28,7 +34,7 @@ public class TaskVO {
     private Long parentId; // UPPER_TASK_NO
 
     @JsonProperty("owner")
-    private String owner; // CHARGER_EMPNO or 이름 (사용 방식에 따라)
+    private String owner; // CHARGER_EMPNO or 이름
 
     @JsonProperty("status")
     private Integer status; // TASK_STTUS
@@ -37,5 +43,5 @@ public class TaskVO {
     private Integer priority; // PRIORT
 
     @JsonProperty("duration")
-    private Integer duration; // 계산된 기간 (프론트에서 계산 or 백엔드에서 계산)
+    private Integer duration; // 계산된 일수 (선택사항)
 }

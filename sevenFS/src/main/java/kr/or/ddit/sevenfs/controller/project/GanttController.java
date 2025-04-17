@@ -14,6 +14,7 @@ import kr.or.ddit.sevenfs.vo.CommonCodeVO;
 import kr.or.ddit.sevenfs.vo.project.LinkVO;
 import kr.or.ddit.sevenfs.vo.project.TaskVO;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Slf4j
@@ -31,7 +32,12 @@ public class GanttController {
     CommonCodeMapper commonCodeMapper;
 
     @GetMapping
-    public String showGanttView(@RequestParam("prjctNo") int prjctNo, Model model) {
+    public String showGanttView(@RequestParam(value = "prjctNo", required = false) Integer prjctNo, Model model) {
+        // prjctNo가 null이면 최근 프로젝트 번호를 가져옴
+        if (prjctNo == null) {
+            prjctNo = projectService.selectMaxProjectNo();
+        }
+        
         model.addAttribute("prjctNo", prjctNo);
 
         // 직접 호출해서 리스트 불러오기
@@ -69,8 +75,30 @@ public class GanttController {
             List<TaskVO> tasks = ganttService.getTasksByProject(prjctNo);
             List<LinkVO> links = ganttService.getAllLinks();
 
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+            for (TaskVO task : tasks) {
+                if (task.getStartDate() == null) {
+                    task.setStartDate(new Date());
+                }
+                if (task.getEndDate() == null) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(task.getStartDate());
+                    cal.add(Calendar.DAY_OF_MONTH, 1);
+                    task.setEndDate(cal.getTime());
+                }
+
+                task.setStartDateStr(sdf.format(task.getStartDate()));
+                task.setEndDateStr(sdf.format(task.getEndDate()));
+
+                if (task.getProgress() == null) {
+                    task.setProgress(0.0);
+                }
+            }
+
             response.put("data", tasks);
             response.put("links", links);
+            log.info("간트 데이터 로드 성공 - 프로젝트: {}, 업무 개수: {}, 링크 개수: {}", prjctNo, tasks.size(), links.size());
         } catch (Exception e) {
             log.error("간트 데이터 로드 실패", e);
             response.put("data", new ArrayList<>());
@@ -78,6 +106,7 @@ public class GanttController {
         }
         return response;
     }
+
 
     /** 업무 생성 */
     @PostMapping("/task")
