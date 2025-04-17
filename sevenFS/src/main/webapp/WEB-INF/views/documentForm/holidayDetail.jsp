@@ -117,7 +117,7 @@
 										, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0)]-->
 										<!-- 기안자일때만 보이게 하기 -->
 										<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
-											<p>curAtrzLnSn : 여기야${curAtrzLnSn} / ${atrzLineVO.atrzLnSn}</p>
+											<!-- <p>curAtrzLnSn : 여기야${curAtrzLnSn} / ${atrzLineVO.atrzLnSn}</p> -->
 											<c:if test="${atrzLineVO.sanctnerEmpno == emp.emplNo
 															&& atrzLineVO.atrzTy eq 'N'
 															&& atrzLineVO.atrzLnSn == curAtrzLnSn && atrzVO.atrzSttusCode eq '00'}">
@@ -459,7 +459,7 @@
 document.addEventListener("DOMContentLoaded", ()=>{
 
 
-	//결재하기 버튼을 눌러서 업데이트 진행하기 
+//결재하기 버튼을 눌러서 업데이트 진행하기 
 
 $("#atrzDetailappBtn").on("click", function() {
 	const atrzDocNo = $("#atrzDocNo").val(); // 문서 번호 가져오기
@@ -498,7 +498,7 @@ $("#atrzDetailappBtn").on("click", function() {
 					button: "확인",
 				}).then(() => {
 					// 결재 완료 후 페이지를 새로고침하거나 목록 페이지로 이동
-					window.location.href = "/atrz/home";
+					// window.location.href = "/atrz/home";
 				});
 			}
         },
@@ -511,6 +511,7 @@ $("#atrzDetailappBtn").on("click", function() {
             });
         },
     });
+	
 });
 
 $("#atrzDetailComBtn").on("click", function () {

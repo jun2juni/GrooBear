@@ -367,6 +367,7 @@ public class AtrzController {
 		
 		//연차상세정보 셋팅
 		atrzVO.setHolidayVO(atrzService.holidayDetail(atrzDocNo));
+		
 		//권한 여부는 model로 넘겨서  화면에서 결재버튼 노출여부 조절
 		model.addAttribute("isAuthorize", isAuthorize);
 		model.addAttribute("sanEmplVOList",sanEmplVOList);

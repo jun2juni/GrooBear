@@ -355,6 +355,7 @@ public class AtrzServiceImpl implements AtrzService {
 	}
 	
 	//전자결재 상세 업데이트(승인시)
+	@Transactional
 	@Override
 	public int atrzDetailAppUpdate(AtrzVO atrzVO) {
 		String atrzDocNo = atrzVO.getAtrzDocNo();
@@ -418,21 +419,30 @@ public class AtrzServiceImpl implements AtrzService {
 				
 				atrzMapper.holidayDclzUpdate(dclzTypeVO);
 				log.info("atrzDetailAppUpdate->dclzTypeVO : "+dclzTypeVO);
-				//연차코드
+				//연차신청서에서 연차 사용갯수를 가져온다.
 				Double useDays = Double.parseDouble(holidayVO.getHoliUseDays());
 				
 				VacationVO vacationVO = new VacationVO();
 				
-				vacationVO.setEmplNo(holidayVO.getAtrzVO().getDrafterEmpno());   //사원번호 추출 
-				log.info("holidayVO.getAtrzVO().getDrafterEmpno() "+holidayVO.getAtrzVO().getDrafterEmpno());
-				Double holiUseDays = Double.parseDouble(holidayVO.getHoliUseDays());
-				vacationVO = dclztypeService.emplVacationCnt(emplNo);
-				vacationVO.setYrycUseDaycnt(vacationVO.getYrycUseDaycnt()+holiUseDays);   		//사용일수
-				vacationVO.setYrycRemndrDaycnt(vacationVO.getYrycRemndrDaycnt()-holiUseDays);    //잔여일수
+				String draftEmpNo = holidayVO.getAtrzVO().getDrafterEmpno();
+				log.info("draftEmpNo(기안자사원번호) :  "+draftEmpNo);
+				vacationVO.setEmplNo(draftEmpNo);   //사원번호 추출 
 				
+				Double holiUseDays = Double.parseDouble(holidayVO.getHoliUseDays());
+				log.info("holiUseDays(연차사용갯수) :  "+holiUseDays);
+				vacationVO = atrzMapper.emplVacationCnt(draftEmpNo);
+				log.info("vacationVO :  "+vacationVO);
+				//사용가능 연차일수가져오기
+				Double yrycUseDaycnt = vacationVO.getYrycUseDaycnt();
+				log.info("holiUseDays(사용연차갯수) :  "+yrycUseDaycnt);
+				//잔여갯수 가져오기
+				Double yrycRemndrDaycnt = vacationVO.getYrycRemndrDaycnt();
+				log.info("holiUseDays(잔여연차갯수) :  "+yrycRemndrDaycnt);
+				vacationVO.setYrycUseDaycnt(yrycUseDaycnt+holiUseDays);   		//사용일수
+				vacationVO.setYrycRemndrDaycnt(yrycRemndrDaycnt-holiUseDays);    //잔여일수
+				log.info("vacationVO(셋팅후) :  "+vacationVO);
 				// 연차 업데이트 처리
 				atrzMapper.updateVacationUseDays(vacationVO);
-				
 			}
 			
 		}

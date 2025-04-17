@@ -132,6 +132,8 @@ public interface AtrzMapper {
 	
 	//연차신청서 남은 연차갯수가져오기
 	public Double readHoCnt(String empNo);
+	//기안자의 연차정보 가져오기
+	public VacationVO emplVacationCnt(String draftEmpNo);
 	
 
 	

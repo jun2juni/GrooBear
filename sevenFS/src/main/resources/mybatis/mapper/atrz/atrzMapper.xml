@@ -528,6 +528,7 @@
 		SELECT YRYC_REMNDR_DAYCNT
 		FROM VACATION
 		WHERE EMPL_NO =#{empNo}
+		AND YRYC_YEAR='2025'
 	</select>
 	
 	<!-- 전자결재 임시저장 update -->
@@ -1155,13 +1156,34 @@
 	</insert>
 	<!-- 연차신청서 기안완료시 연차갯수 소진시키기 -->
 	<update id="updateVacationUseDays" parameterType="kr.or.ddit.sevenfs.vo.organization.VacationVO">
-	    UPDATE vacation
+	    UPDATE vacation   /* AtrzMapper.updateVacationUseDays */
 		    SET 
-		        yryc_use_daycnt =  #{yrycUseDaycnt},
-		        yryc_remndr_daycnt =  #{yrycUseDaycnt}
+		        yryc_use_daycnt =  #{yrycUseDaycnt}
+		        ,yryc_remndr_daycnt =  #{yrycRemndrDaycnt}
 		    WHERE empl_no = #{emplNo}
+		    AND YRYC_YEAR = '2025'
 	</update>
+	<!-- 기안자의 연차정보 가져오기 -->
+	<select id="emplVacationCnt" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.organization.VacationVO">
+		SELECT 				/* AtrzMapper.emplVacationCnt */
+			    EMPL_NO
+			, YRYC_YEAR
+			, YRYC_USE_BEGIN_DATE
+			, YRYC_USE_END_DATE
+			, TOT_YRYC_DAYCNT
+			, YRYC_USE_DAYCNT
+			, YRYC_MDAT_DAYCNT
+			, YRYC_REMNDR_DAYCNT
+			, EXCESS_WORK_YRYC
+			, CMPNSTN_YRYC
+			, YRYC_CODE
+			, YRYC_DETAIL
+			FROM VACATION
+			WHERE 1 = 1
+			AND EMPL_NO ='20250004'
+			AND YRYC_YEAR = TO_CHAR(SYSDATE, 'YYYY')
 	
+	</select>
 	<!-- 연차신청서 resultMap 사용 -->
 	<resultMap id="holidayDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.HolidayVO" >
 		<!-- 연차신청서 -->
