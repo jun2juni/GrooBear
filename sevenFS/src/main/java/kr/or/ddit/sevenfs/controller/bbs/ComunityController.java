@@ -55,10 +55,25 @@ public class ComunityController {
 	} // comunityHome
 	
 	@GetMapping("/comunityClubList")
-	public String comunityClubList(
-			) {
+	public String comunityClubList(Model model,
+								   @ModelAttribute BbsVO bbsVO,
+								   @RequestParam("bbsCtgryNo") int bbsCtgryNo
+								  ) {	
+		 // 게시판 카테고리 번호 설정
+		int bbsCtgryNo14 = 14; // 동아리 카테고리
+		int bbsCtgryNo15 = 15; // 동아리 카테고리
+		int bbsCtgryNo16 = 16; // 동아리 카테고리
 		
-		// 동아리 카테고리
+        bbsVO.setBbsCtgryNo(bbsCtgryNo14);
+        bbsVO.setBbsCtgryNo(bbsCtgryNo15);
+        bbsVO.setBbsCtgryNo(bbsCtgryNo16);
+        
+        Map<String, Object> map = new HashMap<>();
+        map.put("category", bbsVO.getCategory());
+        map.put("bbsCtgryNo", bbsVO.getBbsCtgryNo());
+        
+        
+		// sns임 
 		return "comunity/comunityClubList";	
 	} // comunityClubList
 	
