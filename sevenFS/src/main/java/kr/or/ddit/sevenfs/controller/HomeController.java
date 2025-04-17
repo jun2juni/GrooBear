@@ -117,31 +117,30 @@ public class HomeController {
 							 @RequestParam(defaultValue = "3") int size,
 							 @RequestParam(defaultValue = "1") int bbsCtgryNo
 	) {
-
-
-		// 공지사항 총 게시글 수
-		int total = mainService.noticeAllCnt();
+		
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("currentPage", currentPage);
 		map.put("size", size);
 		map.put("bbsCtgryNo", bbsCtgryNo);
 
-		Map<String, Object> noticeMap = new HashMap<>();
+		// 공지사항 총 게시글 수
+		int total = mainService.noticeAllCnt();
 		// 공지사항 페이지네이션
 		ArticlePage<BbsVO> articlePage = new ArticlePage<>(total, currentPage, size);
 		//model.addAttribute("articlePage",articlePage);
-		noticeMap.put("articlePage", articlePage);
+		Map<String, Object> bbsMap = new HashMap<>();
+		bbsMap.put("articlePage", articlePage);
 		
 		 // 공지사항 게시글 가져오기
-        List<BbsVO> noticeList = mainService.getBbsNoticeList(map);
+        List<BbsVO> bbsList = mainService.getBbsNoticeList(map);
         //model.addAttribute("noticeList", noticeList);
-        log.info("공지사항 게시글 : " + noticeList);
-        noticeMap.put("noticeList", noticeList);
+        log.info("공지사항 게시글 : " + bbsList);
+        bbsMap.put("noticeList", bbsList);
         
-        log.info("noticeMap : " + noticeMap); 
+        log.info("noticeMap : " + bbsMap); 
 		
-		return noticeMap;
+		return bbsMap;
 	}
 	
 	// 출근 버튼 눌렀을때 실행
