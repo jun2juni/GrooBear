@@ -18,10 +18,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.or.ddit.sevenfs.service.MainService;
 import kr.or.ddit.sevenfs.service.organization.DclztypeService;
+import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.service.project.DashboardService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
 import kr.or.ddit.sevenfs.vo.organization.DclzTypeVO;
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +39,8 @@ public class HomeController {
 	DashboardService dashboardService;
 	@Autowired
 	MainService mainService;
+	@Autowired
+	OrganizationService organizationService;
 	
 	@GetMapping("/home")
 	public String main(Model model, DclzTypeVO dclzTypeVO, Principal principal
@@ -44,30 +48,10 @@ public class HomeController {
 						, @RequestParam(defaultValue = "3") int size
 						) {
 		
-		// 공지사항 총 게시글 수
-		int total = mainService.noticeAllCnt();
-
-		Map<String, Object> map = new HashMap<>();
-		map.put("currentPage", currentPage);
-		map.put("size", size);
-		map.put("bbsCtgryNo", "1");
-
-		// 공지사항 페이지네이션
-		ArticlePage<BbsVO> articlePage = new ArticlePage<>(total, currentPage, size);
-		model.addAttribute("articlePage",articlePage);
-		
 		String emplNo = principal.getName();
 		log.info("사원번호 : " + emplNo);
-		dclzTypeVO.setEmplNo(emplNo);
 		
-		// 프로젝트 리스트 가져오기
-     	List<ProjectTaskVO> urgentTasks = dashboardService.selectUrgentTasks(); 
-        Map<String, Map<String, String>> commonCodes = dashboardService.getCommonCodes(); 
-        model.addAttribute("urgentTasks", urgentTasks);
-        model.addAttribute("commonCodes", commonCodes);
-        log.info("프로젝트까지 왔니 ???? ");
-        
-     	// 전자결재 갯수 가져오기
+		// 전자결재 갯수 가져오기
         // 결재대기
         int atrzApprovalCnt = mainService.getAtrzApprovalCnt(emplNo);
         // 결재진행
@@ -80,13 +64,45 @@ public class HomeController {
         model.addAttribute("atrzSubmitCnt", atrzSubmitCnt);
         model.addAttribute("atrzCompletedCnt", atrzCompletedCnt);
         model.addAttribute("atrzRejectedCnt", atrzRejectedCnt);
+		
+		// 공지사항 총 게시글 수
+		int total = mainService.noticeAllCnt();
+		Map<String, Object> map = new HashMap<>();
+		map.put("currentPage", currentPage);
+		map.put("size", size);
+		map.put("bbsCtgryNo", "1");
+
+		// 공지사항 페이지네이션
+		ArticlePage<BbsVO> articlePage = new ArticlePage<>(total, currentPage, size);
+		model.addAttribute("articlePage",articlePage);
+		
+		// 프로젝트 리스트 가져오기
+     	List<ProjectTaskVO> urgentTasks = dashboardService.selectUrgentTasks(); 
+        Map<String, Map<String, String>> commonCodes = dashboardService.getCommonCodes(); 
+        model.addAttribute("urgentTasks", urgentTasks);
+        model.addAttribute("commonCodes", commonCodes);
+        //log.info("프로젝트까지 왔니 ???? ");
         
         // 공지사항 : 1 , 커뮤니티 : 2 , 식단표 : 3
         // 공지사항 게시글 가져오기
         List<BbsVO> noticeList = mainService.getBbsNoticeList(map);
         model.addAttribute("noticeList", noticeList);
-        log.info("공지사항 게시글 : " + noticeList);
+        //log.info("공지사항 게시글 : " + noticeList);
         
+     	// 사원 상세정보에서 부서코드 가져오기
+     	EmployeeVO empDetailData = organizationService.emplDetail(emplNo);
+     	String deptCode =  empDetailData.getDeptCode();
+     	
+     	Map<String, Object> calMap = new HashMap<>();
+     	calMap.put("emplNo", emplNo);
+     	calMap.put("deptCode", deptCode);
+     	
+     	// 사원의 오늘 일정 조회(개인+부서)
+     	int todayCalendarCnt = mainService.getEmplTodayCalendar(calMap);
+     	//log.info("오늘 일정 : " + todayCalendarCnt);
+        model.addAttribute("todayCalendarCnt" , todayCalendarCnt);
+     	
+        dclzTypeVO.setEmplNo(emplNo);
 		// 사원 출퇴근 시간 가져오기
 		// mainEmplDclzList 호출
 		List<DclzTypeVO> mainEmplDclzList = dclztypeService.mainEmplDclzList(emplNo);
@@ -96,7 +112,7 @@ public class HomeController {
 		dclzTypeVO.setEmplNo(emplNo);
 		// 오늘 등록된 출,퇴근 시간 가져오기
 		DclzTypeVO workTime = dclztypeService.getTodayWorkTime(dclzTypeVO);
-		log.info("workTime : " + workTime);
+		//log.info("workTime : " + workTime);
 		if(workTime == null) {
 			return "home";
 		}
@@ -104,9 +120,6 @@ public class HomeController {
 		String todayWorkEndTime = workTime.getTodayWorkEndTime();
      	model.addAttribute("todayWorkTime", todayWorkTime);
      	model.addAttribute("todayWorkEndTime", todayWorkEndTime);
-     	log.info("todayWorkTime : " + todayWorkTime);
-     	log.info("todayWorkEndTime : " + todayWorkEndTime);
-        
 		return "home";
 	}
 	

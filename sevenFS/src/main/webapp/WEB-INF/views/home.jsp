@@ -110,7 +110,7 @@
 					  	</a>
 				  	 </div>
 				    <!-- <div class="d-flex flex-column text-center"> -->
-				    	<p class="text-sm">오늘 일정 <span class="text-xl text-bold text-dark ml-2">2</span>건</p>
+				    	<a href="/myCalendar" class="text-sm text-dark">오늘 일정 <span class="text-xl text-bold text-dark ml-2">${todayCalendarCnt}</span>건</a>
 				    <!-- </div> -->
 			    </div>
 			    <!-- 일정 위젯 -->
@@ -408,7 +408,7 @@ function updateClock() {
 }
 updateClock();
 setInterval(updateClock, 1000);
-// ----------------------------------------------- 여기 부터는 비동기 게시판 불러오가
+// ----------------------------------------------- 여기 부터는 비동기 게시판 불러오기
 let categoryNo  = 1;
 let bbsDiv = document.querySelector('#notice .bbsDiv');
 
@@ -477,7 +477,7 @@ $('.prevBtn').on('click', function(){
 	const currentVal = $('.currentPage').val();
   	// const  = $('.currentPage').val();
 	const prevPage = currentVal - 1;
-	console.log('현재페이지 : ' , currentVal-1);
+	//console.log('현재페이지 : ' , currentVal-1);
 	// 이전 화살표 버튼 눌렀을때 
 	fetch('/main/noticeList?currentPage=' + prevPage + "&bbsCtgryNo=" + categoryNo  , {
 		method : 'get',
@@ -487,12 +487,11 @@ $('.prevBtn').on('click', function(){
 	})
 	.then(resp => resp.json())
 	.then(res => {
-		console.log('받은 결과 : ' , res);
+		//console.log('받은 결과 : ' , res);
 		const noticeList = res.noticeList;
 		const articlePage = res.articlePage;
-		console.log('noticeList : ' , noticeList);
-		
-		console.log('tbody : ' , bbsDiv);
+		//console.log('noticeList : ' , noticeList);
+
 		bbsDiv.innerHTML = "";
 		// 현재페이지
 		let currentPage = articlePage.currentPage;
@@ -525,11 +524,9 @@ $('.prevBtn').on('click', function(){
 // 다음 화살표 눌렀을때 비동기로 이동
 $('.nextPage').on('click', function(){
 	const currentVal = Number($('.currentPage').val());
-	console.log('현재페이지 : ' , currentVal);
+	//console.log('현재페이지 : ' , currentVal);
 	const nextPage = currentVal + 1 ; 
-	console.log('다음페이지 : ' , nextPage);
-
-  
+	//console.log('다음페이지 : ' , nextPage);
 
     fetch('/main/noticeList?currentPage=' + nextPage + "&bbsCtgryNo=" + categoryNo , {
 		method : 'get',
@@ -539,12 +536,11 @@ $('.nextPage').on('click', function(){
 	})
 	.then(resp => resp.json())
 	.then(res => {
-		console.log('받은 결과 : ' , res);
+		//console.log('받은 결과 : ' , res);
 		const noticeList = res.noticeList;
 		const articlePage = res.articlePage;
-		console.log('noticeList : ' , noticeList);
+		//console.log('noticeList : ' , noticeList);
 		
-		console.log('tbody : ' , bbsDiv);
 		bbsDiv.innerHTML = "";
 		// 현재페이지
 		let currentPage = articlePage.currentPage;
@@ -574,10 +570,7 @@ $('.nextPage').on('click', function(){
 	}) // end res
 }) // 다음 화살표 눌렀을때 비동기로 이동 끝
 // 공지사항 페이지네이션 끝
-// ----------------------------------------------- 여기 부터는 비동기 게시판 불러오가
-
-
-
+// ----------------------------------------------- 여기 부터는 비동기 게시판 불러오기
 }) // end function
 
 </script>

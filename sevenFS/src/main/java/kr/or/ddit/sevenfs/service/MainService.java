@@ -25,4 +25,7 @@ public interface MainService {
 	// 공지사항 총 게시글 수
 	public int noticeAllCnt();
 	
+	// 사원 한명의 오늘 일정 갯수
+	public int getEmplTodayCalendar(Map<String, Object> map);
+	
 }

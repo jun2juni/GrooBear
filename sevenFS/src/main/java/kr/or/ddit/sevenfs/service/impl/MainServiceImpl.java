@@ -1,5 +1,6 @@
 package kr.or.ddit.sevenfs.service.impl;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,11 @@ public class MainServiceImpl implements MainService {
 	@Override
 	public int noticeAllCnt() {
 		return mainMapper.noticeAllCnt();
+	}
+
+	@Override
+	public int getEmplTodayCalendar(Map<String, Object> map) {
+		return mainMapper.getEmplTodayCalendar(map);
 	}
 	
 }
