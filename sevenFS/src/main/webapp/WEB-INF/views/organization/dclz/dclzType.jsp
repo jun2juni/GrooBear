@@ -37,6 +37,9 @@
 		   <div class="row">
 			<div class="col-12">
 			<div class="row">
+			  <div class="text-center mb-20">
+			  	<h4><p class="status-btn" style="color:thistle; font-size:20px; font-weight:bold; background-color: white;"> ${paramKeyword.substring(0,4)}년 근태현황 </p></h4>
+	          </div>
 	          <div class="col-3">
 	            <div class="icon-card mb-30">
 	              <div class="icon orange">
@@ -133,46 +136,37 @@
 	        <!-- </div> -->
 	        </div>
 	        </div>
-        
-	        
 	        <div class="row">
 	          <div class="">
 	            <div class="card-style mb-30" id="divPage">
-	              <div class="title d-flex flex-wrap justify-content-between align-items-center">
-	                <div style="width: 50%">
+	              <div class="title d-flex flex-wrap">
+	                <div class=" justify-content-first" style="width: 40%">
 	                  <h6 class="text-medium mb-30">전체 근무일자</h6>
 	                  <!-- 출퇴근만 출력? -->
 	                </div>
-	                <div class="right">
-	                  <div class="select-style-1 d-flex">
-	                  	<a href="/dclz/dclzType" class="btn-sm main-btn light-btn-light btn-hover mr-10 rounded-md">전체 목록 보기</a>
-	                    <div class="select-position select-sm">
-	                      <select class="light-bg" id="yearSelect">
-						  <c:set var="prevYear" value="" />
-						  <c:forEach var="dclzWork" items="${empDclzList}">
-						    <c:set var="year" value="${dclzWork.dclzNo.substring(0, 4)}" />
-						    <c:if test="${year != prevYear}">
-						      <option value="${year}" <c:if test="${year == currentYear}">selected</c:if>>${year}</option>
-						      <c:set var="prevYear" value="${year}" />
-						    </c:if>
-						  </c:forEach>
-						</select>
-	                    <c:set var="duplMonth" value="" />
-	                    </div>
-	                    <div class="select-position select-sm ml-10">
-	                      <select class="light-bg" id=monthSelect>
-	                      <option>월 선택</option>
-		                    <c:forEach var="dclzWork" items="${empDclzList}">
-						      <c:set var="month" value="${fn:substring(dclzWork.dclzNo, 4, 6)}" />
-						      <c:if test="${not fn:contains(duplMonth, month)}">
-						        <option value="${month}">${month}</option>
-						        <c:set var="duplMonth" value="${duplMonth},${month}" />
-						      </c:if>
-						    </c:forEach>
-	                      </select>
-	                    </div>
-	                  </div>
-	                  <!-- end select -->
+	                <div class="justify-content-center">
+	           		<!-- 달력 페이지네이션 -->
+					  <form action="/dclz/dclzType" method="get" id="keywordForm">
+					  <nav class="justify-content-center" aria-label="Page navigation example">
+						<ul class=" d-flex">
+						  <li class="page-item">
+							<button type="button" class="page-link prevBtn">
+							  <span aria-hidden="true"><</span>
+							</button>
+						  </li>
+						  <input type="hidden" value="${paramKeyword.substring(0,4)}" id="hiddenKeyYear" />
+						  <input type="hidden" value="${paramKeyword.substring(5,7)}" id="hiddenKeyword" />
+						  <input type="hidden" value="" id="submitKeyword" name="keyword" />
+						  <h4 class="ml-10 mr-10" id="monthDisplay">${paramKeyword.substring(0,4)}-${paramKeyword.substring(5,7)}</h4>
+						  <li class="page-item">
+							<button type="button" class="page-link nextPage">
+							  <span aria-hidden="true">></span>
+							</button>
+						  </li>
+						</ul>
+					  </nav>
+					  </form>
+					  <!-- 달력 페이지네이션 -->
 	                </div>
 	              </div>
 	              <!-- End Title -->
@@ -200,10 +194,13 @@
 	                  </thead>
 	                  
 	                  <!-- 반복문 돌리기 -->
-	                <%--   <c:set var="dclzTypeList" value="${empDclzList}"></c:set> --%>
-	                  
-			          
+	                <c:set var="dclzTypeList" value="${empDclzList}"></c:set>
 	                  <tbody id="dclzBody">
+	                  <c:choose>
+		                  <c:when test="${dclzTypeList.size() == 0}">
+		                  		<td>해당 날짜에 대한 근태현황이 없습니다.</td>
+		                  </c:when>
+		                  <c:otherwise>
 	                  <c:forEach var="dclzWork" items="${empDclzList}">
 	                  <c:set var="year" value="${dclzWork.dclzNo.substring(0,4)}"></c:set>
 			          <c:set var="month" value="${dclzWork.dclzNo.substring(4,6)}"></c:set>
@@ -257,6 +254,9 @@
 	                      	<c:when test="${dclzWork.workHour == 0}">
 	                      		<p class="text-sm">0시간 0분</p>
 	                      	</c:when>
+	                      	<c:when test="${dclzWork.workEndTime == null}">
+	                      		<p class="text-sm"> </p>
+	                      	</c:when>
 	                      	<c:otherwise>
 	                      		 <p class="text-sm">${dclzWork.workHour}시간 ${dclzWork.workMinutes}분</p>
 	                      	</c:otherwise>
@@ -265,13 +265,15 @@
 	                      </td>
 	                    </tr>
 	                  </c:forEach>
+	                  </c:otherwise>
+	                  </c:choose>
 	                  </tbody>
 	                </table>
-	                  <page-navi id="page"
+	                 <%--  <page-navi id="page"
 						url="/dclz/dclzType?"
 						current="${param.get("currentPage")}"
 						show-max="10"
-						total="${articlePage.endPage}"></page-navi>
+						total="${articlePage.endPage}"></page-navi> --%>
 	                <!-- End Table -->
 	              </div>
 	            </div>
@@ -285,228 +287,58 @@
 <c:import url="../../layout/prescript.jsp" />
 
 <script type="text/javascript">
+
 $(function(){
 	
-	// 페이징 처리하기 emlDclzTypeList 하나로 해보기
-	yearSelected = $('#yearSelect').val();
-	console.log('기본년도 값 ', yearSelect);
+	  // 버튼 클릭 이벤트
+	  function updateDateDisplay(){
+		 const year = $('#hiddenKeyYear').val();
+		 const month = $('#hiddenKeyword').val();
+		 const formattedMonth = String(month).padStart(2, '0');
+		 document.getElementById('monthDisplay').textContent = year + '-' + formattedMonth;
+		 
+		 const newDate = $('#monthDisplay').text(); 
+	     console.log(" ddddddd " , newDate);
+	     
+	     $('#submitKeyword').val(newDate);
+	     console.log('보낼키워드 : ' , $('#submitKeyword').val());
+		 $('#keywordForm').submit();
+	  }
 	
-	$("#yearSelect").on("change", function(){
-		// 선택 년도 보내기
-		//const yearSelect = this.value;
-		
-		yearSelected = this.value;
-		console.log("바뀐년도 : " , yearSelected);
-		
-		const emplNo = ${emplNo}
-		//console.log("emplNo : " , emplNo)
-		
-		fetch("/dclz/yearSelect",{
-			method : "post",
-		    headers : {
-		        "Content-Type": "application/json"
-	       },
-	       body : JSON.stringify({
-	    	   workBeginDate : yearSelect,
-	    	   emplNo : emplNo
-	       })
-		})
-		.then(resp => resp.json())
-		.then(res => {
-			//console.log("선택년도의 데이터 : " , res);
-			
-			const dclzBody = $("#dclzBody");
-			const page = $("#page");
+	  // --- 이전버튼
+	  document.querySelector('.prevBtn').addEventListener('click', () => {
+		let hiddenKeyword = Number($('#hiddenKeyword').val());
+		hiddenKeyword -= 1;
 
-			dclzBody.html("");
-			page.html("");
-			
-			const selYearList = res.selYearList;
-			//console.log("선택년도 데이터 : " , selYearList);
-			
-			const currentPage = res.currentPage;
-			//console.log("페이지 : " , currentPage);
-			
-			//const nullEndTime = [];
-			selYearList.map((item) => {
-				
-				let badgeColor = '';
-				switch (item.cmmnCodeNm) {
-				  case '지각':
-				  case '결근':
-				    badgeColor = 'salmon';
-				    break;
-				  case '출/퇴근':
-				    badgeColor = 'mediumSeaGreen';
-				    break;
-				  case '출장':
-				  case '외근':
-				    badgeColor = 'lightBlue';
-				    break;
-				  case '반차':
-					badgeColor = 'pink';
-				  case '조퇴':
-				    badgeColor = 'thistle';
-				    break;
-				  default:
-				    badgeColor = 'gray';
-				}
-				
-				const tr = document.createElement('tr');
-				tr.innerHTML = `
-					 <td>
-                    <div>
-                      <p class="text-sm">\${item.dclzNo.substring(0,4)}-\${item.dclzNo.substring(4,6)}-\${item.dclzNo.substring(6,8)}
-                      </p>
-                    </div>
-                  </td>
-                  <td>
-                    <div>
-                  	  <h4><span class="badge rounded-pill text-white" style="background-color:\${badgeColor}">\${item.cmmnCodeNm}</span></h4>
-                    </div>
-                  </td>
-                  <td>
-                    <p class="text-sm">\${item.workBeginTime === null ? '미등록' : item.workBeginTime}</p>
-                  </td>
-                  <td>
-                    <p class="text-sm">\${item.workEndTime === null ? '미등록' : item.workEndTime}</p>
-                  </td>
-                  <td>
-                    <p class="text-sm">\${item.workHour === null ? 0 : item.workHour}시간 \${item.workMinutes === null ? 0 : item.workMinutes}분</p>
-                  </td>
-				`
-				dclzBody.append(tr);
-			});
-			// 년도 선택시 페이징처리
-			page.html(`
-					 <page-navi
-					url="/dclz/dclzType?"
-					current="${param.get('currentPage')}"
-					show-max="10"
-					total="${res.endPage}"></page-navi>
-					`)
+	    if (hiddenKeyword === 0) {
+	      const prevYear = Number($('#hiddenKeyYear').val()) - 1;
+	      $('#hiddenKeyYear').val(prevYear);
+	      hiddenKeyword = 12;
+	    }
+	    $('#hiddenKeyword').val(hiddenKeyword);
+	    updateDateDisplay();
+	    
+	  });
 		
-			// 월 넣어줄 select box
-			const selMonth = $("#monthSelect");
-			selMonth.html("");
-			
-			// 중복값 제거
-			let notDuplMonth = [];
-			selYearList.forEach(item =>{
-				 if(!notDuplMonth.includes(item.dclzNo.substring(4,6))){
-					 notDuplMonth.push(item.dclzNo.substring(4,6));
-				 }
-			})
-			//console.log("화긴: ",notDuplMonth);
-			
-			notDuplMonth.map((items) => {
-				selMonth.append(
-					`
-					<option value="\${items}" id="mon">\${items}</option>
-					`		
-				);
-			})  
-		})		
-	}) // end sel
+	  // --- 다음버튼
+	  document.querySelector('.nextPage').addEventListener('click', () => {
+		  let hiddenKeyword = Number($('#hiddenKeyword').val());
+		  //let monthNum = Number(hiddenKeyword);
+		  hiddenKeyword += 1;
+		  
+		  if (hiddenKeyword === 13) {
+			    const nextYear = Number($('#hiddenKeyYear').val()) + 1;
+			    $('#hiddenKeyYear').val(nextYear);
+			    hiddenKeyword = 1;
+			  }
+		  $('#hiddenKeyword').val(hiddenKeyword);
+		  updateDateDisplay();
+	  });
+	  
+	  
+	  
 }) // end fn
 
-$(document).on('change', '#monthSelect', function(e) {
-	
-	const employeeNo = ${emplNo};
-	
-	const monVal = e.target.value;
-	//console.log(monVal);
-	
-	const page = $("#page");
-	
-	const yearVal = $('#yearSelect').val();
-	//console.log(yearVal);
-	
-	// 선택한 달 보내기
-	fetch("/dclz/yearSelect",{
-		method : 'post',
-		 headers : {
-		        "Content-Type": "application/json"
-	       },
-	       body : JSON.stringify({
-	    	   workBeginDate : yearVal,
-	    	   workEndDate : monVal,
-	    	   emplNo : employeeNo
-	       })
-		})
-		.then(resp => resp.json())
-		.then(res => {
-			//console.log("월까지 선택한 결과 : " ,res.selMonList);
-			
-			const selMonList = res.selMonList;
-			
-			const dclzBody = $("#dclzBody");
-			
-			dclzBody.html("");
-			page.html("");
-			
-			
-			
-			selMonList.map((item) => {
-				
-				let badgeColor = '';
-				switch (item.cmmnCodeNm) {
-				  case '지각':
-				  case '결근':
-				    badgeColor = 'salmon';
-				    break;
-				  case '출/퇴근':
-				    badgeColor = 'mediumSeaGreen';
-				    break;
-				  case '출장':
-				  case '외근':
-				    badgeColor = 'lightBlue';
-				    break;
-				  case '반차':
-					badgeColor = 'pink';
-				  case '조퇴':
-				    badgeColor = 'thistle';
-				    break;
-				  default:
-				    badgeColor = 'gray';
-				}
-				
-				
-				const tr = document.createElement('tr');
-				tr.innerHTML = `
-					 <td>
-                    <div>
-                      <p class="text-sm">\${item.dclzNo.substring(0,4)}-\${item.dclzNo.substring(4,6)}-\${item.dclzNo.substring(6,8)}
-                      </p>
-                    </div>
-                  </td>
-                  <td>
-                    <div>
-                      <h4><span class="badge rounded-pill text-white" style="background-color:\${badgeColor}">\${item.cmmnCodeNm}</span></h4>
-                    </div>
-                  </td>
-                  <td>
-                    <p class="text-sm">\${item.workBeginTime === null ? '미등록' : item.workBeginTime}</p>
-                  </td>
-                  <td>
-                    <p class="text-sm">\${item.workEndTime === null ? '미등록' : item.workEndTime}</p>
-                  </td>
-                  <td>
-                    <p class="text-sm">\${item.workHour === null ? 0 : item.workHour}시간 \${item.workMinutes === null ? 0 : item.workMinutes}분</p>
-                  </td>
-				`
-				dclzBody.append(tr);
-			});
-			// 년도+월 선택시 페이징처리
-			page.html(`
-					 <page-navi
-					url="/dclz/dclzType?"
-					current="${param.get('currentPage')}"
-					show-max="10"
-					total="${res.endPage}"></page-navi>
-					`)
-		})
-});
 
 </script>
 

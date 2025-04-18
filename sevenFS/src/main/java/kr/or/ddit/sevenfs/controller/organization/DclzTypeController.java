@@ -44,9 +44,13 @@ public class DclzTypeController {
 	@GetMapping("/dclzType")
 	public String dclzType(Model model, Principal principal, DclzTypeVO dclzTypeVO,
 			@RequestParam(defaultValue="1") int currentPage,
-			@RequestParam(defaultValue = "10") int size
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "") String keyword
 			) {
 		model.addAttribute("title" , "나의 근태 현황");
+		
+		log.info("dclz keyword : " + keyword);
+		
 		// 페이징처리
 		String emplNo = principal.getName();
 		//log.info("username : " + emplNo);
@@ -56,6 +60,8 @@ public class DclzTypeController {
 		map.put("emplNo" , emplNo);
 		map.put("currentPage", currentPage);
 		map.put("size", size);
+		map.put("keyword", keyword);
+		
 		// 게시글의 총 갯수
 		int total = dclztypeService.getTotal(map);
 		log.info("total : " + total);
@@ -73,17 +79,32 @@ public class DclzTypeController {
 		
 		// 사원의 전체 근태현황 조회
 		List<DclzTypeVO> empDclzList = dclztypeService.emplDclzTypeList(map);
-		log.info("empDclzList : " + empDclzList);
+		log.info("controller -> empDclzList : " + empDclzList);
 		model.addAttribute("empDclzList",empDclzList);
 		model.addAttribute("articlePage" , articlePage);
 		
+		// 근태 selectBox를 위한 근태현황 조회
+		List<DclzTypeVO> dclzSelList = dclztypeService.dclzSelList(emplNo);
+		Date beginDt = dclzSelList.get(0).getDclzBeginDt();
 		
-		String dclzCode = empDclzList.get(0).getDclzCode();
-		log.info("dclzCode : " + dclzCode);
+		String paramKeyword = "";
+		// 키워드 있을때
+		if(keyword == null || keyword.trim().isEmpty()) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			String simepleFormatted = sdf.format(beginDt);
+			paramKeyword = simepleFormatted;
+		}else {
+			paramKeyword = keyword;
+		}
+		
+		model.addAttribute("paramKeyword" , paramKeyword);
+		
+		//String dclzCode = empDclzList.get(0).getDclzCode();
+		//log.info("dclzCode : " + dclzCode);
 		
 		
-		dclzTypeVO.setEmplNo(emplNo);
-		dclzTypeVO.setDclzCode(dclzCode);
+	//	dclzTypeVO.setEmplNo(emplNo);
+	//	dclzTypeVO.setDclzCode(dclzCode);
 		
 		// 오늘 등록된 출,퇴근 시간 가져오기
 //		DclzTypeVO workTime = dclztypeService.getTodayWorkTime(dclzTypeVO);

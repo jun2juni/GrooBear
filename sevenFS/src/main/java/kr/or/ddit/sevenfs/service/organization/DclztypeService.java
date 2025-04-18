@@ -22,6 +22,9 @@ public interface DclztypeService {
 	// 사원 근태현황 대분류로 조회
 	public DclzTypeVO dclzCnt(String emplNo);
 	
+	// 근태 selectBox를 위한 근태현황 조회
+	public List<DclzTypeVO> dclzSelList(String emplNo);
+	
 	// 사원의 출퇴근 현황 목록
 	public List<DclzTypeVO> emplDclzTypeList(Map<String, Object> map);
 	

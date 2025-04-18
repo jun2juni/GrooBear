@@ -43,7 +43,10 @@
                <c:set var="edYear" value="${endDt.substring(0,4)}"></c:set>
                <c:set var="edMonth" value="${endDt.substring(4,6)}"></c:set>
                <c:set var="edDay" value="${endDt.substring(6,8)}"></c:set>
-               <h3><p class="text-center mb-3">${bgYear}.${bgMonth}.${bgDay} ~ ${edYear}.${edMonth}.${edDay}</p></h3>
+                <div class="text-center mb-20">
+			  		<h4><p class="status-btn" style="color:thistle; font-size:20px; font-weight:bold; background-color: white;">
+			  		${bgYear}.${bgMonth}.${bgDay} ~ ${edYear}.${edMonth}.${edDay} </p></h4>
+	          </div>
              </div>
             <div class="card-style mb-3" style="height:130px;'">
 			<div class="row">			

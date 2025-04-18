@@ -42,7 +42,7 @@
 	SELECT COUNT(*)
 	  FROM atrz
 	 WHERE drafter_empno = #{emplNo}
-	   AND atrz_sttus_code = '20'
+	   AND atrz_sttus_code = '10'
 	   AND atrz_delete_yn = 'N'
 </select>
 
@@ -51,7 +51,7 @@
 	SELECT COUNT(*)
 	  FROM atrz
 	 WHERE drafter_empno = #{emplNo}
-	   AND atrz_sttus_code = '10'
+	   AND atrz_sttus_code = '20'
 	   AND atrz_delete_yn = 'N'
 </select>
 

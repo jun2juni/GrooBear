@@ -5,8 +5,9 @@
 <!-- 사원의 근태현황 총 갯수 -->
 <select id="getTotal" parameterType="HashMap" resultType="int">
 	  SELECT COUNT(*)
-      FROM   dclz_type
-      where empl_no=#{emplNo}
+        FROM   dclz_type
+       WHERE empl_no=#{emplNo}
+         AND dclz_code NOT IN ('22', '23', '24')
 </select>
 
 <!-- 사원의 연차 사용내역 총 갯수 -->
@@ -56,8 +57,53 @@
 	    GROUP BY DT.EMPL_NO
 </select>
 
+<!-- 근태 selectBox를 위한 근태현황 조회 -->
+<select id="dclzSelList" parameterType="String" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
+	SELECT dt.EMPL_NO, dt.DCLZ_NO, dt.DCLZ_CODE, dt.DCLZ_BEGIN_DT, dt.DCLZ_END_DT, cc.cmmn_code_nm
+	  FROM   dclz_type dt
+	    RIGHT OUTER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
+	 WHERE cmmn_code_group='ATTEND'
+	   AND dt.dclz_code NOT IN ('22', '23', '24')
+	   ANd TO_CHAR(dt.dclz_begin_dt, 'YYYY-mm') = TO_CHAR(SYSDATE, 'YYYY-mm')
+	   AND EMPL_NO=#{emplNo}
+</select>
+
 <!-- 사원 한명의 전체 근태현황 조회 -->
 <select id="emplDclzTypeList" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
+	WITH U AS(
+	    SELECT ROW_NUMBER() OVER(ORDER BY D.dclz_no DESC) RNUM
+	         , D.EMPL_NO
+	         , D.DCLZ_NO
+	         , D.DCLZ_CODE
+	         , D.DCLZ_BEGIN_DT
+	         , D.DCLZ_END_DT
+	         , D.cmmn_code_nm
+   		     ,TO_CHAR(D.dclz_begin_dt, 'HH24:MI:SS') as work_begin_time
+		     ,TO_CHAR(D.dclz_end_dt, 'HH24:MI:SS') as work_end_time
+		     ,TO_CHAR(D.dclz_end_dt, 'YYYY-mm-DD') as work_begin_date
+		     ,TO_CHAR(D.dclz_end_dt, 'YYYY-mm-DD') as work_end_date
+             ,FLOOR((D.dclz_end_dt - D.dclz_begin_dt) * 24) AS work_hour,
+              ROUND(MOD((D.dclz_end_dt - D.dclz_begin_dt) * 24 * 60, 60)) AS work_minutes
+	    FROM
+	    (
+	        SELECT dt.EMPL_NO, dt.DCLZ_NO, dt.DCLZ_CODE, dt.DCLZ_BEGIN_DT, dt.DCLZ_END_DT, cc.cmmn_code_nm
+	        FROM   dclz_type dt
+	        RIGHT OUTER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
+	        WHERE cmmn_code_group='ATTEND'
+	        AND dt.dclz_code NOT IN ('22', '23', '24')
+	        AND EMPL_NO=#{emplNo}
+            AND (
+             (TO_CHAR(dt.dclz_begin_dt, 'YYYY-mm')) LIKE '%' || #{keyword} || '%'
+            )
+	    )D  
+	)
+	SELECT U.*
+	FROM U
+	WHERE U.RNUM BETWEEN (#{currentPage} * #{size})-(10-1) AND (#{currentPage}* #{size})
+</select>
+
+<!-- 사원 한명의 전체 근태현황 조회 -->
+<!-- <select id="emplDclzTypeList" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
 	WITH U AS(
 	    SELECT ROW_NUMBER() OVER(ORDER BY D.dclz_no DESC) RNUM
 	         , D.EMPL_NO
@@ -84,8 +130,8 @@
 	)
 	SELECT U.*
 	FROM U
-	WHERE U.RNUM BETWEEN (#{currentPage} * #{size})-(#{size}-1) AND (#{currentPage}* #{size})
-</select>
+	WHERE U.RNUM BETWEEN (#{currentPage} * #{size})-(10-1) AND (#{currentPage}* #{size})
+</select> -->
 
 <!-- 메인페이지에서 필요한 사원의 근태현황 조회 -->
 <select id="mainEmplDclzList" parameterType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">

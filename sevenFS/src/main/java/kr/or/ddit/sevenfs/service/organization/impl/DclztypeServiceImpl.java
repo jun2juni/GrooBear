@@ -42,13 +42,16 @@ public class DclztypeServiceImpl implements DclztypeService {
 		return dclztypeMapper.getEmplAllVacTotal();
 	}
 	
+	// 근태 selectBox를 위한 근태현황 조회
+	@Override
+	public List<DclzTypeVO> dclzSelList(String emplNo) {
+		return dclztypeMapper.dclzSelList(emplNo);
+	}
+	
 	// 사원 출퇴근 현황 목록 조회
 	@Override
 	public List<DclzTypeVO> emplDclzTypeList(Map<String, Object> map) {
-		// 사원의 전체 근태현황
-		List<DclzTypeVO> empDclzList = dclztypeMapper.emplDclzTypeList(map);
-		log.info("service -> empDclzList : " + empDclzList);
-		return empDclzList;
+		return dclztypeMapper.emplDclzTypeList(map);
 	}
 	
 	// 대분류에 따른 사원 근태 갯수
@@ -194,12 +197,5 @@ public class DclztypeServiceImpl implements DclztypeService {
 	public List<DclzTypeVO> mainEmplDclzList(String emplNo) {
 		return dclztypeMapper.mainEmplDclzList(emplNo);
 	}
-
-
-
-	
-
-
-
 
 }
