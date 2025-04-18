@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
+import kr.or.ddit.sevenfs.vo.bbs.ComunityVO;
 
 @Mapper
 public interface ComunityMapper {
@@ -21,4 +22,16 @@ public interface ComunityMapper {
 	public BbsVO comunityMonthMenuDetail(int bbsSn);
 	//월별 메뉴 업데이트 
 	public int comunityMonthMenuUpdate(BbsVO bbsVO);
+	
+	
+	// 여기부터 sns
+	//커뮤니티 sns 오늘의 한줄  삽입
+	public int insertToday(BbsVO bbsVO);
+	// -----------------------------------------	여기부터 ComunityVO ㅜㅜㅜ-------------------
+	// 커뮤니티 sns 이모지 삽입
+	public int insertEmoji(ComunityVO comunityVO);
+	
+	//커뮤니티 sns list 추출
+	public List<ComunityVO> comunityClubList(ComunityVO comunityVO);
+	
 }

@@ -254,4 +254,115 @@
 		SELECT BBS_CTGRY_NO, UPPER_CTGRY_NO, CTGRY_NM, CTGRY_CREAT_DT, CTGRY_USE_YN, DEPT_CODE
 		FROM BBS_CTGRY
 	</select>
+	
+	
+	<insert id="insertToday" parameterType="BbsVO">
+	   	<selectKey resultType="int" order="BEFORE"
+			keyProperty="bbsSn">
+			SELECT SEQ_BBS.NEXTVAL FROM DUAL
+		</selectKey>
+	  INSERT INTO BBS( 
+		    BBS_SN,
+		    BBS_CTGRY_NO,
+		    EMPL_NO,
+		    BBSCTT_SJ,
+		    BBSCTT_CN,
+		    BBSCTT_CREAT_DT,
+		    BBSCTT_UPDT_DT,
+		    RDCNT,
+		    BBSCTT_USE_YN,
+		    UPEND_FIXING_YN,
+		    ATCH_FILE_NO
+		  ) VALUES (
+		    #{bbsSn},
+		    #{bbsCtgryNo},
+		    #{emplNo},
+		    #{bbscttSj},
+		    #{bbscttCn},
+		    SYSDATE,
+		    NULL,
+		    0,
+		    #{bbscttUseYn},
+		    #{upendFixingYn},
+		    #{atchFileNo}
+		  )
+	</insert>
+	
+	<insert id="insertEmoji" parameterType="ComunityVO">
+	   	<selectKey resultType="int" order="BEFORE"
+			keyProperty="bbsSn">
+			SELECT SEQ_BBS.NEXTVAL FROM DUAL
+		</selectKey>
+	  INSERT INTO BBS( 
+		    BBS_SN,
+		    BBS_CTGRY_NO,
+		    EMPL_NO,
+		    BBSCTT_SJ,
+		    BBSCTT_CN,
+		    BBSCTT_CREAT_DT,
+		    BBSCTT_UPDT_DT,
+		    RDCNT,
+		    BBSCTT_USE_YN,
+		    UPEND_FIXING_YN,
+		    ATCH_FILE_NO
+		  ) VALUES (
+		    #{bbsSn},
+		    #{bbsCtgryNo},
+		    #{emplNo},
+		    #{bbscttSj},
+		    #{bbscttCn},
+		    SYSDATE,
+		    NULL,
+		    0,
+		    #{bbscttUseYn},
+		    #{upendFixingYn},
+		    #{atchFileNo}
+		  )
+	</insert>
+	
+	<select id="comunityClubList" parameterType="kr.or.ddit.sevenfs.vo.bbs.ComunityVO" resultType="kr.or.ddit.sevenfs.vo.bbs.ComunityVO">
+	  SELECT 
+	    e.empl_no,
+	    e.empl_nm,
+	
+	    -- T.T-MI
+	    (
+	      SELECT bbsctt_cn FROM (
+	        SELECT b.bbsctt_cn
+	        FROM bbs b
+	        WHERE b.empl_no = e.empl_no
+	          AND b.bbs_ctgry_no = 14
+	          AND b.bbsctt_use_yn = 'N'
+	        ORDER BY b.bbsctt_creat_dt DESC
+	      ) WHERE ROWNUM = 1
+	    ) AS ttmiContent,
+	
+	    -- 오늘의 한 줄
+	    (
+	      SELECT bbsctt_cn FROM (
+	        SELECT b.bbsctt_cn
+	        FROM bbs b
+	        WHERE b.empl_no = e.empl_no
+	          AND b.bbs_ctgry_no = 15
+	          AND b.bbsctt_use_yn = 'N'
+	        ORDER BY b.bbsctt_creat_dt DESC
+	      ) WHERE ROWNUM = 1
+	    ) AS todayContent,
+	
+	    -- 이모지 상태
+	    (
+	      SELECT bbsctt_cn FROM (
+	        SELECT b.bbsctt_cn
+	        FROM bbs b
+	        WHERE b.empl_no = e.empl_no
+	          AND b.bbs_ctgry_no = 16
+	          AND b.bbsctt_use_yn = 'N'
+	        ORDER BY b.bbsctt_creat_dt DESC
+	      ) WHERE ROWNUM = 1
+	    ) AS emoji
+	
+	  FROM employee e
+	  ORDER BY e.empl_nm
+</select>
+	
 </mapper>

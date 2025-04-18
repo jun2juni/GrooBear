@@ -14,6 +14,7 @@ import kr.or.ddit.sevenfs.service.bbs.ComunityService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
+import kr.or.ddit.sevenfs.vo.bbs.ComunityVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -46,6 +47,22 @@ public class ComunityServiceImpl implements ComunityService{
 	@Override
 	public int comunityMonthMenuUpdate(BbsVO bbsVO) {
 		return comunityMapper.comunityMonthMenuUpdate(bbsVO);
+	}
+	
+	@Override
+	public int insertToday(BbsVO bbsVO) {
+		
+		return comunityMapper.insertToday(bbsVO);
+	}
+	// 여기부터 ComunityVO ㅜㅜ----- 
+	@Override
+	public List<ComunityVO> comunityClubList(ComunityVO comunityVO) {
+		return comunityMapper.comunityClubList(comunityVO);
+	}
+
+	public int insertEmoji(ComunityVO comunityVO) {
+		
+		return comunityMapper.insertEmoji(comunityVO);
 	}
 	
 

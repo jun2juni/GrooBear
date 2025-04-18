@@ -1,11 +1,15 @@
 package kr.or.ddit.sevenfs.controller.bbs;
 
+import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,9 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpSession;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.bbs.BbsService;
 import kr.or.ddit.sevenfs.service.bbs.ComunityService;
@@ -25,6 +32,7 @@ import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.utils.AttachFile;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
+import kr.or.ddit.sevenfs.vo.bbs.ComunityVO;
 
 
 // 썰풀사람 => log.info 를 통해서 console에 데이터흐름을 확인하기 위함
@@ -55,27 +63,70 @@ public class ComunityController {
 	} // comunityHome
 	
 	@GetMapping("/comunityClubList")
-	public String comunityClubList(Model model,
-								   @ModelAttribute BbsVO bbsVO,
-								   @RequestParam("bbsCtgryNo") int bbsCtgryNo
+	public String comunityClubList(
+									Model model,
+								   @ModelAttribute ComunityVO comunityVO
 								  ) {	
-		 // 게시판 카테고리 번호 설정
-		int bbsCtgryNo14 = 14; // 동아리 카테고리
-		int bbsCtgryNo15 = 15; // 동아리 카테고리
-		int bbsCtgryNo16 = 16; // 동아리 카테고리
+        
+		List<ComunityVO> list = comunityServiceImpl.comunityClubList(comunityVO);
+	    model.addAttribute("clubList", list);
 		
-        bbsVO.setBbsCtgryNo(bbsCtgryNo14);
-        bbsVO.setBbsCtgryNo(bbsCtgryNo15);
-        bbsVO.setBbsCtgryNo(bbsCtgryNo16);
-        
-        Map<String, Object> map = new HashMap<>();
-        map.put("category", bbsVO.getCategory());
-        map.put("bbsCtgryNo", bbsVO.getBbsCtgryNo());
-        
-        
+		
+		
 		// sns임 
 		return "comunity/comunityClubList";	
-	} // comunityClubList
+	} // comunityClubList (sns 스느스 클럽)
+	
+	
+	@PostMapping("/insertToday")
+	public String insertTodayTTMi(@ModelAttribute BbsVO bbsVO, Principal principal) {
+			
+		    // 세션에서 사번 가져오기
+//	    	String emplNo = (String) session.getAttribute("emplNo");
+	    	String emplNo = principal.getName(); // Principal 객체에서 사번 가져오기 
+	    	
+	    	log.info("세션에서 가져온 사번: " + emplNo);
+	    	if (emplNo == null) {
+	    	        // 세션에 사번 없으면 로그인 페이지로 보내기
+	    	        return "redirect:/auth/login";
+	    	 }
+		
+		    bbsVO.setBbsCtgryNo(15); // 예시: insertTodayTTMi 전용 카테고리 번호
+		    bbsVO.setBbscttUseYn("N"); // 게시글 사용 여부
+		    bbsVO.setEmplNo(emplNo); // Principal 객체에서 사번 가져오기 , 임시값
+		
+		    comunityServiceImpl.insertToday(bbsVO);
+		    
+			// 입력 이후 => redirect를 통해서 상세보기로 가주려함 
+		return  "redirect:/comunity/comunityClubList"; // 성공 시 리다이렉트
+	} // insertTodayTTMi 삽입
+	
+	
+	@PostMapping("/insertEmoji")
+	public String insertEmoji(@ModelAttribute ComunityVO comunityVO,   Principal principal) {
+			
+		    // 세션에서 사번 가져오기
+//	    	String emplNo = (String) session.getAttribute("emplNo");
+	    	String emplNo = principal.getName(); // Principal 객체에서 사번 가져오기 
+	    	
+	    	if (emplNo == null) {
+	    	        // 세션에 사번 없으면 로그인 페이지로 보내기
+	    	        return "redirect:/auth/login";
+	    	 }
+		
+	    	comunityVO.setBbsCtgryNo(16); // 예시: insertEmoji 전용 카테고리 번호
+	    	comunityVO.setBbscttUseYn("N"); // 게시글 사용 여부
+	    	comunityVO.setEmplNo(emplNo); // Principal 객체에서 사번 가져오기 , 임시값
+	    	
+		    comunityServiceImpl.insertEmoji(comunityVO);
+		    
+		    
+			// 입력 이후 => redirect를 통해서 상세보기로 가주려함 
+		return  "redirect:/comunity/comunityClubList"; // 성공 시 리다이렉트
+	} // insertTodayTTMi 삽입
+	
+	
+	
 	
 	// 투표리스트
 	@GetMapping("/comunitySurveyList")

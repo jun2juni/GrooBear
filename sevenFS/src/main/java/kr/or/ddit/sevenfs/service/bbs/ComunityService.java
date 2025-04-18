@@ -5,6 +5,7 @@ import java.util.Map;
 
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
+import kr.or.ddit.sevenfs.vo.bbs.ComunityVO;
 
 public interface ComunityService {
 	
@@ -20,4 +21,13 @@ public interface ComunityService {
 	public BbsVO comunityMonthMenuDetail(int bbsSn);
 
 	public int comunityMonthMenuUpdate(BbsVO bbsVO);
+
+	public int insertToday(BbsVO bbsVO);
+
+	public List<ComunityVO> comunityClubList(ComunityVO comunityVO);
+	
+	public int insertEmoji(ComunityVO comunityVO);
+	
+
+
 }

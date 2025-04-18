@@ -89,24 +89,54 @@
 			                      <!-- end table row-->
 			                    </thead>
 			                    <tbody>
+			                    <c:forEach var="clubList" items="${clubList}">
 			                      <tr>
 			                        <td>
 			                          <div class="employee-image">
 			                            <img src="assets/images/lead/lead-1.png" alt="">
 			                          </div>
 			                        </td>
+			                        <!-- 사원이름  -->
 			                        <td class="min-width">
-			                          <p>Esther Howard</p>
+			                          <p>${clubList.emplNm}</p>
 			                        </td>
-			                        <td class="min-width">
-			                          <p><a href="#" data-bs-toggle="modal" data-bs-target="#100Modal">백문백답 쓰러가기 ✍️</a></p>
-			                        </td>
-			                        <td class="min-width">
-			                          <p><a href="#" data-bs-toggle="modal" data-bs-target="#todayModal">"여깁니다."</a></p>
-			                        </td>
-			                        <td class="min-width">
-			                        	<p><a href="#" data-bs-toggle="modal" data-bs-target="#emojiModal">"🌝 🌞 🌛 🌜"</a></p>
-			                        </td>
+			                        <!-- 사원이름  -->
+			                        
+			                        <!-- T.T-MI -->
+			                         <td>
+								      <a href="#" data-bs-toggle="modal" data-bs-target="#100Modal">
+								        <c:choose>
+								          <c:when test="${not empty clubList.ttmiContent}">
+								            ${clubList.ttmiContent}
+								          </c:when>
+								          <c:otherwise>✍️ 등록하기</c:otherwise>
+								        </c:choose>
+								      </a>
+								    </td>
+			                        <!-- T.T-MI -->
+			                        <!-- 오늘의 한 줄 -->
+			                         <td>
+								      <a href="#" data-bs-toggle="modal" data-bs-target="#todayModal">
+								        <c:choose>
+								          <c:when test="${not empty clubList.todayContent}">
+								            ${clubList.todayContent}
+								          </c:when>
+								          <c:otherwise>작성 전</c:otherwise>
+								        </c:choose>
+								      </a>
+								    </td>
+			                        <!-- 오늘의 한 줄 -->
+			                        <!-- 이모지 -->
+			                        <td>
+								      <a href="#" data-bs-toggle="modal" data-bs-target="#emojiModal">
+								        <c:choose>
+								          <c:when test="${not empty clubList.emoji}">
+								            ${clubList.emoji}
+								          </c:when>
+								          <c:otherwise>🙂 감정을 골라주세요</c:otherwise>
+								        </c:choose>
+								      </a>
+								    </td>
 			                        <td>
 			                          <div class="action">
 			                            <button class="text-danger">
@@ -114,88 +144,9 @@
 			                            </button>
 			                          </div>
 			                        </td>
+			                        <!-- 상태 -->
 			                      </tr>
-			                      <!-- end table row -->
-			                      <tr>
-			                        <td>
-			                          <div class="employee-image">
-			                            <img src="assets/images/lead/lead-3.png" alt="">
-			                          </div>
-			                        </td>
-			                        <td>
-			                          <p>John Doe</p>
-			                        </td>
-			                        <td>
-			                          <p><a href="#0">여기다</a></p>
-			                        </td>
-			                        <td>
-			                          <p>Bootstrap Template</p>
-			                        </td>
-			                        <td>
-			                          <span class="status-btn success-btn">Done</span>
-			                        </td>
-			                        <td>
-			                          <div class="action">
-			                            <button class="text-danger">
-			                              <i class="lni lni-trash-can"></i>
-			                            </button>
-			                          </div>
-			                        </td>
-			                      </tr>
-			                      <!-- end table row -->
-			                      <tr>
-			                        <td>
-			                          <div class="employee-image">
-			                            <img src="assets/images/lead/lead-4.png" alt="">
-			                          </div>
-			                        </td>
-			                        <td>
-			                          <p>Rayhan Jamil</p>
-			                        </td>
-			                        <td>
-			                          <p><a href="#0">요거다</a></p>
-			                        </td>
-			                        <td>
-			                          <p>Css Grid Template</p>
-			                        </td>
-			                        <td>
-			                          <span class="status-btn info-btn">Pending</span>
-			                        </td>
-			                        <td>
-			                          <div class="action">
-			                            <button class="text-danger">
-			                              <i class="lni lni-trash-can"></i>
-			                            </button>
-			                          </div>
-			                        </td>
-			                      </tr>
-			                      <!-- end table row -->
-			                      <tr>
-			                        <td>
-			                          <div class="employee-image">
-			                            <img src="assets/images/lead/lead-5.png" alt="">
-			                          </div>
-			                        </td>
-			                        <td>
-			                          <p>Esther Howard</p>
-			                        </td>
-			                        <td>
-			                          <p><a href="#0">헤이</a></p>
-			                        </td>
-			                        <td>
-			                          <p>Admin Dashboard Design</p>
-			                        </td>
-			                        <td>
-			                          <span class="status-btn close-btn">Close</span>
-			                        </td>
-			                        <td>
-			                          <div class="action">
-			                            <button class="text-danger">
-			                              <i class="lni lni-trash-can"></i>
-			                            </button>
-			                          </div>
-			                        </td>
-			                      </tr>
+			                      </c:forEach>
 			                      <!-- end table row -->
 			                    </tbody>
 			                  </table>
@@ -236,7 +187,7 @@
 			</form>
        		 <!-- 백문백답모달 끝  -->
 			 <!-- 오늘의 한 줄 모달 시작  -->
-			 <form action="">
+			 <form id="todayForm" action="/comunity/insertToday" method="post">
 				<div class="modal fade" id="todayModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 				  <div class="modal-dialog">
 				    <div class="modal-content">
@@ -247,7 +198,7 @@
 				      <div class="modal-body">
 				        <div class="input-style-1">
 		                  <label><h4>😼오늘의 기분을 말해주세요!😻</h4></label> 
-		                  <textarea placeholder="답변을 입력해주세요" rows="5" data-listener-added_0bb1bb5="true"></textarea>
+		                  <textarea name="bbscttCn" placeholder="답변을 입력해주세요" rows="5" data-listener-added_0bb1bb5="true"></textarea>
 		                </div>
 				      </div>
 				      <div class="modal-footer">
@@ -260,7 +211,7 @@
 			</form>
        		 <!-- 오늘의 한 줄 모달 끝  -->
 			 <!-- 오늘의 이모지 모달 시작  -->
-			 <form action="">
+			 <form action="/comunity/insertEmoji" method="post">
 				<div class="modal fade" id="emojiModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 				  <div class="modal-dialog">
 				    <div class="modal-content">
@@ -274,7 +225,7 @@
 						</div>				      
 				        <div class="input-style-1">
 		                  <label><h4>👍오늘의 기분을 이모지로 말해주세요!👎</h4></label> <!--이모지 들어가는 곳   -->
-		                  <textarea id="emojiTextArea" placeholder="이모지를 입력해주세요" rows="5" data-listener-added_0bb1bb5="true"></textarea>
+		                  <textarea id="emojiTextArea" name="emoji" placeholder="이모지를 입력해주세요" rows="5" data-listener-added_0bb1bb5="true"></textarea>
 		                </div>
 				      </div>
 				      <div class="modal-footer">
@@ -292,6 +243,11 @@
 	<%@ include file="../layout/prescript.jsp"%>
 </body>
 <script type="text/javascript">
+
+      	 
+	  
+	  
+	/*이모지 위 입력하는 이모지칸  */
 const Emojis = [
 	  "😀", "😄", "😆", "😅", "🤣", "😂", "😉", "😇", "🥰", "😍",
 	  "🤪", "😜", "😬", "😒", "🙄", "😪", "😴", "💀", "☠️", "💩",
@@ -300,24 +256,45 @@ const Emojis = [
 	  "🌦️", "🌪️", "🌩️", "🪐", "🌞", "🌝", "🔥", "☄️", "💘",	
 	  "❤️‍🔥", "🚭", "⁉️"
 	];
-window.addEventListener('DOMContentLoaded', () => {
+	
+function renderEmojis() {
     const emojiContainer = document.querySelector('.emoji-picker');
     const emojiTextArea = document.querySelector('#emojiTextArea');
+
+    if (!emojiContainer || !emojiTextArea) {
+      console.warn('이모지 DOM 요소가 없습니다.');
+      return;
+    }
+    // 이미 버튼이 있다면 초기화
+    emojiContainer.innerHTML = '';
 
     Emojis.forEach(emoji => {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'btn btn-light m-1';
-      button.style.fontSize = '1.0rem';
+      button.style.fontSize = '1rem';
       button.textContent = emoji;
 
       button.addEventListener('click', () => {
-    	  emojiTextArea.value += emoji;
-    	  emojiTextArea.focus();
+        emojiTextArea.value += emoji;
+        emojiTextArea.focus();
       });
 
       emojiContainer.appendChild(button);
     });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Bootstrap 모달이 열릴 때마다 renderEmojis 실행
+    const emojiModal = document.getElementById('emojiModal');
+    if (emojiModal) {
+      emojiModal.addEventListener('shown.bs.modal', () => {
+        renderEmojis();
+      });
+    }
   });
+    
+
+  
 </script>
 </html>
