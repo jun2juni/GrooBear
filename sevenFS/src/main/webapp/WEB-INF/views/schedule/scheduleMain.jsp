@@ -192,6 +192,7 @@
 					if(selLabel){
 						lblColor = selLabel.lblColor;
 					}
+					borderColor="#ffffff"
 				}
 				console.log("lblColor : ",lblColor);
 				console.log("borderColor : ",borderColor);

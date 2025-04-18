@@ -24,11 +24,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import kr.or.ddit.sevenfs.service.AttachFileService;
+import kr.or.ddit.sevenfs.service.mail.MailLabelService;
 import kr.or.ddit.sevenfs.service.mail.MailService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.CustomUser;
+import kr.or.ddit.sevenfs.vo.mail.MailLabelVO;
 import kr.or.ddit.sevenfs.vo.mail.MailVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
@@ -45,17 +47,18 @@ public class MailController {
 	MailService mailService;
 	
 	@Autowired
+	MailLabelService mailLabelService;
+	
+	@Autowired
 	OrganizationService organizationService;
 	
 	@Autowired
 	AttachFileService attachFileService;
 	
 	@GetMapping("")
-//	public String mailHome(Model model,@ModelAttribute MailVO mailVO, @AuthenticationPrincipal CustomUser customUser,
-//							@RequestParam(defaultValue = "1") int currentPage) {
 	public String mailHome(Model model,@ModelAttribute MailVO mailVO, @AuthenticationPrincipal CustomUser customUser,
 			@RequestParam(defaultValue = "1", required = false) int currentPage,
-			@RequestParam(defaultValue = "0", required = false) String emailClTy) {
+			@RequestParam(defaultValue = "1", required = false) String emailClTy) {
 		EmployeeVO employeeVO = customUser.getEmpVO();
 		mailVO.setEmailClTy(emailClTy);
 		mailVO.setEmplNo(employeeVO.getEmplNo());
@@ -77,9 +80,15 @@ public class MailController {
 		List<MailVO> mailVOList = mailService.getList(articlePage);
 		log.info("mailHome -> getList() -> mailVOList : "+mailVOList);
 		
+		List<MailLabelVO> mailLabelList = mailLabelService.getLabelList(employeeVO);
+		log.info("mailHome -> getLabelList(employeeVO) -> mailVOList" + mailLabelList);
+		
 		model.addAttribute("mailVOList",mailVOList);
 		model.addAttribute("articlePage", articlePage);
 		model.addAttribute("searchVO", mailVO);
+		model.addAttribute("emplNo", employeeVO.getEmplNo());
+		model.addAttribute("mailLabelList", mailLabelList);
+		
 		return "mail/mailHome";
 	}
 	
@@ -99,8 +108,11 @@ public class MailController {
 	
 	@GetMapping("/mailSend")
 	public String mailSend(Model model, @RequestParam(value = "emplNm",required = false) String emplNm,
-										@RequestParam(value = "email",required = false) String email) {
+										@RequestParam(value = "email",required = false) String email,
+										@AuthenticationPrincipal CustomUser customUser) {
+		EmployeeVO employeeVO = customUser.getEmpVO();
 		model.addAttribute("title","메일함");
+		model.addAttribute("emplNo",employeeVO.getEmplNo());
 		model.addAttribute("emplNm",emplNm);
 		model.addAttribute("email",email);
 		log.info("mailSend get요청 -> emplNm : "+emplNm);
@@ -141,6 +153,22 @@ public class MailController {
 		return "mail";
 	}
 	
+	@PostMapping("/delete")
+	@ResponseBody
+	public String mailDelete(@RequestParam(value = "emailNoList") String[] emailNoList) {
+		for(String emailNo : emailNoList) {
+			log.info("mailDelete -> emailNo : "+emailNo);
+		}
+		int result = mailService.mailDelete(emailNoList);
+		return "/mail";
+	}
+	
+	@PostMapping("/mailLblAdd")
+	public String mailLblAdd(@ModelAttribute MailLabelVO labelVO) {
+		log.info("mailLblAdd -> labelVO : "+labelVO);
+		mailLabelService.mailLblAdd(labelVO);
+		return "redirect:/mail";
+	}
 	
 	@ResponseBody
 	@PostMapping("/upload")

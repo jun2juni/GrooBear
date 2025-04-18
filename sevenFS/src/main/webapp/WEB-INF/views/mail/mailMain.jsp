@@ -4,8 +4,10 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="text/javascript">
     $(document).ready(function(){
+      $('.tab').prop('disabled',true)
       // $('#emailClTy ').val();
       /* 리스트 조회 조건 시작 */
       let emailClTy = '';
@@ -27,19 +29,43 @@
       })
 
       // 탭 클릭 이벤트
-      $('.tab').on('click', function() {
-        $('.tab').removeClass('active');
-        $(this).addClass('active');
-      });
+      // $('.tab').on('click', function() {
+      //   $('.tab').removeClass('active');
+      //   $(this).addClass('active');
+      // });
       
       // 사이드바 아이템 클릭 이벤트
       $('.sidebar-item').on('click', function() {
         $('.sidebar-item').removeClass('active');
         $(this).addClass('active');
         emailClTy = $(this).attr('data-emailClTy');
-        console.log('emailClTy -> ',emailClTy);
-        window.location.href = "/mail?emailClTy="+emailClTy;
-      });
+        if(emailClTy){
+          console.log('emailClTy -> ',emailClTy);
+          window.location.href = "/mail?emailClTy="+emailClTy;
+        }
+        });
+
+      // 삭제
+      $('#tab-del').on('click',function(){
+        let emailNoList = [];
+        let chkList = $('.email-checkbox:checked').get();
+        chkList.forEach(chk=>{
+          let emailNo = $(chk).closest('.email-item').attr('data-emailno');
+          emailNoList.push(emailNo);
+        })
+        console.log('삭제 할 메일',emailNoList);
+        $.ajax({
+          url:"/mail/delete",
+          method:'post',
+          data:{"emailNoList":emailNoList},
+          success:function(resp){
+            window.location.href = resp;
+          },
+          error:function(err){
+            console.log(err);
+          }
+        })
+      })
       // 리스트 클릭 이벤트
       $('.email-content').on('click',function(){
         let emailNo = $(this).closest('.email-item').attr('data-emailno');
@@ -54,16 +80,27 @@
         console.log(chkList);
         chkList.forEach(chk=>{
           let emailNo = $(chk).closest('.email-item').attr('data-emailno');
-          emailNoList.push(emailNo)
+          emailNoList.push(emailNo);
         })
         console.log("체크된 리스트 : ",emailNoList);
+        console.log("체크된 리스트 길이 : ",emailNoList.length);
         if(emailNoList.length>1){
+          $('#tab-del').prop('disabled',false);
           $("#tab-repl").prop('disabled',true);
           $("#tab-trnsms").prop('disabled',true);
-        }else{
+          $('#labeling').prop('disabled',false);
+        }else if(emailNoList.length == 0){
+          $('#tab-del').prop('disabled',true);
+          $("#tab-repl").prop('disabled',true);
+          $("#tab-trnsms").prop('disabled',true);
+          $('#labeling').prop('disabled',true);
+        }else if(emailNoList.length == 1){
+          $('#tab-del').prop('disabled',false);
           $("#tab-repl").prop('disabled',false);
           $("#tab-trnsms").prop('disabled',false);
+          $('#labeling').prop('disabled',false);
         }
+
       })
     });
 </script>
@@ -82,47 +119,121 @@
         <c:set var="emailClTy" value="${param.emailClTy}" />
         <div class="sidebar-section " id="emailClTy">
           
-          <div class="sidebar-item ${emailClTy eq '0' ? 'active' : ''}" data-emailClTy="0">
+          <div class="sidebar-item ${mailVO.emailClTy eq '0' ? 'active' : ''}" data-emailClTy="0">
             <i class="fas fa-paper-plane"></i>
             <span class="sidebar-label">보낸편지함</span>
           </div>
-          <div class="sidebar-item ${emailClTy eq '1' ? 'active' : ''}" data-emailClTy="1">
+          <div class="sidebar-item ${mailVO.emailClTy eq '1' ? 'active' : ''}" data-emailClTy="1">
             <i class="fas fa-inbox"></i>
             <span class="sidebar-label">받은편지함</span>
-            <span class="sidebar-count">2,307</span>
+            <!-- <span class="sidebar-count">2,307</span> -->
           </div>
-          <div class="sidebar-item ${emailClTy eq '2' ? 'active' : ''}" data-emailClTy="2">
+          <div class="sidebar-item ${mailVO.emailClTy eq '2' ? 'active' : ''}" data-emailClTy="2">
             <i class="far fa-file-alt"></i>
             <span class="sidebar-label">임시보관함</span>
-            <span class="sidebar-count">11</span>
+            <!-- <span class="sidebar-count">11</span> -->
           </div>
-          <div class="sidebar-item ${emailClTy eq '3' ? 'active' : ''}" data-emailClTy="3">
+          <div class="sidebar-item ${mailVO.emailClTy eq '3' ? 'active' : ''}" data-emailClTy="3">
             <i class="far fa-file-alt"></i>
             <span class="sidebar-label">스팸함</span>
-            <span class="sidebar-count">11</span>
+            <!-- <span class="sidebar-count">11</span> -->
           </div>
-          <div class="sidebar-item ${emailClTy eq '4' ? 'active' : ''}" data-emailClTy="4">
+          <div class="sidebar-item ${mailVO.emailClTy eq '4' ? 'active' : ''}" data-emailClTy="4">
             <i class="far fa-file-alt"></i>
             <span class="sidebar-label">휴지통</span>
-            <span class="sidebar-count">11</span>
+            <!-- <span class="sidebar-count">11</span> -->
           </div>
         </div>
         
         <div class="sidebar-section">
           <div class="sidebar-section-header">라벨</div>
-          <div class="sidebar-item">
-            <i class="fas fa-tag" style="color: #4285f4;"></i>
-            <span class="sidebar-label">내일정</span>
-          </div>
-          <div class="sidebar-item">
-            <i class="fas fa-tag" style="color: #ea4335;"></i>
-            <span class="sidebar-label">뉴스레터</span>
-          </div>
-          <div class="sidebar-item">
-            <i class="fas fa-tag" style="color: #fbbc04;"></i>
-            <span class="sidebar-label">중요</span>
+          <c:forEach items="${mailLabelList}" var="mailLabel">
+            <div class="sidebar-item">
+              <i class="fas fa-tag" style="color: ${mailLabel.lblCol};" data-lblNo="${mailLabel.lblNo}"></i>
+              <span class="sidebar-label">${mailLabel.lblNm}</span>
+            </div>
+          </c:forEach>
+          <div class="sidebar-item" id="addLabelBtn" style="cursor: pointer;">
+            <i class="fas fa-plus-circle" style="color: #34a853;"></i>
+            <span class="sidebar-label">라벨 추가</span>
           </div>
         </div>
+
+        <!-- 라벨 추가 팝업 -->
+        <div id="label-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;">
+          <h3 style="margin-bottom: 10px;">라벨 추가</h3>
+          <form action="/mail/mailLblAdd" method="post">
+            <input type="text" name="lblNm" id="label-name" placeholder="라벨 이름 입력" style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 4px;">
+            <input type="hidden" name="lblCol" id="lblCol">
+            <input type="hidden" name="emplNo" value="${emplNo}">
+            <label for="label-color" style="display: block; margin-bottom: 5px;">라벨 색상 선택</label>
+            <div id="label-color" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;">
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #D50000; border-radius: 50%; cursor: pointer;" data-color="#D50000"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #C51162; border-radius: 50%; cursor: pointer;" data-color="#C51162"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #AA00FF; border-radius: 50%; cursor: pointer;" data-color="#AA00FF"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #6200EA; border-radius: 50%; cursor: pointer;" data-color="#6200EA"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #304FFE; border-radius: 50%; cursor: pointer;" data-color="#304FFE"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #2962FF; border-radius: 50%; cursor: pointer;" data-color="#2962FF"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #0091EA; border-radius: 50%; cursor: pointer;" data-color="#0091EA"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #00B8D4; border-radius: 50%; cursor: pointer;" data-color="#00B8D4"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #00BFA5; border-radius: 50%; cursor: pointer;" data-color="#00BFA5"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #00C853; border-radius: 50%; cursor: pointer;" data-color="#00C853"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #64DD17; border-radius: 50%; cursor: pointer;" data-color="#64DD17"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #AEEA00; border-radius: 50%; cursor: pointer;" data-color="#AEEA00"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #FFD600; border-radius: 50%; cursor: pointer;" data-color="#FFD600"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #FFAB00; border-radius: 50%; cursor: pointer;" data-color="#FFAB00"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #FF6D00; border-radius: 50%; cursor: pointer;" data-color="#FF6D00"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #DD2C00; border-radius: 50%; cursor: pointer;" data-color="#DD2C00"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #8D6E63; border-radius: 50%; cursor: pointer;" data-color="#8D6E63"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #9E9E9E; border-radius: 50%; cursor: pointer;" data-color="#9E9E9E"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #607D8B; border-radius: 50%; cursor: pointer;" data-color="#607D8B"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #000000; border-radius: 50%; cursor: pointer;" data-color="#000000"></div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+              <button id="cancel-label" style="padding: 8px 16px; border: none; background-color: #e5e7eb; border-radius: 4px; cursor: pointer;">취소</button>
+              <button id="save-label" type="submit" style="padding: 8px 16px; border: none; background-color: #2563eb; color: white; border-radius: 4px; cursor: pointer;">저장</button>
+            </div>
+          </form> 
+        </div>
+
+        <script>
+          $(document).ready(function() {
+            let selectedColor = "#000000"; // Default color
+
+            // 라벨 추가 버튼 클릭 이벤트
+            $('#addLabelBtn').on('click', function() {
+              $('#label-popup').show();
+              $('#popup-overlay').show();
+            });
+
+            // 라벨 색상 선택 이벤트
+            $('.color-option').on('click', function() {
+              $('.color-option').css('border', 'none'); // Reset border
+              $(this).css('border', '2px solid #2563eb'); // Highlight selected color
+              selectedColor = $(this).data('color');
+              $('#lblCol').val(selectedColor);
+              console.log("$('#lblCol').val() : ",$('#lblCol').val());
+            });
+
+            // 저장 버튼 클릭 이벤트
+            $('#save-label').on('click', function() {
+              let labelName = $('#label-name').val().trim();
+              let labelCol = $('#lblCol').val();
+              console.log('라벨 추가 labelName: ',labelName);
+              console.log('라벨 추가 labelCol: ',labelCol);
+            });
+
+            // 취소 버튼 클릭 이벤트
+            $('#cancel-label').on('click', function() {
+              $('#label-popup').hide();
+              $('#popup-overlay').hide();
+            });
+          });
+        </script>
+
+        <!-- 팝업 배경 -->
+        <div id="popup-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+
       </div>
 
       <!-- 메일 콘텐츠 영역 -->
@@ -133,73 +244,71 @@
             <!-- 이메일 툴바 -->
             <div class="email-toolbar">
               <div class="checkbox-container">
-                <input type="checkbox" id="select-all">
+          <input type="checkbox" id="select-all">
               </div>
-              <!-- <button class="toolbar-button">
-                <i class="fas fa-ellipsis-v"></i>
-              </button> -->
               <div class="email-tabs">
-                <button class="tab" id="tab-del">삭제</button>
-                <button class="tab" id="tab-repl">답장</button>
-                <button class="tab" id="tab-trnsms">전달</button>
-                <select name="mailLbl" id="labeling">
-                  <option value="1">테스트라벨1</option>
-                  <option value="2">테스트라벨2</option>
-                </select>
+          <button class="tab" id="tab-del">삭제</button>
+          <button class="tab" id="tab-repl">답장</button>
+          <button class="tab" id="tab-trnsms">전달</button>
+          <select class="tab" name="mailLbl" id="labeling">
+            <option value="1">테스트라벨1</option>
+            <option value="2">테스트라벨2</option>
+          </select>
               </div>
-                <div class="d-flex justify-content-end align-items-center" style="margin-left: auto; gap: 10px;">
-                <c:set var="searchOption" value="${param.searchOption}"/>
-                <form action="/mail" class="d-flex align-items-center" style="gap: 10px;">
-                  <input type="hidden" name="emailClTy" id="emailClTy" value="${searchVO.emailClTy}">
-                  <select name="searchOption" id="searchOption" class="form-select" style="width: auto; padding: 8px 12px; border-radius: 4px; border: 1px solid #d1d5db;">
-                    <option value="title" ${searchOption eq 'title' ? 'selected' : ''} >제목</option>
-                    <option value="content" ${searchOption eq 'content' ? 'selected' : ''}>내용</option>
-                    <option value="title_content" ${searchOption eq 'title_content' ? 'selected' : ''}>제목+내용</option>
-                    <!-- <option value="email">email</option> -->
-                  </select>
-                  <input type="text" value="${searchVO.keyword}" name="keyword" id="search" class="form-control" placeholder="검색어 입력" style="width: 200px; padding: 8px 12px; border-radius: 4px; border: 1px solid #d1d5db;">
-                  <button type="submit" class="btn btn-primary" style="padding: 8px 16px; border-radius: 4px; background-color: #2563eb; color: white; border: none; cursor: pointer; transition: background-color 0.2s;">
-                    검색
-                  </button>
-                </form>
-                </div>
+          <div class="d-flex justify-content-end align-items-center" style="margin-left: auto; gap: 10px;">
+          <c:set var="searchOption" value="${param.searchOption}"/>
+          <form action="/mail" class="d-flex align-items-center" style="gap: 10px;">
+            <input type="hidden" name="emailClTy" id="emailClTy" value="${searchVO.emailClTy}">
+            <select name="searchOption" id="searchOption" class="form-select" style="width: auto; padding: 8px 12px; border-radius: 4px; border: 1px solid #d1d5db;">
+              <option value="title" ${searchOption eq 'title' ? 'selected' : ''} >제목</option>
+              <option value="content" ${searchOption eq 'content' ? 'selected' : ''} >내용</option>
+              <option value="title_content" ${searchOption eq 'title_content' ? 'selected' : ''} >제목+내용</option>
+            </select>
+            <input type="text" value="${searchVO.keyword}" name="keyword" id="search" class="form-control" placeholder="검색어 입력" style="width: 200px; padding: 8px 12px; border-radius: 4px; border: 1px solid #d1d5db;">
+            <button type="submit" class="btn btn-primary" style="padding: 8px 16px; border-radius: 4px; background-color: #2563eb; color: white; border: none; cursor: pointer; transition: background-color 0.2s;">
+              검색
+            </button>
+          </form>
+          </div>
             </div>
             <!-- 이메일 목록 - 여기에 스크롤이 적용됩니다 -->
             <div class="email-list" id="email-list">
               <!-- forEach 시작 -->
               <c:forEach items="${mailVOList}" var="mailVO">
-                <div class="email-item ${mailVO.readngAt}" data-emailNo="${mailVO.emailNo}">
-                  <div class="email-actions">
-                    <input type="checkbox" class="email-checkbox">
-                    <button class="star-button ${starClass}" data-emailNo="${mailVO.emailNo}">
-                      <i class="far fa-star"></i>
-                    </button>
-                  </div>
-                  <div class="email-sender">${mailVO.trnsmitEmail}</div>
-                  <div class="email-content">
-                    <c:if test="${mailVO.emailSj != null}">
-                      <span class="email-subject">${mailVO.emailSj}</span>
-                    </c:if>
-                    <c:if test="${mailVO.emailSj == null}">
-                      <span class="email-subject">(제목 없음)</span>
-                    </c:if>
-                    <c:if test="${mailVO.emailCn != null}">
-                      -<span class="email-content-summary">${mailVO.emailCn}</span>
-                    </c:if>
-                  </div>
-                  <div class="email-date">${mailVO.trnsmitDt}</div>
-                </div>
+          <div class="email-item ${mailVO.readngAt}" data-emailNo="${mailVO.emailNo}">
+            <div class="email-actions">
+              <input type="checkbox" class="email-checkbox">
+              <button class="star-button ${starClass}" data-emailNo="${mailVO.emailNo}">
+                <i class="far fa-star"></i>
+              </button>
+            </div>
+            <div class="email-sender">${mailVO.trnsmitEmail}</div>
+            <div class="email-content">
+              <c:if test="${mailVO.emailSj != null}">
+                <span class="email-subject">${mailVO.emailSj}</span>
+              </c:if>
+              <c:if test="${mailVO.emailSj == null}">
+                <span class="email-subject">(제목 없음)</span>
+              </c:if>
+              <c:if test="${mailVO.emailCn != null}">
+                -<span class="email-content-summary">${mailVO.emailCn}</span>
+              </c:if>
+            </div>
+            <div class="email-date">${mailVO.trnsmitDt}</div>
+          </div>
               </c:forEach>
               <!-- forEach 끝 -->
             </div>
           </div>
           <!-- 페이지네이션 -->
-          <page-navi
-            url="/mail?${articlePage.getSearchVo()}"
-            current="${articlePage.getCurrentPage()}"
-            show-max="5"
-            total="${articlePage.getTotalPages()}"
-          ></page-navi>
+          <div style="margin-top: 20px;">
+            <page-navi
+              url="/mail?${articlePage.getSearchVo()}"
+              current="${articlePage.getCurrentPage()}"
+              show-max="5"
+              total="${articlePage.getTotalPages()}"
+            ></page-navi>
+          </div>
         </div>
         <!-- 이메일 listSection 끝 -->
          

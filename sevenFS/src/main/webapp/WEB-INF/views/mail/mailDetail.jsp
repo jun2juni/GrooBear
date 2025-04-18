@@ -33,7 +33,7 @@
     /* 사이드바 스타일 개선 */
     .email-sidebar {
       width: 240px;
-      /* background-color: #f8f9fa; */
+      background-color: #ffffff;
       border-right: 1px solid #e0e0e0;
       height: 100%;
       overflow-y: auto;
@@ -340,7 +340,7 @@
     }
     
     .email-detail-attachments {
-      background-color: #f9fafb;
+      background-color: #ffffff;
       border-radius: 8px;
       padding: 16px;
       margin-top: 24px;
@@ -424,7 +424,7 @@
               <div class="sidebar-item active">
                 <i class="fas fa-inbox"></i>
                 <span class="sidebar-label">받은편지함</span>
-                <span class="sidebar-count">2,307</span>
+                <!-- <span class="sidebar-count">2,307</span> -->
               </div>
               <div class="sidebar-item">
                 <i class="fas fa-paper-plane"></i>
@@ -433,7 +433,7 @@
               <div class="sidebar-item">
                 <i class="far fa-file-alt"></i>
                 <span class="sidebar-label">임시보관함</span>
-                <span class="sidebar-count">11</span>
+                <!-- <span class="sidebar-count">11</span> -->
               </div>
               <div class="sidebar-item">
                 <i class="fas fa-star"></i>
@@ -520,8 +520,8 @@
                               ${fn:substring(mailVO.emplNm, 0, 1)}
                             </div>
                             <div class="participant-info">
-                              <div class="participant-name">${mailVO.emplNm}</div>
-                              <div class="participant-email">${mailVO.trnsmitEmail}</div>
+                              <div class="participant-name" id="trnsmitEmplNm">${mailVO.emplNm}</div>
+                              <div class="participant-email" id="trnsmitEmail">${mailVO.trnsmitEmail}</div>
                             </div>
                           </div>
                         </div>
@@ -565,20 +565,9 @@
                         </div>
                       </c:if>
                     </div>
-                    
-                    <div class="email-detail-actions">
-                      <button class="reply-button">
-                        <i class="fas fa-reply"></i>
-                        <span>답장</span>
-                      </button>
-                      <button class="forward-button">
-                        <i class="fas fa-share"></i>
-                        <span>전달</span>
-                      </button>
-                    </div>
                   </div>
                     <div class="email-detail-actions">
-                      <button class="reply-button">
+                      <button class="reply-button" ${mailVO.emailClTy == '0' ? 'hidden' : ''}>
                         <i class="fas fa-reply"></i>
                         <span>답장</span>
                       </button>
@@ -613,7 +602,7 @@
                 </div>
     
                 <div class="email-detail-actions-bottom">
-                  <button class="reply-button">
+                    <button class="reply-button" id="replyBtn" ${mailVO.emailClTy == '0' ? 'hidden' : ''}>
                     <i class="fas fa-reply"></i>
                     <span>답장</span>
                   </button>
@@ -652,11 +641,18 @@
         });
         $('.participant-recptn').on('click',function(){
           let emplNm = $(this).find('.participant-name').text();
-          let emplEmail = $(this).find('.participant-email').text()
+          let emplEmail = $(this).find('.participant-email').text();
 
           // console.log('.participant-recptn 클릭 : ',this);
           console.log('.participant-recptn 클릭 : ',emplNm);
           console.log('.participant-recptn 클릭 : ',emplEmail);
+          window.location.href=`/mail/mailSend?emplNm=\${emplNm}&&email=\${emplEmail}`;
+        })
+        $('#replyBtn').on('click',function(){
+          let emplNm = $('#trnsmitEmplNm').text();
+          let emplEmail = $('#trnsmitEmail').text();
+          console.log('답장 이벤트 emplEmail : ',emplEmail);
+          console.log('답장 이벤트 emplNm : ',emplNm);
           window.location.href=`/mail/mailSend?emplNm=\${emplNm}&&email=\${emplEmail}`;
         })
 

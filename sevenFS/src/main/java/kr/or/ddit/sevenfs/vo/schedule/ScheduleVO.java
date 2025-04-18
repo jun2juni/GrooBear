@@ -22,7 +22,7 @@ public class ScheduleVO {
 		private int lblNo;
 		
 		////////////////////////////////////////////////////
-			
+		
 		// 일정 유형 0:개인공개 1:부서공개 2:전체공개	// 프론트에서 작성 // 완
 		private String schdulTy;
 		

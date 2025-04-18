@@ -186,6 +186,13 @@ public class MailServiceImpl implements MailService{
 
 	@Override
 	public int getTotal(Map<String, Object> map) {
-		return mailMapper.getTotal(map);
+		int result = mailMapper.getTotal(map);
+		return result;
+	}
+
+	@Override
+	public int mailDelete(String[] emailNoList) {
+		int result = mailMapper.mailDelete(emailNoList);
+		return 0;
 	}
 }

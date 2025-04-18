@@ -14,6 +14,7 @@
 	/>
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 	<title>${title}</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<c:import url="../layout/prestyle.jsp" />
 </head>
 <style>
@@ -311,9 +312,14 @@
 
         // <input type="hidden" id="modelEmplNm" value="${emplNm}">
         // <input type="hidden" id="modelEmail" value="${email}">
-        if($('#modelEmail').length&&$('#modelEmplNm').length){
+        // if($('#modelEmail').length&&$('#modelEmplNm').length){
+
+        if($('#modelEmail').val() && $('#modelEmplNm').val()){
+            console.log($('#modelEmail').val())
+            console.log($('#modelEmplNm').val())
             let email = $('#modelEmail').val();
             let emplNm = $('#modelEmplNm').val();
+            console.log("email : ",email,"  emplNm : ",emplNm)
             $('#modelEmail').remove();
             $('#recpEmailInp').val(email);
             $('#recpEmailInpSpan').text(emplNm);
@@ -334,7 +340,8 @@
 
         $('#sendMail').on('click', function() {
             if($('#recpEmail').get().length==0){
-                alert('수신 이메일을 작성해주세요')
+                swal({title:'수신 이메일을 작성해주세요',icon:'warning'})
+                // alert('수신 이메일을 작성해주세요');
                 return 
             }
             let mailForm = new FormData();
@@ -344,7 +351,7 @@
             let emplNo = $('input[name="emplNo"]').val();
             mailForm.append('emplNo', emplNo);
 
-             // 여러 이메일을 처리하는 방법 수정
+            // 여러 이메일을 처리하는 방법 수정
             $('.recpEmailInp').each(function() {  // 클래스로 가정, 실제 구조에 맞게 수정 필요
                 let recEmail = $(this).val();
                 let recEmplNo = $(this).attr('data-emplNo')|| "";
@@ -465,17 +472,20 @@
             console.log('recpEmailInp 값 변경 감지 emplNo : ',emplNo);
             let myMail = $('#trnsmitEmail').val();
             if(email == myMail){
-                alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
+                // alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
+                swal({title:'자신의 이메일을 수신이메일란에 작성할 수 없습니다.',icon:'warning'})
                 $('#recptnEmail').val('');
                 return 
             }
             if(email != '' && !(isValidEmail(email))){
-                alert('알맞지 않는 형식입니다.');
+                // alert('알맞지 않는 형식입니다.');
+                swal({title:'알맞지 않는 형식입니다.',icon:'warning'});
                 $('#recptnEmail').val('');
                 return
             }
             if(email != '' && validateDupl(email).length!=0){
-                alert('이미 작성한 이메일입니다.');
+                // alert('이미 작성한 이메일입니다.');
+                swal({title:'이미 작성한 이메일입니다.',icon:'warning'});
                 console.log('이거 실행되면 안됨');
                 $('#recptnEmail').val('');
                 return;
@@ -529,16 +539,19 @@
             // console.log('refEmailInp 값 변경 감지',email);
             let myMail = $('#trnsmitEmail').val();
             if(email==myMail){
-                alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
+                // alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
+                swal({title:'이미 작성한 이메일입니다.',icon:'warning'});
                 $('#refEmailInp').val('');
                 return 
             }
             if(email!='' && !(isValidEmail(email))){
-                alert('알맞지 않는 형식입니다.');
+                // alert('알맞지 않는 형식입니다.');
+                swal({title:'알맞지 않는 형식입니다.',icon:'warning'});
                 return
             }
             if(email!='' && validateDupl(email).length!=0){
-                alert('이미 작성한 이메일입니다.');
+                // alert('이미 작성한 이메일입니다.');
+                swal({title:'이미 작성한 이메일입니다.',icon:'warning'});
                 $('#refEmailInp').val('');
                 return;
             }
@@ -588,16 +601,19 @@
             // console.log('hiddenRefEmailInp 값 변경 감지',email);
             let myMail = $('#trnsmitEmail').val();
             if(email==myMail){
-                alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
+                // alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
+                swal({title:'자신의 이메일을 수신이메일란에 작성할 수 없습니다.',icon:'warning'});
                 $('#hiddenRefEmailInp').val('');
-                return 
+                return;
             }
             if(email!='' && !(isValidEmail(email))){
-                alert('알맞지 않는 형식입니다.');
-                return
+                // alert('알맞지 않는 형식입니다.');
+                swal({title:'알맞지 않는 형식입니다.',icon:'warning'});
+                return;
             }
             if(email!='' && validateDupl(email).length!=0){
-                alert('이미 작성한 이메일입니다.');
+                // alert('이미 작성한 이메일입니다.');
+                swal({title:'이미 작성한 이메일입니다.',icon:'warning'});
                 $('#hiddenRefEmailInp').val('')
                 return;
             }
@@ -687,19 +703,22 @@
                 spanField.text(emplNmState);
             }
             if(email==myMail){
-                alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
+                // alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
+                swal({title:'자신의 이메일을 수신이메일란에 작성할 수 없습니다.',icon:'warning'});
                 spanField.text(emplNmState);
                 emailField.val(emailState);
                 return;
             }
             if(emailState!='' && !(isValidEmail(email))){
-                alert('알맞지 않는 형식입니다.');
+                // alert('알맞지 않는 형식입니다.');
+                swal({title:'알맞지 않는 형식입니다.',icon:'warning'});
                 spanField.text(emplNmState);
                 emailField.val(emailState);
                 return;
             }
             if((emailState!='' && validateDupl(email).length!=0) && email != emailState){
-                alert(' 수정 : 이미 작성한 이메일입니다.');
+                // alert(' 수정 : 이미 작성한 이메일입니다.');
+                swal({title:'이미 작성한 이메일입니다.',icon:'warning'});
                 spanField.text(emplNmState);
                 emailField.val(emailState);
                 return;
@@ -764,7 +783,8 @@
                             console.log("사번 확인2",$(sel).attr('data-emplNo'));
                             $(sel).val(resp.email).trigger('change');
                         }else{
-                            alert('이미 작성한 이메일입니다.');
+                            // alert('이미 작성한 이메일입니다.');
+                            swal({title:'이미 작성한 이메일입니다.',icon:'warning'});
                         }
                         
                     }

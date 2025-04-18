@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
+import kr.or.ddit.sevenfs.vo.mail.MailLabelVO;
 import kr.or.ddit.sevenfs.vo.mail.MailVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 
@@ -22,5 +23,8 @@ public interface MailService {
 	void downloadFile(String fileName);
 
 	int getTotal(Map<String, Object> map);
+
+	int mailDelete(String[] emailNoList);
+
 
 }

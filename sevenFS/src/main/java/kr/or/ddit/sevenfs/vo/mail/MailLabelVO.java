@@ -17,4 +17,7 @@ public class MailLabelVO {
 	
 	// 라벨명
 	private String lblNm;
+	
+	// 라벨 색상
+	private String lblCol;
 }

@@ -15,6 +15,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>${title}</title>
   <%@ include file="../layout/prestyle.jsp" %>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <%@ include file="../layout/sidebar.jsp" %>

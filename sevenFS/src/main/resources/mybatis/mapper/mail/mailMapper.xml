@@ -42,17 +42,18 @@ FROM MAIL M
 INNER JOIN EMPLOYEE E ON M.EMPL_NO = E.EMPL_NO
 WHERE M.EMPL_NO=#{searchVo.emplNo}
   AND M.email_cl_ty = #{searchVo.emailClTy}
+  AND M.DEL_AT = 'N'
 	<if test = "searchVo.keyword != null and searchVo.keyword !=''">
 		<choose>
-			<when test="searchVo.searchOption = 'title'">
-				AND m.EMAIL_SJ '%' || #{searchVo.keyword} || '%'
+			<when test="searchVo.searchOption == 'title'">
+				AND m.EMAIL_SJ LIKE '%' || #{searchVo.keyword} || '%'
 			</when>
-			<when test="searchVo.searchOption = 'content'">
-				AND m.EMAIL_CN '%' || #{searchVo.keyword} || '%'
+			<when test="searchVo.searchOption == 'content'">
+				AND m.EMAIL_CN LIKE '%' || #{searchVo.keyword} || '%'
 			</when>
 			<otherwise>
 				AND (m.EMAIL_SJ '%' || #{mailVO.keyword} || '%'
-					 OR m.EMAIL_CN '%' || #{searchVo.keyword} || '%')
+					 OR m.EMAIL_CN LIKE '%' || #{searchVo.keyword} || '%')
 			</otherwise>
 		</choose>
 	</if>
@@ -91,17 +92,18 @@ SELECT count(*)
 FROM mail m
 WHERE m.EMPL_NO = #{emplNo}
 AND m.EMAIL_CL_TY = #{mailVO.emailClTy}
+AND m.DEL_AT = 'N'
 	<if test = "mailVO.keyword != null and mailVO.keyword !=''">
 		<choose>
-			<when test="mailVO.searchOption = 'title'">
-				AND m.EMAIL_SJ '%' || #{mailVO.keyword} || '%'
+			<when test="mailVO.searchOption == 'title'">
+				AND m.EMAIL_SJ LIKE '%' || #{mailVO.keyword} || '%'
 			</when>
-			<when test="mailVO.searchOption = 'content'">
-				AND m.EMAIL_CN '%' || #{mailVO.keyword} || '%'
+			<when test="mailVO.searchOption == 'content'">
+				AND m.EMAIL_CN LIKE '%' || #{mailVO.keyword} || '%'
 			</when>
 			<otherwise>
-				AND (m.EMAIL_SJ '%' || #{mailVO.keyword} || '%'
-					 OR m.EMAIL_CN '%' || #{mailVO.keyword} || '%')
+				AND (m.EMAIL_SJ LIKE '%' || #{mailVO.keyword} || '%'
+					 OR m.EMAIL_CN LIKE '%' || #{mailVO.keyword} || '%')
 			</otherwise>
 		</choose>
 	</if>
@@ -114,6 +116,17 @@ CONNECT BY LEVEL &lt;= #{count}
 <select id="getEmailGroupNo" resultType="int">
 	select nvl(max(email_group_no),0)+1 from mail
 </select>
+
+
+<update id="mailDelete" parameterType="java.util.List">
+	update mail
+	set DEL_AT = 'Y'
+	where email_no in
+	<foreach collection="list" item="emailNo" open="(" separator="," close=")">
+		#{emailNo}	        
+	</foreach>
+</update>
+
 
 <insert id="sendMail" parameterType="list">
         INSERT ALL
