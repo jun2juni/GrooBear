@@ -268,7 +268,7 @@
 										
 										  <!-- 전체선택 - 한 줄로 표시 -->
 										  <div class="form-check checkbox-style d-flex align-items-center mb-3">
-										    <input class="form-check-input" type="checkbox" value="selectAll" id="selectAll" onclick="checkedAll(this)">
+										    <input class="form-check-input" type="checkbox" value="selectAll" id="selectAll" onclick="checkedAll(this)" checked>
 										    <label class="form-check-label ms-2" for="selectAll">전체선택</label>
 										  </div>
 										
@@ -477,6 +477,15 @@
     			console.error('Error fetching data:', error); // 오류 처리
     		}
     }//end drawVisualization
+    
+    $(document).ready(function () {
+        const selectAllCheckbox = document.getElementById("selectAll");
+
+        // 페이지 로드 시 체크된 상태라면 강제로 전체선택 로직 실행
+        if (selectAllCheckbox.checked) {
+            checkedAll(selectAllCheckbox);
+        }
+    });
 
     // 차트 변경
     function updateChartType() {
