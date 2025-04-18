@@ -48,7 +48,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="atrzDetailappBtn" class="main-btn success-btn rounded-full btn-hover small-btn">승인</button>
+                    <button type="button" id="atrzDetailappBtn" class="main-btn primary-btn rounded-full btn-hover small-btn">승인</button>
                     <button type="button" class="main-btn light-btn rounded-full btn-hover small-btn" data-bs-dismiss="modal">취소</button>
                 </div>
             </div>
@@ -75,7 +75,7 @@
                             </tr>
                             <tr>
                                 <td>반려의견</td>
-                                <td><textarea class="form-control" id="companionMessage" placeholder="반려 결재의견 입력은 필수입니다."></textarea></td>
+                                <td><textarea class="form-control" id="companionMessage" placeholder="반려시 결재의견은 필수입력사항입니다."></textarea></td>
                             </tr>
                         </table>
                     </form>

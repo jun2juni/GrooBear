@@ -204,7 +204,7 @@
 		       ,L.sanctn_progrs_sttus_code
 		       ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
                ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
-		  FROM atrz A
+		  FROM ATRZ A
 		  LEFT JOIN atrz_line L
 		    ON A.atrz_doc_no = L.atrz_doc_no
 		 WHERE 1 = 1 
@@ -499,8 +499,8 @@
 	<select id="readHoCnt" parameterType="string" resultType="double">
 		SELECT YRYC_REMNDR_DAYCNT
 		FROM VACATION
-		WHERE EMPL_NO =#{empNo}
-		AND YRYC_YEAR='2025'
+		WHERE EMPL_NO = #{empNo}
+		AND YRYC_YEAR = TO_CHAR(SYSDATE, 'YYYY')
 	</select>
 	
 	<!-- 전자결재 임시저장 update -->
@@ -545,28 +545,28 @@
 	<insert id="atrzHolidayStorage" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
 	       INSERT INTO 
 	       			ATRZ (
-		        ATRZ_DOC_NO,
-		        DRAFTER_EMPNO,
-		        DRAFTER_CLSF,
-		        DRAFTER_EMPNM,
-		        DRAFTER_DEPT,
-		        ATRZ_SJ,
-		        ATRZ_CN,
-		        ATRZ_TMPR_STRE_DT,
-		        ATRZ_STTUS_CODE,
-		        DOC_FORM_NO
+		         ATRZ_DOC_NO,
+		        ,DRAFTER_EMPNO
+		        ,DRAFTER_CLSF
+		        ,DRAFTER_EMPNM
+		        ,DRAFTER_DEPT
+		        ,ATRZ_SJ
+		        ,ATRZ_CN
+		        ,ATRZ_TMPR_STRE_DT
+		        ,ATRZ_STTUS_CODE
+		        ,DOC_FORM_NO
 		    )
 		    VALUES (
-		        #{atrzDocNo},
-		        #{drafterEmpno},
-		        #{drafterClsf},
-		        #{drafterEmpnm},
-		        #{drafterDept},
-		        #{atrzSj},
-		        #{atrzCn},
-		        SYSDATE,
-		        '99',
-		        #{docFormNo}
+		         #{atrzDocNo},
+		        ,#{drafterEmpno}
+		        ,#{drafterClsf}
+		        ,#{drafterEmpnm}
+		        ,#{drafterDept}
+		        ,#{atrzSj}
+		        ,#{atrzCn}
+		        ,SYSDATE
+		        ,'99'
+		        ,#{docFormNo}
 		    )
 	</insert>
 	<!-- 연차신청서 임시저장 murge into -->
@@ -579,10 +579,10 @@
 	    ON (A.ATRZ_DOC_NO = B.ATRZ_DOC_NO)
 	    WHEN MATCHED THEN
 	        UPDATE SET
-	            HOLI_CODE = #{holiCode},
-	            HOLI_START = #{holiStart},
-	            HOLI_END = #{holiEnd},
-	            HOLI_USE_DAYS = #{holiUseDays}
+	            HOLI_CODE = #{holiCode}
+	            ,HOLI_START = #{holiStart}
+	            ,HOLI_END = #{holiEnd}
+	            ,HOLI_USE_DAYS = #{holiUseDays}
 	    WHEN NOT MATCHED THEN
 	        INSERT (
 	        	  HOLI_ACTPLN_NO
@@ -592,7 +592,7 @@
 	            , HOLI_END
 	            , HOLI_USE_DAYS
 	        ) VALUES (
-		         #{holiActplnNo}
+		          #{holiActplnNo}
 				, #{atrzDocNo}
 	            , #{holiCode}
 	            , #{holiStart}
@@ -611,48 +611,70 @@
 		<!-- 전자결재 상세조회 -->
 	<select id="getAtrzStorage" parameterType="string" resultMap="atrzMap">
 		SELECT 	/* AtrzMapper.getAtrzStorage */
-		    A.ATRZ_DOC_NO,
-		    A.DRAFTER_EMPNO,
-		    A.DRAFTER_CLSF,
-		    A.DRAFTER_EMPNM,
-		    A.DRAFTER_DEPT,
-		    A.BKMK_YN,
-		    A.ATCH_FILE_NO,
-		    A.ATRZ_SJ,
-		    A.ATRZ_CN,
-		    A.ATRZ_OPINION,
-		    A.ATRZ_TMPR_STRE_DT,
-		    A.ATRZ_DRFT_DT,
-		    A.ATRZ_COMPT_DT,
-		    A.ATRZ_RTRVL_DT,
-		    A.ATRZ_STTUS_CODE,
-		    A.ELTSGN_IMAGE,
-		    A.DOC_FORM_NO,
-		    A.ATRZ_DELETE_YN,
-		    A.SCHDUL_REG_YN,
-		
-		    H.HOLI_ACTPLN_NO, H.HOLI_CODE, H.HOLI_START, H.HOLI_END, H.HOLI_USE_DAYS,
-		    S.SPENDING_REPORT_NO, S.EXPENSE_ORDER, S.EXPENSE_DATE, S.ITEM_DESCRIPTION, S.ITEM_QUANTITY, S.ITEM_AMOUNT, S.PAYMENT_METHOD,
-		    SL.SALARY_NO, SL.BASE_SALARY, SL.MEAL_ALLOWANCE, SL.INCOME_TAX, SL.LOCAL_TAX, SL.PENSION, SL.EMPLOYMENT_INS, SL.HEALTH_INS, SL.CARE_INS, SL.PAY_DATE,
-		    B.BANK_ACC_NO, B.OLD_BANK, B.OLD_ACC_NO, B.NEW_BANK, B.NEW_ACC_NO, B.REASON,
-		    D.DRAFT_NO,
-		    EC.EMP_CERT_NO,
-		    R.RESIGNATION_NO,
-		
-		    L.ATRZ_LN_SN,
-		    L.SANCTNER_EMPNO,
-		    L.SANCTNER_CLSF_CODE,
-		    L.CONTD_EMPNO,
-		    L.CONTD_CLSF_CODE,
-		    L.DCRB_MAN_EMPNO,
-		    L.DCRB_MAN_CLSF_CODE,
-		    L.ATRZ_TY,
-		    L.SANCTN_PROGRS_STTUS_CODE,
-		    L.DCRB_AUTHOR_YN,
-		    L.CONTD_AUTHOR_YN,
-		    L.SANCTN_OPINION,
-		    L.ELTSGN_IMAGE AS LINE_ELTSGN_IMAGE,
-		    L.SANCTN_CONFM_DT
+		     A.ATRZ_DOC_NO
+		    ,A.DRAFTER_EMPNO
+		    ,A.DRAFTER_CLSF
+		    ,A.DRAFTER_EMPNM
+		    ,A.DRAFTER_DEPT
+		    ,A.BKMK_YN
+		    ,A.ATCH_FILE_NO
+		    ,A.ATRZ_SJ
+		    ,A.ATRZ_CN
+		    ,A.ATRZ_OPINION
+		    ,A.ATRZ_TMPR_STRE_DT
+		    ,A.ATRZ_DRFT_DT
+		    ,A.ATRZ_COMPT_DT
+		    ,A.ATRZ_RTRVL_DT
+		    ,A.ATRZ_STTUS_CODE
+		    ,A.ELTSGN_IMAGE
+		    ,A.DOC_FORM_NO
+		    ,A.ATRZ_DELETE_YN
+		    ,A.SCHDUL_REG_YN
+		    ,H.HOLI_ACTPLN_NO
+		    ,H.HOLI_CODE
+		    ,H.HOLI_START
+		    ,H.HOLI_END
+		    ,H.HOLI_USE_DAYS
+		    ,S.SPENDING_REPORT_NO
+		    ,S.EXPENSE_ORDER
+		    ,S.EXPENSE_DATE
+		    ,S.ITEM_DESCRIPTION
+		    ,S.ITEM_QUANTITY
+		    ,S.ITEM_AMOUNT
+		    ,S.PAYMENT_METHOD
+		    ,SL.SALARY_NO
+		    ,SL.BASE_SALARY
+		    ,SL.MEAL_ALLOWANCE
+		    ,SL.INCOME_TAX
+		    ,SL.LOCAL_TAX
+		    ,SL.PENSION
+		    ,SL.EMPLOYMENT_INS
+		    ,SL.HEALTH_INS
+		    ,SL.CARE_INS
+		    ,SL.PAY_DATE
+		    ,B.BANK_ACC_NO
+		    ,B.OLD_BANK
+		    ,B.OLD_ACC_NO
+		    ,B.NEW_BANK
+		    ,B.NEW_ACC_NO
+		    ,B.REASON
+		    ,D.DRAFT_NO
+		    ,EC.EMP_CERT_NO
+		    ,R.RESIGNATION_NO
+		    ,L.ATRZ_LN_SN
+		    ,L.SANCTNER_EMPNO
+		    ,L.SANCTNER_CLSF_CODE
+		    ,L.CONTD_EMPNO
+		    ,L.CONTD_CLSF_CODE
+		    ,L.DCRB_MAN_EMPNO
+		    ,L.DCRB_MAN_CLSF_CODE
+		    ,L.ATRZ_TY
+		    ,L.SANCTN_PROGRS_STTUS_CODE
+		    ,L.DCRB_AUTHOR_YN
+		    ,L.CONTD_AUTHOR_YN
+		    ,L.SANCTN_OPINION
+		    ,L.ELTSGN_IMAGE AS LINE_ELTSGN_IMAGE
+		    ,L.SANCTN_CONFM_DT
 		
 		FROM ATRZ A
 		LEFT JOIN DOCUM_HOLIDAY H ON A.ATRZ_DOC_NO = H.ATRZ_DOC_NO
@@ -670,12 +692,13 @@
 	<!-- 연차신청서 임시저장후 업데이트 -->
 	<update id="updateHolidayAtrz" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
 		    UPDATE ATRZ
-		    SET ATRZ_SJ = #{atrzSj},
-		        ATRZ_CN = #{atrzCn},
-		        DRAFTER_CLSF = #{clsfCode},
-		        DRAFTER_DEPT = #{deptCode},
-		        ATRZ_DRFT_DT = SYSDATE,
-		        ATRZ_STTUS_CODE = '10'
+		      SET 
+		    	ATRZ_SJ = #{atrzSj}
+		    	,ATRZ_CN = #{atrzCn}
+		        ,DRAFTER_CLSF = #{clsfCode}
+		        ,DRAFTER_DEPT = #{deptCode}
+		        ,ATRZ_DRFT_DT = SYSDATE
+		        ,ATRZ_STTUS_CODE = '10'
 		    WHERE ATRZ_DOC_NO = #{atrzDocNo}
 	</update>
 	
@@ -687,10 +710,10 @@
 	    ON (A.ATRZ_DOC_NO = B.ATRZ_DOC_NO)
 	    WHEN MATCHED THEN
 	        UPDATE SET
-	            HOLI_CODE = #{holiCode},
-	            HOLI_START = #{holiStart},
-	            HOLI_END = #{holiEnd},
-	            HOLI_USE_DAYS = #{holiUseDays}
+	             HOLI_CODE = #{holiCode}
+	            ,HOLI_START = #{holiStart}
+	            ,HOLI_END = #{holiEnd}
+	            ,HOLI_USE_DAYS = #{holiUseDays}
 	    WHEN NOT MATCHED THEN
 	        INSERT (
 	        	  HOLI_ACTPLN_NO
@@ -711,48 +734,68 @@
 	<!-- 재기안시 문서정보가져오기 -->
 	<select id="selectDocumentReturn" parameterType="string" resultMap="atrzMap">
 	SELECT 	/* AtrzMapper.selectDocumentReturn */
-	    A.ATRZ_DOC_NO,
-	    A.DRAFTER_EMPNO,
-	    A.DRAFTER_CLSF,
-	    A.DRAFTER_EMPNM,
-	    A.DRAFTER_DEPT,
-	    A.BKMK_YN,
-	    A.ATCH_FILE_NO,
-	    A.ATRZ_SJ,
-	    A.ATRZ_CN,
-	    A.ATRZ_OPINION,
-	    A.ATRZ_TMPR_STRE_DT,
-	    A.ATRZ_DRFT_DT,
-	    A.ATRZ_COMPT_DT,
-	    A.ATRZ_RTRVL_DT,
-	    A.ATRZ_STTUS_CODE,
-	    A.ELTSGN_IMAGE,
-	    A.DOC_FORM_NO,
-	    A.ATRZ_DELETE_YN,
-	    A.SCHDUL_REG_YN,
-	
-	    H.HOLI_ACTPLN_NO, H.HOLI_CODE, H.HOLI_START, H.HOLI_END, H.HOLI_USE_DAYS,
-	    S.SPENDING_REPORT_NO, S.EXPENSE_ORDER, S.EXPENSE_DATE, S.ITEM_DESCRIPTION, S.ITEM_QUANTITY, S.ITEM_AMOUNT, S.PAYMENT_METHOD,
-	    SL.SALARY_NO, SL.BASE_SALARY, SL.MEAL_ALLOWANCE, SL.INCOME_TAX, SL.LOCAL_TAX, SL.PENSION, SL.EMPLOYMENT_INS, SL.HEALTH_INS, SL.CARE_INS, SL.PAY_DATE,
-	    B.BANK_ACC_NO, B.OLD_BANK, B.OLD_ACC_NO, B.NEW_BANK, B.NEW_ACC_NO, B.REASON,
-	    D.DRAFT_NO,
-	    EC.EMP_CERT_NO,
-	    R.RESIGNATION_NO,
-	
-	    L.ATRZ_LN_SN,
-	    L.SANCTNER_EMPNO,
-	    L.SANCTNER_CLSF_CODE,
-	    L.CONTD_EMPNO,
-	    L.CONTD_CLSF_CODE,
-	    L.DCRB_MAN_EMPNO,
-	    L.DCRB_MAN_CLSF_CODE,
-	    L.ATRZ_TY,
-	    L.SANCTN_PROGRS_STTUS_CODE,
-	    L.DCRB_AUTHOR_YN,
-	    L.CONTD_AUTHOR_YN,
-	    L.SANCTN_OPINION,
-	    L.ELTSGN_IMAGE AS LINE_ELTSGN_IMAGE,
-	    L.SANCTN_CONFM_DT
+	    A.ATRZ_DOC_NO
+	    ,A.DRAFTER_EMPNO
+	    ,A.DRAFTER_CLSF
+	    ,A.DRAFTER_EMPNM
+	    ,A.DRAFTER_DEPT
+	    ,A.BKMK_YN
+	    ,A.ATCH_FILE_NO
+	    ,A.ATRZ_SJ
+	    ,A.ATRZ_CN
+	    ,A.ATRZ_OPINION
+	    ,A.ATRZ_TMPR_STRE_DT
+	    ,A.ATRZ_DRFT_DT
+	    ,A.ATRZ_COMPT_DT
+	    ,A.ATRZ_RTRVL_DT
+	    ,A.ATRZ_STTUS_CODE
+	    ,A.ELTSGN_IMAGE
+	    ,A.DOC_FORM_NO
+	    ,A.ATRZ_DELETE_YN
+	    ,A.SCHDUL_REG_YN
+	    ,H.HOLI_ACTPLN_NO
+	    ,H.HOLI_CODE
+	    ,H.HOLI_START
+	    ,H.HOLI_END
+	    ,H.HOLI_USE_DAYS
+	    ,S.SPENDING_REPORT_NO
+	    ,S.EXPENSE_ORDER
+	    ,S.EXPENSE_DATE
+	    ,S.ITEM_DESCRIPTION
+	    ,S.ITEM_QUANTITY
+	    ,S.ITEM_AMOUNT
+	    ,S.PAYMENT_METHOD
+	    ,SL.SALARY_NO
+	    ,SL.BASE_SALARY
+	    ,SL.MEAL_ALLOWANCE
+	    ,SL.INCOME_TAX, SL.LOCAL_TAX
+	    ,SL.PENSION, SL.EMPLOYMENT_INS
+	    ,SL.HEALTH_INS
+	    ,SL.CARE_INS
+	    ,SL.PAY_DATE
+	    ,B.BANK_ACC_NO
+	    ,B.OLD_BANK
+	    ,B.OLD_ACC_NO
+	    ,B.NEW_BANK
+	    ,B.NEW_ACC_NO
+	    ,B.REASON
+	    ,D.DRAFT_NO
+	    ,EC.EMP_CERT_NO
+	    ,R.RESIGNATION_NO
+	    ,L.ATRZ_LN_SN
+	    ,L.SANCTNER_EMPNO
+	    ,L.SANCTNER_CLSF_CODE
+	    ,L.CONTD_EMPNO
+	    ,L.CONTD_CLSF_CODE
+	    ,L.DCRB_MAN_EMPNO
+	    ,L.DCRB_MAN_CLSF_CODE
+	    ,L.ATRZ_TY
+	    ,L.SANCTN_PROGRS_STTUS_CODE
+	    ,L.DCRB_AUTHOR_YN
+	    ,L.CONTD_AUTHOR_YN
+	    ,L.SANCTN_OPINION
+	    ,L.ELTSGN_IMAGE AS LINE_ELTSGN_IMAGE
+	    ,L.SANCTN_CONFM_DT
 	
 	FROM ATRZ A
 	LEFT JOIN DOCUM_HOLIDAY H ON A.ATRZ_DOC_NO = H.ATRZ_DOC_NO
@@ -880,35 +923,56 @@
 	<!-- 전자결재 상세조회 -->
 	<select id="selectAtrzDetail" parameterType="string" resultMap="atrzMap">
 		 SELECT 	/* AtrzMapper.selectAtrzDetail */
-            A.ATRZ_DOC_NO,
-            A.DRAFTER_EMPNO,
-            A.DRAFTER_CLSF,
-            A.DRAFTER_EMPNM,
-            A.DRAFTER_DEPT,
-            A.BKMK_YN,
-            A.ATCH_FILE_NO,
-            A.ATRZ_SJ,
-            A.ATRZ_CN,
-            A.ATRZ_OPINION,
-            A.ATRZ_TMPR_STRE_DT,
-            A.ATRZ_DRFT_DT,
-            A.ATRZ_COMPT_DT,
-            A.ATRZ_RTRVL_DT,
-            A.ATRZ_STTUS_CODE,
-            A.ELTSGN_IMAGE,
-            A.DOC_FORM_NO,
-            A.ATRZ_DELETE_YN,
-            A.SCHDUL_REG_YN,
-
-            H.HOLI_ACTPLN_NO, H.HOLI_CODE, H.HOLI_START, H.HOLI_END,H.HOLI_USE_DAYS,
-            S.SPENDING_REPORT_NO, S.EXPENSE_ORDER, S.EXPENSE_DATE, S.ITEM_DESCRIPTION, S.ITEM_QUANTITY, S.ITEM_AMOUNT, S.PAYMENT_METHOD,
-            SL.SALARY_NO, SL.BASE_SALARY, SL.MEAL_ALLOWANCE, SL.INCOME_TAX, SL.LOCAL_TAX, SL.PENSION, SL.EMPLOYMENT_INS, SL.HEALTH_INS, SL.CARE_INS, SL.PAY_DATE,
-            B.BANK_ACC_NO, B.OLD_BANK, B.OLD_ACC_NO, B.NEW_BANK, B.NEW_ACC_NO, B.REASON,
-            D.DRAFT_NO,
-            EC.EMP_CERT_NO,
-            R.RESIGNATION_NO
-            
-            
+             A.ATRZ_DOC_NO
+            ,A.DRAFTER_EMPNO
+            ,A.DRAFTER_CLSF
+            ,A.DRAFTER_EMPNM
+            ,A.DRAFTER_DEPT
+            ,A.BKMK_YN
+            ,A.ATCH_FILE_NO
+            ,A.ATRZ_SJ
+            ,A.ATRZ_CN
+            ,A.ATRZ_OPINION
+            ,A.ATRZ_TMPR_STRE_DT
+            ,A.ATRZ_DRFT_DT
+            ,A.ATRZ_COMPT_DT
+            ,A.ATRZ_RTRVL_DT
+            ,A.ATRZ_STTUS_CODE
+            ,A.ELTSGN_IMAGE
+            ,A.DOC_FORM_NO
+            ,A.ATRZ_DELETE_YN
+            ,A.SCHDUL_REG_YN
+            ,H.HOLI_ACTPLN_NO
+            ,H.HOLI_CODE
+            ,H.HOLI_START
+            ,H.HOLI_END
+            ,H.HOLI_USE_DAYS
+            ,S.SPENDING_REPORT_NO
+            ,S.EXPENSE_ORDER
+            ,S.EXPENSE_DATE
+            ,S.ITEM_DESCRIPTION
+            ,S.ITEM_QUANTITY
+            ,S.ITEM_AMOUNT
+            ,S.PAYMENT_METHOD
+            ,SL.SALARY_NO
+            ,SL.BASE_SALARY
+            ,SL.MEAL_ALLOWANCE
+            ,SL.INCOME_TAX
+            ,SL.LOCAL_TAX
+            ,SL.PENSION
+            ,SL.EMPLOYMENT_INS
+            ,SL.HEALTH_INS
+            ,SL.CARE_INS
+            ,SL.PAY_DATE
+            ,B.BANK_ACC_NO
+            ,B.OLD_BANK
+            ,B.OLD_ACC_NO
+            ,B.NEW_BANK
+            ,B.NEW_ACC_NO
+            ,B.REASON
+            ,D.DRAFT_NO
+            ,EC.EMP_CERT_NO
+            ,R.RESIGNATION_NO
         FROM ATRZ A
         LEFT JOIN DOCUM_HOLIDAY H ON A.ATRZ_DOC_NO = H.ATRZ_DOC_NO
         LEFT JOIN DOCUM_SPENDING S ON A.ATRZ_DOC_NO = S.ATRZ_DOC_NO
@@ -924,21 +988,21 @@
 	<!-- 전자결재선 상세보기 -->
 	<select id="selectAtrzLineList" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
 		SELECT     /* AtrzMapper.selectAtrzLineList */
-            ATRZ_DOC_NO,
-            ATRZ_LN_SN,
-            SANCTNER_EMPNO,
-            SANCTNER_CLSF_CODE,
-            CONTD_EMPNO,
-            CONTD_CLSF_CODE,
-            DCRB_MAN_EMPNO,
-            DCRB_MAN_CLSF_CODE,
-            ATRZ_TY,
-            SANCTN_PROGRS_STTUS_CODE,
-            DCRB_AUTHOR_YN,
-            CONTD_AUTHOR_YN,
-            SANCTN_OPINION,
-            ELTSGN_IMAGE,
-            SANCTN_CONFM_DT
+             ATRZ_DOC_NO
+            ,ATRZ_LN_SN
+            ,SANCTNER_EMPNO
+            ,SANCTNER_CLSF_CODE
+            ,CONTD_EMPNO
+            ,CONTD_CLSF_CODE
+            ,DCRB_MAN_EMPNO
+            ,DCRB_MAN_CLSF_CODE
+            ,ATRZ_TY
+            ,SANCTN_PROGRS_STTUS_CODE
+            ,DCRB_AUTHOR_YN
+            ,CONTD_AUTHOR_YN
+            ,SANCTN_OPINION
+            ,ELTSGN_IMAGE
+            ,SANCTN_CONFM_DT
         FROM ATRZ_LINE
         WHERE ATRZ_DOC_NO = #{atrzDocNo}
         ORDER BY ATRZ_LN_SN
@@ -949,13 +1013,13 @@
 		    SELECT *		/* AtrzMapper.holidayDetail */
 			    FROM (
 			        SELECT 
-			            HOLI_ACTPLN_NO,
-			            ATRZ_DOC_NO,
-			            HOLI_CODE,
-			            HOLI_START,
-			            HOLI_END,
-			            HOLI_USE_DAYS,
-			            ROW_NUMBER() OVER (ORDER BY HOLI_ACTPLN_NO DESC) AS RN
+			            HOLI_ACTPLN_NO
+			            ,ATRZ_DOC_NO
+			            ,HOLI_CODE
+			            ,HOLI_START
+			            ,HOLI_END
+			            ,HOLI_USE_DAYS
+			            ,ROW_NUMBER() OVER (ORDER BY HOLI_ACTPLN_NO DESC) AS RN
 			        FROM DOCUM_HOLIDAY
 			        WHERE ATRZ_DOC_NO = #{atrzDocNo}
 			    )
@@ -1034,7 +1098,7 @@
 	<update id="atrzDetailAppUpdate" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
 		UPDATE atrz_line  /* AtrzMapper.atrzDetailAppUpdate */
 		SET 
-			SANCTN_PROGRS_STTUS_CODE = 10
+			 SANCTN_PROGRS_STTUS_CODE = 10
 			,SANCTN_CONFM_DT = SYSDATE
 			,SANCTN_OPINION = #{atrzLineVOList[0].sanctnOpinion}
 		WHERE ATRZ_DOC_NO = #{atrzDocNo} AND SANCTNER_EMPNO = #{emplNo}
@@ -1044,7 +1108,7 @@
 	<update id="atrzStatusFinalUpdate" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
 		UPDATE ATRZ /* AtrzMapper.atrzStatusFinalUpdate */
 		SET 
-			ATRZ_STTUS_CODE = #{atrzSttusCode}
+			 ATRZ_STTUS_CODE = #{atrzSttusCode}
 			,ATRZ_COMPT_DT = SYSDATE
 		WHERE ATRZ_DOC_NO = #{atrzDocNo}
 	</update>
@@ -1054,14 +1118,14 @@
 		BEGIN
 		UPDATE atrz_line  /* AtrzMapper.atrzDetailAppUpdate */
 		SET 
-			SANCTN_PROGRS_STTUS_CODE = 20
+			 SANCTN_PROGRS_STTUS_CODE = 20
 			,SANCTN_CONFM_DT = SYSDATE
 			,SANCTN_OPINION = #{atrzLineVOList[0].sanctnOpinion}
 		WHERE ATRZ_DOC_NO = #{atrzDocNo} 
 		AND SANCTNER_EMPNO = #{emplNo};
 		
 		UPDATE ATRZ
-		SET ATRZ_STTUS_CODE = 20
+		 SET ATRZ_STTUS_CODE = 20
 			,ATRZ_COMPT_DT = SYSDATE
 			,ATRZ_OPINION = #{atrzLineVOList[0].sanctnOpinion}
 		WHERE ATRZ_DOC_NO = #{atrzDocNo};
@@ -1090,8 +1154,8 @@
 	<update id="atrzCancelUpdate" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
 			UPDATE ATRZ			/* AtrzMapper.atrzCancelUpdate */
 			SET 
-			    atrz_sttus_code = '30',
-			    atrz_rtrvl_dt = SYSDATE
+			     atrz_sttus_code = '30'
+			    ,atrz_rtrvl_dt = SYSDATE
 			WHERE atrz_doc_no = #{atrzDocNo}
 			  AND drafter_empno = #{emplNo}
 	</update>
@@ -1099,33 +1163,31 @@
 	<!-- 연차신청서 최종 결재 완료시 -->
 	<select id="selectHolidayByDocNo" resultMap="holidayDetailMap">
 	    SELECT 				/* AtrzMapper.selectHolidayByDocNo */
-	        H.HOLI_ACTPLN_NO,
-	        H.ATRZ_DOC_NO,
-	        H.HOLI_CODE,
-	        H.HOLI_START,
-	        H.HOLI_END,
-	        H.HOLI_USE_DAYS,
-	
+	         H.HOLI_ACTPLN_NO
+	        ,H.ATRZ_DOC_NO
+	        ,H.HOLI_CODE
+	        ,H.HOLI_START
+	        ,H.HOLI_END
+	        ,H.HOLI_USE_DAYS
 	        /* AtrzVO에 필요한 컬럼들 (resultMap에서 참조하는 것들) */
-	        A.ATCH_FILE_NO,
-	        A.ATRZ_CN,
-	        A.ATRZ_COMPT_DT,
-	        A.ATRZ_DELETE_YN,
-	        A.ATRZ_DRFT_DT,
-	        A.ATRZ_OPINION,
-	        A.ATRZ_RTRVL_DT,
-	        A.ATRZ_SJ,
-	        A.ATRZ_STTUS_CODE,
-	        A.ATRZ_TMPR_STRE_DT,
-	        A.BKMK_YN,
-	        A.DOC_FORM_NO,
-	        A.DRAFTER_CLSF,
-	        A.DRAFTER_DEPT,
-	        A.DRAFTER_EMPNM,
-	        A.DRAFTER_EMPNO,
-	        A.ELTSGN_IMAGE,
-	        A.SCHDUL_REG_YN
-	
+	        ,A.ATCH_FILE_NO
+	        ,A.ATRZ_CN
+	        ,A.ATRZ_COMPT_DT
+	        ,A.ATRZ_DELETE_YN
+	        ,A.ATRZ_DRFT_DT
+	        ,A.ATRZ_OPINION
+	        ,A.ATRZ_RTRVL_DT
+	        ,A.ATRZ_SJ
+	        ,A.ATRZ_STTUS_CODE
+	        ,A.ATRZ_TMPR_STRE_DT
+	        ,A.BKMK_YN
+	        ,A.DOC_FORM_NO
+	        ,A.DRAFTER_CLSF
+	        ,A.DRAFTER_DEPT
+	        ,A.DRAFTER_EMPNM
+	        ,A.DRAFTER_EMPNO
+	        ,A.ELTSGN_IMAGE
+	        ,A.SCHDUL_REG_YN
 	    FROM DOCUM_HOLIDAY H
 	    LEFT JOIN ATRZ A ON H.ATRZ_DOC_NO = A.ATRZ_DOC_NO
 	    WHERE H.ATRZ_DOC_NO = #{atrzDocNo}
@@ -1137,19 +1199,19 @@
 		    INSERT INTO  /* AtrzMapper.holidayDclzUpdate */
 		    DCLZ_TYPE 
 		    (		
-		        EMPL_NO,
-		        DCLZ_NO,
-		        DCLZ_CODE,
-		        DCLZ_BEGIN_DT,
-		        DCLZ_END_DT,
-		        DCLZ_REASON
+		         EMPL_NO
+		        ,DCLZ_NO
+		        ,DCLZ_CODE
+		        ,DCLZ_BEGIN_DT
+		        ,DCLZ_END_DT
+		        ,DCLZ_REASON
 		    ) VALUES (
-		        #{emplNo},
-		        #{dclzNo},
-		        #{dclzCode},
-		        #{dclzBeginDt},
-		        #{dclzEndDt},
-		        #{dclzReason}
+		         #{emplNo}
+		        ,#{dclzNo}
+		        ,#{dclzCode}
+		        ,#{dclzBeginDt}
+		        ,#{dclzEndDt}
+		        ,#{dclzReason}
 		    )
 	</insert>
 	<!-- 연차신청서 기안완료시 연차갯수 소진시키기 -->
@@ -1180,8 +1242,33 @@
 			WHERE 1 = 1
 			AND EMPL_NO = #{emplNo}
 			AND YRYC_YEAR = TO_CHAR(SYSDATE, 'YYYY')
-	
 	</select>
+	
+	<!-- 임시저장 결재선 삭제 -->
+	<delete id="deleteStorageAtrzLines">
+		 DELETE FROM ATRZ_LINE WHERE ATRZ_DOC_NO IN
+	    <foreach collection="atrzDocNos" item="atrzDocNo" open="(" separator="," close=")">
+	        #{atrzDocNo}
+	    </foreach>
+	</delete>
+	
+	<!-- 임시저장 연차신청서 삭제 -->
+	<delete id="deleteStorageDocumHoliday">
+		 DELETE FROM DOCUM_HOLIDAY WHERE ATRZ_DOC_NO IN
+	    <foreach collection="atrzDocNos" item="atrzDocNo" open="(" separator="," close=")">
+	        #{atrzDocNo}
+	    </foreach>
+	</delete>
+	
+	<!-- 임시저장 결재선 삭제 -->
+	<delete id="deleteStorageAtrz">
+		 DELETE FROM ATRZ WHERE ATRZ_DOC_NO IN
+	    <foreach collection="atrzDocNos" item="atrzDocNo" open="(" separator="," close=")">
+	        #{atrzDocNo}
+	    </foreach>
+	</delete>
+	
+	
 	<!-- 연차신청서 resultMap 사용 -->
 	<resultMap id="holidayDetailMap" type="kr.or.ddit.sevenfs.vo.atrz.HolidayVO" >
 		<!-- 연차신청서 -->
@@ -1191,6 +1278,7 @@
 		<result property="holiStart" column="HOLI_START"/>
 		<result property="holiEnd" column="HOLI_END"/>
 		<result property="holiUseDays" column="HOLI_USE_DAYS"/>
+		<result property="holiDelete" column="HOLI_DELETE"/>
 		<association property="atrzVO" resultMap="atrzMap"></association>
 	</resultMap>
 

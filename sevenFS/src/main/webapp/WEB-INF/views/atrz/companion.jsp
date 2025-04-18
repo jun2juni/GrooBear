@@ -151,8 +151,6 @@
 						<!-- <p>${atrzVOList}</p> -->
 						<!-- 메뉴바 시작 -->
 					<!-- 메뉴바 끝 -->
-					<!-- 새결재 진행 모달import -->
-					<c:import url="newAtrzDocModal.jsp" />
 					<!-- 컨텐츠1 시작 -->
 
 					<div class="tab-content" id="myTabContent">
@@ -535,6 +533,20 @@
 </main>
 <%@ include file="../layout/prescript.jsp" %>
 <!-- jquery 사용시 여기 이후 작성하기 -->
-<c:import url="./newAtrzDocModal.jsp" />
+<!-- 새결재 진행 모달import -->
+<c:import url="newAtrzDocModal.jsp" />
+<script>
+//기간입력 선택시 활성화 시키는 스크립트
+document.getElementById("duration").addEventListener("change",function() {
+	var durationPeriod = document.getElementById("durationPeriod");
+	if (this.value == "period") {
+		durationPeriod.classList.remove("d-none");
+		durationPeriod.classList.add("d-flex");
+	} else {
+		durationPeriod.classList.remove("d-flex");
+		durationPeriod.classList.add("d-none");
+	}
+})
+</script>
 </body>
 </html>

@@ -2,6 +2,7 @@ package kr.or.ddit.sevenfs.service.atrz.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
+import kr.or.ddit.sevenfs.service.notification.NotificationService;
 import kr.or.ddit.sevenfs.service.organization.DclztypeService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.utils.CommonCode;
@@ -20,6 +22,7 @@ import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 import kr.or.ddit.sevenfs.vo.atrz.HolidayVO;
 import kr.or.ddit.sevenfs.vo.atrz.SalaryVO;
 import kr.or.ddit.sevenfs.vo.atrz.SpendingVO;
+import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
 import kr.or.ddit.sevenfs.vo.organization.DclzTypeVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.organization.VacationVO;
@@ -39,7 +42,9 @@ public class AtrzServiceImpl implements AtrzService {
 	@Autowired
 	private DclztypeService dclztypeService;
 	
-	
+	//알림을 위한
+	@Autowired
+	private NotificationService notificationService;
 	
 	//결재 대기중인 문서리스트
 	@Override
@@ -117,13 +122,6 @@ public class AtrzServiceImpl implements AtrzService {
 	}
 	
 	
-	//기안서 상세
-	@Override
-	public DraftVO draftDetail(String draftNo) {
-		return this.atrzMapper.draftDetail(draftNo);
-	}
-	
-	
 	//전자결재테이블 등록
 	@Override
 	public int insertAtrz(AtrzVO atrzVO) {
@@ -148,8 +146,57 @@ public class AtrzServiceImpl implements AtrzService {
 		return this.atrzMapper.insertAtrzLine(atrzLineVO);
 	}
 	//연차신청서 등록
+	@Transactional
 	@Override
 	public int insertHoliday(HolidayVO documHolidayVO) {
+		//알림 vo생성
+		//알림에 넣을 정보를 셋팅해주기 위한 공간을 만든다.
+		NotificationVO notificationVO = new NotificationVO();
+		//여기서 제목 내용을 셋팅해줘야하는데 
+		String atrzDocNo = documHolidayVO.getAtrzDocNo();
+		log.info("insertHoliday->atrzDocNo :"+atrzDocNo);
+		 
+		//사번 리스트를 만들기 위한 List
+		List<String> sanctnerEmpNoList = new ArrayList<>();
+		String sanctnerEmpNo= "";
+		
+		AtrzVO atrzVO = atrzMapper.getAtrzStorage(atrzDocNo);
+		List<AtrzLineVO> atrzLineVoList = atrzVO.getAtrzLineVOList();
+		for(AtrzLineVO atrzLineVO : atrzLineVoList) {
+//			sanctnerEmpNm
+			//사원이름을 뽑기위해서 이렇게 진행
+			// 사원 정보 가져오기 (사번을 리스트에 추가)
+			log.info("insertHoliday->atrzLineVO : "+atrzLineVO);
+			sanctnerEmpNoList.add(atrzLineVO.getSanctnerEmpno());
+		}
+		//배열로 변환
+		String[] sanctnerEmpNoArr =sanctnerEmpNoList.toArray(new String[0]);
+		log.info("insertHoliday->sanctnerEmpNoArr :"+sanctnerEmpNoArr);
+		log.info("insertHoliday->atrzVO :"+atrzVO);
+		
+		
+		//originPath 기능별 NO =? /board/detail?boardNo=1
+		//skillCode  전자결재 코드 넘버
+		//알림 받아야할 사원의 정보를 리스트로 받아서 넘겨준다.
+		
+		//넘버를 vo에 담아서 넣어준다.
+		List<EmployeeVO> employeeVOList = new ArrayList<>();
+		for(String empNo : sanctnerEmpNoArr) {
+			EmployeeVO employeeVO = new EmployeeVO();
+			employeeVO.setEmplNo(empNo);
+			employeeVOList.add(employeeVO);
+		}
+		
+		
+		//알림 제목을 셋팅해준다 ntcnSj 제목
+		notificationVO.setNtcnSj("[전자결재 알림]"+ atrzVO.getDrafterEmpnm() +"님이 결재기안을 요청하였습니다.");
+		//알림 내용을 셋팅해준다 ntcnCn	내용
+		notificationVO.setNtcnCn(atrzVO.getAtrzSj());
+		notificationVO.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}");
+		notificationVO.setSkillCode("02");
+		
+		// 알림을 보낼 사번을 배열로 담아준다.
+		notificationService.insertNotification(notificationVO, employeeVOList);
 		return this.atrzMapper.insertHoliday(documHolidayVO);
 	}
 	
@@ -516,6 +563,23 @@ public class AtrzServiceImpl implements AtrzService {
 	    }
 
 	    return atrzReturnVO;
+	}
+	//기안서 상세
+	@Override
+	public DraftVO draftDetail(String draftNo) {
+		return this.atrzMapper.draftDetail(draftNo);
+		
+	}
+	
+	//임시저장함 삭제(일괄삭제)
+	@Transactional
+	@Override
+	public void storageListDelete(List<String> atrzDocNos) {
+		log.info("storageListDelete->atrzDocNos :"+atrzDocNos);
+		//문서번호 기준으로 하위 테이블 먼저 삭제(참조 무결성 고려)
+		atrzMapper.deleteStorageAtrzLines(atrzDocNos);
+		atrzMapper.deleteStorageDocumHoliday(atrzDocNos);
+		atrzMapper.deleteStorageAtrz(atrzDocNos);
 	}
 	
 	

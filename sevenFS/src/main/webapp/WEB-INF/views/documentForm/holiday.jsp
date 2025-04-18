@@ -125,6 +125,7 @@
 	padding-bottom: 10px;
 	width: 300px;
 	box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.1);
+	padding-top: 10px;
 	
 }
 
@@ -236,7 +237,7 @@
 .ui-state-highlight, .ui-widget-content .ui-state-highlight,
 .ui-widget-header .ui-state-highlight {
 	border: 0px;
-	background: #b0e0e6  ;
+	background: rgb(255, 192, 203);
 	border-radius: 50%;
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -301,18 +302,23 @@ select.ui-datepicker-year {
 								<div class="critical d-flex gap-2 mb-3">
 									<!--성진스 버튼-->
 									<button id="s_eap_app_top" type="button" 
-										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app btnFontSt">
-										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
+										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+										<span class="material-symbols-outlined fs-5">upload</span> 결재요청
 									</button>
-									<a id="s_eap_storTo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor btnFontSt"> 
-										<span class="material-symbols-outlined fs-5">error</span> 임시저장
+									<a id="s_eap_storTo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor btnFontSt"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+										<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
 									</a> 
 									<a id="s_appLine_btn" type="button"
-										class="btn btn-outline-info d-flex align-items-center gap-1 btnFontSt"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> 
+										class="btn btn-outline-info d-flex align-items-center gap-1"
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 btnFontSt" href="/atrz/home"> 
+									<a type="button"  href="/atrz/home"
+										class="btn btn-outline-danger d-flex align-items-center gap-1"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
@@ -395,17 +401,15 @@ select.ui-datepicker-year {
 													<div class="col-auto">
 														<div class="s_frm_title mb-2"><b>유형</b></div>
 														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault1"  value="20">
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault1" value="20">
 															<label class="form-check-label" for="flexRadioDefault1">오전반차</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2"  value="21">
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2" value="21">
 															<label class="form-check-label" for="flexRadioDefault2">오후반차</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio"
-																name="holiCode" id="flexRadioDefault3" 
-																value="22"> 
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault3" value="22"> 
 																<label class="form-check-label"	for="flexRadioDefault3">연차</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
@@ -417,6 +421,21 @@ select.ui-datepicker-year {
 															<label class="form-check-label" for="flexRadioDefault5">병가</label>
 														</div>
 													</div>
+													<script>
+														$(".s_eap_app").click(function() {
+															if (!$("input[name='holiCode']:checked").val()) {
+																swal({
+																	title: "연차유형이 선택되지 않았습니다.",
+																	text: "연차유형을 선택해주세요.",
+																	icon: "error",
+																	closeOnClickOutside: false,
+																	closeOnEsc: false,
+																	button: "확인"
+																});
+																return false;
+															}
+														});
+													</script>
 													
 													<!--연차기간 선택 시작-->
 													<div class="col ms-4">
@@ -426,8 +445,8 @@ select.ui-datepicker-year {
 																class="form-control s_ho_start d-inline-block"
 																style="width: 250px; cursor: context-menu;"
 																id="s_ho_start" required="required" onchange="dateCnt();" name="holiStartArr">
-															<input type="time" class="form-control d-inline-block"
-																style="width: 150px; display: none;"
+															<input type="hidden" class="form-control d-inline-block" 
+																style="width: 150px; display: none;" 
 																id="s_start_time" min="09:00:00" max="18:00:00" value="09:00:00"
 																disabled onchange="dateCnt();" name="holiStartArr"> 부터
 														</div>
@@ -436,12 +455,12 @@ select.ui-datepicker-year {
 																class="form-control s_ho_end d-inline-block mt-2"
 																style="width: 250px; cursor: context-menu;"
 																id="s_ho_end" required="required" onchange="dateCnt();" name="holiEndArr" />
-															<input type="time" class="form-control d-inline-block"
+															<input type="hidden" class="form-control d-inline-block"
 																style="width: 150px; display: none;"
 																id="s_end_time" min="09:00:00" max="18:00:00" value="18:00:00"
 																disabled onchange="dateCnt();" name="holiEndArr" /> 까지
 															<div class="d-inline-block" >
-																(총 <span id="s_date_cal">0</span>일)
+																(총 <span id="s_date_cal">0</span>일) &nbsp;&nbsp;&nbsp;공가와 병가의 경우에는 0으로 표시됩니다.
 															</div>
 														</div>
 														<div id="halfTypeArea" style="display: none; margin-top: 5px;">
@@ -455,7 +474,8 @@ select.ui-datepicker-year {
 															</div>
 														</div>
 														<div style="margin: 5px 0;">
-															사용 가능한 휴가일수는 <span id="s_ho_use"><fmt:formatNumber value="${checkHo}" minFractionDigits="0" maxFractionDigits="1" /></span>일 입니다.
+															사용 가능한 휴가일수는 
+															<span id="s_ho_use"><fmt:formatNumber value="${checkHo}" minFractionDigits="0" maxFractionDigits="1" /></span>일 입니다.
 														</div>
 													</div>	
 													<!--연차기간 선택 끝-->
@@ -468,8 +488,6 @@ select.ui-datepicker-year {
 														style="resize: none; height: 150px;" id="s_ho_co" name="atrzCn" 
 														required="required" rows="2" cols="20" wrap="hard"></textarea>
 												</div>
-
-												
 
 												<div style="padding: 10px 0;">
 													<div class="s_frm_title">파일첨부</div>
@@ -494,17 +512,23 @@ select.ui-datepicker-year {
 								<div class="critical d-flex gap-2 mt-3">
 									<!--성진스 버튼-->
 									<button id="s_eap_app_bottom" type="button" 
-										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app btnFontSt">
-										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
+										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app btnFontSt"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+										<span class="material-symbols-outlined fs-5">upload</span> 결재요청
 									</button>
-									<a id="s_eap_storBo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor btnFontSt"> 
-										<span class="material-symbols-outlined fs-5">error</span> 임시저장
+									<a id="s_eap_storBo" type="button" 
+										class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor btnFontSt"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+										<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
 									</a> 
 									<a id="s_appLine_btn" type="button" class="btn btn-outline-info d-flex align-items-center gap-1 btnFontSt"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal">
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 btnFontSt" href="/atrz/home"> 
+									<a type="button" href="/atrz/home"
+										class="btn btn-outline-danger d-flex align-items-center gap-1 btnFontSt"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;" > 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
@@ -526,88 +550,7 @@ select.ui-datepicker-year {
 <script>
 // 결재요청 클릭 시
 $(".s_eap_app").click(function() {
-	var eap_title = $('#s_ho_tt').val();
-	var eap_content = $('#s_ho_co').val();
-
-	// textarea에 \r \n같은 문자를 <br>로 바꿔주기
-	eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
-	var ho_code = $('input[type=radio]:checked').val();
-	var ho_start = $('#s_ho_start').val() + " " + $('#s_start_time').val();
-	var ho_end = $('#s_ho_end').val() + " " + $('#s_end_time').val();
-	var ho_use_count = $('#s_date_cal').text();
 	
-	// 결재선 지정 여부 확인
-	if ($(".s_appLine_tbody_new .clsTr").length === 0) {
-		swal({
-			title: "결재선이 지정되지 않았습니다.",
-			text: "결재선을 지정해주세요.",
-			icon: "error",
-			closeOnClickOutside: false,
-			closeOnEsc: false,
-			button: "확인"
-		});
-		return;
-	}
-	
-	// 날짜 계산
-	var start = new Date($('#s_ho_start').val() + 'T' + $('#s_start_time').val());
-	var end = new Date($('#s_ho_end').val() + 'T' + $('#s_end_time').val());
-	
-	// 신청 종료시간이 시작시간보다 빠를 때
-	if(start > end) {
-		swal({
-				title: "종료 시간이 시작 시간보다 빠를 수 없습니다!",
-				text: "신청 종료 시간을 다시 선택해주세요.",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false,
-				button: "확인"
-
-			});
-		$("#s_end_time").val('');
-	}
-	
-	// 제목, 내용이 비어있을 때
-	if(eap_title == "" || eap_content == "") {
-		swal({
-				title: "제목 또는 내용이 비어있습니다.",
-				text: "다시 확인해주세요.",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false,
-				button: "확인"
-			});
-		return;
-	}
-	
-	// 신청한 휴가일수가 0일때 alert
-	if(ho_use_count == 0) {
-		swal({
-				title: "신청한 휴가일수가 0일입니다",
-				text: "날짜와 시간을 다시 선택해주세요",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false,
-				button: "확인"
-			});
-		return;
-	}
-	
-	var s_ho_use = $("#s_ho_use").text();
-	
-	// 사용 가능한 휴가일수보다 신청한 휴가일수가 더 많을 때 alert
-	// ex) s_ho_use(사용 가능한 휴가일수) = 14.5 / ho_use_count(신청한 휴가 일수) = 1
-	if(parseFloat(ho_use_count) > parseFloat(s_ho_use)) {
-		swal({
-				title: "사용 가능한 휴가일수보다 신청한 휴가일수가 더 많습니다.",
-				text: "날짜와 시간을 다시 선택해주세요",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false,
-				button: "확인"
-			});
-		return;
-	}
 });
 // <!-- 결재선지정하는 관련 스크립트 끝 -->
 
@@ -716,6 +659,103 @@ $(document).ready(function() {
 		console.log("전송하기 체킁 확인");
 		console.log("s_eap_app_bottom->authList : ", authList);
 		
+	//유효성검사
+	var eap_title = $('#s_ho_tt').val();
+	var eap_content = $('#s_ho_co').val();
+
+	// textarea에 \r \n같은 문자를 <br>로 바꿔주기
+	eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
+	var ho_code = $("input[name='holiCode']:checked").val();
+	var ho_start = $('#s_ho_start').val() + " " + $('#s_start_time').val();
+	var ho_end = $('#s_ho_end').val() + " " + $('#s_end_time').val();
+	var ho_use_count = $('#s_date_cal').text();
+	
+	// 결재선 지정 여부 확인
+	if ($(".s_appLine_tbody_new .clsTr").length === 0) {
+		swal({
+			title: "결재선이 지정되지 않았습니다.",
+			text: "결재선을 지정해주세요.",
+			icon: "error",
+			closeOnClickOutside: false,
+			closeOnEsc: false,
+			button: "확인"
+		});
+		return;
+	}
+	
+	// 날짜 계산
+	var start = new Date($('#s_ho_start').val() + 'T' + $('#s_start_time').val());
+	var end = new Date($('#s_ho_end').val() + 'T' + $('#s_end_time').val());
+	
+	// 신청 종료시간이 시작시간보다 빠를 때
+	if(start > end) {
+		swal({
+				title: "종료 시간이 시작 시간보다 빠를 수 없습니다!",
+				text: "신청 종료 시간을 다시 선택해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+
+			});
+		$("#s_end_time").val('');
+	}
+	//select박스가비어있을때 연차유형이 선택되지 않았습니다.라고 알림 띄어줘
+	if (!$("input[name='holiCode']:checked").val()) 
+		{
+			swal({
+				title: "연차유형이 선택되지 않았습니다.",
+				text: "연차유형을 선택해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+			return;
+		}
+	// 제목, 내용이 비어있을 때
+	if(eap_title == "" || eap_content == "") {
+		swal({
+				title: "제목 또는 내용이 비어있습니다.",
+				text: "다시 확인해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+		return;
+	}
+	
+	// 신청한 휴가일수가 0일때 alert
+	if(ho_use_count == 0) {
+		swal({
+				title: "신청한 휴가일수가 0일입니다",
+				text: "날짜와 시간을 다시 선택해주세요",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+		return;
+	}
+	
+	var s_ho_use = $("#s_ho_use").text();
+	
+	// 사용 가능한 휴가일수보다 신청한 휴가일수가 더 많을 때 alert
+	// ex) s_ho_use(사용 가능한 휴가일수) = 14.5 / ho_use_count(신청한 휴가 일수) = 1
+	if(parseFloat(ho_use_count) > parseFloat(s_ho_use)) {
+		swal({
+				title: "사용 가능한 휴가일수보다 신청한 휴가일수가 더 많습니다.",
+				text: "날짜와 시간을 다시 선택해주세요",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+		return;
+	}
+	//유효성검사
+
 		let jnForm = document.querySelector("#atrz_ho_form");
 		// console.log("${empVO}" + empVO);
 		
@@ -980,8 +1020,6 @@ $(document).ready(function() {
 				`;
 			}
 
-
-
 			let str = `
 					<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
 						<th hidden>\${noLen+1}</th>
@@ -1078,6 +1116,7 @@ $(document).ready(function() {
 			});
 			return;
 		}
+
 		var appLineArr = [];
 		
 		//1)
@@ -1281,7 +1320,7 @@ $(document).ready(function() {
 			var height = $(input).outerHeight();
 			//위치조정변수
 			var extraTopOffset = -100; 
-			var extraRightOffset = 500; // 오른쪽으로 20px 이동
+			var extraRightOffset = 150; // 오른쪽으로 20px 이동
 
 			$('#ui-datepicker-div').css({
 				'top': (offset.top + height + extraTopOffset) + 'px',
@@ -1343,8 +1382,8 @@ $(document).ready(function() {
 		var offset = $(input).offset();
 		var height = $(input).outerHeight();
 		//위치조정변수
-		var extraTopOffset = -145; 
-		var extraRightOffset = 500; // 오른쪽으로 20px 이동
+		var extraTopOffset = -95; 
+		var extraRightOffset = 150; // 오른쪽으로 20px 이동
 
 
 		$('#ui-datepicker-div').css({

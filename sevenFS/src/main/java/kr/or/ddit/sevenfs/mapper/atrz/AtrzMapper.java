@@ -138,6 +138,13 @@ public interface AtrzMapper {
 	//재기안 select
 	public AtrzVO selectDocumentReturn(String atrzDocNo);
 	
+	//임시저장 전자결재선 삭제
+	public void deleteStorageAtrzLines(@Param("atrzDocNos")List<String> atrzDocNos);
+	//임시저장 연차신청서 삭제
+	public void deleteStorageDocumHoliday(@Param("atrzDocNos")List<String> atrzDocNos);
+	//임시저장 전자결재 삭제
+	public void deleteStorageAtrz(@Param("atrzDocNos")List<String> atrzDocNos);
+	
 
 	
 }

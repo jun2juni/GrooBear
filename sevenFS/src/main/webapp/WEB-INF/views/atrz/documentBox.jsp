@@ -159,8 +159,6 @@
 						</div>
 					</div>
 					<!-- 메뉴바 끝 -->
-					<!-- 새결재 진행 모달import -->
-					<c:import url="newAtrzDocModal.jsp" />
 					<!-- 컨텐츠1 시작 -->
 					<div class="tab-content" id="myTabContent">
 						<div class="tab-pane fade show active" id="contact1-tab-pane"
@@ -289,8 +287,8 @@
 							<div id="critical">
 								<a class="btn" data-bs-toggle="modal"
 									data-bs-target="#approvalSaveModal"> <span
-									class="material-symbols-outlined">data_check</span> <span
-									class="txt">문서삭제</span>
+									class="material-symbols-outlined">data_check</span> 
+									<span class="txt">문서삭제</span>
 								</a>
 							</div>
 							<div class="atrzTabCont">
@@ -311,7 +309,9 @@
 															<thead>
 																<tr>
 																	<!-- select박스 -->
-																	<th></th>
+																	<th class="text-center" style="padding-top: 10px; padding-bottom: 10px;">
+																		<input class="form-check-input" type="checkbox" id="checkbox-all">
+																	</th>
 																	<th class="text-center">
 																		<h6 class="fw-bolder">제목</h6>
 																	</th>
@@ -331,7 +331,7 @@
 																	<tr>
 																		<td class="text-center" style="padding-top: 10px; padding-bottom: 10px;">
 																			<div class="check-input-primary">
-																				<input class="form-check-input" type="checkbox" id="checkbox-1">
+																				<input class="form-check-input doc-check" type="checkbox" id="checkbox-1"value="${atrzVO.atrzDocNo}">
 																			</div>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
@@ -411,28 +411,7 @@
 							</div>
 						</div>
 					</div>
-					<!--임시저장목록 삭제-->
-					<!-- Modal -->
-					<div class="modal fade" id="approvalSaveModal" tabindex="-1"
-					aria-labelledby="approvalSaveModalLabel" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content border-0">
-							<div class="modal-header border-0">
-								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-							</div>
-							<div class="modal-body border-0">
-								<h4 class="form-label">임시 저장 문서를 삭제하시겠습니까?</h4>
-							</div>
-								<div class="modal-footer border-0">
-									<button type="button" class="main-btn primary-btn rounded-full btn-hover modalBtn">확인</button>
-									<button type="button" class="main-btn light-btn rounded-full btn-hover modalBtn" data-bs-dismiss="modal">취소</button>
-								</div>
-						</div>
-					</div>
-				</div>
-				<!--일괄결재모달 끝-->
-					<!--임시저장목록 삭제-->
-
+					
 
 					<!-- 컨텐츠2 끝 -->
 					<!-- 컨텐츠3 시작 -->
@@ -582,6 +561,108 @@
 </main>
 <%@ include file="../layout/prescript.jsp" %>
 <!-- j쿼리 사용시 여기 이후에 작성하기 -->
-<c:import url="./newAtrzDocModal.jsp" />
+<!-- 새결재 진행 모달import -->
+<c:import url="newAtrzDocModal.jsp" />
+<!--임시저장목록 삭제-->
+<!-- Modal -->
+<div class="modal fade" id="approvalSaveModal" tabindex="-1"
+aria-labelledby="approvalSaveModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+	<div class="modal-content border-0">
+		<div class="modal-header border-0">
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body border-0">
+			<h4 class="form-label">임시 저장 문서를 삭제하시겠습니까?</h4>
+		</div>
+			<div class="modal-footer border-0">
+				<button type="button" class="main-btn primary-btn rounded-full btn-hover modalBtn" id="storageDeleteBtn">확인</button>
+				<button type="button" class="main-btn light-btn rounded-full btn-hover modalBtn" data-bs-dismiss="modal">취소</button>
+			</div>
+	</div>
+</div>
+</div>
+<!--일괄결재모달 끝-->
+<!--임시저장목록 삭제-->
+
 </body>
+<script>
+$(document).ready(function() {
+	// 체크박스 전체 선택
+	$("#checkbox-all").click(function() {
+		if ($(this).is(":checked")) {
+			$("input[type=checkbox]").prop("checked", true);
+		} else {
+			$("input[type=checkbox]").prop("checked", false);
+		}
+	});
+});
+
+//기간입력 선택시 활성화 시키는 스크립트
+document.getElementById("duration").addEventListener("change",function() {
+	var durationPeriod = document.getElementById("durationPeriod");
+	if (this.value == "period") {
+		durationPeriod.classList.remove("d-none");
+		durationPeriod.classList.add("d-flex");
+	} else {
+		durationPeriod.classList.remove("d-flex");
+		durationPeriod.classList.add("d-none");
+	}
+})
+document.getElementById("storageDeleteBtn").addEventListener("click",function(){
+	//체크 박스로 선택되 문서번호들 수집
+	const checked = document.querySelectorAll(".doc-check:checked");
+	const docNos = Array.from(checked).map(checkbox => checkbox.value);
+
+	if(docNos.length ==0){
+		swal({
+			title: "삭제할 문서를 선택해주세요",
+			icon: "warning",
+			closeOnClickOutside: false,
+			closeOnEsc: false,
+			button: "확인",
+			timer: 2000
+		});
+		return;
+	}
+	
+	//Ajax로 삭제 요청
+	fetch("/atrz/storageListDelete", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({atrzDocNos :docNos})
+	})
+	.then(response=>{
+		if(!response.ok){
+			throw new Error("서버 오류 발생");
+			return response.text(); 
+		}
+	})
+	.then(data=>{
+		swal({
+			title: "삭제되었습니다.",
+			icon: "success",
+			closeOnClickOutside: false,
+			closeOnEsc: false,
+			button: "확인",
+			timer: 2000
+		});
+		location.reload();
+	})
+	.catch(error=>{
+		swal({
+			title: "삭제 실패",
+			icon: "error",
+			closeOnClickOutside: false,
+			closeOnEsc: false,
+			button: "확인",
+			timer: 2000
+		});
+	})
+
+})
+
+</script>
 </html>

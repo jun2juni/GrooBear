@@ -15,6 +15,7 @@ public class HolidayVO {
 	private String[] holiEndArr;   //연차종료시작 결합*
 	private Date holiEnd;   		//연차종료시작*
 	private String holiUseDays;    //연차사용횟수*
+	private String holiDelete;    //연차신청서 삭제여부
 	
 	//테이블을 3가지를 조인하는경우 이것이 필요함
 	//DOCUM_HOLIDAY : ATRZ_LINE = 1 : N

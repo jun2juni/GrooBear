@@ -128,20 +128,6 @@
 											style="width: 100px;"> ~ <input id="toDate"
 											class="form-control" type="text" style="width: 100px;">
 									</div>
-									<!--기간입력 선택시 활성화 시키는 스크립트-->
-									<script>
-									document.getElementById("duration").addEventListener("change",function(){
-										var durationPeriod = document.getElementById("durationPeriod");
-										if(this.value == "period"){
-											durationPeriod.classList.remove("d-none");
-											durationPeriod.classList.add("d-flex");
-										}else{
-											durationPeriod.classList.remove("d-flex");
-											durationPeriod.classList.add("d-none");
-											
-										}
-									})
-								</script>
 									<!-- 검색 유형 선택 -->
 									<select id="searchtype" class="form-select w-auto">
 										<option value="title">제목</option>
@@ -166,8 +152,6 @@
 						<!-- <p>${atrzVOList}</p> -->
 						<!-- 메뉴바 시작 -->
 					<!-- 메뉴바 끝 -->
-					<!-- 새결재 진행 모달import -->
-					<c:import url="newAtrzDocModal.jsp" />
 					<!-- 컨텐츠1 시작 -->
 
 					<div class="tab-content" id="myTabContent">
@@ -229,7 +213,9 @@
 															<thead>
 																<tr>
 																	<!-- select박스 -->
-																	<th></th>
+																	<th class="text-center" style="padding-top: 10px; padding-bottom: 10px;">
+																		<input class="form-check-input" type="checkbox" id="checkbox-all">
+																	</th>
 																	<th class="text-center">
 																		<h6 class="fw-bolder">기안일</h6>
 																	</th>
@@ -572,6 +558,31 @@
 </main>
 <%@ include file="../layout/prescript.jsp" %>
 <!-- jquery 사용시 여기 이후 작성하기 -->
-<c:import url="./newAtrzDocModal.jsp" />
+<!-- 새결재 진행 모달import -->
+<c:import url="newAtrzDocModal.jsp" />
+<script>
+$(document).ready(function() {
+	// 체크박스 전체 선택
+	$("#checkbox-all").click(function() {
+		if ($(this).is(":checked")) {
+			$("input[type=checkbox]").prop("checked", true);
+		} else {
+			$("input[type=checkbox]").prop("checked", false);
+		}
+	});
+});
+
+//기간입력 선택시 활성화 시키는 스크립트
+document.getElementById("duration").addEventListener("change",function() {
+	var durationPeriod = document.getElementById("durationPeriod");
+	if (this.value == "period") {
+		durationPeriod.classList.remove("d-none");
+		durationPeriod.classList.add("d-flex");
+	} else {
+		durationPeriod.classList.remove("d-flex");
+		durationPeriod.classList.add("d-none");
+	}
+})
+</script>
 </body>
 </html>

@@ -125,6 +125,7 @@
 	padding-bottom: 10px;
 	width: 300px;
 	box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.1);
+	padding-top: 10px;
 	
 }
 
@@ -236,7 +237,7 @@
 .ui-state-highlight, .ui-widget-content .ui-state-highlight,
 .ui-widget-header .ui-state-highlight {
 	border: 0px;
-	background: #b0e0e6  ;
+	background: rgb(255, 192, 203);
 	border-radius: 50%;
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -302,37 +303,24 @@ select.ui-datepicker-year {
 								<div class="critical d-flex gap-2 mb-3">
 									<!--성진스 버튼-->
 									<button id="s_eap_app_top" type="button" 
-										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app">
-										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
+										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+										<span class="material-symbols-outlined fs-5">upload</span> 결재요청
 									</button>
-									<a id="s_eap_storTo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
-										> <span
-										class="material-symbols-outlined fs-5">error</span> 임시저장
+									<a id="s_eap_storTo" type="button" 
+										class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+										<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
 									</a> <a id="s_appLine_btn" type="button"
 										class="btn btn-outline-info d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
-										class="material-symbols-outlined fs-5">error</span> 결재선 지정
-									</a> <a type="button"
-										class="btn btn-outline-danger d-flex align-items-center gap-1"
-										href="/atrz/home"> <span
-										class="material-symbols-outlined fs-5">cancel</span> 취소
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
+									</a> 
+									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1"
+										href="/atrz/home" style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
-									<!-- 										<a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="/atrz/approval"> -->
-									<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
-									<!-- 											목록으로</a> -->
-
-									<!-- 										<a id="act_draft_withdrawal" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-									<!-- 											<span class="material-symbols-outlined fs-5">cancel</span>  -->
-									<!-- 											<span class="txt">상신취소</span> -->
-									<!-- 										</a> -->
-									<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-									<!-- 											<span class="material-symbols-outlined fs-5">error</span>  -->
-									<!-- 											<span class="txt">결재선 정보</span> -->
-									<!-- 										</a> -->
-									<!-- 										<a id="act_edit_apprflow" class="btn d-flex align-items-center gap-1" data-role="button"> -->
-									<!-- 											<span class="material-symbols-outlined fs-5">reorder</span>  -->
-									<!-- 											<span class="txt">목록</span> -->
-									<!-- 										</a> -->
 								</div>
 							</div>
 
@@ -539,7 +527,7 @@ select.ui-datepicker-year {
 																class="form-control s_ho_start d-inline-block"
 																style="width: 250px; cursor: context-menu;" value=${onlyStDate}
 																id="s_ho_start" required="required" onchange="dateCnt();" name="holiStartArr">
-															<input type="time" class="form-control d-inline-block"
+															<input type="hidden" class="form-control d-inline-block"
 																style="width: 150px; display: none;" value=${onlyStTime}
 																id="s_start_time" min="09:00:00" max="18:00:00" value="09:00:00"
 																disabled onchange="dateCnt();" name="holiStartArr"> 부터
@@ -551,7 +539,7 @@ select.ui-datepicker-year {
 																class="form-control s_ho_end d-inline-block mt-2"
 																style="width: 250px; cursor: context-menu;" value=${onlyEnDate}
 																id="s_ho_end" required="required" onchange="dateCnt();" name="holiEndArr" />
-															<input type="time" class="form-control d-inline-block"
+															<input type="hidden" class="form-control d-inline-block"
 																style="width: 150px; display: none;" value=${onlyEnTime}
 																id="s_end_time" min="09:00:00" max="18:00:00" value="18:00:00"
 																disabled onchange="dateCnt();" name="holiEndArr" /> 까지
@@ -609,20 +597,24 @@ select.ui-datepicker-year {
 								<div class="critical d-flex gap-2 mt-3">
 									<!--성진스 버튼-->
 									<button id="s_eap_app_bottom" type="button" 
-										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app">
-										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
+										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+										<span class="material-symbols-outlined fs-5">upload</span> 결재요청
 									</button>
-									<a id="s_eap_storBo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"> 
-										<span class="material-symbols-outlined fs-5">error</span> 임시저장
-									</a> <a id="s_appLine_btn" type="button"
-									
+									<a id="s_eap_storBo" type="button" 
+										class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+										<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
+									</a> 
+									<a id="s_appLine_btn" type="button"
 										class="btn btn-outline-info d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
-										class="material-symbols-outlined fs-5">error</span> 결재선 지정
-									</a> <a type="button"
-										class="btn btn-outline-danger d-flex align-items-center gap-1"
-										href="/atrz/home"> <span
-										class="material-symbols-outlined fs-5">cancel</span> 취소
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
+									</a> 
+									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1"
+										href="/atrz/home" style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
 							</div>
@@ -1399,7 +1391,7 @@ $(document).ready(function() {
 			var height = $(input).outerHeight();
 			//위치조정변수
 			var extraTopOffset = -100; 
-			var extraRightOffset = 500; // 오른쪽으로 20px 이동
+			var extraRightOffset = 150; // 오른쪽으로 20px 이동
 
 			$('#ui-datepicker-div').css({
 				'top': (offset.top + height + extraTopOffset) + 'px',
@@ -1461,8 +1453,8 @@ $(document).ready(function() {
 		var offset = $(input).offset();
 		var height = $(input).outerHeight();
 		//위치조정변수
-		var extraTopOffset = -145; 
-		var extraRightOffset = 500; // 오른쪽으로 20px 이동
+		var extraTopOffset = -95; 
+		var extraRightOffset = 150; // 오른쪽으로 20px 이동
 
 
 		$('#ui-datepicker-div').css({

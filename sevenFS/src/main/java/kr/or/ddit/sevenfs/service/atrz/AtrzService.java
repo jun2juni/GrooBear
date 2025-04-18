@@ -99,6 +99,9 @@ public interface AtrzService {
 	//반려 문서 재기안 get
 	public AtrzVO selectDocumentReturn(String atrzDocNo);
 	
+	//임시저장함 삭제하기 (일괄삭제 포함)
+	public void storageListDelete(List<String> atrzDocNos);
+	
 	
 	
 }

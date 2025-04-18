@@ -131,15 +131,17 @@
 															&& atrzLineVO.atrzTy eq 'N'
 															&& atrzLineVO.atrzLnSn == curAtrzLnSn && atrzVO.atrzSttusCode eq '00'}">
 												<button id="atrzAppBtnTo" type="button" 
-													class="btn btn-outline-success d-flex align-items-center gap-1 atrzAppBtn btnFontSt" 
+													class="btn btn-outline-primary d-flex align-items-center gap-1 atrzAppBtn btnFontSt" 
 													data-all-app-check="<c:if test='${lastAtrzLnSn==atrzLineVO.atrzLnSn}'>Y</c:if>" 
-													data-bs-toggle="modal" data-bs-target="#atrzApprovalModal">
-													<span class="material-symbols-outlined fs-5">note_alt</span> 결재
+													data-bs-toggle="modal" data-bs-target="#atrzApprovalModal"
+													style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+													<span class="material-symbols-outlined fs-5">inventory</span> 결재
 												</button>
 												<a id="atrzComBtnTo" type="button"
 													class="btn btn-outline-danger d-flex align-items-center gap-1 btnFontSt"
-													data-bs-toggle="modal" data-bs-target="#atrzCompanModal"> <span
-													class="material-symbols-outlined fs-5 atrzComBtn">keyboard_return</span> 반려
+													data-bs-toggle="modal" data-bs-target="#atrzCompanModal"
+													style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+													<span class="material-symbols-outlined fs-5 atrzComBtn">undo</span> 반려
 												</a>
 											</c:if>
 										</c:forEach>
@@ -159,15 +161,16 @@
 										</c:if>
 										<!-- <p>${atrzVO}</p> -->
 										<c:if test="${atrzVO.drafterEmpno == emp.emplNo  && atrzVO.atrzSttusCode!=10 && atrzVO.atrzSttusCode!=20 && atrzVO.atrzSttusCode!=30}">
-											<a id="atrzCancelBtnTo" type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzCancelBtn"> 
+											<a id="atrzCancelBtnTo" type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzCancelBtn"
+											style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 											<span class="material-symbols-outlined fs-5 atrzComBtn">keyboard_return</span> 기안취소
 										</a>
 										</c:if>
 										<a type="button" 
 										class="btn btn-outline-secondary d-flex align-items-center gap-1"
-										style="padding: 0.rem 1rem; font-size: 0.95rem;"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"
 										href="/atrz/companion"> 
-										<span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록으로
+										<span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록
 									</a>
 								</div>
 							</div>
@@ -379,7 +382,7 @@
 																class="form-control s_ho_start d-inline-block"
 																style="width: 250px; cursor: context-menu;" value="${onlyStDate}" disabled
 																id="s_ho_start" >
-															<input type="time" class="form-control d-inline-block"
+															<input type="hidden" class="form-control d-inline-block"
 																style="width: 150px; display: none;"
 																id="s_start_time" value=${onlyStTime}
 																disabled > 부터
@@ -391,7 +394,7 @@
 																class="form-control s_ho_end d-inline-block mt-2"
 																style="width: 250px; cursor: context-menu;" value="${onlyEnDate}" disabled
 																id="s_ho_end" />
-															<input type="time" class="form-control d-inline-block"
+															<input type="hidden" class="form-control d-inline-block"
 																style="width: 150px; display: none;"
 																id="s_end_time" value="${onlyEnTime}" disabled  /> 까지
 															<!-- <div class="d-inline-block" >
@@ -436,15 +439,17 @@
 														&& atrzLineVO.atrzTy eq 'N'
 														&& atrzLineVO.atrzLnSn == curAtrzLnSn && atrzVO.atrzSttusCode eq '00'}">
 											<button id="atrzAppBtnBo" type="button" 
-												class="btn btn-outline-success d-flex align-items-center gap-1 atrzAppBtn" 
+												class="btn btn-outline-primary d-flex align-items-center gap-1 atrzAppBtn" 
 												data-all-app-check="<c:if test='${lastAtrzLnSn==atrzLineVO.atrzLnSn}'>Y</c:if>"
-												data-bs-toggle="modal" data-bs-target="#atrzApprovalModal">
-												<span class="material-symbols-outlined fs-5">note_alt</span> 결재
+												data-bs-toggle="modal" data-bs-target="#atrzApprovalModal"
+												style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+												<span class="material-symbols-outlined fs-5">inventory</span>결재
 											</button>
 											<a id="atrzComBtnBo" type="button"
 												class="btn btn-outline-danger d-flex align-items-center gap-1"
-												data-bs-toggle="modal" data-bs-target="#atrzCompanModal"> <span
-												class="material-symbols-outlined fs-5 atrzComBtn">keyboard_return</span> 반려
+												data-bs-toggle="modal" data-bs-target="#atrzCompanModal"
+												style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+												<span class="material-symbols-outlined fs-5 atrzComBtn">undo</span> 반려
 											</a>
 										</c:if>
 									</c:forEach>
@@ -463,15 +468,17 @@
 									</c:if>
 									<!-- <p>${atrzVO}</p> -->
 									<c:if test="${atrzVO.drafterEmpno == emp.emplNo  && atrzVO.atrzSttusCode!=10 && atrzVO.atrzSttusCode!=20}">
-										<a id="atrzCancelBtnBo" type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzCancelBtn"> 
+										<a id="atrzCancelBtnBo" type="button" 
+										class="btn btn-outline-danger d-flex align-items-center gap-1 atrzCancelBtn"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5 atrzComBtn">keyboard_return</span> 기안취소
 									</a>
 									</c:if>
 									<a type="button" 
 										class="btn btn-outline-secondary d-flex align-items-center gap-1"
-										style="padding: 0.rem 1rem; font-size: 0.95rem;"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"
 										href="/atrz/companion"> 
-										<span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록으로
+										<span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록
 									</a>
 								</div>
 							</div>
@@ -491,9 +498,7 @@
 
 
 <script>
-
 document.addEventListener("DOMContentLoaded", ()=>{
-
 
 //결재하기 버튼을 눌러서 업데이트 진행하기 
 

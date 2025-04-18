@@ -9,12 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -28,6 +30,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
+import kr.or.ddit.sevenfs.service.notification.NotificationService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.utils.CommonCode;
 import kr.or.ddit.sevenfs.vo.CustomUser;
@@ -59,6 +62,7 @@ public class AtrzController {
 	// 파일 전송을 위한 방법
 	@Autowired
 	private AttachFileService attachFileService;
+	
 
 	@GetMapping("/home")
 	public String home(Model model, @AuthenticationPrincipal CustomUser customUser) {
@@ -478,6 +482,19 @@ public class AtrzController {
 		
 		char docPrefix = atrzDocNo.charAt(0); // 예: H, S, D, A, B, C, R
 		
+		//제목설정을 위한것
+		String title = switch (docPrefix) {
+		case 'H' -> "연차신청서";
+		case 'S' -> "지출결의서";
+		case 'D' -> "기안서";
+		case 'A' -> "급여명세서";
+		case 'B' -> "급여계좌변경신청서";
+		case 'C' -> "재직증명서";
+		case 'R' -> "퇴직신청서";
+		default -> "전자결재상세보기";
+		};
+		model.addAttribute("title", title);
+		
 		String viewName = switch (docPrefix){
 		case 'H' -> "documentForm/holidayReturn";            // 연차신청서
 		case 'S' -> "documentForm/spendingReturn";           // 지출결의서
@@ -493,7 +510,18 @@ public class AtrzController {
 	}
 		
 	
+	//임시저장함 삭제하기
+	@PostMapping("/storageListDelete")
+	@ResponseBody
+	public ResponseEntity<?> storageListDelete(@RequestBody Map<String, List<String>> params){
+		List<String> atrzDocNos = params.get("atrzDocNos");
+		atrzService.storageListDelete(atrzDocNos);
+		return ResponseEntity.ok().build();
+	}
 	
+	//체크해서 삭제 처리하기 
+	
+	//일괄승인하기
 	
 	
 	
@@ -759,7 +787,8 @@ public class AtrzController {
 		// 3) 연차신청서 등록
 		int documHolidayResult = atrzService.insertHoliday(documHolidayVO);
 		log.info("insertHolidayForm->documHolidayResult : " + documHolidayResult);
-
+		
+		
 		return "쭈니성공";
 	}
 	

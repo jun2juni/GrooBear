@@ -138,28 +138,6 @@
 										style="width: 150px;"> ~ <input id="toDate"
 										class="form-control" type="text" style="width: 150px;">
 								</div>
-								<!--기간입력 선택시 활성화 시키는 스크립트-->
-								<script>
-									document
-											.getElementById("duration")
-											.addEventListener(
-													"change",
-													function() {
-														var durationPeriod = document
-																.getElementById("durationPeriod");
-														if (this.value == "period") {
-															durationPeriod.classList
-																	.remove("d-none");
-															durationPeriod.classList
-																	.add("d-flex");
-														} else {
-															durationPeriod.classList
-																	.remove("d-flex");
-															durationPeriod.classList
-																	.add("d-none");
-														}
-													})
-								</script>
 								<!-- 검색 유형 선택 -->
 								<select id="searchtype" class="form-select w-auto">
 									<option value="title">제목</option>
@@ -330,7 +308,7 @@
 																		</p>
 																	</td>
 																	<td style="text-align: left; padding-top: 0px;">
-																		<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
+																		<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont " style="display: flex; align-items: center;">
 																		<c:choose>
 																			<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
 																				<span class="material-symbols-outlined" style="margin-right: 5px;">
@@ -519,5 +497,18 @@
 <%@ include file="../layout/prescript.jsp" %>
 <!-- j쿼리 사용시 여기 이후에 작성하기 -->
 <c:import url="./newAtrzDocModal.jsp" />
+<!--기간입력 선택시 활성화 시키는 스크립트-->
+<script>
+document.getElementById("duration").addEventListener("change",function() {
+	var durationPeriod = document.getElementById("durationPeriod");
+	if (this.value == "period") {
+		durationPeriod.classList.remove("d-none");
+		durationPeriod.classList.add("d-flex");
+	} else {
+		durationPeriod.classList.remove("d-flex");
+		durationPeriod.classList.add("d-none");
+	}
+})
+</script>
 </body>
 </html>
