@@ -1695,11 +1695,11 @@ h6,
   border-bottom-color: #efefef;
 }
 .table tbody tr:first-child > * {
-  padding-top: 20px;
+/*   padding-top: 20px; */
 }
 .table tbody tr:last-child > * {
   border-bottom-color: transparent;
-  padding-bottom: 0px;
+/*   padding-bottom: 0px; */
 }
 .table th h6 {
   font-weight: 500;

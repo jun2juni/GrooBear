@@ -168,56 +168,53 @@
 		<div>
           <div class="">
             <div class="card-style  mb-30 col-12">
-              <div class="row">
-	            <div>
-	              <h6>연차 사용 내역</h6>
-	             </div> 
-	             <div class="">
-                <!-- 연차유형 selectBox -->
-                <div class="col-12 d-flex justify-content-end">
-	             <a href="/dclz/vacation" class="btn-sm light-btn-light btn-hover mr-10 rounded-md">전체 목록 보기</a>
-				<form method="get" action="/dclz/vacation" id="selType" class="mr-10" style="height:40px;">
-                <c:set var="duplTypes" value=""></c:set>
-                <div class="input-style-1 form-group col-3">
-				  <select id="vacType" class="form-select w-auto" required="required" name="keyword">
-				    <option>유형 선택</option>
-				    <c:forEach var="vacType" items="${emplCmmnVacationList}">
-				      <!-- 중복 확인: printedTypes에 포함되어 있지 않은 경우만 출력 -->
-				      <c:if test="${not fn:contains(duplTypes,vacType.cmmnCodeNm)}">
-				        <option value="${vacType.cmmnCodeNm}">${vacType.cmmnCodeNm}</option>
-				        <!-- 출력한 값 저장 -->
-				        <c:set var="duplTypes" value="${duplTypes},${vacType.cmmnCodeNm}" />
-				      </c:if>
-				    </c:forEach>
-				  </select>
-				</div>
-				 </form>
-			  	<!-- 년도 selectBox -->
-                <form method="get" action="/dclz/vacation" id="selYear" class="mr-10" style="height:40px;">
-			  	<c:set var="duplYears" value="" />
-                <div class="input-style-1 form-group col-3">
-	     	     <select id="vacYear" class="form-select w-auto" required="required">
-					<option>년도 선택</option>
-					<c:forEach var="vacDate" items="${emplCmmnVacationList}">
-						<fmt:formatDate value="${vacDate.dclzBeginDt}" pattern="yyyy" var="vacYear" />
-						<c:if test="${not fn:contains(duplYears, vacYear)}">
-							<option value="${vacYear}">${vacYear}</option>
-							<c:set var="duplYears" value="${duplYears},${vacYear}" />
-						</c:if>	
-					</c:forEach>
-				 </select> 
-				 <input type="hidden" id="yearKeyword" name="keyword">
-			  	</div>
-			  	</form>
-			 </div>
-              </div>
-              <div class="table-wrapper table-responsive mt-40">
+	            <div class="title d-flex flex-wrap">
+	                <div class=" justify-content-first" style="width: 40%">
+	                  <h6 class="text-medium mb-30">이번달 연차현황</h6>
+	                  <!-- 출퇴근만 출력? -->
+	                </div>
+	                <div class="justify-content-center">
+	           		<!-- 달력 페이지네이션 -->
+					  <form action="/dclz/vacation" method="get" id="keywordForm">
+					  <nav class="justify-content-center" aria-label="Page navigation example">
+						<ul class=" d-flex">
+						  <li class="page-item">
+							<button type="button" class="page-link prevBtn">
+							  <span aria-hidden="true"><</span>
+							</button>
+						  </li>
+						  <input type="hidden" value="${paramKeyword.substring(0,4)}" id="hiddenKeyYear" />
+						  <input type="hidden" value="${paramKeyword.substring(5,7)}" id="hiddenKeyword" />
+						  <input type="hidden" value="${paramKeyword.substring(0,4)}-${paramKeyword.substring(5,7)}" id="submitKeyword" name="keyword" />
+						  <h4 class="ml-10 mr-10" id="dateDisplay">${paramKeyword.substring(0,4)}-${paramKeyword.substring(5,7)}</h4>
+						  <li class="page-item">
+							<button type="button" class="page-link nextPage">
+							  <span aria-hidden="true">></span>
+							</button>
+						  </li>
+						</ul>
+					  </nav>
+					  </form>
+					  <!-- 달력 페이지네이션 -->
+	                </div>
+	                <div class="input-group mb-3 ms-auto justify-content-end w-20">
+	                <a href="/dclz/vacation" class="btn-sm main-btn light-btn-light btn-hover mr-10 rounded">전체 목록 보기</a>
+	                <form action="/dclz/vacation" method="get" id="keywordSearchFome">
+	                	<input type="search" class="form-control rounded" placeholder="년도, 연차유형 입력" aria-label="Search"
+					              aria-describedby="search-addon" id="schName" name="keywordSearch"
+					              onkeydown="fSchEnder(event)"
+					       />
+		                </form>
+					       <span class="input-group-text border-0" id="search-addon"
+					             onclick="fSch()">
+					           <i class="fas fa-search"></i>
+					       </span>
+	                </div>
+	              </div>
+              <div class="table-wrapper table-responsive">
                 <table class="table clients-table" id="vacTable">
                   <thead>
                     <tr>
-                      <th>
-                        <h6></h6>
-                      </th>
                       <th>
                         <h6>연차 유형</h6>
                       </th>
@@ -233,12 +230,22 @@
                   <tbody id="vacBody">
 					<c:forEach var="emplVacationData" items="${emplCmmnVacationList}" >
                     <tr>
-                      <td>
-                        <div>
-                        </div>
-                      </td>
                       <td class="min-width">
-                      <h4><span class="badge rounded-pill text-white" style="background-color:pink" id="vacData">${emplVacationData.cmmnCodeNm}</span></h4>
+                      	<c:if test="${emplVacationData.cmmnCodeNm == '연차'}">
+	                      	<h4><span class="badge rounded-pill text-white" style="background-color:pink" id="vacData">
+	                      		${emplVacationData.cmmnCodeNm}
+	                      	</span></h4>
+                      	</c:if>
+                      	<c:if test="${emplVacationData.cmmnCodeNm == '공가'}">
+	                      	<h4><span class="badge rounded-pill text-white" style="background-color:peachPuff" id="vacData">
+	                      		${emplVacationData.cmmnCodeNm}
+	                      	</span></h4>
+                      	</c:if>
+                      	<c:if test="${emplVacationData.cmmnCodeNm == '병가'}">
+	                      	<h4><span class="badge rounded-pill text-white" style="background-color:tomato" id="vacData">
+	                      		${emplVacationData.cmmnCodeNm}
+	                      	</span></h4>
+                      	</c:if>
                       </td>
                       <td class="min-width">
                         <p><span class="text-medium text-dark">
@@ -257,14 +264,13 @@
                 <!-- end table -->
               </div>
                <!-- 페이지네이션 -->
-               <page-navi id="page"
+               <%-- <page-navi id="page"
 				   url="/dclz/vacation?"
 				   current="${param.get("currentPage")}"
 				   show-max="10"
 				   total="${articlePage.totalPages}">
-			   </page-navi>
+			   </page-navi> --%>
 			   <!-- 페이지네이션 -->
-            </div>
             <!-- end card -->
           </div>
           <!-- end col -->
@@ -278,8 +284,64 @@
 
 <script type="text/javascript">
 
+function fSchEnder(e){
+	if(e.code === "Enter"){
+		const keywordSearch = $('#keywordSearch').val();
+		console.log('dkdkdk : ', keywordSearch);
+	}
+}
 
 $(function(){
+	
+	function updateDateDisplay(){
+		 const year = $('#hiddenKeyYear').val();
+		 const month = $('#hiddenKeyword').val();
+		 const formattedMonth = String(month).padStart(2, '0');
+		 document.getElementById('dateDisplay').textContent = year + '-' + formattedMonth;
+		 
+		 const newDate = $('#dateDisplay').text(); 
+	     console.log(" ddddddd " , newDate);
+	     
+	     $('#submitKeyword').val(newDate);
+	     console.log('보낼키워드 : ' , $('#submitKeyword').val());
+		 $('#keywordForm').submit();
+	  }
+	
+	  // --- 이전버튼
+	  document.querySelector('.prevBtn').addEventListener('click', () => {
+		let hiddenKeyword = Number($('#hiddenKeyword').val());
+		hiddenKeyword -= 1;
+
+	    if (hiddenKeyword === 0) {
+	      const prevYear = Number($('#hiddenKeyYear').val()) - 1;
+	      $('#hiddenKeyYear').val(prevYear);
+	      hiddenKeyword = 12;
+	    }
+	    $('#hiddenKeyword').val(hiddenKeyword);
+	    updateDateDisplay();
+	    
+	  });
+		
+	  // --- 다음버튼
+	  document.querySelector('.nextPage').addEventListener('click', () => {
+		  let hiddenKeyword = Number($('#hiddenKeyword').val());
+		  //let monthNum = Number(hiddenKeyword);
+		  hiddenKeyword += 1;
+		  
+		  if (hiddenKeyword === 13) {
+			    const nextYear = Number($('#hiddenKeyYear').val()) + 1;
+			    $('#hiddenKeyYear').val(nextYear);
+			    hiddenKeyword = 1;
+			  }
+		  $('#hiddenKeyword').val(hiddenKeyword);
+		  updateDateDisplay();
+	  });
+	
+	
+	
+	
+	
+	
 	// 연차 유형 선택시
 	$('#vacType').on('change', function(){
 		//alert("dididi");

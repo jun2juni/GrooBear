@@ -140,7 +140,7 @@
 	            <div class="card-style mb-30" id="divPage">
 	              <div class="title d-flex flex-wrap">
 	                <div class=" justify-content-first" style="width: 40%">
-	                  <h6 class="text-medium mb-30">전체 근무일자</h6>
+	                  <h6 class="text-medium mb-30">이번달 근무현황</h6>
 	                  <!-- 출퇴근만 출력? -->
 	                </div>
 	                <div class="justify-content-center">
@@ -167,7 +167,8 @@
 					  </form>
 					  <!-- 달력 페이지네이션 -->
 	                </div>
-	                <div class="input-group rounded mb-3 ms-auto justify-content-end w-25">
+	                <div class="input-group mb-3 ms-auto justify-content-end w-20">
+	                <a href="/dclz/dclzType" class="btn-sm main-btn light-btn-light btn-hover mr-10 rounded">전체 목록 보기</a>
 	                <form action="/dclz/dclzType" method="get" id="keywordSearchFome">
 	                	<input type="search" class="form-control rounded" placeholder="년도, 근태유형 입력" aria-label="Search"
 					              aria-describedby="search-addon" id="schName" name="keywordSearch"

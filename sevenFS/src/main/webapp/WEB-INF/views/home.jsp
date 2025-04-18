@@ -88,7 +88,7 @@
   <section class="section">
 		<div class="container-fluid">
 		  <div class="row">
-		  <div class="col-md-3" style="position: sticky; top: 100px; z-index:1000; max-height: 80vh;">
+		  <div class="col-md-3" style="position: sticky; top: 100px; z-index:1; max-height: 80vh;">
 		    <!-- 출퇴근-->
 		    <div class="card-style mb-3" style="box-shadow: 1px 1px 20px 1px rgba(0,0,2,0.1);">
 		      <c:import url="./organization/dclz/workButton.jsp" />

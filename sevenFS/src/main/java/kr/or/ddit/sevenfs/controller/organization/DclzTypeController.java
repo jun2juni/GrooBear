@@ -1,11 +1,9 @@
 package kr.or.ddit.sevenfs.controller.organization;
 
-import java.io.Console;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -45,13 +43,30 @@ public class DclzTypeController {
 			) {
 		model.addAttribute("title" , "나의 근태 현황");
 		
+		// 페이징처리
+				String emplNo = principal.getName();
+				//log.info("username : " + emplNo);
+				dclzTypeVO.setEmplNo(emplNo);
+		
+		// 근태 selectBox를 위한 근태현황 조회
+		List<DclzTypeVO> dclzSelList = dclztypeService.dclzSelList(emplNo);
+		Date beginDt = dclzSelList.get(0).getDclzBeginDt();
+		
+		String paramKeyword = "";
+		// 키워드 없을때
+		if(keyword == null || keyword.trim().isEmpty()) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			sdf.applyPattern("yyyy-MM");
+			String simepleFormatted = sdf.format(beginDt);
+			//log.info("simepleFormatted : " + simepleFormatted);
+			keyword = simepleFormatted;
+		}
+		model.addAttribute("paramKeyword" , keyword);
+		
 		log.info("dclz keyword : " + keyword);
 		log.info("dclz keywordSearch : " + keywordSearch);
 		
-		// 페이징처리
-		String emplNo = principal.getName();
-		//log.info("username : " + emplNo);
-		dclzTypeVO.setEmplNo(emplNo);
+		
 		model.addAttribute("emplNo" , emplNo);
 		Map<String, Object> map = new HashMap<>();
 		map.put("emplNo" , emplNo);
@@ -82,26 +97,10 @@ public class DclzTypeController {
 		model.addAttribute("empDclzList",empDclzList);
 		model.addAttribute("articlePage" , articlePage);
 		
-		// 근태 selectBox를 위한 근태현황 조회
-		List<DclzTypeVO> dclzSelList = dclztypeService.dclzSelList(emplNo);
-		Date beginDt = dclzSelList.get(0).getDclzBeginDt();
 		
-		String paramKeyword = "";
-		// 키워드 있을때
-		if(keyword == null || keyword.trim().isEmpty()) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			String simepleFormatted = sdf.format(beginDt);
-			paramKeyword = simepleFormatted;
-		}else {
-			paramKeyword = keyword;
-		}
-		model.addAttribute("paramKeyword" , paramKeyword);
      	
 		return "organization/dclz/dclzType";
 	}
-	
-	
-	
 	
 	// 년도 , 달 선택했을때
 	@ResponseBody
@@ -181,9 +180,24 @@ public class DclzTypeController {
 	public String vacation(Model model, Principal principal, VacationVO vacationVO,
 			@RequestParam(defaultValue="1") int currentPage,
 			@RequestParam(defaultValue = "10") int size,
-			@RequestParam(defaultValue = "") String keyword) {
+			@RequestParam(defaultValue = "") String keyword,
+			@RequestParam(defaultValue = "") String keywordSearch) {
 		
 		//model.addAttribute("title","나의 연차 내역 by박호산나");
+		
+		log.info("keyword" + keyword);
+		log.info("keywordSearch" + keywordSearch);
+		
+		String paramKeyword = "";
+		// 키워드 없을때
+		if(keyword == null || keyword.trim().isEmpty()) {
+			Date date = new Date();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			dateFormat.applyPattern("yyyy-MM");
+			String currentDate = dateFormat.format(date);
+			keyword = currentDate;
+		}
+		model.addAttribute("paramKeyword" , keyword);
 
 		// 현재 로그인한 사원번호
 		String emplNo = principal.getName();
@@ -192,6 +206,7 @@ public class DclzTypeController {
 		map.put("emplNo", emplNo);
 		map.put("currentPage", currentPage);
 		map.put("keyword", keyword);
+		map.put("keywordSearch", keywordSearch);
 		
 		// 연차사용내역 전체 행 수
 		int total = dclztypeService.getVacTotal(map);

@@ -330,8 +330,9 @@ WITH U AS(
     AND cc.upper_cmmn_code='20'
     AND cc.cmmn_code_group='ATTEND'
        AND (
-         (TO_CHAR(dt.dclz_begin_dt, 'YYYY')) LIKE '%' || #{keyword} || '%'
-         OR cc.cmmn_code_nm  LIKE '%' || #{keyword} || '%'
+         (TO_CHAR(dt.dclz_begin_dt, 'YYYY-mm')) LIKE '%' || #{keyword} || '%'
+             AND((TO_CHAR(dt.dclz_begin_dt, 'YYYY')) LIKE '%' || #{keywordSearch} || '%'
+             OR cc.cmmn_code_nm  LIKE '%' || #{keywordSearch} || '%' )
 		)
     )
     D
