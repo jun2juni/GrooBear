@@ -92,7 +92,7 @@ $('#jstree').on('ready.jstree', function() {
 		          bubbles: true
 		        });
 			input.dispatchEvent(fakeEnterEvent);
-	        
+			$('#schName').focus();
 		}
 		
 	})
