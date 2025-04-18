@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="text/javascript">
 	document.addEventListener('DOMContentLoaded', function() {
 		
@@ -137,7 +138,7 @@
 			let differenceInDays
 			if(time=="date"){
 				differenceInDays = (date2 - date1) / (1000 * 60 * 60 * 24);
-				console.log('date',differenceInDays)
+// 				console.log('date',differenceInDays)
 			}else if(time=="minute"){
 				differenceInDays = (date2 - date1) / (1000 * 60 );
 				console.log('minute',differenceInDays)
@@ -173,10 +174,27 @@
 				// console.log("dataMap.labelList : ",dataMap.labelList);
 				let selLabel = dataMap.labelList.filter(labeObj=> labeObj.lblNo == data.lblNo)[0];
 				let lblColor='';
-				if(selLabel){
-					lblColor = selLabel.lblColor;
+				let backgroundColor=''
+				let textColor=''
+				if(data.schdulTy == '1'){
+					console.log('일정 타입',data.schdulTy);
+					console.log('일정 넘버',data.schdulNo);
+					borderColor = '#0d6efd';
+					lblColor = '#ffffff'
+					textColor='#000000'
+				}else if(data.schdulTy == '2'){
+					console.log('일정 타입',data.schdulTy);
+					console.log('일정 넘버',data.schdulNo);
+					borderColor = '#dc3545'
+					lblColor = '#ffffff'
+					textColor='#000000'
+				}else{
+					if(selLabel){
+						lblColor = selLabel.lblColor;
+					}
 				}
-				// console.log("selLabel",selLabel);
+				console.log("lblColor : ",lblColor);
+				console.log("borderColor : ",borderColor);
 				returnData.push({
 				   "emplNo":data.emplNo,
 				   "id":data.schdulNo,
@@ -191,6 +209,8 @@
 				   "allDay":chk,
 				   "durationEditable": true,
 				   "backgroundColor":lblColor,
+				   "borderColor":borderColor,
+				   "textColor":textColor
 				})
 			});
 			return returnData;
@@ -430,7 +450,10 @@
 					console.log('startTendTimeme : ',endDate)
 					let chk = overChk(startDate,endDate,'minute',1);
 					console.log('chk : ',chk)
-					if(!chk){ alert('결과 : '+ chk+ ' validation 대상입니다. '); }
+					if(!chk){
+						let errStr = '결과 : '+ chk+ ' validation 대상입니다. '
+						swal({title:errStr,icon:"error"});
+					}
 			}
 
 			// 같은 날짜일 경우 시간 제약 조건 처리
@@ -660,7 +683,7 @@
 			// console.log("event -> input.start : ",e.target.form.startTime.value);
 			
 			if(!e.target.form.schdulSj.value){
-				alert("제목을 입력하세요");
+				swal({title:'제목을 입력하세요',icon:"error"});
 				return;
 			}
 
@@ -724,27 +747,43 @@
 			return uptData;
 		}
 		window.fCalDel = function(e){
-			if(!confirm('삭제하시겠습니까??')) { return; }
-			
-			let schdulNo = e.target.closest("form").schdulNo.value;
-			console.log("event check",schdulNo);
-			$.ajax({
-				url:"/myCalendar/delCalendar",
-				type:"post",
-				data:JSON.stringify({schdulNo : schdulNo, emplNo : emplNo, deptCode : deptCode}),
-				// data:schdulNo,
-				contentType:"application/json",
-				success:function(resp){
-					fMClose();
-					let clndr = chngData(resp);
-					console.log(clndr);
-					window.globalCalendar.setOption('events', clndr);
-				},
-				error:function(err){
-					console.log("실패 : ",err);
+			// if(!confirm('삭제하시겠습니까??')) { return; }
+			Swal.fire({
+				title: '삭제하시겠습니까?',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: '확인',
+				cancelButtonText: '취소'
+			}).then((result) => {
+				if(result.isConfirmed) {
+				// 확인 버튼 클릭 시 실행할 코드
+					let schdulNo = e.target.closest("form").schdulNo.value;
+					console.log("event check",schdulNo);
+					$.ajax({
+						url:"/myCalendar/delCalendar",
+						type:"post",
+						data:JSON.stringify({schdulNo : schdulNo, emplNo : emplNo, deptCode : deptCode}),
+						// data:schdulNo,
+						contentType:"application/json",
+						success:function(resp){
+							fMClose();
+							let clndr = chngData(resp);
+							console.log(clndr);
+							window.globalCalendar.setOption('events', clndr);
+						},
+						error:function(err){
+							console.log("실패 : ",err);
+						}
+					})
+					console.log('삭제 확인됨');
+				} else {
+					// 취소 버튼 클릭 시 실행할 코드
+					console.log('삭제 취소됨');
+					return;
 				}
-			})
+			});
 		};
+		
 		calendar.on("eventMouseEnter",function(info){
 			// console.log(info)
 		})

@@ -523,7 +523,7 @@
         saveLabelBtn.addEventListener('click', function () {
             const labelName = document.getElementById('newLabelName').value.trim();
             if (!labelName) {
-                alert('라벨 이름을 입력해주세요');
+                swal('라벨 이름을 입력해주세요.')
                 return;
             }
             let labelData = {
@@ -568,7 +568,7 @@
                 },
                 error: function(err) {
                     console.error("라벨 추가 실패:", err);
-                    alert("라벨 추가 중 오류가 발생했습니다.");
+                    swal('라벨 추가 중 오류가 발생했습니다.')
                 }
             });
         });
