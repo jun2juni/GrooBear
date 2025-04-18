@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
+<%@ page import="org.springframework.security.core.Authentication" %>
 
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
 <c:set var="title" scope="application" value="조직도" />
@@ -46,9 +48,52 @@
 	  </div>
 	</section>
 	<c:import url="../layout/footer.jsp" />
+	<c:import url="../layout/prescript.jsp" />
+	
 </main>
 
 <script type="text/javascript">
+$('#jstree').on('ready.jstree', function() {
+	<%
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String username = auth.getName(); // 사용자 이름 가져오기
+	%>
+	console.log('현재사용자 : ' , <%= username %>);
+	
+	// 이름 검색 디폴트를 위한 사원 상세 정보 가져오기
+	fetch('/emplDetailData?emplNo='+<%= username %>,{
+		 method : 'get',
+   	 headers : {
+   		 "Content-Type": "application/json"
+   	 }
+	})
+	.then(resp => resp.json())
+	.then(res => {
+		console.log(res.empDetail);
+		
+		const emplDetail = res.empDetail;
+		const emplNm = emplDetail.emplNm;
+		
+		if(emplNm){
+			
+			const schName = document.getElementById("schName");
+			schName.value = emplNm;
+
+			const input = document.getElementById("schName");
+			
+			const fakeEnterEvent = new KeyboardEvent("keydown", {
+		          code: "Enter",
+		          key: "Enter",
+		          bubbles: true
+		        });
+			input.dispatchEvent(fakeEnterEvent);
+	        
+		}
+		
+	})
+})
+
+
 
   // 사원 클릭 한 경우
   function clickEmp(data) {
@@ -60,7 +105,7 @@
     })
       .then(resp => resp.text())
       .then(res => {
-        console.log("사원상세정보 : " , res);
+        //console.log("사원상세정보 : " , res);
         $("#emplDetail").html(res);
       })
   }
@@ -75,7 +120,7 @@
     })
       .then(resp => resp.text())
       .then(res => {
-        console.log("부서상세정보 : " , res);
+        //console.log("부서상세정보 : " , res);
         $("#emplDetail").html(res);
 
         // 부서 삭제 - 관리자만 가능
@@ -136,6 +181,7 @@
   // 엔터치면 검색 + 상세보기 창 열림
   function fSchEnder(e) {
       if (e.code === "Enter") {
+    	  
          $('#jstree').jstree(true).search($("#schName").val());
          
          let empList = "";
@@ -158,7 +204,7 @@
 		 
 			 // 전체사원 목록
 			 empList = res.empList;
-			 console.log('전체사원 : ' , empList);
+			 //console.log('전체사원 : ' , empList);
 			 
 			 // 전체부서 목록
 			 deptList = res.deptList;
@@ -225,8 +271,10 @@
   }
   
 
+  
+
  </script>
 
-<c:import url="../layout/prescript.jsp" />
+
 </body>
 </html>

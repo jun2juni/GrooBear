@@ -37,9 +37,9 @@
 		   <div class="row">
 			<div class="col-12">
 			<div class="row">
-			  <div class="text-center mb-20">
+			  <%-- <div class="text-center mb-20">
 			  	<h4><p class="status-btn" style="color:thistle; font-size:20px; font-weight:bold; background-color: white;"> ${paramKeyword.substring(0,4)}년 근태현황 </p></h4>
-	          </div>
+	          </div> --%>
 	          <div class="col-3">
 	            <div class="icon-card mb-30">
 	              <div class="icon orange">
@@ -64,11 +64,11 @@
 	              <div class="content">
 	                <h6 class="mb-10">출장</h6>
 		                <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.businessTrip == null ? 0 : dclzCnt.businessTrip}건</h3>
-	                <p class="text-sm text-success">
+	                <p class="text-sm text-gray">
 					<c:forEach var="dclzType" items="${empDetailDclzTypeCnt}" varStatus="status">
 						<c:choose>
 							<c:when test="${dclzType.upperCmmnCode == '30' && dclzType.cnt != 0}">
-		                  		<span>${dclzType.cmmnCodeNm} ${dclzType.cnt} / </span>
+		                  		<span>${dclzType.cmmnCodeNm} ${dclzType.cnt}&nbsp;</span>
 		                  	</c:when>
 							<c:otherwise>
 							</c:otherwise>
@@ -91,11 +91,11 @@
 	              <div class="content">
 	                <h6 class="mb-10">휴가</h6>
 		                <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.vacation == null ? 0 : dclzCnt.vacation}건</h3>
-	                <p class="text-sm text-success">
+	                <p class="text-sm text-gray">
 	                <c:forEach var="dclzType" items="${empDetailDclzTypeCnt}" varStatus="status">
 						<c:choose>
 							<c:when test="${dclzType.upperCmmnCode == '20' && dclzType.cnt != 0}">
-		                  		<span>${separator}${dclzType.cmmnCodeNm} ${dclzType.cnt} / </span>
+		                  		<span>${separator}${dclzType.cmmnCodeNm} ${dclzType.cnt}&nbsp;</span>
 		                  	</c:when>
 							<c:otherwise>
 								<span> </span>
@@ -119,7 +119,7 @@
 	                <c:forEach var="dclzType" items="${empDetailDclzTypeCnt}" varStatus="status">
 	                  <c:choose>
 	                  	<c:when test="${dclzType.upperCmmnCode == '00' && dclzType.cnt != 0}">
-	                  		<span>${separator}${dclzType.cmmnCodeNm} ${dclzType.cnt} / </span>
+	                  		<span>${separator}${dclzType.cmmnCodeNm} ${dclzType.cnt}&nbsp;</span>
 	                  	</c:when>
 	                  <c:otherwise>
 	                  	<span> </span>

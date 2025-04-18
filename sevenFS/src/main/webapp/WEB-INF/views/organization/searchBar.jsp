@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 
+
 <!-- 검색 -->
 <div style="background-color: white; position:sticky; top: 90px; z-index:1; height:20px;" >
    <div class="input-group rounded mb-3" id="schDiv" >
@@ -15,11 +16,12 @@
 </div>
  
 <script type="text/javascript">
+
+ 	
 	// 검색기능
     function fSch() {
         console.log("검색");
         $('#jstree').jstree(true).search($("#schName").val());
-        
     }
     
     function fSchEnder(e) {

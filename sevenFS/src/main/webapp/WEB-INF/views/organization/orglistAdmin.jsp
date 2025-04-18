@@ -4,6 +4,9 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
+<%@ page import="org.springframework.security.core.Authentication" %>
+
 
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
 <c:set var="title" scope="application" value="조직관리" />
@@ -54,6 +57,51 @@
 
 
 <script>
+
+$('#jstree').on('ready.jstree', function() {
+	<%
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String username = auth.getName(); // 사용자 이름 가져오기
+	%>
+	console.log('현재사용자 : ' , <%= username %>);
+	
+	// 이름 검색 디폴트를 위한 사원 상세 정보 가져오기
+	fetch('/emplDetailData?emplNo='+<%= username %>,{
+		 method : 'get',
+   	 headers : {
+   		 "Content-Type": "application/json"
+   	 }
+	})
+	.then(resp => resp.json())
+	.then(res => {
+		console.log(res.empDetail);
+		
+		const emplDetail = res.empDetail;
+		const emplNm = emplDetail.emplNm;
+		
+		if(emplNm){
+			
+			const schName = document.getElementById("schName");
+			schName.value = emplNm;
+
+			const input = document.getElementById("schName");
+			
+			const fakeEnterEvent = new KeyboardEvent("keydown", {
+		          code: "Enter",
+		          key: "Enter",
+		          bubbles: true
+		        });
+			input.dispatchEvent(fakeEnterEvent);
+	        
+		}
+		
+	})
+})
+
+
+
+
+
 // 부서등록 - 관리자만 가능
 function deptInsert(){
     fetch("/depInsert", {
