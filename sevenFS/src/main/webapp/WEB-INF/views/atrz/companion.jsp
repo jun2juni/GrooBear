@@ -91,18 +91,15 @@
 								<div id="atrNavBar">
 									<ul class="nav nav-pills" id="myTab" role="tablist">
 										<li class="nav-item" role="presentation">
-											<button class="nav-link active" id="contact1-tab"
-												data-bs-toggle="tab" data-bs-target="#contact1-tab-pane"
-												type="button" role="tab" aria-controls="contact1-tab-pane"
-												aria-selected="true">반려문서함</button>
+											<button id="s_eap_btn" class="main-btn active-btn rounded-full btn-hover newAtrzDocBtn"
+										data-bs-toggle="modal" data-bs-target="#newAtrzDocModal">
+										새 결재 진행</button>
 										</li>
 									</ul>
 								</div>
 								<!-- 오른쪽: 검색창 -->
 								<div class="table_search d-flex align-items-center gap-2">
-									<button id="s_eap_btn" class="main-btn active-btn rounded-full btn-hover newAtrzDocBtn"
-										data-bs-toggle="modal" data-bs-target="#newAtrzDocModal">
-										새 결재 진행</button>
+									
 									<select id="duration" class="form-select w-auto">
 										<option value="all">전체기간</option>
 										<option value="1">1개월</option>
@@ -191,13 +188,6 @@
 
 						<div class="tab-pane fade show active" id="contact1-tab-pane"
 							role="tabpanel" aria-labelledby="contact1-tab" tabindex="0">
-							<div id="critical">
-								<a class="btn" data-bs-toggle="modal"
-									data-bs-target="#allApproval"> <span
-									class="material-symbols-outlined">data_check</span> <span
-									class="txt">일괄결재</span>
-								</a>
-							</div>
 
 							<div class="atrzTabCont">
 								<!-- <div class="container mt-4"> -->
@@ -217,18 +207,14 @@
 															<thead>
 																<tr>
 																	<!-- select박스 -->
-																	<th></th>
 																	<th class="text-center">
-																		<h6 class="fw-bolder">기안일</h6>
+																		<h6 class="fw-bolder">반려일</h6>
 																	</th>
 																	<th class="text-center">
 																		<h6 class="fw-bolder">제목</h6>
 																	</th>
 																	<th class="text-center">
-																		<h6 class="fw-bolder">기안부서</h6>
-																	</th>
-																	<th class="text-center">
-																		<h6 class="fw-bolder">기안자</h6>
+																		<h6 class="fw-bolder">반려의견</h6>
 																	</th>
 																	<th class="text-center">
 																		<h6 class="fw-bolder">결재상태</h6>
@@ -238,18 +224,10 @@
 															<c:forEach var="atrzVO" items="${atrzCompanionList}">
 																<tbody>
 																	<tr>
-																		<td class="text-center"
-																			style="padding-top: 10px; padding-bottom: 10px;">
-																			<div class="check-input-primary">
-																				<input class="form-check-input" type="checkbox"
-																					id="checkbox-1">
-																			</div>
-																		</td>
-																		<td class="text-center" style="padding-top: 0px;">
+																		<td class="text-center" style="padding-top: 10px; padding-bottom: 10px;">
 																			<!--글씨체 두껍게 b태그 사용하기-->
 																			<p class="text-sm fw-bolder">
-																				<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
-																				<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																				<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="yyyy-MM-dd" var="onlyDate" />
 																				<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p></p>
 																		</td>
 																		<td style="text-align: left; padding-top: 0px;">
@@ -270,10 +248,7 @@
 																			</a>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
-																			<p class="fw-bolder">${atrzVO.deptCodeNm}</p>
-																		</td>
-																		<td class="text-center" style="padding-top: 0px;">
-																			<p class="fw-bolder">${atrzVO.drafterEmpnm}</p>
+																			<p class="fw-bolder">${atrzVO.atrzOpinion}</p>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
 																			<p>

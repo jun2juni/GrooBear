@@ -887,7 +887,7 @@ $(document).ready(function() {
 			tableHtml += `</tr><tr>`;
 			$.each(approvalList, function(i, employeeVO){
 				tableHtml += `<td><img
-					src="/assets/images/atrz/beforGR.png"
+					src="/assets/images/atrz/before.png"
 					style="width: 50px;"></td>`;
 			});
 

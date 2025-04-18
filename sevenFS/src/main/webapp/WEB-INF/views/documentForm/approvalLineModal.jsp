@@ -64,10 +64,10 @@
 							<table class="table">
 								<thead>
 									<tr>
-										<th scope="col">NO</th>
+										<th scope="col" hidden>NO</th>
 										<th scope="col">이름</th>
 										<th scope="col">부서</th>
-										<th scope="col">직책</th>
+										<th scope="col">직급</th>
 										<th scope="col" hidden>권한</th>
 										<th scope="col">전결여부</th>
 									</tr>
@@ -82,10 +82,12 @@
 									<table class="table">
 										<thead>
 											<tr>
-											<th scope="col">NO</th>
-											<th scope="col">참조자명</th>
-											<th scope="col">부서</th>
-											<th scope="col">직급</th>
+												<th scope="col" hidden>NO</th>
+												<th scope="col">이름</th>
+												<th scope="col">부서</th>
+												<th scope="col">직급</th>
+												<th scope="col" hidden>권한</th>
+												<th scope="col" style="visibility: hidden;">전결여부</th>
 											</tr>
 										</thead>
 									<tbody class="s_appLine_tbody_ref" style="text-align: center;">

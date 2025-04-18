@@ -1,58 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper">
-	<select id="homeList" resultMap="atrzMap">
-		SELECT /* AtrzMapper.homeList */
-	        A.atrz_doc_no,
-	        A.drafter_empno,
-	        A.drafter_clsf,
-	        A.drafter_empnm,
-	        A.drafter_dept,
-	        A.bkmk_yn,
-	        A.atch_file_no,
-	        A.atrz_sj,
-	        A.atrz_cn,
-	        A.atrz_opinion,
-	        A.atrz_tmpr_stre_dt,
-	        A.atrz_drft_dt,
-	        A.atrz_compt_dt,
-	        A.atrz_rtrvl_dt,
-	        A.atrz_sttus_code,
-	        A.eltsgn_image,
-	        A.doc_form_no,
-	        A.atrz_delete_yn,
-	        A.schdul_reg_yn,
-	
-	        L.atrz_doc_no as line_atrz_doc_no,
-	        L.atrz_ln_sn,
-	        L.sanctner_empno,
-	        L.sanctner_clsf_code,
-	        L.contd_empno,
-	        L.contd_clsf_code,
-	        L.dcrb_man_empno,
-	        L.dcrb_man_clsf_code,
-	        L.atrz_ty,
-	        L.sanctn_progrs_sttus_code,
-	        L.dcrb_author_yn,
-	        L.contd_author_yn,
-	        L.sanctn_opinion,
-	        L.eltsgn_image as line_eltsgn_image,
-	        L.sanctn_confm_dt,
-	
-	        H.holi_actpln_no,
-	        H.atrz_doc_no as holi_atrz_doc_no,
-	        H.holi_code,
-	        H.holi_start,
-	        H.holi_end
-	
-	    FROM atrz A
-	    LEFT JOIN atrz_line L ON A.atrz_doc_no = L.atrz_doc_no
-	    LEFT JOIN docum_holiday H ON A.atrz_doc_no = H.atrz_doc_no
-	    WHERE A.drafter_empno = #{drafterEmpno}
-	    ORDER BY A.atrz_drft_dt
-	</select>
-
-
 	<!-- 결재 대기중인 문서리스트 (결재대기문서)-->
 	<select id="atrzApprovalList" resultMap="atrzMap">
 		WITH my_turn_lines AS (					/* AtrzMapper.atrzApprovalList */
@@ -71,31 +19,33 @@
 		      )
 		)
 		SELECT  
-		      A.atrz_doc_no,
-		      A.drafter_empno,
-		      A.drafter_clsf,
-		      A.drafter_empnm,
-		      A.drafter_dept,
-		      A.bkmk_yn,
-		      A.atch_file_no,
-		      A.atrz_sj,
-		      A.atrz_cn,
-		      A.atrz_opinion,
-		      A.atrz_tmpr_stre_dt,
-		      A.atrz_drft_dt,
-		      A.atrz_compt_dt,
-		      A.atrz_rtrvl_dt,
-		      A.atrz_sttus_code,
-		      A.eltsgn_image,
-		      A.doc_form_no,
-		      A.atrz_delete_yn,
-		      A.schdul_reg_yn,
-		      L.atrz_ln_sn,
-		      L.sanctner_empno,
-		      L.sanctn_progrs_sttus_code,
-		      L.atrz_ty,
-		      L.dcrb_author_yn
-		FROM atrz A
+		      A.atrz_doc_no
+		      ,A.drafter_empno
+		      ,A.drafter_clsf
+		      ,A.drafter_empnm
+		      ,A.drafter_dept
+		      ,A.bkmk_yn
+		      ,A.atch_file_no
+		      ,A.atrz_sj
+		      ,A.atrz_cn
+		      ,A.atrz_opinion
+		      ,A.atrz_tmpr_stre_dt
+		      ,A.atrz_drft_dt
+		      ,A.atrz_compt_dt
+		      ,A.atrz_rtrvl_dt
+		      ,A.atrz_sttus_code
+		      ,A.eltsgn_image
+		      ,A.doc_form_no
+		      ,A.atrz_delete_yn
+		      ,A.schdul_reg_yn
+		      ,L.atrz_ln_sn
+		      ,L.sanctner_empno
+		      ,L.sanctn_progrs_sttus_code
+		      ,L.atrz_ty
+		      ,L.dcrb_author_yn
+		      ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
+          	  ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
+		FROM ATRZ A
 		JOIN my_turn_lines L
 		  ON A.atrz_doc_no = L.atrz_doc_no
 		WHERE A.atrz_compt_dt IS NULL
@@ -106,62 +56,67 @@
 	<!-- 기안진행문서 최신순5개 -->
 	<select id="atrzMinSubmitList" resultMap="atrzMap" parameterType="string">
 		SELECT 		/* AtrzMapper.atrzMinSubmitList */
-		      a.atrz_doc_no,
-		      a.drafter_empno,
-		      a.drafter_clsf,
-		      a.drafter_empnm,
-		      a.drafter_dept,
-		      a.bkmk_yn,
-		      a.atch_file_no,
-		      a.atrz_sj,
-		      a.atrz_cn,
-		      a.atrz_opinion,
-		      a.atrz_tmpr_stre_dt,
-		      a.atrz_drft_dt,
-		      a.atrz_compt_dt,
-		      a.atrz_rtrvl_dt,
-		      a.atrz_sttus_code,
-		      a.eltsgn_image,
-		      a.doc_form_no,
-		      a.atrz_delete_yn,
-		      a.schdul_reg_yn,
-		      l.atrz_ln_sn,
-		      l.sanctner_empno,
-		      l.sanctn_progrs_sttus_code
+		       A.atrz_doc_no
+		      ,A.drafter_empno
+		      ,A.drafter_clsf
+		      ,A.drafter_empnm
+		      ,A.drafter_dept
+		      ,A.bkmk_yn
+		      ,A.atch_file_no
+		      ,A.atrz_sj
+		      ,A.atrz_cn
+		      ,A.atrz_opinion
+		      ,A.atrz_tmpr_stre_dt
+		      ,A.atrz_drft_dt
+		      ,A.atrz_compt_dt
+		      ,A.atrz_rtrvl_dt
+		      ,A.atrz_sttus_code
+		      ,A.eltsgn_image
+		      ,A.doc_form_no
+		      ,A.atrz_delete_yn
+		      ,A.schdul_reg_yn
+		      ,L.atrz_ln_sn
+		      ,L.sanctner_empno
+		      ,L.sanctn_progrs_sttus_code
+		      ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
+		      ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
+		      
 		FROM (
 		    SELECT *
 		    FROM (
 		        SELECT *
-		        FROM atrz
+		        FROM ATRZ
 		        WHERE drafter_empno = #{emplNo}
 		          AND atrz_delete_yn = 'N'
 		          AND atrz_sttus_code = '00'
 		        ORDER BY atrz_drft_dt DESC
 		    )
 		    WHERE ROWNUM &lt;= 5
-		) a
-		LEFT JOIN atrz_line l
-		  ON a.atrz_doc_no = l.atrz_doc_no
-		ORDER BY a.atrz_drft_dt DESC
+		) A
+		LEFT JOIN atrz_line L
+		  ON A.atrz_doc_no = L.atrz_doc_no
+		ORDER BY A.atrz_drft_dt DESC
 	</select>
 	
 	<!-- 기안완료문서 최신순5개 -->
 	<select id="atrzMinCompltedList" resultMap="atrzMap" parameterType="string">
-		SELECT *   /* AtrzMapper.atrzMinCompltedList */
+		SELECT *   /* AtrzMapper.atrzMinCompltedList 쿼리수정완료 */
 			FROM (
 			  SELECT 	
-			        A.atrz_doc_no,
-			        A.atrz_sj,
-			        A.atrz_cn,
-			        A.atrz_drft_dt,
-			        A.atrz_compt_dt,
-			        A.atrz_rtrvl_dt,
-			        A.atrz_sttus_code,
-			        A.drafter_empno,
-			        A.drafter_empnm,
-			        A.drafter_clsf,
-			        A.drafter_dept
-			    FROM atrz A
+			        A.atrz_doc_no
+			        ,A.atrz_sj
+			        ,A.atrz_cn
+			        ,A.atrz_drft_dt
+			        ,A.atrz_compt_dt
+			        ,A.atrz_rtrvl_dt
+			        ,A.atrz_sttus_code
+			        ,A.drafter_empno
+			        ,A.drafter_empnm
+			        ,A.drafter_clsf
+			        ,A.drafter_dept
+			        ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
+          			,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
+			    FROM ATRZ A
 			    WHERE A.drafter_empno = #{emplNo}
 			      AND A.atrz_sttus_code = '10'
 			    ORDER BY A.atrz_compt_dt DESC
@@ -172,77 +127,83 @@
 	
 	<!-- 기안중인 문서리스트 문서리스트 (기안진행문서) -->
 	<select id="atrzSubmitList" resultMap="atrzMap" parameterType="string">
-		SELECT 	/* AtrzMapper.atrzSubmitList */
-	        A.atrz_doc_no,
-	        A.atrz_sj,
-	        A.atrz_cn,
-	        A.atrz_drft_dt,
-	        A.atrz_compt_dt,
-	        A.atrz_rtrvl_dt,
-	        A.atrz_sttus_code,
-	        A.drafter_empno,
-	        A.drafter_empnm,
-	        A.drafter_clsf,
-	        A.drafter_dept,
-	        L.atrz_ln_sn,
-	        L.sanctner_empno,
-	        L.sanctn_progrs_sttus_code
-	    FROM atrz A
+		SELECT 	/* AtrzMapper.atrzSubmitList 쿼리수정완료 */
+	        A.atrz_doc_no
+	        ,A.atrz_sj
+	        ,A.atrz_cn
+	        ,A.atrz_drft_dt
+	        ,A.atrz_compt_dt
+	        ,A.atrz_rtrvl_dt
+	        ,A.atrz_sttus_code
+	        ,A.drafter_empno
+	        ,A.drafter_empnm
+	        ,A.drafter_clsf
+	        ,A.drafter_dept
+	        ,L.atrz_ln_sn
+	        ,L.sanctner_empno
+	        ,L.sanctn_progrs_sttus_code
+	        ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
+            ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
+	    FROM ATRZ A
 	    LEFT JOIN atrz_line L
 	        on A.atrz_doc_no = L.atrz_doc_no
 	    WHERE 1 = 1
 	     AND A.drafter_empno = #{emplNo}
 	     AND A.atrz_sttus_code = '00'
-	    ORDER BY A.atrz_drft_dt desc
+	    ORDER BY A.atrz_drft_dt DESC
 	</select>
 	
 	<!-- 기안완료된 문서리스트(결재완료문서) -->
 	<select id="atrzCompletedList" resultMap="atrzMap" parameterType="string">
-		SELECT 	/* AtrzMapper.atrzCompletedList */
-	        A.atrz_doc_no,
-	        A.atrz_sj,
-	        A.atrz_cn,
-	        A.atrz_drft_dt,
-	        A.atrz_compt_dt,
-	        A.atrz_rtrvl_dt,
-	        A.atrz_sttus_code,
-	        A.drafter_empno,
-	        A.drafter_empnm,
-	        A.drafter_clsf,
-	        A.drafter_dept
-	    FROM atrz A
+        SELECT 	/* AtrzMapper.atrzCompletedList 쿼리수정완료 */
+	         A.atrz_doc_no
+	        ,A.atrz_sj
+	        ,A.atrz_cn
+	        ,A.atrz_drft_dt
+	        ,A.atrz_compt_dt
+	        ,A.atrz_rtrvl_dt
+	        ,A.atrz_sttus_code
+	        ,A.drafter_empno
+	        ,A.drafter_empnm
+	        ,A.drafter_clsf
+	        ,A.drafter_dept
+	        ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
+            ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
+	    FROM ATRZ A
 	    WHERE  1 = 1
 	      AND A.drafter_empno = #{emplNo}
 	      AND A.atrz_sttus_code = '10'
-	    ORDER BY A.atrz_compt_dt desc
+	    ORDER BY A.atrz_compt_dt DESC
 	</select>
 	
 	<!-- 참조대기문서 -->
 	<select id="atrzReferList" resultMap="atrzMap" parameterType="string">
-		SELECT 		/* AtrzMapper.atrzReferList */ 
-		       A.atrz_doc_no,
-		       A.drafter_empno,
-		       A.drafter_clsf,
-		       A.drafter_empnm,
-		       A.drafter_dept,
-		       A.bkmk_yn,
-		       A.atch_file_no,
-		       A.atrz_sj,
-		       A.atrz_cn,
-		       A.atrz_opinion,
-		       A.atrz_tmpr_stre_dt,
-		       A.atrz_drft_dt,
-		       A.atrz_compt_dt,
-		       A.atrz_rtrvl_dt,
-		       A.atrz_sttus_code,
-		       A.eltsgn_image,
-		       A.doc_form_no,
-		       A.atrz_delete_yn,
-		       A.schdul_reg_yn,
-		       L.atrz_ln_sn,
-		       L.sanctner_empno,
-		       L.atrz_ty,
-		       L.sanctn_progrs_sttus_code
+		SELECT 		/* AtrzMapper.atrzReferList 쿼리수정완료 */ 
+		       A.atrz_doc_no
+		       ,A.drafter_empno
+		       ,A.drafter_clsf
+		       ,A.drafter_empnm
+		       ,A.drafter_dept
+		       ,A.bkmk_yn
+		       ,A.atch_file_no
+		       ,A.atrz_sj
+		       ,A.atrz_cn
+		       ,A.atrz_opinion
+		       ,A.atrz_tmpr_stre_dt
+		       ,A.atrz_drft_dt
+		       ,A.atrz_compt_dt
+		       ,A.atrz_rtrvl_dt
+		       ,A.atrz_sttus_code
+		       ,A.eltsgn_image
+		       ,A.doc_form_no
+		       ,A.atrz_delete_yn
+		       ,A.schdul_reg_yn
+		       ,L.atrz_ln_sn
+		       ,L.sanctner_empno
+		       ,L.atrz_ty
+		       ,L.sanctn_progrs_sttus_code
+		       ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
+               ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
 		  FROM atrz A
 		  LEFT JOIN atrz_line L
 		    ON A.atrz_doc_no = L.atrz_doc_no
@@ -256,31 +217,33 @@
 	<!-- 결재예정문서 -->
 	<select id="atrzExpectedList" resultMap="atrzMap" parameterType="string">
 		SELECT  /* AtrzMapper.atrzExpectedList */ 
-		       A.atrz_doc_no,
-		       A.drafter_empno,
-		       A.drafter_clsf,
-		       A.drafter_empnm,
-		       A.drafter_dept,
-		       A.bkmk_yn,
-		       A.atch_file_no,
-		       A.atrz_sj,
-		       A.atrz_cn,
-		       A.atrz_opinion,
-		       A.atrz_tmpr_stre_dt,
-		       A.atrz_drft_dt,
-		       A.atrz_compt_dt,
-		       A.atrz_rtrvl_dt,
-		       A.atrz_sttus_code,
-		       A.eltsgn_image,
-		       A.doc_form_no,
-		       A.atrz_delete_yn,
-		       A.schdul_reg_yn,
-		       L.atrz_ln_sn,
-		       L.sanctner_empno,
-		       L.sanctn_progrs_sttus_code,
-		       L.atrz_ty,
-		       L.dcrb_author_yn
-		FROM atrz A
+		        A.atrz_doc_no
+		       ,A.drafter_empno
+		       ,A.drafter_clsf
+		       ,A.drafter_empnm
+		       ,A.drafter_dept
+		       ,A.bkmk_yn
+		       ,A.atch_file_no
+		       ,A.atrz_sj
+		       ,A.atrz_cn
+		       ,A.atrz_opinion
+		       ,A.atrz_tmpr_stre_dt
+		       ,A.atrz_drft_dt
+		       ,A.atrz_compt_dt
+		       ,A.atrz_rtrvl_dt
+		       ,A.atrz_sttus_code
+		       ,A.eltsgn_image
+		       ,A.doc_form_no
+		       ,A.atrz_delete_yn
+		       ,A.schdul_reg_yn
+		       ,L.atrz_ln_sn
+		       ,L.sanctner_empno
+		       ,L.sanctn_progrs_sttus_code
+		       ,L.atrz_ty
+		       ,L.dcrb_author_yn
+		       ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
+               ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
+		FROM ATRZ A
 		     LEFT JOIN atrz_line L ON A.atrz_doc_no = L.atrz_doc_no
 		WHERE 1 = 1
 		  AND A.atrz_compt_dt IS NULL
@@ -300,26 +263,28 @@
 	
 	<!-- 기안문서함 -->	
 	<select id="atrzAllSubmitList" resultMap="atrzMap" parameterType="string">
-		SELECT 
-		      A.atrz_doc_no,
-		      A.drafter_empno,
-		      A.drafter_clsf,
-		      A.drafter_empnm,
-		      A.drafter_dept,
-		      A.bkmk_yn,
-		      A.atch_file_no,
-		      A.atrz_sj,
-		      A.atrz_cn,
-		      A.atrz_opinion,
-		      A.atrz_tmpr_stre_dt,
-		      A.atrz_drft_dt,
-		      A.atrz_compt_dt,
-		      A.atrz_rtrvl_dt,
-		      A.atrz_sttus_code,
-		      A.eltsgn_image,
-		      A.doc_form_no,
-		      A.atrz_delete_yn,
-		      A.schdul_reg_yn
+		SELECT 				/* AtrzMapper.atrzAllSubmitList 쿼리수정완료 */ 
+		       A.atrz_doc_no
+		      ,A.drafter_empno
+		      ,A.drafter_clsf
+		      ,A.drafter_empnm
+		      ,A.drafter_dept
+		      ,A.bkmk_yn
+		      ,A.atch_file_no
+		      ,A.atrz_sj
+		      ,A.atrz_cn
+		      ,A.atrz_opinion
+		      ,A.atrz_tmpr_stre_dt
+		      ,A.atrz_drft_dt
+		      ,A.atrz_compt_dt
+		      ,A.atrz_rtrvl_dt
+		      ,A.atrz_sttus_code
+		      ,A.eltsgn_image
+		      ,A.doc_form_no
+		      ,A.atrz_delete_yn
+		      ,A.schdul_reg_yn
+		      ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
+              ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
 		FROM ATRZ A
 		     LEFT JOIN atrz_line L
 		       ON A.atrz_doc_no = L.atrz_doc_no
@@ -332,8 +297,8 @@
 
 	<!-- 임시저장한 문서리스트 (임시저장함) -->
 	<select id="atrzStorageList"  resultMap="atrzMap" parameterType="string">
-		SELECT /* AtrzMapper.atrzStorageList */
-		         atrz_doc_no
+		SELECT /* AtrzMapper.atrzStorageList 쿼리수정완료 */
+		          atrz_doc_no
 		        , drafter_empno
 		        , drafter_clsf
 		        , drafter_empnm
@@ -351,6 +316,8 @@
 		        , doc_form_no
 		        , atrz_delete_yn
 		        , schdul_reg_yn
+		        ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
+		        ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
 		FROM ATRZ
 		WHERE 1 = 1
 			AND drafter_empno= #{emplNo}
@@ -380,6 +347,8 @@
 		    , A.doc_form_no
 		    , A.atrz_delete_yn
 		    , A.schdul_reg_yn
+    		,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
+            ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
 		FROM ATRZ A
 		        LEFT JOIN atrz_line L
 		         ON A.atrz_doc_no = L.atrz_doc_no
@@ -390,8 +359,9 @@
 		    AND L.sanctn_progrs_sttus_code IN ('10','20','60')
 		ORDER BY A.atrz_drft_dt DESC    
 	</select>
+	<!-- 반려문서함 -->
 	<select id="atrzCompanionList" resultMap="atrzMap" parameterType="string">
-		SELECT /* AtrzMapper.atrzCompanionList */
+		SELECT /* AtrzMapper.atrzCompanionList 쿼리수정완료 */
 		         atrz_doc_no
 		        , drafter_empno
 		        , drafter_clsf
@@ -410,6 +380,8 @@
 		        , doc_form_no
 		        , atrz_delete_yn
 		        , schdul_reg_yn
+		        ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
+		        ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
 		FROM ATRZ
 		WHERE 1 = 1
 			AND drafter_empno= #{emplNo}
@@ -736,7 +708,64 @@
 	            , #{holiUseDays}
 	        )
 	</insert>
+	<!-- 재기안시 문서정보가져오기 -->
+	<select id="selectDocumentReturn" parameterType="string" resultMap="atrzMap">
+	SELECT 	/* AtrzMapper.selectDocumentReturn */
+	    A.ATRZ_DOC_NO,
+	    A.DRAFTER_EMPNO,
+	    A.DRAFTER_CLSF,
+	    A.DRAFTER_EMPNM,
+	    A.DRAFTER_DEPT,
+	    A.BKMK_YN,
+	    A.ATCH_FILE_NO,
+	    A.ATRZ_SJ,
+	    A.ATRZ_CN,
+	    A.ATRZ_OPINION,
+	    A.ATRZ_TMPR_STRE_DT,
+	    A.ATRZ_DRFT_DT,
+	    A.ATRZ_COMPT_DT,
+	    A.ATRZ_RTRVL_DT,
+	    A.ATRZ_STTUS_CODE,
+	    A.ELTSGN_IMAGE,
+	    A.DOC_FORM_NO,
+	    A.ATRZ_DELETE_YN,
+	    A.SCHDUL_REG_YN,
 	
+	    H.HOLI_ACTPLN_NO, H.HOLI_CODE, H.HOLI_START, H.HOLI_END, H.HOLI_USE_DAYS,
+	    S.SPENDING_REPORT_NO, S.EXPENSE_ORDER, S.EXPENSE_DATE, S.ITEM_DESCRIPTION, S.ITEM_QUANTITY, S.ITEM_AMOUNT, S.PAYMENT_METHOD,
+	    SL.SALARY_NO, SL.BASE_SALARY, SL.MEAL_ALLOWANCE, SL.INCOME_TAX, SL.LOCAL_TAX, SL.PENSION, SL.EMPLOYMENT_INS, SL.HEALTH_INS, SL.CARE_INS, SL.PAY_DATE,
+	    B.BANK_ACC_NO, B.OLD_BANK, B.OLD_ACC_NO, B.NEW_BANK, B.NEW_ACC_NO, B.REASON,
+	    D.DRAFT_NO,
+	    EC.EMP_CERT_NO,
+	    R.RESIGNATION_NO,
+	
+	    L.ATRZ_LN_SN,
+	    L.SANCTNER_EMPNO,
+	    L.SANCTNER_CLSF_CODE,
+	    L.CONTD_EMPNO,
+	    L.CONTD_CLSF_CODE,
+	    L.DCRB_MAN_EMPNO,
+	    L.DCRB_MAN_CLSF_CODE,
+	    L.ATRZ_TY,
+	    L.SANCTN_PROGRS_STTUS_CODE,
+	    L.DCRB_AUTHOR_YN,
+	    L.CONTD_AUTHOR_YN,
+	    L.SANCTN_OPINION,
+	    L.ELTSGN_IMAGE AS LINE_ELTSGN_IMAGE,
+	    L.SANCTN_CONFM_DT
+	
+	FROM ATRZ A
+	LEFT JOIN DOCUM_HOLIDAY H ON A.ATRZ_DOC_NO = H.ATRZ_DOC_NO
+	LEFT JOIN DOCUM_SPENDING S ON A.ATRZ_DOC_NO = S.ATRZ_DOC_NO
+	LEFT JOIN DOCUM_SALARY SL ON A.ATRZ_DOC_NO = SL.ATRZ_DOC_NO
+	LEFT JOIN DOCUM_BANK_ACCOUNT B ON A.ATRZ_DOC_NO = B.ATRZ_DOC_NO
+	LEFT JOIN DOCUM_DRAFT D ON A.ATRZ_DOC_NO = D.ATRZ_DOC_NO
+	LEFT JOIN DOCUM_EMP_CERTIFICATE EC ON A.ATRZ_DOC_NO = EC.ATRZ_DOC_NO
+	LEFT JOIN DOCUM_RESIGNATION R ON A.ATRZ_DOC_NO = R.ATRZ_DOC_NO
+	LEFT JOIN ATRZ_LINE L ON A.ATRZ_DOC_NO = L.ATRZ_DOC_NO
+	
+	WHERE A.ATRZ_DOC_NO = #{atrzDocNo}
+	</select>
 	
 	
 	
@@ -1068,37 +1097,6 @@
 	</update>
 	
 	<!-- 연차신청서 최종 결재 완료시 -->
-<!--  기본연차지급 -->
-<!-- 	<insert id="basicVacInsert" parameterType="kr.or.ddit.sevenfs.vo.organization.VacationVO"> -->
-<!-- 		INSERT INTO vacation( -->
-<!-- 	            EMPL_NO -->
-<!-- 	           , YRYC_YEAR -->
-<!-- 	           , YRYC_USE_BEGIN_DATE -->
-<!-- 	           , YRYC_USE_END_DATE -->
-<!-- 	           , TOT_YRYC_DAYCNT -->
-<!-- 	           , YRYC_USE_DAYCNT -->
-<!-- 	           , YRYC_MDAT_DAYCNT -->
-<!-- 	           , YRYC_REMNDR_DAYCNT -->
-<!-- 	           , EXCESS_WORK_YRYC -->
-<!-- 	           , CMPNSTN_YRYC -->
-<!-- 	           , YRYC_CODE -->
-<!-- 	           , YRYC_DETAIL -->
-<!-- 	           ) -->
-<!-- 	    VALUES( -->
-<!-- 	        #{emplNo} -->
-<!-- 	        ,TO_CHAR(SYSDATE, 'YYYY') -->
-<!-- 	        ,TO_CHAR(SYSDATE, 'YYYY') || '0101' -->
-<!-- 	        ,TO_CHAR(SYSDATE, 'YYYY') || '1231' -->
-<!-- 	        ,#{totYrycDaycnt} -->
-<!-- 	        ,0 -->
-<!-- 	        ,0 -->
-<!-- 	        ,0 -->
-<!-- 	        ,0 -->
-<!-- 	        ,0 -->
-<!-- 	        ,'20' -->
-<!-- 	        ,'기본연차 지급' -->
-<!-- 	    ) -->
-<!-- 	</insert> -->
 	<select id="selectHolidayByDocNo" resultMap="holidayDetailMap">
 	    SELECT 				/* AtrzMapper.selectHolidayByDocNo */
 	        H.HOLI_ACTPLN_NO,
@@ -1161,7 +1159,7 @@
 		        yryc_use_daycnt =  #{yrycUseDaycnt}
 		        ,yryc_remndr_daycnt =  #{yrycRemndrDaycnt}
 		    WHERE empl_no = #{emplNo}
-		    AND YRYC_YEAR = '2025'
+		    AND YRYC_YEAR = TO_CHAR(SYSDATE, 'YYYY')
 	</update>
 	<!-- 기안자의 연차정보 가져오기 -->
 	<select id="emplVacationCnt" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.organization.VacationVO">
@@ -1180,7 +1178,7 @@
 			, YRYC_DETAIL
 			FROM VACATION
 			WHERE 1 = 1
-			AND EMPL_NO ='20250004'
+			AND EMPL_NO = #{emplNo}
 			AND YRYC_YEAR = TO_CHAR(SYSDATE, 'YYYY')
 	
 	</select>
@@ -1264,6 +1262,8 @@
 		<result property="drafterEmpno" column="DRAFTER_EMPNO"/>
 		<result property="eltsgnImage" column="ELTSGN_IMAGE"/>
 		<result property="schdulRegYn" column="SCHDUL_REG_YN"/>
+		<result property="clsfCodeNm" column="CLSF_CODE_NM"/>
+		<result property="deptCodeNm" column="DEPT_CODE_NM"/>
 		<collection property="atrzLineVOList" resultMap="atrzLineMap"></collection>
 	</resultMap>
 	

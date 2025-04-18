@@ -114,19 +114,17 @@
 							<div id="atrNavBar">
 								<ul class="nav nav-pills" id="myTab" role="tablist">
 									<li class="nav-item" role="presentation">
-										<button class="nav-link active" id="contact1-tab"
-											data-bs-toggle="tab" data-bs-target="#contact1-tab-pane"
-											type="button" role="tab" aria-controls="contact1-tab-pane"
-											aria-selected="true">전자결재</button>
+										<!-- <h4 style="margin-left: 10px; color: rgb(54, 92, 245);">전자결재</h4> -->
+										<button id="s_eap_btn" class="main-btn active-btn rounded-full btn-hover newAtrzDocBtn"
+										data-bs-toggle="modal" data-bs-target="#newAtrzDocModal">
+										새 결재 진행</button>
 									</li>
 								</ul>
 							</div>
 
 							<!-- 오른쪽: 검색창 -->
 							<div class="table_search d-flex align-items-center gap-2">
-								<button id="s_eap_btn" class="main-btn active-btn rounded-full btn-hover newAtrzDocBtn"
-									data-bs-toggle="modal" data-bs-target="#newAtrzDocModal">
-									새 결재 진행</button>
+								
 								<select id="duration" class="form-select w-auto">
 									<option value="all">전체기간</option>
 									<option value="1">1개월</option>
@@ -192,14 +190,15 @@
 						<div class="tab-pane fade show active" id="contact1-tab-pane"
 							role="tabpanel" aria-labelledby="contact1-tab" tabindex="0">
 								<!-- <p>${myEmpInfo}</p> -->
-								<div style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding-left: 20px;padding-right: 40px;" class="mb-10">
-									<h6 class="mb-10 mr-8 ml-8 pt-20 pl-20">결재대기문서</h6>
-									<a href="/atrz/approval" class="text-sm fw-bolder" style="color: #4a6cf7;">
-										더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
-									</a>
-								</div>
-							<div class="atrzTabCont" style="margin-top: 0px; overflow-x: auto;">
-								<div class="container mt-2 homeContainer">
+								<div class="atrzTabCont" style="margin-top: 0; padding-bottom: 5px;">
+									<div style="display: flex;justify-content: space-between;align-items: center;margin-left: 30px;margin-top: 25px;margin-right: 30px;margin-bottom: 5px;">
+										<h6 class="mb-10">결재대기문서</h6>
+										<a href="/atrz/document" class="text-sm fw-bolder" style="color: #4a6cf7;">
+											더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
+										</a>
+									</div>
+							<div class="" style="margin-top: 0px; overflow-x: auto;">
+								<div class="container mt-2 homeContainer" style="padding-left: 30px; padding-right: 30px;">
 									<c:choose>
 										<c:when test="${empty atrzApprovalList}">
 											<div class="text-center emptyList">
@@ -207,10 +206,10 @@
 											</div>
 										</c:when>
 										<c:otherwise>
-											<div class="row flex-nowrap">
+											<div class="d-flex gap-3 flex-nowrap">
 												<input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
 												<c:forEach var="atrzVO" items="${atrzApprovalList}">
-													<div class="col-sm-3">
+													<div class="">
 														<div class="card" style="height: 250px; width: 300px;">
 															<div class="card-header pt-3" style="height: 50px;">
 																<div class="row g-0 text-center">
@@ -236,7 +235,7 @@
 																	</a>
 																</div>
 															</div>
-															<div class="card-body">
+															<div class="card-body d-flex flex-column justify-content-center" style="height: 150px;">
 																<p class="card-text">기안자&nbsp;&nbsp; :&nbsp;&nbsp;  ${atrzVO.drafterEmpnm}&nbsp;&nbsp;[${atrzVO.deptCodeNm}]</p>
 																<p class="card-text">기안일시&nbsp;&nbsp; :&nbsp;&nbsp; 
 																	<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
@@ -266,6 +265,7 @@
 									</c:choose>
 								</div>
 							</div>
+						</div>
 							<div class="atrzTabCont">
 								<div class="col-lg-12">
 									<div class="card-style mb-30 docList">
@@ -512,10 +512,9 @@
 			</div>
 			<!-- 여기서 작업 끝 -->
 			
-		 
 		</div>
 	</section>
-  <%@ include file="../layout/footer.jsp" %>
+<%@ include file="../layout/footer.jsp" %>
 </main>
 <%@ include file="../layout/prescript.jsp" %>
 <!-- j쿼리 사용시 여기 이후에 작성하기 -->

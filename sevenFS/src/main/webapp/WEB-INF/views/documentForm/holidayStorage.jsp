@@ -420,7 +420,7 @@ select.ui-datepicker-year {
 																				<img src="/assets/images/atrz/cancel.png" style="width: 50px; display: block; margin: 0 auto;">
 																			</c:when>
 																			<c:otherwise>
-																				<img src="/assets/images/atrz/beforGR.png" style="width: 50px; display: block; margin: 0 auto;">
+																				<img src="/assets/images/atrz/before.png" style="width: 50px; display: block; margin: 0 auto;">
 																			</c:otherwise>
 																		</c:choose>
 																		<span style="display: block; margin-top: 5px;">${atrzLineVO.sanctnerEmpNm}</span>
@@ -505,24 +505,24 @@ select.ui-datepicker-year {
 													<div class="col-auto">
 														<div class="s_frm_title mb-2"><b>유형</b></div>
 														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2" value="20" <c:if test="${atrzVO.holidayVO.holiCode eq '20'}">checked</c:if>>
-															<label class="form-check-label" for="flexRadioDefault2">오전반차</label>
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault1" value="20" <c:if test="${atrzVO.holidayVO.holiCode eq '20'}">checked</c:if>>
+															<label class="form-check-label" for="flexRadioDefault1">오전반차</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
 															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2" value="21"  <c:if test="${atrzVO.holidayVO.holiCode eq '21'}">checked</c:if>>
 															<label class="form-check-label" for="flexRadioDefault2">오후반차</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault1" value="22" <c:if test="${atrzVO.holidayVO.holiCode eq '22'}">checked</c:if>> 
-																<label class="form-check-label"	for="flexRadioDefault1">연차</label>
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault3" value="22" <c:if test="${atrzVO.holidayVO.holiCode eq '22'}">checked</c:if>> 
+																<label class="form-check-label"	for="flexRadioDefault3">연차</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
 															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault4" value="23" <c:if test="${atrzVO.holidayVO.holiCode eq '23'}">checked</c:if>>
 															<label class="form-check-label" for="flexRadioDefault4">공가</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault3" value="24" <c:if test="${atrzVO.holidayVO.holiCode eq '24'}">checked</c:if>>
-															<label class="form-check-label" for="flexRadioDefault3">병가</label>
+															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault5" value="24" <c:if test="${atrzVO.holidayVO.holiCode eq '24'}">checked</c:if>>
+															<label class="form-check-label" for="flexRadioDefault5">병가</label>
 														</div>
 													</div>
 													
@@ -568,6 +568,9 @@ select.ui-datepicker-year {
 																<input class="form-check-input" type="radio" name="halfType" id="halfPm" value="PM">
 																<label class="form-check-label" for="halfPm">오후반차</label>
 															</div>
+														</div>
+														<div style="margin: 5px 0;">
+															사용 가능한 휴가일수는 <span id="s_ho_use"><fmt:formatNumber value="${checkHo}" minFractionDigits="0" maxFractionDigits="1" /></span>일 입니다.
 														</div>
 													</div>	
 													<!--연차기간 선택 끝-->
@@ -660,7 +663,8 @@ $("#s_eap_app").click(function() {
 				text: "신청 종료 시간을 다시 선택해주세요.",
 				icon: "error",
 				closeOnClickOutside: false,
-				closeOnEsc: false
+				closeOnEsc: false,
+				button: "확인"
 			});
 		$("#s_end_time").val('');
 	}
@@ -672,7 +676,8 @@ $("#s_eap_app").click(function() {
 				text: "다시 확인해주세요.",
 				icon: "error",
 				closeOnClickOutside: false,
-				closeOnEsc: false
+				closeOnEsc: false,
+				button: "확인"
 			});
 		return;
 	}
@@ -684,7 +689,8 @@ $("#s_eap_app").click(function() {
 				text: "날짜와 시간을 다시 선택해주세요",
 				icon: "error",
 				closeOnClickOutside: false,
-				closeOnEsc: false
+				closeOnEsc: false,
+				button: "확인"
 			});
 		return;
 	}
@@ -699,7 +705,8 @@ $("#s_eap_app").click(function() {
 				text: "날짜와 시간을 다시 선택해주세요",
 				icon: "error",
 				closeOnClickOutside: false,
-				closeOnEsc: false
+				closeOnEsc: false,
+				button: "확인"
 			});
 		return;
 	}
@@ -729,7 +736,8 @@ function dateCnt() {
 				text: "신청 종료 시간을 다시 선택해주세요.",
 				icon: "error",
 				closeOnClickOutside: false,
-				closeOnEsc: false
+				closeOnEsc: false,
+				button: "확인"
 			});
 		$("#s_end_time").val('');
 	}
@@ -884,7 +892,8 @@ $(document).ready(function() {
 						text: "",
 						icon: "success",
 						closeOnClickOutside: false,
-						closeOnEsc: false
+						closeOnEsc: false,
+						button: "확인"
 					}).then(() => {
 						location.replace("/atrz/home")
 					});
@@ -976,7 +985,8 @@ $(document).ready(function() {
 						text: "",
 						icon: "success",
 						closeOnClickOutside: false,
-						closeOnEsc: false
+						closeOnEsc: false,
+						button: "확인"
 					}).then(() => {
 						location.replace("/atrz/document");
 					});
@@ -1117,7 +1127,8 @@ $(document).ready(function() {
 					text: "삭제할 사원이 없습니다.",
 					icon: "error",
 					closeOnClickOutside: false,
-					closeOnEsc: false
+					closeOnEsc: false,
+					button: "확인"
 				});
 					return;
 			}
@@ -1144,7 +1155,8 @@ $(document).ready(function() {
             text: "삭제할 참조자가 없습니다.",
             icon: "error",
             closeOnClickOutside: false,
-            closeOnEsc: false
+            closeOnEsc: false,
+			button: "확인"
         });
     }
 });
@@ -1158,7 +1170,8 @@ $(document).ready(function() {
 				text: "결재할 사원을 추가해주세요!",
 				icon: "error",
 				closeOnClickOutside: false,
-				closeOnEsc: false
+				closeOnEsc: false,
+				button: "확인"
 			});
 			return;
 		}
@@ -1264,7 +1277,8 @@ $(document).ready(function() {
 					text: "",
 					icon: "success",
 					closeOnClickOutside: false,
-					closeOnEsc: false
+					closeOnEsc: false,
+					button: "확인"
 				});
 				$(".btn-close").trigger('click');
 				// alert("결재선이 지정되었습니다.");
@@ -1300,7 +1314,7 @@ $(document).ready(function() {
 				//길준희 여기부터 시작
 				// 가. 결재파트 시작
 				if (approvalList.length > 0) {
-					tableHtml += `<tr><th rowspan="3">결재</th>`;
+					tableHtml += `<tr><th rowspan="2">결재</th>`;
 					$.each(approvalList, function(i, employeeVO){
 						$("#atrz_ho_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
 						tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
@@ -1308,16 +1322,10 @@ $(document).ready(function() {
 
 					tableHtml += `</tr><tr>`;
 					$.each(approvalList, function(i, employeeVO){
-						tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
-					});
-
-					tableHtml += `</tr><tr>`;
-					$.each(approvalList, function(i, employeeVO){
-						tableHtml += `<td><img
-							src="/assets/images/atrz/beforGR.png"
-							style="width: 50px;"></td>`;
-					});
-
+						tableHtml += `<td><img src="/assets/images/atrz/before.png"
+							style="width: 50px;">
+							<span style="display: block; margin-top: 5px; name="sanctnerEmpno">\${employeeVO.emplNm}</span></td>`;				
+						});
 					tableHtml += `</tr>`;
 				}
 
@@ -1376,7 +1384,8 @@ $(document).ready(function() {
 				text: "",
 				icon: "error",
 				closeOnClickOutside: false,
-				closeOnEsc: false
+				closeOnEsc: false,
+				button: "확인"
 			});
 			$("#s_ho_start").val("");
 			}
@@ -1437,7 +1446,8 @@ $(document).ready(function() {
 				text: "",
 				icon: "error",
 				closeOnClickOutside: false,
-				closeOnEsc: false
+				closeOnEsc: false,
+				button: "확인"
 			});
 			$("#s_ho_end").val("");
 		}
@@ -1485,11 +1495,6 @@ function disableAllTheseDays2(date) {
     }
 </script>
 	<!-- 주니가 입력한 스크립트 끝 -->
-	<p></p>
-	<p>
-		<sec:authentication property="principal.Username" />
-	</p>
-
 </body>
 
 </html>

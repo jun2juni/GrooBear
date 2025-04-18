@@ -154,7 +154,6 @@ public class AtrzController {
 	
 	
 	
-	
 	@GetMapping("/companion")
 	public String companionList(Model model, @AuthenticationPrincipal CustomUser customUser) {
 		// 로그인한 사람정보 가져오기(사번 이름)
@@ -250,10 +249,13 @@ public class AtrzController {
 		return "documentForm/holiday";
 	}
 	
+	
+	
+	
 	// 전자결재 상세보기
 	@GetMapping("/selectForm/atrzDetail")
 	public String selectAtrzDetail(@RequestParam String atrzDocNo, Model model
-			,@AuthenticationPrincipal CustomUser customUser,ModelAndView mav) {
+			,@AuthenticationPrincipal CustomUser customUser) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String empNo = empVO.getEmplNo();
@@ -458,6 +460,41 @@ public class AtrzController {
 		return atrzCancelResult > 0 ? "success" : "fail";
 	}
 	
+	// 반려문서 재기안
+	@GetMapping("/selectForm/selectDocumentReturn")
+	public String selectDocumentReturn(@RequestParam String atrzDocNo, Model model
+			,@AuthenticationPrincipal CustomUser customUser) {
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String empNo = empVO.getEmplNo();
+		
+		AtrzVO atrzVO = atrzService.selectDocumentReturn(atrzDocNo);
+		log.info("selectDocumentReturn->atrzVO : "+atrzVO);
+		
+		Double checkHo= atrzService.readHoCnt(empNo);
+		model.addAttribute("checkHo",checkHo);
+		model.addAttribute("atrzVO",atrzVO);
+		model.addAttribute("empVO",empVO);
+		
+		char docPrefix = atrzDocNo.charAt(0); // 예: H, S, D, A, B, C, R
+		
+		String viewName = switch (docPrefix){
+		case 'H' -> "documentForm/holidayReturn";            // 연차신청서
+		case 'S' -> "documentForm/spendingReturn";           // 지출결의서
+		case 'D' -> "documentForm/draftReturn";              // 기안서
+		case 'A' -> "documentForm/salaryReturn";         // 급여명세서
+		case 'B' -> "documentForm/bankAccountReturn";      // 급여계좌변경신청서
+		case 'C' -> "documentForm/employmentCertReturn";     // 재직증명서
+		case 'R' -> "documentForm/resignReturn";             // 퇴직신청서
+		default -> "redirect:/error";                        // 알 수 없는 양식
+		};
+		
+		return viewName;
+	}
+		
+	
+	
+	
 	
 	
 	
@@ -616,7 +653,9 @@ public class AtrzController {
 		log.info("로그인 사용자 사번: "+ empNo); 
 		
 		AtrzVO atrzVO = atrzService.getAtrzStorage(atrzDocNo);
-		
+
+		Double checkHo= atrzService.readHoCnt(empNo);
+		model.addAttribute("checkHo",checkHo);
 		model.addAttribute("atrzVO",atrzVO);
 		model.addAttribute("empVO",empVO);
 		

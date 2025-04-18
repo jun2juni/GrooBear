@@ -96,21 +96,9 @@ public interface AtrzService {
 	//연차신청서에서 남은 연차 갯수 가져오기
 	public Double readHoCnt(String empNo);
 	
+	//반려 문서 재기안 get
+	public AtrzVO selectDocumentReturn(String atrzDocNo);
 	
-
-
-	
-	
-
-	
-	
-	
-	
-	
-	//비즈니스 로직 이란???
-	//컨드롤러에서는 화면에서 보여지는것만 
-	//mapper에는 db연결만 
-	//service는 로직처리한다.
 	
 	
 }

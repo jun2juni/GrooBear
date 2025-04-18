@@ -135,6 +135,9 @@ public interface AtrzMapper {
 	//기안자의 연차정보 가져오기
 	public VacationVO emplVacationCnt(String draftEmpNo);
 	
+	//재기안 select
+	public AtrzVO selectDocumentReturn(String atrzDocNo);
+	
 
 	
 }

@@ -182,7 +182,6 @@
 													<thead>
 														<tr>
 															<!-- select박스 -->
-															<th></th>
 															<th class="text-center">
 																<h6 class="fw-bolder">기안일시</h6>
 															</th>
@@ -203,14 +202,7 @@
 													<c:forEach var="atrzVO" items="${atrzAllSubmitList}">
 														<tbody>
 															<tr>
-																<td class="text-center"
-																	style="padding-top: 10px; padding-bottom: 10px;">
-																	<div class="check-input-primary">
-																		<input class="form-check-input" type="checkbox"
-																			id="checkbox-1">
-																	</div>
-																</td>
-																<td class="text-center" style="padding-top: 0px;">
+																<td class="text-center" style="padding-top: 10px; padding-bottom: 10px;">
 																	<p>
 																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
 																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
@@ -321,16 +313,16 @@
 																	<!-- select박스 -->
 																	<th></th>
 																	<th class="text-center">
-																		<h6 class="fw-bolder">생성일</h6>
+																		<h6 class="fw-bolder">제목</h6>
 																	</th>
 																	<th class="text-center">
 																		<h6 class="fw-bolder">결재양식</h6>
 																	</th>
 																	<th class="text-center">
-																		<h6 class="fw-bolder">제목</h6>
+																		<h6 class="fw-bolder">결재상태</h6>
 																	</th>
 																	<th class="text-center">
-																		<h6 class="fw-bolder">결재상태</h6>
+																		<h6 class="fw-bolder">생성일</h6>
 																	</th>
 																</tr>
 															</thead>
@@ -341,26 +333,6 @@
 																			<div class="check-input-primary">
 																				<input class="form-check-input" type="checkbox" id="checkbox-1">
 																			</div>
-																		</td>
-																		<td class="text-center" style="padding-top: 0px;">
-																			<p>
-																				<fmt:formatDate value="${atrzVO.atrzTmprStreDt}" pattern="yyyy-MM-dd" var="onlyDate" />
-																				<fmt:formatDate value="${atrzVO.atrzTmprStreDt}" pattern="HH:mm:ss" var="onlyTime" />
-																				<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}
-																			</p>
-																		</td>
-																		<td class="text-center" style="padding-top: 0px;">
-																			<p>
-																				<c:choose>
-																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'H')}">연차신청서</c:when>
-																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'S')}">지출결의서</c:when>
-																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'B')}">급여계좌변경신청서</c:when>
-																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'A')}">급여명세서</c:when>
-																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'D')}">기안서</c:when>
-																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'C')}">재직증명서</c:when>
-																					<c:otherwise>퇴사신청서</c:otherwise>
-																				</c:choose>
-																			</p>
 																		</td>
 																		<td class="text-center" style="padding-top: 0px;">
 																			<a href="/atrz/selectForm/getAtrzStorage?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
@@ -379,6 +351,20 @@
 																				${atrzVO.atrzSj}
 																			</a>
 																		</td>
+																		<td class="text-center" style="padding-top: 0px;">
+																			<p>
+																				<c:choose>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'H')}">연차신청서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'S')}">지출결의서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'B')}">급여계좌변경신청서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'A')}">급여명세서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'D')}">기안서</c:when>
+																					<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'C')}">재직증명서</c:when>
+																					<c:otherwise>퇴사신청서</c:otherwise>
+																				</c:choose>
+																			</p>
+																		</td>
+																		
 																															
 																		<td class="text-center" style="padding-top: 0px;">
 																			<p>
@@ -402,6 +388,13 @@
 																						<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4">임시저장</span>
 																					</c:otherwise>
 																				</c:choose>
+																			</p>
+																		</td>
+																		<td class="text-center" style="padding-top: 0px;">
+																			<p>
+																				<fmt:formatDate value="${atrzVO.atrzTmprStreDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																				<fmt:formatDate value="${atrzVO.atrzTmprStreDt}" pattern="HH:mm:ss" var="onlyTime" />
+																				<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}
 																			</p>
 																		</td>
 																	</tr>

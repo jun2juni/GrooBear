@@ -301,19 +301,20 @@ select.ui-datepicker-year {
 								<div class="critical d-flex gap-2 mb-3">
 									<!--성진스 버튼-->
 									<button id="s_eap_app_top" type="button" 
-										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app btnFontSt">
+										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app">
 										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
 									</button>
-									<a id="s_eap_storTo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor btnFontSt"> 
-										<span class="material-symbols-outlined fs-5">error</span> 임시저장
-									</a> 
-									<a id="s_appLine_btn" type="button"
-										class="btn btn-outline-info d-flex align-items-center gap-1 btnFontSt"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> 
-										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
-									</a> 
-									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 btnFontSt" href="/atrz/home"> 
-										<span class="material-symbols-outlined fs-5">cancel</span> 취소
+									<a id="s_eap_storTo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
+										> <span
+										class="material-symbols-outlined fs-5">error</span> 임시저장
+									</a> <a id="s_appLine_btn" type="button"
+										class="btn btn-outline-info d-flex align-items-center gap-1"
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
+										class="material-symbols-outlined fs-5">error</span> 결재선 지정
+									</a> <a type="button"
+										class="btn btn-outline-danger d-flex align-items-center gap-1"
+										href="/atrz/home"> <span
+										class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
 							</div>
@@ -361,15 +362,73 @@ select.ui-datepicker-year {
 												</table>
 											</div>
 
-											<div style="float: left; width: 130px; margin-right: 10px;">
-												<table border="1" id="s_eap_draft">
-													<tr>
-														<th rowspan="2">신청</th>
-														<td>${empVO.clsfCodeNm}</td>
-													</tr>
-													<tr>
-														<td>${empVO.emplNm}</td>
-													</tr>
+											<div style="float: right; margin-right: 20px;" id="s_eap_draft_app">
+												<table border="1" class="s_eap_draft_app">
+													<tbody>
+														<!-- 결재자: atrzTy = 'N' -->
+														<tr>
+															<th rowspan="3">결재</th>
+															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
+																	<!-- <p>${atrzLineVO}</p> -->
+																	<td>${atrzLineVO.sanctnerClsfNm}</td>
+																</c:if>
+															</c:forEach>
+														</tr>
+														<tr>
+															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
+																	<td style="text-align: center;">
+																		<img src="/assets/images/atrz/before.png" style="width: 50px; display: block; margin: 0 auto; visibility: hidden;">
+																		<span style="display: block; margin-top: 5px;">${atrzLineVO.sanctnerEmpNm}</span>
+																		<input type="hidden" name="atrzLnSn" id="s_dfNo" value="${atrzLineVO.atrzLnSn}" />
+																		<input type="hidden" name="sanctnerEmpno" value="${atrzLineVO.sanctnerEmpno}" />
+																		<input type="hidden" name="atrzDocNo" value="${atrzLineVO.atrzDocNo}" />
+																	</td>
+																</c:if>
+															</c:forEach>
+														</tr>
+														<tr style="height: 30px;">
+															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
+																	<td style="font-size: 0.8em;">
+																	</td>
+																</c:if>
+															</c:forEach>
+														</tr>
+														
+
+												
+														<!-- 참조자: atrzTy = 'Y' -->
+														<c:set var="hasReference" value="false" />
+														<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+															<c:if test="${atrzLineVO.atrzTy eq 'Y'}">
+																<c:set var="hasReference" value="true" />
+															</c:if>
+														</c:forEach>
+												
+														<c:if test="${hasReference eq true}">
+															<tr>
+																<th rowspan="2">참조</th>
+																<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+																	<c:if test="${atrzLineVO.atrzTy eq 'Y'}">
+																		<td>${atrzLineVO.sanctnerClsfNm}</td>
+																	</c:if>
+																</c:forEach>
+															</tr>
+															<tr>
+																<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+																	<c:if test="${atrzLineVO.atrzTy eq 'Y'}">
+																		<td>
+																			${atrzLineVO.sanctnerEmpNm}
+																			<input type="hidden" name="atrzLnSn" value="${atrzLineVO.atrzLnSn}" />
+																			<input type="hidden" name="sanctnerEmpno" value="${atrzLineVO.sanctnerEmpno}" />
+																		</td>
+																	</c:if>
+																</c:forEach>
+															</tr>
+														</c:if>
+													</tbody>
 												</table>
 											</div>
 
@@ -384,13 +443,12 @@ select.ui-datepicker-year {
 													style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목
 													:</div>
 												<input type="text" class="form-control" placeholder="제목을 입력해주세요"
-													style="display: inline-block; width: 90%; margin-left: 5px;"
+													style="display: inline-block; width: 90%; margin-left: 5px;" value="${atrzVO.atrzSj}"
 													id="s_ho_tt" name="atrzSj" required="required">
 											</div>
 
 											<div style="border: 1px solid lightgray; margin: 10px;"></div>
 											<div style="margin: 0 10px;">
-
 												<div class="row align-items-start" style="padding: 10px 0;">
 													<div class="col-auto">
 														<div class="s_frm_title mb-2"><b>유형</b></div>
@@ -439,7 +497,7 @@ select.ui-datepicker-year {
 															<input type="time" class="form-control d-inline-block"
 																style="width: 150px; display: none;"
 																id="s_end_time" min="09:00:00" max="18:00:00" value="18:00:00"
-																disabled onchange="dateCnt();" name="holiEndArr" /> 까지
+																disabled onchange="dateCnt();" name="holiEndArr"/> 까지
 															<div class="d-inline-block" >
 																(총 <span id="s_date_cal">0</span>일)
 															</div>
@@ -464,12 +522,10 @@ select.ui-datepicker-year {
 
 												<div style="padding: 10px 0;">
 													<div class="s_frm_title mb-2">내용</div>
-													<textarea class="form-control s_scroll" placeholder="내용을 입력해주세요"
+													<textarea class="form-control s_scroll"
 														style="resize: none; height: 150px;" id="s_ho_co" name="atrzCn" 
-														required="required" rows="2" cols="20" wrap="hard"></textarea>
+														required="required" rows="2" cols="20" wrap="hard">${atrzVO.atrzCn}</textarea>
 												</div>
-
-												
 
 												<div style="padding: 10px 0;">
 													<div class="s_frm_title">파일첨부</div>
@@ -494,18 +550,20 @@ select.ui-datepicker-year {
 								<div class="critical d-flex gap-2 mt-3">
 									<!--성진스 버튼-->
 									<button id="s_eap_app_bottom" type="button" 
-										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app btnFontSt">
+										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app">
 										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
 									</button>
-									<a id="s_eap_storBo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor btnFontSt"> 
+									<a id="s_eap_storBo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"> 
 										<span class="material-symbols-outlined fs-5">error</span> 임시저장
-									</a> 
-									<a id="s_appLine_btn" type="button" class="btn btn-outline-info d-flex align-items-center gap-1 btnFontSt"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal">
-										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
-									</a> 
-									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 btnFontSt" href="/atrz/home"> 
-										<span class="material-symbols-outlined fs-5">cancel</span> 취소
+									</a> <a id="s_appLine_btn" type="button"
+									
+										class="btn btn-outline-info d-flex align-items-center gap-1"
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
+										class="material-symbols-outlined fs-5">error</span> 결재선 지정
+									</a> <a type="button"
+										class="btn btn-outline-danger d-flex align-items-center gap-1"
+										href="/atrz/home"> <span
+										class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
 							</div>
@@ -1208,7 +1266,7 @@ $(document).ready(function() {
 							style="width: 50px;">
 							<span style="display: block; margin-top: 5px; name="sanctnerEmpno">\${employeeVO.emplNm}</span></td>`;				
 						});
-					tableHtml += `</tr>`;
+					tableHtml +=`</tr>`;
 				}
 
 				// 나. 참조파트 시작

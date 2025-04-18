@@ -89,6 +89,32 @@
     </div>
     <!--반려모달-->
 
+    <!--반려사유모달-->
+    <div class="modal fade" id="atrzComOptionModal" tabindex="-1" 
+    aria-labelledby="atrzComOptionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="atrzComOptionModalLabel">반려사유</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <table class="table">
+                            <tr>
+                                <input type="text" class="form-control" id="recipient-name" value="${atrzVO.atrzOpinion}" readonly disabled>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="main-btn light-btn rounded-full btn-hover small-btn" data-bs-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--반려사유모달-->
+
 </body>
 
 </html>
