@@ -107,6 +107,7 @@ public class SecurityConfig {
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ASYNC).permitAll() // forward
                         .requestMatchers("/auth/login", "/signup", "/error",
                                 "/assets/**", "/images/**", "/layout/**", "/ws/**", "/upload/**",
+                                "/viewer/**",
                                 "/api/login","/api/token/invalid", "/api/token/refresh" // 여기는 비동기 로그인 관련
                         ).permitAll()
                         .requestMatchers("/api/**").authenticated() // 나머지 API는 인증 필요
