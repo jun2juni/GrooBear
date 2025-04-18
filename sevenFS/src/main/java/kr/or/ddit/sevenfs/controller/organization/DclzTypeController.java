@@ -3,10 +3,6 @@ package kr.or.ddit.sevenfs.controller.organization;
 import java.io.Console;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,7 +38,7 @@ public class DclzTypeController {
 	
 	@GetMapping("/dclzType")
 	public String dclzType(Model model, Principal principal, DclzTypeVO dclzTypeVO,
-			@RequestParam(defaultValue="1") int currentPage,
+			@RequestParam(defaultValue = "1") int currentPage,
 			@RequestParam(defaultValue = "10") int size,
 			@RequestParam(defaultValue = "") String keyword,
 			@RequestParam(defaultValue = "") String keywordSearch
@@ -100,29 +95,7 @@ public class DclzTypeController {
 		}else {
 			paramKeyword = keyword;
 		}
-		
 		model.addAttribute("paramKeyword" , paramKeyword);
-		
-		//String dclzCode = empDclzList.get(0).getDclzCode();
-		//log.info("dclzCode : " + dclzCode);
-		
-		
-	//	dclzTypeVO.setEmplNo(emplNo);
-	//	dclzTypeVO.setDclzCode(dclzCode);
-		
-		// 오늘 등록된 출,퇴근 시간 가져오기
-//		DclzTypeVO workTime = dclztypeService.getTodayWorkTime(dclzTypeVO);
-//		log.info("workTime : " + workTime);
-//		if(workTime == null) {
-//			return "/main/home";
-//		}
-//		
-//		String todayWorkTime = workTime.getTodayWorkStartTime();
-//		String todayWorkEndTime = workTime.getTodayWorkEndTime();
-//     	model.addAttribute("todayWorkTime", todayWorkTime);
-//     	model.addAttribute("todayWorkEndTime", todayWorkEndTime);
-//     	log.info("todayWorkTime : " + todayWorkTime);
-//     	log.info("todayWorkEndTime : " + todayWorkEndTime);
      	
 		return "organization/dclz/dclzType";
 	}
