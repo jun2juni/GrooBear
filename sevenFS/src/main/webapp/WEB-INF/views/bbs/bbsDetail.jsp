@@ -24,7 +24,13 @@
     </script>
 </c:if>
 <style>
-    
+    #likeIcon {
+    transition: transform 0.2s;
+	}
+	#likeIcon.liked {
+	    transform: scale(1.2);
+	}
+	    
     
     
     
@@ -93,7 +99,7 @@
 
               <!-- 좋아요 버튼 -->
               <div class="d-flex align-items-center gap-2 mt-4">
-                <i id="likeIcon" class="bi bi-hand-thumbs-up fs-3 text-secondary" onclick="toggleLike()" style="cursor: pointer;"></i>
+                <i id="likeIcon" class="bi bi-hand-thumbs-up fs-3 text-warning" onclick="toggleLike()" style="cursor: pointer;"></i>
 				<span id="likeCount">${bbsVO.likeCnt}</span>
               </div>
             </div>
@@ -148,16 +154,42 @@
 	        bbsSn: bbsSn,
 	        bbsCtgryNo: bbsCtgryNo
 	    }, function (res) {
+	        const $icon = $("#likeIcon");
+	        const $count = $("#likeCount");
+
 	        if (res.liked) {
-	            $("#likeBtn").addClass("text-warning");
+	            // 좋아요 누른 상태
+	            $icon
+	                .removeClass("bi-hand-thumbs-up text-warning")
+	                .addClass("bi-hand-thumbs-up-fill text-warning");
 	        } else {
-	            $("#likeBtn").removeClass("text-warning");
+	            // 좋아요 취소 상태
+	            $icon
+	                .removeClass("bi-hand-thumbs-up-fill text-warning")
+	                .addClass("bi-hand-thumbs-up text-warning");
 	        }
-	        $("#likeCount").text(res.likeCount);
+
+	        $count.text(res.likeCount);
 	    }).fail(function (xhr) {
 	        console.error("좋아요 처리 실패:", xhr.responseText);
 	    });
 	}
+
+	$(document).ready(function () {
+	    $.get("/bbs/like/exists", {
+	        bbsSn: bbsSn,
+	        bbsCtgryNo: bbsCtgryNo
+	    }, function (liked) {
+	        const $icon = $("#likeIcon");
+	        if (liked) {
+	            $icon
+	                .removeClass("bi-hand-thumbs-up text-secondary")
+	                .addClass("bi-hand-thumbs-up-fill text-warning");
+	        }
+	    });
+	});
+	
+	
 
 	// 페이지 진입 시 현재 좋아요 상태 확인해서 버튼 상태 적용
 	$(document).ready(function () {
