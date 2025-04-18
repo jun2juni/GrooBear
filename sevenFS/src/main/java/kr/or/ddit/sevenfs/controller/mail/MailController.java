@@ -50,14 +50,19 @@ public class MailController {
 	@Autowired
 	AttachFileService attachFileService;
 	
-	
 	@GetMapping("")
+//	public String mailHome(Model model,@ModelAttribute MailVO mailVO, @AuthenticationPrincipal CustomUser customUser,
+//							@RequestParam(defaultValue = "1") int currentPage) {
 	public String mailHome(Model model,@ModelAttribute MailVO mailVO, @AuthenticationPrincipal CustomUser customUser,
-							@RequestParam(defaultValue = "1") int currentPage) {
+			@RequestParam(defaultValue = "1", required = false) int currentPage,
+			@RequestParam(defaultValue = "0", required = false) String emailClTy) {
 		EmployeeVO employeeVO = customUser.getEmpVO();
+		mailVO.setEmailClTy(emailClTy);
+		mailVO.setEmplNo(employeeVO.getEmplNo());
 		log.info("CustomUser -> employeeVO" + employeeVO);
-		log.info("mailHome -> MailVO -> 검색을 위함" + mailVO);
-		
+		log.info("mailHome -> MailVO -> 검색을 위함 : " + mailVO);
+		log.info("mailHome -> MailVO -> 페이지 : " + currentPage);
+		log.info("mailHome -> MailVO -> 메일함 : " + emailClTy);
 		model.addAttribute("title","메일함");
 		Map<String, Object> map = new HashMap<String, Object>();
 		
@@ -67,11 +72,14 @@ public class MailController {
 		map.put("size", 10);
 		int total = mailService.getTotal(map);
 		log.info("mailService.getTotal(map) -> total : "+total);
-		List<MailVO> mailVOList = mailService.getList(employeeVO);
-		log.info("mailHome -> getList() -> mailVOList : "+mailVOList);
 		ArticlePage<MailVO> articlePage = new ArticlePage<MailVO>(total, currentPage, 10);
+		articlePage.setSearchVo(mailVO);
+		List<MailVO> mailVOList = mailService.getList(articlePage);
+		log.info("mailHome -> getList() -> mailVOList : "+mailVOList);
+		
 		model.addAttribute("mailVOList",mailVOList);
 		model.addAttribute("articlePage", articlePage);
+		model.addAttribute("searchVO", mailVO);
 		return "mail/mailHome";
 	}
 	

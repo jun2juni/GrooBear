@@ -6,7 +6,7 @@
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
-
+      // $('#emailClTy ').val();
       /* 리스트 조회 조건 시작 */
       let emailClTy = '';
       let label = ''
@@ -38,6 +38,7 @@
         $(this).addClass('active');
         emailClTy = $(this).attr('data-emailClTy');
         console.log('emailClTy -> ',emailClTy);
+        window.location.href = "/mail?emailClTy="+emailClTy;
       });
       // 리스트 클릭 이벤트
       $('.email-content').on('click',function(){
@@ -78,27 +79,29 @@
           </button>
         </div>
         <!-- 사이드 바 -->
-        <div class="sidebar-section" id="emailClTy">
-          <div class="sidebar-item" data-emailClTy="0">
+        <c:set var="emailClTy" value="${param.emailClTy}" />
+        <div class="sidebar-section " id="emailClTy">
+          
+          <div class="sidebar-item ${emailClTy eq '0' ? 'active' : ''}" data-emailClTy="0">
             <i class="fas fa-paper-plane"></i>
             <span class="sidebar-label">보낸편지함</span>
           </div>
-          <div class="sidebar-item active" data-emailClTy="1">
+          <div class="sidebar-item ${emailClTy eq '1' ? 'active' : ''}" data-emailClTy="1">
             <i class="fas fa-inbox"></i>
             <span class="sidebar-label">받은편지함</span>
             <span class="sidebar-count">2,307</span>
           </div>
-          <div class="sidebar-item" data-emailClTy="2">
+          <div class="sidebar-item ${emailClTy eq '2' ? 'active' : ''}" data-emailClTy="2">
             <i class="far fa-file-alt"></i>
             <span class="sidebar-label">임시보관함</span>
             <span class="sidebar-count">11</span>
           </div>
-          <div class="sidebar-item" data-emailClTy="3">
+          <div class="sidebar-item ${emailClTy eq '3' ? 'active' : ''}" data-emailClTy="3">
             <i class="far fa-file-alt"></i>
             <span class="sidebar-label">스팸함</span>
             <span class="sidebar-count">11</span>
           </div>
-          <div class="sidebar-item" data-emailClTy="4">
+          <div class="sidebar-item ${emailClTy eq '4' ? 'active' : ''}" data-emailClTy="4">
             <i class="far fa-file-alt"></i>
             <span class="sidebar-label">휴지통</span>
             <span class="sidebar-count">11</span>
@@ -126,15 +129,15 @@
       <div class="emial-box" style="width: 90%; margin-left: 20px;">
         <!-- 이메일 listSection 시작 -->
         <div class="email-section email-section-list">
-          <!-- 이메일 툴바 -->
           <div class="email-content-area">
+            <!-- 이메일 툴바 -->
             <div class="email-toolbar">
               <div class="checkbox-container">
                 <input type="checkbox" id="select-all">
               </div>
-              <button class="toolbar-button">
+              <!-- <button class="toolbar-button">
                 <i class="fas fa-ellipsis-v"></i>
-              </button>
+              </button> -->
               <div class="email-tabs">
                 <button class="tab" id="tab-del">삭제</button>
                 <button class="tab" id="tab-repl">답장</button>
@@ -144,15 +147,22 @@
                   <option value="2">테스트라벨2</option>
                 </select>
               </div>
-              <div style="display: flex; justify-content: flex-end;">
-                <select name="searchOption" id="searchOption">
-                  <option value="title">제목</option>
-                  <option value="content">내용</option>
-                  <option value="title&content">제목+내용</option>
-                  <option value="email">email</option>
-                </select>
-                <input type="text" name="keyword" id="search">
-              </div>
+                <div class="d-flex justify-content-end align-items-center" style="margin-left: auto; gap: 10px;">
+                <c:set var="searchOption" value="${param.searchOption}"/>
+                <form action="/mail" class="d-flex align-items-center" style="gap: 10px;">
+                  <input type="hidden" name="emailClTy" id="emailClTy" value="${searchVO.emailClTy}">
+                  <select name="searchOption" id="searchOption" class="form-select" style="width: auto; padding: 8px 12px; border-radius: 4px; border: 1px solid #d1d5db;">
+                    <option value="title" ${searchOption eq 'title' ? 'selected' : ''} >제목</option>
+                    <option value="content" ${searchOption eq 'content' ? 'selected' : ''}>내용</option>
+                    <option value="title_content" ${searchOption eq 'title_content' ? 'selected' : ''}>제목+내용</option>
+                    <!-- <option value="email">email</option> -->
+                  </select>
+                  <input type="text" value="${searchVO.keyword}" name="keyword" id="search" class="form-control" placeholder="검색어 입력" style="width: 200px; padding: 8px 12px; border-radius: 4px; border: 1px solid #d1d5db;">
+                  <button type="submit" class="btn btn-primary" style="padding: 8px 16px; border-radius: 4px; background-color: #2563eb; color: white; border: none; cursor: pointer; transition: background-color 0.2s;">
+                    검색
+                  </button>
+                </form>
+                </div>
             </div>
             <!-- 이메일 목록 - 여기에 스크롤이 적용됩니다 -->
             <div class="email-list" id="email-list">
@@ -183,15 +193,16 @@
               <!-- forEach 끝 -->
             </div>
           </div>
-        </div>
-        <!-- 이메일 listSection 끝 -->
-         <!-- 페이지네이션 -->
+          <!-- 페이지네이션 -->
           <page-navi
             url="/mail?${articlePage.getSearchVo()}"
             current="${articlePage.getCurrentPage()}"
             show-max="5"
             total="${articlePage.getTotalPages()}"
           ></page-navi>
+        </div>
+        <!-- 이메일 listSection 끝 -->
+         
       </div>
     </div>
   </div>
@@ -476,7 +487,7 @@ body {
   overflow-y: auto; /* 여기에 스크롤 적용 */
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 #f1f5f9;
-  height: calc(100vh - 60px); /* 툴바 높이를 제외한 나머지 공간 */
+  /* height: calc(100vh - 60px); 툴바 높이를 제외한 나머지 공간email-list */
 }
 
 .email-list::-webkit-scrollbar {

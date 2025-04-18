@@ -23,7 +23,7 @@ WHERE
     atch_file_no = #{atchFileNo}
 </select>
 
-<select id="getList" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO" parameterType="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
+<select id="getList" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO" parameterType="kr.or.ddit.sevenfs.utils.ArticlePage">
 SELECT E.EMPL_NM
     ,M.email_no
     ,M.empl_no
@@ -40,7 +40,25 @@ SELECT E.EMPL_NM
     ,M.email_group_no
 FROM MAIL M
 INNER JOIN EMPLOYEE E ON M.EMPL_NO = E.EMPL_NO
-WHERE M.EMPL_NO=#{emplNo}
+WHERE M.EMPL_NO=#{searchVo.emplNo}
+  AND M.email_cl_ty = #{searchVo.emailClTy}
+	<if test = "searchVo.keyword != null and searchVo.keyword !=''">
+		<choose>
+			<when test="searchVo.searchOption = 'title'">
+				AND m.EMAIL_SJ '%' || #{searchVo.keyword} || '%'
+			</when>
+			<when test="searchVo.searchOption = 'content'">
+				AND m.EMAIL_CN '%' || #{searchVo.keyword} || '%'
+			</when>
+			<otherwise>
+				AND (m.EMAIL_SJ '%' || #{mailVO.keyword} || '%'
+					 OR m.EMAIL_CN '%' || #{searchVo.keyword} || '%')
+			</otherwise>
+		</choose>
+	</if>
+	ORDER BY TRNSMIT_DT
+	OFFSET (#{currentPage} - 1) * 10 ROWS
+	FETCH NEXT 10 ROWS ONLY	
 </select>
 
 <select id="emailDetail" parameterType="kr.or.ddit.sevenfs.vo.mail.MailVO" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO">
@@ -71,7 +89,22 @@ WHERE m.email_group_no = (
 <select id="getTotal" parameterType="hashmap" resultType="int">
 SELECT count(*)
 FROM mail m
-WHERE m.empl_no = #{emplNo}
+WHERE m.EMPL_NO = #{emplNo}
+AND m.EMAIL_CL_TY = #{mailVO.emailClTy}
+	<if test = "mailVO.keyword != null and mailVO.keyword !=''">
+		<choose>
+			<when test="mailVO.searchOption = 'title'">
+				AND m.EMAIL_SJ '%' || #{mailVO.keyword} || '%'
+			</when>
+			<when test="mailVO.searchOption = 'content'">
+				AND m.EMAIL_CN '%' || #{mailVO.keyword} || '%'
+			</when>
+			<otherwise>
+				AND (m.EMAIL_SJ '%' || #{mailVO.keyword} || '%'
+					 OR m.EMAIL_CN '%' || #{mailVO.keyword} || '%')
+			</otherwise>
+		</choose>
+	</if>
 </select>
 <select id="getMailNos" parameterType="int" resultType="int">
 select SEQ_MAIL.nextval from dual

@@ -16,6 +16,7 @@ import kr.or.ddit.sevenfs.mapper.mail.MailMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.mail.MailService;
 import kr.or.ddit.sevenfs.service.schedule.ScheduleLabelService;
+import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.mail.MailVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
@@ -133,8 +134,8 @@ public class MailServiceImpl implements MailService{
 	}
 
 	@Override
-	public List<MailVO> getList(EmployeeVO employeeVO) {
-		List<MailVO> mailVOList = mailMapper.getList(employeeVO);
+	public List<MailVO> getList(ArticlePage<MailVO> articlePage) {
+		List<MailVO> mailVOList = mailMapper.getList(articlePage);
 		return mailVOList;
 	}
 
