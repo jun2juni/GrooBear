@@ -407,7 +407,7 @@
     // console.log(data);
   }
 
-  function getChatMessage({chttRoomNo, targetEmplNo}) {
+  function getChatMessage({chttRoomNo}) {
     // 로그인된 사용자
     fetch(`/chat/messageList?chttRoomNo=\${chttRoomNo}&emplNo=${myEmpInfo.emplNo}`)
       .then((res) => res.json())

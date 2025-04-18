@@ -120,8 +120,6 @@ public class ChatController {
                 log.debug("emplNo = {}", emplNo);
                 messagingTemplate.convertAndSend("/sub/alert/room/" + emplNo, message);
             }
-        } else {
-            return ResponseEntity.ok("메시지 전송 완료");
         }
 
         // 메시지를 해당 채팅방 구독자들에게 전송

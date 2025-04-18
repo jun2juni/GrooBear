@@ -77,7 +77,7 @@
     <select id="selectChatList" parameterType="hashmap" resultType="kr.or.ddit.sevenfs.vo.chat.ChatVO"><![CDATA[
         SELECT MSSAGE_SN,
                CE.LAST_CNFIRM_NO,
-               CASE WHEN CE.LAST_CNFIRM_NO <= MSSAGE_SN THEN '1'
+               CASE WHEN CE.LAST_CNFIRM_NO < MSSAGE_SN THEN '1'
                     ELSE '0'
                    END as READ_STR,
                M.MSSAGE_WRITNG_EMPNO,
@@ -85,7 +85,7 @@
                MSSAGE_CN, M.MSSAGE_CREAT_DT, MSSAGE_TY,
                E.EMPL_NO, EMPL_NM, E.PROFL_PHOTO_URL
         FROM CHAT_MESSAGE M
-                 LEFT JOIN CHAT_EMP CE ON(CE.CHTT_ROOM_NO = M.CHTT_ROOM_NO AND CE.EMPL_NO = M.MSSAGE_WRITNG_EMPNO)
+                 LEFT JOIN CHAT_EMP CE ON(CE.CHTT_ROOM_NO = M.CHTT_ROOM_NO AND CE.EMPL_NO != M.MSSAGE_WRITNG_EMPNO)
                  LEFT JOIN EMPLOYEE E ON (M.MSSAGE_WRITNG_EMPNO = E.EMPL_NO)
         WHERE CE.CHTT_ROOM_NO = #{chttRoomNo}
         ORDER BY MSSAGE_SN
