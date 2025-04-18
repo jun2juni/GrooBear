@@ -19,7 +19,7 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 	
 	<title>${bbsVO.bbsCtgryNm}</title>
-	
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <%@ include file="../layout/prestyle.jsp" %>
 <style>
 .file-table {
@@ -191,41 +191,83 @@ table.table-hover.align-middle.text-center tbody tr td {
   <%@ include file="../layout/footer.jsp" %>
 </main>
 <script>
-	document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
 	  const toggleBtn = document.getElementById("bulkToggleBtn");
 	  const deleteBtn = document.getElementById("bulkDeleteBtn");
 	  const checkAll = document.getElementById("checkAll");
-	
+
 	  toggleBtn.addEventListener("click", () => {
 	    const bulkCols = document.querySelectorAll(".bulk-col");
 	    const display = bulkCols[0].style.display === "none" || bulkCols[0].style.display === "" ? "table-cell" : "none";
-	
+
 	    bulkCols.forEach(col => col.style.display = display);
 	    deleteBtn.style.display = display === "table-cell" ? "inline-block" : "none";
 	  });
-	
+
 	  checkAll?.addEventListener("change", (e) => {
 	    document.querySelectorAll(".bulk-check").forEach(cb => cb.checked = e.target.checked);
 	  });
-	
+
 	  deleteBtn.addEventListener("click", () => {
 	    const selected = Array.from(document.querySelectorAll(".bulk-check:checked")).map(cb => cb.value);
 	    if (selected.length === 0) {
-	      alert("삭제할 게시글을 선택해주세요.");
+	      Swal.fire({
+	        icon: 'warning',
+	        title: '선택된 항목 없음',
+	        text: '삭제할 게시글을 선택해주세요.',
+	        confirmButtonText: '확인'
+	      });
 	      return;
 	    }
-	
-	    if (!confirm(`${selected.length}개의 게시글을 삭제하시겠습니까?`)) return;
-	
-	    fetch("/bbs/bulkDelete", {
-	      method: "POST",
-	      headers: { "Content-Type": "application/json" },
-	      body: JSON.stringify({ ids: selected })
-	    })
-	    .then(res => res.ok ? location.reload() : alert("삭제 실패"))
-	    .catch(err => alert("에러 발생"));
+
+	    Swal.fire({
+	      title: `${selected.length}개의 게시글을 삭제하시겠습니까?`,
+	      text: "삭제된 게시글은 복구할 수 없습니다.",
+	      icon: 'warning',
+	      showCancelButton: true,
+	      confirmButtonColor: '#d33',
+	      cancelButtonColor: '#3085d6',
+	      confirmButtonText: '삭제',
+	      cancelButtonText: '취소'
+	    }).then((result) => {
+	      if (result.isConfirmed) {
+	        fetch("/bbs/bulkDelete", {
+	          method: "POST",
+	          headers: { "Content-Type": "application/json" },
+	          body: JSON.stringify({ ids: selected })
+	        })
+	        .then(res => {
+	          if (res.ok) {
+	            Swal.fire({
+	              icon: 'success',
+	              title: '삭제 완료',
+	              text: '선택한 게시글이 삭제되었습니다.',
+	              confirmButtonText: '확인'
+	            }).then(() => {
+	              location.reload();
+	            });
+	          } else {
+	            Swal.fire({
+	              icon: 'error',
+	              title: '삭제 실패',
+	              text: '서버 오류로 인해 삭제에 실패했습니다.',
+	              confirmButtonText: '확인'
+	            });
+	          }
+	        })
+	        .catch(err => {
+	          Swal.fire({
+	            icon: 'error',
+	            title: '에러 발생',
+	            text: '요청 중 문제가 발생했습니다.',
+	            confirmButtonText: '확인'
+	          });
+	        });
+	      }
+	    });
 	  });
 	});
+
 </script>
 
 <%@ include file="../layout/prescript.jsp" %>

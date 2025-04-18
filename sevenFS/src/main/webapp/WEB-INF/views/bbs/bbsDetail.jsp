@@ -16,7 +16,7 @@
     const loginUserEmplNo = "${myEmpInfo.emplNo}";
 </script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <c:if test="${not empty errorMessage}">
     <script>
@@ -100,7 +100,7 @@
 
             <!-- 하단 버튼 -->
             <div class="d-flex justify-content-between">
-              <a href="javascript:history.back();" class="btn btn-outline-secondary">← 목록</a>
+              <a href="/bbs/bbsList?bbsCtgryNo=${bbsVO.bbsCtgryNo}" class="btn btn-outline-secondary">← 목록</a>
 
               <c:if test="${myEmpInfo.emplNo == bbsVO.emplNo || myEmpInfo.emplNo == '20250000'}">
                 <div class="d-flex gap-2">
@@ -281,63 +281,134 @@
 	
 	// 댓글 수정
 	function editAnswer(answerNo) {
-	    const currentText = $(`#answerCn-${answerNo}`).data("content");  // or use .text() or .html() if 안 쓰면
-	    const newText = prompt("댓글을 수정하세요", currentText);
-	
-	    if (newText && newText.trim()) {
-	        $.ajax({
-	            type: "POST",
-	            url: "/bbs/answer/update",
-	            data: {
-	                answerNo: answerNo,
-	                answerCn: newText.trim()
-	            },
-	            success: function () {
-	                alert("댓글이 수정되었습니다.");
-	                loadAnswer();
-	            },
-	            error: function (xhr) {
-	                alert("댓글 수정 실패: " + xhr.responseText);
-	            }
-	        });
+	  const currentText = $(`#answerCn-${answerNo}`).data("content");
+
+	  Swal.fire({
+	    title: '댓글 수정',
+	    input: 'textarea',
+	    inputLabel: '수정할 댓글 내용을 입력하세요.',
+	    inputValue: currentText,
+	    inputAttributes: {
+	      'aria-label': '댓글 내용'
+	    },
+	    showCancelButton: true,
+	    confirmButtonText: '수정',
+	    cancelButtonText: '취소',
+	    inputValidator: (value) => {
+	      if (!value || !value.trim()) {
+	        return '댓글 내용은 비워둘 수 없습니다.';
+	      }
 	    }
+	  }).then((result) => {
+	    if (result.isConfirmed) {
+	      const newText = result.value.trim();
+
+	      $.ajax({
+	        type: "POST",
+	        url: "/bbs/answer/update",
+	        data: {
+	          answerNo: answerNo,
+	          answerCn: newText
+	        },
+	        success: function () {
+	          Swal.fire({
+	            icon: 'success',
+	            title: '수정 완료',
+	            text: '댓글이 수정되었습니다.',
+	            confirmButtonText: '확인'
+	          }).then(() => loadAnswer());
+	        },
+	        error: function (xhr) {
+	          Swal.fire({
+	            icon: 'error',
+	            title: '수정 실패',
+	            text: xhr.responseText || '알 수 없는 오류가 발생했습니다.',
+	            confirmButtonText: '확인'
+	          });
+	        }
+	      });
+	    }
+	  });
 	}
 
-
-	
 	// 댓글 삭제
 	function deleteAnswer(answerNo) {
-		if (confirm("댓글을 삭제하시겠습니까?")) {
-			$.ajax({
-				type: "POST",
-				url: "/bbs/answer/delete",
-				data: { answerNo: answerNo },
-				success: function () {
-					alert("댓글이 삭제되었습니다.");
-					loadAnswer();
-				},
-				error: function (xhr) {
-					alert("댓글 삭제 실패: " + xhr.responseText);
-				}
-			});
-		}
+	  Swal.fire({
+	    title: '댓글을 삭제하시겠습니까?',
+	    text: '삭제된 댓글은 복구할 수 없습니다.',
+	    icon: 'warning',
+	    showCancelButton: true,
+	    confirmButtonColor: '#d33',
+	    cancelButtonColor: '#3085d6',
+	    confirmButtonText: '삭제',
+	    cancelButtonText: '취소'
+	  }).then((result) => {
+	    if (result.isConfirmed) {
+	      $.ajax({
+	        type: "POST",
+	        url: "/bbs/answer/delete",
+	        data: { answerNo: answerNo },
+	        success: function () {
+	          Swal.fire({
+	            icon: 'success',
+	            title: '삭제 완료',
+	            text: '댓글이 삭제되었습니다.',
+	            confirmButtonText: '확인'
+	          }).then(() => loadAnswer());
+	        },
+	        error: function (xhr) {
+	          Swal.fire({
+	            icon: 'error',
+	            title: '삭제 실패',
+	            text: xhr.responseText || '알 수 없는 오류가 발생했습니다.',
+	            confirmButtonText: '확인'
+	          });
+	        }
+	      });
+	    }
+	  });
 	}
 
+
 	function bbsDelete(bbsSn) {
-	    if (confirm("정말 삭제하시겠습니까?")) {
-	        $.ajax({
-	            url: "/bbs/bbsDelete",
-	            type: "POST",
-	            data: { bbsSn: bbsSn },
-	            success: function (res) {
-	                window.location.href = "/bbs/bbsList?bbsCtgryNo=" + bbsCtgryNo;
-	            },
-	            error: function (xhr) {
-	                alert("삭제 실패: " + xhr.responseText);
-	            }
-	        });
-	    }
+	    Swal.fire({
+	        title: '정말 삭제하시겠습니까?',
+	        text: "이 작업은 되돌릴 수 없습니다.",
+	        icon: 'warning',
+	        showCancelButton: true,
+	        confirmButtonColor: '#3085d6',
+	        cancelButtonColor: '#d33',
+	        confirmButtonText: '삭제',
+	        cancelButtonText: '취소'
+	    }).then((result) => {
+	        if (result.isConfirmed) {
+	            $.ajax({
+	                url: "/bbs/bbsDelete",
+	                type: "POST",
+	                data: { bbsSn: bbsSn },
+	                success: function (res) {
+	                    Swal.fire({
+	                        title: '삭제 완료',
+	                        text: '게시물이 삭제되었습니다.',
+	                        icon: 'success',
+	                        confirmButtonText: '확인'
+	                    }).then(() => {
+	                        window.location.href = "/bbs/bbsList?bbsCtgryNo=" + bbsCtgryNo;
+	                    });
+	                },
+	                error: function (xhr) {
+	                    Swal.fire({
+	                        title: '삭제 실패',
+	                        text: xhr.responseText || '알 수 없는 오류가 발생했습니다.',
+	                        icon: 'error',
+	                        confirmButtonText: '확인'
+	                    });
+	                }
+	            });
+	        }
+	    });
 	}
+
 
 
 
