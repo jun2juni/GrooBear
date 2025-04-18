@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 
 <!-- 검색 -->
-<div style="background-color: white; position:sticky; top: 90px; z-index:900; height:20px;" >
+<div style="background-color: white; position:sticky; top: 90px; z-index:1; height:20px;" >
    <div class="input-group rounded mb-3" id="schDiv" >
        <input type="search" class="form-control rounded" placeholder="이름 입력" aria-label="Search"
               aria-describedby="search-addon" id="schName"

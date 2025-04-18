@@ -45,11 +45,13 @@ public class DclzTypeController {
 	public String dclzType(Model model, Principal principal, DclzTypeVO dclzTypeVO,
 			@RequestParam(defaultValue="1") int currentPage,
 			@RequestParam(defaultValue = "10") int size,
-			@RequestParam(defaultValue = "") String keyword
+			@RequestParam(defaultValue = "") String keyword,
+			@RequestParam(defaultValue = "") String keywordSearch
 			) {
 		model.addAttribute("title" , "나의 근태 현황");
 		
 		log.info("dclz keyword : " + keyword);
+		log.info("dclz keywordSearch : " + keywordSearch);
 		
 		// 페이징처리
 		String emplNo = principal.getName();
@@ -61,6 +63,8 @@ public class DclzTypeController {
 		map.put("currentPage", currentPage);
 		map.put("size", size);
 		map.put("keyword", keyword);
+		map.put("keywordSearch", keywordSearch);
+		
 		
 		// 게시글의 총 갯수
 		int total = dclztypeService.getTotal(map);

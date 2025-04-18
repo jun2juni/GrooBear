@@ -75,7 +75,6 @@
 						</c:choose>
 					</c:forEach>
 					</p>
-					<span></span>
 	              </div>
 	            </div>
 	            <!-- End Icon Cart -->
@@ -167,6 +166,18 @@
 					  </nav>
 					  </form>
 					  <!-- 달력 페이지네이션 -->
+	                </div>
+	                <div class="input-group rounded mb-3 ms-auto justify-content-end w-25">
+	                <form action="/dclz/dclzType" method="get" id="keywordSearchFome">
+	                	<input type="search" class="form-control rounded" placeholder="년도, 근태유형 입력" aria-label="Search"
+					              aria-describedby="search-addon" id="schName" name="keywordSearch"
+					              onkeydown="fSchEnder(event)"
+					       />
+		                </form>
+					       <span class="input-group-text border-0" id="search-addon"
+					             onclick="fSch()">
+					           <i class="fas fa-search"></i>
+					       </span>
 	                </div>
 	              </div>
 	              <!-- End Title -->
@@ -288,7 +299,14 @@
 
 <script type="text/javascript">
 
+function fSchEnder(e){
+	if(e.code === "Enter"){
+		const keywordSearch = $('#keywordSearch').val();
+		console.log('dkdkdk : ', keywordSearch);
+	}
+} 
 $(function(){
+	
 	
 	  // 버튼 클릭 이벤트
 	  function updateDateDisplay(){
@@ -334,9 +352,6 @@ $(function(){
 		  $('#hiddenKeyword').val(hiddenKeyword);
 		  updateDateDisplay();
 	  });
-	  
-	  
-	  
 }) // end fn
 
 
