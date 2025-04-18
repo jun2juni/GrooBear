@@ -147,17 +147,17 @@
 												<button type="button" onclick="window.location.reload()" class="btn btn-outline-primary text-nowrap">초기화</button>
 											</div>
 											<div class="form-check radio-style mb-20 " style="display: inline-block;">
-												<input class="form-check-input" type="radio" name="interval"value="year" id="year" >
+												<input class="form-check-input" type="radio" name="interval"value="year" id="year" required>
 												<label class="form-check-label" for="year">연간</label>
 											</div>
 											&nbsp;&nbsp;&nbsp;
 											<div class="form-check radio-style mb-20" style="display: inline-block;">
-												<input class="form-check-input" type="radio" name="interval" value="month" id="month">
+												<input class="form-check-input" type="radio" name="interval" value="month" id="month" required>
 												<label class="form-check-label" for="month">월간</label>
 											</div>
 											&nbsp;&nbsp;&nbsp;
 											<div class="form-check radio-style mb-20" style="display: inline-block;">
-												<input class="form-check-input" type="radio" name="interval" value="day" id="day">
+												<input class="form-check-input" type="radio" name="interval" value="day" id="day" required>
 												<label class="form-check-label" for="day">일간</label>
 											</div>
 											&nbsp;&nbsp;&nbsp;
@@ -171,7 +171,7 @@
 													<div class="card-body">
 														<div class="select-style-1 form-group w-fit"">
 															<label for="startYears" class="form-label"> 시작년도</label> 
-															<select name="startYearsY" class="form-select" id="startYearsY">
+															<select name="startYearsY" class="form-select" id="startYearsY" required>
 																<option selected="" disabled="" readonly="" value="startYearsY">조회를 시작 할 년도를 선택해주세요</option>
 																<option value="202101">2021</option>
 																<option value="202201">2022</option>
@@ -182,7 +182,7 @@
 														</div>
 														<div class="select-style-1 form-group w-fit">
 															<label for="endYearsY" class="form-label"> 종료년도 </label>
-															<select name="endYearsY" class="form-select" id="endYearsY">
+															<select name="endYearsY" class="form-select" id="endYearsY" required>
 																<option selected="" disabled="" readonly="" value="endYearsY">조회를 종료 할 년도를 선택해주세요</option>
 																<option value="202112">2021</option>
 																<option value="202212">2022</option>
@@ -268,7 +268,7 @@
 										
 										  <!-- 전체선택 - 한 줄로 표시 -->
 										  <div class="form-check checkbox-style d-flex align-items-center mb-3">
-										    <input class="form-check-input" type="checkbox" value="selectAll" id="selectAll" onclick="checkedAll(this)">
+										    <input class="form-check-input" type="checkbox" value="selectAll" id="selectAll" onclick="checkedAll(this)" checked>
 										    <label class="form-check-label ms-2" for="selectAll">전체선택</label>
 										  </div>
 										
@@ -562,6 +562,16 @@
 </script>
 
 <script>
+
+$(document).ready(function () {
+    const selectAllCheckbox = document.getElementById("selectAll");
+
+    // 페이지 로드 시 체크된 상태라면 강제로 전체선택 로직 실행
+    if (selectAllCheckbox.checked) {
+        checkedAll(selectAllCheckbox);
+    }
+});
+
 
 function handleIntervalChange(event) {
 	console.log("왔다");

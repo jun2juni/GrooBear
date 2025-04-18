@@ -173,7 +173,7 @@
           </a>
           <ul id="statistics" class="dropdown-nav collapse" style="">
             <li>
-              <a href="/statistics"> 1뎁스 </a>
+              <a href="/statistics/statisticsHome"> 통계1 </a>
             </li>
             <li>
               <a href="/statistics"> 2뎁스 </a>
