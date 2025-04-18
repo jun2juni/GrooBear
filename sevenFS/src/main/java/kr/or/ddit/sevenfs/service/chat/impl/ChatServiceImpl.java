@@ -38,7 +38,8 @@ public class ChatServiceImpl implements ChatService {
         queryMap.put("mssageSn", chatRoomVO.getMssageSn());
         queryMap.put("emplNo", chatRoomVO.getMssageWritngEmpno());
         readChatMsg(queryMap);
-//        queryMap.put("emplNo", chatRoomVO.getRecipient());
+
+//        // 읽음 처리
 //        readChatMsg(queryMap);
 
         return this.chatMapper.chatEmpNoList(chatRoomVO);

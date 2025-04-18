@@ -7,7 +7,7 @@ import java.util.Date;
 @Data
 public class ChatVO {
     public enum MessageType {
-        TALK, JOIN, FILE, IMAGE
+        TALK, JOIN, FILE, IMAGE, READ
     }
 
     private MessageType type; // 메시지 타입
@@ -29,12 +29,22 @@ public class ChatVO {
     private String proflPhotoUrl; // 채팅방 대표 이미지
     private String recipient; // 채팅 받는 사원 번호
 
+    private boolean read;
+    private String readStr;
+
+    public void setReadStr(String readStr) {
+        if (readStr != null) {
+            this.read = readStr.equals("1");
+        }
+    }
+
     public void setType(String type) {
         switch (type) {
             case "TALK" -> this.type = MessageType.TALK;
             case "JOIN" -> this.type = MessageType.JOIN;
             case "IMAGE" -> this.type = MessageType.IMAGE;
             case "FILE" -> this.type = MessageType.FILE;
+            case "READ" -> this.type = MessageType.READ;
         }
 
         if (this.type == MessageType.TALK) this.mssageTy = "0";

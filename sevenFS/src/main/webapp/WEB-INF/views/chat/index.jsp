@@ -35,7 +35,7 @@
       #chatList {
           max-height: 62vh;
           overflow-x: hidden; /* 가로 스크롤 활성화 */
-          overflow-y: scroll; /* 세로 스크롤 숨김 */
+          /*overflow-y: scroll; !* 세로 스크롤 숨김 *!*/
       }
 	  
 	  #chatRoomList {
@@ -50,9 +50,9 @@
           overflow-y: scroll; /* 세로 스크롤 숨김 */
 	  }
 
-      #chatRoomList::-webkit-scrollbar {
-		  display: none;
-	  }
+      /*#chatRoomList::-webkit-scrollbar {*/
+		/*  display: none;*/
+	  /*}*/
 	  
       /* ( 크롬, 사파리, 오페라, 엣지 ) 동작 */
       #chatList::-webkit-scrollbar-track-piece,
@@ -85,86 +85,83 @@
 	  <div class="row">
 		
 	  	<div class="col-md-9">
-		  <div class="card" id="chat3">
-			<div class="card-body">
+		  <div class="" id="chat3">
+			
 			  <div class="row">
 				<div class="col-md-4">
-				  <div class="p-3">
-					<div>
-					  <%--채팅방 목록--%>
-					  <ul id="chatRoomList" class="list-unstyled mb-0">
-						
-						<c:forEach var="chatRoom" items="${chatRoomVOList}">
-						  <li class="p-2 rounded border-bottom chatRoom" data-chtt-room-no="${chatRoom.chttRoomNo}">
-							<div class="d-flex justify-content-between text-truncate" style="cursor: pointer">
-							  <div class="d-flex flex-row">
-								  <%-- 채팅방 상대 이미지 --%>
-								<div>
-									<%--채팅방 이미지--%>
-								  <img src="/upload/${chatRoom.proflPhotoUrl}"
-									  alt="avatar" class="d-flex align-self-center me-3 rounded-circle chat-avatar"
-									  onerror="this.src='/assets/images/image-error.png'"
-								  >
-								  <span class="badge bg-success badge-dot"></span>
-								</div>
-								  
-								  <%-- 채티방 이름 마지막 메세지 --%>
-								<div>
-								  <p class="fw-bold mb-0">
-									  ${chatRoom.chttRoomTy == '0' ? chatRoom.emplNm : chatRoom.chttRoomNm}
-								  </p>
-								  <p class="chat-last-msg small text-muted text-truncate-2">
-									  ${empty chatRoom.lastMsg ?
-									  	"대화 내용 없음" : chatRoom.mssageTy == "1" ?
-									  	"사진을 보냈습니다."
-									  	: chatRoom.mssageTy == "2" ?
-									  	"파일을 보냈습니다."
-									  	 : chatRoom.lastMsg}
-								  </p>
-								</div>
-							  </div>
+				  <div>
+					<%--채팅방 목록--%>
+					<ul id="chatRoomList" class="list-unstyled mb-0 card card-body">
+					  <c:forEach var="chatRoom" items="${chatRoomVOList}">
+						<li class="p-2 rounded border-bottom chatRoom" data-chtt-room-no="${chatRoom.chttRoomNo}" data-target-empl-no="${chatRoom.targetEmplNo}">
+						  <div class="d-flex justify-content-between text-truncate" style="cursor: pointer">
+							<div class="d-flex flex-row">
+								<%-- 채팅방 상대 이미지 --%>
 							  <div>
-								  <%-- 마지막 보낸 메세지 시간 --%>
-								<p class="chat-create-date small text-muted mb-1">
-								  <c:choose>
-									<%-- 오늘이면 시간만 표시 --%>
-									<c:when test="${fn:substring(chatRoom.chttCreatDt, 0, 10) == fn:substring(now, 0, 10)}">
-									  <fmt:formatDate value="${chatRoom.chttCreatDt}" pattern="HH:mm" />
-									</c:when>
-									
-									<%-- 전날이면 날짜만 표시 --%>
-									<c:when
-										test="${fn:substring(chatRoom.chttCreatDt, 0, 4) == fn:substring(yesterday, 0, 4)}">
-									  <fmt:formatDate value="${chatRoom.chttCreatDt}" pattern="MM.dd" />
-									</c:when>
-									
-									<%-- 전날이면 날짜만 표시 --%>
-									<c:when
-										test="${fn:substring(chatRoom.chttCreatDt, 0, 4) != fn:substring(yesterday, 0, 4)}">
-									  <fmt:formatDate value="${chatRoom.chttCreatDt}" pattern="yyyy.MM.dd" />
-									</c:when>
-									
-									<%-- 그 외 날짜+시간 표시 --%>
-									<c:otherwise>
-									  <fmt:formatDate value="${chatRoom.chttCreatDt}" pattern="yyyy.MM.dd HH:mm" />
-									</c:otherwise>
-								  </c:choose>
-								</p>
+								  <%--채팅방 이미지--%>
+								<img src="/upload/${chatRoom.proflPhotoUrl}"
+									alt="avatar" class="d-flex align-self-center me-3 rounded-circle chat-avatar"
+									onerror="this.src='/assets/images/image-error.png'"
+								>
+								<span class="badge bg-success badge-dot"></span>
+							  </div>
 								
-								<%-- 채팅 안 읽은 카운트 --%>
-								<span class="read-badge badge bg-danger rounded-pill float-end ${chatRoom.readCount != 0 ? '' :  'd-none'}">
-									${chatRoom.readCount}
-								</span>
+								<%-- 채티방 이름 마지막 메세지 --%>
+							  <div>
+								<p class="fw-bold mb-0">
+									${chatRoom.chttRoomTy == '0' ? chatRoom.emplNm : chatRoom.chttRoomNm}
+								</p>
+								<p class="chat-last-msg small text-muted text-truncate-2">
+									${empty chatRoom.lastMsg ?
+									  "대화 내용 없음" : chatRoom.mssageTy == "1" ?
+									  "사진을 보냈습니다."
+									  : chatRoom.mssageTy == "2" ?
+									  "파일을 보냈습니다."
+									   : chatRoom.lastMsg}
+								</p>
 							  </div>
 							</div>
-						  </li>
-						</c:forEach>
-					  </ul>
-					</div>
+							<div>
+								<%-- 마지막 보낸 메세지 시간 --%>
+							  <p class="chat-create-date small text-muted mb-1">
+								<c:choose>
+								  <%-- 오늘이면 시간만 표시 --%>
+								  <c:when test="${fn:substring(chatRoom.chttCreatDt, 0, 10) == fn:substring(now, 0, 10)}">
+									<fmt:formatDate value="${chatRoom.chttCreatDt}" pattern="HH:mm" />
+								  </c:when>
+								  
+								  <%-- 전날이면 날짜만 표시 --%>
+								  <c:when
+									  test="${fn:substring(chatRoom.chttCreatDt, 0, 4) == fn:substring(yesterday, 0, 4)}">
+									<fmt:formatDate value="${chatRoom.chttCreatDt}" pattern="MM.dd" />
+								  </c:when>
+								  
+								  <%-- 전날이면 날짜만 표시 --%>
+								  <c:when
+									  test="${fn:substring(chatRoom.chttCreatDt, 0, 4) != fn:substring(yesterday, 0, 4)}">
+									<fmt:formatDate value="${chatRoom.chttCreatDt}" pattern="yyyy.MM.dd" />
+								  </c:when>
+								  
+								  <%-- 그 외 날짜+시간 표시 --%>
+								  <c:otherwise>
+									<fmt:formatDate value="${chatRoom.chttCreatDt}" pattern="yyyy.MM.dd HH:mm" />
+								  </c:otherwise>
+								</c:choose>
+							  </p>
+							  
+							  <%-- 채팅 안 읽은 카운트 --%>
+							  <span class="read-badge badge bg-danger rounded-pill float-end ${chatRoom.readCount != 0 ? '' :  'd-none'}">
+								  ${chatRoom.readCount}
+							  </span>
+							</div>
+						  </div>
+						</li>
+					  </c:forEach>
+					</ul>
 				  </div>
 				</div>
 				
-				<div id="chat" class="col-8 d-none position-relative">
+				<div id="chat" class="col-8 position-relative card card-body d-flex justify-content-between">
 				  <div id="chatList" class="pt-3 pe-3">
 					<div id="loader" class="d-none text-center">
 					  <div class="spinner-border" role="status">
@@ -181,7 +178,7 @@
 					<div id="realChatList"></div>
 					
 					<div id="chatInnerAlert"
-						 class="position-absolute left-0 m-2 px-3 py-2 rounded-2
+						 class="position-absolute left-0 mx-2 my-4 px-3 py-2 rounded-2
 								bg-warning-400 text-truncate d-flex justify-content-between
 								align-items-center d-none"
 						 style="width: calc(100% - 4rem);
@@ -198,29 +195,8 @@
 				  </div>
 				  
 				  <%--채팅 발송 부분 --%>
-				  <div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2 gap-3">
-				
-					<div class="position-relative">
-					  <%--	<ul class="position-absolute bottom-100 mb-2 bg-white border rounded mt-1 w-100">--%>
-					  <%--		--%>
-					  <%--		<c:forEach var="idx" begin="1" end="5">--%>
-					  <%--			${idx}--%>
-					  <%--		</c:forEach>--%>
-					  <%--		--%>
-					  <%--		<li class="p-2">--%>
-					  <%--			<img--%>
-					  <%--					src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"--%>
-					  <%--					alt="avatar" class="d-flex align-self-center me-3"--%>
-					  <%--					width="60">--%>
-					  <%--			허성진--%>
-					  <%--		</li>--%>
-					  <%--		--%>
-					  <%--	</ul>--%>
-					  
-				
-					</div>
-					<input type="text" class="form-control form-control-lg" id="messageInput"
-						   placeholder="메세지를 입력해주세요." />
+				  <div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2 mb-2 gap-3">
+					<input type="text" class="form-control form-control-lg" id="messageInput" placeholder="메세지를 입력해주세요." />
 					<%--파일--%>
 					<label for="uploadFiles" style="cursor: pointer">
 					  <i class="fas fa-paperclip"></i>
@@ -228,19 +204,12 @@
 					
 					<%-- 숨겨진 파일 인풋 --%>
 					<input type="file" name="uploadFiles" id="uploadFiles" class="d-none">
-					
-					<%--이모티콘--%>
-					<%--										<a class="text-muted" href="#!">--%>
-					<%--											<i class="fas fa-smile"></i>--%>
-					<%--										</a>--%>
-					<%--submitMessage--%>
 					<a id="submitMessage" class="text-muted" href="#!">
 					  <i class="fas fa-paper-plane"></i>
 					</a>
 				  </div>
 				</div>
 			  </div>
-			</div>
 		  </div>
 		</div>
 
@@ -319,6 +288,7 @@
   async function chatRoomClick(e, dom) {
     e.stopPropagation();
     const chttRoomNo = dom.dataset.chttRoomNo; // this는 li 요소를 가리킴
+    const targetEmplNo = dom.dataset.targetEmplNo; // this는 li 요소를 가리킴
     document.querySelector("#realChatList").innerHTML = ""; // 전에 보던 메세지 삭제
     // 채팅방 커넥션 끊고
     disconnectWebSocket({chttRoomNo: prevChatRoomNo}); // 나가는 채팅방 연결 끊기
@@ -338,13 +308,13 @@
     // 뱃지 데이터 초기화
     dom.querySelector(".read-badge").innerHTML = "0";
     dom.querySelector(".read-badge").classList.add("d-none");
-
-    await getChatMessage({chttRoomNo}); // 이전 메세지 가져오기
+	
+    // await getLastMsgInfo({chttRoomNo, targetEmplNo});
+    await getChatMessage({chttRoomNo, targetEmplNo}); // 이전 메세지 가져오기
+	// await
     chatWebSocketConnect({chttRoomNo}); // 들어가는 채팅방 연결
 
-    document.querySelector("#chat").classList.remove("d-none");
     prevChatRoomNo = chttRoomNo; // 현재 채팅방 번호
-
     dom.classList.add("bg-body-secondary");
   }
 
@@ -370,6 +340,7 @@
 
     	// 채팅방 추가하기
 		if (data.chatRoom) {
+          console.log(data.chatRoom)
       		let chatRoom = data.chatRoom;
       		let html = `
 				<li class="p-2 rounded border-bottom chatRoom" data-chtt-room-no="\${chatRoom.chttRoomNo}">
@@ -418,14 +389,13 @@
       })
   }
 
-  
   function dbClickDept(data) {
     // 부서 채팅방
 	// 부서 채팅방은 없음
     // console.log(data);
   }
 
-  function getChatMessage({chttRoomNo}) {
+  function getChatMessage({chttRoomNo, targetEmplNo}) {
     // 로그인된 사용자
     fetch(`/chat/messageList?chttRoomNo=\${chttRoomNo}&emplNo=${myEmpInfo.emplNo}`)
       .then((res) => res.json())
@@ -441,12 +411,15 @@
         console.error(error);
       })
       .finally(() => {
+        submitMessage({messageValue: "읽었당~", chttRoomNo, emplNo: "${myEmpInfo.emplNo}", type: "READ"});
         setTimeout(() => {
           let chatList = document.querySelector("#chatList");
+          document.querySelector("#chat").classList.remove("d-none");
           chatList.scrollTop = chatList.scrollHeight; // 채팅 밑으로 내리기
-		}, 1)
+		}, 100)
       })
   }
+
 </script>
 </body>
 </html>

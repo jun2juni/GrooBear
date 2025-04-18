@@ -49,11 +49,11 @@ public class SecurityConfig {
      * 정적 리소스만 스프링 시큐리티 사용을 비활성화 하는 데 static 하위 경로에 있는 리소스를
      * 대상으로 ignoring() 메서드를 사용함
      */
-    @Bean
-    public WebSecurityCustomizer configure() {
-        return (web) -> web.ignoring()
-                .requestMatchers("/assets/**", "/images/**", "/layout/**", "/ws/**", "/upload/**");
-    }
+//    @Bean
+//    public WebSecurityCustomizer configure() {
+//        return (web) -> web.ignoring()
+//                .requestMatchers("/assets/**", "/images/**", "/layout/**", "/ws/**", "/upload/**");
+//    }
 
     /**
      * 서버가 재시작 되어도 로그인 유지를 위힘
@@ -105,9 +105,8 @@ public class SecurityConfig {
                 .httpBasic(hbasic -> hbasic.disable())
                 .authorizeHttpRequests(authz -> authz
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ASYNC).permitAll() // forward
-                        .requestMatchers("/auth/login", "/signup",
-                                 "/error",  "/images/**",  "/layout/**",
-                                "/assets/**", "/ws/**",
+                        .requestMatchers("/auth/login", "/signup", "/error",
+                                "/assets/**", "/images/**", "/layout/**", "/ws/**", "/upload/**",
                                 "/api/login","/api/token/invalid", "/api/token/refresh" // 여기는 비동기 로그인 관련
                         ).permitAll()
                         .requestMatchers("/api/**").authenticated() // 나머지 API는 인증 필요

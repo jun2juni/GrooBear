@@ -88,6 +88,21 @@ public class ChatController {
         return resultMap;
     }
 
+    @MessageMapping("/chat/reading")
+    public ResponseEntity<String> readingMessage(@Payload ChatVO message) {
+
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("chttRoomNo", message.getChttRoomNo());
+        queryMap.put("emplNo", message.getMssageWritngEmpno());
+        queryMap.put("mssageSn", message.getMssageSn());
+
+        this.chatService.readChatMsg(queryMap);
+
+        messagingTemplate.convertAndSend("/sub/chat/room/" + message.getChttRoomNo(), message);
+
+        return ResponseEntity.ok("메시지 전송 완료");
+    }
+
     // 채팅 메시지 수신 및 저장
     @MessageMapping("/chat/message")
     public ResponseEntity<String> receiveMessage(@Payload ChatVO message) {
@@ -96,13 +111,17 @@ public class ChatController {
         }
 
         log.debug("message => {}", message);
-        int[] empNoList = chatService.insertMessage(message); // 메시지를 받을때마다 데이터베이스에 저장
+        if (!message.getType().equals(ChatVO.MessageType.READ)) {
+            int[] empNoList = chatService.insertMessage(message); // 메시지를 받을때마다 데이터베이스에 저장
 
-        // 채팅 알림 보내기
-        log.debug("empNoList = {}", Arrays.toString(empNoList));
-        for (int emplNo : empNoList) {
-            log.debug("emplNo = {}", emplNo);
-            messagingTemplate.convertAndSend("/sub/alert/room/" + emplNo, message);
+            // 채팅 알림 보내기
+            log.debug("empNoList = {}", Arrays.toString(empNoList));
+            for (int emplNo : empNoList) {
+                log.debug("emplNo = {}", emplNo);
+                messagingTemplate.convertAndSend("/sub/alert/room/" + emplNo, message);
+            }
+        } else {
+            return ResponseEntity.ok("메시지 전송 완료");
         }
 
         // 메시지를 해당 채팅방 구독자들에게 전송

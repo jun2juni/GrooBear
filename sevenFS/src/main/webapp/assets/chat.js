@@ -2,6 +2,7 @@ const RECONNECT_INTERVAL = 5000; // 5초 후 재연결 시도
 const TALK = "TALK";
 const FILE = "FILE";
 const IMAGE = "IMAGE";
+const READ = "READ";
 const NOTIFICATION = "NOTIFICATION";
 
 let stompClientMap = {}; //
@@ -35,8 +36,6 @@ document.addEventListener("DOMContentLoaded", function() {
     roomPath: "alert/room",
     chttRoomNo: emp.emplNo,
     receiveMessage: (message) => {
-      console.log(message, "alert" + message);
-
       if (message.type === TALK) {
        chatAlert(message, infoAlert);
       }
@@ -155,7 +154,7 @@ function connectWebSocket({roomPath = "chat/room", chttRoomNo, receiveMessage}) 
     stompClient = null;
     isSubscribed = false;
   }
-
+  // localhost
   const socket = new SockJS("http://localhost/ws");
   const client = Stomp.over(socket);
   client.debug = null;
@@ -201,11 +200,23 @@ function chatWebSocketConnect({chttRoomNo}) {
   connectWebSocket({
     roomPath: "chat/room",
     chttRoomNo, receiveMessage: (message) => {
-      // 여기는 알림
-      console.log(message, "recevide" + chttRoomNo);
 
       // 내가 보낸 메세지는 안받기
       if(emp.emplNo === message.mssageWritngEmpno) return;
+      // 여기는 알림
+      console.log(message, "recevide" + chttRoomNo);
+
+      // 보고 있는경우
+      // 읽음처리 하기
+      document.querySelectorAll(".read-count-badge").forEach((dom) => dom.remove());
+      if (message.type === READ) {
+        return;
+      }
+
+      // 보고 있는경우 상대방 채팅 읽음 처리해주기
+      // message.type = READ;
+      // message.mssageWritngEmpno = emp.emplNo; // 내 번호로 변경
+      // stompClientMap[chttRoomNo]?.send(`/pub/chat/reading`, {}, JSON.stringify(message));
 
       buildChatMessage(
         document.querySelector("#realChatList"),
@@ -247,6 +258,8 @@ function submitMessage({messageValue, type, chttRoomNo, emplNo}) {
 
   stompClientMap[chttRoomNo]?.send(`/pub/chat/message`, {}, JSON.stringify(message));
 
+  if (type === READ) return;
+
   // 채팅방 목록 텍스트도 변경
   document.querySelectorAll(".chatRoom").forEach((dom) => {
     if (dom.dataset.chttRoomNo === chttRoomNo) {
@@ -254,6 +267,7 @@ function submitMessage({messageValue, type, chttRoomNo, emplNo}) {
     }
   })
 
+  message.read = true;
   buildChatMessage(
     document.querySelector("#realChatList"),
     {message}
@@ -281,18 +295,22 @@ function buildChatMessage(dom, {message}) {
       <div class="d-flex flex-row justify-content-end">
           <div class="chat-message text-end d-flex flex-column align-items-end" style="width: 80%">
               <p class="small me-4" style="font-size: 0.5rem">${message.emplNm}</p>
-              ${ message.type === TALK ? 
-                `<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary" style="width: fit-content">${message.mssageCn}</p>`
-                : message.type === FILE ?
-                  `<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary" style="width: fit-content">
-                      <span>${message.mssageCn}</span>
-                      <a class="float-end mt-2 text-white p-1 rounded d-flex align-items-center justify-content-center" href="/download?fileName=${message.mssageCn}" style="background: rgba(255, 255, 255, 0.2); transition: background 0.2s; width: 32px; height: 32px;">
-                        <span class="material-symbols-outlined" style="font-size: 1.2rem;">
-                          download
-                        </span>
-                      </a>  
-                   </p>`
-                : `<img src="/upload/${message.mssageCn}" class="me-3 mb-1 rounded float-start w-50" alt"프로필 이미지" onerror="this.src='/assets/images/image-error.png'" >`}
+              <div class="d-flex align-items-end me-3 mb-1">
+                  <!-- 안읽은것만 -->
+                  ${message.read ? `<span class="read-count-badge me-1 badge text-bg-warning" style="height: 18px;color: white !important;font-size: 10px;">1</span>` : ''}
+                  ${ message.type === TALK ? 
+                    `<p class="small p-2 text-white rounded-3 bg-primary" style="width: fit-content">${message.mssageCn}</p>`
+                    : message.type === FILE ?
+                      `<p class="small p-2 text-white rounded-3 bg-primary" style="width: fit-content">
+                          <span>${message.mssageCn}</span>
+                          <a class="float-end mt-2 text-white p-1 rounded d-flex align-items-center justify-content-center" href="/download?fileName=${message.mssageCn}" style="background: rgba(255, 255, 255, 0.2); transition: background 0.2s; width: 32px; height: 32px;">
+                            <span class="material-symbols-outlined" style="font-size: 1.2rem;">
+                              download
+                            </span>
+                          </a>  
+                       </p>`
+                    : `<img src="/upload/${message.mssageCn}" class="rounded float-start w-50" alt"프로필 이미지" onerror="this.src='/assets/images/image-error.png'" >`}
+                  </div>
               <p class="small me-3 mb-3 rounded-3 text-muted" style="font-size: 0.5rem">${formatDate(new Date(message.mssageCreatDt))}</p>
           </div>
           <img src="/upload/${message.proflPhotoUrl}"
@@ -308,22 +326,25 @@ function buildChatMessage(dom, {message}) {
                alt="avatar 1" class="chat-avatar rounded-circle" style="height: 45px;">
           <div class="chat-message d-flex flex-column align-items-start" style="width: 80%">
               <p class="small ms-4" style="font-size: 0.5rem">${message.emplNm}</p>
-              ${ message.type === TALK ?
-                `<p class="small p-2 ms-3 mb-1 rounded-3 bg-body-secondary">${message.mssageCn}</p>`
-              : message.type === FILE ?
-                `<p class="small p-2 ms-3 mb-1 rounded-3 bg-body-secondary">
-                    <span>${message.mssageCn}</span>
-                      <a class="float-left mt-2 text-black p-1 rounded d-flex align-items-center justify-content-center" href="/download?fileName=${message.mssageCn}" style="background: rgba(0, 0, 0, 0.2); transition: background 0.2s; width: 32px; height: 32px;">
-                        <span class="material-symbols-outlined" style="font-size: 1.2rem;">
-                          download
-                        </span>
-                      </a>  
-                 </p>`
-              : `<img src="/upload/${message.mssageCn}" class="ms-3 mb-1 rounded float-start w-50" alt="프로필 이미지" onerror="this.src='/assets/images/image-error.png'">`}
+              <div class="d-flex align-items-end ms-3 mb-1">
+                ${ message.type === TALK ?
+                    `<p class="small p-2 rounded-3 bg-body-secondary">${message.mssageCn}</p>`
+                  : message.type === FILE ?
+                    `<p class="small p-2 rounded-3 bg-body-secondary">
+                        <span>${message.mssageCn}</span>
+                          <a class="float-left mt-2 text-black p-1 rounded d-flex align-items-center justify-content-center" href="/download?fileName=${message.mssageCn}" style="background: rgba(0, 0, 0, 0.2); transition: background 0.2s; width: 32px; height: 32px;">
+                            <span class="material-symbols-outlined" style="font-size: 1.2rem;">
+                              download
+                            </span>
+                          </a>  
+                     </p>`
+                  : `<img src="/upload/${message.mssageCn}" class="rounded float-start w-50" alt="프로필 이미지" onerror="this.src='/assets/images/image-error.png'">`}
+              </div>
               <p class="small ms-3 mb-3 rounded-3 text-muted float-end" style="font-size: 0.5rem">${formatDate(new Date(message.mssageCreatDt))}</p>
           </div>
       </div>
   `;
+
 
   // observerBlock 뒤에 메시지 추가
   if(!message.bPrevChat) {

@@ -18,11 +18,13 @@
         SELECT CR.CHTT_ROOM_NO, CHTT_ROOM_TY,
                CHTT_ROOM_NM,
                READ_COUNT,
+               LAST_MSSAGE_NO,
                NVL(M.MSSAGE_CREAT_DT, CR.CHTT_CREAT_DT) AS CHTT_CREAT_DT,
                M.MSSAGE_CN as LAST_MSG,
                CE.EMPL_NO,
                M.MSSAGE_TY,
-               E.EMPL_NM, E.PROFL_PHOTO_URL
+               E.EMPL_NM, E.PROFL_PHOTO_URL,
+               E.EMPL_NO as TARGET_EMPL_NO
         FROM (SELECT B.CHTT_ROOM_NO, B.LAST_MSSAGE_NO, B.CHTT_CREAT_DT, B.CHTT_ROOM_NM, B.CHTT_ROOM_TY,
              NVL(B.LAST_MSSAGE_NO - A.LAST_CNFIRM_NO, 0) as READ_COUNT
 
@@ -72,15 +74,23 @@
     </insert>
 
 
-    <select id="selectChatList" parameterType="hashmap" resultType="kr.or.ddit.sevenfs.vo.chat.ChatVO">
-        SELECT MSSAGE_SN, M.MSSAGE_WRITNG_EMPNO, CHTT_ROOM_NO,
+    <select id="selectChatList" parameterType="hashmap" resultType="kr.or.ddit.sevenfs.vo.chat.ChatVO"><![CDATA[
+        SELECT MSSAGE_SN,
+               CE.LAST_CNFIRM_NO,
+               CASE WHEN CE.LAST_CNFIRM_NO >= MSSAGE_SN THEN '0'
+                    ELSE '1'
+                   END as READ_STR,
+               M.MSSAGE_WRITNG_EMPNO,
+               CE.CHTT_ROOM_NO,
                MSSAGE_CN, M.MSSAGE_CREAT_DT, MSSAGE_TY,
                E.EMPL_NO, EMPL_NM, E.PROFL_PHOTO_URL
         FROM CHAT_MESSAGE M
-        LEFT JOIN EMPLOYEE E ON (M.MSSAGE_WRITNG_EMPNO = E.EMPL_NO)
-        WHERE CHTT_ROOM_NO = #{chttRoomNo}
+                 LEFT JOIN CHAT_EMP CE ON(CE.CHTT_ROOM_NO = M.CHTT_ROOM_NO AND CE.EMPL_NO = M.MSSAGE_WRITNG_EMPNO)
+                 LEFT JOIN EMPLOYEE E ON (M.MSSAGE_WRITNG_EMPNO = E.EMPL_NO)
+        WHERE CE.CHTT_ROOM_NO = #{chttRoomNo}
         ORDER BY MSSAGE_SN
-    </select>
+
+    ]]></select>
 
     <select id="invalidChatRoom" resultType="integer">
         SELECT C.CHTT_ROOM_NO
