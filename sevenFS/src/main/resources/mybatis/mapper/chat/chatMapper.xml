@@ -77,8 +77,8 @@
     <select id="selectChatList" parameterType="hashmap" resultType="kr.or.ddit.sevenfs.vo.chat.ChatVO"><![CDATA[
         SELECT MSSAGE_SN,
                CE.LAST_CNFIRM_NO,
-               CASE WHEN CE.LAST_CNFIRM_NO >= MSSAGE_SN THEN '0'
-                    ELSE '1'
+               CASE WHEN CE.LAST_CNFIRM_NO <= MSSAGE_SN THEN '1'
+                    ELSE '0'
                    END as READ_STR,
                M.MSSAGE_WRITNG_EMPNO,
                CE.CHTT_ROOM_NO,

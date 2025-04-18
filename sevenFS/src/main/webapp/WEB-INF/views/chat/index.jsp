@@ -33,13 +33,15 @@
       }
 
       #chatList {
-          max-height: 62vh;
+          min-height: 64vh;
+          max-height: 64vh;
           overflow-x: hidden; /* 가로 스크롤 활성화 */
           /*overflow-y: scroll; !* 세로 스크롤 숨김 *!*/
       }
 	  
 	  #chatRoomList {
-          max-height: 72vh;
+          min-height: 76.2vh;
+          max-height: 76.2vh;
           overflow-x: hidden; /* 가로 스크롤 활성화 */
           overflow-y: scroll; /* 세로 스크롤 숨김 */
 	  }
@@ -161,7 +163,16 @@
 				  </div>
 				</div>
 				
-				<div id="chat" class="col-8 position-relative card card-body d-flex justify-content-between">
+				<div id="chat-no" class="col-8 card card-body">
+				  <div class="card text-center py-5">
+					<div class="card-body">
+					  <h5 class="card-title mt-3">선택한 채팅방이 없습니다</h5>
+					  <p class="card-text text-muted">채팅방을 선택해주세요.</p>
+					</div>
+				  </div>
+				</div>
+				
+				<div id="chat" class="col-8 position-relative card card-body d-flex justify-content-between d-none">
 				  <div id="chatList" class="pt-3 pe-3">
 					<div id="loader" class="d-none text-center">
 					  <div class="spinner-border" role="status">
@@ -301,6 +312,7 @@
     if(chttRoomNo === prevChatRoomNo) {
       // 채팅창 비활성 화
       document.querySelector("#chat").classList.add("d-none");
+      document.querySelector("#chat-no").classList.remove("d-none");
       prevChatRoomNo = null;
       return;
     }
@@ -414,6 +426,8 @@
         submitMessage({messageValue: "읽었당~", chttRoomNo, emplNo: "${myEmpInfo.emplNo}", type: "READ"});
         setTimeout(() => {
           let chatList = document.querySelector("#chatList");
+
+          document.querySelector("#chat-no").classList.add("d-none");
           document.querySelector("#chat").classList.remove("d-none");
           chatList.scrollTop = chatList.scrollHeight; // 채팅 밑으로 내리기
 		}, 100)
