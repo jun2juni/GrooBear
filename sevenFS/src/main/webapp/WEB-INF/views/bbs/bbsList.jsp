@@ -18,7 +18,7 @@
 		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 	
-	<title>${bbsVO.bbsCtgryNm}</title>
+	<title>게시판 리스트</title>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <%@ include file="../layout/prestyle.jsp" %>
 <style>
@@ -59,11 +59,6 @@ table.table-hover.align-middle.text-center tbody tr td {
 
 </style>
 </head>
-<c:if test="${not empty errorMessage}">
-    <script>
-        alert("${errorMessage}");
-    </script>
-</c:if>
 <body>
 
 <%@ include file="../layout/sidebar.jsp" %>

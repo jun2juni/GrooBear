@@ -18,11 +18,6 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<c:if test="${not empty errorMessage}">
-    <script>
-        alert("${errorMessage}");
-    </script>
-</c:if>
 <style>
     #likeIcon {
     transition: transform 0.2s;

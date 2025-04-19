@@ -213,7 +213,7 @@ public class BbsController {
         
         if (!securityUtil.canEdit(authentication, bbsVO)) {
             redirectAttrs.addFlashAttribute("errorMessage", "수정 권한이 없습니다.");
-            return "redirect:/bbs/bbsDetail?bbsSn=" + bbsSn;
+            return "error/403";
         }
         
         model.addAttribute("bbsVO", bbsVO);
@@ -253,7 +253,7 @@ public class BbsController {
     	
     	if (!securityUtil.canDelete(authentication, bbs)) {
             redirectAttrs.addFlashAttribute("errorMessage", "삭제 권한이 없습니다.");
-            return "redirect:/bbs/bbsDetail?bbsSn=" + bbsSn;
+            return "error/403";
         }
     	
     	int delete = bbsService.bbsDelete(bbsSn);
