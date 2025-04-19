@@ -67,24 +67,11 @@
 			                  <table class="table">
 			                    <thead class="table-striped">
 			                      <tr>
-			                        <th>
-			                          <h6>프로필</h6>
-			                        </th>
-			                        <th>
-			                          <h6>이름</h6>
-			                        </th>
-			                        <th>
-			                          <h6>T.T-MI</h6>
-			                        </th>
-			                        <th>
-			                          <h6>오늘의 한 줄</h6>
-			                        </th>
-			                        <th>
-			                          <h6>상태</h6>
-			                        </th>
-			                        <th>
-			                          <h6>Action</h6>
-			                        </th>
+			                        <th data-bs-toggle="tooltip"  data-bs-html="true" data-bs-placement="top" title="이곳은 여러분의 <br>프로필 사진이 나오는 곳입니다!<br> 프로필 사진을 변경해주세요">프로필</th>
+			                        <th data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" title="사원의 이름입니다.">이름</th>
+			                        <th data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" title="여러분의<br>사소한 정보와 이야기를<br>여기 남겨주세요!! ">T.T-MI</th>
+			                        <th data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" title="여러분의 일상의 오늘 말 하고 싶은 말들!<br>좌우명도 좋아요 한 마디씩 남겨주세요!">오늘의 한 줄</th>
+			                        <th data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" title="때로는<br>잘 고른 이모지 1개가<br>여러분의 많은 감정을 대변해 줄 수 있죠!<br> 여러분의 감정을 골라주세요!!!">상태</th>
 			                      </tr>
 			                      <!-- end table row-->
 			                    </thead>
@@ -137,14 +124,6 @@
 								        </c:choose>
 								      </a>
 								    </td>
-			                        <td>
-			                          <div class="action">
-			                            <button class="text-danger">
-			                              <i class="lni lni-trash-can"></i>
-			                            </button>
-			                          </div>
-			                        </td>
-			                        <!-- 상태 -->
 			                      </tr>
 			                      </c:forEach>
 			                      <!-- end table row -->
@@ -242,10 +221,38 @@
 	</main>
 	<%@ include file="../layout/prescript.jsp"%>
 </body>
+<style>
+ td, th  {
+  position: relative;
+  overflow: visible;
+  white-space: nowrap;
+  text-align: center;
+  
+  }
+  .tooltip-inner {
+  min-width: 120px;  /* 최소 너비 확보 */
+  max-width: none;   /* Bootstrap 기본값 제한 해제 */
+  background-color: #365CF5 !important; /* 밝은 파란색 */
+  color: #fff !important; /* 텍스트는 흰색 */
+  font-size: 0.85rem;
+  padding: 6px 10px;
+  border-radius: 4px;
+  padding: 8px 12px;
+  text-align: center;
+  white-space: normal;  /* 줄바꿈 허용 */
+}
+</style>
+
 <script type="text/javascript">
 
+// TH 테이블 head에 툴팁 달기
+document.addEventListener('DOMContentLoaded', () => {
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+    new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+});
       	 
-	  
 	  
 	/*이모지 위 입력하는 이모지칸  */
 const Emojis = [
