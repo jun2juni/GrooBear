@@ -376,7 +376,7 @@
 									<div class="card-style mb-30 docList">
 										<div style="display: flex; justify-content: space-between; align-items: center;" class="mb-10">
 											<h6 class="mb-10">결재완료문서</h6>
-											<a href="/atrz/document" class="text-sm fw-bolder" style="color: #4a6cf7;">
+											<a href="/atrz/complete" class="text-sm fw-bolder" style="color: #4a6cf7;">
 												더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
 											</a>
 										</div>

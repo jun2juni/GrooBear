@@ -96,6 +96,9 @@
                       <a href="/atrz/approval" class="${fn:contains(currentURL, '/atrz/approval') ? 'active' : ''}"> 결재 대기 문서 </a>
                     </li>
                     <li>
+                      <a href="/atrz/complete" class="${fn:contains(currentURL, '/atrz/complete') ? 'active' : ''}"> 결재 완료 문서 </a>
+                    </li>
+                    <li>
                       <a href="/atrz/document" class="${fn:contains(currentURL, '/atrz/document') ? 'active' : ''}"> 전자결재 문서함 </a>
                     </li>
                     <li>

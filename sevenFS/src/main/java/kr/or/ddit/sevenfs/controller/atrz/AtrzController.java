@@ -130,6 +130,24 @@ public class AtrzController {
 		return "atrz/approval";
 
 	}
+	
+	@GetMapping("/complete")
+	public String completeList(Model model, @AuthenticationPrincipal CustomUser customUser) {
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String emplNo = empVO.getEmplNo();
+		log.info("documentList-> emplNo : "+emplNo);
+		
+		List<AtrzVO> atrzCompleteList = atrzService.atrzCompleteList(emplNo);
+		model.addAttribute("atrzCompleteList",atrzCompleteList);
+		
+		
+		
+		model.addAttribute("title", "결재 완료 문서");
+		return "atrz/complete";
+		
+	}
+	
 
 	@GetMapping("/document")
 	public String documentList(Model model, @AuthenticationPrincipal CustomUser customUser) {

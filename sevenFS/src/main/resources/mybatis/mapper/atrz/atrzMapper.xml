@@ -294,6 +294,40 @@
 		   AND A.atrz_sttus_code IN ('00', '10', '20', '30', '40')
 		ORDER BY a.atrz_drft_dt DESC
 	</select>
+	
+	<!-- 결재완료문서 -->	
+	<select id="atrzCompleteList" resultMap="atrzMap" parameterType="string">
+		SELECT 				/* AtrzMapper.atrzCompleteList 쿼리수정완료 */ 
+		       A.atrz_doc_no
+		      ,A.drafter_empno
+		      ,A.drafter_clsf
+		      ,A.drafter_empnm
+		      ,A.drafter_dept
+		      ,A.bkmk_yn
+		      ,A.atch_file_no
+		      ,A.atrz_sj
+		      ,A.atrz_cn
+		      ,A.atrz_opinion
+		      ,A.atrz_tmpr_stre_dt
+		      ,A.atrz_drft_dt
+		      ,A.atrz_compt_dt
+		      ,A.atrz_rtrvl_dt
+		      ,A.atrz_sttus_code
+		      ,A.eltsgn_image
+		      ,A.doc_form_no
+		      ,A.atrz_delete_yn
+		      ,A.schdul_reg_yn
+		      ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
+              ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
+		FROM ATRZ A
+		     LEFT JOIN atrz_line L
+		       ON A.atrz_doc_no = L.atrz_doc_no
+		WHERE 1=1
+		  AND A.drafter_empno = #{emplNo}
+		  AND A.atrz_delete_yn = 'N'
+		   AND A.atrz_sttus_code = 10
+		ORDER BY a.atrz_drft_dt DESC
+	</select>
 
 	<!-- 임시저장한 문서리스트 (임시저장함) -->
 	<select id="atrzStorageList"  resultMap="atrzMap" parameterType="string">

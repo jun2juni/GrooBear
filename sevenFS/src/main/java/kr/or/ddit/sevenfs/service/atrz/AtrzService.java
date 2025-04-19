@@ -102,6 +102,9 @@ public interface AtrzService {
 	//임시저장함 삭제하기 (일괄삭제 포함)
 	public void storageListDelete(List<String> atrzDocNos);
 	
+	//결재완료문서함
+	public List<AtrzVO> atrzCompleteList(String emplNo);
+	
 	
 	
 }

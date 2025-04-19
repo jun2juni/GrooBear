@@ -171,7 +171,7 @@
 														<tr>
 															<!-- select박스 -->
 															<th class="text-center">
-																<h6 class="fw-bolder">기안일시</h6>
+																<h6 class="fw-bolder">기안일</h6>
 															</th>
 															<th class="text-center">
 																<h6 class="fw-bolder">결재양식</h6>
@@ -195,7 +195,7 @@
 																	<p class="text-sm fw-bolder">
 																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
 																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
-																		${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}
+																		${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp;
 																	</p>
 																</td>
 																<td class="text-center">
@@ -316,7 +316,7 @@
 																		<h6 class="fw-bolder">결재상태</h6>
 																	</th>
 																	<th class="text-center">
-																		<h6 class="fw-bolder">생성일</h6>
+																		<h6 class="fw-bolder">저장일시</h6>
 																	</th>
 																</tr>
 															</thead>
@@ -431,9 +431,7 @@
 															<thead>
 																<tr>
 																	<!-- select박스 -->
-																	<th class="text-center">
-																		<h6 class="fw-bolder">기안일시</h6>
-																	</th>
+																	
 																	<th>
 																		<h6 class="fw-bolder">결재양식</h6>
 																	</th>
@@ -448,7 +446,10 @@
 																		<h6 class="fw-bolder">문서번호</h6>
 																	</th>
 																	<th class="text-center">
-																		<h6 class="fw-bolder">완료(반려)일시</h6>
+																		<h6 class="fw-bolder">기안일</h6>
+																	</th>
+																	<th class="text-center">
+																		<h6 class="fw-bolder">완료일</h6>
 																	</th>
 																	<th class="text-center">
 																		<h6 class="fw-bolder">결재상태</h6>
@@ -458,13 +459,6 @@
 															<tbody>
 																<c:forEach var="atrzVO" items="${atrzAllApprovalList}">
 																	<tr>
-																		<td class="text-center">
-																			<p class="fw-bolder">
-																				<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
-																				<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
-																				${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}
-																			</p>
-																		</td>
 																		<td>
 																			<p>
 																				<c:choose>
@@ -505,9 +499,14 @@
 																		</td>
 																		<td class="text-center">
 																			<p class="fw-bolder">
+																				${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp;
+																			</p>
+																		</td>
+																		<td class="text-center">
+																			<p class="fw-bolder">
 																				<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="yyyy-MM-dd" var="onlyDate" />
 																				<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="HH:mm:ss" var="onlyTime" />
-																				${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}
+																				${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp;
 																			</p>
 																		</td>
 																		<td class="text-center">

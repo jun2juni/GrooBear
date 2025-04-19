@@ -92,6 +92,13 @@ public class AtrzServiceImpl implements AtrzService {
 		return atrzExpectedList;
 	}
 	
+	//결재완료 문서함
+	@Override
+	public List<AtrzVO> atrzCompleteList(String emplNo) {
+		List<AtrzVO> atrzCompleteList = atrzMapper.atrzCompleteList(emplNo);
+		return atrzCompleteList;
+	}
+	
 	//기안문서함
 	@Override
 	public List<AtrzVO> atrzAllSubmitList(String emplNo) {
@@ -582,6 +589,7 @@ public class AtrzServiceImpl implements AtrzService {
 		atrzMapper.deleteStorageDocumHoliday(atrzDocNos);
 		atrzMapper.deleteStorageAtrz(atrzDocNos);
 	}
+
 	
 	
 }
