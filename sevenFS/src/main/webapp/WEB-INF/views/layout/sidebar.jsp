@@ -194,7 +194,7 @@
              data-bs-toggle="collapse" data-bs-target="#comunity"
              aria-controls="comunity" aria-expanded="false" aria-label="Toggle navigation">
             <span class="icon material-symbols-outlined">face</span>
-            <span class="text">커뮤니티</span>
+            <span class="text">커뮤니티</span>	
           </a>
           <ul id="comunity" class="dropdown-nav collapse" style="">
             <li>
