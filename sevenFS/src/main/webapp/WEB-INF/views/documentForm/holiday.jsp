@@ -713,6 +713,7 @@ $(document).ready(function() {
 			});
 			return;
 		}
+	
 	// 제목, 내용이 비어있을 때
 	if(eap_title == "" || eap_content == "") {
 		swal({

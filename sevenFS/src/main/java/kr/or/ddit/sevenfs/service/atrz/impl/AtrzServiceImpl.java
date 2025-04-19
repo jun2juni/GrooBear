@@ -145,6 +145,7 @@ public class AtrzServiceImpl implements AtrzService {
 	public int insertAtrzLine(AtrzLineVO atrzLineVO) {
 		return this.atrzMapper.insertAtrzLine(atrzLineVO);
 	}
+	
 	//연차신청서 등록
 	@Transactional
 	@Override
@@ -187,12 +188,12 @@ public class AtrzServiceImpl implements AtrzService {
 			employeeVOList.add(employeeVO);
 		}
 		
-		
 		//알림 제목을 셋팅해준다 ntcnSj 제목
-		notificationVO.setNtcnSj("[전자결재 알림]"+ atrzVO.getDrafterEmpnm() +"님이 결재기안을 요청하였습니다.");
+		//허성진씨 줄바꿈이 안먹히자나~~~~~
+		notificationVO.setNtcnSj("[전자결재 알림]");
 		//알림 내용을 셋팅해준다 ntcnCn	내용
-		notificationVO.setNtcnCn(atrzVO.getAtrzSj());
-		notificationVO.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}");
+		notificationVO.setNtcnCn(atrzVO.getDrafterEmpnm() +" 님이 결재기안을 요청하였습니다.");
+		notificationVO.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo="+atrzVO.getAtrzDocNo());
 		notificationVO.setSkillCode("02");
 		
 		// 알림을 보낼 사번을 배열로 담아준다.

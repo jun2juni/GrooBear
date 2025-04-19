@@ -97,6 +97,7 @@
 	font-size: 1.2rem; 
 	color: gray;
 }
+
 </style>
 <body>
 <%@ include file="../layout/sidebar.jsp" %>
@@ -268,10 +269,11 @@
 																	<h6 class="fw-bolder" style="text-align: center;">기안일시</h6>
 																</th>
 																<th>
-																	<h6 class="fw-bolder" style="text-align: center;">양식유형</h6>
+																	<h6 class="fw-bolder">양식유형</h6>
 																</th>
+																<th></th>
 																<th>
-																	<h6 class="fw-bolder" style="padding-left: 120px;">제목</h6>
+																	<h6 class="fw-bolder">제목</h6>
 																</th>
 																<th>
 																	<h6 class="fw-bolder" style="text-align: center;">진행부서</h6>
@@ -288,14 +290,14 @@
 															<tbody>
 																<!-- <p>${atrzMinSubmitList}</p> -->
 																<tr>
-																	<td style="padding-top: 10px; padding-bottom: 10px;" >
-																		<p class="text-sm" style="text-align: center;">
+																	<td>
+																		<p class="fw-bolder" style="text-align: center;">
 																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
 																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
-																			<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
+																			${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
 																	</td>
-																	<td style="padding-top: 0px;">
-																		<p class="fw-bolder" style="text-align: center;">
+																	<td>
+																		<p>
 																			<c:choose>
 																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'H')}">연차신청서</c:when>
 																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'S')}">지출결의서</c:when>
@@ -307,31 +309,33 @@
 																			</c:choose>
 																		</p>
 																	</td>
-																	<td style="text-align: left; padding-top: 0px;">
-																		<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont " style="display: flex; align-items: center;">
+																	<td style="text-align: right;">
 																		<c:choose>
 																			<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
-																				<span class="material-symbols-outlined" style="margin-right: 5px;">
-																				attach_file
+																				<span class="material-symbols-outlined" style="font-size: 14px;">
+																					attach_file
 																				</span>
 																			</c:when>
 																			<c:otherwise>
-																				<span class="material-symbols-outlined" style="margin-right: 5px; visibility: hidden;">
-																				attach_file
+																				<span class="material-symbols-outlined" style="font-size: 14px; visibility: hidden;">
+																					attach_file
 																				</span>
 																			</c:otherwise>
 																		</c:choose>
-																		${atrzVO.atrzSj}
+																	</td>
+																	<td>
+																		<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
+																			${atrzVO.atrzSj}
 																		</a>
 																	</td>
-																	<td style="padding-top: 0px;">
-																		<p class="fw-bolder" style="text-align: center;">${atrzVO.deptCodeNm}</p>
+																	<td>
+																		<p style="text-align: center;">${atrzVO.deptCodeNm}</p>
 																	</td>
-																	<td style="padding-top: 0px;" >
-																		<p class="fw-bolder" style="text-align: center;">${atrzVO.drafterEmpnm}</p>
+																	<td>
+																		<p style="text-align: center;">${atrzVO.drafterEmpnm}</p>
 																	</td>
 																	
-																	<td  style="padding-top: 0px;">
+																	<td>
 																		<h6 class="text-sm">
 																			<p>
 																				<c:choose>
@@ -388,13 +392,14 @@
 														<thead>
 															<tr>
 																<th>
-																	<h6 class="fw-bolder" style="text-align: center;">기안일시</h6>
-																</th>
-																<th>
 																	<h6 class="fw-bolder" style="text-align: center;">완료일시</h6>
 																</th>
 																<th>
-																	<h6 class="fw-bolder" style="padding-left: 120px;">제목</h6>
+																	<h6 class="fw-bolder">양식유형</h6>
+																</th>
+																<th></th>
+																<th>
+																	<h6 class="fw-bolder">제목</h6>
 																</th>
 																<th>
 																	<h6 class="fw-bolder" style="text-align: center;">기안부서</h6>
@@ -410,44 +415,52 @@
 														<c:forEach var="atrzVO" items="${atrzMinCompltedList}">
 															<tbody>
 																<tr>
-																	<td style="padding-top: 10px; padding-bottom: 10px;">
-																		<p class="text-sm" style="text-align: center;">
-																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
-																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
-																			<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}
-																		</p>
-																	</td>
-																	<td style="padding-top: 10px; padding-bottom: 10px;">
-																		<p class="text-sm" style="text-align: center;">
+																	<td>
+																		<p class="fw-bolder" style="text-align: center;">
 																			<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="yyyy-MM-dd" var="onlyDate" />
 																			<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="HH:mm:ss" var="onlyTime" />
-																			<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}
+																			${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}
 																		</p>
 																	</td>
-																	<td style="text-align: left; padding-top: 0px;">
-																		<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
+																	<td>
+																		<p>
 																			<c:choose>
-																				<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
-																					<span class="material-symbols-outlined" style="margin-right: 5px;">
-																						attach_file
-																					</span>
-																				</c:when>
-																				<c:otherwise>
-																					<span class="material-symbols-outlined" style="margin-right: 5px; visibility: hidden;">
-																						attach_file
-																					</span>
-																				</c:otherwise>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'H')}">연차신청서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'S')}">지출결의서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'B')}">급여계좌변경신청서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'A')}">급여명세서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'D')}">기안서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'C')}">재직증명서</c:when>
+																				<c:otherwise>퇴사신청서</c:otherwise>
 																			</c:choose>
+																		</p>
+																	</td>
+																	<td style="text-align: right;">
+																		<c:choose>
+																			<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
+																				<span class="material-symbols-outlined" style="font-size: 14px;">
+																					attach_file
+																				</span>
+																			</c:when>
+																			<c:otherwise>
+																				<span class="material-symbols-outlined" style="font-size: 14px; visibility: hidden;">
+																					attach_file
+																				</span>
+																			</c:otherwise>
+																		</c:choose>
+																	</td>
+																	<td style="text-align:left;">
+																		<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
 																			${atrzVO.atrzSj}
 																		</a>
 																	</td>
-																	<td style="padding-top: 0px;">
-																		<p class="fw-bolder" style="text-align: center;">${atrzVO.deptCodeNm}</p>
+																	<td>
+																		<p style="text-align: center;">${atrzVO.deptCodeNm}</p>
 																	</td>
-																	<td style="padding-top: 0px;">
-																		<p class="fw-bolder" style="text-align: center;">${atrzVO.drafterEmpnm}</p>
+																	<td>
+																		<p style="text-align: center;">${atrzVO.drafterEmpnm}</p>
 																	</td>
-																	<td style="padding-top: 0px;">
+																	<td>
 																		<h6 class="text-sm">
 																			<p>
 																				<c:choose>
