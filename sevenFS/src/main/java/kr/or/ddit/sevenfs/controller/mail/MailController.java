@@ -119,6 +119,18 @@ public class MailController {
 		log.info("mailSend get요청 -> email : "+email);
 		return "mail/mailSend";
 	}
+	@GetMapping("/mailRepl")
+	public String mailRepl(@RequestParam(value = "emailNo") String emailNo) {
+		log.info("mailRepl -> emailNo : "+emailNo);
+		
+		return"";
+	}
+	@GetMapping("/mailTrnsms")
+	public String mailTrnsms(@RequestParam(value = "emailNo") String emailNo) {
+		log.info("mailTrnsms -> emailNo : "+emailNo);
+		
+		return"";
+	}
 	
 	@PostMapping("/selEmail")
 	@ResponseBody
@@ -155,7 +167,7 @@ public class MailController {
 	
 	@PostMapping("/delete")
 	@ResponseBody
-	public String mailDelete(@RequestParam(value = "emailNoList") String[] emailNoList) {
+	public String mailDelete(@RequestParam(value = "emailNoList") List<String> emailNoList) {
 		for(String emailNo : emailNoList) {
 			log.info("mailDelete -> emailNo : "+emailNo);
 		}
@@ -168,6 +180,12 @@ public class MailController {
 		log.info("mailLblAdd -> labelVO : "+labelVO);
 		mailLabelService.mailLblAdd(labelVO);
 		return "redirect:/mail";
+	}
+	@PostMapping("/starred")
+	@ResponseBody
+	public String mailStarred(@ModelAttribute MailVO mailVO){
+		log.info("mailStarred -> mailVO : "+mailVO);
+		return "success";
 	}
 	
 	@ResponseBody

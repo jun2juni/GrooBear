@@ -20,6 +20,6 @@ public interface MailMapper {
 	List<MailVO> emailDetail(MailVO mailVO);
 	List<AttachFileVO> getAtchFile(long atchFileNo);
 	int getTotal(Map<String, Object> map);
-	int mailDelete(String[] emailNoList);
+	int mailDelete(List<String> emailNoList);
 
 }

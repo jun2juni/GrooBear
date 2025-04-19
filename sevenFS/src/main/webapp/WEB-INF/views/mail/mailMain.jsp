@@ -6,7 +6,7 @@
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="text/javascript">
-    $(document).ready(function(){
+  $(document).ready(function(){
       $('.tab').prop('disabled',true)
       // $('#emailClTy ').val();
       /* 리스트 조회 조건 시작 */
@@ -20,7 +20,7 @@
       
       
       $('#mailWrite').on('click',function(){
-        console.log('클릭 확인');
+        // console.log('클릭 확인');
         // $('.email-section').hide();
         // console.log($('.email-section'));
         // $('.email-section write').show();
@@ -40,10 +40,17 @@
         $(this).addClass('active');
         emailClTy = $(this).attr('data-emailClTy');
         if(emailClTy){
-          console.log('emailClTy -> ',emailClTy);
+          // console.log('emailClTy -> ',emailClTy);
           window.location.href = "/mail?emailClTy="+emailClTy;
         }
-        });
+      });
+
+      $('.label-select').on('click',function(){
+        // console.log('.label-select 클릭 이벤트 : ',this);
+        let lnlNo = $(this).data('lblno');
+        // console.log('.label-select 클릭 이벤트 lnlNo : ',lnlNo);
+        window.location.href="/mail?lblNo="+lnlNo;
+      })
 
       // 삭제
       $('#tab-del').on('click',function(){
@@ -53,18 +60,43 @@
           let emailNo = $(chk).closest('.email-item').attr('data-emailno');
           emailNoList.push(emailNo);
         })
+        // 현재 URL에서 쿼리스트링 가져오기
+        let queryString = window.location.search;
+
+        // URLSearchParams 객체를 사용하여 쿼리스트링을 파싱
+        let urlParams = new URLSearchParams(queryString);
+
+        // 특정 파라미터 값 가져오기
+        let paramValue = urlParams.get('emailClTy'); // 'name'이라는 키의 값을 가져옴
+
+        console.log(paramValue);
         console.log('삭제 할 메일',emailNoList);
         $.ajax({
           url:"/mail/delete",
           method:'post',
           data:{"emailNoList":emailNoList},
           success:function(resp){
-            window.location.href = resp;
+            window.location.href = resp+'?emailClTy='+paramValue;
           },
           error:function(err){
             console.log(err);
           }
         })
+      })
+
+      $('#tab-repl').on('click',function(){
+        console.log('답장 버튼 클릭 : ',this);
+        let chk = $('.email-checkbox:checked').get()[0];
+        let emailNo = $(chk).closest('.email-item').attr('data-emailno');
+        console.log('답장 버튼 클릭 emailNo : ',emailNo);
+
+      })
+      $('#tab-trnsms').on('click',function(){
+        console.log('전달 버튼 클릭 : ',this);
+        let chk = $('.email-checkbox:checked').get()[0];
+        let emailNo = $(chk).closest('.email-item').attr('data-emailno');
+        console.log('전달 버튼 클릭 emailNo : ',emailNo);
+        window.location.href="/mail/mailTrnsms?emailNo="+emailNo;
       })
       // 리스트 클릭 이벤트
       $('.email-content').on('click',function(){
@@ -73,7 +105,43 @@
         window.location.href="/mail/emailDetail?emailNo="+emailNo;
       })
 
+      // 별표 클릭
+      $('.fa-star').on('click',function(){
+        let starredYN = '';
+        $(this).toggleClass('fas');
+        $(this).toggleClass('far');
+        let className = $(this).prop('className')
+        let emailNo = $(this).closest('button').data('emailno');
+        console.log('별표 이벤트 -> emailNo : ',emailNo);
+        console.log('별표 이벤트 -> className : ',className);
+        if(className.indexOf('far') != -1){
+          starredYN = 'N';
+        }else if(className.indexOf('fas') != -1){
+          starredYN = 'Y';
+        }
+        console.log('별표 이벤트 -> starredYN : ',starredYN);
+        $.ajax({
+          url:'/mail/starred',
+          data:{emailNo:emailNo,starred:starredYN},
+          method:'post',
+          success:function(resp){
+            console.log('ajax 요청 결과 : ',resp);
+          },
+          error:function(err){
+            console.log('에러 발생 : ',err)
+          }
+        })
+      })
+
       $('.email-checkbox').change(function(){
+        // 현재 URL에서 쿼리스트링 가져오기
+        let queryString = window.location.search;
+
+        // URLSearchParams 객체를 사용하여 쿼리스트링을 파싱
+        let urlParams = new URLSearchParams(queryString);
+
+        // 특정 파라미터 값 가져오기
+        let paramValue = urlParams.get('emailClTy'); // 'name'이라는 키의 값을 가져옴
         let emailNoList = [];
         console.log('클릭 확인 : ',this)
         let chkList = $('.email-checkbox:checked').get();
@@ -100,9 +168,13 @@
           $("#tab-trnsms").prop('disabled',false);
           $('#labeling').prop('disabled',false);
         }
-
+        if(paramValue!='1'){
+          $("#tab-repl").prop('disabled',true);
+        }
       })
-    });
+      // <i class="${mailVO.starred=='Y'?'fas':'far'} fa-star"></i>
+      
+  });
 </script>
   <div class="email-container">
     <!-- 메인 콘텐츠 영역 (사이드바 + 이메일 영역) -->
@@ -148,8 +220,8 @@
         <div class="sidebar-section">
           <div class="sidebar-section-header">라벨</div>
           <c:forEach items="${mailLabelList}" var="mailLabel">
-            <div class="sidebar-item">
-              <i class="fas fa-tag" style="color: ${mailLabel.lblCol};" data-lblNo="${mailLabel.lblNo}"></i>
+            <div class="sidebar-item label-select" data-lblNo="${mailLabel.lblNo}">
+              <i class="fas fa-tag" style="color: ${mailLabel.lblCol};"></i>
               <span class="sidebar-label">${mailLabel.lblNm}</span>
             </div>
           </c:forEach>
@@ -275,27 +347,27 @@
             <div class="email-list" id="email-list">
               <!-- forEach 시작 -->
               <c:forEach items="${mailVOList}" var="mailVO">
-          <div class="email-item ${mailVO.readngAt}" data-emailNo="${mailVO.emailNo}">
-            <div class="email-actions">
-              <input type="checkbox" class="email-checkbox">
-              <button class="star-button ${starClass}" data-emailNo="${mailVO.emailNo}">
-                <i class="far fa-star"></i>
-              </button>
-            </div>
-            <div class="email-sender">${mailVO.trnsmitEmail}</div>
-            <div class="email-content">
-              <c:if test="${mailVO.emailSj != null}">
-                <span class="email-subject">${mailVO.emailSj}</span>
-              </c:if>
-              <c:if test="${mailVO.emailSj == null}">
-                <span class="email-subject">(제목 없음)</span>
-              </c:if>
-              <c:if test="${mailVO.emailCn != null}">
-                -<span class="email-content-summary">${mailVO.emailCn}</span>
-              </c:if>
-            </div>
-            <div class="email-date">${mailVO.trnsmitDt}</div>
-          </div>
+                <div class="email-item ${mailVO.readngAt}" data-emailNo="${mailVO.emailNo}">
+                  <div class="email-actions">
+                    <input type="checkbox" class="email-checkbox">
+                    <button class="star-button ${mailVO.starred}" data-emailNo="${mailVO.emailNo}">
+                      <i class="${mailVO.starred=='Y'?'fas':'far'} fa-star"></i>
+                    </button>
+                  </div>
+                  <div class="email-sender">${mailVO.trnsmitEmail}</div>
+                  <div class="email-content">
+                    <c:if test="${mailVO.emailSj != null}">
+                      <span class="email-subject">${mailVO.emailSj}</span>
+                    </c:if>
+                    <c:if test="${mailVO.emailSj == null}">
+                      <span class="email-subject">(제목 없음)</span>
+                    </c:if>
+                    <c:if test="${mailVO.emailCn != null}">
+                      -<span class="email-content-summary">${mailVO.emailCn}</span>
+                    </c:if>
+                  </div>
+                  <div class="email-date">${mailVO.trnsmitDt}</div>
+                </div>
               </c:forEach>
               <!-- forEach 끝 -->
             </div>

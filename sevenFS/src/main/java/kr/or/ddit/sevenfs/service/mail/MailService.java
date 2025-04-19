@@ -24,7 +24,7 @@ public interface MailService {
 
 	int getTotal(Map<String, Object> map);
 
-	int mailDelete(String[] emailNoList);
+	int mailDelete(List<String> emailNoList);
 
 
 }

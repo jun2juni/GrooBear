@@ -191,7 +191,7 @@ public class MailServiceImpl implements MailService{
 	}
 
 	@Override
-	public int mailDelete(String[] emailNoList) {
+	public int mailDelete(List<String> emailNoList) {
 		int result = mailMapper.mailDelete(emailNoList);
 		return 0;
 	}

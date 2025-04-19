@@ -75,6 +75,9 @@ public class MailVO {
 	// 송수신 여부 (읽었는지 확인)
 	private String readngAt;
 	
+	// 별표시
+	private String starred;
+	
 	// 서버에서 처리시 refEmail존재여부,hiddenRefEmail 존재여부,둘다 없음 3가지로 분기처리된다.
 	// 참조 이메일 리스트
 	private List<String>  refEmailList;
