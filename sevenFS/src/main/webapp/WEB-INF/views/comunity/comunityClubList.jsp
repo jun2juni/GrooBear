@@ -163,7 +163,7 @@
 			 </div>	<!--fluid  -->
 			 
 			 <!-- 백문백답모달 시작  -->
-			 <form action="">
+			 <form action="/comunity/insertTTMI" method="post">
 				<div class="modal fade" id="100Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 				  <div class="modal-dialog">
 				    <div class="modal-content">
@@ -174,7 +174,7 @@
 				      <div class="modal-body">
 				        <div class="input-style-1">
 		                  <label><h4>가장 좋아하는 과일을 말해주세요!</h4></label> <!--백문백답 들어가는 곳   -->
-		                  <textarea placeholder="답변을 입력해주세요" rows="5" data-listener-added_0bb1bb59="true"></textarea>
+		                  <textarea placeholder="답변을 입력해주세요" name="ttmiContent" rows="5" data-listener-added_0bb1bb59="true"></textarea>
 		                </div>
 				      </div>
 				      <div class="modal-footer">
@@ -233,7 +233,7 @@
 				        <button type="submit" class="btn btn-primary">오늘의 이모지 저장하기</button>
 				      </div>	
 				    </div>
-				  </div>
+				  </div> 
 				</div>     
 			</form>
        		 <!-- 오늘의 이모지 모달 끝  -->

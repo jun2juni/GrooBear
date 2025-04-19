@@ -288,7 +288,7 @@
 		  )
 	</insert>
 	
-	<insert id="insertEmoji" parameterType="ComunityVO">
+	<insert id="insertContent" parameterType="ComunityVO">
 	   	<selectKey resultType="int" order="BEFORE"
 			keyProperty="bbsSn">
 			SELECT SEQ_BBS.NEXTVAL FROM DUAL

@@ -77,9 +77,28 @@ public class ComunityController {
 		return "comunity/comunityClubList";	
 	} // comunityClubList (sns 스느스 클럽)
 	
+	// TTMI 게시판 
+	@PostMapping("/insertTTMI")
+	public String insertTTMI(@ModelAttribute ComunityVO comunityVO,
+	                         @RequestParam("ttmiContent") String ttmiContent,
+	                         Principal principal) {
+
+	    if (principal == null) return "redirect:/auth/login";
+
+	    comunityVO.setBbscttCn(ttmiContent);     
+	    comunityVO.setBbsCtgryNo(14);            
+	    comunityVO.setBbscttUseYn("N");
+	    comunityVO.setEmplNo(principal.getName());
+
+	    comunityServiceImpl.insertContent(comunityVO);  // 
+
+	    return "redirect:/comunity/comunityClubList";
+	}
+	
+	
 	
 	@PostMapping("/insertToday")
-	public String insertTodayTTMi(@ModelAttribute BbsVO bbsVO, Principal principal) {
+	public String insertTodayTTMi(@ModelAttribute ComunityVO comunityVO, Principal principal) {
 			
 		    // 세션에서 사번 가져오기
 //	    	String emplNo = (String) session.getAttribute("emplNo");
@@ -91,11 +110,11 @@ public class ComunityController {
 	    	        return "redirect:/auth/login";
 	    	 }
 		
-		    bbsVO.setBbsCtgryNo(15); // 예시: insertTodayTTMi 전용 카테고리 번호
-		    bbsVO.setBbscttUseYn("N"); // 게시글 사용 여부
-		    bbsVO.setEmplNo(emplNo); // Principal 객체에서 사번 가져오기 , 임시값
+	    	comunityVO.setBbsCtgryNo(15); // 예시: insertTodayTTMi 전용 카테고리 번호
+	    	comunityVO.setBbscttUseYn("N"); // 게시글 사용 여부
+	    	comunityVO.setEmplNo(emplNo); // Principal 객체에서 사번 가져오기 , 임시값
 		
-		    comunityServiceImpl.insertToday(bbsVO);
+		    comunityServiceImpl.insertContent(comunityVO);
 		    
 			// 입력 이후 => redirect를 통해서 상세보기로 가주려함 
 		return  "redirect:/comunity/comunityClubList"; // 성공 시 리다이렉트
@@ -103,10 +122,10 @@ public class ComunityController {
 	
 	
 	@PostMapping("/insertEmoji")
-	public String insertEmoji(@ModelAttribute ComunityVO comunityVO,   Principal principal) {
+	public String insertEmoji(@ModelAttribute ComunityVO comunityVO,
+							  @RequestParam("emoji") String emoji ,
+							  Principal principal) {
 			
-		    // 세션에서 사번 가져오기
-//	    	String emplNo = (String) session.getAttribute("emplNo");
 	    	String emplNo = principal.getName(); // Principal 객체에서 사번 가져오기 
 	    	
 	    	if (emplNo == null) {
@@ -117,13 +136,14 @@ public class ComunityController {
 	    	comunityVO.setBbsCtgryNo(16); // 예시: insertEmoji 전용 카테고리 번호
 	    	comunityVO.setBbscttUseYn("N"); // 게시글 사용 여부
 	    	comunityVO.setEmplNo(emplNo); // Principal 객체에서 사번 가져오기 , 임시값
+	    	comunityVO.setBbscttCn(emoji); // 이모지 내용
 	    	
-		    comunityServiceImpl.insertEmoji(comunityVO);
+		    comunityServiceImpl.insertContent(comunityVO);
 		    
 		    
 			// 입력 이후 => redirect를 통해서 상세보기로 가주려함 
 		return  "redirect:/comunity/comunityClubList"; // 성공 시 리다이렉트
-	} // insertTodayTTMi 삽입
+	} // insertEmoji 삽입
 	
 	
 	

@@ -22,11 +22,10 @@ public interface ComunityService {
 
 	public int comunityMonthMenuUpdate(BbsVO bbsVO);
 
-	public int insertToday(BbsVO bbsVO);
-
+	// 여기부터 sns
 	public List<ComunityVO> comunityClubList(ComunityVO comunityVO);
 	
-	public int insertEmoji(ComunityVO comunityVO);
+	public int insertContent(ComunityVO comunityVO);
 	
 
 

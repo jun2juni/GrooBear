@@ -25,13 +25,10 @@ public interface ComunityMapper {
 	
 	
 	// 여기부터 sns
-	//커뮤니티 sns 오늘의 한줄  삽입
-	public int insertToday(BbsVO bbsVO);
-	// -----------------------------------------	여기부터 ComunityVO ㅜㅜㅜ-------------------
-	// 커뮤니티 sns 이모지 삽입
-	public int insertEmoji(ComunityVO comunityVO);
-	
 	//커뮤니티 sns list 추출
 	public List<ComunityVO> comunityClubList(ComunityVO comunityVO);
+	
+	//커뮤니티 글 insert (컨트롤러에서 나눕니다,,,,,)
+	public int insertContent(ComunityVO comunityVO);
 	
 }

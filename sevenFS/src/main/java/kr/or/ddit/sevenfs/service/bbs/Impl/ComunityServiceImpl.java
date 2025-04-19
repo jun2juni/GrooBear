@@ -49,21 +49,16 @@ public class ComunityServiceImpl implements ComunityService{
 		return comunityMapper.comunityMonthMenuUpdate(bbsVO);
 	}
 	
-	@Override
-	public int insertToday(BbsVO bbsVO) {
-		
-		return comunityMapper.insertToday(bbsVO);
-	}
 	// 여기부터 ComunityVO ㅜㅜ----- 
 	@Override
 	public List<ComunityVO> comunityClubList(ComunityVO comunityVO) {
 		return comunityMapper.comunityClubList(comunityVO);
 	}
-
-	public int insertEmoji(ComunityVO comunityVO) {
+	@Override
+	public int insertContent(ComunityVO comunityVO) {
 		
-		return comunityMapper.insertEmoji(comunityVO);
+		return comunityMapper.insertContent(comunityVO);
 	}
-	
+
 
 }
