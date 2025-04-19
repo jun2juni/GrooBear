@@ -14,5 +14,7 @@ public interface MailLabelMapper {
 
 	List<MailLabelVO> getLabelList(EmployeeVO employeeVO);
 
+	int deleteLbl(String lblNo);
+
 
 }

@@ -31,4 +31,10 @@ values(
 	,#{lblCol}
 )
 </insert>
+
+<delete id="deleteLbl" parameterType="String">
+	DELETE FROM mail_label
+	WHERE 
+		lbl_no = #{lblNo}
+</delete>
 </mapper>

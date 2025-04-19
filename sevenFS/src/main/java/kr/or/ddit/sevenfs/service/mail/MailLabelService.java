@@ -11,4 +11,6 @@ public interface MailLabelService {
 
 	List<MailLabelVO> getLabelList(EmployeeVO employeeVO);
 
+	int deleteLbl(String lblNo);
+
 }

@@ -32,5 +32,10 @@ public class MailLabelServiceImpl implements MailLabelService {
 		return labelMapper.getLabelList(employeeVO);
 	}
 
+	@Override
+	public int deleteLbl(String lblNo) {
+		return labelMapper.deleteLbl(lblNo);
+	}
+
 
 }

@@ -120,7 +120,7 @@ CONNECT BY LEVEL &lt;= #{count}
 
 <update id="mailDelete" parameterType="java.util.List">
 	update mail
-	set DEL_AT = 'Y'
+	set email_cl_ty = '4'
 	where email_no in
 	<foreach collection="list" item="emailNo" open="(" separator="," close=")">
 		#{emailNo}	        

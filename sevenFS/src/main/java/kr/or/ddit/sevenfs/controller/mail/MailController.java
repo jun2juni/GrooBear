@@ -81,7 +81,8 @@ public class MailController {
 		log.info("mailHome -> getList() -> mailVOList : "+mailVOList);
 		
 		List<MailLabelVO> mailLabelList = mailLabelService.getLabelList(employeeVO);
-		log.info("mailHome -> getLabelList(employeeVO) -> mailVOList" + mailLabelList);
+		log.info("mailHome -> getLabelList(employeeVO) -> mailLabelList" + mailLabelList);
+		log.info("mailHome -> 응답전 mailVO : "+mailVO);
 		
 		model.addAttribute("mailVOList",mailVOList);
 		model.addAttribute("articlePage", articlePage);
@@ -186,6 +187,14 @@ public class MailController {
 	public String mailStarred(@ModelAttribute MailVO mailVO){
 		log.info("mailStarred -> mailVO : "+mailVO);
 		return "success";
+	}
+	
+	@PostMapping("/deleteLbl")
+	@ResponseBody
+	public String deleteLbl(@RequestParam(value = "lblNo") String lblNo) {
+		log.info("deleteLbl -> lblNo : "+lblNo);
+		int result = mailLabelService.deleteLbl(lblNo);
+		return "";
 	}
 	
 	@ResponseBody

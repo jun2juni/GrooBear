@@ -36,8 +36,8 @@
       
       // 사이드바 아이템 클릭 이벤트
       $('.sidebar-item').on('click', function() {
-        $('.sidebar-item').removeClass('active');
-        $(this).addClass('active');
+        // $('.sidebar-item').removeClass('active');
+        // $(this).addClass('active');
         emailClTy = $(this).attr('data-emailClTy');
         if(emailClTy){
           // console.log('emailClTy -> ',emailClTy);
@@ -220,9 +220,22 @@
         <div class="sidebar-section">
           <div class="sidebar-section-header">라벨</div>
           <c:forEach items="${mailLabelList}" var="mailLabel">
-            <div class="sidebar-item label-select" data-lblNo="${mailLabel.lblNo}">
-              <i class="fas fa-tag" style="color: ${mailLabel.lblCol};"></i>
+            <div class="sidebar-item label-select ${mailVO.lblNo == mailLabel.lblNo ? 'active' : ''}" data-lblNo="${mailLabel.lblNo}">
+              <i class="fas fa-tag" data-col="${mailLabel.lblCol}" style="color: ${mailLabel.lblCol};"></i>
               <span class="sidebar-label">${mailLabel.lblNm}</span>
+              <div class="dropdown label-actions" style="margin-left: auto; position: relative;">
+                <button class="dropdown-toggle" style="background: none; border: none; cursor: pointer;">
+                  <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div class="dropdown-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;">
+                  <button class="dropdown-item edit-label" type="button" data-lblNo="${mailLabel.lblNo}" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left;">
+                    <i class="fas fa-edit" style="margin-right: 8px;"></i> 수정
+                  </button>
+                  <button class="dropdown-item delete-label" type="button" data-lblNo="${mailLabel.lblNo}" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left;">
+                    <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> 삭제
+                  </button>
+                </div>
+              </div>
             </div>
           </c:forEach>
           <div class="sidebar-item" id="addLabelBtn" style="cursor: pointer;">
@@ -231,9 +244,67 @@
           </div>
         </div>
 
+        <script>
+          $(document).ready(function() {
+            // 드롭다운 토글
+            $('.dropdown-toggle').on('click', function(e) {
+              e.stopPropagation();
+              const dropdownMenu = $(this).siblings('.dropdown-menu');
+              $('.dropdown-menu').not(dropdownMenu).hide(); // 다른 드롭다운 닫기
+              dropdownMenu.toggle();
+            });
+
+            // 페이지 외부 클릭 시 드롭다운 닫기
+            $(document).on('click', function() {
+              $('.dropdown-menu').hide();
+            });
+
+            // 라벨 수정 버튼 클릭 이벤트
+            $('.edit-label').on('click', function(e) {
+              e.stopPropagation();
+              // console.log(this);
+              const lblNo = $(this).data('lblno');
+              const lblNm = $(this).closest('.dropdown-menu').parent().siblings('.sidebar-label').text();
+              const lblCol = $(this).closest('.dropdown-menu').parent().siblings('.fas').data('col');
+              console.log('수정 -> lblNo : ',lblNo);
+              console.log('수정 -> lblNm : ',lblNm);
+              console.log('수정 -> lblCol : ',lblCol);
+              $('#addLabelBtn').trigger('click');
+              $('#lblPopTitle').text('라벨 수정');
+              // $(`.color-option[data-color=\${lblCol}]`).css('border', '2px solid #2563eb');
+              $('.color-option[data-color="' + lblCol + '"]').css('border', '3px solid #2563eb');
+              $('#label-name').val(lblNm);
+              // $('color-option').css('border', '2px solid #2563eb'); // Highlight selected color
+            });
+            
+            // 라벨 삭제 하고 있었음//////////////////////////////////
+            // 라벨 삭제 버튼 클릭 이벤트
+            $('.delete-label').on('click', function(e) {
+              e.stopPropagation();
+              const lblNo = $(this).data('lblno');
+              console.log('삭제 -> lblNo : ',lblNo);
+              $.ajax({
+                url:'mail/deleteLbl',
+                method:'post',
+                data:{lblNo:lblNo},
+                success:function(resp){
+                  if(resp==success){
+                    $('.label-select[data-lblno="' + lblNo + '"]').remove();
+                  }else{
+
+                  }
+                },
+                error:function(err){
+                  console.log('ajax요청결과 에러 발생 : ',err);
+                }
+              })
+            });
+          });
+        </script>
+
         <!-- 라벨 추가 팝업 -->
         <div id="label-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;">
-          <h3 style="margin-bottom: 10px;">라벨 추가</h3>
+          <h3 style="margin-bottom: 10px;" id="lblPopTitle">라벨 추가</h3>
           <form action="/mail/mailLblAdd" method="post">
             <input type="text" name="lblNm" id="label-name" placeholder="라벨 이름 입력" style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 4px;">
             <input type="hidden" name="lblCol" id="lblCol">
@@ -262,10 +333,10 @@
               <div class="color-option" style="width: 24px; height: 24px; background-color: #000000; border-radius: 50%; cursor: pointer;" data-color="#000000"></div>
             </div>
             <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
-              <button id="cancel-label" style="padding: 8px 16px; border: none; background-color: #e5e7eb; border-radius: 4px; cursor: pointer;">취소</button>
+              <button id="cancel-label" type="button" style="padding: 8px 16px; border: none; background-color: #e5e7eb; border-radius: 4px; cursor: pointer;">취소</button>
               <button id="save-label" type="submit" style="padding: 8px 16px; border: none; background-color: #2563eb; color: white; border-radius: 4px; cursor: pointer;">저장</button>
             </div>
-          </form> 
+          <!-- </form>  -->
         </div>
 
         <script>
@@ -276,12 +347,15 @@
             $('#addLabelBtn').on('click', function() {
               $('#label-popup').show();
               $('#popup-overlay').show();
+              $('.color-option').css('border', 'none');
+              $('#label-name').val('');
+              $('#lblPopTitle').text('라벨 추가');
             });
 
             // 라벨 색상 선택 이벤트
             $('.color-option').on('click', function() {
               $('.color-option').css('border', 'none'); // Reset border
-              $(this).css('border', '2px solid #2563eb'); // Highlight selected color
+              $(this).css('border', '3px solid #2563eb');// Highlight selected color
               selectedColor = $(this).data('color');
               $('#lblCol').val(selectedColor);
               console.log("$('#lblCol').val() : ",$('#lblCol').val());
@@ -345,29 +419,35 @@
             </div>
             <!-- 이메일 목록 - 여기에 스크롤이 적용됩니다 -->
             <div class="email-list" id="email-list">
+              <!-- 헤더 추가 -->
+              <div class="email-list-header" style="display: flex; padding: 10px; border-bottom: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: bold;">
+              <div class="email-header-sender" style="flex: 1; text-align: center;">이메일</div>
+              <div class="email-header-subject" style="flex: 2; text-align: center;">제목</div>
+              <div class="email-header-date" style="flex: 1; text-align: center;">날짜</div>
+              </div>
               <!-- forEach 시작 -->
               <c:forEach items="${mailVOList}" var="mailVO">
-                <div class="email-item ${mailVO.readngAt}" data-emailNo="${mailVO.emailNo}">
-                  <div class="email-actions">
-                    <input type="checkbox" class="email-checkbox">
-                    <button class="star-button ${mailVO.starred}" data-emailNo="${mailVO.emailNo}">
-                      <i class="${mailVO.starred=='Y'?'fas':'far'} fa-star"></i>
-                    </button>
-                  </div>
-                  <div class="email-sender">${mailVO.trnsmitEmail}</div>
-                  <div class="email-content">
-                    <c:if test="${mailVO.emailSj != null}">
-                      <span class="email-subject">${mailVO.emailSj}</span>
-                    </c:if>
-                    <c:if test="${mailVO.emailSj == null}">
-                      <span class="email-subject">(제목 없음)</span>
-                    </c:if>
-                    <c:if test="${mailVO.emailCn != null}">
-                      -<span class="email-content-summary">${mailVO.emailCn}</span>
-                    </c:if>
-                  </div>
-                  <div class="email-date">${mailVO.trnsmitDt}</div>
-                </div>
+              <div class="email-item ${mailVO.readngAt}" data-emailNo="${mailVO.emailNo}">
+              <div class="email-actions">
+                <input type="checkbox" class="email-checkbox">
+                <button class="star-button ${mailVO.starred}" data-emailNo="${mailVO.emailNo}">
+                <i class="${mailVO.starred=='Y'?'fas':'far'} fa-star"></i>
+                </button>
+              </div>
+              <div class="email-sender" style="flex: 1;">${mailVO.trnsmitEmail}</div>
+              <div class="email-content" style="flex: 2;">
+                <c:if test="${mailVO.emailSj != null}">
+                <span class="email-subject">${mailVO.emailSj}</span>
+                </c:if>
+                <c:if test="${mailVO.emailSj == null}">
+                <span class="email-subject">(제목 없음)</span>
+                </c:if>
+                <c:if test="${mailVO.emailCn != null}">
+                -<span class="email-content-summary">${mailVO.emailCn}</span>
+                </c:if>
+              </div>
+              <div class="email-date" style="flex: 1; text-align: center;">${mailVO.trnsmitDt}</div>
+              </div>
               </c:forEach>
               <!-- forEach 끝 -->
             </div>
@@ -401,7 +481,9 @@ body {
   color: #202124;
   line-height: 1.5;
 }
-
+.dropdown-toggle::after {
+  display: none !important;
+}
 .email-container {
   font-family: 'Roboto', 'Noto Sans KR', Arial, sans-serif;
   background-color: #ffffff;

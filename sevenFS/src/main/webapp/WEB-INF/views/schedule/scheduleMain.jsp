@@ -176,18 +176,24 @@
 				let lblColor='';
 				let backgroundColor=''
 				let textColor=''
+				let durationEditable = true
+				let startEditable = true
 				if(data.schdulTy == '1'){
 					console.log('일정 타입',data.schdulTy);
 					console.log('일정 넘버',data.schdulNo);
 					borderColor = '#0d6efd';
 					lblColor = '#ffffff'
 					textColor='#000000'
+					durationEditable=false
+					startEditable=false
 				}else if(data.schdulTy == '2'){
 					console.log('일정 타입',data.schdulTy);
 					console.log('일정 넘버',data.schdulNo);
 					borderColor = '#dc3545'
 					lblColor = '#ffffff'
 					textColor='#000000'
+					durationEditable=false
+					startEditable=false
 				}else{
 					if(selLabel){
 						lblColor = selLabel.lblColor;
@@ -208,7 +214,8 @@
 				   "schdulPlace":data.schdulPlace,
 				   "deptCode":data.deptCode,
 				   "allDay":chk,
-				   "durationEditable": true,
+				   "durationEditable": durationEditable,
+				   "startEditable":startEditable,
 				   "backgroundColor":lblColor,
 				   "borderColor":borderColor,
 				   "textColor":textColor

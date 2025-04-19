@@ -9,7 +9,7 @@
         </div>
         
         <div class="input-style-1 form-group col-12">
-            <input type="text" name="searchSj" class="form-control" id="searchSj" placeholder="검색" maxlength="100">
+            <input type="hidden" name="searchSj" class="form-control" id="searchSj" placeholder="검색" maxlength="100">
         </div>
         
         <!-- 일정 필터 -->
