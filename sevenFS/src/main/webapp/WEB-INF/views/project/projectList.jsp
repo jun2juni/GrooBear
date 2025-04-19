@@ -27,15 +27,23 @@
     <div class="card-style">
       <!-- 검색 폼 -->
       <div class="row mb-4">
-        <div class="col-md-8 col-lg-6 mx-auto">
-          <form id="searchForm" class="input-group">
-            <input type="text" id="keywordInput" class="form-control" placeholder="프로젝트명, 카테고리, 담당자 검색" value="${param.keyword}">
-            <button type="submit" class="btn btn-primary d-flex align-items-center">
-              <span class="material-icons-outlined">search</span>
-              <span class="ms-1">검색</span>
-            </button>
-          </form>
+  <div class="col-md-10 mx-auto">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        
+      <form id="searchForm" class="input-group flex-grow-1 me-2" style="max-width: 700px;">
+        <input type="text" id="keywordInput" class="form-control" placeholder="프로젝트명, 카테고리, 담당자 검색" value="${param.keyword}">
+        <button type="submit" class="btn btn-primary d-flex align-items-center">
+          <span class="material-icons-outlined">search</span>
+          <span class="ms-1">검색</span>
+        </button>
+      </form>
+      <a href="/project/insert" class="btn btn-success d-flex align-items-center">
+        <span class="material-icons-outlined me-1">add</span>
+        프로젝트 생성
+      </a>
+          
         </div>
+      </div>
       </div>
 
       <!-- 프로젝트 목록 테이블 -->
