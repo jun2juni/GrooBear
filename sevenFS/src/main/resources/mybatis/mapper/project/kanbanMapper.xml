@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.or.ddit.sevenfs.mapper.project.KanbanMapper">
+
+    <select id="selectTasksByProjectNo" parameterType="long" resultType="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO">
+        SELECT 
+            PT.TASK_NO,
+            PT.PRJCT_NO,
+            PT.TASK_NM,
+            PT.TASK_CN,
+            PT.TASK_BEGIN_DT,
+            PT.TASK_END_DT,
+            PT.TASK_GRAD,
+            PT.TASK_STTUS,
+            PT.PROGRSRT,
+            PT.TASK_DAYCNT,
+            PT.UPPER_TASK_NO,
+            PT.CHARGER_EMPNO,
+            E.EMPL_NM AS CHARGER_EMP_NM,
+            PT.ATCH_FILE_NO,
+            PT.PRIORT
+        FROM PROJECT_TASK PT
+        LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
+        WHERE PT.PRJCT_NO = #{prjctNo}
+        ORDER BY PT.TASK_NO
+    </select>
+
+    <update id="updateTaskStatus">
+        UPDATE PROJECT_TASK
+        SET TASK_STTUS = #{newStatus}
+        WHERE TASK_NO = #{taskNo}
+    </update>
+
+    <select id="selectTaskById" parameterType="long" resultType="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO">
+        SELECT 
+            PT.TASK_NO,
+            PT.PRJCT_NO,
+            PT.TASK_NM,
+            PT.TASK_CN,
+            PT.TASK_BEGIN_DT,
+            PT.TASK_END_DT,
+            PT.TASK_GRAD,
+            PT.TASK_STTUS,
+            PT.PROGRSRT,
+            PT.TASK_DAYCNT,
+            PT.UPPER_TASK_NO,
+            PT.CHARGER_EMPNO,
+            E.EMPL_NM AS CHARGER_EMP_NM,
+            PT.ATCH_FILE_NO,
+            PT.PRIORT
+        FROM PROJECT_TASK PT
+        LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
+        WHERE PT.TASK_NO = #{taskNo}
+    </select>
+    
+    
+
+</mapper>

@@ -1,38 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="kr.or.ddit.sevenfs.mapper.project.GanttMapper">
-  
-  <!-- 전체 업무 조회 (프로젝트별) -->
-  <select id="selectAllTasksByProject" resultType="kr.or.ddit.sevenfs.vo.project.TaskVO" parameterType="int">
-    SELECT
-      TASK_NO AS taskId,
-      TASK_NM AS taskText,
-      TASK_BEGIN_DT AS startDate,
-      TASK_END_DT AS endDate,
-      PROGRSRT AS progress,
-      UPPER_TASK_NO AS parentId,
-      CHARGER_EMPNO AS owner,
-      TASK_STTUS AS status,
-      PRIORT AS priority
-    FROM PROJECT_TASK
-    WHERE PRJCT_NO = #{prjctNo}
-    ORDER BY TASK_NO
+
+  <!-- 업무 조회 결과 매핑 -->
+  <resultMap id="taskResultMap" type="kr.or.ddit.sevenfs.vo.project.TaskVO">
+    <result property="taskId" column="TASK_NO"/>
+    <result property="taskText" column="TASK_NM"/>
+    <result property="startDate" column="TASK_BEGIN_DT"/>
+    <result property="endDate" column="TASK_END_DT"/>
+    <result property="progress" column="PROGRSRT"/>
+    <result property="parentId" column="UPPER_TASK_NO"/>
+    <result property="owner" column="CHARGER_EMP_NM"/>
+    <result property="status" column="TASK_STTUS"/>
+    <result property="priority" column="PRIORT"/>
+  </resultMap>
+
+  <!-- 전체 업무 조회 -->
+  <select id="selectAllTasksByProject" resultMap="taskResultMap">
+    SELECT 
+      PT.TASK_NO,
+      PT.TASK_NM,
+      PT.TASK_BEGIN_DT,
+      PT.TASK_END_DT,
+      PT.PROGRSRT,
+      PT.UPPER_TASK_NO,
+      E.EMPL_NM AS CHARGER_EMP_NM,
+      PT.TASK_STTUS,
+      PT.PRIORT
+    FROM PROJECT_TASK PT
+    LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
+    WHERE PT.PRJCT_NO = #{prjctNo}
   </select>
 
   <!-- 단일 업무 조회 -->
-  <select id="selectTaskById" resultType="kr.or.ddit.sevenfs.vo.project.TaskVO" parameterType="long">
-    SELECT
-      TASK_NO AS taskId,
-      TASK_NM AS taskText,
-      TASK_BEGIN_DT AS startDate,
-      TASK_END_DT AS endDate,
-      PROGRSRT AS progress,
-      UPPER_TASK_NO AS parentId,
-      CHARGER_EMPNO AS owner,
-      TASK_STTUS AS status,
-      PRIORT AS priority
-    FROM PROJECT_TASK
-    WHERE TASK_NO = #{taskId}
+  <select id="selectTaskById" resultMap="taskResultMap" parameterType="long">
+    SELECT 
+      PT.TASK_NO,
+      PT.TASK_NM,
+      PT.TASK_BEGIN_DT,
+      PT.TASK_END_DT,
+      PT.PROGRSRT,
+      PT.UPPER_TASK_NO,
+      E.EMPL_NM AS CHARGER_EMP_NM,
+      PT.TASK_STTUS,
+      PT.PRIORT
+    FROM PROJECT_TASK PT
+    LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
+    WHERE PT.TASK_NO = #{taskId}
   </select>
 
   <!-- 업무 등록 -->
@@ -44,8 +60,10 @@
       TASK_NO, PRJCT_NO, TASK_NM, TASK_BEGIN_DT, TASK_END_DT,
       PROGRSRT, UPPER_TASK_NO, CHARGER_EMPNO, TASK_STTUS, PRIORT
     ) VALUES (
-      #{taskId}, #{projectNo}, #{taskText}, #{startDate}, #{endDate},
-      #{progress}, #{parentId}, #{owner}, #{status}, #{priority}
+      #{taskId}, #{prjctNo}, #{taskText}, #{startDate}, #{endDate},
+      #{progress}, #{parentId}, 
+      (SELECT EMPL_NO FROM EMPLOYEE WHERE EMPL_NM = #{owner} FETCH FIRST 1 ROWS ONLY),
+      #{status}, #{priority}
     )
   </insert>
 
@@ -58,7 +76,7 @@
       TASK_END_DT = #{endDate},
       PROGRSRT = #{progress},
       UPPER_TASK_NO = #{parentId},
-      CHARGER_EMPNO = #{owner},
+      CHARGER_EMPNO = (SELECT EMPL_NO FROM EMPLOYEE WHERE EMPL_NM = #{owner} FETCH FIRST 1 ROWS ONLY),
       TASK_STTUS = #{status},
       PRIORT = #{priority}
     WHERE TASK_NO = #{taskId}
@@ -70,7 +88,7 @@
     WHERE TASK_NO = #{taskId}
   </delete>
 
-  <!-- 링크 전체 조회 -->
+  <!-- 전체 링크 조회 -->
   <select id="selectAllLinks" resultType="kr.or.ddit.sevenfs.vo.project.LinkVO">
     SELECT
       TASK_LINK_NO AS linkId,
@@ -79,6 +97,17 @@
       TASK_LINK_TY AS linkType
     FROM TASK_LINK
     ORDER BY TASK_LINK_NO
+  </select>
+
+  <!-- 단일 링크 조회 -->
+  <select id="selectLinkById" parameterType="long" resultType="kr.or.ddit.sevenfs.vo.project.LinkVO">
+    SELECT
+      TASK_LINK_NO AS linkId,
+      TASK_NO AS sourceId,
+      TRGT_TASK_NO AS targetId,
+      TASK_LINK_TY AS linkType
+    FROM TASK_LINK
+    WHERE TASK_LINK_NO = #{linkId}
   </select>
 
   <!-- 링크 등록 -->
@@ -108,16 +137,5 @@
     DELETE FROM TASK_LINK
     WHERE TASK_LINK_NO = #{linkId}
   </delete>
-
-  <!-- 링크 단건 조회 -->
-  <select id="selectLinkById" parameterType="long" resultType="kr.or.ddit.sevenfs.vo.project.LinkVO">
-    SELECT
-      TASK_LINK_NO AS linkId,
-      TASK_NO AS sourceId,
-      TRGT_TASK_NO AS targetId,
-      TASK_LINK_TY AS linkType
-    FROM TASK_LINK
-    WHERE TASK_LINK_NO = #{linkId}
-  </select>
 
 </mapper>

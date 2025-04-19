@@ -7,17 +7,19 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.ddit.sevenfs.mapper.project.ProjectMapper;
 import kr.or.ddit.sevenfs.mapper.project.ProjectTaskMapper;
 import kr.or.ddit.sevenfs.service.project.ProjectService;
-import kr.or.ddit.sevenfs.utils.ArticlePage;
-import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectEmpVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 프로젝트 서비스 구현체
+ */
 @Slf4j
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -91,8 +93,6 @@ public class ProjectServiceImpl implements ProjectService {
 
         return projectVO;
     }
-
-
 
     @Override
     public int createProject(ProjectVO projectVO, List<ProjectTaskVO> taskList) {
@@ -200,41 +200,87 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 
+    @Override
+    public List<Map<String, Object>> getProjectCategoryList() {
+        return projectMapper.getProjectCategoryList();
+    }
 
-	@Override
-	public void updateProject(ProjectVO projectVO) {
-	    // 1. 프로젝트 정보 업데이트
-	    projectMapper.updateProject(projectVO);
+    @Override
+    public List<Map<String, Object>> getProjectStatusList() {
+        return projectMapper.getProjectStatusList();
+    }
 
-	    // 2. 새 참여자 목록에서만 insert 처리
-	    List<ProjectEmpVO> newEmpList = projectVO.getProjectEmpVOList();
-	    if (newEmpList != null && !newEmpList.isEmpty()) {
-	        projectMapper.insertProjectEmpBatch(newEmpList); // 중복제거 미리 됐다고 가정
-	    }
+    @Override
+    public List<Map<String, Object>> getProjectGradeList() {
+        return projectMapper.getProjectGradeList();
+    }
 
+    @Override
+    public int selectMaxProjectNo() {
+        return projectMapper.selectMaxProjectNo();
+    }
+    
+    @Override
+    public List<ProjectVO> selectAllProjects() {
+        return projectMapper.selectAllProjects();
+    }
+    
+    // 칸반보드 관련 추가 메서드
+    
+    @Override
+    public List<ProjectVO> getAllProjects() {
+        log.debug("getAllProjects 서비스 호출");
+        return projectMapper.selectAllProjects();
+    }
 
-	}
+    @Override
+    public ProjectVO getProjectDetail(String projectNo) {
+        log.debug("getProjectDetail 서비스 호출: projectNo={}", projectNo);
+        return projectMapper.selectProjectByNo(projectNo);
+    }
 
+    @Override
+    public List<ProjectVO> getProjectsByStatus(String status) {
+        log.debug("getProjectsByStatus 서비스 호출: status={}", status);
+        return projectMapper.selectProjectsByStatus(status);
+    }
 
-	@Override
-	public List<Map<String, Object>> getProjectCategoryList() {
-	    return projectMapper.getProjectCategoryList();
-	}
+    @Override
+    @Transactional
+    public boolean updateProjectStatus(String projectNo, String status) {
+        log.debug("updateProjectStatus 서비스 호출: projectNo={}, status={}", projectNo, status);
+        try {
+            int result = projectMapper.updateProjectStatus(projectNo, status);
+            return result > 0;
+        } catch (Exception e) {
+            log.error("프로젝트 상태 업데이트 중 오류 발생", e);
+            throw e;
+        }
+    }
 
-	@Override
-	public List<Map<String, Object>> getProjectStatusList() {
-	    return projectMapper.getProjectStatusList();
-	}
+    @Override
+    @Transactional
+    public int registerProject(ProjectVO project) {
+        log.debug("registerProject 서비스 호출");
+        try {
+            projectMapper.insertProject(project);
+            return project.getPrjctNo();
+        } catch (Exception e) {
+            log.error("프로젝트 등록 중 오류 발생", e);
+            throw e;
+        }
+    }
 
-	@Override
-	public List<Map<String, Object>> getProjectGradeList() {
-	    return projectMapper.getProjectGradeList();
-	}
-
-	@Override
-	public int selectMaxProjectNo() {
-	    return projectMapper.selectMaxProjectNo();
-	}
-
+    @Override
+    @Transactional
+    public boolean updateProject(ProjectVO project) {
+        log.debug("updateProject 서비스 호출: projectNo={}", project.getPrjctNo());
+        try {
+            int result = projectMapper.updateProject(project);
+            return result > 0;
+        } catch (Exception e) {
+            log.error("프로젝트 수정 중 오류 발생", e);
+            throw e;
+        }
+    }
 }
-

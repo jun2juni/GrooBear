@@ -1,7 +1,9 @@
 package kr.or.ddit.sevenfs.vo.project;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,48 +14,66 @@ import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import lombok.Data;
 
 @Data
-/*
- * VO에 없는 필드가 있음 chargerEmpNm, parentTaskNm, parentIndex jaxkson이 오류 없이 무시할 수 있음
- */
-@JsonIgnoreProperties(ignoreUnknown = true)  
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProjectTaskVO {
-    private int progrsrt;
-    private String taskSttus;
-    private long atchFileNo;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date taskBeginDt;
-    private int taskDaycnt;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date taskEndDt;
+
     private long taskNo;
     private long prjctNo;
-    private Long upperTaskNo;
-    private String chargerEmpno;
     private String taskNm;
     private String taskCn;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date taskBeginDt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date taskEndDt;
+
+    private int progrsrt;
+    private long atchFileNo;
+    private Long upperTaskNo;
+
+    private String chargerEmpno;
+    private String chargerEmpNm;
+    private String role;
     private String priort;
     private String taskGrad;
-    
-    private String parentTaskNm; //상위 업무명
-    private Integer depth; // 계층 구조 들여쓰기용
-    private String role; // 예: 업무 담당자의 역할 등
-    private String chargerEmpNm;
+    private String taskSttus;
 
-    
+    private Integer taskDaycnt;
+    private Integer depth;
+    private String parentTaskNm;
+    private String tempParentIndex;
+
     private List<MultipartFile> files;
     private List<AttachFileVO> attachFileList;
 
- // ProjectTaskVO.java
-    private String tempParentIndex; // 임시 필드, DB 컬럼 없음
-
-    // getter, setter 추가
-    public String getTempParentIndex() {
-        return tempParentIndex;
+    // 💡 간트 연동용 getter
+    public String getText() {
+        return this.taskNm;
     }
 
-    public void setTempParentIndex(String tempParentIndex) {
-        this.tempParentIndex = tempParentIndex;
+    public String getStart_date() {
+        return (taskBeginDt != null) ? new SimpleDateFormat("yyyy-MM-dd").format(taskBeginDt) : null;
     }
 
-    
+    public String getEnd_date() {
+        return (taskEndDt != null) ? new SimpleDateFormat("yyyy-MM-dd").format(taskEndDt) : null;
+    }
+
+    public int getDuration() {
+        if (taskBeginDt != null && taskEndDt != null) {
+            long diff = taskEndDt.getTime() - taskBeginDt.getTime();
+            return (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) + 1;
+        }
+        return 1;
+    }
+
+    public String getStatus() {
+        return taskSttus;
+    }
+
+    public int getParent() {
+        return (upperTaskNo != null) ? Math.toIntExact(upperTaskNo) : 0;
+    }
+
+    // ⚠ setter 생략 가능 (MyBatis는 getter만 있어도 동작)
 }

@@ -202,5 +202,78 @@
 	    WHERE UPPER_TASK_NO = #{parentTaskNo}
 	</select>
 
+	<select id="selectTaskCardsByProjectNo" resultType="kr.or.ddit.sevenfs.vo.project.TaskVO">
+	  SELECT
+	    PT.TASK_NO,
+	    PT.TASK_NM,
+	    PT.TASK_CN,
+	    PT.TASK_BEGIN_DT,
+	    PT.TASK_END_DT,
+	    PT.TASK_GRAD,
+	    PT.TASK_STTUS,
+	    PT.PROGRSRT,
+	    PT.TASK_DAYCNT,
+	    PT.UPPER_TASK_NO,
+	    PT.CHARGER_EMPNO,
+	    E.EMPL_NM AS CHARGER_EMP_NM,
+	    PT.ATCH_FILE_NO,
+	    PT.PRIORT
+	  FROM PROJECT_TASK PT
+	  LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
+	  WHERE PT.PRJCT_NO = #{prjctNo}
+	  ORDER BY PT.TASK_NO ASC
+	</select>
+
+	<update id="updateTaskStatus">
+	  UPDATE PROJECT_TASK
+	  SET TASK_STTUS = #{status}
+	  WHERE TASK_NO = #{taskId}
+	</update>
+
+   <select id="selectTasksByProject" parameterType="int" resultMap="projectTaskResultMap">
+	  SELECT 
+	    PT.TASK_NO,
+	    PT.PRJCT_NO,
+	    PT.TASK_NM,
+	    PT.TASK_CN,
+	    PT.TASK_BEGIN_DT,
+	    PT.TASK_END_DT,
+	    PT.PRIORT,
+	    PT.TASK_GRAD,
+	    PT.TASK_STTUS,
+	    PT.PROGRSRT,
+	    PT.TASK_DAYCNT,
+	    PT.UPPER_TASK_NO,
+	    PT.CHARGER_EMPNO,
+	    E.EMPL_NM AS CHARGER_EMP_NM,
+	    PT.ATCH_FILE_NO
+	  FROM PROJECT_TASK PT
+	  LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
+	  WHERE PT.PRJCT_NO = #{prjctNo}
+	  ORDER BY PT.TASK_NO
+	</select>
+	
+	<select id="selectCardById" resultType="kr.or.ddit.sevenfs.vo.project.TaskVO" parameterType="long">
+	  SELECT
+	    PT.TASK_NO,
+	    PT.TASK_NM,
+	    PT.TASK_CN,
+	    PT.TASK_BEGIN_DT,
+	    PT.TASK_END_DT,
+	    PT.TASK_GRAD,
+	    PT.TASK_STTUS,
+	    PT.PROGRSRT,
+	    PT.TASK_DAYCNT,
+	    PT.UPPER_TASK_NO,
+	    PT.CHARGER_EMPNO,
+	    E.EMPL_NM AS CHARGER_EMP_NM,
+	    PT.ATCH_FILE_NO,
+	    PT.PRIORT
+	  FROM PROJECT_TASK PT
+	  LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
+	  WHERE PT.TASK_NO = #{taskNo}
+	</select>
+
+	
    
 </mapper>

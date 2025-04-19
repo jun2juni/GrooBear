@@ -343,4 +343,71 @@
 </resultMap>
 	
 	
+	<select id="selectAllProjects" resultType="ProjectVO">
+	    SELECT PRJCT_NO, PRJCT_NM 
+	    FROM PROJECT 
+	    ORDER BY PRJCT_NO DESC
+	</select>
+	
+	<!-- 칸반보드용 추가 쿼리 -->
+	
+	<!-- 프로젝트 번호로 상세 정보 조회 (문자열 파라미터) -->
+	<select id="selectProjectByNo" parameterType="string" resultMap="projectResultMap">
+	  SELECT 
+	    P.PRJCT_NO, 
+	    P.CTGRY_NO, 
+	    C.CTGRY_NM,
+	    P.PRJCT_NM, 
+	    P.PRJCT_CN, 
+	    P.PRJCT_STTUS, 
+	    P.PRJCT_GRAD,
+	    P.PRJCT_ADRES, 
+	    P.PRJCT_URL, 
+	    P.PRJCT_RCVORD_AMOUNT, 
+	    P.PRJCT_BEGIN_DATE,
+	    P.PRJCT_END_DATE,
+	    CODE.CMMN_CODE_NM AS PRJCT_STTUS_NM
+	  FROM PROJECT P
+	  LEFT JOIN PROJECT_CATEGORY C ON P.CTGRY_NO = C.CTGRY_NO
+	  LEFT JOIN COMMON_CODE CODE 
+	    ON CODE.CMMN_CODE_GROUP = 'PRJCT_STTUS'
+	    AND P.PRJCT_STTUS = CODE.CMMN_CODE
+	  WHERE P.PRJCT_NO = #{projectNo}
+	</select>
+	
+	<!-- 상태별 프로젝트 목록 조회 -->
+	<select id="selectProjectsByStatus" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
+	  SELECT 
+	    P.PRJCT_NO, 
+	    P.CTGRY_NO, 
+	    C.CTGRY_NM,
+	    P.PRJCT_NM, 
+	    P.PRJCT_CN, 
+	    P.PRJCT_STTUS, 
+	    P.PRJCT_GRAD,
+	    P.PRJCT_ADRES, 
+	    P.PRJCT_URL, 
+	    P.PRJCT_RCVORD_AMOUNT, 
+	    P.PRJCT_BEGIN_DATE,
+	    P.PRJCT_END_DATE,
+	    CODE.CMMN_CODE_NM AS PRJCT_STTUS_NM,
+	    E.EMPL_NM AS CHARGER_EMP_NM
+	  FROM PROJECT P
+	  LEFT JOIN PROJECT_CATEGORY C ON P.CTGRY_NO = C.CTGRY_NO
+	  LEFT JOIN COMMON_CODE CODE 
+	    ON CODE.CMMN_CODE_GROUP = 'PRJCT_STTUS'
+	    AND P.PRJCT_STTUS = CODE.CMMN_CODE
+	  LEFT JOIN PROJECT_EMP PE ON P.PRJCT_NO = PE.PRJCT_NO AND PE.PRTCPNT_ROLE = '00'
+	  LEFT JOIN EMPLOYEE E ON PE.PRTCPNT_EMPNO = E.EMPL_NO
+	  WHERE P.PRJCT_STTUS = #{status}
+	  ORDER BY P.PRJCT_NO DESC
+	</select>
+	
+	<!-- 프로젝트 상태 업데이트 -->
+	<update id="updateProjectStatus">
+	  UPDATE PROJECT
+	  SET PRJCT_STTUS = #{status}
+	  WHERE PRJCT_NO = #{projectNo}
+	</update>
+	
 </mapper>

@@ -219,4 +219,10 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 	    return projectTaskMapper.countChildTasks(parentTaskNo) > 0;
 	}
 
+    @Override
+    public int updateTaskStatus(long taskId, String status) {
+        return projectTaskMapper.updateTaskStatus(taskId, status);
+    }
+    
+
 }

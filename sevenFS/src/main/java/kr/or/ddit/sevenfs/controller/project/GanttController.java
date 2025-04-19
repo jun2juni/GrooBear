@@ -1,6 +1,6 @@
 package kr.or.ddit.sevenfs.controller.project;
-import lombok.extern.slf4j.Slf4j;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
@@ -12,6 +12,7 @@ import kr.or.ddit.sevenfs.service.project.GanttService;
 import kr.or.ddit.sevenfs.service.project.ProjectService;
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
 import kr.or.ddit.sevenfs.vo.project.LinkVO;
+import kr.or.ddit.sevenfs.vo.project.ProjectVO;
 import kr.or.ddit.sevenfs.vo.project.TaskVO;
 
 import java.text.SimpleDateFormat;
@@ -24,49 +25,39 @@ public class GanttController {
 
     @Autowired
     private GanttService ganttService;
-    
-    @Autowired
-    ProjectService projectService;
-    
-    @Autowired
-    CommonCodeMapper commonCodeMapper;
 
+    @Autowired
+    private ProjectService projectService;
+
+    @Autowired
+    private CommonCodeMapper commonCodeMapper;
+
+    // 간트 차트 기본 화면 출력
     @GetMapping
     public String showGanttView(@RequestParam(value = "prjctNo", required = false) Integer prjctNo, Model model) {
-        // prjctNo가 null이면 최근 프로젝트 번호를 가져옴
         if (prjctNo == null) {
             prjctNo = projectService.selectMaxProjectNo();
         }
-        
-        model.addAttribute("prjctNo", prjctNo);
 
-        // 직접 호출해서 리스트 불러오기
+        ProjectVO project = projectService.projectDetail(prjctNo);
         List<CommonCodeVO> taskSttusList = commonCodeMapper.selectCodesByGroup("TASK_STTUS");
         List<CommonCodeVO> priortList = commonCodeMapper.selectCodesByGroup("PRIORT");
 
+        model.addAttribute("prjctNo", prjctNo);
         model.addAttribute("taskSttusList", taskSttusList);
         model.addAttribute("priortList", priortList);
+        model.addAttribute("project", project);
 
         return "project/gantt";
     }
-    
+
     @GetMapping("/latest")
     public String latestGantt(Model model) {
         int latestPrjctNo = projectService.selectMaxProjectNo();
-
-        List<CommonCodeVO> taskSttusList = commonCodeMapper.selectCodesByGroup("TASK_STTUS");
-        List<CommonCodeVO> priortList = commonCodeMapper.selectCodesByGroup("PRIORT");
-
-        model.addAttribute("taskSttusList", taskSttusList);
-        model.addAttribute("prjctNo", latestPrjctNo);
-        model.addAttribute("priortList", priortList);
-        return "project/gantt";
+        return "redirect:/project/gantt?prjctNo=" + latestPrjctNo;
     }
 
-
-    
-
-    /** Gantt.js에서 요청하는 업무 + 링크 데이터 */
+    /** Gantt.js용 업무 + 링크 전체 데이터 */
     @GetMapping("/data")
     @ResponseBody
     public Map<String, Object> getTasks(@RequestParam("prjctNo") int prjctNo) {
@@ -78,35 +69,37 @@ public class GanttController {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
             for (TaskVO task : tasks) {
-                if (task.getStartDate() == null) {
-                    task.setStartDate(new Date());
-                }
-                if (task.getEndDate() == null) {
+                // 날짜 보정
+                Date start = task.getStartDate();
+                Date end = task.getEndDate();
+
+                if (start == null) start = new Date();
+                if (end == null) {
                     Calendar cal = Calendar.getInstance();
-                    cal.setTime(task.getStartDate());
+                    cal.setTime(start);
                     cal.add(Calendar.DAY_OF_MONTH, 1);
-                    task.setEndDate(cal.getTime());
+                    end = cal.getTime();
                 }
 
-                task.setStartDateStr(sdf.format(task.getStartDate()));
-                task.setEndDateStr(sdf.format(task.getEndDate()));
+                task.setStartDate(start);
+                task.setEndDate(end);
 
-                if (task.getProgress() == null) {
-                    task.setProgress(0.0);
-                }
+                task.setStartDateStr(sdf.format(start));
+                task.setEndDateStr(sdf.format(end));
+
+                if (task.getProgress() == null) task.setProgress(0.0);
             }
 
             response.put("data", tasks);
             response.put("links", links);
-            log.info("간트 데이터 로드 성공 - 프로젝트: {}, 업무 개수: {}, 링크 개수: {}", prjctNo, tasks.size(), links.size());
+            log.info("✅ 간트 데이터 로드 완료: 업무 {}건, 링크 {}건", tasks.size(), links.size());
         } catch (Exception e) {
-            log.error("간트 데이터 로드 실패", e);
+            log.error("❌ 간트 데이터 로드 실패", e);
             response.put("data", new ArrayList<>());
             response.put("links", new ArrayList<>());
         }
         return response;
     }
-
 
     /** 업무 생성 */
     @PostMapping("/task")
@@ -116,7 +109,7 @@ public class GanttController {
             TaskVO created = ganttService.createTask(task);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (Exception e) {
-            log.error("업무 생성 실패", e);
+            log.error("❌ 업무 생성 실패", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("업무 생성 실패");
         }
     }
@@ -130,7 +123,7 @@ public class GanttController {
             TaskVO updated = ganttService.updateTask(task);
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
-            log.error("업무 수정 실패", e);
+            log.error("❌ 업무 수정 실패", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("업무 수정 실패");
         }
     }
@@ -143,7 +136,7 @@ public class GanttController {
             ganttService.deleteTask(taskId);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            log.error("업무 삭제 실패", e);
+            log.error("❌ 업무 삭제 실패", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("업무 삭제 실패");
         }
     }
@@ -156,7 +149,7 @@ public class GanttController {
             LinkVO created = ganttService.createLink(link);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (Exception e) {
-            log.error("링크 생성 실패", e);
+            log.error("❌ 링크 생성 실패", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("링크 생성 실패");
         }
     }
@@ -165,12 +158,12 @@ public class GanttController {
     @PutMapping("/link/{linkId}")
     @ResponseBody
     public ResponseEntity<?> updateLink(@PathVariable long linkId, @RequestBody LinkVO link) {
+        link.setLinkId(linkId);
         try {
-            link.setLinkId(linkId);
             LinkVO updated = ganttService.updateLink(link);
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
-            log.error("링크 수정 실패", e);
+            log.error("❌ 링크 수정 실패", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("링크 수정 실패");
         }
     }
@@ -183,11 +176,8 @@ public class GanttController {
             ganttService.deleteLink(linkId);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            log.error("링크 삭제 실패", e);
+            log.error("❌ 링크 삭제 실패", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("링크 삭제 실패");
         }
     }
-    
-    
-    
 }

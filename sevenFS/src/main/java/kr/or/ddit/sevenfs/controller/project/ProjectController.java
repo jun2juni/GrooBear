@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -52,10 +53,6 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/project")
 public class ProjectController {
-
-	/*
-	 * @Autowired private GanttService gnGanttService;
-	 */
 	
 	@Autowired
 	private ProjectService projectService;
@@ -76,42 +73,54 @@ public class ProjectController {
 	
 	@GetMapping("/tab")
 	public String projectTab(@RequestParam(required = false) Integer prjctNo, Model model) {
+
+	    // 프로젝트 상세 (있을 경우)
 	    if (prjctNo != null) {
 	        ProjectVO project = projectService.projectDetail(prjctNo);
 	        model.addAttribute("project", project); 
 	    }
+
+	    // 프로젝트 목록 (좌측 리스트용)
+	    List<ProjectVO> projectList = projectService.selectAllProjects(); // ← 이 메서드가 있어야 함
+	    model.addAttribute("projectList", projectList); // ← 좌측 프로젝트 목록으로 사용됨
+
 	    return "project/projectTab";
 	}
+
 
 
 	
 	@GetMapping("/projectList")
 	public String projectList(Model model, ProjectVO projectVO,
 	    @RequestParam(value = "currentPage", required = false, defaultValue = "1") int currentPage,
-	    @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword) {
+	    @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+	    @RequestParam(value = "mode", required = false) String mode) { // 🔍 mode 추가
 
 	    Map<String, Object> map = new HashMap<>();
 	    map.put("currentPage", currentPage);
 	    map.put("keyword", keyword);
-	    int size = 5;
+
+	    int size = (mode != null && mode.equals("kanban")) ? 100 : 5; // 업무보드 전용일 때는 더 많이 보여줘
 	    map.put("size", size);
 
 	    int total = projectService.getTotal(map);
 	    List<ProjectVO> projectList = projectService.projectList(map);
+	    log.info("projectList prjctNo 포함되는지??", projectList);
 
 	    ArticlePage<ProjectVO> articlePage = new ArticlePage<>(total, currentPage, size);
 	    articlePage.setSearchVo(projectVO);
 
-	    // 최신순 순번 계산
 	    int startNumber = total - ((currentPage - 1) * size);
 	    model.addAttribute("startNumber", startNumber);
 
 	    model.addAttribute("articlePage", articlePage);
 	    model.addAttribute("projectList", projectList);
 	    model.addAttribute("totalProjectCount", total);
+	    model.addAttribute("mode", mode); 
 
 	    return "project/projectList";
 	}
+
 
 
 
@@ -305,9 +314,72 @@ public class ProjectController {
 		    }
 	    }
 	    projectVO.setProjectEmpVOList(empList);
-	    projectService.updateProject(projectVO);
+	    boolean result = projectService.updateProject(projectVO);
 	    return "redirect:/project/projectDetail?prjctNo=" + projectVO.getPrjctNo();
 	}
 
+	
+	
+	
+	 /**
+     * 프로젝트 칸반보드 화면 표시
+     */
+    @GetMapping("/kanban")
+    public String projectKanban(Model model) {
+        log.debug("프로젝트 칸반보드 화면 요청");
+        
+        // 상태별 프로젝트 목록 조회
+        List<ProjectVO> waitingProjects = projectService.getProjectsByStatus("00");
+        List<ProjectVO> inProgressProjects = projectService.getProjectsByStatus("01");
+        List<ProjectVO> completedProjects = projectService.getProjectsByStatus("02");
+        List<ProjectVO> canceledProjects = projectService.getProjectsByStatus("03");
+        
+        // 모델에 데이터 추가
+        model.addAttribute("waitingProjects", waitingProjects);
+        model.addAttribute("inProgressProjects", inProgressProjects);
+        model.addAttribute("completedProjects", completedProjects);
+        model.addAttribute("canceledProjects", canceledProjects);
+        model.addAttribute("projectCategoryList", projectService.getProjectCategoryList());
+        
+        // 프로젝트 상태 및 등급 정보 추가
+        model.addAttribute("projectStatusList", projectService.getProjectStatusList());
+        model.addAttribute("projectGradeList", projectService.getProjectGradeList());
+        
+        return "project/projectKanban";
+    }
+    
+    /**
+     * 프로젝트 상태 업데이트 (드래그 앤 드롭)
+     */
+    @PostMapping("/kanban/update-project-status")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateProjectStatus(@RequestBody Map<String, String> requestData) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            String projectNo = requestData.get("projectNo");
+            String status = requestData.get("status");
+            
+            log.debug("프로젝트 상태 업데이트 요청: 프로젝트번호={}, 상태={}", projectNo, status);
+            
+            // 상태 업데이트 서비스 호출
+            boolean updated = projectService.updateProjectStatus(projectNo, status);
+            
+            if (updated) {
+                response.put("success", true);
+                response.put("message", "프로젝트 상태가 성공적으로 업데이트되었습니다.");
+            } else {
+                response.put("success", false);
+                response.put("message", "프로젝트 상태 업데이트에 실패했습니다.");
+            }
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("프로젝트 상태 업데이트 오류", e);
+            response.put("success", false);
+            response.put("message", "서버 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
 
 }

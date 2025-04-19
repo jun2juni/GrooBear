@@ -1,47 +1,72 @@
 package kr.or.ddit.sevenfs.vo.project;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Data;
 
 @Data
 public class TaskVO {
 
-    @JsonProperty("id")
-    private Long taskId; // TASK_NO
+    private Long taskId;
+    private String taskText;
 
-    @JsonProperty("text")
-    private String taskText; // TASK_NM
+    private Date startDate;
+    private Date endDate;
+    private String startDateStr;
+    private String endDateStr;
 
-    @JsonIgnore
-    private Date startDate; // TASK_BEGIN_DT (내부용)
+    private Double progress;
+    private Long parentId;
 
-    @JsonIgnore
-    private Date endDate; // TASK_END_DT (내부용)
+    private String owner;
 
-    @JsonProperty("start_date")
-    private String startDateStr; // Gantt에 넘기는 문자열 날짜
+    // DB에서 온 값들
+    private Long taskNo;
+    private Long prjctNo;
+    private String taskNm;
+    private String taskCn;
+    private String taskBeginDt;
+    private String taskEndDt;
+    private String priort;
+    private String taskGrad;
+    private String taskSttus;
+    private Integer progrsrt;
+    private Integer taskDaycnt;
+    private Long upperTaskNo;
+    private Long chargerEmpno;
+    private String chargerEmpNm;
+    private Long atchFileNo;
 
-    @JsonProperty("end_date")
-    private String endDateStr;   // Gantt에 넘기는 문자열 날짜
-
-    @JsonProperty("progress")
-    private Double progress; // PROGRSRT
-
-    @JsonProperty("parent")
-    private Long parentId; // UPPER_TASK_NO
-
-    @JsonProperty("owner")
-    private String owner; // CHARGER_EMPNO or 이름
+    // Gantt용 필드 변환용 Getter
+    @JsonProperty("status")
+    public String getStatus() {
+        return taskSttus;
+    }
 
     @JsonProperty("status")
-    private Integer status; // TASK_STTUS
+    public void setStatus(String status) {
+        this.taskSttus = status;
+    }
 
     @JsonProperty("priority")
-    private Integer priority; // PRIORT
+    public String getPriority() {
+        return priort;
+    }
+
+    @JsonProperty("priority")
+    public void setPriority(String priority) {
+        this.priort = priority;
+    }
 
     @JsonProperty("duration")
-    private Integer duration; // 계산된 일수 (선택사항)
+    public Integer getDuration() {
+        return taskDaycnt;
+    }
+
+    @JsonProperty("duration")
+    public void setDuration(Integer duration) {
+        this.taskDaycnt = duration;
+    }
 }

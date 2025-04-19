@@ -12,16 +12,12 @@
 			<tbody>
 				<tr>
 					<th class="bg-light w-25 text-center">상위 업무</th>
-					<td class="ps-4 fw-bold">
-						<c:choose>
-							<c:when test="${not empty task.parentTaskNm}">
-								${task.parentTaskNm}
-							</c:when>
+					<td class="ps-4 fw-bold"><c:choose>
+							<c:when test="${not empty task.parentTaskNm}">${task.parentTaskNm}</c:when>
 							<c:otherwise>
 								<span class="text-muted">없음</span>
 							</c:otherwise>
-						</c:choose>
-					</td>
+						</c:choose></td>
 				</tr>
 				<tr>
 					<th class="bg-light text-center">업무명</th>
@@ -33,26 +29,57 @@
 				</tr>
 				<tr>
 					<th class="bg-light text-center">기간</th>
-					<td class="ps-4">
-						<fmt:formatDate value="${task.taskBeginDt}" pattern="yyyy-MM-dd" /> ~ 
-						<fmt:formatDate value="${task.taskEndDt}" pattern="yyyy-MM-dd" />
-					</td>
+					<td class="ps-4"><fmt:formatDate value="${task.taskBeginDt}"
+							pattern="yyyy-MM-dd" /> ~ <fmt:formatDate
+							value="${task.taskEndDt}" pattern="yyyy-MM-dd" /></td>
 				</tr>
 				<tr>
 					<th class="bg-light text-center">중요도</th>
-					<td class="ps-4">
-						<c:choose>
+					<td class="ps-4"><c:choose>
 							<c:when test="${task.priort == '00'}">낮음</c:when>
 							<c:when test="${task.priort == '01'}">보통</c:when>
 							<c:when test="${task.priort == '02'}">높음</c:when>
 							<c:when test="${task.priort == '03'}">긴급</c:when>
 							<c:otherwise>-</c:otherwise>
-						</c:choose>
-					</td>
+						</c:choose></td>
 				</tr>
 				<tr>
 					<th class="bg-light text-center">등급</th>
 					<td class="ps-4">${task.taskGrad}</td>
+				</tr>
+				<!-- 추가된 진행률 -->
+				<tr>
+					<th class="bg-light text-center">진행률</th>
+					<td class="ps-4">
+						<div class="progress" style="height: 20px;">
+							<div class="progress-bar" role="progressbar" style="width: ${task.progrsrt}%;"
+								aria-valuenow="${task.progrsrt}" aria-valuemin="0"
+								aria-valuemax="100">${task.progrsrt}%</div>
+						</div>
+					</td>
+				</tr>
+				<!-- 추가된 업무상태 -->
+				<tr>
+					<th class="bg-light text-center">업무상태</th>
+					<td class="ps-4">
+					<c:choose>
+							<c:when test="${task.taskSttus == '00'}">
+								<span class="badge bg-secondary">대기</span>
+							</c:when>
+							<c:when test="${task.taskSttus == '01'}">
+								<span class="badge bg-primary">진행중</span>
+							</c:when>
+							<c:when test="${task.taskSttus == '02'}">
+								<span class="badge bg-success">완료</span>
+							</c:when>
+							<c:when test="${task.taskSttus == '03'}">
+								<span class="badge bg-warning text-dark">피드백</span>
+							</c:when>
+							<c:when test="${task.taskSttus == '04'}">
+								<span class="badge bg-info text-dark">변경</span>
+							</c:when>
+							<c:otherwise>-</c:otherwise>
+						</c:choose></td>
 				</tr>
 				<tr>
 					<th class="bg-light text-center">업무 내용</th>
@@ -67,11 +94,13 @@
 			</h6>
 			<ul class="list-group mt-2">
 				<c:forEach var="file" items="${task.attachFileList}">
-					<li class="list-group-item d-flex justify-content-between align-items-center">
+					<li
+						class="list-group-item d-flex justify-content-between align-items-center">
 						<span><i class="fas fa-file-alt me-2 text-primary"></i>${file.fileNm}</span>
-						<a href="/projectTask/download?fileName=${file.fileStrePath}" class="btn btn-sm btn-outline-success">
-							<i class="fas fa-download"></i>
-						</a>
+						<a href="/projectTask/download?fileName=${file.fileStrePath}"
+						class="btn btn-sm btn-outline-success"> <i
+							class="fas fa-download"></i>
+					</a>
 					</li>
 				</c:forEach>
 			</ul>
@@ -82,6 +111,6 @@
 <script>
 	const currentTaskNo = "${task.taskNo}";
 	function goToTaskEdit(taskNo) {
-		location.href = `/projectTask/editForm?taskNo=\${taskNo}`;
+		location.href = `/projectTask/editForm?taskNo=${taskNo}`;
 	}
 </script>

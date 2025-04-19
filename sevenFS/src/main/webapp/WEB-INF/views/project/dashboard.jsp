@@ -82,7 +82,7 @@ th.desc::after {
 /* 카드 hover 시 아이콘도 같이 반응하도록 */
   transform: translateY(-3px) rotate(-2deg) scale(1.1);
 }
-  
+
   
 </style>
 
@@ -93,12 +93,12 @@ th.desc::after {
 
   <!-- 프로젝트 상태 카드 -->
   <div class="row justify-content-center mb-4">
-    <div class="col-md-4 mb-3">
-      <div class="card dashboard-card shadow h-100 border-primary border-2 d-flex align-items-center justify-content-center">
-        <div class="card-body d-flex align-items-center justify-content-center">
-          <i class="material-icons text-primary me-3 fs-1">work</i>
-          <h5 id="projectCountText" class="mb-0 fw-bold text-primary project-title-big">
-            프로젝트 진행중
+    <div class="col-md-4">
+      <div class="card dashboard-card shadow h-100 border-white border-2 d-flex align-items-center justify-content-center bg-success p-2 text-white  ">
+        <div class="card-body d-flex align-items-center justify-content-center ">
+          <i class="material-icons text-warning me-3 fs-1">work</i>
+          <h5 id="projectCountText" style="text-align: center;" class="mb-0 fw-bold text-white project-title-big">
+            프로젝트 진행중<br> 
             <c:forEach var="status" items="${projectStatus}">
               <c:if test="${status.STATUS_NM eq '진행중'}">${status.CNT}</c:if>
             </c:forEach>건
@@ -374,3 +374,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+
+
+
+<style>
+td{
+	width: 176.52px;
+	height: 54.19px;
+}
+.table tbody tr:last-child > *{
+	padding-bottom: 15px;
+}
+
+</style>

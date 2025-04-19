@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
+import kr.or.ddit.sevenfs.vo.project.TaskVO;
 
 @Mapper
 public interface ProjectTaskMapper {
@@ -33,6 +35,10 @@ public interface ProjectTaskMapper {
 
 	public int countChildTasks(Long parentTaskNo);
 
+	public List<TaskVO> selectTaskCardsByProjectNo(Long prjctNo);
 
+	public int updateTaskStatus(@Param("taskId") long taskId, @Param("status") String status);
+
+	public TaskVO selectCardById(Long taskNo);
 
 }
