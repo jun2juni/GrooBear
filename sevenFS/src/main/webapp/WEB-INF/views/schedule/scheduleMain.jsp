@@ -7,7 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="text/javascript">
 	document.addEventListener('DOMContentLoaded', function() {
-		
+	    $('.nav-item-myCalendar').addClass('active');
 		let emplNo = "${myEmpInfo.emplNo}";
 		let deptCode = "${myEmpInfo.deptCode}";
 		let shceduleList = [];

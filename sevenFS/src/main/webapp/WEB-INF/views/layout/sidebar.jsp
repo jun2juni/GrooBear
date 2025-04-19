@@ -119,7 +119,7 @@
         
         <%--일정 사이드 바 --%>
         <c:if test="${readSchdule}">
-        <li class="nav-item ${fn:contains(currentURL, '/myCalendar') ? 'active' : ''}">
+        <li class="nav-item nav-item-myCalendar ${fn:contains(currentURL, '/myCalendar') ? 'active' : ''}">
           <a href="/myCalendar">
             <span class="icon material-symbols-outlined">today</span>
             <span class="text">내 일정</span>

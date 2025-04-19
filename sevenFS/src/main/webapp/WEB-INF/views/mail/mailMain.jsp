@@ -47,9 +47,9 @@
 
       $('.label-select').on('click',function(){
         // console.log('.label-select 클릭 이벤트 : ',this);
-        let lnlNo = $(this).data('lblno');
-        // console.log('.label-select 클릭 이벤트 lnlNo : ',lnlNo);
-        window.location.href="/mail?lblNo="+lnlNo;
+        let lblNo = $(this).data('lblno');
+        // console.log('.label-select 클릭 이벤트 lblNo : ',lblNo);
+        window.location.href="/mail?lblNo="+lblNo;
       })
 
       // 삭제
