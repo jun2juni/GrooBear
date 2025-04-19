@@ -531,17 +531,22 @@ function buildChatNotification(message) {
   document.querySelectorAll("#chatNotification li").forEach((item) => {
     alertChatNoList.push(item.dataset.chatRoomNo);
   })
+  console.log(message)
+
+  if (message.lastMsg.includes("chat/")) {
+    message.lastMsg = "사진을 보냈습니다."
+  }
 
   if (alertChatNoList.includes(message.chttRoomNo + "")) {
     // 이미 있는 채팅방인 경우는 내용만 수정
     let findDom = document.querySelectorAll("#chatNotification li")[alertChatNoList.indexOf(message.chttRoomNo + "")];
 
     findDom.querySelector(".content").innerHTML = `
-                  <div class="content">
-                    <h6>${message.emplNm}</h6>
-                    <p>${message.lastMsg}</p>
-                    <span>${formatDate(message.chttCreatDt)}</span>
-                  </div>
+                <div class="content">
+                  <h6>${message.emplNm}</h6>
+                  <p>${message.lastMsg}</p>
+                  <span>${formatDate(message.chttCreatDt)}</span>
+                </div>
             `;
   } else {
     document.querySelector("#chatNotification").innerHTML += `

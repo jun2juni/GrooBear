@@ -120,7 +120,7 @@
 			    <!-- 메일 위젯 -->
 			    <div class="text-center mr-15">
 			    	<p class="text-sm">미확인 <span class="text-xl text-bold text-dark ml-2">0</span>건</p>
-			    	 <div class="rounded-4" style="background-color : rgb(230,230,250,0.5); display: inline-block;"> 
+			    	 <div class="rounded-4" style="background-color : rgb(230,230,250,0.5); display: inline-block;">
 				  	   	<a href="/mail/mailSend" class="btn-sm main-btn square-btn btn-hover text-dark" style="padding:8px;">
 					  	   	<i class="lni lni-envelope"></i>
 					  	   	메일쓰기
