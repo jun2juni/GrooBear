@@ -15,6 +15,7 @@
 <c:set var="readChat" value="${myEmpInfo.skillAuth.get(6).skllAuthorCode.substring(0, 1) == '1'}" />
 <c:set var="readNotification" value="${myEmpInfo.skillAuth.get(7).skllAuthorCode.substring(0, 1) == '1'}" />
 <c:set var="readStatics" value="${myEmpInfo.skillAuth.get(8).skllAuthorCode.substring(0, 1) == '1'}" />
+<c:set var="readComunity" value="${myEmpInfo.skillAuth.get(8).skllAuthorCode.substring(0, 1) == '1'}" />
 <%-- 읽기 권한 확인 --%>
 
 <style>
@@ -185,6 +186,27 @@
         </li>
         </c:if>
         <%--통계 사이드 바 --%>
+        
+        <%--커뮤니티 사이드 바 --%>
+        <c:if test="${readComunity}">
+        <li class="nav-item nav-item-has-children">
+          <a href="#7" class="${fn:contains(currentURL, '/comunity') ? '' : 'collapsed'}"
+             data-bs-toggle="collapse" data-bs-target="#comunity"
+             aria-controls="comunity" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="icon material-symbols-outlined">face</span>
+            <span class="text">커뮤니티</span>
+          </a>
+          <ul id="comunity" class="dropdown-nav collapse" style="">
+            <li>
+              <a href="/comunity/comunityClubList"> 스느스 </a>
+            </li>
+            <li>
+              <a href="comunity"> 2뎁스 </a>
+            </li>
+          </ul>
+        </li>
+        </c:if>
+        <%--커뮤니티 사이드 바 --%>
         
         <%--게시판 사이드 바 --%>
         <c:set var="selectedCtgryNo" value="${param.get('bbsCtgryNo')}" />
