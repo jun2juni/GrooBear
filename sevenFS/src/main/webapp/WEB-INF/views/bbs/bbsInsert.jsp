@@ -88,7 +88,7 @@
 
 								<!-- 게시글 추가 버튼 -->
 								<a href="javascript:history.back();" class="btn btn-outline-secondary">취소</a>&nbsp;
-								<button type="submit" class="btn btn-outline-primary">추가</button>
+								<button id="submitBtn" type="submit" class="btn btn-outline-primary">추가</button>
 							</form>
 						</div>
 					</div>
@@ -105,19 +105,69 @@
 	//ckeditor5
 	//<div id="descriptionTemp"></div>
 	//editor : CKEditor객체를 말함
-	ClassicEditor.create(document.querySelector("#descriptionTemp"),{ckfinder:{uploadUrl:"/bbs/upload"}})
-				 .then(editor=>{window.editor=editor;})
-				 .catch(err=>{console.error(err.stack);});
+	ClassicEditor
+	  .create(document.querySelector("#descriptionTemp"), {
+	    ckfinder: {
+	      uploadUrl: "/bbs/upload"
+	    }
+	  })
+	  .then(editor => {
+	    window.editor = editor;
+	  })
+	  .catch(err => {
+	    console.error(err.stack);
+	  });
+	
+	$(function () {
+	  // 실제 내용만 추출해서 공백만 있는 경우 걸러냄
+	  function cleanText(html) {
+	    return html
+	      .replace(/<[^>]*>/g, '')      // 태그 제거
+	      .replace(/&nbsp;/g, '')       // &nbsp 제거
+	      .replace(/\s+/g, '')          // 공백 문자 제거
+	      .trim();
+	  }
+	
+	  function updateContent() {
+	    const rawHtml = window.editor.getData();
+	    const clean = cleanText(rawHtml); // 텍스트 판단용
+	    const htmlTrimmed = rawHtml.trim(); // 저장용
+	
+	    if (clean === "") {
+	      console.warn("실제 내용 없음 (공백만 존재)");
+	      // 필요 시 alert 띄우기
+	      // Swal.fire({ icon: 'warning', title: '내용 없음', text: '본문을 입력해 주세요.' });
+	    }
+	
+	    $("#content").val(htmlTrimmed); // 최종 저장할 HTML
+	    console.log("저장될 내용 (HTML):", htmlTrimmed);
+	    console.log("실제 텍스트만:", clean);
+	  }
+	
+	  $(".ck-blurred").on("input", updateContent);
+	  $(".ck-blurred").on("focusout", updateContent);
+	});
+	
+	$("#submitBtn").on("click", function (e) {
+		  const rawHtml = window.editor.getData();
+		  const cleanedText = cleanText(rawHtml);
 
-$(function(){
-	$(".ck-blurred").keydown(function(){
-		 console.log("str : ", window.editor.getData());
-		 $("#content").val(window.editor.getData());
-	 })
-	$(".ck-blurred").on("focusout",function(){
-		 $("#content").val(window.editor.getData());
-	 })
-});
+		  if (cleanedText === '') {
+		    e.preventDefault(); // 전송 막기
+		    Swal.fire({
+		      icon: 'warning',
+		      title: '내용 없음',
+		      text: '본문을 입력해주세요!'
+		    });
+		    return;
+		  }
+
+		  $("#content").val(rawHtml.trim());
+		  $("#yourForm").submit();
+		});
+
+
+
 
 </script>
 </body>

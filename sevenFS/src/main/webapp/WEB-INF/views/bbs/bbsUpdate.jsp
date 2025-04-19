@@ -115,20 +115,30 @@
     
     <script type="text/javascript">
         // CKEditor5 적용
-        ClassicEditor.create(document.querySelector("#descriptionTemp"), {
-            ckfinder: { uploadUrl: "/bbs/image/upload" }
-        })
-        .then(editor => { window.editor = editor; })
-        .catch(err => { console.error(err.stack); });
-        
-        $(function(){
-            $(".ck-blurred").keydown(function(){
-                 $("#content").val(window.editor.getData());
-            });
-            $(".ck-blurred").on("focusout", function(){
-                 $("#content").val(window.editor.getData());
-            });
-        });
+        ClassicEditor
+		  .create(document.querySelector("#descriptionTemp"), {
+		    ckfinder: {
+		      uploadUrl: "/bbs/upload"
+		    }
+		  })
+		  .then(editor => {
+		    window.editor = editor;
+		  })
+		  .catch(err => {
+		    console.error(err.stack);
+		  });
+		
+		$(function () {
+		  function updateContent() {
+		    const trimmedData = window.editor.getData().trim();
+		    $("#content").val(trimmedData);
+		    console.log("Trimmed content:", trimmedData);
+		  }
+		
+		  $(".ck-blurred").on("input", updateContent);
+		  $(".ck-blurred").on("focusout", updateContent);
+		});
+
     </script>
 </body>
 </html>

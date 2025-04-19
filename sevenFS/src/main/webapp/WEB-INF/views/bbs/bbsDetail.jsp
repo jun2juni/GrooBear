@@ -47,15 +47,15 @@
 
             <!-- 게시글 본문 -->
             <div class="mb-4">
-              <h3 class="mb-3 text-dark fw-bold">${bbsVO.bbscttSj}</h3>
-              <div class="text-muted mb-3">
+              <h3 class="mb-3 text-dark fw-bold">${bbsVO.bbscttSj}</h3><br>
+              <div class="text-muted mb-3" style="text-align: right;">
                 <small>
                   작성자: ${bbsVO.emplNm} · 작성일: ${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}
                 </small>
-              </div>
+              </div><br>
               <div class="mb-3">
-                <p class="text-body">${bbsVO.bbscttCn}</p>
-              </div>
+                <c:out value="${bbsVO.bbscttCn}" escapeXml="false" />
+              </div><br><br>
 
               <!-- 첨부파일 -->
               <div class="mb-3">
@@ -66,10 +66,10 @@
                       <c:set var="ext" value="${fn:toLowerCase(fn:substringAfter(file.fileNm, '.'))}" />
                       <c:choose>
                         <c:when test="${ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'gif' || ext == 'bmp'}">
-                          <div class="border rounded p-3 bg-light d-inline-flex flex-column align-items-center" style="max-width: 200px;">
+                          <div class="border rounded p-3 bg-light d-inline-flex flex-column align-items-center" style="max-width: 450px;">
 							    <img src="/upload/${file.fileStrePath}" 
 							         alt="${file.fileNm}" 
-							         style="max-width: 150px; max-height: 150px; object-fit: cover;" />
+							         style="max-width: 400px; max-height: 400px; object-fit: cover;" />
 							
 							    <div class="mt-2 text-truncate w-100 text-center" style="max-width: 180px;" title="${file.fileNm}">
 							        ${file.fileNm}
