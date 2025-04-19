@@ -10,7 +10,7 @@
     </parent>
     <groupId>kr.or.ddit</groupId>
     <artifactId>sevenFS</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>sevenFS</name>
     <description>sevenFS</description>
     <url/>
@@ -26,6 +26,7 @@
         <tag/>
         <url/>
     </scm>
+    <packaging>war</packaging>
     <properties>
         <java.version>21</java.version>
     </properties>
@@ -181,6 +182,20 @@
             <version>2.3.1</version>
         </dependency>
         <!-- ///// 자바 JWT 라이브러리 시작 /////  -->
+
+        <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.27</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox-tools -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox-tools</artifactId>
+            <version>2.0.18</version>
+        </dependency>
 
     </dependencies>
 
