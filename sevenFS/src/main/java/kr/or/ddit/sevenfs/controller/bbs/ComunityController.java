@@ -28,6 +28,7 @@ import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.bbs.BbsService;
 import kr.or.ddit.sevenfs.service.bbs.ComunityService;
 import kr.or.ddit.sevenfs.service.bbs.Impl.ComunityServiceImpl;
+import kr.or.ddit.sevenfs.service.organization.impl.OrganizationServiceImpl;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.utils.AttachFile;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
@@ -64,14 +65,19 @@ public class ComunityController {
 	
 	@GetMapping("/comunityClubList")
 	public String comunityClubList(
-									Model model,
-								   @ModelAttribute ComunityVO comunityVO
+									Model model,	
+								   @ModelAttribute ComunityVO comunityVO,
+								   Principal principal
 								  ) {	
+        
         
 		List<ComunityVO> list = comunityServiceImpl.comunityClubList(comunityVO);
 	    model.addAttribute("clubList", list);
-		
-		
+	  
+	    
+	    String emplNo = principal.getName();  // 🔹 로그인된 사용자 아이디 갸져오기 (username)
+	    comunityVO.setEmplNo(emplNo); // 🔹 로그인된 사용자 아이디 저장하기  (username)
+	    model.addAttribute("loginEmplNo", emplNo);
 		
 		// sns임 
 		return "comunity/comunityClubList";	

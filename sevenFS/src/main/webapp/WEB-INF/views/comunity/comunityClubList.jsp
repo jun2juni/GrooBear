@@ -66,28 +66,90 @@
 			                <div class="table-wrapper table-responsive">
 			                  <table class="table">
 			                    <thead class="table-striped">
-			                      <tr>
-			                        <th data-bs-toggle="tooltip"  data-bs-html="true" data-bs-placement="top" title="이곳은 여러분의 <br>프로필 사진이 나오는 곳입니다!<br> 프로필 사진을 변경해주세요">프로필</th>
-			                        <th data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" title="사원의 이름입니다.">이름</th>
-			                        <th data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" title="여러분의<br>사소한 정보와 이야기를<br>여기 남겨주세요!! ">T.T-MI</th>
-			                        <th data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" title="여러분의 일상의 오늘 말 하고 싶은 말들!<br>좌우명도 좋아요 한 마디씩 남겨주세요!">오늘의 한 줄</th>
-			                        <th data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top" title="때로는<br>잘 고른 이모지 1개가<br>여러분의 많은 감정을 대변해 줄 수 있죠!<br> 여러분의 감정을 골라주세요!!!">상태</th>
-			                      </tr>
-			                      <!-- end table row-->
-			                    </thead>
+								  <tr>
+									  <th style="width: 80px; text-align: left;">
+									    <span
+									      data-bs-toggle="tooltip"
+									      data-bs-html="true"
+									      data-bs-placement="top"
+									      title="이곳은 여러분의 <br>프로필 사진이 나오는 곳입니다!<br>프로필 사진을 변경해주세요">
+									      프로필
+									    </span>
+									  </th>
+									
+									  <th style="width: 200px; text-align: left;">
+									    <span
+									      data-bs-toggle="tooltip"
+									      data-bs-html="true"
+									      data-bs-placement="top"
+									      title="사원의 이름입니다.<br>때로는<br>잘 고른 이모지 1개가<br>여러분의 많은 감정을 대변해 줄 수 있죠!<br>여러분의 감정을 골라주세요!!!">
+									      이름
+									    </span>
+									  </th>
+									
+									  <th style="width: 280px; text-align: left;">
+									    <span
+									      data-bs-toggle="tooltip"
+									      data-bs-html="true"
+									      data-bs-placement="top"
+									      title="여러분의<br>사소한 정보와 이야기를<br>여기 남겨주세요!!">
+									      T.T-MI
+									    </span>
+									  </th>
+									
+									  <th style="width: 320px; text-align: left;">
+									    <span
+									      data-bs-toggle="tooltip"
+									      data-bs-html="true"
+									      data-bs-placement="top"
+									      title="여러분의 일상의 오늘 말 하고 싶은 말들!<br>좌우명도 좋아요 한 마디씩 남겨주세요!">
+									      오늘의 한 줄
+									    </span>
+									  </th>
+									</tr>
+
+								</thead>
 			                    <tbody>
 			                    <c:forEach var="clubList" items="${clubList}">
 			                      <tr>
-			                        <td>
+			                        <td style="text-align: left;">
 			                          <div class="employee-image">
 			                            <img src="assets/images/lead/lead-1.png" alt="">
 			                          </div>
 			                        </td>
-			                        <!-- 사원이름  -->
-			                        <td class="min-width">
-			                          <p>${clubList.emplNm}</p>
-			                        </td>
-			                        <!-- 사원이름  -->
+			                        <!-- 사원이름+이모지  -->
+			                        <td style="text-align: left; white-space: nowrap;">
+									  <!-- 이름은 무조건 출력 -->
+										<span style="display: inline-block; font-weight: bold; font-size: 1.05rem; color: #2C3E50;">
+										  ${clubList.emplNm}
+										</span>
+										
+									<!-- 이모지는 사원 본인만 클릭 가능 -->
+									  <c:choose>
+							          <c:when test="${clubList.emplNo == loginEmplNo}">
+							            <a href="#" data-bs-toggle="modal" data-bs-target="#emojiModal"
+							               style="display: inline-block; margin-left: 6px; text-decoration: none; font-size: 1.2rem;">
+							              <c:choose>
+							                <c:when test="${not empty clubList.emoji}">
+							                  <span style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji'">
+							                    ${clubList.emoji}
+							                  </span>
+							                </c:when>
+							                <c:otherwise><p>😆</p></c:otherwise>
+							              </c:choose>
+							            </a>
+							          </c:when>
+							          <c:otherwise>
+							            <span style="margin-left: 6px;">
+							              <c:choose>
+							                <c:when test="${not empty clubList.emoji}">${clubList.emoji}</c:when>
+							                <c:otherwise><p>😆</p></c:otherwise>
+							              </c:choose>
+							            </span>
+							          </c:otherwise>
+							        </c:choose>
+							      </td>
+			                        <!-- 사원이름+이모지  -->
 			                        
 			                        <!-- T.T-MI -->
 			                         <td>
@@ -113,17 +175,6 @@
 								      </a>
 								    </td>
 			                        <!-- 오늘의 한 줄 -->
-			                        <!-- 이모지 -->
-			                        <td>
-								      <a href="#" data-bs-toggle="modal" data-bs-target="#emojiModal">
-								        <c:choose>
-								          <c:when test="${not empty clubList.emoji}">
-								            ${clubList.emoji}
-								          </c:when>
-								          <c:otherwise>🙂 감정을 골라주세요</c:otherwise>
-								        </c:choose>
-								      </a>
-								    </td>
 			                      </tr>
 			                      </c:forEach>
 			                      <!-- end table row -->
@@ -157,7 +208,7 @@
 		                </div>
 				      </div>
 				      <div class="modal-footer">
-				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
 				        <button type="submit" class="btn btn-primary">답변 저장하기</button>
 				      </div>	
 				    </div>
@@ -181,7 +232,7 @@
 		                </div>
 				      </div>
 				      <div class="modal-footer">
-				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
 				        <button type="submit" class="btn btn-primary">답변 저장하기</button>
 				      </div>	
 				    </div>
@@ -203,12 +254,13 @@
 						  <!-- 이모지 버튼이 여기에 동적으로 들어갈 예정 -->
 						</div>				      
 				        <div class="input-style-1">
-		                  <label><h4>👍오늘의 기분을 이모지로 말해주세요!👎</h4></label> <!--이모지 들어가는 곳   -->
-		                  <textarea id="emojiTextArea" name="emoji" placeholder="이모지를 입력해주세요" rows="5" data-listener-added_0bb1bb5="true"></textarea>
+		                  <label><h4>👍오늘의 기분을 이모지로 말해주세요!👎(최대 3개)</h4></label> <!--이모지 들어가는 곳   -->
+		                  <textarea readonly="readonly"  id="emojiTextArea" name="emoji" placeholder="이모지를 입력해주세요" rows="5" data-listener-added_0bb1bb5="true"></textarea>
 		                </div>
 				      </div>
 				      <div class="modal-footer">
-				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				        <button type="button" id="emojiResetBtn" class="btn btn-outline-danger btn-sm mt-2">선택 초기화</button>
+				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
 				        <button type="submit" class="btn btn-primary">오늘의 이모지 저장하기</button>
 				      </div>	
 				    </div>
@@ -224,10 +276,11 @@
 <style>
  td, th  {
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   white-space: nowrap;
-  text-align: center;
-  
+  text-align: left;
+  text-overflow: ellipsis;
+  max-width: 150px; /* 최대 너비 설정 */ 
   }
   .tooltip-inner {
   min-width: 120px;  /* 최소 너비 확보 */
@@ -244,64 +297,79 @@
 </style>
 
 <script type="text/javascript">
+// ✅ 1. 이모지 배열은 최상단에 선언!
+const Emojis = [
+  "😀", "😄", "😆", "😅", "🤣", "😂", "😉", "😇", "🥰", "😍",
+  "🤪", "😜", "😬", "😒", "🙄", "😪", "😴", "💀", "☠️", "💩",
+  "😵‍💫", "🙈", "🙉", "🙊", "🙏", "👩‍❤️‍👨", "🦕", "🦖", "🍀",
+  "🦑", "🦋", "🐛", "🦞", "🐠", "🌂", "🌤️", "⛈️", "⛅", "🌥️",
+  "🌦️", "🌪️", "🌩️", "🪐", "🌞", "🌝", "🔥", "☄️", "💘",
+  "❤️‍🔥", "🚭", "⁉️"
+];
 
-// TH 테이블 head에 툴팁 달기
+// ✅ 2. 이모지 렌더링 함수
+function renderEmojis() {
+  const emojiContainer = document.querySelector('.emoji-picker');
+  const emojiTextArea = document.querySelector('#emojiTextArea');
+  const resetButton = document.querySelector('#emojiResetBtn');
+
+  if (!emojiContainer || !emojiTextArea) {
+    console.warn('이모지 DOM 요소가 없습니다.');
+    return;
+  }
+
+  // 기존 버튼 초기화
+  emojiContainer.innerHTML = '';
+
+  // 이모지 버튼 생성
+  Emojis.forEach(emoji => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'btn btn-light m-1';
+    button.style.fontSize = '1rem';
+    button.textContent = emoji;
+
+    button.addEventListener('click', () => {
+      const emojiArray = Array.from(emojiTextArea.value);
+      if (emojiArray.length >= 5) {
+        swal({
+          title: "⚠️ 제한 초과",
+          text: "이모지는 최대 3개까지만 선택할 수 있어요!",
+          icon: "warning",
+          button: "확인"
+        });
+        return;
+      }
+      emojiTextArea.value += emoji;
+      emojiTextArea.focus();
+    });
+
+    emojiContainer.appendChild(button);
+  });
+
+  // ✅ 3. 초기화 버튼 클릭 시 이모지 초기화
+  if (resetButton && emojiTextArea) {
+    resetButton.addEventListener('click', () => {
+      emojiTextArea.value = "";
+    });
+  }
+}
+
+// ✅ 4. 모달이 열릴 때 이모지 렌더링 실행
 document.addEventListener('DOMContentLoaded', () => {
+  const emojiModal = document.getElementById('emojiModal');
+  if (emojiModal) {
+    emojiModal.addEventListener('shown.bs.modal', () => {
+      renderEmojis();
+    });
+  }
+
+  // ✅ (선택) 툴팁 초기화 등 다른 초기화
   const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
   tooltipTriggerList.forEach(function (tooltipTriggerEl) {
     new bootstrap.Tooltip(tooltipTriggerEl);
   });
 });
-      	 
-	  
-	/*이모지 위 입력하는 이모지칸  */
-const Emojis = [
-	  "😀", "😄", "😆", "😅", "🤣", "😂", "😉", "😇", "🥰", "😍",
-	  "🤪", "😜", "😬", "😒", "🙄", "😪", "😴", "💀", "☠️", "💩",
-	  "😵‍💫", "🙈", "🙉", "🙊", "🙏", "👩‍❤️‍👨", "🦕", "🦖", "🍀",
-	  "🦑", "🦋", "🐛", "🦞", "🐠", "🌂", "🌤️", "⛈️", "⛅", "🌥️",
-	  "🌦️", "🌪️", "🌩️", "🪐", "🌞", "🌝", "🔥", "☄️", "💘",	
-	  "❤️‍🔥", "🚭", "⁉️"
-	];
-	
-function renderEmojis() {
-    const emojiContainer = document.querySelector('.emoji-picker');
-    const emojiTextArea = document.querySelector('#emojiTextArea');
-
-    if (!emojiContainer || !emojiTextArea) {
-      console.warn('이모지 DOM 요소가 없습니다.');
-      return;
-    }
-    // 이미 버튼이 있다면 초기화
-    emojiContainer.innerHTML = '';
-
-    Emojis.forEach(emoji => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'btn btn-light m-1';
-      button.style.fontSize = '1rem';
-      button.textContent = emoji;
-
-      button.addEventListener('click', () => {
-        emojiTextArea.value += emoji;
-        emojiTextArea.focus();
-      });
-
-      emojiContainer.appendChild(button);
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    // Bootstrap 모달이 열릴 때마다 renderEmojis 실행
-    const emojiModal = document.getElementById('emojiModal');
-    if (emojiModal) {
-      emojiModal.addEventListener('shown.bs.modal', () => {
-        renderEmojis();
-      });
-    }
-  });
-    
-
-  
 </script>
+
 </html>

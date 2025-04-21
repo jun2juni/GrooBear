@@ -15,4 +15,6 @@ public class BbsCategoryVO {
     private String ctgryUseYn;
     private String deptCode;
     private List<BbsCategoryVO> children = new ArrayList<>();
+    
+    private List<BbsVO> bbsList; // 게시글 목록
 }
