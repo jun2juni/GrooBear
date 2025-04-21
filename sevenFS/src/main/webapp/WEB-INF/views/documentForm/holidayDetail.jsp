@@ -501,7 +501,6 @@
 document.addEventListener("DOMContentLoaded", ()=>{
 
 //결재하기 버튼을 눌러서 업데이트 진행하기 
-
 $("#atrzDetailappBtn").on("click", function() {
 	const atrzDocNo = $("#atrzDocNo").val(); // 문서 번호 가져오기
     const approvalMessage = $("#approvalMessage").val(); // 결재 의견 가져오기

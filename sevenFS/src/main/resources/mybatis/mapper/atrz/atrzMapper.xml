@@ -642,7 +642,7 @@
 	</delete>
 	
 	<!-- 임시저장 select조회 상세보기 -->
-		<!-- 전자결재 상세조회 -->
+		<!-- 전자결재(임시저장포함) 상세조회 -->
 	<select id="getAtrzStorage" parameterType="string" resultMap="atrzMap">
 		SELECT 	/* AtrzMapper.getAtrzStorage */
 		     A.ATRZ_DOC_NO
@@ -1096,24 +1096,25 @@
 	0 : 최종결재자가 아님
 	 -->
 	<select id="getMaxStep" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO" resultType="int">
-	/* AtrzMapper.getMaxStep */
-		SELECT CASE WHEN ME.ATRZ_LN_SN = TOT.TOT_ATRZ_LN_SN THEN ME.ATRZ_LN_SN
-		            ELSE 0 
-		       END RSLT	
-		FROM
-		(
-		    SELECT ATRZ_LN_SN, ATRZ_DOC_NO
-		    FROM   ATRZ_LINE
-		    WHERE  ATRZ_DOC_NO = #{atrzDocNo}
-		    AND    SANCTNER_EMPNO = #{emplNo}
-		) ME,
-		(
-		    SELECT MAX(ATRZ_LN_SN) TOT_ATRZ_LN_SN, ATRZ_DOC_NO
-		    FROM   ATRZ_LINE
-		    WHERE  ATRZ_DOC_NO = #{atrzDocNo}
+		SELECT
+		    CASE 
+		        WHEN AL.ATRZ_LN_SN = MAX_LINE.MAX_LN_SN THEN AL.ATRZ_LN_SN
+		        ELSE 0
+		    END AS RSLT
+		FROM (
+		    SELECT ATRZ_DOC_NO, TO_NUMBER(ATRZ_LN_SN) AS ATRZ_LN_SN
+		    FROM ATRZ_LINE
+		    WHERE ATRZ_DOC_NO = #{atrzDocNo}
+		      AND SANCTNER_EMPNO = #{emplNo}
+		      AND ATRZ_TY = '1'  /* 결재자만 */
+		) AL
+		LEFT JOIN (
+		    SELECT ATRZ_DOC_NO, MAX(TO_NUMBER(ATRZ_LN_SN)) AS MAX_LN_SN
+		    FROM ATRZ_LINE
+		    WHERE ATRZ_DOC_NO = #{atrzDocNo}
+		      AND ATRZ_TY = '1'  /* 결재자만 고려 */
 		    GROUP BY ATRZ_DOC_NO
-		) TOT
-		WHERE ME.ATRZ_DOC_NO = TOT.ATRZ_DOC_NO
+		) MAX_LINE ON AL.ATRZ_DOC_NO = MAX_LINE.ATRZ_DOC_NO
 	</select>
 	
 	<!-- 전자결재선 수정

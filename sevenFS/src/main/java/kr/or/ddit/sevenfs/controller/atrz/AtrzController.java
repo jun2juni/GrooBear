@@ -440,8 +440,6 @@ public class AtrzController {
 		
 		int atrzAppUpdateResult = atrzService.atrzDetailAppUpdate(atrzVO);
 		
-		log.info("atrzDetailUpdate-> atrzVO : "+atrzVO);
-
 		return "success";
 	}
 	
