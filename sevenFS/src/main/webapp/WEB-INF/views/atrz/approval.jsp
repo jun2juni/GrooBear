@@ -187,13 +187,13 @@
 
 					<div class="tab-pane fade show active" id="contact1-tab-pane"
 						role="tabpanel" aria-labelledby="contact1-tab" tabindex="0">
-						<div id="critical">
+						<!-- <div id="critical">
 							<a class="btn" data-bs-toggle="modal"
 								data-bs-target="#allApproval"> <span
 								class="material-symbols-outlined">data_check</span> <span
 								class="txt">일괄결재</span>
 							</a>
-						</div>
+						</div> -->
 
 						<div class="atrzTabCont">
 							<!-- <div class="container mt-4"> -->
@@ -213,9 +213,9 @@
 														<thead>
 															<tr>
 																<!-- select박스 -->
-																<th class="text-center" style="padding-top: 10px; padding-bottom: 10px;">
+																<!-- <th class="text-center" style="padding-top: 10px; padding-bottom: 10px;">
 																	<input class="form-check-input" type="checkbox" id="checkbox-all">
-																</th>
+																</th> -->
 																<th class="text-center">
 																	<h6 class="fw-bolder">기안일</h6>
 																</th>
@@ -238,18 +238,18 @@
 														<tbody>
 															<c:forEach var="atrzVO" items="${atrzApprovalList}">
 																<tr>
-																	<td class="text-center">
+																	<!-- <td class="text-center">
 																		<div class="check-input-primary">
 																			<input class="form-check-input" type="checkbox"
 																				id="checkbox-1">
 																		</div>
-																	</td>
+																	</td> -->
 																	<td class="text-center">
 																		<!--글씨체 두껍게 b태그 사용하기-->
 																		<p class="text-sm fw-bolder">
 																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
 																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
-																			<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p></p>
+																			<b>${onlyDate}</b>&nbsp;&nbsp;&nbsp;&nbsp; </p>
 																	</td>
 																	<td style="text-align: right;">
 																		<c:choose>
@@ -342,10 +342,10 @@
 														<thead>
 															<tr>
 																<th class="text-center">
-																	<h6 class="fw-bolder">기안일시</h6>
+																	<h6 class="fw-bolder">기안일</h6>
 																</th>
 																<th class="text-center">
-																	<h6 class="fw-bolder">완료일시</h6>
+																	<h6 class="fw-bolder">완료일</h6>
 																</th>
 																<th style="text-align:left;">
 																	<h6 class="fw-bolder">결재양식</h6>
@@ -370,15 +370,13 @@
 																<tr>
 																	<td class="text-center">
 																		<p class="text-sm fw-bolder">
-																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
-																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
-																			${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p></p>
+																			${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp;</p></p>
 																	</td>
 																	<td class="text-center">
 																		<p class="text-sm fw-bolder">
 																			<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="yyyy-MM-dd" var="onlyDate" />
 																			<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="HH:mm:ss" var="onlyTime" />
-																			${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p></p>
+																			${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp;</p></p>
 																	</td>
 																	<td class="text-center">
 																		<p style="text-align:left;">
@@ -495,6 +493,9 @@
 																<th class="text-center">
 																	<h6 class="fw-bolder">기안자</h6>
 																</th>
+																<th class="text-center">
+																	<h6 class="fw-bolder">결재상태</h6>
+																</th>
 															</tr>
 														</thead>
 														<tbody>
@@ -504,7 +505,7 @@
 																		<p class="text-sm fw-bolder">
 																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
 																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
-																			${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p></p>
+																			${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp;</p></p>
 																	</td>
 																	<td style="text-align:left;">
 																		<p>
@@ -540,6 +541,32 @@
 																	</td>
 																	<td class="text-center">
 																		<p>${atrzVO.drafterEmpnm}</p>
+																	</td>
+																	<td class="text-center">
+																		<h6 class="text-sm">
+																			<p>
+																				<c:choose>
+																					<c:when test="${atrzVO.atrzSttusCode == '00' }">
+																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
+																					</c:when>
+																					<c:when test="${atrzVO.atrzSttusCode == '10' }">
+																						<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
+																					</c:when>
+																					<c:when test="${atrzVO.atrzSttusCode == '20' }">
+																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
+																					</c:when>
+																					<c:when test="${atrzVO.atrzSttusCode == '30' }">
+																						<span class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																					</c:when>
+																					<c:when test="${atrzVO.atrzSttusCode == '40' }">
+																						<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4" style="background-color: pink; color: #ed268a;">취소</span>
+																					</c:when>
+																					<c:otherwise>
+																						<span class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4">임시저장</span>
+																					</c:otherwise>
+																				</c:choose>
+																			</p>
+																		</h6>
 																	</td>
 																</tr>
 															</c:forEach>

@@ -64,7 +64,7 @@
 							<table class="table">
 								<thead>
 									<tr>
-										<th scope="col" hidden>NO</th>
+										<th scope="col">NO</th>
 										<th scope="col">이름</th>
 										<th scope="col">부서</th>
 										<th scope="col">직급</th>
@@ -83,6 +83,7 @@
 										<thead>
 											<tr>
 												<th scope="col" hidden>NO</th>
+												<th scope="col"></th>
 												<th scope="col">이름</th>
 												<th scope="col">부서</th>
 												<th scope="col">직급</th>

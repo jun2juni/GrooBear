@@ -153,6 +153,16 @@ public class AtrzServiceImpl implements AtrzService {
 		return this.atrzMapper.insertAtrzLine(atrzLineVO);
 	}
 	
+	@Transactional
+	@Override
+	public void deleteAtrzWriting(String atrzDocNo) {
+		atrzMapper.deleteAtrzWriting(atrzDocNo);
+		atrzMapper.deleteAtrzLineWriting(atrzDocNo);
+		
+	}
+	
+	
+	
 	//연차신청서 등록
 	@Transactional
 	@Override
@@ -589,6 +599,7 @@ public class AtrzServiceImpl implements AtrzService {
 		atrzMapper.deleteStorageDocumHoliday(atrzDocNos);
 		atrzMapper.deleteStorageAtrz(atrzDocNos);
 	}
+	
 
 	
 	

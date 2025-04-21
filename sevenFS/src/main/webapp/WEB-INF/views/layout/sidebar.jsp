@@ -94,13 +94,10 @@
                       <a href="/atrz/home" class="${fn:contains(currentURL, '/atrz/home') ? 'active' : ''}"> 전자결재 </a>
                     </li>
                     <li>
-                      <a href="/atrz/approval" class="${fn:contains(currentURL, '/atrz/approval') ? 'active' : ''}"> 결재 대기 문서 </a>
+                      <a href="/atrz/approval" class="${fn:contains(currentURL, '/atrz/approval') ? 'active' : ''}"> 수신문서함 </a>
                     </li>
                     <li>
-                      <a href="/atrz/complete" class="${fn:contains(currentURL, '/atrz/complete') ? 'active' : ''}"> 결재 완료 문서 </a>
-                    </li>
-                    <li>
-                      <a href="/atrz/document" class="${fn:contains(currentURL, '/atrz/document') ? 'active' : ''}"> 전자결재 문서함 </a>
+                      <a href="/atrz/document" class="${fn:contains(currentURL, '/atrz/document') ? 'active' : ''}"> 개인문서함 </a>
                     </li>
                     <li>
                       <a href="/atrz/companion" class="${fn:contains(currentURL, '/atrz/companion') ? 'active' : ''}"> 반려문서함 </a>

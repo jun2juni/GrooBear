@@ -8,13 +8,13 @@
 		    FROM atrz_line L
 		    WHERE L.sanctner_empno = #{emplNo}
 		      AND L.sanctn_progrs_sttus_code = '00'
-		      AND L.atrz_ty = 'N'
+		      AND L.atrz_ty = '1'
 		      AND NOT EXISTS (
 		          SELECT 1
 		          FROM atrz_line L2
 		          WHERE L2.atrz_doc_no = L.atrz_doc_no
 		            AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
-		            AND L2.atrz_ty = 'N'
+		            AND L2.atrz_ty = '1'
 		            AND L2.sanctn_progrs_sttus_code NOT IN ('10', '60')
 		      )
 		)
@@ -211,7 +211,7 @@
 		   AND A.atrz_delete_yn = 'N'
 		   AND A.atrz_sttus_code = '00'         
 		   AND L.sanctner_empno = #{emplNo}      
-		   AND L.atrz_ty = 'Y'                  
+		   AND L.atrz_ty = '0'                  
 		 ORDER BY A.atrz_drft_dt DESC
 	</select>
 	<!-- 결재예정문서 -->
@@ -249,13 +249,13 @@
 		  AND A.atrz_compt_dt IS NULL
 		  AND A.atrz_sttus_code = '00'
 		  AND L.sanctner_empno = #{emplNo}
-		  AND L.atrz_ty = 'N'
+		  AND L.atrz_ty = '1'
 		  AND EXISTS (
 		      SELECT 1
 		      FROM atrz_line L2
 		      WHERE L2.atrz_doc_no = A.atrz_doc_no
 		        AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
-		        AND L2.atrz_ty = 'N'
+		        AND L2.atrz_ty = '1'
 		        AND L2.sanctn_progrs_sttus_code = '00'
 		  )
 		ORDER BY A.atrz_drft_dt DESC
@@ -389,7 +389,7 @@
 		    WHERE 1=1
 		    AND L.sanctner_empno = #{emplNo}
 		    AND A.atrz_delete_yn = 'N'
-		    AND L.atrz_ty = 'N'
+		    AND L.atrz_ty = '1'
 		    AND L.sanctn_progrs_sttus_code IN ('10','20','60')
 		ORDER BY A.atrz_drft_dt DESC    
 	</select>

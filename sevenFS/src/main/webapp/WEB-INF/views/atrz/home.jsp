@@ -292,8 +292,6 @@
 																<tr>
 																	<td>
 																		<p class="fw-bolder" style="text-align: center;">
-																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
-																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
 																			${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
 																	</td>
 																	<td>

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -30,7 +31,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
-import kr.or.ddit.sevenfs.service.notification.NotificationService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.utils.CommonCode;
 import kr.or.ddit.sevenfs.vo.CustomUser;
@@ -140,8 +140,6 @@ public class AtrzController {
 		
 		List<AtrzVO> atrzCompleteList = atrzService.atrzCompleteList(emplNo);
 		model.addAttribute("atrzCompleteList",atrzCompleteList);
-		
-		
 		
 		model.addAttribute("title", "결재 완료 문서");
 		return "atrz/complete";
@@ -283,9 +281,9 @@ public class AtrzController {
 		String empNo = empVO.getEmplNo();
 		log.info("로그인 사용자 사번: "+ empNo); 
 		
-		if (atrzDocNo == null || atrzDocNo.isEmpty()) {
-			return "redirect:/error"; // 유효하지 않은 문서번호
-		}
+//		if (atrzDocNo == null || atrzDocNo.isEmpty()) {
+//			return "redirect:/error"; // 유효하지 않은 문서번호
+//		}
 
 		char docPrefix = atrzDocNo.charAt(0); // 예: H, S, D, A, B, C, R
 		//상세정보를 가져오기 위한것
@@ -315,12 +313,12 @@ public class AtrzController {
 		//atrzLineVOList : 결재선(atrzTy : N/Y)
 		int lastAtrzLnSn=0;
 		for(AtrzLineVO atrzLineVO : atrzLineVOList) {
-			String atrzTy = atrzLineVO.getAtrzTy();    //N이면 결재자  Y면 참조자
+			String atrzTy = atrzLineVO.getAtrzTy();    //1이면 결재자  0면 참조자
 			
 			//결재자, 대결재, 전결자 권한 체크 
 			//접근 해지
 			
-			if("N".equals(atrzTy)) {
+			if("1".equals(atrzTy)) {
 				if(	empNo.equals(atrzLineVO.getSanctnerEmpno())
 				|| empNo.equals(atrzLineVO.getContdEmpno())
 				|| empNo.equals(atrzLineVO.getDcrbManEmpno())) {
@@ -333,7 +331,7 @@ public class AtrzController {
 				|| empNo.equals(atrzLineVO.getContdEmpno())
 				|| empNo.equals(atrzLineVO.getDcrbManEmpno())){
 					log.info("결재 권한 있음 - 사용자 사번: "+ empNo);
-					isAuthorize = true;
+					isAuthorize = false;
 				}
 			}
 			log.info("ATRZ_TY: "+ atrzLineVO.getAtrzTy());
@@ -349,14 +347,14 @@ public class AtrzController {
 				canView = true;
 			}
 			
-			if(!canView && "N".equals(atrzTy)) {
+			if(!canView && "1".equals(atrzTy)) {
 				canView = true; //참조자의 경우에는 열람만 가능
 			}
 			
-//			//열람 권한이 없는 경우만 막기
-//			if(!canView) {
-//				return "redirect:/error";
-//			}
+			//열람 권한이 없는 경우만 막기
+			if(!canView) {
+				return "redirect:/error";
+			}
 			
 			//결재자 이름 / 직급 셋팅
 			String sancterEmpNo = atrzLineVO.getSanctnerEmpno();
@@ -378,7 +376,7 @@ public class AtrzController {
 		}
 		//다음결재할사람이 없는것(결재자가 없는것)을 계산함
 		int curAtrzLnSn = atrzLineVOList.stream()
-			    .filter(vo -> "N".equals(vo.getAtrzTy()) && "00".equals(vo.getSanctnProgrsSttusCode()))
+			    .filter(vo -> "1".equals(vo.getAtrzTy()) && "00".equals(vo.getSanctnProgrsSttusCode()))
 			    .mapToInt(AtrzLineVO::getAtrzLnSn)
 			    .min()
 			    .orElse(-1); // -1이면 더 이상 결재할 사람 없음
@@ -689,6 +687,21 @@ public class AtrzController {
 		return atrzVO;
 
 	}
+	//결재선 지정후 취소를 한다면 데이터를 삭제하는 작업을 진행해야한다.
+	@ResponseBody
+	@PostMapping("/deleteAtrzWriting")
+	public ResponseEntity<String> deleteAtrzWriting(@RequestBody Map<String, String> payload) {
+		 String atrzDocNo = payload.get("draftId");
+		    try {
+		        atrzService.deleteAtrzWriting(atrzDocNo);
+		        return ResponseEntity.ok("success");
+		    } catch (Exception e) {
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
+		    }
+	}
+	
+	
+	
 	//연차신청서 임시저장 불러오기 
 	@GetMapping("selectForm/getAtrzStorage")
 	public String getAtrzStorage(@RequestParam String atrzDocNo, Model model

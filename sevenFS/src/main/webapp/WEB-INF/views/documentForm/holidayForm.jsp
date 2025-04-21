@@ -95,8 +95,6 @@
 								class="form-control s_ho_start d-inline-block"
 								style="width: 250px; cursor: context-menu;"
 								id="s_ho_start" required="required" onchange="dateCnt();" name="holiStartArr" disabled/>
-						</div>
-						<div>
 							<input type="text" placeholder="신청 종료 기간을 선택해주세요"
 								class="form-control s_ho_end d-inline-block mt-2"
 								style="width: 250px; cursor: context-menu;"

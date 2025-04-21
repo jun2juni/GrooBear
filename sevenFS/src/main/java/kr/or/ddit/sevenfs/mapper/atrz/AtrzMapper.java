@@ -147,6 +147,10 @@ public interface AtrzMapper {
 	
 	//결재완료 문서리스트
 	public List<AtrzVO> atrzCompleteList(String emplNo);
+	//기안작성중 취소시 전자결재 삭제
+	public void deleteAtrzWriting(String atrzDocNo);
+	//기안작성중 취소시 결재선 삭제
+	public void deleteAtrzLineWriting(String atrzDocNo);
 	
 
 	

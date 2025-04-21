@@ -128,7 +128,7 @@
 										<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 											<!-- <p>curAtrzLnSn : 여기야${curAtrzLnSn} / ${atrzLineVO.atrzLnSn}</p> -->
 											<c:if test="${atrzLineVO.sanctnerEmpno == emp.emplNo
-															&& atrzLineVO.atrzTy eq 'N'
+															&& atrzLineVO.atrzTy eq 1
 															&& atrzLineVO.atrzLnSn == curAtrzLnSn && atrzVO.atrzSttusCode eq '00'}">
 												<button id="atrzAppBtnTo" type="button" 
 													class="btn btn-outline-primary d-flex align-items-center gap-1 atrzAppBtn btnFontSt" 
@@ -145,7 +145,7 @@
 												</a>
 											</c:if>
 										</c:forEach>
-										<c:if test="${atrzVO.atrzSttusCode eq '20'}">
+										<c:if test="${emp.emplNo==atrzLineVO.sanctnerEmpno && atrzVO.atrzSttusCode eq '20'}">
 											<a id="atrzComOption" type="button"
 												class="btn btn-outline-danger d-flex align-items-center gap-1"
 												style="padding: 0.4rem 1rem; font-size: 0.95rem;"
@@ -169,7 +169,7 @@
 										<a type="button" 
 										class="btn btn-outline-secondary d-flex align-items-center gap-1"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"
-										href="/atrz/companion"> 
+										href="/atrz/document"> 
 										<span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록
 									</a>
 								</div>
@@ -240,7 +240,7 @@
 														<tr>
 															<th rowspan="3">결재</th>
 															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
-																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
+																<c:if test="${atrzLineVO.atrzTy eq '1'}">
 																	<!-- <p>${atrzLineVO}</p> -->
 																	<td>${atrzLineVO.sanctnerClsfNm}</td>
 																</c:if>
@@ -248,7 +248,7 @@
 														</tr>
 														<tr>
 															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
-																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
+																<c:if test="${atrzLineVO.atrzTy eq '1'}">
 																	<td style="text-align: center;">
 																		<c:choose>
 																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '10'}">
@@ -273,12 +273,12 @@
 														</tr>
 														<tr style="height: 30px;">
 															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
-																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
+																<c:if test="${atrzLineVO.atrzTy eq '1'}">
 																	<td style="font-size: 0.8em;">
 																		<c:choose>
 																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '20'}">
 																				<span style="color: red;">
-																					<fmt:formatDate value="${atrzLineVO.sanctnConfmDt}" pattern="yyyy-MM-dd" />
+																					<fmt:formatDate value="${atrzLineVO.sanctnConfmDt}" pattern="yyyy-MM-dd HH:mm:ss" />
 																				</span>
 																			</c:when>
 																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '30'}">
@@ -286,7 +286,7 @@
 																			</c:when>
 																			<c:otherwise>
 																				<span style="color: black;">
-																					<fmt:formatDate value="${atrzLineVO.sanctnConfmDt}" pattern="yyyy-MM-dd" />
+																					<fmt:formatDate value="${atrzLineVO.sanctnConfmDt}" pattern="yyyy-MM-dd HH:mm:ss" />
 																				</span>
 																			</c:otherwise>
 																		</c:choose>
@@ -299,7 +299,7 @@
 														<!-- 참조자: atrzTy = 'Y' -->
 														<c:set var="hasReference" value="false" />
 														<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
-															<c:if test="${atrzLineVO.atrzTy eq 'Y'}">
+															<c:if test="${atrzLineVO.atrzTy eq '0'}">
 																<c:set var="hasReference" value="true" />
 															</c:if>
 														</c:forEach>
@@ -308,14 +308,14 @@
 															<tr>
 																<th rowspan="2">참조</th>
 																<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
-																	<c:if test="${atrzLineVO.atrzTy eq 'Y'}">
+																	<c:if test="${atrzLineVO.atrzTy eq '0'}">
 																		<td>${atrzLineVO.sanctnerClsfNm}</td>
 																	</c:if>
 																</c:forEach>
 															</tr>
 															<tr>
 																<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
-																	<c:if test="${atrzLineVO.atrzTy eq 'Y'}">
+																	<c:if test="${atrzLineVO.atrzTy eq '0'}">
 																		<td>
 																			${atrzLineVO.sanctnerEmpNm}
 																			<input type="hidden" name="atrzLnSn" value="${atrzLineVO.atrzLnSn}" />
@@ -436,7 +436,7 @@
 								<div class="critical d-flex gap-2 mb-3 mt-3">
 									<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 										<c:if test="${atrzLineVO.sanctnerEmpno == emp.emplNo
-														&& atrzLineVO.atrzTy eq 'N'
+														&& atrzLineVO.atrzTy eq '1'
 														&& atrzLineVO.atrzLnSn == curAtrzLnSn && atrzVO.atrzSttusCode eq '00'}">
 											<button id="atrzAppBtnBo" type="button" 
 												class="btn btn-outline-primary d-flex align-items-center gap-1 atrzAppBtn" 
@@ -453,7 +453,7 @@
 											</a>
 										</c:if>
 									</c:forEach>
-									<c:if test="${atrzVO.atrzSttusCode eq '20'}">
+									<c:if test="${emp.emplNo==atrzLineVO.sanctnerEmpno && atrzVO.atrzSttusCode eq '20'}">
 										<a id="atrzComOption" type="button"
 											class="btn btn-outline-danger d-flex align-items-center gap-1 btnFontSt"
 											style="padding: 0.4rem 1rem; font-size: 0.95rem;"
@@ -477,7 +477,7 @@
 									<a type="button" 
 										class="btn btn-outline-secondary d-flex align-items-center gap-1"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"
-										href="/atrz/companion"> 
+										href="/atrz/document"> 
 										<span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록
 									</a>
 								</div>

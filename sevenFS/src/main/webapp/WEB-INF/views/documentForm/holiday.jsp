@@ -306,7 +306,7 @@ select.ui-datepicker-year {
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
 										<span class="material-symbols-outlined fs-5">upload</span> 결재요청
 									</button>
-									<a id="s_eap_storTo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor btnFontSt"
+									<a id="s_eap_storTo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
 									</a> 
@@ -316,11 +316,77 @@ select.ui-datepicker-year {
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button"  href="/atrz/home"
-										class="btn btn-outline-danger d-flex align-items-center gap-1"
+									<a type="button" id="cancelButton"
+										class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
+<script>
+// 우선 버튼을 누르면 정말로 기안을 취소하시겠습니까라고 알려준다.
+$(".atrzLineCancelBtn").on("click", function(event) {
+	event.preventDefault();
+	swal({
+		title: "작성중인 기안을 취소하시겠습니까?",
+		text: "취소 후에는 기안이 삭제됩니다.",
+		icon: "warning",
+		buttons: {
+			cancel: "아니요",
+			confirm: {
+				text: "예",
+				value: true,
+				className: "atrzLineCancelBtn"
+			}
+		},
+		dangerMode: true,
+	}).then((willDelete) => {
+		if (willDelete) {
+			// 취소 요청을 처리하는 fetch 호출
+			fetch('/atrz/deleteAtrzWriting', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ draftId: $("#s_dfNo").text() }) // 문서 번호를 전송
+			})
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					throw new Error('삭제 요청 실패');
+				}
+			})
+			.then(data => {
+				if (data.success) {
+					swal({
+						title: "기안이 성공적으로 삭제되었습니다.",
+						icon: "success",
+						button: "확인"
+					}).then(() => {
+						location.replace("/atrz/home");
+					});
+				} else {
+					swal({
+						title: "삭제 실패",
+						text: data.message || "알 수 없는 오류가 발생했습니다.",
+						icon: "error",
+						button: "확인"
+					});
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				swal({
+					title: "삭제 실패",
+					text: "서버와의 통신 중 오류가 발생했습니다.",
+					icon: "error",
+					button: "확인"
+				});
+			});
+		}
+	});
+});
+</script>
+</script>
 								</div>
 							</div>
 
@@ -441,26 +507,29 @@ select.ui-datepicker-year {
 													<div class="col ms-4">
 														<div class="s_frm_title mb-2"><b>신청기간</b></div>
 														<div>
-															<input type="text" placeholder="신청 시작 기간을 선택해주세요"
-																class="form-control s_ho_start d-inline-block"
-																style="width: 250px; cursor: context-menu;"
+															<%
+																java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+																String today = sdf.format(new java.util.Date());
+															%>
+															<input type="text" class="form-control s_ho_start d-inline-block"
+																style="width: 150px; cursor: context-menu;"  value="<%= today %>" 
 																id="s_ho_start" required="required" onchange="dateCnt();" name="holiStartArr">
 															<input type="hidden" class="form-control d-inline-block" 
 																style="width: 150px; display: none;" 
 																id="s_start_time" min="09:00:00" max="18:00:00" value="09:00:00"
-																disabled onchange="dateCnt();" name="holiStartArr"> 부터
-														</div>
-														<div>
-															<input type="text" placeholder="신청 종료 기간을 선택해주세요"
-																class="form-control s_ho_end d-inline-block mt-2"
-																style="width: 250px; cursor: context-menu;"
+																disabled onchange="dateCnt();" name="holiStartArr"> ~
+															<input type="text" class="form-control s_ho_end d-inline-block mt-2"
+																style="width: 150px; cursor: context-menu;" value="<%= today %>" 
 																id="s_ho_end" required="required" onchange="dateCnt();" name="holiEndArr" />
 															<input type="hidden" class="form-control d-inline-block"
 																style="width: 150px; display: none;"
 																id="s_end_time" min="09:00:00" max="18:00:00" value="18:00:00"
-																disabled onchange="dateCnt();" name="holiEndArr" /> 까지
+																disabled onchange="dateCnt();" name="holiEndArr" />
+															<div class="d-inline-block" style="display: none !important;">
+																(총 <span id="s_date_cal">0</span>일) &nbsp;&nbsp;&nbsp;
+															</div>
 															<div class="d-inline-block" >
-																(총 <span id="s_date_cal">0</span>일) &nbsp;&nbsp;&nbsp;공가와 병가의 경우에는 0으로 표시됩니다.
+																(총 <span id="s_date_calView">0</span>일) &nbsp;&nbsp;&nbsp;
 															</div>
 														</div>
 														<div id="halfTypeArea" style="display: none; margin-top: 5px;">
@@ -512,22 +581,22 @@ select.ui-datepicker-year {
 								<div class="critical d-flex gap-2 mt-3">
 									<!--성진스 버튼-->
 									<button id="s_eap_app_bottom" type="button" 
-										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app btnFontSt"
+										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
 										<span class="material-symbols-outlined fs-5">upload</span> 결재요청
 									</button>
 									<a id="s_eap_storBo" type="button" 
-										class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor btnFontSt"
+										class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
 									</a> 
-									<a id="s_appLine_btn" type="button" class="btn btn-outline-info d-flex align-items-center gap-1 btnFontSt"
+									<a id="s_appLine_btn" type="button" class="btn btn-outline-info d-flex align-items-center gap-1"
 										data-bs-toggle="modal" data-bs-target="#atrzLineModal"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
 									<a type="button" href="/atrz/home"
-										class="btn btn-outline-danger d-flex align-items-center gap-1 btnFontSt"
+										class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;" > 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
@@ -548,18 +617,15 @@ select.ui-datepicker-year {
 
 
 <script>
-// 결재요청 클릭 시
-$(".s_eap_app").click(function() {
-	
-});
-// <!-- 결재선지정하는 관련 스크립트 끝 -->
-
-
 // 총 일수 계산 함수
 function dateCnt() {
 	// 공가(23) 또는 병가(24)일 경우 총일수를 0으로 설정
 	if ($("input[name='holiCode']:checked").val() === '23' || $("input[name='holiCode']:checked").val() === '24') {
 		$('#s_date_cal').text('0');
+		$('#s_date_calView').text('0');
+		//신청종료일자를 초기화 시켜줘
+		//신청종료일자를 없애고 다시 셋팅할수있게 해줘
+		
 		return;
 	}
 	// 날짜 계산
@@ -585,6 +651,7 @@ function dateCnt() {
 	
 	if((0 < diffDay && diffDay < 1) && (0 < diffTime && diffTime < 8)) {
 		$('#s_date_cal').text('0.5'); // 반차
+		$('#s_date_calView').text('0.5'); // 반차
 	} else if(diffTime >= 1 && diffTime >= 8) {
 		
 		// 평일 계산할 cnt 선언
@@ -611,6 +678,7 @@ function dateCnt() {
 		// cnt string으로 변환하여 일수 나타내기
 		var cntStr = String(cnt);
 		$('#s_date_cal').text(cntStr);
+		$('#s_date_calView').text(cntStr);
 		
 		// 연차사용신청일을 변수에 담기
 		let holidayUsageDates = {
@@ -620,6 +688,7 @@ function dateCnt() {
 		
 	} else {
 		$('#s_date_cal').text('0');
+		$('#s_date_calView').text('0');
 	}
 }
 // 오전반차 및 오후반차 선택 시 시간 설정 및 총일수 계산
@@ -644,12 +713,16 @@ $("input[name='holiCode']").on("change", function () {
 	}
 	dateCnt(); // 총일수 계산 호출
 });
+
+//시작날짜를 input을 클릭하면 자동으로 종료일자 셋팅값을 null로 넣어준다.
+$("#s_ho_start").on("click", function() {
+		$("#s_ho_end").val(null);
+});
 </script>
 
 <script>
 //JSON Object List
 let authList = [];
-
 
 $(document).ready(function() {
 	//******* 폼 전송 *******
@@ -669,6 +742,7 @@ $(document).ready(function() {
 	var ho_start = $('#s_ho_start').val() + " " + $('#s_start_time').val();
 	var ho_end = $('#s_ho_end').val() + " " + $('#s_end_time').val();
 	var ho_use_count = $('#s_date_cal').text();
+	var ho_use_countView = $('#s_date_calView').text();
 	
 	// 결재선 지정 여부 확인
 	if ($(".s_appLine_tbody_new .clsTr").length === 0) {
@@ -726,18 +800,22 @@ $(document).ready(function() {
 			});
 		return;
 	}
-	
-	// 신청한 휴가일수가 0일때 alert
-	if(ho_use_count == 0) {
-		swal({
-				title: "신청한 휴가일수가 0일입니다",
-				text: "날짜와 시간을 다시 선택해주세요",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false,
-				button: "확인"
-			});
-		return;
+	//라디오 버튼 23 24인경우에는 신청휴가일수가 사용가능한 휴가일수보다 많아도 기안이 작성된다.
+	if(ho_code == '23' || ho_code == '24') {
+		// 아무것도 안함
+	} else {
+		// 신청한 휴가일수가 0일때 alert
+		if(ho_use_count == 0) {
+			swal({
+					title: "신청한 휴가일수가 0일입니다",
+					text: "날짜와 시간을 다시 선택해주세요",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false,
+					button: "확인"
+				});
+			return;
+		}
 	}
 	
 	var s_ho_use = $("#s_ho_use").text();
@@ -745,6 +823,20 @@ $(document).ready(function() {
 	// 사용 가능한 휴가일수보다 신청한 휴가일수가 더 많을 때 alert
 	// ex) s_ho_use(사용 가능한 휴가일수) = 14.5 / ho_use_count(신청한 휴가 일수) = 1
 	if(parseFloat(ho_use_count) > parseFloat(s_ho_use)) {
+		//공가병가 선택시 작아도 기안이 작성된다.
+		if(ho_code == '23' || ho_code == '24') {
+			// 아무것도 안함
+		} else {
+			swal({
+				title: "사용 가능한 휴가일수보다 신청한 휴가일수가 더 많습니다.",
+				text: "날짜와 시간을 다시 선택해주세요",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+			return;
+		}
 		swal({
 				title: "사용 가능한 휴가일수보다 신청한 휴가일수가 더 많습니다.",
 				text: "날짜와 시간을 다시 선택해주세요",
@@ -1003,13 +1095,13 @@ $(document).ready(function() {
 		type:"post",
 		dataType:"json",
 		success:function(result){
-			let noLen = $(".clsTr").length;
+			let noLen = $(".clsPo").length;
 
 			console.log("결재선지정->result : ",result);
 			let selectHtml = `
 				<select class="form-select selAuth" aria-label="Default select example">
-					<option value="0" \${selectedType == "sign" ? "selected" : ""}>결재</option>
-					<option value="1" \${selectedType == "ref" ? "selected" : ""}>참조</option>
+					<option value="1" \${selectedType == "sign" ? "selected" : ""}>결재</option>
+					<option value="0" \${selectedType == "ref" ? "selected" : ""}>참조</option>
 				</select>
 			`;
 			
@@ -1021,9 +1113,23 @@ $(document).ready(function() {
 				`;
 			}
 
-			let str = `
+			let strA = `
 					<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
-						<th hidden>\${noLen+1}</th>
+						<th>\${noLen+1}</th>
+						<th style="display: none;" hidden class="s_td_no">\${result.emplNo}</th>
+						<th class="s_td_name">\${result.emplNm}</th>
+						<th>\${result.deptNm}</th>
+						<th class="clsPo">\${result.posNm}</th>
+						<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
+						<input type="hidden" name="clsfCode" class="clsfCode" value="\${result.clsfCode}"/>
+						log.info("결재선지정->result : ",result);
+						<th hidden>\${selectHtml}</th>
+						<th>\${checkboxHtml}</th>
+					</tr>
+				`;
+			let strB = `
+					<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
+						<th></th>
 						<th style="display: none;" hidden class="s_td_no">\${result.emplNo}</th>
 						<th class="s_td_name">\${result.emplNm}</th>
 						<th>\${result.deptNm}</th>
@@ -1038,9 +1144,9 @@ $(document).ready(function() {
 
 			// ✅ 타입에 따라 위치 다르게 append
 			if(selectedType === "sign"){
-				$(".s_appLine_tbody_new").append(str);  // 위쪽 결재선
+				$(".s_appLine_tbody_new").append(strA);  // 위쪽 결재선
 			}else{
-				$(".s_appLine_tbody_ref").append(str);  // 아래쪽 참조자
+				$(".s_appLine_tbody_ref").append(strB);  // 아래쪽 참조자
 			}
 		}
 	});
@@ -1171,8 +1277,8 @@ $(document).ready(function() {
 
 			formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",data.emplNo);
 			formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",data.clsfCode);
-			formData.append("atrzLineVOList["+idx+"].atrzTy",data.flex);//Y / N
-			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.auth);//  1 / 0
+			formData.append("atrzLineVOList["+idx+"].atrzTy",data.auth);//Y / N 결재자 / 참조자
+			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.flex);//  1 / 0 전결여부
 			formData.append("atrzLineVOList["+idx+"].atrzLnSn",data.atrzLnSn);
 		});	
 		
@@ -1227,9 +1333,9 @@ $(document).ready(function() {
 					const matched = result.find(emp => emp.emplNo === authItem.emplNo);
 					if (matched) {
 						matched.flex = authItem.flex; // flex 정보도 보존
-						if (authItem.auth === "0") {
+						if (authItem.auth === "1") {
 							approvalList.push(matched);
-						} else if (authItem.auth === "1") {
+						} else if (authItem.auth === "0") {
 							referenceList.push(matched);
 						}
 					}

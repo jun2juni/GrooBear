@@ -449,7 +449,7 @@
 																		<h6 class="fw-bolder">기안일</h6>
 																	</th>
 																	<th class="text-center">
-																		<h6 class="fw-bolder">완료일</h6>
+																		<h6 class="fw-bolder">완료(반려)일</h6>
 																	</th>
 																	<th class="text-center">
 																		<h6 class="fw-bolder">결재상태</h6>
@@ -499,6 +499,8 @@
 																		</td>
 																		<td class="text-center">
 																			<p class="fw-bolder">
+																				<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																				<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
 																				${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp;
 																			</p>
 																		</td>

@@ -105,6 +105,9 @@ public interface AtrzService {
 	//결재완료문서함
 	public List<AtrzVO> atrzCompleteList(String emplNo);
 	
+	//기안작성중 도중 취소한경우에는 남은 atrz와 atrzLine을 삭제처리해야한다.
+	public void deleteAtrzWriting(String atrzDocNo);
+	
 	
 	
 }

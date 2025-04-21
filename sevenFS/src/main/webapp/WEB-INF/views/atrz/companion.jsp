@@ -168,7 +168,7 @@
 							<div class="row">
 								<div class="col-lg-12">
 									<div class="card-style">
-										<h6 class="mb-10">결재대기문서</h6>
+										<h6 class="mb-10">반려문서함</h6>
 										<div class="table-wrapper table-responsive">
 											<c:choose>
 												<c:when test="${empty atrzCompanionList}">
