@@ -281,4 +281,27 @@
 	  </foreach>
 	</update>
 		
+	<!-- MyBatis XML 예시 -->
+	<select id="getAllEmployees" resultType="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
+	    SELECT
+	        EMPL_NO            AS emplNo,
+	        EMPL_NM            AS emplNm,
+	        DEPT_CODE          AS deptCode,
+	        CLSF_CODE          AS clsfCode,
+	        EMAIL              AS email,
+	        TELNO              AS telno,
+	        ENABLED            AS enabled,
+	        ECNY_DATE          AS ecnyDate,
+	        RETIRE_DATE        AS retireDate,
+	        PROFL_PHOTO_URL    AS proflPhotoUrl
+	    FROM
+	        EMPLOYEE
+	    WHERE
+	        ENABLED = '1'
+	        AND (RETIRE_DATE IS NULL OR RETIRE_DATE = '')
+	</select>
+
+
+		
+	
 </mapper>

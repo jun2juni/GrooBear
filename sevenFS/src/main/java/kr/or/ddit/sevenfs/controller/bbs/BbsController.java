@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,13 +26,17 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import kr.or.ddit.sevenfs.controller.notification.NotificationController;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.bbs.BbsService;
+import kr.or.ddit.sevenfs.service.notification.NotificationService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.utils.AttachFile;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.bbs.BbsCategoryVO;
 import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
+import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -53,6 +58,8 @@ public class BbsController {
 	@Autowired
 	BbsSecurityUtil securityUtil;
 	
+	@Autowired
+	NotificationService notificationService;
 	
 	
     @GetMapping("/bbs")
@@ -157,19 +164,23 @@ public class BbsController {
      */
     @PostMapping("/bbsInsert")
     public String bbsInsert(@ModelAttribute BbsVO bbsVO, Model model,
-    		@RequestParam("bbsCtgryNo") int bbsCtgryNo, MultipartFile[] uploadFile, 
-    		@RequestParam("uploadFile") MultipartFile file, Authentication auth) {
+                            @RequestParam("bbsCtgryNo") int bbsCtgryNo,
+                            MultipartFile[] uploadFile,
+                            @RequestParam("uploadFile") MultipartFile file,
+                            Authentication auth,
+                            @AuthenticationPrincipal(expression = "username") String emplNo) {
+
         log.info("게시글 등록 요청");
-        
+
         bbsVO.setBbsCtgryNo(bbsCtgryNo);
-        
+
         if (bbsCtgryNo == 1 && !securityUtil.canInsertNotice(auth)) {
-            return "error/403"; // 403 에러 페이지 or redirect:/accessDenied
+            return "error/403";
         }
 
         long attachFileNm = attachFileService.insertFileList("insertFile", uploadFile);
         bbsVO.setAtchFileNo(attachFileNm);
-        
+
         // 게시글 저장
         int result = bbsService.bbsInsert(bbsVO);
         int bbsSn = bbsVO.getBbsSn(); // INSERT 후 bbsSn 가져오기
@@ -178,11 +189,24 @@ public class BbsController {
 
         String fileName = file.getOriginalFilename();
         log.info("파일이름 : " + fileName);
-        
-        
-        
-        return "redirect:/bbs/bbsList?bbsCtgryNo="+bbsVO.getBbsCtgryNo();
+
+        // ========== 공지사항 알림 처리 시작 ==========
+        if (bbsCtgryNo == 1 && "Y".equalsIgnoreCase(bbsVO.getUpendFixingYn())) { // 공지사항인 경우 전체 사원에게 알림
+            List<EmployeeVO> allEmployees = bbsService.getAllEmployees(); // 전체 사원 목록 조회
+
+            NotificationVO notificationVO = new NotificationVO();
+            notificationVO.setNtcnSj("[공지사항 등록]");
+            notificationVO.setNtcnCn(bbsVO.getEmplNm() + "님이 새로운 공지사항을 등록하였습니다.");
+            notificationVO.setOriginPath("/bbs/bbsDetail?bbsSn=" + bbsSn);
+            notificationVO.setSkillCode("01");
+
+            notificationService.insertNotification(notificationVO, allEmployees);
+        }
+        // ========== 공지사항 알림 처리 끝 ==========
+
+        return "redirect:/bbs/bbsList?bbsCtgryNo=" + bbsVO.getBbsCtgryNo();
     }
+
 
 
     /**

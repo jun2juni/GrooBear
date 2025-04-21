@@ -6,6 +6,7 @@ import java.util.Map;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.bbs.BbsCategoryVO;
 import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 
 public interface BbsService {
 
@@ -27,4 +28,6 @@ public interface BbsService {
 
 	// 게시판 일괄삭제
 	public void bulkDelete(List<Integer> ids);
+
+	public List<EmployeeVO> getAllEmployees();
 }

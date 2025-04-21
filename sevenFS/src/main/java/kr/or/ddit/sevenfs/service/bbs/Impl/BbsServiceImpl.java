@@ -12,6 +12,7 @@ import kr.or.ddit.sevenfs.service.bbs.BbsService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -69,6 +70,13 @@ public class BbsServiceImpl implements BbsService{
 	public void bulkDelete(List<Integer> ids) {
 		// TODO Auto-generated method stub
 		bbsMapper.bulkDelete(ids);
+	}
+
+	// 모든사원 조회
+	@Override
+	public List<EmployeeVO> getAllEmployees() {
+		// TODO Auto-generated method stub
+		return bbsMapper.getAllEmployees();
 	}
 
 }

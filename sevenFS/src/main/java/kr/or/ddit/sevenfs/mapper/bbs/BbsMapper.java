@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.bbs.BbsVO;
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 
 @Mapper
 public interface BbsMapper {
@@ -31,4 +32,6 @@ public interface BbsMapper {
     List<BbsCategoryVO> bbsCategoryList();
 
 	public void bulkDelete(List<Integer> ids);
+
+	public List<EmployeeVO> getAllEmployees();
 }
