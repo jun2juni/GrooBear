@@ -48,8 +48,10 @@
                 </div>
                 <div class="checkbox-container" id="personalLabel">
                     <label>개인 일정
-                        <i class='fas fa-chevron-left event-filter' id="leftArrIcon" style="cursor: pointer; display: none;"></i>
-                        <i class='fas fa-chevron-down event-filter' id="downArrIcon" style="cursor: pointer;"></i>
+                        <!-- <i class='fas fa-chevron-left event-filter' id="leftArrIcon" style="cursor: pointer; display: none;"></i>
+                        <i class='fas fa-chevron-down event-filter' id="downArrIcon" style="cursor: pointer;"></i> -->
+                        <i class='fas fa-chevron-left' id="leftArrIcon" style="cursor: pointer; display: none;"></i>
+                        <i class='fas fa-chevron-down' id="downArrIcon" style="cursor: pointer;"></i>
                         <!-- <input type="checkbox" id="labelAll" class="event-filter" value="0" checked> -->
                     </label>
                 </div>
@@ -586,12 +588,19 @@
             $('#filterAll').on('click',function(){
                 // console.log('filter changed 확인');
                 let filtered = [];
+                let labeled = [];
                 $('.event-filter').each(function() {
                     this.checked = true;
                     filtered.push($(this).val()); // 체크된 요소의 값만 가져옴
                 });
+                $('.label-filter').each(function() {
+                    this.checked = true;
+                    labeled.push($(this).val()); // 체크된 요소의 값만 가져옴
+                });
                 console.log('필터 결과 : ',filtered);
+                console.log('필터 결과 : ',labeled);
                 fltrLbl.schdulTyList = filtered;
+                fltrLbl.lblNoList = labeled;
                 console.log(fltrLbl);
                 fltrLblAjx();
             })
@@ -608,18 +617,18 @@
         });
         
         // 전체 보기 버튼 이벤트
-        $('#labelAll').on('click', function() {
-            $('.label-filter').each(function() {
-                this.checked = true;
-            });
+        // $('#labelAll').on('click', function() {
+        //     $('.label-filter').each(function() {
+        //         this.checked = true;
+        //     });
             
-            let labeled = $('.label-filter').map(function() {
-                return $(this).val();
-            }).get();
+        //     let labeled = $('.label-filter').map(function() {
+        //         return $(this).val();
+        //     }).get();
             
-            window.fltrLbl.lblNoList = labeled;
-            fltrLblAjx();
-        });
+        //     window.fltrLbl.lblNoList = labeled;
+        //     fltrLblAjx();
+        // });
         
         // 필터링 AJAX 함수 - 전역 스코프로 이동
         window.fltrLblAjx = function() {

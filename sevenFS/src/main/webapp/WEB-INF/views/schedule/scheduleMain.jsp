@@ -198,7 +198,11 @@
 					if(selLabel){
 						lblColor = selLabel.lblColor;
 					}
-					borderColor="#ffffff"
+					if(chk){
+						borderColor="#ffffff"
+					}else{
+						borderColor = lblColor;
+					}
 				}
 				console.log("lblColor : ",lblColor);
 				console.log("borderColor : ",borderColor);

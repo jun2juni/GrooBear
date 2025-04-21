@@ -37,35 +37,54 @@
 	   OR (SCHDUL_TY = '1' AND DEPT_CODE = #{deptCode})
 	   OR (SCHDUL_TY = '2')
 	)
-	<if test="schdulTyList == null or schdulTyList.size() == 0">
-    	AND 1 = 0
-	</if>
-	<if test="schdulTyList != null and schdulTyList.size() > 0">
-		AND schdul_ty IN
-	    <foreach collection="schdulTyList" item="ty" open="(" separator="," close=")">
-	        #{ty}
-	    </foreach>
-	</if>
-	<choose>
-	    <when test="lblNoList != null and lblNoList.size() > 0">
-		    AND (lbl_no IN
-		    <foreach collection="lblNoList" item="no" open="(" separator="," close=")">
-		        #{no}
-		    </foreach>
-		    <foreach collection="lblNoList" item="no">
-				<if test="no == 0">
-					OR lbl_no IS NULL
-				</if>
-			</foreach>
-			OR (schdul_ty = '1' OR schdul_ty = '2')
-		    )
-	    </when>
-		<otherwise>
-	    	AND (lbl_no IS NULL AND schdul_ty != '0')
-		</otherwise>
-	</choose>
+	AND(
+		<choose>
+			<when test="schdulTyList != null and schdulTyList.size() > 0 and lblNoList != null and lblNoList.size() > 0">
+				(
+					schdul_ty IN
+	                <foreach collection="schdulTyList" item="ty" open="(" separator="," close=")">
+	                    #{ty}
+	                </foreach>
+	                OR
+	                lbl_no IN
+	                <foreach collection="lblNoList" item="no" open="(" separator="," close=")">
+	                    #{no}
+	                </foreach>
+	                <foreach collection="lblNoList" item="no">
+	                    <if test="no == 0">
+	                        OR (lbl_no IS NULL and SCHDUL_TY = '0')
+	                    </if>
+	                </foreach>
+				)
+			</when>
+			<when test="schdulTyList != null and schdulTyList.size() > 0">
+	            <!-- 타입 조건만 있는 경우 -->
+	            schdul_ty IN
+	            <foreach collection="schdulTyList" item="ty" open="(" separator="," close=")">
+	                #{ty}
+	            </foreach>
+	        </when>
+	        <when test="lblNoList != null and lblNoList.size() > 0">
+	            <!-- 라벨 조건만 있는 경우 -->
+	            (
+	                lbl_no IN
+	                <foreach collection="lblNoList" item="no" open="(" separator="," close=")">
+	                    #{no}
+	                </foreach>
+	                <foreach collection="lblNoList" item="no">
+	                    <if test="no == 0">
+	                        OR (lbl_no IS NULL and SCHDUL_TY = '0')
+	                    </if>
+	                </foreach>
+	            )
+	        </when>
+	        <otherwise>
+	            <!-- 둘 다 없는 경우: 아무것도 안가져온다 -->
+	            1=2
+	        </otherwise>
+		</choose>
+	)
 </select>
-
 
 <insert id="scheduleInsert" parameterType="kr.or.ddit.sevenfs.vo.schedule.ScheduleVO">
 	/*kr.or.ddit.sevenfs.mapper.schedule.ScheduleMapper.scheduleInsert 이걸 찍으면 log에서 찾기 편하다.*/
