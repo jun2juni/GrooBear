@@ -281,9 +281,9 @@ public class AtrzController {
 		String empNo = empVO.getEmplNo();
 		log.info("로그인 사용자 사번: "+ empNo); 
 		
-//		if (atrzDocNo == null || atrzDocNo.isEmpty()) {
-//			return "redirect:/error"; // 유효하지 않은 문서번호
-//		}
+		if (atrzDocNo == null || atrzDocNo.isEmpty()) {
+			return "redirect:/error"; // 유효하지 않은 문서번호
+		}
 
 		char docPrefix = atrzDocNo.charAt(0); // 예: H, S, D, A, B, C, R
 		//상세정보를 가져오기 위한것

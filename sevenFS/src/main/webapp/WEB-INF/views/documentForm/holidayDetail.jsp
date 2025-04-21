@@ -145,7 +145,7 @@
 												</a>
 											</c:if>
 										</c:forEach>
-										<c:if test="${emp.emplNo==atrzLineVO.sanctnerEmpno && atrzVO.atrzSttusCode eq '20'}">
+										<c:if test="${emp.emplNo==atrzVO.drafterEmpno && atrzVO.atrzSttusCode eq '20'}">
 											<a id="atrzComOption" type="button"
 												class="btn btn-outline-danger d-flex align-items-center gap-1"
 												style="padding: 0.4rem 1rem; font-size: 0.95rem;"

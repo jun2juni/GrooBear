@@ -343,7 +343,7 @@
 																			</c:choose>
 																		</td>
 																		<td style="text-align:left;">
-																			<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
+																			<a href="/atrz/selectForm/getAtrzStorage?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
 																				${atrzVO.atrzSj}
 																			</a>
 																		</td>

@@ -386,7 +386,6 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 	});
 });
 </script>
-</script>
 								</div>
 							</div>
 
@@ -972,8 +971,8 @@ $(document).ready(function() {
 			let atrzLine = {
 				atrzLnSn: auth.atrzLnSn ,
 				sanctnerEmpno: auth.emplNo,
-				atrzTy: auth.flex,
-				dcrbAuthorYn: auth.auth,
+				atrzTy: auth.auth,
+				dcrbAuthorYn: auth.flex,
 				sanctnerClsfCode: auth.clsfCode,
 			}
 			atrzLineList.push(atrzLine);			
@@ -1172,7 +1171,7 @@ $(document).ready(function() {
 			}else{
 				swal({
 					title: "",
-					text: "삭제할 사원이 없습니다.",
+					text: "삭제할 결재자가 없습니다.",
 					icon: "error",
 					closeOnClickOutside: false,
 					closeOnEsc: false,

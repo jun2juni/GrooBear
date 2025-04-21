@@ -387,7 +387,7 @@ select.ui-datepicker-year {
 														<tr>
 															<th rowspan="3">결재</th>
 															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
-																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
+																<c:if test="${atrzLineVO.atrzTy eq '1'}">
 																	<!-- <p>${atrzLineVO}</p> -->
 																	<td>${atrzLineVO.sanctnerClsfNm}</td>
 																</c:if>
@@ -395,7 +395,7 @@ select.ui-datepicker-year {
 														</tr>
 														<tr>
 															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
-																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
+																<c:if test="${atrzLineVO.atrzTy eq '1'}">
 																	<td style="text-align: center;">
 																		<c:choose>
 																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '10'}">
@@ -421,7 +421,7 @@ select.ui-datepicker-year {
 														</tr>
 														<tr style="height: 30px;">
 															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
-																<c:if test="${atrzLineVO.atrzTy eq 'N'}">
+																<c:if test="${atrzLineVO.atrzTy eq '1'}">
 																	<td style="font-size: 0.8em;">
 																		<c:choose>
 																			<c:when test="${atrzLineVO.sanctnProgrsSttusCode eq '20'}">
@@ -447,7 +447,7 @@ select.ui-datepicker-year {
 														<!-- 참조자: atrzTy = 'Y' -->
 														<c:set var="hasReference" value="false" />
 														<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
-															<c:if test="${atrzLineVO.atrzTy eq 'Y'}">
+															<c:if test="${atrzLineVO.atrzTy eq '0'}">
 																<c:set var="hasReference" value="true" />
 															</c:if>
 														</c:forEach>
@@ -456,14 +456,14 @@ select.ui-datepicker-year {
 															<tr>
 																<th rowspan="2">참조</th>
 																<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
-																	<c:if test="${atrzLineVO.atrzTy eq 'Y'}">
+																	<c:if test="${atrzLineVO.atrzTy eq '0'}">
 																		<td>${atrzLineVO.sanctnerClsfNm}</td>
 																	</c:if>
 																</c:forEach>
 															</tr>
 															<tr>
 																<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
-																	<c:if test="${atrzLineVO.atrzTy eq 'Y'}">
+																	<c:if test="${atrzLineVO.atrzTy eq '0'}">
 																		<td>
 																			${atrzLineVO.sanctnerEmpNm}
 																			<input type="hidden" name="atrzLnSn" value="${atrzLineVO.atrzLnSn}" />
@@ -633,84 +633,15 @@ select.ui-datepicker-year {
 
 
 <script>
-// 결재요청 클릭 시
-$("#s_eap_app").click(function() {
-	var eap_title = $('#s_ho_tt').val();
-	var eap_content = $('#s_ho_co').val();
-	// textarea에 \r \n같은 문자를 <br>로 바꿔주기
-	eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
-	var ho_code = $('input[type=radio]:checked').val();
-	var ho_start = $('#s_ho_start').val() + " " + $('#s_start_time').val();
-	var ho_end = $('#s_ho_end').val() + " " + $('#s_end_time').val();
-	var ho_use_count = $('#s_date_cal').text();
-	
-	// 날짜 계산
-	var start = new Date($('#s_ho_start').val() + 'T' + $('#s_start_time').val());
-	var end = new Date($('#s_ho_end').val() + 'T' + $('#s_end_time').val());
-	
-	// 신청 종료시간이 시작시간보다 빠를 때
-	if(start > end) {
-		swal({
-				title: "종료 시간이 시작 시간보다 빠를 수 없습니다!",
-				text: "신청 종료 시간을 다시 선택해주세요.",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false,
-				button: "확인"
-			});
-		$("#s_end_time").val('');
-	}
-	
-	// 제목, 내용이 비어있을 때
-	if(eap_title == "" || eap_content == "") {
-		swal({
-				title: "제목 또는 내용이 비어있습니다.",
-				text: "다시 확인해주세요.",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false,
-				button: "확인"
-			});
-		return;
-	}
-	
-	// 신청한 휴가일수가 0일때 alert
-	if(ho_use_count == 0) {
-		swal({
-				title: "신청한 휴가일수가 0일입니다",
-				text: "날짜와 시간을 다시 선택해주세요",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false,
-				button: "확인"
-			});
-		return;
-	}
-	
-	var s_ho_use = $("#s_ho_use").text();
-	
-	// 사용 가능한 휴가일수보다 신청한 휴가일수가 더 많을 때 alert
-	// ex) s_ho_use(사용 가능한 휴가일수) = 14.5 / ho_use_count(신청한 휴가 일수) = 1
-	if(parseFloat(ho_use_count) > parseFloat(s_ho_use)) {
-		swal({
-				title: "사용 가능한 휴가일수보다 신청한 휴가일수가 더 많습니다.",
-				text: "날짜와 시간을 다시 선택해주세요",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false,
-				button: "확인"
-			});
-		return;
-	}
-});
-// <!-- 결재선지정하는 관련 스크립트 끝 -->
-
-
 // 총 일수 계산 함수
 function dateCnt() {
 	// 공가(23) 또는 병가(24)일 경우 총일수를 0으로 설정
 	if ($("input[name='holiCode']:checked").val() === '23' || $("input[name='holiCode']:checked").val() === '24') {
 		$('#s_date_cal').text('0');
+		$('#s_date_calView').text('0');
+		//신청종료일자를 초기화 시켜줘
+		//신청종료일자를 없애고 다시 셋팅할수있게 해줘
+		
 		return;
 	}
 	// 날짜 계산
@@ -736,6 +667,7 @@ function dateCnt() {
 	
 	if((0 < diffDay && diffDay < 1) && (0 < diffTime && diffTime < 8)) {
 		$('#s_date_cal').text('0.5'); // 반차
+		$('#s_date_calView').text('0.5'); // 반차
 	} else if(diffTime >= 1 && diffTime >= 8) {
 		
 		// 평일 계산할 cnt 선언
@@ -762,6 +694,7 @@ function dateCnt() {
 		// cnt string으로 변환하여 일수 나타내기
 		var cntStr = String(cnt);
 		$('#s_date_cal').text(cntStr);
+		$('#s_date_calView').text(cntStr);
 		
 		// 연차사용신청일을 변수에 담기
 		let holidayUsageDates = {
@@ -771,8 +704,10 @@ function dateCnt() {
 		
 	} else {
 		$('#s_date_cal').text('0');
+		$('#s_date_calView').text('0');
 	}
 }
+
 // 오전반차 및 오후반차 선택 시 시간 설정 및 총일수 계산
 $("input[name='holiCode']").on("change", function () {
 	const selectedValue = $(this).val();
@@ -780,11 +715,13 @@ $("input[name='holiCode']").on("change", function () {
 		$("#s_start_time").val("09:00:00").prop("disabled", true).show();
 		$("#s_end_time").val("13:00:00").prop("disabled", true).show();
 		$("#s_ho_end").val($("#s_ho_start").val()); // 종료일을 시작일과 동일하게 설정
+		$("#s_ho_end").hide();
 		$("#halfTypeArea").hide();
 	} else if (selectedValue === "21") { // 오후반차
 		$("#s_start_time").val("14:00:00").prop("disabled", true).show();
 		$("#s_end_time").val("18:00:00").prop("disabled", true).show();
 		$("#s_ho_end").val($("#s_ho_start").val()); // 종료일을 시작일과 동일하게 설정
+		$("#s_ho_end").hide();
 		$("#halfTypeArea").hide();
 	} else {
 		$("#s_start_time").val("09:00:00").prop("disabled", false).hide();
@@ -792,6 +729,11 @@ $("input[name='holiCode']").on("change", function () {
 		$("#halfTypeArea").hide();
 	}
 	dateCnt(); // 총일수 계산 호출
+});
+
+//시작날짜를 input을 클릭하면 자동으로 종료일자 셋팅값을 null로 넣어준다.
+$("#s_ho_start").on("click", function() {
+		$("#s_ho_end").val(null);
 });
 </script>
 
@@ -807,6 +749,127 @@ $(document).ready(function() {
 // 		alert("체킁");
 		console.log("전송하기 체킁 확인");
 		console.log("s_eap_app_bottom->authList : ", authList);
+
+		//유효성검사
+		var eap_title = $('#s_ho_tt').val();
+		var eap_content = $('#s_ho_co').val();
+
+		// textarea에 \r \n같은 문자를 <br>로 바꿔주기
+		eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
+		var ho_code = $("input[name='holiCode']:checked").val();
+		var ho_start = $('#s_ho_start').val() + " " + $('#s_start_time').val();
+		var ho_end = $('#s_ho_end').val() + " " + $('#s_end_time').val();
+		var ho_use_count = $('#s_date_cal').text();
+		var ho_use_countView = $('#s_date_calView').text();
+
+		
+		//결재선 지정확인
+		if(".s_eap_draft_app" == null) {
+			swal({
+				title: "결재선이 지정되지 않았습니다.",
+				text: "결재선을 지정해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+			return;
+		}
+
+		// 날짜 계산
+		var start = new Date($('#s_ho_start').val() + 'T' + $('#s_start_time').val());
+		var end = new Date($('#s_ho_end').val() + 'T' + $('#s_end_time').val());
+
+		// 신청 종료시간이 시작시간보다 빠를 때
+	if(start > end) {
+		swal({
+				title: "종료 시간이 시작 시간보다 빠를 수 없습니다!",
+				text: "신청 종료 시간을 다시 선택해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+
+			});
+		$("#s_end_time").val('');
+	}
+	//select박스가비어있을때 연차유형이 선택되지 않았습니다.라고 알림 띄어줘
+	if (!$("input[name='holiCode']:checked").val()) 
+		{
+			swal({
+				title: "연차유형이 선택되지 않았습니다.",
+				text: "연차유형을 선택해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+			return;
+		}
+	
+	// 제목, 내용이 비어있을 때
+	if(eap_title == "" || eap_content == "") {
+		swal({
+				title: "제목 또는 내용이 비어있습니다.",
+				text: "다시 확인해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+		return;
+	}
+	//라디오 버튼 23 24인경우에는 신청휴가일수가 사용가능한 휴가일수보다 많아도 기안이 작성된다.
+	if(ho_code == '23' || ho_code == '24') {
+		// 아무것도 안함
+	} else {
+		// 신청한 휴가일수가 0일때 alert
+		if(ho_use_count == 0) {
+			swal({
+					title: "신청한 휴가일수가 0일입니다",
+					text: "날짜와 시간을 다시 선택해주세요",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false,
+					button: "확인"
+				});
+			return;
+		}
+	}
+	
+	var s_ho_use = $("#s_ho_use").text();
+	
+	// 사용 가능한 휴가일수보다 신청한 휴가일수가 더 많을 때 alert
+	// ex) s_ho_use(사용 가능한 휴가일수) = 14.5 / ho_use_count(신청한 휴가 일수) = 1
+	if(parseFloat(ho_use_count) > parseFloat(s_ho_use)) {
+		//공가병가 선택시 작아도 기안이 작성된다.
+		if(ho_code == '23' || ho_code == '24') {
+			// 아무것도 안함
+		} else {
+			swal({
+				title: "사용 가능한 휴가일수보다 신청한 휴가일수가 더 많습니다.",
+				text: "날짜와 시간을 다시 선택해주세요",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+			return;
+		}
+		swal({
+				title: "사용 가능한 휴가일수보다 신청한 휴가일수가 더 많습니다.",
+				text: "날짜와 시간을 다시 선택해주세요",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+		return;
+	}
+	//유효성검사
+
+
+
 		
 		let jnForm = document.querySelector("#atrz_ho_form");
 		// console.log("${empVO}" + empVO);
@@ -837,8 +900,8 @@ $(document).ready(function() {
 			let atrzLine = {
 				atrzLnSn: auth.atrzLnSn ,
 				sanctnerEmpno: auth.emplNo,
-			    atrzTy: auth.flex,
-			    dcrbAuthorYn: auth.auth
+			    atrzTy: auth.auth,
+			    dcrbAuthorYn: auth.flex
 			}
 			atrzLineList.push(atrzLine);			
 		}
@@ -931,8 +994,9 @@ $(document).ready(function() {
 			let atrzLine = {
 				atrzLnSn: auth.atrzLnSn ,
 				sanctnerEmpno: auth.emplNo,
-			    atrzTy: auth.flex,
-			    dcrbAuthorYn: auth.auth
+			    atrzTy: auth.auth,
+			    dcrbAuthorYn: auth.flex,
+				sanctnerClsfCode: auth.clsfCode,
 			}
 			atrzLineList.push(atrzLine);			
 		}
@@ -1053,13 +1117,13 @@ $(document).ready(function() {
 		type:"post",
 		dataType:"json",
 		success:function(result){
-			let noLen = $(".clsTr").length;
+			let noLen = $(".clsPo").length;
 
 			console.log("결재선지정->result : ",result);
 			let selectHtml = `
 				<select class="form-select selAuth" aria-label="Default select example">
-					<option value="0" \${selectedType == "sign" ? "selected" : ""}>결재</option>
-					<option value="1" \${selectedType == "ref" ? "selected" : ""}>참조</option>
+					<option value="1" \${selectedType == "sign" ? "selected" : ""}>결재</option>
+					<option value="0" \${selectedType == "ref" ? "selected" : ""}>참조</option>
 				</select>
 			`;
 			
@@ -1071,10 +1135,24 @@ $(document).ready(function() {
 				`;
 			}
 
-			let str = `
+			let strA = `
 					<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
 						<th>\${noLen+1}</th>
-						<th style="display: none;" class="s_td_no">\${result.emplNo}</th>
+						<th style="display: none;" hidden class="s_td_no">\${result.emplNo}</th>
+						<th class="s_td_name">\${result.emplNm}</th>
+						<th>\${result.deptNm}</th>
+						<th class="clsPo">\${result.posNm}</th>
+						<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
+						<input type="hidden" name="clsfCode" class="clsfCode" value="\${result.clsfCode}"/>
+						log.info("결재선지정->result : ",result);
+						<th hidden>\${selectHtml}</th>
+						<th>\${checkboxHtml}</th>
+					</tr>
+				`;
+			let strB = `
+					<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
+						<th></th>
+						<th style="display: none;" hidden class="s_td_no">\${result.emplNo}</th>
 						<th class="s_td_name">\${result.emplNm}</th>
 						<th>\${result.deptNm}</th>
 						<th>\${result.posNm}</th>
@@ -1088,9 +1166,9 @@ $(document).ready(function() {
 
 			// ✅ 타입에 따라 위치 다르게 append
 			if(selectedType === "sign"){
-				$(".s_appLine_tbody_new").append(str);  // 위쪽 결재선
+				$(".s_appLine_tbody_new").append(strA);  // 위쪽 결재선
 			}else{
-				$(".s_appLine_tbody_ref").append(str);  // 아래쪽 참조자
+				$(".s_appLine_tbody_ref").append(strB);  // 아래쪽 참조자
 			}
 		}
 	});
@@ -1116,7 +1194,7 @@ $(document).ready(function() {
 			}else{
 				swal({
 					title: "",
-					text: "삭제할 사원이 없습니다.",
+					text: "삭제할 결재자가 없습니다.",
 					icon: "error",
 					closeOnClickOutside: false,
 					closeOnEsc: false,
@@ -1232,8 +1310,8 @@ $(document).ready(function() {
 			formData.append("atrzVO.atrzDocNo", $("#s_dfNo").val());
 			formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",data.emplNo);
 			formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",data.clsfCode);
-			formData.append("atrzLineVOList["+idx+"].atrzTy",data.flex);//Y / N
-			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.auth);//  1 / 0
+			formData.append("atrzLineVOList["+idx+"].atrzTy",data.auth);//Y / N
+			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.flex);//  1 / 0
 			formData.append("atrzLineVOList["+idx+"].atrzLnSn",data.atrzLnSn);
 			formData.append("authList", JSON.stringify(authList)); // 배열은 stringify해서 보내도 무방
 		});	
@@ -1296,9 +1374,9 @@ $(document).ready(function() {
 					const matched = result.find(emp => emp.emplNo === authItem.emplNo);
 					if (matched) {
 						matched.flex = authItem.flex; // flex 정보도 보존
-						if (authItem.auth === "0") {
+						if (authItem.auth === "1") {
 							approvalList.push(matched);
-						} else if (authItem.auth === "1") {
+						} else if (authItem.auth === "0") {
 							referenceList.push(matched);
 						}
 					}
