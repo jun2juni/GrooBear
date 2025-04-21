@@ -283,4 +283,14 @@ public class ProjectServiceImpl implements ProjectService {
             throw e;
         }
     }
+    
+    @Override
+    public boolean updateTaskParent(Long taskNo, Long parentTaskNo) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("taskNo", taskNo);
+        params.put("parentTaskNo", parentTaskNo);
+        
+        int updatedRows = projectTaskMapper.updateTaskParent(params);
+        return updatedRows > 0;
+    }
 }

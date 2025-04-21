@@ -115,11 +115,18 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
     }
 
     @Override
-    public void updateTaskParent(Long taskNo, Long parentTaskNo) {
+    public boolean updateTaskParent(Long taskNo, Long parentTaskNo) {
         Map<String, Object> params = new HashMap<>();
         params.put("taskNo", taskNo);
         params.put("parentTaskNo", parentTaskNo);
-        projectTaskMapper.updateTaskParent(params);
+        
+        try {
+            projectTaskMapper.updateTaskParent(params);
+            return true;
+        } catch (Exception e) {
+            log.error("업무 상위 관계 업데이트 실패: {}", e.getMessage(), e);
+            return false;
+        }
     }
 
     @Transactional

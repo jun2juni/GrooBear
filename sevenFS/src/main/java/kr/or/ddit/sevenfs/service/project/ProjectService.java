@@ -134,4 +134,7 @@ public interface ProjectService {
      * @return 등록된 프로젝트 번호
      */
     public int registerProject(ProjectVO project);
+    
+    public boolean updateTaskParent(Long taskNo, Long parentTaskNo);
+    
 }

@@ -2,7 +2,8 @@ package kr.or.ddit.sevenfs.service.project;
 
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
-import kr.or.ddit.sevenfs.vo.project.TaskVO;
+import kr.or.ddit.sevenfs.vo.project.GanttTaskVO;
+import kr.or.ddit.sevenfs.vo.project.ProjectTaskEntity;
 
 import java.util.List;
 
@@ -17,9 +18,9 @@ public interface KanbanService {
 
     ProjectTaskVO getTaskById(Long taskNo);
 
-    List<TaskVO> getCardsByProject(Long prjctNo);
+    List<GanttTaskVO> getCardsByProject(Long prjctNo);
     
-    TaskVO getTaskCardById(Long taskNo);
+    GanttTaskVO getTaskCardById(Long taskNo);
 
-
+    List<ProjectTaskEntity> getTaskEntitiesByProject(Long prjctNo);
 }

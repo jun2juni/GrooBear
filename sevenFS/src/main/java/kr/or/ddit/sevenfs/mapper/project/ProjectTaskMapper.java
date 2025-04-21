@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
-import kr.or.ddit.sevenfs.vo.project.TaskVO;
+import kr.or.ddit.sevenfs.vo.project.GanttTaskVO;
 
 @Mapper
 public interface ProjectTaskMapper {
@@ -27,7 +27,7 @@ public interface ProjectTaskMapper {
 
 	public List<ProjectTaskVO> selectProjectTasks(int prjctNo);
 
-	public void updateTaskParent(Map<String, Object> params);
+	public int updateTaskParent(Map<String, Object> params);
 	
 	public void deleteTasksByProjectNo(int prjctNo);
 
@@ -35,10 +35,12 @@ public interface ProjectTaskMapper {
 
 	public int countChildTasks(Long parentTaskNo);
 
-	public List<TaskVO> selectTaskCardsByProjectNo(Long prjctNo);
+	public List<GanttTaskVO> selectTaskCardsByProjectNo(Long prjctNo);
 
 	public int updateTaskStatus(@Param("taskId") long taskId, @Param("status") String status);
 
-	public TaskVO selectCardById(Long taskNo);
+	public GanttTaskVO selectCardById(Long taskNo);
+	
+    
 
 }

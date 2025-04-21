@@ -2,7 +2,8 @@ package kr.or.ddit.sevenfs.mapper.project;
 
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
-import kr.or.ddit.sevenfs.vo.project.TaskVO;
+import kr.or.ddit.sevenfs.vo.project.GanttTaskVO;
+import kr.or.ddit.sevenfs.vo.project.ProjectTaskEntity;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -17,5 +18,5 @@ public interface KanbanMapper {
 
     ProjectTaskVO selectTaskById(Long taskNo);
     
-
+    List<ProjectTaskEntity> selectTaskEntitiesByProjectNo(Long prjctNo);
 }

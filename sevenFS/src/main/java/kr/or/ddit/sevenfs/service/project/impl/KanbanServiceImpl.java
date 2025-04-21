@@ -6,7 +6,8 @@ import kr.or.ddit.sevenfs.mapper.project.ProjectTaskMapper;
 import kr.or.ddit.sevenfs.service.project.KanbanService;
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
-import kr.or.ddit.sevenfs.vo.project.TaskVO;
+import kr.or.ddit.sevenfs.vo.project.GanttTaskVO;
+import kr.or.ddit.sevenfs.vo.project.ProjectTaskEntity;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,15 +45,19 @@ public class KanbanServiceImpl implements KanbanService {
     
 
     @Override
-    public List<TaskVO> getCardsByProject(Long prjctNo) {
+    public List<GanttTaskVO> getCardsByProject(Long prjctNo) {
         return projectTaskMapper.selectTaskCardsByProjectNo(prjctNo);
     }
 
     @Override
-    public TaskVO getTaskCardById(Long taskNo) {
+    public GanttTaskVO getTaskCardById(Long taskNo) {
         return projectTaskMapper.selectCardById(taskNo);
     }
 
-
+    @Override
+    public List<ProjectTaskEntity> getTaskEntitiesByProject(Long prjctNo) {
+        // 엔티티를 가져오는 매퍼 메서드 호출
+        return kanbanMapper.selectTaskEntitiesByProjectNo(prjctNo);
+    }
 
 }

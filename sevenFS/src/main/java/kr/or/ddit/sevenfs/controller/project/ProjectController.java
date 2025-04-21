@@ -39,6 +39,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import kr.or.ddit.sevenfs.mapper.common.CommonCodeMapper;
 import kr.or.ddit.sevenfs.mapper.project.ProjectTaskMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
+import kr.or.ddit.sevenfs.service.common.CommonCodeService;
 import kr.or.ddit.sevenfs.service.project.GanttService;
 import kr.or.ddit.sevenfs.service.project.ProjectService;
 import kr.or.ddit.sevenfs.service.project.ProjectTaskService;
@@ -47,6 +48,7 @@ import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectEmpVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
+import kr.or.ddit.sevenfs.vo.project.GanttTaskVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -61,11 +63,10 @@ public class ProjectController {
 	private AttachFileService attachFileService;
 	@Autowired
 	private ProjectTaskService projectTaskService;
-	@Autowired
-	ProjectTaskMapper projectTaskMapper;
 	
-	@Autowired
-	CommonCodeMapper commonCodeMapper;
+	
+    @Autowired
+    private CommonCodeService commonCodeService;
 	
 	@Autowired
 	GanttService ganttService;
@@ -121,7 +122,21 @@ public class ProjectController {
 	    return "project/projectList";
 	}
 
-
+	@GetMapping("/list/simple")
+	@ResponseBody
+	public List<Map<String, Object>> getSimpleProjectList() {
+	  List<Map<String, Object>> result = new ArrayList<>();
+	  List<ProjectVO> projects = projectService.getAllProjects();
+	  
+	  for (ProjectVO project : projects) {
+	    Map<String, Object> projectMap = new HashMap<>();
+	    projectMap.put("prjctNo", project.getPrjctNo());
+	    projectMap.put("prjctNm", project.getPrjctNm());
+	    result.add(projectMap);
+	  }
+	  
+	  return result;
+	}
 
 
 	
@@ -213,15 +228,10 @@ public class ProjectController {
 	                log.debug("상위 업무 처리: 인덱스 {} -> taskNo {}", parentIndex, parentTaskNo);
 	                
 	                if (parentTaskNo != null) {
-	                    // 상위 업무 번호 업데이트
-	                    Map<String, Object> params = new HashMap<>();
-	                    params.put("taskNo", task.getTaskNo());
-	                    params.put("parentTaskNo", parentTaskNo);
-	                    
-	                    log.info("업무 관계 업데이트: 업무 {} -> 상위 업무 {}", task.getTaskNo(), parentTaskNo);
-	                    
-	                    // ProjectTaskMapper에 추가할 메서드
-	                    projectTaskMapper.updateTaskParent(params);
+	                    // 매퍼 직접 호출 대신 서비스 메서드 호출
+	                    boolean updated = projectTaskService.updateTaskParent(task.getTaskNo(), parentTaskNo);
+	                    log.info("업무 관계 업데이트 {}: 업무 {} -> 상위 업무 {}", 
+	                            updated ? "성공" : "실패", task.getTaskNo(), parentTaskNo);
 	                }
 	            } catch (NumberFormatException e) {
 	                log.warn("상위 업무 인덱스 변환 실패: {}", task.getTempParentIndex());
@@ -382,4 +392,6 @@ public class ProjectController {
         }
     }
 
+    
+    
 }

@@ -89,9 +89,32 @@
   <div class="tab-pane fade" id="tab2" role="tabpanel">
     <div id="projectListContent">프로젝트 목록을 불러오는 중...</div>
   </div>
-  <div class="tab-pane fade" id="tab-gantt" role="tabpanel">
-    <div id="ganttChartArea"><div class="alert alert-info">프로젝트를 선택해주세요.</div></div>
+  
+<div class="tab-pane fade" id="tab-gantt" role="tabpanel">
+  <div class="card mb-3">
+    <div class="card-header bg-light">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h5 class="mb-0">간트 차트</h5>
+        </div>
+        <div class="col-md-6">
+          <select id="ganttProjectSelect" class="form-select">
+            <option value="">프로젝트 선택</option>
+            <!-- 프로젝트 목록은 JavaScript로 채워집니다 -->
+          </select>
+        </div>
+      </div>
+    </div>
   </div>
+  <div id="ganttChartArea" class="mt-3">
+    <div class="alert alert-info text-center">
+      <i class="material-icons-outlined mb-2" style="font-size: 2rem;">info</i>
+      <p>상단에서 프로젝트를 선택하면 간트 차트가 표시됩니다.</p>
+    </div>
+  </div>
+</div>
+  
+  
   
   <!-- 프로젝트 칸반보드 탭 -->
   <div class="tab-pane fade" id="projectKanban" role="tabpanel">
@@ -434,36 +457,139 @@ window.deleteProject = function(prjctNo) {
   });
 };
 
-// ✅ 간트 차트 로딩 함수 - 전역 함수로 한 번만 정의
+// 간트 차트 로딩 함수 - 전역 함수로 한 번만 정의
+// ✅ 개선된 간트 차트 로딩 함수
 window.loadGanttChart = function(prjctNo) {
-  console.log("간트차트 로드: " + prjctNo);
-  
-  // 탭 전환
-  var ganttTabBtn = document.querySelector('[data-bs-target="#tab-gantt"]');
-  if (ganttTabBtn) {
-    new bootstrap.Tab(ganttTabBtn).show();
+  console.log("간트차트 로드 시작: prjctNo =", prjctNo);
+  if (!prjctNo) {
+    console.error("프로젝트 번호가 제공되지 않았습니다.");
+    return;
   }
   
-  // 간트차트 로드
-  fetch("/project/gantt?prjctNo=" + prjctNo)
-    .then(function(res) { return res.text(); })
-    .then(function(html) {
-      var ganttArea = document.getElementById("ganttChartArea");
-      if (ganttArea) {
-        ganttArea.innerHTML = html;
-        safeExecuteInlineScripts("ganttChartArea");
+  // 간트 탭으로 전환
+  var ganttTabBtn = document.querySelector('[data-bs-target="#tab-gantt"]');
+  if (ganttTabBtn) {
+    try {
+      new bootstrap.Tab(ganttTabBtn).show();
+    } catch (e) {
+      console.error("간트 탭 전환 실패:", e);
+    }
+  }
+  
+  // 로딩 표시
+  var ganttArea = document.getElementById("ganttChartArea");
+  if (ganttArea) {
+    ganttArea.innerHTML = 
+      '<div class="text-center py-5">' +
+      '<div class="spinner-border" role="status"></div>' +
+      '<p class="mt-3">간트차트를 불러오는 중...</p>' +
+      '</div>';
+    
+    // 간트차트 로드 (캐시 방지를 위한 타임스탬프 추가)
+    fetch("/project/gantt?prjctNo=" + prjctNo + "&t=" + Date.now(), {
+      headers: { 
+        "X-Requested-With": "XMLHttpRequest",
+        "Cache-Control": "no-cache"
       }
     })
-    .catch(function(err) {
-      console.error("간트차트 로드 실패:", err);
-      var ganttArea = document.getElementById("ganttChartArea");
-      if (ganttArea) {
-        ganttArea.innerHTML = "<p class='text-danger'>간트차트를 불러오지 못했습니다.</p>";
+    .then(function(res) { 
+      if (!res.ok) {
+        throw new Error("서버 응답 오류: " + res.status);
       }
+      return res.text(); 
+    })
+    .then(function(html) {
+      if (!html || html.trim() === "") {
+        throw new Error("빈 응답");
+      }
+      
+      ganttArea.innerHTML = html;
+      
+      // 스크립트 실행
+      safeExecuteInlineScripts("ganttChartArea");
+    })
+    .catch(function(err) {
+      console.error("❌ 간트차트 로드 실패:", err);
+      ganttArea.innerHTML = 
+        '<div class="alert alert-danger">' +
+        '<p><i class="material-icons-outlined">error</i> 간트차트를 불러오지 못했습니다.</p>' +
+        '<p>오류 내용: ' + err.message + '</p>' +
+        '<button class="btn btn-sm btn-outline-secondary mt-2" onclick="loadGanttChart(' + prjctNo + ')">다시 시도</button>' +
+        '</div>';
     });
+  } else {
+    console.error("간트차트 영역(#ganttChartArea)을 찾을 수 없습니다.");
+  }
 };
 
-// ✅ 칸반보드 로딩
+// 아래 코드는 DOMContentLoaded 이벤트에 추가 (기존 이벤트 리스너를 대체하지 말고 추가)
+// 간트차트 탭 클릭 이벤트 처리
+document.addEventListener('DOMContentLoaded', function() {
+  // 기존 DOMContentLoaded 이벤트 리스너가 있을 수 있으므로 추가만 합니다
+  var ganttTabBtn = document.querySelector('[data-bs-target="#tab-gantt"]');
+  if (ganttTabBtn) {
+    ganttTabBtn.addEventListener('shown.bs.tab', function() {
+      console.log("간트 탭이 표시됨");
+      
+      // 간트 영역이 비어있거나 안내 메시지만 있는 경우
+      var ganttArea = document.getElementById("ganttChartArea");
+      if (ganttArea && (!ganttArea.innerHTML || 
+          ganttArea.innerHTML.trim() === "" || 
+          ganttArea.innerHTML.includes("프로젝트를 선택해주세요") ||
+          ganttArea.innerHTML.includes("alert"))) {
+        
+        // URL에서 프로젝트 번호 확인
+        const urlParams = new URLSearchParams(window.location.search);
+        const prjctNo = urlParams.get("prjctNo");
+        
+        if (prjctNo) {
+          // URL에 프로젝트 번호가 있으면 해당 프로젝트 간트차트 로드
+          console.log("URL 파라미터에서 프로젝트 번호 발견:", prjctNo);
+          loadGanttChart(prjctNo);
+        } else {
+          // 없으면 기본 안내 메시지 표시
+          ganttArea.innerHTML = '<div class="alert alert-info text-center p-4">' +
+                              '<i class="material-icons-outlined fs-1 mb-2">info</i>' +
+                              '<p>프로젝트를 선택하면 간트차트가 이곳에 표시됩니다.</p>' +
+                              '<p class="text-muted small">프로젝트 목록에서 프로젝트를 선택하세요.</p>' +
+                              '</div>';
+        }
+      }
+    });
+  }
+});
+
+// 간트차트로 이동 버튼에 대한 이벤트 위임 (별도로 추가)
+document.addEventListener('click', function(e) {
+  var target = e.target;
+  
+  // 간트차트 보기 링크 처리
+  if (target.classList.contains('gantt-tab-link') || 
+      (target.closest && target.closest('.gantt-tab-link'))) {
+    e.preventDefault();
+    
+    var link = target.classList.contains('gantt-tab-link') ? target : target.closest('.gantt-tab-link');
+    var prjctNo = link.getAttribute('data-project-id') || link.dataset.prjctNo;
+    
+    if (!prjctNo && link.getAttribute('onclick')) {
+      // onclick 속성에서 프로젝트 번호 추출 시도
+      var onclickText = link.getAttribute('onclick');
+      var match = /loadGanttChart\((\d+)\)/.exec(onclickText);
+      if (match && match[1]) {
+        prjctNo = match[1];
+      }
+    }
+    
+    if (prjctNo) {
+      console.log("간트차트 링크 클릭 감지, prjctNo =", prjctNo);
+      loadGanttChart(prjctNo);
+    } else {
+      console.error("프로젝트 번호를 찾을 수 없음");
+    }
+  }
+});
+
+// 칸반보드 로딩
 function loadKanbanBoard(prjctNo) {
   console.log("loadKanbanBoard 호출됨: prjctNo =", prjctNo);
   if (!prjctNo) return;
@@ -587,6 +713,182 @@ document.addEventListener('shown.bs.tab', function(e) {
   // 약간의 지연 후 검색 폼 설정 (DOM 업데이트 시간 허용)
   setTimeout(setupAllSearchForms, 300);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+//프로젝트 목록 로드 및 셀렉트 박스 설정 함수
+function loadProjectsForGantt() {
+  console.log("간트 차트용 프로젝트 목록 로드 시작");
+  fetch("/project/list/simple", {
+    headers: { "X-Requested-With": "XMLHttpRequest" }
+  })
+  .then(function(res) { 
+    if (!res.ok) throw new Error("프로젝트 목록 로드 실패");
+    return res.json(); 
+  })
+  .then(function(projects) {
+    console.log("프로젝트 목록 로드 완료:", projects.length, "개");
+    
+    // 셀렉트 박스 채우기
+    var select = document.getElementById("ganttProjectSelect");
+    if (!select) return;
+    
+    // 기존 옵션 초기화 (첫 번째 옵션은 유지)
+    while (select.options.length > 1) {
+      select.remove(1);
+    }
+    
+    // 프로젝트 옵션 추가
+    projects.forEach(function(project) {
+      var option = document.createElement("option");
+      option.value = project.prjctNo;
+      option.textContent = project.prjctNm;
+      
+      // 현재 URL에 프로젝트 번호가 있으면 해당 프로젝트 선택
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentPrjctNo = urlParams.get("prjctNo");
+      if (currentPrjctNo && currentPrjctNo == project.prjctNo) {
+        option.selected = true;
+      }
+      
+      select.appendChild(option);
+    });
+    
+    // 선택된 프로젝트가 있으면 간트 차트 로드
+    if (select.value) {
+      loadGanttChart(select.value);
+    }
+  })
+  .catch(function(err) {
+    console.error("프로젝트 목록 로드 실패:", err);
+    var select = document.getElementById("ganttProjectSelect");
+    if (select) {
+      var option = document.createElement("option");
+      option.value = "";
+      option.textContent = "프로젝트 목록을 불러올 수 없습니다";
+      select.appendChild(option);
+    }
+  });
+}
+
+// 간트 차트 탭 클릭 시 프로젝트 목록 로드
+document.addEventListener('DOMContentLoaded', function() {
+  var ganttTabBtn = document.querySelector('[data-bs-target="#tab-gantt"]');
+  if (ganttTabBtn) {
+    ganttTabBtn.addEventListener('shown.bs.tab', function() {
+      console.log("간트 탭이 표시됨");
+      
+      // 프로젝트 목록 로드
+      loadProjectsForGantt();
+    });
+  }
+  
+  // 셀렉트 박스 변경 이벤트
+  var ganttProjectSelect = document.getElementById("ganttProjectSelect");
+  if (ganttProjectSelect) {
+    ganttProjectSelect.addEventListener('change', function() {
+      var selectedProjectNo = this.value;
+      if (selectedProjectNo) {
+        loadGanttChart(selectedProjectNo);
+      } else {
+        // 선택된 프로젝트가 없으면 안내 메시지 표시
+        var ganttArea = document.getElementById("ganttChartArea");
+        if (ganttArea) {
+          ganttArea.innerHTML = '<div class="alert alert-info text-center">' +
+                                '<i class="material-icons-outlined mb-2" style="font-size: 2rem;">info</i>' +
+                                '<p>프로젝트를 선택하면 간트 차트가 표시됩니다.</p>' +
+                                '</div>';
+        }
+      }
+    });
+  }
+});
+
+// 3. 수정된 loadGanttChart 함수 (기존 함수 대체)
+window.loadGanttChart = function(prjctNo) {
+  console.log("간트차트 로드 시작: prjctNo =", prjctNo);
+  if (!prjctNo) {
+    console.error("프로젝트 번호가 제공되지 않았습니다.");
+    return;
+  }
+  
+  // 간트 탭으로 전환
+  var ganttTabBtn = document.querySelector('[data-bs-target="#tab-gantt"]');
+  if (ganttTabBtn) {
+    try {
+      new bootstrap.Tab(ganttTabBtn).show();
+    } catch (e) {
+      console.error("간트 탭 전환 실패:", e);
+    }
+  }
+  
+  // 셀렉트 박스에서 해당 프로젝트 선택
+  var ganttProjectSelect = document.getElementById("ganttProjectSelect");
+  if (ganttProjectSelect) {
+    for (var i = 0; i < ganttProjectSelect.options.length; i++) {
+      if (ganttProjectSelect.options[i].value == prjctNo) {
+        ganttProjectSelect.selectedIndex = i;
+        break;
+      }
+    }
+  }
+  
+  // 로딩 표시
+  var ganttArea = document.getElementById("ganttChartArea");
+  if (ganttArea) {
+    ganttArea.innerHTML = 
+      '<div class="text-center py-5">' +
+      '<div class="spinner-border" role="status"></div>' +
+      '<p class="mt-3">간트차트를 불러오는 중...</p>' +
+      '</div>';
+    
+    // 간트차트 로드 (캐시 방지를 위한 타임스탬프 추가)
+    fetch("/project/gantt?prjctNo=" + prjctNo + "&t=" + Date.now(), {
+      headers: { 
+        "X-Requested-With": "XMLHttpRequest",
+        "Cache-Control": "no-cache"
+      }
+    })
+    .then(function(res) { 
+      if (!res.ok) {
+        throw new Error("서버 응답 오류: " + res.status);
+      }
+      return res.text(); 
+    })
+    .then(function(html) {
+      if (!html || html.trim() === "") {
+        throw new Error("빈 응답");
+      }
+      
+      ganttArea.innerHTML = html;
+      
+      // 스크립트 실행
+      safeExecuteInlineScripts("ganttChartArea");
+    })
+    .catch(function(err) {
+      console.error("❌ 간트차트 로드 실패:", err);
+      ganttArea.innerHTML = 
+        '<div class="alert alert-danger">' +
+        '<p><i class="material-icons-outlined">error</i> 간트차트를 불러오지 못했습니다.</p>' +
+        '<p>오류 내용: ' + err.message + '</p>' +
+        '<button class="btn btn-sm btn-outline-secondary mt-2" onclick="loadGanttChart(' + prjctNo + ')">다시 시도</button>' +
+        '</div>';
+    });
+  } else {
+    console.error("간트차트 영역(#ganttChartArea)을 찾을 수 없습니다.");
+  }
+};
+
 </script>
 
 </body>

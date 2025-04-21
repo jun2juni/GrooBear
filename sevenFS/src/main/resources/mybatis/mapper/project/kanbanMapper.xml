@@ -5,28 +5,30 @@
 
 <mapper namespace="kr.or.ddit.sevenfs.mapper.project.KanbanMapper">
 
-    <select id="selectTasksByProjectNo" parameterType="long" resultType="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO">
-        SELECT 
-            PT.TASK_NO,
-            PT.PRJCT_NO,
-            PT.TASK_NM,
-            PT.TASK_CN,
-            PT.TASK_BEGIN_DT,
-            PT.TASK_END_DT,
-            PT.TASK_GRAD,
-            PT.TASK_STTUS,
-            PT.PROGRSRT,
-            PT.TASK_DAYCNT,
-            PT.UPPER_TASK_NO,
-            PT.CHARGER_EMPNO,
-            E.EMPL_NM AS CHARGER_EMP_NM,
-            PT.ATCH_FILE_NO,
-            PT.PRIORT
-        FROM PROJECT_TASK PT
-        LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
-        WHERE PT.PRJCT_NO = #{prjctNo}
-        ORDER BY PT.TASK_NO
-    </select>
+	<select id="selectTaskEntitiesByProjectNo" parameterType="long" resultType="kr.or.ddit.sevenfs.vo.project.ProjectTaskEntity">
+	    SELECT 
+	        PT.TASK_NO,
+	        PT.PRJCT_NO,
+	        PT.TASK_NM,
+	        PT.TASK_CN,
+	        PT.TASK_BEGIN_DT,
+	        PT.TASK_END_DT,
+	        PT.TASK_GRAD,
+	        PT.TASK_STTUS,
+	        PT.PROGRSRT,
+	        PT.TASK_DAYCNT,
+	        PT.UPPER_TASK_NO,
+	        PT.CHARGER_EMPNO,
+	        E.EMPL_NM AS CHARGER_EMP_NM,
+	        PT.ATCH_FILE_NO,
+	        PT.PRIORT,
+	        PARENT.TASK_NM AS PARENT_TASK_NM
+	    FROM PROJECT_TASK PT
+	    LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
+	    LEFT JOIN PROJECT_TASK PARENT ON PT.UPPER_TASK_NO = PARENT.TASK_NO
+	    WHERE PT.PRJCT_NO = #{prjctNo}
+	    ORDER BY PT.TASK_NO
+	</select>
 
     <update id="updateTaskStatus">
         UPDATE PROJECT_TASK

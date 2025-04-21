@@ -31,7 +31,7 @@ public class ProjectTaskVO {
     private long atchFileNo;
     private Long upperTaskNo;
 
-    private String chargerEmpno;
+    private long chargerEmpno;
     private String chargerEmpNm;
     private String role;
     private String priort;
@@ -75,5 +75,35 @@ public class ProjectTaskVO {
         return (upperTaskNo != null) ? Math.toIntExact(upperTaskNo) : 0;
     }
 
-    // ⚠ setter 생략 가능 (MyBatis는 getter만 있어도 동작)
+    public GanttTaskVO toGanttVO() {
+        GanttTaskVO vo = new GanttTaskVO();
+        vo.setTaskNo(this.taskNo);
+        vo.setTaskId(this.taskNo);  // taskId 설정
+        vo.setPrjctNo(this.prjctNo);
+        vo.setTaskNm(this.taskNm);
+        vo.setTaskCn(this.taskCn);
+        vo.setTaskBeginDt(this.taskBeginDt);
+        vo.setTaskEndDt(this.taskEndDt);
+        vo.setPriort(this.priort);
+        vo.setTaskGrad(this.taskGrad);
+        vo.setTaskSttus(this.taskSttus);
+        vo.setProgrsrt(this.progrsrt);
+        vo.setTaskDaycnt(this.taskDaycnt);
+        vo.setUpperTaskNo(this.upperTaskNo);
+        vo.setChargerEmpNm(this.chargerEmpNm);
+        return vo;
+    }
+
+    public KanbanTaskVO toKanbanVO() {
+        KanbanTaskVO vo = new KanbanTaskVO();
+        vo.setTaskNo(this.taskNo);
+        vo.setPrjctNo(this.prjctNo);
+        vo.setTaskNm(this.taskNm);
+        vo.setTaskSttus(this.taskSttus);
+        vo.setChargerEmpNm(this.chargerEmpNm);
+        vo.setTaskGrad(this.taskGrad);
+        vo.setPriort(this.priort);
+        vo.setProgrsrt(this.progrsrt);
+        return vo;
+    }
 }

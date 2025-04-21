@@ -330,17 +330,17 @@
     WHERE PRJCT_NO = #{prjctNo}
 </select>
 
-<resultMap id="taskResultMap" type="kr.or.ddit.sevenfs.vo.project.TaskVO">
-    <result property="taskId" column="TASK_NO"/>
-    <result property="taskText" column="TASK_NM"/>
-    <result property="startDate" column="TASK_BEGIN_DT"/>
-    <result property="endDate" column="TASK_END_DT"/>
-    <result property="progress" column="PROGRSRT"/>
-    <result property="parentId" column="UPPER_TASK_NO"/>
-    <result property="owner" column="CHARGER_EMPNO"/>
-    <result property="status" column="TASK_STTUS"/>
-    <result property="priority" column="PRIORT"/>
-</resultMap>
+	<resultMap id="taskResultMap" type="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO">
+	    <result property="taskId" column="TASK_NO"/>
+	    <result property="taskText" column="TASK_NM"/>
+	    <result property="startDate" column="TASK_BEGIN_DT"/>
+	    <result property="endDate" column="TASK_END_DT"/>
+	    <result property="progress" column="PROGRSRT"/>
+	    <result property="parentId" column="UPPER_TASK_NO"/>
+	    <result property="owner" column="CHARGER_EMPNO"/>
+	    <result property="status" column="TASK_STTUS"/>
+	    <result property="priority" column="PRIORT"/>
+	</resultMap>
 	
 	
 	<select id="selectAllProjects" resultType="ProjectVO">

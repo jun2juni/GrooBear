@@ -256,7 +256,6 @@ th.desc::after {
     </div>
   </div>
 </div>
-console.log("Compare:", aVal, bVal);
 <script>
 function sortTableByColumn(tableId, colIndex, type = 'string') {
     const table = document.getElementById(tableId);

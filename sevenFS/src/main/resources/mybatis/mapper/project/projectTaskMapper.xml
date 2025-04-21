@@ -6,10 +6,7 @@
 	<resultMap id="projectTaskResultMap" type="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO">
 	  <id property="taskNo" column="TASK_NO"/>
 	  <result property="prjctNo" column="PRJCT_NO"/>
-	  <result property="taskNm" column="TASK_NM"/>
 	  <result property="taskCn" column="TASK_CN"/>
-	  <result property="taskBeginDt" column="TASK_BEGIN_DT"/>
-	  <result property="taskEndDt" column="TASK_END_DT"/>
 	  <result property="taskGrad" column="TASK_GRAD"/>
 	  <result property="priort" column="PRIORT"/>
 	  <result property="taskSttus" column="TASK_STTUS"/>
@@ -20,6 +17,10 @@
 	  <result property="chargerEmpno" column="CHARGER_EMPNO"/>
 	  <result property="chargerEmpNm" column="CHARGER_EMP_NM"/>
 	  <result property="parentTaskNm" column="PARENT_TASK_NM"/>
+	  <result property="taskText" column="TASK_NM"/>
+	<result property="startDate" column="TASK_BEGIN_DT"/>
+	<result property="endDate" column="TASK_END_DT"/>
+	  
 	  
 	</resultMap>
 
@@ -105,10 +106,10 @@
     </insert>
     
     
-	<update id="updateTaskParent" parameterType="java.util.Map">
-	    UPDATE PROJECT_TASK
-	    SET UPPER_TASK_NO = #{parentTaskNo}
-	    WHERE TASK_NO = #{taskNo}
+	<update id="updateTaskParent" parameterType="map">
+	    UPDATE project_task 
+	    SET upper_task_no = #{parentTaskNo}
+	    WHERE task_no = #{taskNo}
 	</update>
 
 	<!-- 프로젝트 번호로 업무 목록 조회 -->
@@ -202,7 +203,7 @@
 	    WHERE UPPER_TASK_NO = #{parentTaskNo}
 	</select>
 
-	<select id="selectTaskCardsByProjectNo" resultType="kr.or.ddit.sevenfs.vo.project.TaskVO">
+	<select id="selectTaskCardsByProjectNo" resultType="kr.or.ddit.sevenfs.vo.project.KanbanTaskVO">
 	  SELECT
 	    PT.TASK_NO,
 	    PT.TASK_NM,
@@ -253,7 +254,7 @@
 	  ORDER BY PT.TASK_NO
 	</select>
 	
-	<select id="selectCardById" resultType="kr.or.ddit.sevenfs.vo.project.TaskVO" parameterType="long">
+	<select id="selectCardById" resultType="kr.or.ddit.sevenfs.vo.project.KanbanTaskVO" parameterType="long">
 	  SELECT
 	    PT.TASK_NO,
 	    PT.TASK_NM,

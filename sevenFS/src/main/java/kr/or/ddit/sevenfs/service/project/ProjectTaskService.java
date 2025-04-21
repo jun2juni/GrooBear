@@ -28,7 +28,7 @@ public interface ProjectTaskService {
 	public Long insertProjectTaskAndGetId(ProjectTaskVO taskVO);
 
 	// 상위 업무 관계 업데이트 메서드
-	public void updateTaskParent(Long taskNo, Long parentTaskNo);
+	public boolean updateTaskParent(Long taskNo, Long parentTaskNo);
 	
 	public void updateTaskParentRelations(List<ProjectTaskVO> tasks);
     
