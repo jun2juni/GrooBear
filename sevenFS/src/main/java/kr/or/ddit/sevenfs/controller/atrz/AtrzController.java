@@ -300,80 +300,66 @@ public class AtrzController {
 		atrzVO.setClsfCodeNm(ClsfCodeNm);
 		atrzVO.setDeptCodeNm(drafterInfo.getDeptNm());
 		
-		//기본권한 여부 :  기안자
-		Boolean isAuthorize = false;   								//결재권한
-		Boolean canView = empNo.equals(atrzVO.getDrafterEmpno());   //열람가능
-		
-		//결재선 처리  + 권한 체크
+		//권한별 상세보기 조회 막는곳
+		// 기본권한 여부 : 기안자
+		Boolean isAuthorize = false;   								
+		Boolean canView = empNo.equals(atrzVO.getDrafterEmpno());   
+
 		List<AtrzLineVO> atrzLineVOList = atrzVO.getAtrzLineVOList();
 		List<EmployeeVO> sanEmplVOList = new ArrayList<>();
-		
-		
-		log.info("atrzLineVOList : "+atrzLineVOList);
-		//atrzLineVOList : 결재선(atrzTy : N/Y)
-		int lastAtrzLnSn=0;
-		for(AtrzLineVO atrzLineVO : atrzLineVOList) {
-			String atrzTy = atrzLineVO.getAtrzTy();    //1이면 결재자  0면 참조자
+
+		log.info("atrzLineVOList : " + atrzLineVOList);
+
+		int lastAtrzLnSn = 0;
+
+		for (AtrzLineVO atrzLineVO : atrzLineVOList) {
+			String atrzTy = atrzLineVO.getAtrzTy(); // 1: 결재자, 0: 참조자
 			
-			//결재자, 대결재, 전결자 권한 체크 
-			//접근 해지
-			
-			if("1".equals(atrzTy)) {
-				if(	empNo.equals(atrzLineVO.getSanctnerEmpno())
+			boolean isMatched = empNo.equals(atrzLineVO.getSanctnerEmpno())
 				|| empNo.equals(atrzLineVO.getContdEmpno())
-				|| empNo.equals(atrzLineVO.getDcrbManEmpno())) {
-					log.info("결재 권한 있음 - 사용자 사번: "+ empNo);
-					isAuthorize = true;
-				}
+				|| empNo.equals(atrzLineVO.getDcrbManEmpno())
+				|| empNo.equals(atrzLineVO.getAftSanctnerEmpno());
+
+			if ("1".equals(atrzTy)) {
 				lastAtrzLnSn++;
-			} else {
-				if(empNo.equals(atrzLineVO.getSanctnerEmpno())
-				|| empNo.equals(atrzLineVO.getContdEmpno())
-				|| empNo.equals(atrzLineVO.getDcrbManEmpno())){
-					log.info("결재 권한 있음 - 사용자 사번: "+ empNo);
-					isAuthorize = false;
+				if (isMatched) {
+					isAuthorize = true;
+					canView = true;
+					log.info("결재 권한 있음 - 사용자 사번: " + empNo);
+				}
+			} else { // 참조자
+				if (isMatched) {
+					canView = true;
+					log.info("참조 권한 있음 - 사용자 사번: " + empNo);
 				}
 			}
-			log.info("ATRZ_TY: "+ atrzLineVO.getAtrzTy());
-			log.info("결재자 사번(SANCTNER_EMPNO): "+ atrzLineVO.getSanctnerEmpno());
-			log.info("대결자 사번(CONTD_EMPNO): "+ atrzLineVO.getContdEmpno());
-			log.info("전결자 사번(DCRB_MAN_EMPNO): "+ atrzLineVO.getDcrbManEmpno());
-			//참조자든 결재자든 누구든 열람가능
-			if(!canView &&(
-					empNo.equals(atrzLineVO.getAftSanctnerEmpno())
-					|| empNo.equals(atrzLineVO.getContdEmpno())
-					|| empNo.equals(atrzLineVO.getDcrbManEmpno()))) {
-				log.info("문서 열람 권한 있음 - 사용자 사번: "+ empNo);
-				canView = true;
-			}
-			
-			if(!canView && "1".equals(atrzTy)) {
-				canView = true; //참조자의 경우에는 열람만 가능
-			}
-			
-			//열람 권한이 없는 경우만 막기
-			if(!canView) {
-				return "redirect:/error";
-			}
-			
-			//결재자 이름 / 직급 셋팅
+
+			log.info("ATRZ_TY: " + atrzTy);
+			log.info("결재자 사번(SANCTNER_EMPNO): " + atrzLineVO.getSanctnerEmpno());
+			log.info("대결자 사번(CONTD_EMPNO): " + atrzLineVO.getContdEmpno());
+			log.info("전결자 사번(DCRB_MAN_EMPNO): " + atrzLineVO.getDcrbManEmpno());
+
+			// 결재자 이름/직급 셋팅
 			String sancterEmpNo = atrzLineVO.getSanctnerEmpno();
-			EmployeeVO sanEmplVO =organizationService.emplDetail(sancterEmpNo);
+			EmployeeVO sanEmplVO = organizationService.emplDetail(sancterEmpNo);
 			sanEmplVOList.add(sanEmplVO);
-			
-			//직급명 이름 설정
+
 			String sanctClsfCd = atrzLineVO.getSanctnerClsfCode();
 			String sanctClsfNm = CommonCode.PositionEnum.INTERN.getLabelByCode(sanctClsfCd);
 			atrzLineVO.setSanctnerClsfNm(sanctClsfNm);
-			//결재자의 이름 담기
 			atrzLineVO.setSanctnerEmpNm(sanEmplVO.getEmplNm());
-			log.info("sanctClsfNm : "+sanctClsfNm);
-			//여기서 하나하나 담긴애들을 리스트로 보내야한다.
-			
-			log.info("sanEmplVO : "+sanEmplVO);
-			log.info("sancterEmpNo : "+sancterEmpNo);
-			
+
+			log.info("sanctClsfNm : " + sanctClsfNm);
+			log.info("sanEmplVO : " + sanEmplVO);
+			log.info("sancterEmpNo : " + sancterEmpNo);
 		}
+
+		// 🔐 열람 권한 없는 경우 리다이렉트
+		if (!canView) {
+			log.warn("전자결재 상세보기 접근 차단 - 사용자 사번: " + empNo);
+			return "redirect:/error";
+		}
+
 		//다음결재할사람이 없는것(결재자가 없는것)을 계산함
 		int curAtrzLnSn = atrzLineVOList.stream()
 			    .filter(vo -> "1".equals(vo.getAtrzTy()) && "00".equals(vo.getSanctnProgrsSttusCode()))
@@ -385,8 +371,6 @@ public class AtrzController {
 			model.addAttribute("curAtrzLnSn", curAtrzLnSn);
 			model.addAttribute("lastAtrzLnSn", lastAtrzLnSn);
 			
-		
-		
 		//연차상세정보 셋팅
 		atrzVO.setHolidayVO(atrzService.holidayDetail(atrzDocNo));
 		
@@ -1088,19 +1072,5 @@ public class AtrzController {
 		return "쭈니성공";
 	}
 
-	// 3) 기안서 상세
-	@GetMapping("/selectForm/draftDetail")
-	public String draftDetail(Model model, @RequestParam(value = "draftNo", required = true) String draftNo) {
-		log.info("draftDetail->draftNo : " + draftNo);
-
-		// SELECT * FROM DRAFT WHERE DRAFT_NO = 2
-		DraftVO draftVO = this.atrzService.draftDetail(draftNo);
-		log.info("draftDetail->draftVO : " + draftVO);
-
-		model.addAttribute("title", "기안서 상세보기");
-		model.addAttribute("draftVO", draftVO);
-
-		return "documentForm/draftDetail";
-	}
 
 }
