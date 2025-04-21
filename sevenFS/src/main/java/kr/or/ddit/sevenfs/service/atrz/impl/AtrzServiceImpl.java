@@ -548,36 +548,106 @@ public class AtrzServiceImpl implements AtrzService {
 	//전자결재 상세 업데이트(반려시)
 	@Override
 	public int atrzDetilCompUpdate(AtrzVO atrzVO) {
+		/*
+		 atrzDetilCompUpdate->atrzVO : AtrzVO(atrzDocNo=H_20250421_00003, drafterEmpno=null, drafterClsf=null, drafterEmpnm=null, drafterDept=null, bkmkYn=null, atchFileNo=0, atrzSj=null, atrzCn=null, atrzOpinion=null, atrzTmprStreDt=null, atrzDrftDt=null, atrzComptDt=null, atrzRtrvlDt=null, atrzSttusCode=null, eltsgnImage=null, docFormNo=0, atrzDeleteYn=null, schdulRegYn=null, docFormNm=null, emplNoArr=null, emplNo=20250025, emplNm=null, clsfCode=null, clsfCodeNm=null, deptCode=null, deptCodeNm=null, authorize=null, uploadFile=null, atrzLineVOList=[AtrzLineVO(atrzDocNo=null, atrzLnSn=0, sanctnerEmpno=null, sanctnerClsfCode=null, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=null, sanctnProgrsSttusCode=null, dcrbAuthorYn=null, contdAuthorYn=null, sanctnOpinion=반려알림 가나요?, eltsgnImage=null, sanctnConfmDt=null, atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0)], holidayVO=null, spendingVO=null, salaryVO=null, bankAccountVO=null, draftVO=null, emplDetailList=null, authorStatus=null, sanctnProgrsSttusCode=20)
+		 */
+		
+		log.info("atrzDetilCompUpdate->atrzVO : "+atrzVO);
+		
 		//문서번호  
 		String atrzDocNo = atrzVO.getAtrzDocNo();
-		
+		log.info("atrzDetilCompUpdate->atrzDocNo : "+atrzDocNo);
 		//사원번호
 		String emplNo = atrzVO.getEmplNo();
 		//결재의견
 		String atrzOption = atrzVO.getAtrzOpinion();
 		
 		
-		log.info("atrzDetilCompUpdate->atrzVO : "+atrzVO);
-		log.info("atrzDetilCompUpdate->atrzDocNo : "+atrzDocNo);
-		
-		
-		//현재 결재에서 결재한 사람 찾기
-		AtrzLineVO currentLine = null;
-		log.info("atrzDetilCompUpdate->currentLine: "+currentLine);
+		//전자결재문서번호만 존재하기 때문에 상세 정보를 가져오기위한것
+		AtrzVO atrzVOApp = atrzMapper.selectAtrzDetail(atrzDocNo);
+		/*
+		 atrzDetailAppUpdate-> atrzVOApp : AtrzVO(atrzDocNo=H_20250421_00003, drafterEmpno=20250004
+		 , drafterClsf=02, drafterEmpnm=길준희, drafterDept=91, bkmkYn=N, atchFileNo=0, atrzSj=반려알림을 위한것
+		 , atrzCn=반려알림을 위한것, atrzOpinion=null, atrzTmprStreDt=null, atrzDrftDt=Mon Apr 21 20:45:56 KST 2025
+		 , atrzComptDt=null, atrzRtrvlDt=null, atrzSttusCode=00, eltsgnImage=null, docFormNo=1, atrzDeleteYn=N
+		 , schdulRegYn=null, docFormNm=null, emplNoArr=null, emplNo=null, emplNm=null, clsfCode=null, clsfCodeNm=null
+		 , deptCode=null, deptCodeNm=null, authorize=null, uploadFile=null, atrzLineVOList=[AtrzLineVO(atrzDocNo=H_20250421_00003
+		 , atrzLnSn=0, sanctnerEmpno=null, sanctnerClsfCode=null, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null
+		 , dcrbManClsfCode=null, atrzTy=null, sanctnProgrsSttusCode=null, dcrbAuthorYn=null, contdAuthorYn=null
+		 , sanctnOpinion=null, eltsgnImage=null, sanctnConfmDt=null, atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null
+		 , sanctnerEmpNm=null, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null
+		 , aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0)], holidayVO=null, spendingVO=null, salaryVO=null
+		 , bankAccountVO=null, draftVO=null, emplDetailList=null, authorStatus=null, sanctnProgrsSttusCode=null) 
+		 */
+		log.info("atrzDetailAppUpdate-> atrzVOApp : "+atrzVOApp);
 
-		//나의 전자결재선 상황(1행)
-		AtrzLineVO emplAtrzLineInfo = this.atrzMapper.getAtrzLineInfo(atrzVO);
-		log.info("atrzDetailAppUpdate-> emplAtrzLineInfo : "+emplAtrzLineInfo);
-		//H_20250411_00003 문서의 결재선 총 스탭수
-		//0 : 마지막 결재자가 아님
-		//0이 아닌 경우 : 마지막 결재자임
-		int maxStep = atrzMapper.getMaxStep(atrzVO);
-		log.info("atrzDetailAppUpdate-> maxStep : "+maxStep);
+//		//나의 전자결재선 상황(1행)
+//		AtrzLineVO emplAtrzLineInfo = this.atrzMapper.getAtrzLineInfo(atrzVO);
+//		log.info("atrzDetailAppUpdate-> emplAtrzLineInfo : "+emplAtrzLineInfo);
+//		//H_20250411_00003 문서의 결재선 총 스탭수
+//		//0 : 마지막 결재자가 아님
+//		//0이 아닌 경우 : 마지막 결재자임
+//		int maxStep = atrzMapper.getMaxStep(atrzVO);
+//		log.info("atrzDetailAppUpdate-> maxStep : "+maxStep);
 
 		//I. ATRZ_LINE 결재 처리
 		int result = atrzMapper.atrzDetilCompUpdate(atrzVO);
 		
-		//알림넣기 
+		
+		//반려시 기안자에게 반려확인 알림 
+		EmployeeVO drafterVO = new EmployeeVO();
+		drafterVO.setEmplNo(atrzVOApp.getDrafterEmpno());
+		log.info("atrzDetailAppUpdate-> drafterVO : "+drafterVO);
+		List<EmployeeVO> employeeVOList = new ArrayList<>();
+		employeeVOList.add(drafterVO);
+		/*
+		 atrzDetailAppUpdate-> employeeVOList : [EmployeeVO(atchFileNo=0, anslry=0, telno=null
+		 , retireDate=null, proflPhotoUrl=null, postNo=null, password=null, partclrMatter=null
+		 , genderCode=null, genderCodeNm=null, enabled=null, emplSttusCode=null, emplNo=null
+		 , emplNm=null, email=null, elctrnSignImageUrl=null, ecnyDate=null, detailAdres=null
+		 , deptCode=null, deptCodeNm=null, contdEmpno=null, clsfCode=null, clsfCodeNm=null
+		 , brthdy=null, bankNm=null, adres=null, acnutno=null, upperCmmnCode=null, deptNm=null
+		 , posNm=null, empAuthVOList=null, notificationVOList=null, chatRoomVOList=null
+		 , skillAuth=null)]
+		  */
+		log.info("atrzDetailAppUpdate-> employeeVOList : "+employeeVOList);
+		
+
+		//전자결재 유형별로 문구 변경하기 위한것
+		String docNo = atrzVO.getAtrzDocNo();
+		String docTypeNm = ""; // 문서 유형 이름
+		
+		if (docNo != null && !docNo.isEmpty()) {
+		    char firstChar = docNo.charAt(0);
+
+		    switch (firstChar) {
+		        case 'H':
+		            docTypeNm = "연차신청서";
+		            break;
+		        case 'S':
+		            docTypeNm = "지출결의서";
+		            break;
+		        case 'D':
+		            docTypeNm = "기안서";
+		            break;
+		        default:
+		            docTypeNm = "전자결재 문서";
+		            break;
+		    }
+		}
+ 
+		atrzVOApp =  atrzMapper.selectAtrzDetail(atrzDocNo);
+		
+		// 알림 내용설정 
+		NotificationVO notificationVOCompanion = new NotificationVO();
+		notificationVOCompanion.setNtcnSj("[전자결재 알림]");
+		notificationVOCompanion.setNtcnCn(atrzVOApp.getDrafterEmpnm() +" 님 기안하신 " + docTypeNm +  "가 반려되었습니다.  (반려사유 : "+atrzVOApp.getAtrzOpinion()+")");
+		notificationVOCompanion.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo=" + atrzVO.getAtrzDocNo());
+		notificationVOCompanion.setSkillCode("02");
+		log.info("atrzDetailAppUpdate-> notificationVOFinish : "+notificationVOCompanion);
+
+		// 알림 전송
+		notificationService.insertNotification(notificationVOCompanion, employeeVOList);
 		
 		return 1;
 	}
@@ -592,8 +662,8 @@ public class AtrzServiceImpl implements AtrzService {
 		//사원번호
 		String emplNo = atrzVO.getEmplNo();
 		
-		log.info("atrzDetilCompUpdate->atrzVO : "+atrzVO);
-		log.info("atrzDetilCompUpdate->atrzDocNo : "+atrzDocNo);
+		log.info("atrzCancelUpdate->atrzVO : "+atrzVO);
+		log.info("atrzCancelUpdate->atrzDocNo : "+atrzDocNo);
 		List<AtrzLineVO> atrzLineVOList = atrzVO.getAtrzLineVOList(); 
 		log.info("atrzCancelUpdate->atrzLineVOList : "+atrzLineVOList);
 		String drafterEmpNo = atrzVO.getDrafterEmpno();
