@@ -256,59 +256,62 @@
 	                const depth = answer.answerDepth != null ? answer.answerDepth : 0;
 
 	                html += `
-	                	  <div class="card shadow-sm border-0 rounded mb-3" style="margin-left: \${marginLeft}px;">
-	                	    <div class="card-body">
-	                	      <!-- 작성자 & 날짜 -->
-	                	      <div class="d-flex justify-content-between align-items-center mb-2">
-	                	        <div class="d-flex align-items-center gap-2">
-	                	          <span class="fw-semibold text-secondary">\${answer.emplNm}</span>
-	                	        </div>
-	                	        <small class="text-muted">\${formattedDate}</small>
-	                	      </div>
+	                    <div class="card shadow-sm border-0 rounded mb-3 ${depth > 0 ? 'bg-light-subtle' : ''}" style="margin-left: \${marginLeft}px;">
+	                      <div class="card-body pb-2">
+	                        <!-- 작성자 & 날짜 -->
+	                        <div class="d-flex justify-content-between align-items-center mb-2">
+	                          <div class="d-flex align-items-center gap-2">
+	                            <span class="fw-semibold \${depth === 0 ? 'text-primary' : 'text-dark'}">\${answer.emplNm}</span>
+	                            \${depth > 0 ? '<span class="badge text-bg-secondary">답글</span>' : ''}
+	                          </div>
+	                          <small class="text-muted">\${formattedDate}</small>
+	                        </div>
 
-	                	      <!-- 댓글 본문 -->
-	                	      <p class="card-text text-dark lh-sm mb-3" id="answerCn-\${answer.answerNo}" data-content="\${answer.answerCn}">
-	                	        \${answer.answerCn}
-	                	      </p>
+	                        <!-- 댓글 본문 -->
+	                        <p class="card-text text-dark lh-sm mb-3" id="answerCn-\${answer.answerNo}" data-content="\${answer.answerCn}">
+	                          \${answer.answerCn}
+	                        </p>
 
-	                	      <!-- 버튼 영역 -->
-	                	      <div class="d-flex justify-content-end align-items-center gap-2">
-	                	        <button class="btn btn-sm btn-outline-secondary"
-	                	                onclick="showReplyForm(\${answer.answerNo}, \${depth})">
-	                	          <i class="bi bi-reply"></i> 답글
-	                	        </button>
-	                	        <div class="dropdown">
-	                	          <button class="btn btn-sm btn-outline-light text-dark" type="button" id="dropdownMenu-\${answer.answerNo}"
-	                	                  data-bs-toggle="dropdown" aria-expanded="false">
-	                	            <i class="bi bi-three-dots"></i>
-	                	          </button>
-	                	          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenu-\${answer.answerNo}">
-	                	`;
+	                        <!-- 버튼 영역 -->
+	                        <div class="d-flex justify-content-between align-items-center">
+	                        <!-- 답글 버튼 (댓글일 때만 표시) -->
+	                          <div>
+	                            \${depth === 0 ? `
+	                              <button class="btn btn-sm btn-outline-secondary"
+	                                      onclick="showReplyForm(\${answer.answerNo}, \${depth})">
+	                                <i class="bi bi-reply"></i> 답글
+	                              </button>
+	                            ` : ''}
+	                          </div>
+	                          <!-- 드롭다운 (수정/삭제) -->
+	                          <div>
+	                            <div class="dropdown">
+	                              <button class="btn btn-sm btn-outline-light text-dark" type="button"
+	                                      id="dropdownMenu-\${answer.answerNo}" data-bs-toggle="dropdown" aria-expanded="false">
+	                                <i class="bi bi-three-dots-vertical"></i>
+	                              </button>
+	                              <ul class="dropdown-menu" aria-labelledby="dropdownMenu-\${answer.answerNo}">
+	                                \${answer.emplNo === loginUserEmplNo ? `
+	                                  <li><a class="dropdown-item" href="#" onclick="editAnswer(\${answer.answerNo})">
+	                                    <i class="bi bi-pencil-square me-2"></i> 수정</a></li>
+	                                  <li><a class="dropdown-item text-danger" href="#" onclick="deleteAnswer(\${answer.answerNo})">
+	                                    <i class="bi bi-trash me-2"></i> 삭제</a></li>
+	                                ` : loginUserEmplNo === '20250000' ? `
+	                                  <li><a class="dropdown-item text-danger" href="#" onclick="deleteAnswer(\${answer.answerNo})">
+	                                    <i class="bi bi-trash me-2"></i> 삭제</a></li>
+	                                ` : ''}
+	                              </ul>
+	                            </div>
+	                          </div>
 
-	                	if (answer.emplNo === loginUserEmplNo) {
-	                	  html += `
-	                	            <li><a class="dropdown-item" href="#" onclick="editAnswer(\${answer.answerNo})">
-	                	              <i class="bi bi-pencil-square me-2"></i> 수정</a></li>
-	                	            <li><a class="dropdown-item text-danger" href="#" onclick="deleteAnswer(\${answer.answerNo})">
-	                	              <i class="bi bi-trash me-2"></i> 삭제</a></li>
-	                	  `;
-	                	} else if (loginUserEmplNo === '20250000') {
-	                	  html += `
-	                	            <li><a class="dropdown-item text-danger" href="#" onclick="deleteAnswer(\${answer.answerNo})">
-	                	              <i class="bi bi-trash me-2"></i> 삭제</a></li>
-	                	  `;
-	                	}
+	                          
+	                        </div>
 
-	                	html += `
-	                	          </ul>
-	                	        </div>
-	                	      </div>
-
-	                	      <!-- 답글 작성 영역 -->
-	                	      <div id="replyForm-\${answer.answerNo}" class="mt-3"></div>
-	                	    </div>
-	                	  </div>
-	                	`;
+	                        <!-- 답글 입력 영역 -->
+	                        <div id="replyForm-\${answer.answerNo}" class="mt-3"></div>
+	                      </div>
+	                    </div>
+	                  `;
 
 
 	              
