@@ -62,7 +62,20 @@ public class ProjectTaskController {
 	}
 
 
+	// 간트 차트용 업무 수정 모달 폼 불러오기
+	@GetMapping("/taskEditModal")
+	public String taskEditModal(@RequestParam("taskNo") Long taskNo, Model model) {
+	    // 1. 해당 업무(taskNo) 정보 조회
+	    ProjectTaskVO task = projectTaskService.selectTaskById(taskNo);
+	    model.addAttribute("task", task);
 
+	    // 2. 프로젝트 참여자 목록 조회 (참여자 중에서 담당자 선택용)
+	    int prjctNo = (int)task.getPrjctNo(); // 업무에 연결된 프로젝트 번호
+	    ProjectVO project = projectService.projectDetail(prjctNo); // 프로젝트 상세 + 참여자 분리됨
+	    model.addAttribute("project", project);
+
+	    return "project/taskEditModal"; // 모달용 JSP 경로
+	}
 
 
 	// 프로젝트 업무 수정
