@@ -53,11 +53,11 @@
               	<input class="form-control" type="date" id="ecnyDt">
               	<input type="hidden" value="" name="keywordEcny" id="hidEncyDt">
               </div>
-              <div class="col-3">
+              <!-- <div class="col-3">
               	<span class="form-label">퇴사일자</span>
               	<input class="form-control" type="date" id="retireDt">
               	<input type="hidden" value="" name="keywordRetire" id="hidRetireDt">
-              </div>
+              </div> -->
               	<button type="button" id="vacAdminSearch" class="main-btn light-btn square-btn btn-hover btn-sm mt-30" style="height:40px;">검색</button>
               </div>
    			</div>
@@ -132,9 +132,9 @@
                         <th>
                           <h6>입사일자</h6>
                         </th>
-                        <th>
+                        <!-- <th>
                           <h6>퇴사일자</h6>
-                        </th>
+                        </th>  -->
                         <th>
                           <h6>성과 보상</h6>
                         </th>
@@ -182,14 +182,13 @@
                             </div>
                           </div>
                         </td>
-                        <td>
-                         <%--  <fmt:formatDate var="ecnyDate" value="${allVacData.ecnyDate}" pattern="yyyy-MM-dd"/> --%>
+                       <td>
 							<c:set var="year" value="${allVacData.ecnyDate.substring(0,4)}"></c:set>
 							<c:set var="month" value="${allVacData.ecnyDate.substring(4,6)}"></c:set>
 							<c:set var="day" value="${allVacData.ecnyDate.substring(6,8)}"></c:set>
 							${year}-${month}-${day}      
                         </td>
-                        <td>
+                        <%-- <td>
                           	<c:set var="reYear" value="${allVacData.retireDate.substring(0,4)}"></c:set>
 							<c:set var="reMonth" value="${allVacData.retireDate.substring(4,6)}"></c:set>
 							<c:set var="reDay" value="${allVacData.retireDate.substring(6,8)}"></c:set>
@@ -202,7 +201,7 @@
                        		 		${reYear}-${reMonth}-${reDay}  
                        		 	</c:otherwise>
                        		 </c:choose>
-                        </td>
+                        </td> --%>
                         <td>
 		                   <input class="cmpnstnYrycCnt" id="cmpnstnCnt${status.count}" type="number" step="0.5" min="0" max="25" style="width:50px;" value="0.0">개
 	                  	</td>
@@ -238,7 +237,7 @@
                       	<input id="hiddenexcessWork${status.count}" type="hidden" value="${allVacData.excessWorkYryc}" name="excessWorkYryc">
                       	<input id="hiddenInputTotal${status.count}" type="hidden" readonly="readonly" name="totYrycDaycnt" value="${allVacData.totYrycDaycnt}" style="width:15px;"/>
                       	<input type="hidden" id="hiddenRemndrDaycnt${status.count}" name="yrycRemndrDaycnt" value="${allVacData.yrycRemndrDaycnt}">
-                      	<input type="hidden" name="currentPage" value="${articlePage.currentPage}"/>
+                      	<input type="hidden" id="currentPage${status.count}" name="currentPage" value="${articlePage.currentPage}"/>
                       </form>
                       </c:forEach>
                       <!-- end table row -->
@@ -302,59 +301,7 @@
 <%@ include file="../../layout/prescript.jsp" %>
 <script type="text/javascript">
 
-/* $('#addVacationForm').on('submit', function(e){
-	e.preventDefault();
-}) */
 
-/* let selectEmpl = null;
-	
-function clickEmp(data){
-	//console.log("data : " , data);
-	//console.log("사원번호 : " , data.node.id);
-	fetch('/emplDetailData?emplNo=' + data.node.id,{
-		method : 'get',
-		headers : {
-	        "Content-Type": "application/json"
-	    }
-	 })
-	 .then(resp => resp.json())
-	 .then(res => {
-		 console.log('fetch결과 : ' ,res);
-		 selectEmpl = res;
-	  }) 
-}
-
-// 검색한 사원의 사원번호 가져오기
-
-
-let searchEmpl = null;
-// 이름 검색하고 엔터 눌렀을시
-function fSchEnder(e) {
-   if (e.code === "Enter") {
-	
-	 $('#jstree').jstree(true).search($("#schName").val());   
-	
-	 
-	 
-   	/* fetch('/emplDetailData?emplNo=' + ,{
-   		method : 'get',
-   		headers : {
-   	        "Content-Type": "application/json"
-   	    }
-   	 })
-   	 .then(resp => resp.json())
-   	 .then(res => {
-   		 searchEmpl = res.empDetail;
-   		 console.log('fetch결과 : ' ,searchEmpl);
-   		 let emplNm = searchEmpl.emplNm;
-		 let emplPos = searchEmpl.posNm;
-		 let deptNm = searchEmpl.deptNm;
-		 $('#username').val(emplNm+' '+emplPos);
-		 $('#emplDep').val(deptNm);
-   	 
-   	 })  
-   }
-}   */
 
 // 부서명 클릭했을때 조직도 띄우기
 $('#searchDeptNm').on('click', function () {
@@ -364,7 +311,7 @@ $('#searchDeptNm').on('click', function () {
 });
 
 function clickDept(data){
-	  console.log(data.node.text);
+	  //console.log(data.node.text);
 	  const deptNm = data.node.text;
 	  $('#searchDeptNm').val(deptNm);
 	  $('#orgListModal .btn-close').trigger('click');
@@ -378,7 +325,7 @@ function clickEmp(){
 // 사원 이름 눌렀을때
 $('.vacation-modal-btn').on('click', function(){
 	const emplNo = $(this).data('empl-no');
-	console.log(emplNo);
+	//console.log(emplNo);
 	
 	 fetch('/dclz/vacationAdmin?targetEmplNo='+emplNo , {
 		method : 'get',
@@ -416,11 +363,11 @@ $(function(){
 			const idx = id.match(/\d+/)[0];
 			const inputTotalId = $('#inputTotalCnt'+idx);
 			const yrycRemndrDaycnt = $('#yrycRemndrDaycnt'+idx).val();
-			console.log($('#inputTotalCnt'+idx).val());
+			//console.log($('#inputTotalCnt'+idx).val());
 			
 			const currentValue = parseFloat($(this).val());
 			const diff = currentValue - previousValue;
-			console.log('diff' , diff);
+			//console.log('diff' , diff);
 			
 			let sumTotal = 0;
 			let sumRemain = 0;
@@ -446,19 +393,19 @@ $(function(){
 				// 기존 근무보상 + 추가 근무보상
 				//sumExcessWork = Number(excessWork) + diff;
 				//console.log('더한 근무보상 : ' , sumExcessWork);
-				console.log('더한 성과보상 : ' , sumCmpnstn);
+				//console.log('더한 성과보상 : ' , sumCmpnstn);
 				// 보내줘야할 성과, 초과 보상일수
 				$('#hiddenCmpnstnCnt'+idx).val(sumCmpnstn);
 				//$('#hiddenexcessWork'+idx).val(sumExcessWork);
 				
-				console.log('sumCmpnstn : ',sumCmpnstn);
+				//console.log('sumCmpnstn : ',sumCmpnstn);
 				$('#inputTotalCnt'+idx).val(sumTotal);
 				$('#yrycRemndrDaycnt'+idx).val(sumRemain);
 				$('#hiddenInputTotal'+idx).val(sumTotal);
 				$('#hiddenRemndrDaycnt'+idx).val(sumRemain);
 				//$('#hiddenCmpnstnCnt'+idx).val(diff);
 				//$('#hiddenexcessWork'+idx).val(value);
-				console.log('hiddenCmpnstnCnt : ' , $('#hiddenCmpnstnCnt'+idx).val())
+				//console.log('hiddenCmpnstnCnt : ' , $('#hiddenCmpnstnCnt'+idx).val())
 				
 				//console.log(id + ':' + value);
 			} else if (diff === -0.5) {
@@ -475,7 +422,7 @@ $(function(){
 				$('#hiddenInputTotal'+idx).val(sumTotal);
 				$('#hiddenRemndrDaycnt'+idx).val(sumRemain);
 				//$('#hiddenexcessWork'+idx).val(value);
-				console.log('hiddenCmpnstnCnt : ' , $('#hiddenCmpnstnCnt'+idx).val())
+				//console.log('hiddenCmpnstnCnt : ' , $('#hiddenCmpnstnCnt'+idx).val())
 			} 
 			previousValue = currentValue;
 		})
@@ -490,17 +437,17 @@ $(function(){
 		$('.excessWorkYryc').on('input', function(){
 			const workId = $(this).attr('id');
 			const workVal = $(this).val();
-			console.log('workId ' , workId);
-			console.log('workVal ' , workVal);
+			//console.log('workId ' , workId);
+			//console.log('workVal ' , workVal);
 			
 			const currentVal = parseFloat($(this).val());
 			const diffVal = currentVal - previousVal;
-			console.log('diffVal' , diffVal);
+			//console.log('diffVal' , diffVal);
 			
 			const index = workId.match(/\d+/)[0];
 			const inputTotalId = $('#inputTotalCnt'+index);
 			const yrycRemndrDaycnt = $('#yrycRemndrDaycnt'+index).val();
-			console.log($('#inputTotalCnt'+index).val());
+			//console.log($('#inputTotalCnt'+index).val());
 			
 			let sumTotal = 0;
 			let sumRemain = 0;
@@ -521,7 +468,7 @@ $(function(){
 				// 기존 성과보상 + 추가 성과보상
 				// 기존 근무보상 + 추가 근무보상
 				sumExcessWork = Number(excessWork) + diffVal;
-				console.log('더한 근무보상 : ' , sumExcessWork);
+				//console.log('더한 근무보상 : ' , sumExcessWork);
 				// 보내줘야할 초과 보상일수
 				$('#hiddenexcessWork'+index).val(sumExcessWork);
 				
@@ -562,7 +509,7 @@ $(function(){
 		if($('#inputTotalCnt'+idx).val() >= 25){
 			swal('연차는 최대 25일까지 지급할 수 있습니다.');
 			$('#inputTotalCnt'+idx).val(hiddenInputTotal);
-			console.log('inputTotalCnt : ', hiddenInputTotal);
+			//console.log('inputTotalCnt : ', hiddenInputTotal);
 			$('.cmpnstnYrycCnt').val('0.0');
 			$('.excessWorkYryc').val('0.0');
 		}
@@ -573,8 +520,6 @@ $(function(){
 			$('.cmpnstnYrycCnt').val('0.0');
 			$('.excessWorkYryc').val('0.0');
 		}
-		
-		
 		
 		// 초기화 버튼 눌렀을때
 		$('#resetBtn'+idx).on('click', function(){
@@ -625,12 +570,15 @@ $(function(){
 			.then((wilDelete) => {
 				if(wilDelete){
 					const empNo = $('#emplNo'+idx).val();
+					const currentPage = $('#currentPage'+idx).val();
 					//console.log(empNo);
 					$('#emplNo'+idx).val(empNo);
-					console.log('성과연차 : ' , $('#hiddenCmpnstnCnt'+idx).val());
+					$('#currentPage'+idx).val(currentPage);
+					/* console.log('성과연차 : ' , $('#hiddenCmpnstnCnt'+idx).val());
 					console.log('근무연차 : ' , $('#hiddenexcessWork'+idx).val());
 					console.log('총 연차 : ' , $('#hiddenInputTotal'+idx).val());
 					console.log('잔여 연차 : ' , $('#hiddenRemndrDaycnt'+idx).val());
+					console.log('현재페이지 : ' , $('#currentPage'+idx).val()); */
 					$('#addVacationForm'+idx).submit();
 				}
 			})
@@ -659,136 +607,34 @@ $(function(){
 		$('#vacAdminSearchForm').submit();
 	})
 	
-
-	
-	// 기본연차 선택시
-	/* $('#basicVacRadio').on('change', function(){
-		if($(this).val() == 'basic'){
-			$('#basicVacSelect').prop('disabled', false);
-			$('#addVacSelect').prop('disabled', true).val('없음');
-		}
-	}) */
-	
-	// 추가연차 선택시
-	/* $('#addVacRadio').on('change', function(){
-		if($(this).val() === 'add'){
-			$('#addVacSelect').prop('disabled', false);
-			$('#basicVacSelect').prop('disabled', true).val('없음');
-		}
-	})
-		
-	 // 추가화살표 눌렀을때
-	 $('#add_empl').on('click', function(){
-		 let emplData = selectEmpl.empDetail;
-		 //console.log('선택한 사원 정보 : ' , emplData);
-		 let emplNm = emplData.emplNm;
-		 let emplPos = emplData.posNm;
-		 let deptNm = emplData.deptNm;
-		 $('#username').val(emplNm+' '+emplPos);
-		 $('#emplDep').val(deptNm);
-	 }) */
-	 
-	 // 삭제화살표 눌렀을때
-	/*  $('#remo_empl').on('click', function(){
-		 $('#username').val('');
-		 $('#emplDep').val('');
-	 })
-	
-	 // 연차 지급 확인버튼 눌렀을때 경고창
-	 $('#empBtn').on('click', function(){
-		 let empData = selectEmpl.empDetail;
-		 //console.log('사원 : ',empData.emplNo);
-		 
-		 //let emplData = $('#username');
-		 //console.log(emplData.val());
-		 const usernameVal = $('#username').val();
-		 if(usernameVal == null || usernameVal == ''){
-			 swal('사원을 선택해주세요.');
-		 }
-		 
-		// 지급 최대 연차일수 제한
-		if($('#addVacCnt').val() > 25){
-			swal('연차 일수는 최대 25일까지만 부여할 수 있습니다.')
-			.then(() => {
-				$('#addVacCnt').val(25).focus();
-			})
-		} */
-		
-		// 연차 종류 선택 안했을시 경고창
-		/* const selected = $('input[name="vacType"]:checked').val();
-		if(selected){
-			swal('연차 유형을 선택해주세요.');
-			return;
-		}
-				
-		 // 기본연차
-		 const basicVac = $('#basicVac').val();
-		//성과보상, 근무보상
-		 const addVacType = $('#addVac').val();
-		 let vacCnt = $('#addVacCnt').val();
-		 const emplNo = empData.emplNo;
-		 //console.log('addVacType : ', addVacType);
-		 //console.log('vacCnt : ', vacCnt);
-
-		 // 기본 조정연차
-		 let mdatYryc = 0;
-		 // 성과보상
-		 let cmpnstnYryc = 0;
-		 // 근무보상
-		 let excessWorkYryc = 0;
-
-		 if(addVacType === '성과보상'){
-			 cmpnstnYryc = vacCnt;
-		 }else if(addVacType === '근무보상'){
-			 excessWorkYryc = vacCnt;
-		 }else if(basicVac === '기본지급'){
-			 mdatYryc = vacCnt;
-		 } */
-	 	 //console.log('dfjkld : ' , cmpnstnYryc);
-	 	 //console.log('zzzz : ' , excessWorkYryc);
-	 	 //console.log('기본연차일수 : ' , mdatYryc);
+	 /* 
+	 // 검색한 사원의 사원번호 가져오기
+	 let searchEmpl = null;
+	 // 이름 검색하고 엔터 눌렀을시
+	 function fSchEnder(e) {
+	    if (e.code === "Enter") {
+	 	
+	 	 $('#jstree').jstree(true).search($("#schName").val());   
 	 	 
-	 	 // 연차 update 해줄 데이터 보내기
-	 	 /* fetch('/dclz/addVacInsert',{
-	 		 method : 'post',
-	 		 headers : {
-	 			"Content-Type": "application/json"
-	 		 },
-	 		 body : JSON.stringify({
-	 			 emplNo : emplNo,
-	 			 cmpnstnYryc : cmpnstnYryc,
-	 			 excessWorkYryc : excessWorkYryc,
-	 			 yrycMdatDaycnt : mdatYryc
-	 		 })
-	 	 }) // end fetch
-	 	 .then(resp => resp.text())
-	 	 .then(res => {
-	 		 swal('연차 지급이 완료되었습니다.')
-	 		 .then((value)=>{
-	 			 $('#exampleModal').modal('hide');
-	 		 })
-	 		 
-	 		 //console.log('연차 추가하고 받은 결과 : ' , res);
-	 	 }) 
-	 })
-	 
-	 // 유형 selectBox 선택시
-	/*  $('#vacType').on('change', function(){
-		 const vacType = $('#vacType').val();
-		 console.log('선택한 유형 : ' , vacType);
-		 // 선택한 유형 보내주기
-		 const typeKeyword = $('#typeKeyword').val(vacType);
-		 //console.log("바꿔준 input 값 : " , typeKeyword.val());
-		 $('#selTypeForm').submit();
-	 })
-	 // 년도 선택시
-	 $('#vacYear').on('change', function(){
-		 const vacYear = $('#vacYear').val();
-		 console.log('선택날짜 : ' , vacYear);
-		 // 선택 날짜 보내주기
-		 const yearKeyword = $('#yearKeyword').val(vacYear);
-		 $('#selYearForm').submit();
-	 }) */
+	    	/* fetch('/emplDetailData?emplNo=' + ,{
+	    		method : 'get',
+	    		headers : {
+	    	        "Content-Type": "application/json"
+	    	    }
+	    	 })
+	    	 .then(resp => resp.json())
+	    	 .then(res => {
+	    		 searchEmpl = res.empDetail;
+	    		 console.log('fetch결과 : ' ,searchEmpl);
+	    		 let emplNm = searchEmpl.emplNm;
+	 		 let emplPos = searchEmpl.posNm;
+	 		 let deptNm = searchEmpl.deptNm;
+	 		 $('#username').val(emplNm+' '+emplPos);
+	 		 $('#emplDep').val(deptNm);
+	    	 
+	    	 })  
+	    }
+	 }   */
 }) // end fn
 	
 	

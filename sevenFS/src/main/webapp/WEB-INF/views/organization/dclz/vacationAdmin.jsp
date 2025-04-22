@@ -15,6 +15,7 @@
 			<div class="row">			
 	            <div class="col-2" style="border:none;">
 	                <div class="mx-auto text-center">
+	                 <input type="hidden" id="hiddenEmplNo" value="${emplVac.emplNo}">
 	                  <div>
 	                  	<h3><span class="status-btn success-btn mb-2 text-dark">성과 보상</span></h3>
 	                  </div>
@@ -133,6 +134,7 @@
             <div class="card-style  mb-30 col-12">
 	            <div class="title d-flex flex-wrap">
 	                <div class=" justify-content-first" style="width: 40%">
+	                  <h6 class="text-medium mb-30">👨‍💼 ${emplVac.emplNm}</h6>
 	                  <h6 class="text-medium mb-30">이번달 연차현황</h6>
 	                  <!-- 출퇴근만 출력? -->
 	                </div>
@@ -161,7 +163,7 @@
 					  <!-- 달력 페이지네이션 -->
 	                </div>
 	                <div class="input-group mb-3 ms-auto justify-content-end w-20">
-	                <button type="button" id="moreViewEmplVacation" class="btn-sm main-btn light-btn-light btn-hover mr-10 rounded">더보기</button>
+	                <a href="/dclz/vacation?targetEmplNo=${emplVac.emplNo}" id="moreViewEmplVacation" class="btn-sm main-btn light-btn-light btn-hover mr-10 rounded">더보기</a>
 	                <!-- <form action="/dclz/vacationAdmin" method="get" id="keywordSearchFome"> -->
 	                	<!-- <input type="search" class="form-control rounded" placeholder="년도, 연차유형 입력" aria-label="Search"
 					              aria-describedby="search-addon" id="schName" name="keywordSearch"

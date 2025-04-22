@@ -189,6 +189,7 @@ public class DclzTypeController {
 		
 		String emplNo = (targetEmplNo != null && !targetEmplNo.isEmpty())
 						? targetEmplNo : principal.getName();
+		log.info("targetEmplNo : " + targetEmplNo);
 		
 		log.info("keyword" + keyword);
 		log.info("keywordSearch" + keywordSearch);

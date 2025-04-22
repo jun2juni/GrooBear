@@ -5,7 +5,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
-<c:set var="title" scope="application" value="나의 연차 내역 " />
+<c:set var="title" scope="application" value="연차 내역" />
 <c:set var="copyLight" scope="application" value="by 박호산나" />
 
 <!DOCTYPE html>
@@ -187,6 +187,7 @@
 						  <input type="hidden" value="${paramKeyword.substring(0,4)}" id="hiddenKeyYear" />
 						  <input type="hidden" value="${paramKeyword.substring(5,7)}" id="hiddenKeyword" />
 						  <input type="hidden" value="${paramKeyword.substring(0,4)}-${paramKeyword.substring(5,7)}" id="submitKeyword" name="keyword" />
+						  <input type="hidden" value="${emplVacation.emplNo}" id="submitTargetEmplNo" name="targetEmplNo" />
 						  <h4 class="ml-10 mr-10" id="dateDisplay">${paramKeyword.substring(0,4)}-${paramKeyword.substring(5,7)}</h4>
 						  <li class="page-item">
 							<button type="button" class="page-link nextPage">
