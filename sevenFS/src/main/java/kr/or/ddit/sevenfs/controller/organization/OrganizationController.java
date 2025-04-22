@@ -171,14 +171,22 @@ public class OrganizationController {
 	// 최상위부서 선택시 소속된 부서를 반환
 	@ResponseBody
 	@GetMapping("/getLowerdeptList")
-	public List<CommonCodeVO> getLowerdeptList(@RequestParam String upperCmmnCode) {
+	public Map<String, Object> getLowerdeptList(
+			@RequestParam String upperCmmnCode
+		   ,@RequestParam String emplNo) {
 		
+		//log.info("emplNo 왔을까유 ?? : " + emplNo);
 		List<CommonCodeVO> lowerDep = organizationService.lowerDepList(upperCmmnCode);
 		
+		// 사원 상세
+		EmployeeVO emplDetail = organizationService.emplDetail(emplNo);
 		
+		Map<String, Object> map = new HashMap<>();
+		map.put("lowerDep", lowerDep);
+		map.put("emplDetail", emplDetail);
 		
 		// 하위부서 리스트 반환
-		return lowerDep;
+		return map;
 	}
 	
 	// 확인 눌렀을때 조직도 목록으로 이동 
@@ -186,7 +194,7 @@ public class OrganizationController {
 	public String depInsertPost(CommonCodeVO commonCodeVO) {
 		
 		String upperCmmnCode = commonCodeVO.getUpperCmmnCode();
-		log.info("선택한 공통코드 : " + upperCmmnCode);
+		//log.info("선택한 공통코드 : " + upperCmmnCode);
 		
 		organizationService.depInsert(commonCodeVO);
 		
@@ -197,7 +205,7 @@ public class OrganizationController {
 	@ResponseBody
 	@GetMapping("/deptDelete")
 	public int deptDelete(String cmmnCode) {
-		log.info("삭제 cmmnCode : " + cmmnCode);
+		//log.info("삭제 cmmnCode : " + cmmnCode);
 		int result = organizationService.deptDelete(cmmnCode);
 		return result;
 	}
@@ -210,7 +218,7 @@ public class OrganizationController {
 		
 		//log.info("사원번호 와라와라 : " + emplNo);
 		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
-		log.info("사원상세 : " + empDetail);
+		//log.info("사원상세 : " + empDetail);
 		
 		// 사원 파일 번호 가져오기
 		int fileNo = empDetail.getAtchFileNo();
@@ -221,7 +229,7 @@ public class OrganizationController {
 		
 		// 사원 프로필 url가져오기
 		empDetail.setProflPhotoUrl(empFileName);
-		log.info("사원상세 프로필 url : " + empFileName);
+		//log.info("사원상세 프로필 url : " + empFileName);
 		
 		//model.addAttribute("empFileName" , empFileName);
 		
@@ -239,7 +247,7 @@ public class OrganizationController {
 		
 		//log.info("사원번호 와라와라 : " + emplNo);
 		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
-		log.info("사원상세 : " + empDetail);
+		//log.info("사원상세 : " + empDetail);
 		
 		// 사원 파일 번호 가져오기
 		int fileNo = empDetail.getAtchFileNo();
@@ -270,7 +278,7 @@ public class OrganizationController {
 		
 		//log.info("사원번호 와라와라 : " + emplNo);
 		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
-		log.info("사원상세 : " + empDetail);
+		//log.info("사원상세 : " + empDetail);
 		
 		// 사원 파일 번호 가져오기
 		int fileNo = empDetail.getAtchFileNo();
@@ -281,7 +289,7 @@ public class OrganizationController {
 		
 		// 사원 프로필 url가져오기
 		empDetail.setProflPhotoUrl(empFileName);
-		log.info("사원상세 프로필 url : " + empFileName);
+		//log.info("사원상세 프로필 url : " + empFileName);
 		
 		// 사원 비밀번호 공백으로 보내주기
 		empDetail.setPassword("");
@@ -300,7 +308,7 @@ public class OrganizationController {
 		
 		//log.info("사원번호 와라와라 : " + emplNo);
 		EmployeeVO empDetail = organizationService.emplDetail(emplNo);
-		log.info("사원상세 : " + empDetail);
+		//log.info("사원상세 : " + empDetail);
 		
 		model.addAttribute("empDetail", empDetail);
 		
@@ -326,7 +334,7 @@ public class OrganizationController {
 		cmmnList.put("upperDepList", upperDepList);
 		
 		model.addAttribute("cmmnList", cmmnList);
-		log.info("전체 부서와 직급 목록 : " + cmmnList);
+		//log.info("전체 부서와 직급 목록 : " + cmmnList);
 		return "organization/empInsert";
 	}
 	
@@ -334,7 +342,7 @@ public class OrganizationController {
 	@PostMapping("/emplInsertPost")
 	public String emplInsertPost(EmployeeVO employeeVO) {
 		
-		log.info("암호화 전 데이터 : " + employeeVO);
+		//log.info("암호화 전 데이터 : " + employeeVO);
 		String deptCode = employeeVO.getDeptCode();
 
 		if(deptCode=="#") {
@@ -358,7 +366,7 @@ public class OrganizationController {
 		model.addAttribute("title" , "사원 수정");
 		
 		EmployeeVO emplDetail = organizationService.emplDetail(emplNo);
-		log.info("사원상세 : " + emplDetail);
+		//log.info("사원상세 : " + emplDetail);
 		
 		// 전체 직급 가져오기
 		List<CommonCodeVO> posList = organizationService.posList();
@@ -374,7 +382,7 @@ public class OrganizationController {
 		
 		// 파일정보 가져오기
 		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
-		log.info("기존파일정보(수정) ->  fileAttachList : " + fileAttachList);
+		//log.info("기존파일정보(수정) ->  fileAttachList : " + fileAttachList);
 		
 		// 입사일자, 생년월일 가져와서 date 형식으로 바꿔주기
 		String birthDt = emplDetail.getBrthdy();
@@ -396,7 +404,7 @@ public class OrganizationController {
 		emplDetailData.put("depList", depList);
 		emplDetailData.put("upperDepList", upperDepList);
 		//emplDetailData.put("fileAttachList", fileAttachList);
-		log.info("emplDetailData : " + emplDetailData);
+		//log.info("emplDetailData : " + emplDetailData);
 		
 		model.addAttribute("emplDetail", emplDetailData);
 		
@@ -409,42 +417,40 @@ public class OrganizationController {
 	@PostMapping("/emplUpdatePost")
 	public String emplUpdatePost(EmployeeVO employeeVO, MultipartFile[] uploadFile, AttachFileVO attachFileVO) {
 		
+		//log.info("넘겨받은 employeeVO ?????? : " + employeeVO);
+		
 		// 비밀번호 암호화
 		String encode = bCryptPasswordEncoder.encode(employeeVO.getPassword());
 		employeeVO.setPassword(encode);
-
-		// 프로필사진 수정
-		// 수정한 파일넘버로 set 해주기
-		//int fileNo = employeeVO.getAtchFileNo();
-		//attachFileVO.setAtchFileNo(fileNo);
-	
+		
 		// file insert로 수정하기
 		//attachFileService.updateFileList("organization", uploadFile, attachFileVO);
 		AttachFileVO insertFile = attachFileService.insertFile("organization", uploadFile);
-		log.info("수정시 등록된파일 : " + insertFile);
-		long fileNoL = insertFile.getAtchFileNo();
-		log.info("수정시 등록된 파일 번호 : " + fileNoL);
+		//log.info("수정시 등록된파일 : " + insertFile);
 		
-		int fileNo = (int) fileNoL;
-		employeeVO.setAtchFileNo(fileNo);
-		
-		String fileNm = insertFile.getFileStrePath();
-		employeeVO.setProflPhotoUrl(fileNm);
-		
-		// 수정한 파일 리스트 가져오기
-		//List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(fileNo);
-		//log.info("수정파일정보 ->  fileAttachList : " + fileAttachList);
-		// 실제 저장된 경로 가져오기
-		//String savePath = fileAttachList.get(0).getFileStrePath();
-		
-		// 파일 실제저장경로 set해주기
-		//employeeVO.setProflPhotoUrl(savePath);
-		
-		//log.info("jsp에서 넘긴 수정 정보 : " + employeeVO);
+		// 사진 수정 안했을경우
+		if(insertFile == null) {
+			// 원래 있던 파일로 넘겨주기
+			String emplNo = employeeVO.getEmplNo();
+			EmployeeVO employeeData = organizationService.emplDetail(emplNo);
+			int fileNo = employeeData.getAtchFileNo();
+			String proflUrl = employeeData.getProflPhotoUrl();
+			employeeVO.setAtchFileNo(fileNo);
+			employeeVO.setProflPhotoUrl(proflUrl);
+		}else {
+			long fileNoL = insertFile.getAtchFileNo();
+			//log.info("수정시 등록된 파일 번호 : " + fileNoL);
+			
+			int fileNo = (int) fileNoL;
+			employeeVO.setAtchFileNo(fileNo);
+			
+			String fileNm = insertFile.getFileStrePath();
+			employeeVO.setProflPhotoUrl(fileNm);
+		}
 		
 		organizationService.emplUpdatePost(employeeVO);
 		
-		log.info("파일까지 수정된 사원 정보 : " + employeeVO);
+		//log.info("파일까지 수정된 사원 정보 : " + employeeVO);
 		
 		// 사원번호 꺼내기
 		String emplNoParam = employeeVO.getEmplNo();

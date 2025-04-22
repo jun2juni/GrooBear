@@ -90,7 +90,7 @@
 					   <input type="hidden" name="partclrMatter" value="${emp.partclrMatter}"/>
 				   </sec:authorize>
 				   <div class="activity-meta text-start" style="margin-top: 20px;">
-			 			<input type="hidden" name="emplNo" value="${emp.emplNo}">
+			 			<input type="hidden" id="hiddenEmplNo" name="emplNo" value="${emp.emplNo}">
 			   	          <!-- <div class="input-style-1 form-group col-8" style="margin-left:15%;">
 				            <label for="password" class="form-label required">비밀번호-수정필요<span class="text-danger">*</span></label>				            
 				           <div class="invalid-feedback"></div>
@@ -282,6 +282,45 @@
   <%@ include file="../layout/footer.jsp" %>
   <%@ include file="../layout/prescript.jsp" %>
  <script type="text/javascript">
+ 
+// 부서코드 선택시 보여 줄 하위 부서팀
+function lowerDepts(upperCmmnCode, emplNo){
+	fetch('/getLowerdeptList?upperCmmnCode=' + upperCmmnCode + '&emplNo=' + emplNo , {
+		method : 'get',
+		headers: {
+            "Content-Type": "application/json"
+        }
+	})
+	.then(resp => resp.json())
+	.then(res => {
+		// 여기서 $("#lowerDepartment") 내부 비우기
+		  $("#lowerDepartment").html("");
+		 
+		 lowerDepList = res.lowerDep;
+		 emplDetail = res.emplDetail;
+		 console.log("선택한 부서의 하위부서 리스트 : ", lowerDepList);
+		 console.log("사원 정보 : ", emplDetail);
+		 
+		 lowerDepList.map((lowerDep, idx) => {
+				console.log("lowerDep : " , lowerDep.cmmnCode);
+				console.log("사원의 부서 : " , emplDetail.deptCode);
+				const id = idx;
+				const deptChecked = lowerDep.cmmnCode === emplDetail.deptCode ? 'checked' : '';
+				console.log("deptChecked" , deptChecked);
+				 $("#lowerDepartment").append(
+					`
+					 <div>
+					 <input type="radio" value="\${lowerDep.cmmnCode}" id="\${id}" name="deptCode" required \${deptChecked}>
+		      		 <label for="\${id}">\${lowerDep.cmmnCodeNm}</label>
+					</div>
+					`
+				);
+			 }) // end map   
+		})
+	}
+ 
+ 
+ 
 $(function(){
 
 	let fmtEncyDt = $('#fmtEncyDt').val();
@@ -303,59 +342,36 @@ $(function(){
 	let brthdy = $('#brthdy').val(replaceBirth);
 	console.log(brthdy.val());	
 	
-$("#emplUpdateBtn").on("click", function(){
-	// alert창 수정하기ㅡㅡ
-
-	/* 	if(!$('input[name="deptCode"]:checked').val()){
-		swal("하위 부서를 선택해주세요.");
-		return;
-	}else{ */
-		//document.getElementById('emplUpdateForm').requestSubmit();
-		swal({
-		  title: "수정되었습니다.",
-		  icon: "success",
-		  draggable: true
-		})
-		.then((value) =>{
-			$("#emplUpdateForm").submit();
-		})
-	/* } */
-	});
-
-$("#upperDept").on("change", function(){
-	const upperCmmnCode = this.value;
-	console.log("선택한 상위부서 : " , upperCmmnCode);
+	$("#emplUpdateBtn").on("click", function(){
+		// alert창 수정하기ㅡㅡ
 	
-	// 상위코드 보내서 비동기로 보내기
-	fetch("/getLowerdeptList?upperCmmnCode="+upperCmmnCode, {
-		method : "get",
-	    headers : {
-	        "Content-Type": "application/json"
-       }
-	}) // end fetch
-	.then(resp => resp.json())
-	.then(res => {
-		console.log("선택한 부서의 하위부서 리스트 : ", res);
-		 // 여기서 $("#lowerDepartment") 내부 비우기
-		  $("#lowerDepartment").html("");
-		 
-		 res.map((lowerDep, idx) => {
-				console.log("lowerDep : " , lowerDep.cmmnCodeNm);
-				const id = idx;
-				//console.log("id" , id);
-					
-				 $("#lowerDepartment").append(
-					`
-					 <div>
-					 <input type="radio" value="\${lowerDep.cmmnCode}" id="\${id}" name="deptCode" required>
-		      		 <label for="\${id}">\${lowerDep.cmmnCodeNm}</label>
-					</div>
-					`
-				);
- 			 }) // end map   
-	})// end result
-}) // end click event	
-
+		/* 	if(!$('input[name="deptCode"]:checked').val()){
+			swal("하위 부서를 선택해주세요.");
+			return;
+		}else{ */
+			//document.getElementById('emplUpdateForm').requestSubmit();
+			swal({
+			  title: "수정되었습니다.",
+			  icon: "success",
+			  draggable: true
+			})
+			.then((value) =>{
+				$("#emplUpdateForm").submit();
+			})
+		/* } */
+		});
+	
+	// 페이지 로딩시
+	const upperCmmnCode = $('#upperDept').val();
+	const emplNo = $('#hiddenEmplNo').val();
+	lowerDepts(upperCmmnCode, emplNo);
+	
+	// 상위부서 변경될 시
+	$('#upperDept').on('change', function(){
+		const upperCmmnCode = $(this).val();
+		const emplNo = $('#hiddenEmplNo').val();
+		lowerDepts(upperCmmnCode, emplNo);
+	})
 });
 	
 	

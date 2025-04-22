@@ -31,15 +31,14 @@
 			<div class="row">
 			<div class="col-4">
 				<c:import url="../organization/searchBar.jsp"></c:import>
-				<div class="card-style overflow-scroll mt-15" style="max-height: 90vh;">
-					<%@ include file="orgList.jsp" %>
+				<div class="card-style overflow-scroll mt-15" style="height: 95%;">
+					<c:import url="./orgList.jsp"></c:import>
 				</div>
 		 	</div>
 		 	
 		 	<!-- 사원상세 페이지 -->
 		  <div class="col-8">
 			<div id="emplDetail" style="text-align: center;">
-			  
 			  <p id="employeeDetail" style="margin-top: 150px;">
 				<span  class="material-symbols-outlined">group_add</span>
 					변경할 부서와 사원을 선택해주세요.
