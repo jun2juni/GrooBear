@@ -29,6 +29,7 @@
         FROM NOTIFICATION
         WHERE empl_no = #{emplNo}
           AND ntcn_read_yn = 'N'
+        ORDER BY ntcn_creat_dt DESC
     </select>
 
     <insert id="insertNotification" parameterType="notificationVO">
