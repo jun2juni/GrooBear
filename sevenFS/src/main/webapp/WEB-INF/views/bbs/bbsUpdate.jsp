@@ -65,16 +65,14 @@
                                     파일
                                     <c:choose>
     								<c:when test="${not empty bbsVO.files}">
-                                        <c:forEach var="file" items="${bbsVO.files}">
-											<file-upload
-													label="${file.fileStreNm}"
-													name="updateFile"
-													max-files="5"	
-													contextPath="${pageContext.request.contextPath}"
-													uploaded-file="${file}"
-													atch-file-no="${bbsVO.atchFileNo}"
-											></file-upload>
-										</c:forEach>
+										<file-upload
+												label="첨부파일"
+												name="updateFile"
+												max-files="5"	
+												contextPath="${pageContext.request.contextPath}"
+												uploaded-file="${bbsVO.files}"
+												atch-file-no="${bbsVO.atchFileNo}"
+										></file-upload>
 									</c:when>
 									<c:otherwise>
 								        <!-- 파일이 없을 때 기본 UI -->
@@ -93,8 +91,8 @@
 								<div class="mb-3">
 									<label class="form-label">상단 고정 여부</label>
 									<select name="upendFixingYn" class="form-control">
-										<option value="N">고정 안함</option>
-										<option value="Y">고정</option>
+										<option value="N" ${bbsVO.upendFixingYn == 'N' ? 'selected' : ''}>고정 안함</option>
+										<option value="Y" ${bbsVO.upendFixingYn == 'Y' ? 'selected' : ''}>고정</option>
 									</select>
 								</div>
 								<br>

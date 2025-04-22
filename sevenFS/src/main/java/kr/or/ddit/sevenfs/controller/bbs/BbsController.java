@@ -91,10 +91,6 @@ public class BbsController {
         // 게시판 카테고리 번호 설정
         bbsVO.setBbsCtgryNo(bbsCtgryNo);
 
-        // 검색 키워드 및 카테고리 로깅 (디버깅 용도)
-        log.info("서치키워드 확인: " + bbsVO.getSearchKeyword());
-        log.info("서치카테고리 확인: " + bbsVO.getCategory());
-
         // 뷰에 검색 키워드 전달
         model.addAttribute("SearchKeyword", bbsVO.getSearchKeyword());
 

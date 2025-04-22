@@ -67,10 +67,12 @@
                       <c:choose>
                         <c:when test="${ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'gif' || ext == 'bmp'}">
                           <div class="border rounded p-3 bg-light d-inline-flex flex-column align-items-center" style="max-width: 450px;">
+							    <a href="http://localhost/download?fileName=${file.fileStrePath}">
 							    <img src="/upload/${file.fileStrePath}" 
 							         alt="${file.fileNm}" 
-							         style="max-width: 400px; max-height: 400px; object-fit: cover;" />
-							
+							         style="max-width: 300px; max-height: 300px; object-fit: cover;"
+							          />
+								</a>
 							    <div class="mt-2 text-truncate w-100 text-center" style="max-width: 180px;" title="${file.fileNm}">
 							        ${file.fileNm}
 							    </div>
