@@ -26,5 +26,14 @@ public interface MailService {
 
 	int mailDelete(List<String> emailNoList);
 
+	int labelingUpt(Map<String, Object> map);
+
+	List<MailVO> mailLabeling(int lblNo);
+
+
+	int tempStoreEmail(MailVO mailVO, MultipartFile[] uploadFile);
+
+	Map<String, Object> mailRepl(MailVO mailVO);
+
 
 }

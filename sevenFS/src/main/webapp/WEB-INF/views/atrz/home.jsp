@@ -179,7 +179,7 @@
 							<div class="" style="margin-top: 0px; overflow-x: auto;">
 								<div class="container mt-2 homeContainer" style="padding-left: 30px; padding-right: 30px;">
 									<c:choose>
-										<c:when test="${empty atrzApprovalList}">
+										<c:when test="${empty homeAtrzApprovalList}">
 											<div class="text-center emptyList">
 												결재할 문서가 없습니다.
 											</div>
@@ -187,7 +187,7 @@
 										<c:otherwise>
 											<div class="d-flex gap-3 flex-nowrap">
 												<input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
-												<c:forEach var="atrzVO" items="${atrzApprovalList}">
+												<c:forEach var="atrzVO" items="${homeAtrzApprovalList}">
 													<div class="">
 														<div class="card" style="height: 250px; width: 300px;">
 															<div class="card-header pt-3" style="height: 50px;">

@@ -132,6 +132,108 @@ public class MailServiceImpl implements MailService{
 		int result = mailMapper.sendMail(mailVOList);
 		return result;
 	}
+	
+	@Override
+	public int tempStoreEmail(MailVO mailVO, MultipartFile[] uploadFile) {
+		/*
+		 *  emailTrnsmisTy
+	 		전송타입 0 참조x, 1 참조, 2 숨은 참조
+	 		
+			emailClTy 메일함분류시 사용 0 보낸메일, 1 받은메일, 2 임시메일, 3 스팸함, 4 휴지통
+		 * */
+		List<String> recptnEmailList = mailVO.getRecptnEmailList();
+		List<String> refEmailList = mailVO.getRefEmailList();
+		List<String> hiddenRefEmailList = mailVO.getHiddenRefEmailList();
+		List<MailVO> mailVOList = new ArrayList<MailVO>();
+		int totalMailNoCnt = 1;
+		if(recptnEmailList!=null) {
+			totalMailNoCnt += recptnEmailList.size();
+		}
+		if(refEmailList!=null) {
+			totalMailNoCnt += refEmailList.size();
+		}
+		if(hiddenRefEmailList!=null) {
+			totalMailNoCnt += hiddenRefEmailList.size();
+		}
+		int[] mailNos = mailMapper.getMailNos(totalMailNoCnt);
+		int emailNoIndex = 0;
+		
+		// 첨부파일 처리
+		if(uploadFile != null && uploadFile.length != 0) {
+//			log.info("첨부파일 업로드 경로 saveDir + /mail : "+saveDir+"mail");
+			long atchFileNo = attachFileService.insertFileList("mail", uploadFile);
+			mailVO.setAtchFileNo(atchFileNo);
+		}
+		// 보낸 메일함
+		mailVO.setEmailTrnsmisTy("0");
+		mailVO.setEmailClTy("2");
+		mailVO.setRecptnEmail(recptnEmailList.get(0).split("_")[1]);
+		
+		int emailGroupNo = mailMapper.getEmailGroupNo();
+		mailVO.setEmailNo(mailNos[emailNoIndex++]);
+		mailVO.setEmailGroupNo(emailGroupNo);
+		mailVO.setReadngAt("Y");
+		mailVO.setDelAt("N");
+		mailVOList.add(mailVO);
+		// 받은 메일함
+		if(recptnEmailList != null) {
+			for(int i = 0; i < recptnEmailList.size(); i++) {
+				MailVO vo = new MailVO();
+				String[] emplNoEmail = recptnEmailList.get(i).split("_");
+				log.info("emplNoEmail"+emplNoEmail);
+				log.info("emplNoEmail[1] : "+emplNoEmail[1]);
+				log.info("emplNoEmail[0] : "+emplNoEmail[0]);
+				vo.setEmailTrnsmisTy("1");
+				vo.setEmailClTy("1");
+				vo.setRecptnEmail(emplNoEmail[1]);
+				vo.setEmplNo(emplNoEmail[0]);
+				vo.setEmailNo(mailNos[emailNoIndex++]);
+				vo.setEmailGroupNo(emailGroupNo);
+				vo.setReadngAt("N");
+				vo.setDelAt("Y");
+				mailVOList.add(vo);
+			}
+		}
+		// 받은 메일함 - 참조
+		if(refEmailList != null) {
+			for(int i = 0; i < refEmailList.size(); i++) {
+				MailVO vo = new MailVO();
+				String[] emplNoEmail = refEmailList.get(i).split("_");
+				log.info("emplNoEmail[1] : "+emplNoEmail[1]);
+				log.info("emplNoEmail[0] : "+emplNoEmail[0]);
+				vo.setEmailTrnsmisTy("2");
+				vo.setEmailClTy("1");
+				vo.setRecptnEmail(emplNoEmail[1]);
+				vo.setEmplNo(emplNoEmail[0]);
+				vo.setEmailNo(mailNos[emailNoIndex++]);
+				vo.setEmailGroupNo(emailGroupNo);
+				vo.setReadngAt("N");
+				vo.setDelAt("Y");
+				mailVOList.add(vo);
+			}
+		}
+		// 받은 메일함 - 숨은참조
+		if(hiddenRefEmailList != null) {
+			for(int i = 0; i < hiddenRefEmailList.size(); i++) {
+				MailVO vo = new MailVO();
+				String[] emplNoEmail = hiddenRefEmailList.get(i).split("_");
+				log.info("emplNoEmail[1] : "+emplNoEmail[1]);
+				log.info("emplNoEmail[0] : "+emplNoEmail[0]);
+				vo.setEmailTrnsmisTy("3");
+				vo.setEmailClTy("1");
+				vo.setRecptnEmail(emplNoEmail[1]);
+				vo.setEmplNo(emplNoEmail[0]);
+				vo.setEmailNo(mailNos[emailNoIndex++]);
+				vo.setEmailGroupNo(emailGroupNo);
+				vo.setReadngAt("N");
+				vo.setDelAt("Y");
+				mailVOList.add(vo);
+			}
+		}
+		log.info("MailServiceImpl -> tempStoreEmail -> mailVOList : "+mailVOList);
+		int result = mailMapper.tempStoreEmail(mailVOList);
+		return result;
+	}
 
 	@Override
 	public List<MailVO> getList(ArticlePage<MailVO> articlePage) {
@@ -144,7 +246,7 @@ public class MailServiceImpl implements MailService{
 		// mailVO에 emailNo가 들어있음
 		List<MailVO> mailVOList = mailMapper.emailDetail(mailVO);
 //		Map<String, Object> returnMap = new HashMap<String, Object>();
-		log.info("MailServiceImpl emailDetail -> mailMapList : "+mailVOList);
+		log.info("MailServiceImpl emailDetail -> mailVOList : "+mailVOList);
 		List<Map<String, Object>> recptnList = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> refEmailList = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> hiddenRefEmailList = new ArrayList<Map<String, Object>>();
@@ -154,14 +256,17 @@ public class MailServiceImpl implements MailService{
 			if(mailVOList.get(i).getEmailTrnsmisTy().equals("0")) {
 				mailVO = mailVOList.get(i);
 			}else if(mailVOList.get(i).getEmailTrnsmisTy().equals("1")) {
+				map.put("emplNo", (String)mailVOList.get(i).getEmplNo());
 				map.put("emplNm", (String)mailVOList.get(i).getEmplNm());
 				map.put("recptnEmail", (String)mailVOList.get(i).getRecptnEmail());
 				recptnList.add(map);
 			}else if(mailVOList.get(i).getEmailTrnsmisTy().equals("2")) {
+				map.put("emplNo", (String)mailVOList.get(i).getEmplNo());
 				map.put("emplNm", (String)mailVOList.get(i).getEmplNm());
 				map.put("recptnEmail", (String)mailVOList.get(i).getRecptnEmail());
 				refEmailList.add(map);
 			}else if(mailVOList.get(i).getEmailTrnsmisTy().equals("3")) {
+				map.put("emplNo", (String)mailVOList.get(i).getEmplNo());
 				map.put("emplNm", (String)mailVOList.get(i).getEmplNm());
 				map.put("recptnEmail", (String)mailVOList.get(i).getRecptnEmail());
 				hiddenRefEmailList.add(map);
@@ -169,11 +274,11 @@ public class MailServiceImpl implements MailService{
 		}
 		mailVO.setRecptnMapList(recptnList);
 		mailVO.setRefMapList(refEmailList);
-//		mailVO.setHiddenRefMapList(hiddenRefEmailList);
+		mailVO.setHiddenRefMapList(hiddenRefEmailList);
 		log.info("MailServiceImpl emailDetail -> mailVO : "+mailVO);
 		return mailVO;
 	}
-
+	
 	@Override
 	public List<AttachFileVO> getAtchFile(long atchFileNo) {
 		return mailMapper.getAtchFile(atchFileNo);
@@ -193,6 +298,61 @@ public class MailServiceImpl implements MailService{
 	@Override
 	public int mailDelete(List<String> emailNoList) {
 		int result = mailMapper.mailDelete(emailNoList);
-		return 0;
+		return result;
+	}
+
+	@Override
+	public int labelingUpt(Map<String, Object> map) {
+		int result = mailMapper.labelingUpt(map);
+		return result;
+	}
+
+	@Override
+	public List<MailVO> mailLabeling(int lblNo) {
+		return mailMapper.mailLabeling(lblNo);
+	}
+	/*<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>--- Original Message ---<br><strong>From : </strong>"김지연"&lt;kimdemo@dodemo.com&gt;<br><strong>To : </strong>hoodemo@dodemo.com<br><strong>Date : </strong>2025/04/16 수요일 오전 8:04:37<br><strong>Subject : </strong>[참조자 등록] '김지연 부장'이(가) 작성한 '[승인요청] 2025년 2분기 타운홀 진행'의 참조자로 등록되었습니다.</p>*/
+
+	@Override
+	public Map<String, Object> mailRepl(MailVO mailVO) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		mailVO = mailMapper.mailRepl(mailVO);
+		// from
+		String trnsmitEmail = mailVO.getTrnsmitEmail();
+		Map<String,Object> empMap =  mailMapper.findEmplByEmail(trnsmitEmail);
+		log.info("empMap : "+empMap);
+		String fromEmplNm = (String)empMap.get("EMPL_NM");
+		log.info("empMap : "+empMap+" fromEmplNm :"+fromEmplNm);
+		// to
+		String recptnEmail = mailVO.getRecptnEmail();
+		String toEmplNm = mailVO.getEmplNm();;
+		
+		String trnsmitDt = mailVO.getTrnsmitDt();
+		String emailSj = mailVO.getEmailSj();
+		String emailCn = mailVO.getEmailCn();
+		
+		emailCn = "<p>&nbsp;</p>"
+				+ "<p>&nbsp;</p>"
+				+ "<p>&nbsp;</p>"
+				+ "<p>&nbsp;</p>"
+				+ "<p>&nbsp;</p>"
+				+ "--- Original Message ---"
+				+ "<br>"
+				+ "<b>From : </b>"+fromEmplNm + "/"+trnsmitEmail
+				+"<br>"
+				+ "<b>To : </b>"+toEmplNm + "/"+recptnEmail
+				+"<br>"
+				+ "<b>Date : </b>"+trnsmitDt
+				+"<br>"
+				+ "<b>subject : </b>"+emailSj
+				+"<br>"
+				+emailCn;
+		mailVO.setEmailCn(emailCn);
+		log.info("service -> mailRepl -> mailVO : "+mailVO);
+		map.put("mailVO", mailVO);
+		map.put("fromEmplNm", fromEmplNm);
+		map.put("fromEmplNo", (String)empMap.get("EMPL_NO"));
+		log.info("service -> mailRepl -> map : "+map);
+		return map;
 	}
 }

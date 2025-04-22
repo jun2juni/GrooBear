@@ -38,8 +38,12 @@ SELECT E.EMPL_NM
     ,M.trnsmit_dt
     ,M.readng_at
     ,M.email_group_no
+    ,ML.LBL_NO
+    ,ML.LBL_COL
+    ,ML.LBL_NM
 FROM MAIL M
 INNER JOIN EMPLOYEE E ON M.EMPL_NO = E.EMPL_NO
+LEFT JOIN MAIL_LABEL ML ON M.lbl_no = ML.lbl_no
 WHERE M.EMPL_NO=#{searchVo.emplNo}
   AND M.email_cl_ty = #{searchVo.emailClTy}
   AND M.DEL_AT = 'N'
@@ -60,6 +64,30 @@ WHERE M.EMPL_NO=#{searchVo.emplNo}
 	ORDER BY TRNSMIT_DT
 	OFFSET (#{currentPage} - 1) * 10 ROWS
 	FETCH NEXT 10 ROWS ONLY	
+</select>
+
+<select id="mailLabeling" parameterType="int" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO">
+	SELECT E.EMPL_NM
+    ,M.email_no
+    ,M.empl_no
+    ,M.lbl_no
+    ,M.email_trnsmis_ty
+    ,M.email_cl_ty
+    ,M.trnsmit_email
+    ,M.recptn_email
+    ,M.email_sj
+    ,M.email_cn
+    ,M.atch_file_no
+    ,M.trnsmit_dt
+    ,M.readng_at
+    ,M.email_group_no
+    ,ML.LBL_NO
+    ,ML.LBL_COL
+    ,ML.LBL_NM
+FROM MAIL M
+INNER JOIN EMPLOYEE E ON M.EMPL_NO = E.EMPL_NO
+LEFT JOIN MAIL_LABEL ML ON M.lbl_no = ML.lbl_no
+where m.lbl_no = #{lblNo}
 </select>
 
 <select id="emailDetail" parameterType="kr.or.ddit.sevenfs.vo.mail.MailVO" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO">
@@ -85,6 +113,37 @@ WHERE m.email_group_no = (
     FROM mail
     WHERE email_no = #{emailNo}
 )
+</select>
+
+<select id="mailRepl" parameterType="kr.or.ddit.sevenfs.vo.mail.MailVO" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO">
+	SELECT
+	(select empl_nm from EMPLOYEE where empl_no=m.empl_no) empl_nm,
+    m.email_no,
+    m.empl_no,
+    m.lbl_no,
+    m.email_trnsmis_ty,
+    m.email_cl_ty,
+    m.trnsmit_email,
+    m.recptn_email,
+    m.email_sj,
+    m.email_cn,
+    m.atch_file_no,
+    m.trnsmit_dt,
+    m.readng_at,
+    m.email_group_no,
+    m.starred,
+    m.del_at
+FROM
+    mail m
+WHERE email_no = #{emailNo}
+</select>
+
+<select id="findEmplByEmail" parameterType="String" resultType="map">
+	select 
+		empl_nm,
+		empl_no
+	from employee
+	where email=#{email}
 </select>
 
 <select id="getTotal" parameterType="hashmap" resultType="int">
@@ -161,5 +220,59 @@ CONNECT BY LEVEL &lt;= #{count}
                 )
             </foreach>
     	SELECT * FROM dual
-    </insert>
+</insert>
+<insert id="tempStoreEmail" parameterType="list">
+INSERT ALL
+	<foreach collection="mailVOList" item="mail" >
+		INTO mail(email_no,
+    	empl_no,
+      <if test="mail.lblNo!=0">
+	    lbl_no,
+      </if>
+    	email_trnsmis_ty,
+	    email_cl_ty,
+	    trnsmit_email,
+	    recptn_email,
+	    email_sj,
+	    email_cn,
+	    atch_file_no,
+	    email_group_no,
+	    DEL_AT
+           )VALUES (
+               #{mail.emailNo},
+               #{mail.emplNo},
+              <if test="mail.lblNo!=0">
+                #{mail.lblNo},
+			  </if>
+               #{mail.emailTrnsmisTy},
+               #{mail.emailClTy},
+               #{mail.trnsmitEmail},
+               #{mail.recptnEmail},
+               #{mail.emailSj},
+               #{mail.emailCn},
+               #{mail.atchFileNo},
+               #{mail.emailGroupNo},
+               #{mail.delAt}
+           )
+       </foreach>
+    	SELECT * FROM dual
+</insert>    
+<!-- map.put("lblNo", lblNo);
+map.put("checkedList", checkedList); -->
+<update id="labelingUpt" parameterType="hashMap">
+	update mail
+	set 
+		<if test="lblNo != 0">
+ 			lbl_no = #{lblNo}
+		</if>
+		<if test="lblNo == 0">
+			lbl_no = null	
+		</if>
+			where
+				email_no in (
+				<foreach collection="checkedList" item="mailNo" separator=",">
+					#{mailNo}
+				</foreach>
+				)
+</update>
 </mapper>

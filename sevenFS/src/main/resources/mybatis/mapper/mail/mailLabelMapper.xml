@@ -14,27 +14,46 @@ where empl_no = #{emplNo}
     
 </select>
 
+<select id="getCol" parameterType="int" resultType="String">
+select lbl_col
+from mail_label
+where lbl_no = #{lblNo}
+</select>
+
 <insert id="mailLblAdd" parameterType="kr.or.ddit.sevenfs.vo.mail.MailLabelVO">
 	<selectKey resultType="int" order="BEFORE" keyProperty="lblNo">
 		SELECT SEQ_MAIL_LABEL.nextval FROM DUAL
 	</selectKey>
-insert into mail_label(
-	 lbl_no
-    ,empl_no
-    ,lbl_nm
-    ,lbl_col
-)
-values(
-	 #{lblNo}
-	,#{emplNo}
-	,#{lblNm}
-	,#{lblCol}
-)
+	insert into mail_label(
+		 lbl_no
+	    ,empl_no
+	    ,lbl_nm
+	    ,lbl_col
+	)
+	values(
+		 #{lblNo}
+		,#{emplNo}
+		,#{lblNm}
+		,#{lblCol}
+	)
 </insert>
+
+<update id="mailLblUpt" parameterType="kr.or.ddit.sevenfs.vo.mail.MailLabelVO">
+update mail_label
+set 
+	<if test="lblNm != null and lblNm != ''">
+		LBL_NM=#{lblNm},
+	</if>
+	<if test="lblCol != null and lblCol != ''">
+		LBL_COL=#{lblCol}
+	</if>
+where LBL_NO=#{lblNo}
+</update>
 
 <delete id="deleteLbl" parameterType="String">
 	DELETE FROM mail_label
 	WHERE 
 		lbl_no = #{lblNo}
 </delete>
+
 </mapper>

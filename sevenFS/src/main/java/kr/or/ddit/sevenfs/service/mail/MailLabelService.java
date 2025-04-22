@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.service.mail;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.or.ddit.sevenfs.vo.mail.MailLabelVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
@@ -12,5 +13,8 @@ public interface MailLabelService {
 	List<MailLabelVO> getLabelList(EmployeeVO employeeVO);
 
 	int deleteLbl(String lblNo);
+
+	String getCol(int lblNo);
+
 
 }

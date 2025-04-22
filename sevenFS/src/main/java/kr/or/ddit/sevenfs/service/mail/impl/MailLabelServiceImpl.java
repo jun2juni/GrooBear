@@ -24,7 +24,13 @@ public class MailLabelServiceImpl implements MailLabelService {
 	
 	@Override
 	public int mailLblAdd(MailLabelVO labelVO) {
-		return labelMapper.mailLblAdd(labelVO);
+		if(labelVO.getLblNo() != 0) {
+			// update
+			return labelMapper.mailLblUpt(labelVO);
+		}else {
+			// insert
+			return labelMapper.mailLblAdd(labelVO);
+		}
 	}
 
 	@Override
@@ -35,6 +41,11 @@ public class MailLabelServiceImpl implements MailLabelService {
 	@Override
 	public int deleteLbl(String lblNo) {
 		return labelMapper.deleteLbl(lblNo);
+	}
+
+	@Override
+	public String getCol(int lblNo) {
+		return labelMapper.getCol(lblNo);
 	}
 
 

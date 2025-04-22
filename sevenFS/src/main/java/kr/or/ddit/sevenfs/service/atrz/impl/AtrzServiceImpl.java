@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,10 +49,18 @@ public class AtrzServiceImpl implements AtrzService {
 	@Autowired
 	private NotificationService notificationService;
 	
+	// home 결재대기문서목록
+	@Override
+	public List<AtrzVO> homeAtrzApprovalList(String emplNo) {
+		List<AtrzVO> homeAtrzApprovalList = atrzMapper.homeAtrzApprovalList(emplNo);
+		return homeAtrzApprovalList;
+	}
+	
+	
 	//결재 대기중인 문서리스트
 	@Override
-	public List<AtrzVO> atrzApprovalList(String emplNo) {
-		List<AtrzVO> atrzApprovalList = atrzMapper.atrzApprovalList(emplNo);
+	public List<AtrzVO> atrzApprovalList(Map<String,Object> map) {
+		List<AtrzVO> atrzApprovalList = atrzMapper.atrzApprovalList(map);
 		return atrzApprovalList;
 	}
 	//기안진행문서 최신순 5개
@@ -158,9 +167,8 @@ public class AtrzServiceImpl implements AtrzService {
 	@Transactional
 	@Override
 	public void deleteAtrzWriting(String atrzDocNo) {
-		atrzMapper.deleteAtrzWriting(atrzDocNo);
 		atrzMapper.deleteAtrzLineWriting(atrzDocNo);
-		
+		atrzMapper.deleteAtrzWriting(atrzDocNo);
 	}
 	
 	
@@ -641,7 +649,7 @@ public class AtrzServiceImpl implements AtrzService {
 		// 알림 내용설정 
 		NotificationVO notificationVOCompanion = new NotificationVO();
 		notificationVOCompanion.setNtcnSj("[전자결재 알림]");
-		notificationVOCompanion.setNtcnCn(atrzVOApp.getDrafterEmpnm() +" 님 기안하신 " + docTypeNm +  "가 반려되었습니다.  (반려사유 : "+atrzVOApp.getAtrzOpinion()+")");
+		notificationVOCompanion.setNtcnCn(atrzVOApp.getDrafterEmpnm() +" 님 기안하신 " + docTypeNm +  "가 반려되었습니다. (반려사유 : "+atrzVOApp.getAtrzOpinion()+")");
 		notificationVOCompanion.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo=" + atrzVO.getAtrzDocNo());
 		notificationVOCompanion.setSkillCode("02");
 		log.info("atrzDetailAppUpdate-> notificationVOFinish : "+notificationVOCompanion);
@@ -808,6 +816,13 @@ public class AtrzServiceImpl implements AtrzService {
 		atrzMapper.deleteStorageDocumHoliday(atrzDocNos);
 		atrzMapper.deleteStorageAtrz(atrzDocNos);
 	}
+	
+	// 결재대기문서목록 행의 수
+	@Override
+	public int approvalTotal(String emplNo) {
+		return atrzMapper.approvalTotal(emplNo);
+	}
+	
 	
 
 	
