@@ -158,6 +158,8 @@ public class BbsController {
     	
         return "bbs/bbsInsert";
     }
+    
+    
 
     /**
      * 게시글 작성 처리

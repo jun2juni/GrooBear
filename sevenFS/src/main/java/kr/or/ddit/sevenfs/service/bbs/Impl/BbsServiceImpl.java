@@ -22,6 +22,13 @@ public class BbsServiceImpl implements BbsService{
 	@Autowired
 	BbsMapper bbsMapper;
 	
+	public String formatImageTags(String html) {
+	    return html.replaceAll(
+	        "<img(?![^>]*style=)([^>]*?)>",
+	        "<img$1 style=\"width:100px;\">"
+	    );
+	}
+
 	@Override
 	public List<BbsVO> bbsList(ArticlePage<BbsVO> articlePage) {
 		// TODO Auto-generated method stub
@@ -31,8 +38,19 @@ public class BbsServiceImpl implements BbsService{
 
 	@Override
 	public int bbsInsert(BbsVO bbsVO) {
-		// TODO Auto-generated method stub
-		return bbsMapper.bbsInsert(bbsVO);
+	    // 게시글 내용 가져오기
+	    String originalContent = bbsVO.getBbscttCn();
+
+	    // 이미지 태그에 style 삽입
+	    String formattedContent = formatImageTags(originalContent);
+
+	    // 변경된 내용으로 다시 세팅
+	    bbsVO.setBbscttCn(formattedContent);
+	    
+	    log.info("이미지 : " + formattedContent);
+	    
+	    // 저장
+	    return bbsMapper.bbsInsert(bbsVO);
 	}
 
 	@Override
@@ -44,7 +62,15 @@ public class BbsServiceImpl implements BbsService{
 
 	@Override
 	public int bbsUpdate(BbsVO bbsVO) {
-		// TODO Auto-generated method stub
+		// 게시글 내용 가져오기
+	    String originalContent = bbsVO.getBbscttCn();
+
+	    // 이미지 태그에 style 삽입
+	    String formattedContent = formatImageTags(originalContent);
+
+	    // 변경된 내용으로 다시 세팅
+	    bbsVO.setBbscttCn(formattedContent);
+		
 		return bbsMapper.bbsUpdate(bbsVO);
 	}
 
