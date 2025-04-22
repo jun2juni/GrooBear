@@ -143,8 +143,8 @@
 	<script>
 	
 	// 좋아용
-	const bbsSn = ${bbsVO.bbsSn};
-	const bbsCtgryNo = ${bbsVO.bbsCtgryNo};
+	const bbsSn = "${bbsVO.bbsSn}";
+	const bbsCtgryNo = "${bbsVO.bbsCtgryNo}";
 
 	function toggleLike() {
 	    $.post("/bbs/like/toggle", {
@@ -219,8 +219,8 @@
 	        type: "POST",
 	        url: "/bbs/answer",
 	        data: {
-	            bbsSn: ${bbsVO.bbsSn},
-	            bbsCtgryNo: ${bbsVO.bbsCtgryNo},
+	            bbsSn: "${bbsVO.bbsSn}",
+	            bbsCtgryNo: "${bbsVO.bbsCtgryNo}",
 	            answerCn: answerCn,
 	        },
 	        success: function(response) {
@@ -236,66 +236,87 @@
 	
 	// 댓글 목록 불러오기
 	function loadAnswer() {
-	    $.ajax({
-	        url: "/bbs/answer",
-	        type: "GET",
-	        data: {
-	            bbsSn: ${bbsVO.bbsSn},
-	            bbsCtgryNo: ${bbsVO.bbsCtgryNo}
-	        },
+		$.ajax({
+		    type: "GET",
+		    url: "/bbs/answer",
+		    data: {
+		        bbsSn: "${bbsVO.bbsSn}",
+		        bbsCtgryNo: "${bbsVO.bbsCtgryNo}"
+		    },
 	        
 	        success: function(data) {
-	            console.log("댓글 데이터:", data);
+	        	
+	        	console.log("댓글 목록 불러오기 성공");
+	        	
 	            let html = "";
+
 	            data.forEach(function(answer) {
-	                console.log("각 댓글:", answer); // 실제 데이터 확인
-	                const formattedDate = formatDate(answer.answerCreatDt); // ← 여기서 먼저 포맷
-	                html += `
-	                    <div class="card mb-3">
-	                        <div class="card-body">
-	                            <div class="d-flex justify-content-between align-items-center mb-2">
-	                                <h6 class="mb-0 fw-bold text-primary">` + answer.emplNm + `</h6>
-	                                <small class="text-muted">` + formatDate(answer.answerCreatDt) + `</small>
-	                            </div>
-	                            <p class="card-text" id="answerCn-` + answer.answerNo + `">` + answer.answerCn + `</p>
-	                `;
-
-	                // 댓글 작성자일 때만 버튼 보여주기 
-	                if (answer.emplNo == loginUserEmplNo) {
-					    // 내가 쓴 댓글이면 수정 + 삭제
-					    html += `
-					        <div class="mt-2 d-flex justify-content-end">
-					            <button class="btn btn-outline-warning me-2"
-					                    onclick="editAnswer(` + answer.answerNo + `)">수정</button>
-					            <button class="btn btn-outline-danger me-2"
-					                    onclick="deleteAnswer(` + answer.answerNo + `)">삭제</button>
-					        </div>
-					    `;
-					} else if (loginUserEmplNo == '20250000') {
-					    // 관리자지만 내가 쓴 댓글은 아님 → 삭제만
-					    html += `
-					        <div class="mt-2 d-flex justify-content-end">
-					            <button class="btn btn-outline-danger me-2"
-					                    onclick="deleteAnswer(` + answer.answerNo + `)">삭제</button>
-					        </div>
-					    `;
-					}
-
+	                const formattedDate = formatDate(answer.answerCreatDt);
+	                const marginLeft = (answer.answerDepth != null ? answer.answerDepth : 0) * 20;
+	                const depth = answer.answerDepth != null ? answer.answerDepth : 0;
 
 	                html += `
-	                        </div>
-	                    </div>
-	                `;
+	                	  <div class="card shadow-sm border-0 rounded mb-3" style="margin-left: \${marginLeft}px;">
+	                	    <div class="card-body">
+	                	      <!-- 작성자 & 날짜 -->
+	                	      <div class="d-flex justify-content-between align-items-center mb-2">
+	                	        <div class="d-flex align-items-center gap-2">
+	                	          <span class="fw-semibold text-secondary">\${answer.emplNm}</span>
+	                	        </div>
+	                	        <small class="text-muted">\${formattedDate}</small>
+	                	      </div>
+
+	                	      <!-- 댓글 본문 -->
+	                	      <p class="card-text text-dark lh-sm mb-3" id="answerCn-\${answer.answerNo}" data-content="\${answer.answerCn}">
+	                	        \${answer.answerCn}
+	                	      </p>
+
+	                	      <!-- 버튼 영역 -->
+	                	      <div class="d-flex justify-content-end align-items-center gap-2">
+	                	        <button class="btn btn-sm btn-outline-secondary"
+	                	                onclick="showReplyForm(\${answer.answerNo}, \${depth})">
+	                	          <i class="bi bi-reply"></i> 답글
+	                	        </button>
+	                	        <div class="dropdown">
+	                	          <button class="btn btn-sm btn-outline-light text-dark" type="button" id="dropdownMenu-\${answer.answerNo}"
+	                	                  data-bs-toggle="dropdown" aria-expanded="false">
+	                	            <i class="bi bi-three-dots"></i>
+	                	          </button>
+	                	          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenu-\${answer.answerNo}">
+	                	`;
+
+	                	if (answer.emplNo === loginUserEmplNo) {
+	                	  html += `
+	                	            <li><a class="dropdown-item" href="#" onclick="editAnswer(\${answer.answerNo})">
+	                	              <i class="bi bi-pencil-square me-2"></i> 수정</a></li>
+	                	            <li><a class="dropdown-item text-danger" href="#" onclick="deleteAnswer(\${answer.answerNo})">
+	                	              <i class="bi bi-trash me-2"></i> 삭제</a></li>
+	                	  `;
+	                	} else if (loginUserEmplNo === '20250000') {
+	                	  html += `
+	                	            <li><a class="dropdown-item text-danger" href="#" onclick="deleteAnswer(\${answer.answerNo})">
+	                	              <i class="bi bi-trash me-2"></i> 삭제</a></li>
+	                	  `;
+	                	}
+
+	                	html += `
+	                	          </ul>
+	                	        </div>
+	                	      </div>
+
+	                	      <!-- 답글 작성 영역 -->
+	                	      <div id="replyForm-\${answer.answerNo}" class="mt-3"></div>
+	                	    </div>
+	                	  </div>
+	                	`;
 
 
-
-	                console.log("서버에서 온 날짜:", answer.answerCreatDt);
-	                console.log("포맷한 날짜:", formatDate(answer.answerCreatDt));
+	              
 	            });
-	            
-	            console.log("최종 HTML:", html);
+
 	            $("#answerContent").html(html);
 	        }
+
 ,
 	        error: function(xhr) {
 	            console.error("댓글 불러오기 실패:", xhr.responseText);
@@ -307,10 +328,53 @@
 	    loadAnswer();  // 페이지 들어오면 바로 댓글 가져오게
 	});
 	
+	function showReplyForm(parentAnswerNo, parentDepth) {
+		  if ($(`#replyForm-\${parentAnswerNo}`).children().length > 0) return;
+
+		  const html = `
+		    <div class="mt-2">
+		      <textarea class="form-control mb-2" id="replyContent-\${parentAnswerNo}" rows="2" placeholder="답글을 입력하세요."></textarea>
+		      <div class="d-flex justify-content-end">
+		        <button class="btn btn-sm btn-primary me-2" onclick="submitReply(\${parentAnswerNo}, \${parentDepth + 1})">등록</button>
+		        <button class="btn btn-sm btn-secondary" onclick="\$('#replyForm-\${parentAnswerNo}').empty()">취소</button>
+		      </div>
+		    </div>
+		  `;
+
+		  $(`#replyForm-\${parentAnswerNo}`).html(html);
+		}
+
+	
+	function submitReply(parentAnswerNo, depth) {
+		  const content = $(`#replyContent-\${parentAnswerNo}`).val().trim();
+		  if (!content) {
+		    alert("답글을 입력해주세요.");
+		    return;
+		  }
+
+		  $.ajax({
+		    type: "POST",
+		    url: "/bbs/answer",
+		    data: {
+		      bbsSn: ${bbsVO.bbsSn},
+		      bbsCtgryNo: ${bbsVO.bbsCtgryNo},
+		      answerCn: content,
+		      parentAnswerNo: parentAnswerNo,
+		      answerDepth: depth
+		    },
+		    success: function () {
+		      loadAnswer(); // 다시 불러오기
+		    },
+		    error: function (xhr) {
+		      alert("답글 등록 실패: " + xhr.responseText);
+		    }
+		  });
+		}
+
 	
 	// 댓글 수정
 	function editAnswer(answerNo) {
-	  const currentText = $(`#answerCn-${answerNo}`).data("content");
+	  const currentText = $(`#answerCn-\${answerNo}`).data("content");
 
 	  Swal.fire({
 	    title: '댓글 수정',
@@ -441,7 +505,7 @@
 
 
 
-	</script>
+</script>
 
 		
 </body>

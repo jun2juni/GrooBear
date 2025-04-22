@@ -16,4 +16,6 @@ public class AnswerVO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd HH:mm")
     private LocalDateTime answerCreatDt; // 댓글 생성 일시
     private String emplNm; // 사원이름
+    private Integer parentAnswerNo; // 대댓글이면 부모 댓글 번호
+    private Integer answerDepth;    // 댓글 깊이 (0: 댓글, 1: 대댓글)
 }

@@ -42,12 +42,18 @@ public class AnswerController {
 	public ResponseEntity<?> insertAnswer(@RequestParam int bbsSn,
 	                                      @RequestParam int bbsCtgryNo,
 	                                      @RequestParam String answerCn,
+	                                      @RequestParam(required = false) Integer parentAnswerNo,
+	                                      @RequestParam(defaultValue = "0") int answerDepth,
 	                                      @AuthenticationPrincipal(expression = "username") String emplNo) {
+		
+		log.info("ㅎㅇ");
 	    AnswerVO vo = new AnswerVO();
 	    vo.setBbsSn(bbsSn);
 	    vo.setBbsCtgryNo(bbsCtgryNo);
 	    vo.setAnswerCn(answerCn);
 	    vo.setEmplNo(emplNo); // 댓글 단 사람
+	    vo.setParentAnswerNo(parentAnswerNo); 
+	    vo.setAnswerDepth(answerDepth);       
 
 	    answerService.saveAnswer(vo);
 
