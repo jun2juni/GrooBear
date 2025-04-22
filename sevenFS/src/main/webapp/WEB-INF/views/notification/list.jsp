@@ -26,13 +26,19 @@
 
       <div class="card-style">
         <jsp:useBean id="notificationVOList" scope="request" type="java.util.List" />
+        <c:if test="${notificationVOList.size() == 0}">
+            <div style="padding: 2rem; text-align: center; color: #999; font-size: 1.1rem; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+                <p style="margin: 0;">새로운 알림이 없습니다.</p>
+            </div>
+        </c:if>
+
         <c:forEach var="notification" items="${notificationVOList}">
           <div class="single-notification">
             <div class="notification">
               <div class="image ${notification.notificationColor}">
                 ${notification.notificationIcon}
               </div>
-              <a href="#0" class="content">
+              <a href="${notification.originPath}" class="content">
                 <h6>${notification.ntcnSj}</h6>
                 <p class="text-sm text-gray">
                   ${notification.ntcnCn}
@@ -50,7 +56,7 @@
               </button>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction" style="">
                 <li class="dropdown-item">
-                <a href="#" class="text-gray" data-empl-no="${notification.emplNo}" data-ntcn-sn="${notification.ntcnSn}">
+                <a href="#" class="delete-btn text-gray" data-empl-no="${notification.emplNo}" data-ntcn-sn="${notification.ntcnSn}">
                   <i class="lni lni-trash-can"></i>
                   <span>삭제</span>
                 </a>
@@ -77,26 +83,44 @@
 
 <script>
     document.querySelectorAll(".delete-btn").forEach((item, idx) => {
-      item.addEventListener("click", (e) => {
+      item.addEventListener("click", async (e) => {
         const {emplNo, ntcnSn} = item.dataset;
         console.log(emplNo, ntcnSn)
-        
-        try {
-          fetch("/notification/delete", {
-            method: "post",
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              emplNo, ntcnSn
-            })
-          })
-              .then((res) => res.json())
-              .then((data) => {
-                if (data.result === "success") {
-                  document.querySelectorAll(".single-notification")[idx].remove();
-                }
+          	let result = await swal({
+                title: "정말 삭제하시겠습니까?",
+                icon: "warning",
+                confirmButtonColor : '#d33',
+                buttons: {
+                    cancle : {
+                        text : '삭제 취소',
+                        value : false
+                    },
+                    confirm : {
+                        text : '확인',
+                        value : true
+                    }
+                },
+                dangerMode: true
               })
+        try {
+          if (result) {
+            fetch("/notification/delete", {
+              method: "post",
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                emplNo, ntcnSn
+              })
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data.result === "success") {
+                    document.querySelectorAll(".single-notification")[idx].remove();
+                    swal("삭제 완료", "알림이 삭제되었습니다.", "success");
+                  }
+                })
+          }
         } catch (e) {
           console.error(e);
         }
