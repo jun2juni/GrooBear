@@ -26,6 +26,8 @@ public interface ComunityService {
 	public List<ComunityVO> comunityClubList(ComunityVO comunityVO);
 	
 	public int insertContent(ComunityVO comunityVO);
+
+	public List<ComunityVO> comunityClubListPaging(ComunityVO comunityVO);
 	
 
 

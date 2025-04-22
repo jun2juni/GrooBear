@@ -28,6 +28,9 @@ public interface ComunityMapper {
 	//커뮤니티 sns list 추출
 	public List<ComunityVO> comunityClubList(ComunityVO comunityVO);
 	
+	// 페이징 커뮤니티 리스트 (무한스크롤용)
+	public List<ComunityVO> comunityClubListPaging(ComunityVO comunityVO);
+	
 	//커뮤니티 글 insert (컨트롤러에서 나눕니다,,,,,)
 	public int insertContent(ComunityVO comunityVO);
 	

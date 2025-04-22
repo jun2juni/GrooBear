@@ -59,6 +59,10 @@ public class ComunityServiceImpl implements ComunityService{
 		
 		return comunityMapper.insertContent(comunityVO);
 	}
+	@Override
+	public List<ComunityVO> comunityClubListPaging(ComunityVO comunityVO) {
+		return comunityMapper.comunityClubListPaging(comunityVO);
+	}
 
 
 }

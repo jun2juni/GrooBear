@@ -17,9 +17,7 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 <title>${title}</title>
 <%@ include file="../layout/prestyle.jsp"%>
-<style>
 
-</style>
 </head>
 <body>
 	<%@ include file="../layout/sidebar.jsp"%>
@@ -109,9 +107,10 @@
 									</tr>
 
 								</thead>
-			                    <tbody>
+			                    <tbody id="clubListBody">
 			                    <c:forEach var="clubList" items="${clubList}">
 			                      <tr>
+			                      	<!-- 프로필사진  -->
 			                        <td style="text-align: left;">
 			                          <div class="employee-image">
 			                            <img src="assets/images/lead/lead-1.png" alt="">
@@ -123,7 +122,6 @@
 										<span style="display: inline-block; font-weight: bold; font-size: 1.05rem; color: #2C3E50;">
 										  ${clubList.emplNm}
 										</span>
-										
 									<!-- 이모지는 사원 본인만 클릭 가능 -->
 									  <c:choose>
 							          <c:when test="${clubList.emplNo == loginEmplNo}">
@@ -151,36 +149,68 @@
 							      </td>
 			                        <!-- 사원이름+이모지  -->
 			                        
-			                        <!-- T.T-MI -->
-			                         <td>
-								      <a href="#" data-bs-toggle="modal" data-bs-target="#100Modal">
-								        <c:choose>
-								          <c:when test="${not empty clubList.ttmiContent}">
-								            ${clubList.ttmiContent}
-								          </c:when>
-								          <c:otherwise>✍️ 등록하기</c:otherwise>
-								        </c:choose>
-								      </a>
-								    </td>
-			                        <!-- T.T-MI -->
+			                       <!-- T.T-MI -->
+									<td class="ttmi-col" title="${clubList.ttmiContent}">
+									  <c:choose>
+									    <c:when test="${clubList.emplNo == loginEmplNo}">
+									      <!-- 본인이면 입력 가능 -->
+									      <a href="#" data-bs-toggle="modal" data-bs-target="#100Modal">
+									        <c:choose>
+									          <c:when test="${not empty clubList.ttmiContent}">
+									            <span class="ttmi-text">${clubList.ttmiContent}</span>
+									          </c:when>
+									          <c:otherwise>✍️ 등록하기</c:otherwise>
+									        </c:choose>
+									      </a>
+									    </c:when>
+									    <c:otherwise>
+									      <!-- 타인이면 보기만 가능 -->
+									      <span>
+									        <c:choose>
+									          <c:when test="${not empty clubList.ttmiContent}">
+									            <span class="ttmi-text">${clubList.ttmiContent}</span>
+									          </c:when>
+									          <c:otherwise>🙈 아직 업데이트 하지 않았어요 ㅠ.ㅠ</c:otherwise>
+									        </c:choose>
+									      </span>
+									    </c:otherwise>
+									  </c:choose>
+									</td>
 			                        <!-- 오늘의 한 줄 -->
-			                         <td>
-								      <a href="#" data-bs-toggle="modal" data-bs-target="#todayModal">
-								        <c:choose>
-								          <c:when test="${not empty clubList.todayContent}">
-								            ${clubList.todayContent}
-								          </c:when>
-								          <c:otherwise>작성 전</c:otherwise>
-								        </c:choose>
-								      </a>
-								    </td>
-			                        <!-- 오늘의 한 줄 -->
+									<td class="today-col" title="${clubList.todayContent}">
+									  <c:choose>
+									    <c:when test="${clubList.emplNo == loginEmplNo}">
+									      <a href="#" data-bs-toggle="modal" data-bs-target="#todayModal">
+									        <c:choose>
+									          <c:when test="${not empty clubList.todayContent}">
+									            <span class="today-text">${clubList.todayContent}</span>
+									          </c:when>
+									          <c:otherwise>📝 작성 전</c:otherwise>
+									        </c:choose>
+									      </a>
+									    </c:when>
+									    <c:otherwise>
+									      <span>
+									        <c:choose>
+									          <c:when test="${not empty clubList.todayContent}">
+									            <span class="today-text">${clubList.todayContent}</span>
+									          </c:when>
+									          <c:otherwise>🙊 한 줄을 써주세요!!</c:otherwise>
+									        </c:choose>
+									      </span>
+									    </c:otherwise>
+									  </c:choose>
+									</td>
 			                      </tr>
 			                      </c:forEach>
 			                      <!-- end table row -->
 			                    </tbody>
 			                  </table>
 			                  <!-- end table -->
+			                  <!-- table 아래에 이거 추가 -->
+								<div id="loader" style="text-align:center; display:none; padding: 1rem;">
+								  <span>⏳ 불러오는 중...</span>
+								</div>
 			                </div>
 			              </div>
 			              <!-- end card -->
@@ -274,14 +304,37 @@
 	<%@ include file="../layout/prescript.jsp"%>
 </body>
 <style>
- td, th  {
-  position: relative;
+/* 테이블 헤더 스타일 */
+/* 공통: td, th 말줄임 처리 */
+td, th {
+  max-width: 240px;
   overflow: hidden;
   white-space: nowrap;
-  text-align: left;
   text-overflow: ellipsis;
-  max-width: 150px; /* 최대 너비 설정 */ 
-  }
+  word-break: break-word;
+}
+
+/* 테이블 헤더 고정 및 스타일 */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+/* 헤더 스타일 정리 - 겹침 방지용 */
+.table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff; /* 또는 연회색 #f1f3f5 */
+  z-index: 5;
+  border-bottom: 2px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06); /* 살짝 그림자 */
+}
+
+/* 필요 시 tbody의 셀 테두리 정리 */
+.table-wrapper tbody td {
+  border-top: 1px solid #e9ecef;
+}
+
+/* 툴팁 스타일 */
   .tooltip-inner {
   min-width: 120px;  /* 최소 너비 확보 */
   max-width: none;   /* Bootstrap 기본값 제한 해제 */
@@ -294,9 +347,135 @@
   text-align: center;
   white-space: normal;  /* 줄바꿈 허용 */
 }
+/* 테이블 스타일 */
+.table {
+  table-layout: fixed;
+  width: 100%;
+}
+/* 이모지 버튼 스타일 */
+.emoji-btn {
+  position: relative;
+  transition: all 0.2s;
+}
+/*이모지 버튼 스타일- selected  */
+.emoji-btn.selected {
+  background-color: #e8f0fe !important;
+  border: 2px solid #365CF5;
+  box-shadow: 0 0 6px rgba(54, 92, 245, 0.4);
+}
+/*이모지 버튼 스타일 -selected > after  */
+.emoji-btn.selected::after {
+  content: "✔";
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #365CF5;
+  color: white;
+  font-size: 0.65rem;
+  padding: 2px 4px;
+  border-radius: 50%;
+  font-weight: bold;
+  box-shadow: 0 0 3px rgba(0,0,0,0.2);
+}
+
+/* T.T-MI 칸 - 말줄임 처리 */
+.ttmi-col .ttmi-text {
+  display: inline-block;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+/* 오늘의 한 줄 칸 - 말줄임 처리 */
+.today-col .today-text {
+  display: inline-block;
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
 </style>
 
 <script type="text/javascript">
+
+let offset = 0;
+const limit = 10;
+let loading = false;
+
+// 로딩 스피너 표시
+function showLoader(show) {
+  const loader = document.getElementById("loader");
+  if (loader) loader.style.display = show ? "block" : "none";
+}
+
+function loadMoreClubs() {
+  if (loading) return;
+  loading = true;
+  showLoader(true);
+
+  fetch(`/comunity/clubListMore?offset=${offset}&limit=${limit}`)
+    .then(response => response.json())
+    .then(data => {
+      const tbody = document.getElementById("clubListBody");
+
+      data.forEach(club => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><div class="employee-image"><img src="assets/images/lead/lead-1.png" alt=""></div></td>
+          <td style="white-space: nowrap;">
+            <span style="font-weight: bold; font-size: 1.05rem; color: #2C3E50;">${club.emplNm}</span>
+            <span style="margin-left: 6px;">${club.emoji || '😆'}</span>
+          </td>
+          <td class="ttmi-col" title="${club.ttmiContent}">
+            ${club.ttmiContent || '🙈 아직 업데이트 하지 않았어요 ㅠ.ㅠ'}
+          </td>
+          <td class="today-col" title="${club.todayContent}">
+            ${club.todayContent || '🙊 한 줄을 써주세요!!'}
+          </td>`;
+        tbody.appendChild(tr);
+      });
+
+      offset += limit;
+      loading = false;
+      showLoader(false);
+
+      if (data.length < limit) {
+        document.getElementById("loader").innerHTML = "✅ 더 이상 불러올 데이터가 없습니다.";
+      }
+    })
+    .catch(err => {
+      console.error("데이터 로딩 오류:", err);
+      loading = false;
+      showLoader(false);
+    });
+}
+
+// ✅ DOM 완전히 로드된 후 스크롤 대상 확인
+document.addEventListener("DOMContentLoaded", () => {
+	
+  offset = 0; // ✅ 초기화
+  loadMoreClubs();
+	
+  const scrollContainer = document.querySelector(".table-wrapper");
+  if (!scrollContainer) return;
+
+  // 무한 스크롤 이벤트 등록
+  scrollContainer.addEventListener("scroll", () => {
+    const nearBottom = scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - 100;
+    if (nearBottom) {
+      loadMoreClubs();
+    }
+  });
+
+  loadMoreClubs(); // 초기 로딩
+});
+
+
+
+
 // ✅ 1. 이모지 배열은 최상단에 선언!
 const Emojis = [
   "😀", "😄", "😆", "😅", "🤣", "😂", "😉", "😇", "🥰", "😍",
@@ -318,19 +497,29 @@ function renderEmojis() {
     return;
   }
 
-  // 기존 버튼 초기화
   emojiContainer.innerHTML = '';
 
-  // 이모지 버튼 생성
   Emojis.forEach(emoji => {
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = 'btn btn-light m-1';
+    button.className = 'btn btn-light m-1 emoji-btn';
     button.style.fontSize = '1rem';
     button.textContent = emoji;
 
+    // ✅ 중첩 없이 이벤트 1번만 등록
     button.addEventListener('click', () => {
-      const emojiArray = Array.from(emojiTextArea.value);
+    	const currentText = emojiTextArea.value;
+    	const emojiArray = Array.from(currentText);
+	
+      // 선택 해제 (토글)
+      if (button.classList.contains('selected')) {
+        button.classList.remove('selected');
+        emojiArray = emojiArray.filter(e => e !== emoji);
+        emojiTextArea.value = emojiArray.join('');
+        return;
+      }
+
+      // 최대 3개 제한
       if (emojiArray.length >= 5) {
         swal({
           title: "⚠️ 제한 초과",
@@ -340,20 +529,27 @@ function renderEmojis() {
         });
         return;
       }
+
+      // 선택 처리
       emojiTextArea.value += emoji;
       emojiTextArea.focus();
     });
 
+    // ✅ appendChild는 반드시 forEach 바깥에서 실행
     emojiContainer.appendChild(button);
   });
 
-  // ✅ 3. 초기화 버튼 클릭 시 이모지 초기화
+  // ✅ 초기화 버튼도 정리
   if (resetButton && emojiTextArea) {
     resetButton.addEventListener('click', () => {
       emojiTextArea.value = "";
+      document.querySelectorAll('.emoji-btn.selected')
+        .forEach(btn => btn.classList.remove('selected'));
     });
   }
 }
+
+
 
 // ✅ 4. 모달이 열릴 때 이모지 렌더링 실행
 document.addEventListener('DOMContentLoaded', () => {

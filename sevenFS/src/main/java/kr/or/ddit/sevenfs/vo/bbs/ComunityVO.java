@@ -35,4 +35,9 @@ public class ComunityVO {
 	private String ttmiContent;     // bbscttCn where bbs_ctgry_no = 14
 	private String todayContent;    // bbscttCn where bbs_ctgry_no = 15
 	private String emoji;     // bbscttCn where bbs_ctgry_no = 16
+	
+	//  페이징용
+    private int offset;
+    private int limit;
+
 }

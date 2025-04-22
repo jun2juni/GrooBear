@@ -83,6 +83,23 @@ public class ComunityController {
 		return "comunity/comunityClubList";	
 	} // comunityClubList (sns 스느스 클럽)
 	
+	//restController를 사용하지 않으니까 비동기 통신을 위해서 @ResponseBody를 사용해야함
+	// 비동기 무한스크롤 데이터 요청 처리
+	@ResponseBody
+    @GetMapping("/clubListMore")
+    public List<ComunityVO> getClubListMore(
+            @RequestParam("offset") int offset,
+            @RequestParam("limit") int limit) {
+
+        ComunityVO comunityVO = new ComunityVO();
+        comunityVO.setOffset(offset);
+        comunityVO.setLimit(limit);
+
+        List<ComunityVO> result = comunityServiceImpl.comunityClubListPaging(comunityVO);
+        return result; // @RestController 덕분에 JSON 자동 응답됨!
+    }
+	
+	
 	// TTMI 게시판 
 	@PostMapping("/insertTTMI")
 	public String insertTTMI(@ModelAttribute ComunityVO comunityVO,

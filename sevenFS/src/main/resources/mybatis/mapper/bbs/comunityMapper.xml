@@ -191,7 +191,7 @@
 			keyProperty="bbsSn">
 			SELECT SEQ_BBS.NEXTVAL FROM DUAL
 		</selectKey>
-		INSERT INTO BBS
+		INSERT INTO BBS*
 		(BBS_SN, BBS_CTGRY_NO, EMPL_NO, BBSCTT_SJ, BBSCTT_CN,
 		BBSCTT_CREAT_DT, RDCNT, BBSCTT_USE_YN, UPEND_FIXING_YN, ATCH_FILE_NO)
 		VALUES
@@ -359,10 +359,75 @@
 	          AND b.bbsctt_use_yn = 'N'
 	        ORDER BY b.bbsctt_creat_dt DESC
 	      ) WHERE ROWNUM = 1
-	    ) AS emoji
+	    ) AS emoji,
+	    
+	    -- 가장 최근 업데이트 날짜
+	    (
+	      SELECT MAX(b.bbsctt_creat_dt)
+	      FROM bbs b
+	      WHERE b.empl_no = e.empl_no
+	        AND b.bbs_ctgry_no IN (14,15,16)
+	        AND b.bbsctt_use_yn = 'N'
+	    ) AS lastUpdate
 	
 	  FROM employee e
-	  ORDER BY e.empl_nm
+	  ORDER BY lastUpdate DESC NULLS LAST
+
 </select>
+
+<select id="comunityClubListPaging" parameterType="map" resultType="kr.or.ddit.sevenfs.vo.bbs.ComunityVO">
+  SELECT * FROM (
+    SELECT ROWNUM rnum, inner_table.*
+    FROM (
+      SELECT 
+        e.empl_no,
+        e.empl_nm,
+
+        -- T.T-MI
+        (
+          SELECT bbsctt_cn FROM (
+            SELECT b.bbsctt_cn
+            FROM bbs b
+            WHERE b.empl_no = e.empl_no AND b.bbs_ctgry_no = 14 AND b.bbsctt_use_yn = 'N'
+            ORDER BY b.bbsctt_creat_dt DESC
+          ) WHERE ROWNUM = 1
+        ) AS ttmiContent,
+
+        -- 오늘의 한 줄
+        (
+          SELECT bbsctt_cn FROM (
+            SELECT b.bbsctt_cn
+            FROM bbs b
+            WHERE b.empl_no = e.empl_no AND b.bbs_ctgry_no = 15 AND b.bbsctt_use_yn = 'N'
+            ORDER BY b.bbsctt_creat_dt DESC
+          ) WHERE ROWNUM = 1
+        ) AS todayContent,
+
+        -- 이모지
+        (
+          SELECT bbsctt_cn FROM (
+            SELECT b.bbsctt_cn
+            FROM bbs b
+            WHERE b.empl_no = e.empl_no AND b.bbs_ctgry_no = 16 AND b.bbsctt_use_yn = 'N'
+            ORDER BY b.bbsctt_creat_dt DESC
+          ) WHERE ROWNUM = 1
+        ) AS emoji,
+
+        -- 가장 최근 업데이트
+        (
+          SELECT MAX(b.bbsctt_creat_dt)
+          FROM bbs b
+          WHERE b.empl_no = e.empl_no AND b.bbs_ctgry_no IN (14,15,16) AND b.bbsctt_use_yn = 'N'
+        ) AS lastUpdate
+
+      FROM employee e
+      ORDER BY lastUpdate DESC
+
+    ) inner_table
+    WHERE ROWNUM &lt; #{offset} + #{limit}
+  )
+  WHERE rnum &gt; #{offset}
+</select>
+
 	
 </mapper>
