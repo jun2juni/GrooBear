@@ -321,71 +321,6 @@ select.ui-datepicker-year {
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
-<script>
-// 우선 버튼을 누르면 정말로 기안을 취소하시겠습니까라고 알려준다.
-$(".atrzLineCancelBtn").on("click", function(event) {
-	event.preventDefault();
-	swal({
-		title: "작성중인 기안을 취소하시겠습니까?",
-		text: "취소 후에는 기안이 삭제됩니다.",
-		icon: "warning",
-		buttons: {
-			cancel: "아니요",
-			confirm: {
-				text: "예",
-				value: true,
-				className: "atrzLineCancelBtn"
-			}
-		},
-		dangerMode: true,
-	}).then((willDelete) => {
-		if (willDelete) {
-			// 취소 요청을 처리하는 fetch 호출
-			fetch('/atrz/deleteAtrzWriting', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ draftId: $("#s_dfNo").text() }) // 문서 번호를 전송
-			})
-			.then(response => {
-				if (response.ok) {
-					return response.json();
-				} else {
-					throw new Error('삭제 요청 실패');
-				}
-			})
-			.then(data => {
-				if (data.success) {
-					swal({
-						title: "기안이 성공적으로 삭제되었습니다.",
-						icon: "success",
-						button: "확인"
-					}).then(() => {
-						location.replace("/atrz/home");
-					});
-				} else {
-					swal({
-						title: "삭제 실패",
-						text: data.message || "알 수 없는 오류가 발생했습니다.",
-						icon: "error",
-						button: "확인"
-					});
-				}
-			})
-			.catch(error => {
-				console.error('Error:', error);
-				swal({
-					title: "삭제 실패",
-					text: "서버와의 통신 중 오류가 발생했습니다.",
-					icon: "error",
-					button: "확인"
-				});
-			});
-		}
-	});
-});
-</script>
 								</div>
 							</div>
 
@@ -486,21 +421,6 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 															<label class="form-check-label" for="flexRadioDefault5">병가</label>
 														</div>
 													</div>
-													<script>
-														$(".s_eap_app").click(function() {
-															if (!$("input[name='holiCode']:checked").val()) {
-																swal({
-																	title: "연차유형이 선택되지 않았습니다.",
-																	text: "연차유형을 선택해주세요.",
-																	icon: "error",
-																	closeOnClickOutside: false,
-																	closeOnEsc: false,
-																	button: "확인"
-																});
-																return false;
-															}
-														});
-													</script>
 													
 													<!--연차기간 선택 시작-->
 													<div class="col ms-4">
@@ -564,8 +484,6 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 													</div>
 													<input type="hidden" name="fileUrl" id="fileUrl">
 												</div>
-
-
 											</div>
 										</div>
 									</div>
@@ -755,6 +673,19 @@ $(document).ready(function() {
 		});
 		return;
 	}
+
+	//연차유형이 선택되지 않았을경우
+	if (!$("input[name='holiCode']:checked").val()) {
+		swal({
+			title: "연차유형이 선택되지 않았습니다.",
+			text: "연차유형을 선택해주세요.",
+			icon: "error",
+			closeOnClickOutside: false,
+			closeOnEsc: false,
+			button: "확인"
+		});
+		return false;
+	}
 	
 	// 날짜 계산
 	var start = new Date($('#s_ho_start').val() + 'T' + $('#s_start_time').val());
@@ -942,6 +873,33 @@ $(document).ready(function() {
 		console.log("전송하기 체킁 확인");
 		console.log("s_eap_app_bottom->authList : ", authList);
 		
+
+		if ($(".s_appLine_tbody_new .clsTr").length === 0) {
+		swal({
+			title: "결재선이 지정되지 않았습니다.",
+			text: "결재선을 지정해주세요.",
+			icon: "error",
+			closeOnClickOutside: false,
+			closeOnEsc: false,
+			button: "확인"
+		});
+		return;
+		}
+
+		//연차유형이 선택되지 않았을경우
+		if (!$("input[name='holiCode']:checked").val()) {
+			swal({
+				title: "연차유형이 선택되지 않았습니다.",
+				text: "연차유형을 선택해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+			return false;
+		}
+
+
 		let jnForm = document.querySelector("#atrz_ho_form");
 		// console.log("${empVO}" + empVO);
 		
@@ -1087,6 +1045,7 @@ $(document).ready(function() {
 			return;
 		}
 	}
+	
 	//기안자 정보담기
 	$.ajax({
 		url:"/atrz/insertAtrzEmp",
@@ -1379,6 +1338,90 @@ $(document).ready(function() {
 	});//ajax
 	//여기서 결재선에 담긴 애들을 다 하나씩 담아서 post로
 })
+// 우선 버튼을 누르면 정말로 기안을 취소하시겠습니까라고 알려준다.
+$(".atrzLineCancelBtn").on("click", function(event) {
+	event.preventDefault();
+	swal({
+		title: "작성중인 기안을 취소하시겠습니까?",
+		text: "취소 후에는 기안이 삭제됩니다.",
+		icon: "warning",
+		buttons: {
+			cancel: "아니요",
+			confirm: {
+				text: "예",
+				value: true,
+				className: "atrzLineCancelBtn"
+			}
+		},
+		dangerMode: true,
+	}).then((willDelete) => {
+		if (willDelete) {
+			// 취소 요청을 처리하는 fetch 호출
+			fetch('/atrz/deleteAtrzWriting', 
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ atrzDocNo: $("#s_dfNo").text() }) // 문서 번호를 전송
+			})
+			.then(res => res.text())  // 👈 여기!
+			.then(result => {
+			if(result === "success") {
+				swal("삭제 완료!", "", "success");
+					location.replace("/atrz/home")
+			} else {
+				swal("삭제 실패", "관리자에게 문의하세요", "error");
+			}
+			});
+					}
+				});
+			});
+			//뒤로가기 진행시 기안취소되게 만들기
+			let hasDoc = !!$("#s_dfNo").text(); // 문서번호 존재 시만 동작
+			let isCanceled = false;
+
+			// history state push (현재 상태 저장)
+			if (hasDoc) {
+				history.pushState(null, document.title, location.href);
+			}
+
+			window.addEventListener('popstate', function (event) {
+				if (hasDoc && !isCanceled) {
+				event.preventDefault(); // 뒤로가기 중지
+				swal({
+					title: "기안을 취소하시겠습니까?",
+					text: "지정된 결재선이 삭제됩니다.",
+					icon: "warning",
+					buttons: ["취소", "확인"],
+					dangerMode: true
+				}).then((willDelete) => {
+					if (willDelete) {
+					fetch('/atrz/deleteAtrzWriting', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ atrzDocNo: $("#s_dfNo").text() })
+					})
+					.then(res => res.text())
+					.then(result => {
+						if (result === "success") {
+						isCanceled = true;
+						swal("기안이 취소되었습니다!", "", "success")
+							.then(() => {
+							history.back(); // 진짜 뒤로가기
+							});
+						} else {
+						swal("기안 취소 실패", "다시 시도해주세요", "error");
+						history.pushState(null, document.title, location.href); // 다시 뒤로 못 가게 복원
+						}
+					});
+					} else {
+					// 뒤로가기 막기 위해 다시 앞으로 push
+					history.pushState(null, document.title, location.href);
+					}
+				});
+				}
+			});
 
 
 	// datepicker위젯

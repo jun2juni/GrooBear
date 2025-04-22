@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
+import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.utils.CommonCode;
 import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
@@ -72,9 +74,14 @@ public class AtrzController {
 		String emplNo = empVO.getEmplNo();
 		log.info("emplNo : ", emplNo);
 
-		// 결재대기문서목록
-		List<AtrzVO> atrzApprovalList = atrzService.atrzApprovalList(emplNo);
-		model.addAttribute("atrzApprovalList", atrzApprovalList);
+		Map<String,Object> map = new HashMap<String, Object>();
+		
+		map.put("emplNo", emplNo);
+		
+		
+		// home 결재대기문서목록
+		List<AtrzVO> homeAtrzApprovalList = atrzService.homeAtrzApprovalList(emplNo);
+		model.addAttribute("homeAtrzApprovalList", homeAtrzApprovalList);
 
 		// 기안진행 문서 기안중에 문서에 해당 기안일시 최신순으로 10개만 출력
 		List<AtrzVO> atrzSubmitList = atrzService.atrzSubmitList(emplNo);
@@ -101,21 +108,47 @@ public class AtrzController {
 	}
 
 	// 전자결재 문서함
+	//1. 검색조건 받기, required=false, defaultValue=""
 	@GetMapping("/approval")
 	public String approvalList(Model model, @AuthenticationPrincipal CustomUser customUser,
-			@RequestParam(defaultValue = "1") int total, @RequestParam(defaultValue = "1") int currentPage,
-			@RequestParam(defaultValue = "10") int size) {
-		//페이징 처리를 위한 
-//		ArticlePage<AttachFileVO> articlePage = new ArticlePage<>(total, currentPage, size);
-//		List<AttachFileVO> fileAttachList = attachFileService.getFileAttachList(1);
+			@RequestParam(defaultValue = "1") int currentPage,@RequestParam(defaultValue = "10") int size
+			, @RequestParam(defaultValue = "",required = false) String keyword
+			, @RequestParam(defaultValue = "title",required = false) String searchType
+			, @RequestParam(defaultValue = "all",required = false) String duration
+			, @RequestParam(required = false) String fromDate
+			, @RequestParam(required = false) String toDate
+			) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
 		
 		
-		// 결재대기문서목록
-		List<AtrzVO> atrzApprovalList = atrzService.atrzApprovalList(emplNo);
+		// I. 결재대기문서목록
+		// I-1) 검색조건
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("currentPage", currentPage);
+		map.put("size", size);
+		
+		map.put("emplNo", emplNo);
+		map.put("keyword", keyword);
+		map.put("searchType", searchType);
+		map.put("duration", duration);
+		map.put("fromDate", fromDate);
+		map.put("toDate", toDate);
+		//2. 검색조건 map.put하기
+		
+		log.info("atrzApprovalList-> 검색 조건 map : " + map);
+		
+		List<AtrzVO> atrzApprovalList = atrzService.atrzApprovalList(map);
+		log.info("atrzApprovalList : " + atrzApprovalList);
+		
+		// I-2) 결재대기문서목록 행의 수
+		int approvalTotal = atrzService.approvalTotal(emplNo);
+		model.addAttribute("approvalTotal", approvalTotal);
+		// I-3) 결재대기문서목록 페이징
+		ArticlePage<AtrzVO> approvalArticlePage = new ArticlePage<AtrzVO>(approvalTotal, currentPage, size, atrzApprovalList, map);
 		model.addAttribute("atrzApprovalList", atrzApprovalList);
+		model.addAttribute("approvalArticlePage", approvalArticlePage);
 		
 		//참조대기문서
 		List<AtrzVO> atrzReferList = atrzService.atrzReferList(emplNo);
@@ -593,11 +626,7 @@ public class AtrzController {
 
 		// 여기서 사원번호를 꺼내서 사원 디테일까지가져옴
 		EmployeeVO emplDetail = organizationService.emplDetail(emplNo);
-		// appLineEmp->emplDetail : null
-		log.info("appLineEmp->emplDetail : " + emplDetail);
 
-		log.info("appLineEmp->emplDetailNm.getDeptNm : " + emplDetail.getDeptNm());
-		log.info("appLineEmp->emplDetailNm.getPosNm : " + emplDetail.getPosNm());
 
 		return emplDetail;
 	}
@@ -632,15 +661,10 @@ public class AtrzController {
 		// 로그인 시 입력한 아이디(username : 로그인 아이디)
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
-		log.info("empVO : " + empVO);
 		String emplNo = empVO.getEmplNo();
-		log.info("emplNo : " + emplNo);
 		String emplNm = empVO.getEmplNm();
-		log.info("emplNm : " + emplNo);
 		String clsfCode = empVO.getClsfCode();
-		log.info("clsfCode : " + clsfCode);
 		String deptCode = empVO.getDeptCode();
-		log.info("deptCode : " + deptCode);
 
 		atrzVO.setEmplNo(emplNo);
 		atrzVO.setClsfCode(clsfCode);
@@ -671,9 +695,9 @@ public class AtrzController {
 	}
 	//결재선 지정후 취소를 한다면 데이터를 삭제하는 작업을 진행해야한다.
 	@ResponseBody
-	@PostMapping("/deleteAtrzWriting")
+	@PostMapping(value = "deleteAtrzWriting")
 	public ResponseEntity<String> deleteAtrzWriting(@RequestBody Map<String, String> payload) {
-		 String atrzDocNo = payload.get("draftId");
+		 String atrzDocNo = payload.get("atrzDocNo");
 		    try {
 		        atrzService.deleteAtrzWriting(atrzDocNo);
 		        return ResponseEntity.ok("success");

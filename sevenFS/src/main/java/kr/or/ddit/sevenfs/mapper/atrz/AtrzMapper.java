@@ -18,14 +18,18 @@ import kr.or.ddit.sevenfs.vo.organization.VacationVO;
 
 @Mapper
 public interface AtrzMapper {
-	//결재대기문서
-	public List<AtrzVO> atrzApprovalList(String emplNo);
+	
+	//home결재 대기문서
+	public List<AtrzVO> homeAtrzApprovalList(String emplNo);
+	
 	
 	//기안진행문서 최신순 5개
 	public List<AtrzVO> atrzMinSubmitList(String emplNo);
 	//기안완료문서 최신순 5개
 	public List<AtrzVO> atrzMinCompltedList(String emplNo);
 	
+	//결재대기문서
+	public List<AtrzVO> atrzApprovalList(Map<String, Object> map);
 	//기안진행문서
 	public List<AtrzVO> atrzSubmitList(String emplNo);
 	//결재완료문서
@@ -151,6 +155,11 @@ public interface AtrzMapper {
 	public void deleteAtrzWriting(String atrzDocNo);
 	//기안작성중 취소시 결재선 삭제
 	public void deleteAtrzLineWriting(String atrzDocNo);
+
+	// 결재대기문서목록 행의 수
+	public int approvalTotal(String emplNo);
+	
+
 	
 
 	
