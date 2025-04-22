@@ -274,7 +274,6 @@
 		      </div>
 		      <div class="modal-body" id="vacationModalBody">
 		        <c:import url="./vacationAdmin.jsp"></c:import>
-		        
 		    </div>
 		  </div>
 		</div>

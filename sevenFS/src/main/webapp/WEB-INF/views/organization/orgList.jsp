@@ -13,10 +13,10 @@
 	            <%-- <sec:authentication property="principal" /> --%>
 	            <sec:authorize access="hasRole('ROLE_ADMIN')">
 	                <button id="deptInsert" class="main-btn dark-btn-light rounded-full btn-hover btn-xs"
-	                        onclick="deptInsert();">부서등록
+	                        data-bs-toggle="modal" data-bs-target="#deptInsertModal" onclick="deptInsert();">부서등록
 	                </button>
 	                <button id="emplInsert" class="main-btn dark-btn-light rounded-full btn-hover btn-xs"
-	                        onclick="emplInsert();">사원등록
+	                      	onclick="emplInsert();">사원등록
 	                </button>
 	            </sec:authorize>
 	        </c:if>

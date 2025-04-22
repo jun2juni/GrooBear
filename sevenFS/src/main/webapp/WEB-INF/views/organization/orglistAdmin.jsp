@@ -48,6 +48,24 @@
 		  </div>
 		  </div>
 		</div>
+		
+		<!-- 부서등록 Modal -->
+		<div class="modal fade" tabindex="-1" id="deptInsertModal" aria-labelledby="exampleModalLabel" aria-hidden="true"> 
+		  <div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title"></h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body" id="deptInsertModalBody">
+		        <c:import url="./depInsert.jsp"></c:import>
+		    </div>
+		  </div>
+		</div>
+		</div>
+		<!-- 부서등록 Modal -->
+		
+		
 	</section>
   <%@ include file="../layout/footer.jsp" %>
 </main>
@@ -98,12 +116,51 @@ $('#jstree').on('ready.jstree', function() {
 	})
 })
 
+// 부서등록 - 모달
+function deptInsert(){
+	fetch('/depInsert', {
+		method : 'get',
+		headers : {
+            "Content-Type": "application/json"
+        }
+	})
+	.then(resp => resp.text())
+	.then(res => {
+		console.log("부서 정보 : " , res);
+		$('#deptInsertModalBody').html(res);
+		$('#deptInsertModal').show();
+		
+		$("#insertBtn").on("click", function(){
+        	
+       	 // 입력 필드 가져오기
+           var departmentName = document.getElementById("cmmnCodeNm").value.trim();
+           var departmentDesc = document.getElementById("cmmnCodeDc").value.trim();
 
-
+           // 유효성 검사
+           if (departmentName === "") {
+               swal("부서명을 입력하세요.");
+               document.getElementById("cmmnCodeNm").focus();
+               return;
+           }
+           
+           if (departmentDesc === "") {
+           	swal("부서설명을 입력하세요.");
+               document.getElementById("cmmnCodeDc").focus();
+               return;
+           }
+       	if(departmentName != "" && departmentDesc != ""){
+       		swal("등록되었습니다.")
+               .then((value)=>{
+                   $("#depInsertForm").submit();
+               });
+       	}
+       });
+	})
+}
 
 
 // 부서등록 - 관리자만 가능
-function deptInsert(){
+/* function deptInsert(){
     fetch("/depInsert", {
         method : "get",
         headers : {
@@ -141,7 +198,7 @@ function deptInsert(){
             	}
             });
         })
-}
+} */
 
 // 사원 등록
 function emplInsert(){

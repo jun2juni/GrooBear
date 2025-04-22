@@ -15,7 +15,6 @@
 			</div>
 		</div>
 		<div class="activity-meta text-start" style="margin-top: 20px;">
-		
 			<%-- 상위부서 값 --%>
 			<%-- 여기가 실제 보내야할 값 --%>
 			<div class="input-style-1 form-group col-8" style="margin-left: 15%;">
@@ -42,7 +41,7 @@
 			 --%>
 			
 			<div class="input-style-1 form-group col-8" style="margin-left: 15%;">
-				<label for="cmmnCodeNm" class="form-label required">신규 부서명 <span
+				<label for="cmmnCodeNm" class="form-label required">신규 부서팀명 <span
 					class="text-danger">*</span></label> 
 					<input type="text" name="cmmnCodeNm" class="form-control" id="cmmnCodeNm" required>
 				<div class="invalid-feedback">부서명을 작성하세요.</div>

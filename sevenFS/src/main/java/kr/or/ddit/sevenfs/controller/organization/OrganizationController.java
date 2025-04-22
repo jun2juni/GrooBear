@@ -133,7 +133,7 @@ public class OrganizationController {
 		return "redirect:/orglistAdmin";
 	}
 	
-	// 부서 등록
+	// 부서 등록 - jsp return
 	@GetMapping("/depInsert")
 	public String depInsert(Model model) {
 		List<CommonCodeVO> depList = organizationService.depList();
@@ -147,6 +147,26 @@ public class OrganizationController {
 		
 		return "organization/depInsert";
 	}
+	
+	// 부서 등록 - json return
+//	@ResponseBody
+//	@GetMapping("/depInsert")
+//	public Map<String, Object> depInsert(Model model) {
+//		List<CommonCodeVO> depList = organizationService.depList();
+//		model.addAttribute("depList", depList);
+//		
+//		List<CommonCodeVO> upperList = organizationService.upperDepList();
+//		//model.addAttribute("upperList" , upperList);
+//		//model.addAttribute("title" , "부서 등록");
+//		
+//		Map<String, Object> map = new HashMap<>();
+//		map.put("depList", depList);
+//		map.put("upperList", upperList);
+//		
+//		// 최상위부서 선택했을때 소속된 팀 출력하기
+//		
+//		return map;
+//	}
 	
 	// 최상위부서 선택시 소속된 부서를 반환
 	@ResponseBody
