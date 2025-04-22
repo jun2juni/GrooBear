@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
@@ -22,10 +23,12 @@ public class ProjectTaskVO {
     private String taskNm;
     private String taskCn;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private Date taskBeginDt;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private Date taskEndDt;
+
 
     private int progrsrt;
     private long atchFileNo;
@@ -37,6 +40,7 @@ public class ProjectTaskVO {
     private String priort;
     private String taskGrad;
     private String taskSttus;
+    private String taskText;
 
     private Integer taskDaycnt;
     private Integer depth;

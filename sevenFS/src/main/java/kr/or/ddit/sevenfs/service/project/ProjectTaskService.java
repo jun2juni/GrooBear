@@ -38,4 +38,6 @@ public interface ProjectTaskService {
 	
 	public int updateTaskStatus(long taskId, String status);
 
+    // 업무 일정(Gantt에서 이동/수정) 업데이트
+    public void updateSchedule(ProjectTaskVO task);
 }

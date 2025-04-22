@@ -17,9 +17,7 @@
 	  <result property="chargerEmpno" column="CHARGER_EMPNO"/>
 	  <result property="chargerEmpNm" column="CHARGER_EMP_NM"/>
 	  <result property="parentTaskNm" column="PARENT_TASK_NM"/>
-	  <result property="taskText" column="TASK_NM"/>
-	<result property="startDate" column="TASK_BEGIN_DT"/>
-	<result property="endDate" column="TASK_END_DT"/>
+
 	  
 	  
 	</resultMap>
@@ -67,7 +65,7 @@
 </insert>
 
 
-    <insert id="insertProjectTask" parameterType="ProjectTaskVO">
+    <insert id="insertProjectTask" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO">
         <selectKey resultType="int" order="BEFORE" keyProperty="taskNo">
             SELECT SEQ_PROJECT_TASK.NEXTVAL FROM DUAL
         </selectKey>
@@ -113,7 +111,7 @@
 	</update>
 
 	<!-- 프로젝트 번호로 업무 목록 조회 -->
-	<select id="selectProjectTasks" resultType="ProjectTaskVO" parameterType="int">
+	<select id="selectProjectTasks" resultType="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO" parameterType="int">
 	  SELECT 
 	    PT.TASK_NO,
 	    PT.PRJCT_NO,
@@ -274,6 +272,16 @@
 	  LEFT JOIN EMPLOYEE E ON PT.CHARGER_EMPNO = E.EMPL_NO
 	  WHERE PT.TASK_NO = #{taskNo}
 	</select>
+	
+	
+	<update id="updateTaskSchedule" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO">
+	  UPDATE PROJECT_TASK
+	  SET 
+	    TASK_BEGIN_DT = #{taskBeginDt},
+	    TASK_END_DT = #{taskEndDt},
+	    PROGRSRT = #{progrsrt}
+	  WHERE TASK_NO = #{taskNo}
+	</update>
 
 	
    

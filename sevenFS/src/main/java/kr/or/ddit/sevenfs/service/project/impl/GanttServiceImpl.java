@@ -22,12 +22,11 @@ public class GanttServiceImpl implements GanttService {
         List<ProjectTaskEntity> entities = ganttMapper.selectTaskEntitiesByProjectNo(prjctNo);
         return entities.stream().map(ProjectTaskEntity::toGanttVO).collect(Collectors.toList());
     }
-    
+
     @Override
     public List<ProjectTaskEntity> getTaskEntitiesByProject(int prjctNo) {
-        return ganttMapper.selectTaskEntitiesByProjectNo(prjctNo); //
+        return ganttMapper.selectTaskEntitiesByProjectNo(prjctNo);
     }
-
 
     @Override
     public GanttTaskVO createTask(GanttTaskVO task) {

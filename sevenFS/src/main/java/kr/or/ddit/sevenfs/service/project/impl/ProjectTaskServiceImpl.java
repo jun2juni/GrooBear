@@ -231,5 +231,17 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
         return projectTaskMapper.updateTaskStatus(taskId, status);
     }
     
+    @Override
+    public void updateSchedule(ProjectTaskVO task) {
+        log.debug("업무 일정 업데이트 - taskNo: {}, 시작일: {}, 종료일: {}, 진행률: {}%",
+                  task.getTaskNo(), task.getTaskBeginDt(), task.getTaskEndDt(), task.getProgrsrt());
+
+        int affected = projectTaskMapper.updateTaskSchedule(task);
+
+        if (affected != 1) {
+            throw new RuntimeException("업무 일정 업데이트 실패: taskNo=" + task.getTaskNo());
+        }
+    }
+    
 
 }

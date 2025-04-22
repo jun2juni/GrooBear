@@ -41,6 +41,7 @@ public interface ProjectTaskMapper {
 
 	public GanttTaskVO selectCardById(Long taskNo);
 	
+	public int updateTaskSchedule(ProjectTaskVO task);
     
 
 }

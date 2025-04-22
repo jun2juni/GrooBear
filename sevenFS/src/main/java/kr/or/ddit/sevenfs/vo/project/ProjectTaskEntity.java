@@ -23,6 +23,7 @@ public class ProjectTaskEntity {
     private String chargerEmpNm;
     private Long atchFileNo;
     private String parentTaskNm; // 상위 업무명 (JOIN 결과)
+
     
     // VO 변환 메서드
     public GanttTaskVO toGanttVO() {
