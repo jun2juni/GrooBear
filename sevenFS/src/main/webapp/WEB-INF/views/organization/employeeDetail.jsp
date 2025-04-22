@@ -62,7 +62,7 @@
      <ul>
        <li>
        <hr>
-       <span class="status-btn main-btn dark-btn-outline">특이사항</span>
+       <span class="status-btn dark-btn">특이사항</span>
        <c:choose>
 		    <c:when test="${empDetail.partclrMatter != null}">
 		         <div style="margin-top: 20px;" class="text-medium text-dark">${empDetail.partclrMatter}</div>

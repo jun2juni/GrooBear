@@ -56,6 +56,7 @@
 							</c:forEach>
 						 </select>
 				 	 </div>
+				 	 <input type="hidden" value="${emp.deptCode}" id="hiddenDeptCode">
 				  	<div class="input-style-1 form-group col-2">
 		         	 <label for=upperDept class="form-label required">소속부서<span class="text-danger">*</span></label>
 		     	      <select id="upperDept" class="form-select w-auto" required="required">
@@ -239,7 +240,7 @@
 										</option>
 									  </c:forEach>
 								</select>
-								<div class="invalid-feedback">은행을 선택헤주세요.</div>
+								<div class="invalid-feedback">은행을 선택해주세요.</div>
 				          	</div>
 					          
 					          
@@ -282,6 +283,7 @@
   <%@ include file="../layout/footer.jsp" %>
   <%@ include file="../layout/prescript.jsp" %>
  <script type="text/javascript">
+
  
 // 부서코드 선택시 보여 줄 하위 부서팀
 function lowerDepts(upperCmmnCode, emplNo){
@@ -296,6 +298,8 @@ function lowerDepts(upperCmmnCode, emplNo){
 		// 여기서 $("#lowerDepartment") 내부 비우기
 		  $("#lowerDepartment").html("");
 		 
+		 const empDeptCode = $('#hiddenDeptCode').val();
+		
 		 lowerDepList = res.lowerDep;
 		 emplDetail = res.emplDetail;
 		 console.log("선택한 부서의 하위부서 리스트 : ", lowerDepList);
@@ -305,12 +309,21 @@ function lowerDepts(upperCmmnCode, emplNo){
 				console.log("lowerDep : " , lowerDep.cmmnCode);
 				console.log("사원의 부서 : " , emplDetail.deptCode);
 				const id = idx;
-				const deptChecked = lowerDep.cmmnCode === emplDetail.deptCode ? 'checked' : '';
+				// 사원의 부서코드가 00일경우(관리자)
+				const empDept00 = empDeptCode === '00';
+				const matchDeptCode = lowerDep.cmmnCode === emplDetail.deptCode;
+				
+				const deptChecked = (empDept00 && lowerDep.cmmnCode === "00") ||
+									(!empDept00 && matchDeptCode)
+									? 'checked' : '';
+				
+				const deptValue = empDept00 ? '00' : lowerDep.cmmnCode;
+				
 				console.log("deptChecked" , deptChecked);
 				 $("#lowerDepartment").append(
 					`
 					 <div>
-					 <input type="radio" value="\${lowerDep.cmmnCode}" id="\${id}" name="deptCode" required \${deptChecked}>
+					 <input type="radio" value="\${deptValue}" id="\${id}" name="deptCode" required \${deptChecked}>
 		      		 <label for="\${id}">\${lowerDep.cmmnCodeNm}</label>
 					</div>
 					`
@@ -322,27 +335,39 @@ function lowerDepts(upperCmmnCode, emplNo){
  
  
 $(function(){
-
-	let fmtEncyDt = $('#fmtEncyDt').val();
-	console.log("입사일자 : " ,fmtEncyDt);	
-	let replaceEncy = fmtEncyDt.replaceAll('-', '');
-	 //hidden input으로 값 바꿔주기
-	$('#ecnyDate').val(replaceEncy);
-
 	
-	let ecnyDate = $('#ecnyDate').val();
-	let replaceEncyDt = ecnyDate.replaceAll('-', '');
-	console.log(replaceEncyDt);
-	$('#ecnyDate').val(replaceEncyDt);
+	const employeeName = $('#emplNm').val();
+	const employeeDeptCode = $('#hiddenDeptCode').val();
 	
+	console.log('사원이름 : ' , employeeName);
+	console.log('부서코드 : ' , employeeDeptCode);
 	
-	// 생년월일 하이픈 없애는 처리
-	let fmtBirth = $('#fmtBirth').val();
-	let replaceBirth = fmtBirth.replaceAll('-', '');
-	let brthdy = $('#brthdy').val(replaceBirth);
-	console.log(brthdy.val());	
+	if(employeeDeptCode == '00'){
+		$('#upperDept').val('00');
+	}
 	
 	$("#emplUpdateBtn").on("click", function(){
+		
+		let fmtEncyDt = $('#fmtEncyDt').val();
+		if(fmtEncyDt != null){
+			console.log("입사일자 : " ,fmtEncyDt);	
+			let replaceEncy = fmtEncyDt.replaceAll('-', '');
+			 //hidden input으로 값 바꿔주기
+			$('#ecnyDate').val(replaceEncy);
+		}
+		 
+		let ecnyDate = $('#ecnyDate').val();
+		if(ecnyDate != null){
+			let replaceEncyDt = ecnyDate.replaceAll('-', '');
+			console.log(replaceEncyDt);
+			$('#ecnyDate').val(replaceEncyDt);
+		}
+		
+		// 생년월일 하이픈 없애는 처리
+		let fmtBirth = $('#fmtBirth').val();
+		let replaceBirth = fmtBirth.replaceAll('-', '');
+		let brthdy = $('#brthdy').val(replaceBirth);
+		console.log(brthdy.val());	
 		// alert창 수정하기ㅡㅡ
 	
 		/* 	if(!$('input[name="deptCode"]:checked').val()){
