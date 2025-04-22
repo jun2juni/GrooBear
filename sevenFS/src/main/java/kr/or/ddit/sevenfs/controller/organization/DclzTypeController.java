@@ -181,9 +181,14 @@ public class DclzTypeController {
 			@RequestParam(defaultValue="1") int currentPage,
 			@RequestParam(defaultValue = "10") int size,
 			@RequestParam(defaultValue = "") String keyword,
-			@RequestParam(defaultValue = "") String keywordSearch) {
+			@RequestParam(defaultValue = "") String keywordSearch,
+			@RequestParam(required = false) String emplNo
+			) {
 		
 		//model.addAttribute("title","나의 연차 내역 by박호산나");
+		
+//		String emplNo = (targetEmplNo != null && !targetEmplNo.isEmpty())
+//						? targetEmplNo : principal.getName();
 		
 		log.info("keyword" + keyword);
 		log.info("keywordSearch" + keywordSearch);
@@ -198,10 +203,6 @@ public class DclzTypeController {
 			keyword = currentDate;
 		}
 		model.addAttribute("paramKeyword" , keyword);
-
-		// 현재 로그인한 사원번호
-		String emplNo = principal.getName();
-
 		Map<String, Object> map = new HashMap<>();
 		map.put("emplNo", emplNo);
 		map.put("currentPage", currentPage);
@@ -238,31 +239,108 @@ public class DclzTypeController {
 		return "organization/dclz/vacation";
 	}
 	
+	// 연차 페이지
+	@GetMapping("/vacationAdmin")
+	public String vacationAdmin(Model model, Principal principal, VacationVO vacationVO,
+			@RequestParam(defaultValue="1") int currentPage,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "") String keyword,
+			@RequestParam(defaultValue = "") String keywordSearch,
+			@RequestParam(defaultValue = "") String targetEmplNo
+			) {
+		
+		//model.addAttribute("title","나의 연차 내역 by박호산나");
+		
+		String emplNo = targetEmplNo;
+		log.info("넘어온 사원번호 : " + emplNo);
+		
+		log.info("keyword" + keyword);
+		log.info("keywordSearch" + keywordSearch);
+		
+		String paramKeyword = "";
+		// 키워드 없을때
+		if(keyword == null || keyword.trim().isEmpty()) {
+			Date date = new Date();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			dateFormat.applyPattern("yyyy-MM");
+			String currentDate = dateFormat.format(date);
+			keyword = currentDate;
+		}
+		model.addAttribute("paramKeyword" , keyword);
+		Map<String, Object> map = new HashMap<>();
+		map.put("emplNo", emplNo);
+		map.put("currentPage", currentPage);
+		map.put("keyword", keyword);
+		map.put("keywordSearch", keywordSearch);
+		
+		// 연차사용내역 전체 행 수
+		int total = dclztypeService.getVacTotal(map);
+		
+		// 페이지 정보
+		ArticlePage<VacationVO> articlePage = new ArticlePage<>(total, currentPage, size);
+		log.info("articlePage : " + articlePage);
+		log.info("keyword : " + keyword);
+		// 페이지정보 넘겨주기
+		model.addAttribute("articlePage" , articlePage);
+		
+		// 사원의 이번년도 연차 현황 가져오기
+		VacationVO emplVac = dclztypeService.emplVacationCnt(emplNo);
+		log.info("controller 연차현황 : " + emplVac);
+		
+		// 잔여연차 계산된값 확인
+		//double remain = emplVacation.getYrycRemndrDaycnt();
+		//log.info("controller잔여연차 : " + remain);
+		//emplVacation.setYrycRemndrDaycnt(remain);
+		
+		model.addAttribute("emplVac",emplVac);
+		log.info("연차내역 : " + emplVac);
+		
+		// 공통코드가 연차에 해당하는 사원의 모든 년도 데이터 가져오기
+		List<DclzTypeVO> emplCmmnVacList = dclztypeService.emplVacationDataList(map);
+		model.addAttribute("emplCmmnVacList" , emplCmmnVacList);
+		//log.info("사원의 모든 연차 사용내역 : " + emplCmmnVacationList);
+		
+		return "organization/dclz/vacationAdmin";
+	}
+	
+	
+	
+	
+	
 	// 연차관리 페이지(관리자)
 	@GetMapping("/vacAdmin")
 	public String vacationAdmin( Model model
 			,@RequestParam(defaultValue = "1") int currentPage
-			,@RequestParam(defaultValue = "10") int size
-			,@RequestParam(defaultValue = "") String keyword
+			,@RequestParam(defaultValue = "5") int size
+			,@RequestParam(defaultValue = "") String keywordName
+			,@RequestParam(defaultValue = "") String keywordDept
+			,@RequestParam(defaultValue = "") String keywordEcny
+			,@RequestParam(defaultValue = "") String keywordRetire
 			) {
 		
-		log.info("받은 키워드 :" + keyword);
+		log.info("받은 키워드 :" + keywordName);
+		log.info("받은 키워드 :" + keywordDept);
+		log.info("받은 키워드 :" + keywordEcny);
+		log.info("받은 키워드 :" + keywordRetire);
 		
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("currentPage", currentPage);
 		//map.put("size", size);
-		map.put("keyword", keyword);
+		map.put("keywordName", keywordName);
+		map.put("keywordDept", keywordDept);
+		map.put("keywordEcny", keywordEcny);
+		map.put("keywordRetire", keywordRetire); 
 		
 		// 페이지정보
-		int total = dclztypeService.getEmplAllVacTotal();
+		int total = dclztypeService.allEmplVacationAdminCnt();
 		log.info("total : " + total);
 		ArticlePage<VacationVO> articlePage = new ArticlePage<>(total, currentPage, size);
 		log.info("articlePage : " + articlePage);
 		model.addAttribute("articlePage", articlePage);
 		
 		// 모든 사원의 연차 현황
-		List<DclzTypeVO> allEmplVacList = this.dclztypeService.allEmplVacList(map);
+		List<VacationVO> allEmplVacList = this.dclztypeService.allEmplVacationAdmin(map);
 		log.info("모든 사원 연차 현황 : " + allEmplVacList);
 		//map.put("allEmplVacList", allEmplVacList);
 		model.addAttribute("allEmplVacList" , allEmplVacList);
@@ -271,18 +349,16 @@ public class DclzTypeController {
 	}
 	
 	// 연차관리에서 부여된 연차 update
-	@ResponseBody
-	@PostMapping("/addVacInsert")
-	public String addVacInsert(@RequestBody VacationVO vacationVO) {
+	@GetMapping("/addVacInsert")
+	public String addVacInsert(VacationVO vacationVO
+				, @RequestParam(defaultValue = "1") String currentPage) {
 		log.info("addVacInsert->vacationVO : " + vacationVO);
+		log.info("addVacInsert->currentPage : " + currentPage);
 		
 		int result = dclztypeService.addVacInsert(vacationVO);
+		log.info("지급 결과 : " + result);
 		
 		// 선택사원 연차정보 UPDATE해주기
-		if(result == 1) {
-			return "성공";
-		}else {
-			return "실패";
-		}
+		return "redirect:/dclz/vacAdmin?currentPage="+currentPage;
 	}
 }

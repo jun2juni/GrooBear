@@ -15,7 +15,7 @@
 		          FROM atrz_line L2
 		          WHERE L2.atrz_doc_no = L.atrz_doc_no
 		            AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
-		            AND L2.atrz_ty = 'N'
+		            AND L2.atrz_ty = '1'
 		            AND L2.sanctn_progrs_sttus_code NOT IN ('10', '60')
 		      )
 		)
@@ -34,7 +34,7 @@
 	  FROM atrz
 	 WHERE drafter_empno = #{emplNo}
 	   AND atrz_sttus_code = '00'
-	   AND atrz_delete_yn = 'N'
+	   AND atrz_delete_yn = '1'
 </select>
 
 <!-- 결재 완료 갯수  -->
@@ -43,7 +43,7 @@
 	  FROM atrz
 	 WHERE drafter_empno = #{emplNo}
 	   AND atrz_sttus_code = '10'
-	   AND atrz_delete_yn = 'N'
+	   AND atrz_delete_yn = '1'
 </select>
 
 <!-- 결재 반려 갯수 -->
@@ -52,7 +52,7 @@
 	  FROM atrz
 	 WHERE drafter_empno = #{emplNo}
 	   AND atrz_sttus_code = '20'
-	   AND atrz_delete_yn = 'N'
+	   AND atrz_delete_yn = '1'
 </select>
 
 <!-- 공지사항 목록 가져오기 (size 3) -->

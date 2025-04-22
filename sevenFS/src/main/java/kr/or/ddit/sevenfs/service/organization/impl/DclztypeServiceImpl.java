@@ -153,37 +153,36 @@ public class DclztypeServiceImpl implements DclztypeService {
 		//log.info("선택사원정보 : " + vacationVO);
 		
 		// 선택된 사원번호
-		String emplNo = vacationVO.getEmplNo();
+		//String emplNo = vacationVO.getEmplNo();
 		//log.info("선택사원 번호 : " + emplNo);
 		// 선택된 사원의 연차정보 가져오기
-		VacationVO emplVacCnt = dclztypeMapper.emplVacationCnt(emplNo);
+		//VacationVO emplVacCnt = dclztypeMapper.emplVacationCnt(emplNo);
 		//log.info("선택사원의 연차정보 : " + emplVacCnt);
 		
 		// 선택사원의 총 연차일수
-		double totalVac = emplVacCnt.getTotYrycDaycnt();
+		double totalVac = vacationVO.getTotYrycDaycnt();
 		
 		// 기본지급으로 받은 연차
-		double basicWorkVac = vacationVO.getYrycMdatDaycnt();
-		emplVacCnt.setYrycMdatDaycnt(basicWorkVac);
+		//double basicWorkVac = vacationVO.getYrycMdatDaycnt();
+		//emplVacCnt.setYrycMdatDaycnt(basicWorkVac);
 		
 		// 초과근무로 받은 연차
 		double addWorkVac = vacationVO.getExcessWorkYryc();
-		emplVacCnt.setExcessWorkYryc(addWorkVac);
+		//emplVacCnt.setExcessWorkYryc(addWorkVac);
 		
 		// 성과로 받은 연차
 		double cmpnVac = vacationVO.getCmpnstnYryc();
-		emplVacCnt.setCmpnstnYryc(cmpnVac);
+		//emplVacCnt.setCmpnstnYryc(cmpnVac);
+		
+		log.info("총 : " + totalVac + " , 초과 : " + addWorkVac + ", 성과 : " + cmpnVac);
 		
 		// 추가로 받은 연차 계산 , 총연차일수+받은연차일수
-		double sumTotalVac = totalVac+addWorkVac+cmpnVac+basicWorkVac;
-		log.info("계산된 총 연차일수 : " + sumTotalVac);
-		emplVacCnt.setTotYrycDaycnt(sumTotalVac);
+		//double sumTotalVac = totalVac+addWorkVac+cmpnVac+basicWorkVac;
+		//log.info("계산된 총 연차일수 : " + sumTotalVac);
+		//emplVacCnt.setTotYrycDaycnt(sumTotalVac);
 		
 		// 선택사원 연차정보 UPDATE 해주기
-		int result = this.dclztypeMapper.addVacInsert(emplVacCnt);
-		log.info("update결과 : " + result);
-				
-		return result;
+		return this.dclztypeMapper.addVacInsert(vacationVO);
 	}
 
 	// 모든 사원의 연차 현황 - 관리자 조회시
@@ -198,4 +197,15 @@ public class DclztypeServiceImpl implements DclztypeService {
 		return dclztypeMapper.mainEmplDclzList(emplNo);
 	}
 
+	// 전사 연차현황 갯수 조회 (관리자)
+	@Override
+	public List<VacationVO> allEmplVacationAdmin(Map<String, Object> map) {
+		return dclztypeMapper.allEmplVacationAdmin(map);
+	}
+
+	// 전사 연차현황 목록 총 갯수
+	public int allEmplVacationAdminCnt() {
+		return dclztypeMapper.allEmplVacationAdminCnt();
+	}
+	
 }

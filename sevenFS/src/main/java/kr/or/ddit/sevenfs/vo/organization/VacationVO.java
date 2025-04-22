@@ -21,7 +21,8 @@ public class VacationVO {
 	private double excessWorkYryc; // 초과근무연차
 	private double cmpnstnYryc; // 보상연차
 	
-	
+	// 게시글 번호
+	private int rnum;
 	// 사원이름
 	private String emplNm;
 	// 연차 유형명
@@ -32,6 +33,10 @@ public class VacationVO {
 	private Date dclzEndDt;
 	// 근태 사유
 	private String dclzReason;
+	// 입사일자
+	private String ecnyDate;
+	// 퇴사일자
+	private String retireDate;
 	
 
 }

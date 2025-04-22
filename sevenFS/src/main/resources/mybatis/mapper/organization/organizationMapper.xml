@@ -103,6 +103,15 @@
 		  AND ENABLED = '1'
 	</select>
 	
+	<!-- 사원이름으로 상세보기 -->
+	<select id="searchNameEmpDet">
+		SELECT emp.EMPL_NO
+				,
+				
+		FROM EMPLOYEE
+		WHERE empl_nm = '박호산나'
+	</select>
+	
 	<!-- 사원 상세부서 -->
 	<select id="empDetailDep" parameterType="String" resultMap="commonMap">
 		SELECT CC.CMMN_CODE_NM
@@ -141,7 +150,7 @@
 <!-- 		<association property="employeeList" resultMap="employeeMap"></association> -->	
 	</resultMap>
 	
-	<resultMap type="employeeVO" id="employeeMap">
+	<resultMap type="kr.or.ddit.sevenfs.vo.organization.EmployeeVO" id="employeeMap">
 		<id property="emplNo" column="EMPL_NO"/>
 		<result property="password" column="PASSWORD"/>
 		<result property="enabled" column="ENABLED"/>
@@ -171,7 +180,7 @@
 		<collection property="empAuthVOList" resultMap="loginAuthMap"/>
 	</resultMap>
 
-	<resultMap id="loginAuthMap" type="empAuthVO">
+	<resultMap id="loginAuthMap" type="kr.or.ddit.sevenfs.vo.auth.EmpAuthVO">
 		<id property="authority" column="AUTHORITY"/>
 		<id property="emplNo" column="EMPL_NO"/>
 	</resultMap>

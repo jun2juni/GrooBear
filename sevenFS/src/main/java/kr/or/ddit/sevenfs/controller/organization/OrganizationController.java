@@ -141,7 +141,6 @@ public class OrganizationController {
 		
 		List<CommonCodeVO> upperList = organizationService.upperDepList();
 		model.addAttribute("upperList" , upperList);
-		
 		model.addAttribute("title" , "부서 등록");
 		
 		// 최상위부서 선택했을때 소속된 팀 출력하기

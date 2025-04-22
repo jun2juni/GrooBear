@@ -70,4 +70,10 @@ public interface DclztypeService {
 	// 메인페이지에서 필요한 사원의 근태현황 조회
 	public List<DclzTypeVO> mainEmplDclzList(String emplNo);
 	
+	// 전사 연차현황 갯수 조회 (관리자)
+	public List<VacationVO> allEmplVacationAdmin(Map<String, Object> map);
+	
+	// 전사 연차현황 목록 총 갯수
+	public int allEmplVacationAdminCnt();
+	
 }

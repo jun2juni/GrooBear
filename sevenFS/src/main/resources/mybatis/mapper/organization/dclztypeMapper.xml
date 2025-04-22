@@ -176,7 +176,6 @@
 	<result property="work" column="WORK"/>
 	<result property="vacation" column="VACATION"/>
 	<result property="businessTrip" column="BUSINESS_TRIP"/>
-	<result property="upperCmmnCode" column="UPPER_CMMN_CODE"/>
 </resultMap>
 
 <!-- 출근시간 등록 -->
@@ -388,8 +387,6 @@ WITH U AS(
 	        YRYC_USE_BEGIN_DATE = TO_CHAR(SYSDATE, 'YYYY') || '0101'
 	       , YRYC_USE_END_DATE = TO_CHAR(SYSDATE, 'YYYY') || '1231'
 	       , TOT_YRYC_DAYCNT = #{totYrycDaycnt}
-	       , YRYC_USE_DAYCNT = #{yrycUseDaycnt}
-	       , YRYC_MDAT_DAYCNT = #{yrycMdatDaycnt}
 	       , YRYC_REMNDR_DAYCNT = #{yrycRemndrDaycnt}
 	       , EXCESS_WORK_YRYC = #{excessWorkYryc}
 	       , CMPNSTN_YRYC = #{cmpnstnYryc}
@@ -403,6 +400,7 @@ WITH U AS(
 <select id="allEmplVacList" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
 	WITH U AS(
     SELECT ROW_NUMBER() OVER(ORDER BY D.dclz_end_dt DESC) RNUM
+       , D.empl_no
        , D.dclz_no
        , D.dclz_code
        , D.dclz_begin_dt
@@ -437,6 +435,70 @@ WITH U AS(
     SELECT U.*
         FROM U
         WHERE U.RNUM BETWEEN (#{currentPage} * 10)-(10-1) AND (#{currentPage} * 10)
+</select>
+
+<!-- 전사 연차 갯수 현황 -->
+<select id="allEmplVacationAdmin" parameterType="hashMap" resultType="kr.or.ddit.sevenfs.vo.organization.VacationVO">
+	WITH U AS(
+    SELECT ROW_NUMBER() OVER(ORDER BY V.cmmn_code_nm ASC) RNUM
+        , V.EMPL_NO
+        , V.YRYC_YEAR
+        , V.YRYC_USE_BEGIN_DATE
+        , V.YRYC_USE_END_DATE
+        , V.TOT_YRYC_DAYCNT
+        , V.YRYC_USE_DAYCNT
+        , V.YRYC_MDAT_DAYCNT
+        , V.YRYC_REMNDR_DAYCNT
+        , V.EXCESS_WORK_YRYC
+        , V.CMPNSTN_YRYC
+        , V.YRYC_CODE
+        , V.YRYC_DETAIL
+        , V.ECNY_DATE
+        , V.RETIRE_DATE
+        , V.empl_nm
+        , V.cmmn_code_nm
+     FROM
+    (
+    SELECT emp.EMPL_NO
+        , vac.YRYC_YEAR
+        , vac.YRYC_USE_BEGIN_DATE
+        , vac.YRYC_USE_END_DATE
+        , vac.TOT_YRYC_DAYCNT
+        , vac.YRYC_USE_DAYCNT
+        , vac.YRYC_MDAT_DAYCNT
+        , vac.YRYC_REMNDR_DAYCNT
+        , vac.EXCESS_WORK_YRYC
+        , vac.CMPNSTN_YRYC
+        , vac.YRYC_CODE
+        , vac.YRYC_DETAIL
+        , emp.ECNY_DATE
+        , emp.RETIRE_DATE
+        , emp.empl_nm
+        ,cc.cmmn_code_nm
+    FROM VACATION vac
+    LEFT JOIN employee emp ON vac.empl_no = emp.empl_no
+    LEFT JOIN common_code cc ON emp.dept_code = cc.cmmn_code AND cc.cmmn_code_group='DEPARTMENT'
+    WHERE cc.cmmn_code_group='DEPARTMENT'   
+    AND (
+        (emp.empl_nm LIKE '%' || #{keywordName} || '%'
+	    AND (cc.cmmn_code_nm  LIKE '%' || #{keywordDept} || '%'
+	    AND emp.ecny_date LIKE '%' || #{keywordEcny} || '%'
+        OR emp.retire_date LIKE '%' || #{keywordRetire} || '%' ))
+    )
+    )
+    V
+    )
+    SELECT U.*
+        FROM U
+        WHERE U.RNUM BETWEEN (#{currentPage} * 5)-(5-1) AND (#{currentPage} * 5)
+</select>
+
+<!-- 전사 연차현황 목록 총 갯수 -->
+<select id="allEmplVacationAdminCnt" resultType="int">
+	SELECT COUNT(*)
+    FROM VACATION vac
+    LEFT JOIN employee emp ON vac.empl_no = emp.empl_no
+    LEFT JOIN common_code cc ON emp.dept_code = cc.cmmn_code AND cc.cmmn_code_group='DEPARTMENT'
 </select>
 
 </mapper>
