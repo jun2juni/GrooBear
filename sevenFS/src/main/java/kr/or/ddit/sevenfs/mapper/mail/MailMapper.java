@@ -21,5 +21,10 @@ public interface MailMapper {
 	List<AttachFileVO> getAtchFile(long atchFileNo);
 	int getTotal(Map<String, Object> map);
 	int mailDelete(List<String> emailNoList);
+	int labelingUpt(Map<String, Object> map);
+	List<MailVO> mailLabeling(int lblNo);
+	MailVO mailRepl(MailVO mailVO);
+	int tempStoreEmail(List<MailVO> mailVOList);
+	Map<String, Object> findEmplByEmail(String trnsmitEmail);
 
 }

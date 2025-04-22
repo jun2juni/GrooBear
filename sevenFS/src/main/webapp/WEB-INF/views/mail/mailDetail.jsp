@@ -405,6 +405,9 @@
     .back-to-list:hover {
       color: #1f2937;
     }
+    .dropdown-toggle::after {
+      display: none !important;
+    }
     </style>
     <!-- </head> -->
     <!-- <body> -->
@@ -447,26 +450,25 @@
             
             <div class="sidebar-section">
               <div class="sidebar-section-header">라벨</div>
-              <div class="sidebar-item">
-                <i class="fas fa-tag" style="color: #3b82f6;"></i>
-                <span class="sidebar-label">내일정</span>
-              </div>
-              <div class="sidebar-item">
-                <i class="fas fa-tag" style="color: #ef4444;"></i>
-                <span class="sidebar-label">뉴스레터</span>
-              </div>
-              <div class="sidebar-item">
-                <i class="fas fa-tag" style="color: #f59e0b;"></i>
-                <span class="sidebar-label">중요</span>
-              </div>
-              <div class="sidebar-item">
-                <i class="fas fa-tag" style="color: #10b981;"></i>
-                <span class="sidebar-label">업무</span>
-              </div>
-              <div class="sidebar-item">
-                <i class="fas fa-tag" style="color: #8b5cf6;"></i>
-                <span class="sidebar-label">개인</span>
-              </div>
+              <c:forEach items="${mailLabelList}" var="mailLabel">
+                <div class="sidebar-item label-select ${mailVO.lblNo == mailLabel.lblNo ? 'active' : ''}" data-lblNo="${mailLabel.lblNo}">
+                  <i class="fas fa-tag" data-col="${mailLabel.lblCol}" style="color: ${mailLabel.lblCol};"></i>
+                  <span class="sidebar-label">${mailLabel.lblNm}</span>
+                  <div class="dropdown label-actions" style="margin-left: auto; position: relative;">
+                    <button class="dropdown-toggle" style="background: none; border: none; cursor: pointer;">
+                      <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <div class="dropdown-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;">
+                      <button class="dropdown-item edit-label" type="button" data-lblNo="${mailLabel.lblNo}" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left;">
+                        <i class="fas fa-edit" style="margin-right: 8px;"></i> 수정
+                      </button>
+                      <button class="dropdown-item delete-label" type="button" data-lblNo="${mailLabel.lblNo}" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left;">
+                        <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> 삭제
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </c:forEach>
             </div>
           </div>
     
@@ -521,7 +523,7 @@
                             </div>
                             <div class="participant-info">
                               <div class="participant-name" id="trnsmitEmplNm">${mailVO.emplNm}</div>
-                              <div class="participant-email" id="trnsmitEmail">${mailVO.trnsmitEmail}</div>
+                              <div class="participant-email" data-emplNo="${mailVO.emplNo}" id="trnsmitEmail">${mailVO.trnsmitEmail}</div>
                             </div>
                           </div>
                         </div>
@@ -538,7 +540,7 @@
                               </div>
                               <div class="participant-info">
                                 <div class="participant-name">${recp.emplNm}</div>
-                                <div class="participant-email">${recp.recptnEmail}</div>
+                                <div class="participant-email" data-emplNo="${recp.emplNo}">${recp.recptnEmail}</div>
                               </div>
                             </div>
                           </c:forEach>
@@ -557,7 +559,7 @@
                                 </div>
                                 <div class="participant-info">
                                   <div class="participant-name">${ref.emplNm}</div>
-                                  <div class="participant-email">${ref.recptnEmail}</div>
+                                  <div class="participant-email" data-emplNo="${ref.emplNo}">${ref.recptnEmail}</div>
                                 </div>
                               </div>
                             </c:forEach>
@@ -581,8 +583,6 @@
     
                 <div class="email-detail-body">
                   ${mailVO.emailCn}
-                  mailVO : ${mailVO} <br/>
-                  attachFileVOList : ${attachFileVOList}
                 </div>
     
                 <div class="email-detail-attachments">
@@ -639,21 +639,43 @@
             console.log('emailClTy -> ',emailClTy);
             window.location.href="/mail"
         });
-        $('.participant-recptn').on('click',function(){
+
+        $('.participant-item').on('click',function(){
           let emplNm = $(this).find('.participant-name').text();
           let emplEmail = $(this).find('.participant-email').text();
+          let emplNo = $(this).find('.participant-email').data('emplno');
 
           // console.log('.participant-recptn 클릭 : ',this);
-          console.log('.participant-recptn 클릭 : ',emplNm);
-          console.log('.participant-recptn 클릭 : ',emplEmail);
-          window.location.href=`/mail/mailSend?emplNm=\${emplNm}&&email=\${emplEmail}`;
+          console.log('.participant-recptn 클릭 emplNm : ',emplNm);
+          console.log('.participant-recptn 클릭 emplEmail : ',emplEmail);
+          console.log('.participant-recptn 클릭 emplNo : ',emplNo);
+          window.location.href=`/mail/mailSend?emplNm=\${emplNm}&&email=\${emplEmail}&&emplNo=\${emplNo}`;
+          // $.ajax({
+          //   url:'/mail/mailReplSend',
+          //   data:{
+          //     emplNm : emplNm,
+          //     emplEmail : emplEmail,
+          //     emplNo : emplNo
+          //   },
+          //   method:'post',
+          //   success:function(resp){
+          //     window.location.href=resp
+          //   },
+          //   error:function(err){
+          //     console.log(err);
+          //   }
+          // })
         })
+
         $('#replyBtn').on('click',function(){
           let emplNm = $('#trnsmitEmplNm').text();
           let emplEmail = $('#trnsmitEmail').text();
           console.log('답장 이벤트 emplEmail : ',emplEmail);
           console.log('답장 이벤트 emplNm : ',emplNm);
           window.location.href=`/mail/mailSend?emplNm=\${emplNm}&&email=\${emplEmail}`;
+        })
+        $('#mailWrite').on('click',function(){
+          window.location.href="/mail/mailSend";
         })
 
       });

@@ -180,6 +180,7 @@
                 -->
                 <input type="hidden" id="modelEmplNm" value="${emplNm}">
                 <input type="hidden" id="modelEmail" value="${email}">
+                <input type="hidden" id="emailNo" value="${mailVO.emailNo}">
 				<div class="row">
 					<div class="col-12">
 						<div class="card-style">
@@ -198,6 +199,22 @@
                                                 <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                                 <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                             </div>
+                                            <c:forEach items="${mailVO.recptnMapList}" var="recptnMap">
+                                                <div class="emailListDiv"  name="recpEmailTemp" id="recpEmailTemp" style="border: 1px solid #ddd; border-radius: 4px; padding: 2px 5px; margin: 2px; align-items: center; display: inline-flex;">
+                                                    <span id="recpEmailInpSpan">${recptnMap.emplNm}/</span>
+                                                    <input type="text" name="recpEmail" id="recpEmail" data-emplno="${recptnMap.emplNo}" class="recpEmailInp emailInput" value="${recptnMap.recptnEmail}" style="border: 0px; width: 1px;" readonly>
+                                                    <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                                    <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                                </div>
+                                            </c:forEach>
+                                            <c:if test="emplNm!=null and emplNm != ''">
+                                                <div class="emailListDiv"  name="recpEmailTemp" id="recpEmailTemp" style="border: 1px solid #ddd; border-radius: 4px; padding: 2px 5px; margin: 2px; align-items: center; display: inline-flex;">
+                                                    <span id="recpEmailInpSpan">${emplNm}/</span>
+                                                    <input type="text" name="recpEmail" id="recpEmail" data-emplno="${emplNo}" class="recpEmailInp emailInput" value="${recptnEmail}" style="border: 0px; width: 1px;" readonly>
+                                                    <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                                    <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                                </div>
+                                            </c:if>
                                             <input type="text" name="recpEmailInp" id="recpEmailInp" style="margin: 3px; border: 1px;" >
                                         </div>
                                         <button class="emailTreeBtn btn btn-secondary" type="button" data-event="recpEmailInp">주소록</button>
@@ -221,6 +238,14 @@
                                                 <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                                 <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                             </div>
+                                            <c:forEach items="${mailVO.refMapList}" var="refMap">
+                                                <div class="emailListDiv"  name="recpEmailTemp" id="refEmailTemp" style="border: 1px solid #ddd; border-radius: 4px; padding: 2px 5px; margin: 2px; align-items: center; display: inline-flex;">
+                                                    <span id="refEmailInpSpan">${refMap.emplNm}/</span>
+                                                    <input type="text" name="refEmail" id="refEmail" data-emplno="${refMap.emplNo}" style="border: 0px; width: 1px;" class="refEmailInp emailInput" value="${refMap.recptnEmail}" readonly>
+                                                    <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                                    <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                                </div>
+                                            </c:forEach>
                                             <input type="text" name="refEmailInp" id="refEmailInp" style="margin: 3px; border: 1px;" >
                                         </div>
                                         <button class="emailTreeBtn btn btn-secondary" type="button" data-event="refEmailInp">주소록</button>
@@ -235,6 +260,14 @@
                                                 <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                                 <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                             </div>
+                                            <c:forEach items="${mailVO.hiddenRefMapList}" var="hiddenRefMap">
+                                                <div class="emailListDiv"  name="recpEmailTemp" id="hiddenRefEmailTemp" style="border: 1px solid #ddd; border-radius: 4px; padding: 2px 5px; margin: 2px; align-items: center; display: inline-flex;">
+                                                    <span id="hiddenRefEmailInpSpan">${hiddenRefMap.emplNm}/</span>
+                                                    <input type="text" name="refEmail" id="refEmail" data-emplno="${hiddenRefMap.emplNo}" style="border: 0px; width: 1px;" class="hiddenRefEmailInp emailInput" value="${hiddenRefMap.recptnEmail}" readonly>
+                                                    <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                                    <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                                </div>
+                                            </c:forEach>
                                             <input type="text" name="hiddenRefEmailInp" id="hiddenRefEmailInp" style="margin: 3px; border: 0px;" >
                                         </div>
                                         <button class="emailTreeBtn btn btn-secondary" type="button" data-event="hiddenRefEmailInp">주소록</button>
@@ -255,7 +288,7 @@
                             <!-- 메일 제목 -->
                             <div class="mb-3" style="margin-top: 15px;">
                                 <label class="form-label">제목</label> 
-                                <input type="text" id="emailSj" name="emailSj" class="form-control" placeholder="제목을 입력해 주세요." required>
+                                <input type="text" id="emailSj" name="emailSj" class="form-control" placeholder="제목을 입력해 주세요." required value="${mailVO.emailSj}">
                             </div>
                             
                             
@@ -264,8 +297,15 @@
                             <!-- 게시글 내용 (CKEditor) -->
                             <div class="col-sm-12">
                                 <label class="form-label">내용</label>
-                                <div id="descriptionTemp"></div>
-                                <textarea id="emailCn" name="emailCn" rows="3" cols="30" class="form-control" hidden></textarea>
+                                <div id="descriptionTemp">
+                                    ${mailVO.emailCn}
+                                    <!-- <pre>
+                                        ${mailVO}
+                                        ${fileList}
+                                        ${mailLabelList}
+                                    </pre> -->
+                                </div>
+                                <textarea id="emailCn" name="emailCn" rows="3" cols="30" class="form-control" hidden>${mailVO.emailCn}</textarea>
                             </div><br>
 
                             <!-- 작성자 이름 -->
@@ -274,16 +314,31 @@
                             </div>
 
                             <!-- 파일 업로드 -->
-                            <file-upload
-                                label="첨부파일"
-                                name="uploadFile"
-                                max-files="5"
-                                contextPath="${pageContext.request.contextPath}"
-                            ></file-upload>
-
+                            <c:choose>
+                                <c:when test="${not empty fileList}">
+                                        <file-upload
+                                        label="첨부파일"
+                                        name="uploadFile"
+                                        max-files="5"
+                                        contextPath="${pageContext.request.contextPath}"
+                                        uploaded-file="${fileList}"
+                                        atch-file-no="${mailVO.atchFileNo}"
+                                        ></file-upload>
+                                </c:when>
+                                <c:otherwise>
+                                    <file-upload
+                                    label="첨부파일"
+                                    name="uploadFile"
+                                    max-files="5"
+                                    contextPath="${pageContext.request.contextPath}"
+                                    ></file-upload>
+                                </c:otherwise>
+                             </c:choose>
                             <!-- 전송 버튼 -->
-                            <button type="button" id="sendMail" class="btn btn-primary">전송</button>
+                            <button type="button" id="sendMail" data-ty="sub" class="btn btn-primary storeMail">전송</button>
                             <button type="button" id="toList" class="btn btn-secondary">목록</button>
+                            <!-- <button type="button" id="tempStore" class="btn btn-secondary">임시저장</button> -->
+                            <button type="button" id="tempStore" data-ty="temp" class="btn btn-secondary storeMail">임시저장</button>
 						</div>
 					</div>
 				</div>
@@ -300,12 +355,86 @@
 	//ckeditor5
 	//<div id="descriptionTemp"></div>
 	//editor : CKEditor객체를 말함
-	ClassicEditor.create(document.querySelector("#descriptionTemp"),{ckfinder:{uploadUrl:"/mail/upload"}})
-				 .then(editor=>{window.editor=editor;})
-				 .catch(err=>{console.error(err.stack);});
+	ClassicEditor
+    .create(document.querySelector("#descriptionTemp"), {
+      ckfinder: {
+        uploadUrl: "/bbs/upload"
+      }
+    })
+    .then(editor => {
+      window.editor = editor;
+    })
+    .catch(err => {
+      console.error(err.stack);
+    });
+
+  $(function () {
+    // 텍스트만 추출하여 유효성 검사용
+    function cleanText(html) {
+      return html
+        .replace(/<p><br\s*\/?><\/p>/gi, '') // 빈 p 태그 제거
+        .replace(/<[^>]*>/g, '')             // 모든 태그 제거
+        .replace(/&nbsp;/gi, '')             // &nbsp 제거
+        .replace(/\u200B/g, '')              // zero-width space 제거
+        .replace(/\s+/g, '')                 // 기타 공백 제거
+        .trim();
+    }
+
+    // 저장용: 앞뒤 불필요한 빈 단락 제거 (공백 p, br, &nbsp)
+    function cleanHtml(html) {
+      return html
+        .replace(/^(?:\s*<p>(&nbsp;|<br\s*\/?>|\s)*<\/p>\s*)+/gi, '') // 앞쪽
+        .replace(/(?:\s*<p>(&nbsp;|<br\s*\/?>|\s)*<\/p>\s*)+$/gi, '') // 뒤쪽
+        .trim();
+    }
+
+    function updateContent() {
+      const rawHtml = window.editor.getData();
+      const cleanedText = cleanText(rawHtml);   // 텍스트만 추출 (검사용)
+      const cleanedHtml = cleanHtml(rawHtml);   // 저장할 HTML
+
+      if (cleanedText === "") {
+        console.warn("실제 내용 없음 (공백만 존재)");
+        // 필요 시 alert 띄우기
+        // Swal.fire({ icon: 'warning', title: '내용 없음', text: '본문을 입력해 주세요.' });
+      }
+
+      $("#content").val(cleanedHtml); // 최종 저장할 HTML
+    //   console.log("저장될 내용 (HTML):", cleanedHtml);
+    //   console.log("실제 텍스트만:", cleanedText);
+    }
+
+    $(".ck-blurred").on("input", updateContent);
+    $(".ck-blurred").on("focusout", updateContent);
+  });
+
+  // 제출 버튼 클릭 시
+  $("#submitBtn").on("click", function (e) {
+    const rawHtml = window.editor.getData();
+    const cleanedText = cleanText(rawHtml);
+    const cleanedHtml = cleanHtml(rawHtml);
+
+    if (cleanedText === '') {
+      e.preventDefault(); // 전송 막기
+      Swal.fire({
+        icon: 'warning',
+        title: '내용 없음',
+        text: '본문을 입력해주세요!'
+      });
+      return;
+    }
+
+    $("#content").val(cleanedHtml); // 앞뒤 공백 제거된 HTML 저장
+    $("#yourForm").submit();
+  });
+
+
+
+
 
     $(document).ready(function(){
         // console.log("${myEmpInfo}")
+
         $('#hiddenRefInp').hide();
         $('#emailTree').hide();
         $('#trnsmitEmail').val("${myEmpInfo.email}")
@@ -313,7 +442,15 @@
         // <input type="hidden" id="modelEmplNm" value="${emplNm}">
         // <input type="hidden" id="modelEmail" value="${email}">
         // if($('#modelEmail').length&&$('#modelEmplNm').length){
-
+        // console.log("${mailVO}")
+        {
+            $('.emailInput').each(function(){
+                const $this = $(this);
+                const font = getComputedStyle(this).font;
+                const width = getTextWidth($this.val(), font);
+                $this.css('width', width + 'px');
+            })
+        }
         if($('#modelEmail').val() && $('#modelEmplNm').val()){
             console.log($('#modelEmail').val())
             console.log($('#modelEmplNm').val())
@@ -338,7 +475,15 @@
         })
         // ckeditor5 끝
 
-        $('#sendMail').on('click', function() {
+        $('.storeMail').on('click', function() {
+            let data = $(this).data('ty');
+            console.log('data : ',data);
+            let url;
+            if(data=="sub"){
+                url = "/mail/sendMail";
+            }else if(data=="temp"){
+                url = "/mail/tempStore";
+            }
             if($('#recpEmail').get().length==0){
                 swal({title:'수신 이메일을 작성해주세요',icon:'warning'})
                 // alert('수신 이메일을 작성해주세요');
@@ -403,7 +548,7 @@
             console.log("mailForm : ", mailForm);
             
             $.ajax({
-                url: "/mail/sendMail",
+                url: url,
                 type: 'post',
                 data: mailForm,
                 processData: false,  // FormData 처리 시 필요
@@ -417,6 +562,11 @@
                 }
             });
         });
+
+        $('#toList').on('click',function(){
+            console.log('toList 버튼 눌림.');
+            window.location.href="/mail"
+        })
 
         let refBtnIcon = `<i class='fas fa-chevron-up' id="hiddenRefBtn" style="cursor: pointer;"></i>`;
         // $('#hiddenRefBtn').on('click',function(){
@@ -809,13 +959,6 @@
         function isValidEmail(email) {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
         }
-
-
-        
-        $('#toList').on('click',function(){
-            console.log('toList 버튼 눌림.');
-            window.location.href="/mail"
-        })
     });
     // $(window).unload(function() {
     //     // 언로드시 임시저장 (적힌게 있다면 y/n으로 물어보고 y면 저장 아니면 날림)

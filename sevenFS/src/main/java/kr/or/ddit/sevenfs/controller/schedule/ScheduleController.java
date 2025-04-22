@@ -113,6 +113,7 @@ public class ScheduleController {
 	@PostMapping("/addCalendar")
 	@ResponseBody
 	public Map<String,Object> addCalendar(@ModelAttribute  ScheduleVO scheduleVO){
+		// 만약 공개 타입이 1이나 2면 라벨no는 null로 한다.
 		log.info("addCalendar -> scheduleVO : "+scheduleVO);
 		int result = scheduleService.scheduleInsert(scheduleVO);
 		int size = uptMap.size();

@@ -39,7 +39,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping("/mail")
 public class MailController {
-	// bum bum be-dum bum bum be-dum bum
+	/** 
+	 * 
+	 * <pre>
+	 * 	 bum bum be-dum bum bum be-dum bum
+	 * </pre>
+	 * 
+	 * */
 	@Value("${file.save.abs.path}")
 	private String saveDir;
 	
@@ -93,44 +99,90 @@ public class MailController {
 		return "mail/mailHome";
 	}
 	
+	@GetMapping("/labeling")
+	public String mailLabeling(Model model,
+								@RequestParam(value = "lblNo")int lblNo,
+								@AuthenticationPrincipal CustomUser customUser){
+		log.info("mailLabeling -> lblNo : "+lblNo);
+		EmployeeVO employeeVO = customUser.getEmpVO();
+		List<MailVO> list = mailService.mailLabeling(lblNo);
+		log.info("mailLabeling -> mailService : "+list);
+		List<MailLabelVO> mailLabelList = mailLabelService.getLabelList(employeeVO);
+		model.addAttribute("mailVOList", list);
+		model.addAttribute("mailLabelList", mailLabelList);
+		return "mail/mailHome";
+	}
+	
 	@GetMapping("/emailDetail")
-	public String emailDetail(Model model ,@RequestParam(value = "emailNo") int emailNo, String fileName) {
+	public String emailDetail(Model model ,@RequestParam(value = "emailNo") int emailNo, String fileName,
+								@AuthenticationPrincipal CustomUser customUser) {
 		log.info("emailDetail -> emailNo : "+emailNo);
+		EmployeeVO employeeVO = customUser.getEmpVO();
+		List<MailLabelVO> mailLabelList = mailLabelService.getLabelList(employeeVO);
 		MailVO mailVO = new MailVO(emailNo);
 		log.info("emailDetail -> mailVO : "+mailVO);
 		mailVO = mailService.emailDetail(mailVO);
+		mailVO.setHiddenRefMapList(null);
 		log.info("emailDetail -> mailService.emailDetail -> mailVO : "+mailVO);
 		List<AttachFileVO> attachFileVOList = mailService.getAtchFile(mailVO.getAtchFileNo());
 		attachFileService.downloadFile(fileName);
 		model.addAttribute("mailVO",mailVO);
 		model.addAttribute("attachFileVOList",attachFileVOList);
+		model.addAttribute("mailLabelList", mailLabelList);
+		
 		return "mail/mailDetailLayout";
 	}
 	
 	@GetMapping("/mailSend")
 	public String mailSend(Model model, @RequestParam(value = "emplNm",required = false) String emplNm,
 										@RequestParam(value = "email",required = false) String email,
+										@RequestParam(value = "emplNo",required = false) String emplNo,
 										@AuthenticationPrincipal CustomUser customUser) {
 		EmployeeVO employeeVO = customUser.getEmpVO();
 		model.addAttribute("title","메일함");
-		model.addAttribute("emplNo",employeeVO.getEmplNo());
+		model.addAttribute("myEmplNo",employeeVO.getEmplNo());
+		model.addAttribute("emplNo",emplNo);
 		model.addAttribute("emplNm",emplNm);
 		model.addAttribute("email",email);
 		log.info("mailSend get요청 -> emplNm : "+emplNm);
 		log.info("mailSend get요청 -> email : "+email);
+		log.info("mailSend get요청 -> emplNo : "+emplNo);
 		return "mail/mailSend";
 	}
+	
 	@GetMapping("/mailRepl")
-	public String mailRepl(@RequestParam(value = "emailNo") String emailNo) {
+	public String mailRepl(Model model, @RequestParam(value = "emailNo") int emailNo,
+			@AuthenticationPrincipal CustomUser customUser) {
+		// 답장
 		log.info("mailRepl -> emailNo : "+emailNo);
+		EmployeeVO employeeVO = customUser.getEmpVO();
 		
-		return"";
+		MailVO mailVO = new MailVO();
+		mailVO.setEmailNo(emailNo);
+		Map<String, Object> map = mailService.mailRepl(mailVO);
+		mailVO = (MailVO)map.get("mailVO");
+		
+		model.addAttribute("emplNm",map.get("fromEmplNm"));
+		model.addAttribute("emplNo",mailVO.getEmplNo());
+		model.addAttribute("recptnEmail",mailVO.getRecptnEmail());
+		model.addAttribute("mailVO",mailVO);
+		log.info("emplNo : " + mailVO.getEmplNo());
+		log.info("emplNm : " + map.get("fromEmplNm"));
+		log.info("recptnEmail : " + mailVO.getRecptnEmail());
+		return"mail/mailSend";
 	}
+	
 	@GetMapping("/mailTrnsms")
-	public String mailTrnsms(@RequestParam(value = "emailNo") String emailNo) {
-		log.info("mailTrnsms -> emailNo : "+emailNo);
+	public String mailTrnsms(Model model, @RequestParam(value = "emailNo") int emailNo) {
+		// 전달
+		MailVO mailVO = new MailVO();
+		mailVO.setEmailNo(emailNo);
+		mailVO = mailService.emailDetail(mailVO);
+		List<AttachFileVO> attachFileVOList = mailService.getAtchFile(mailVO.getAtchFileNo());
 		
-		return"";
+		model.addAttribute("mailVO",mailVO);
+		model.addAttribute("attachFileVOList",attachFileVOList);
+		return"mail/mailSend";
 	}
 	
 	@PostMapping("/selEmail")
@@ -152,6 +204,7 @@ public class MailController {
 	}
 	
 	@PostMapping("/sendMail")
+	@ResponseBody
 	public String sendEmail(@ModelAttribute MailVO mailVO,
 							@RequestParam(value = "uploadFile",required = false) MultipartFile[] uploadFile) {
 		log.info("sendEmail");
@@ -163,7 +216,44 @@ public class MailController {
 			}
 		}
 		int result = mailService.sendMail(mailVO,uploadFile);
-		return "mail";
+		return "/mail";
+	}
+	@PostMapping("/tempStore")
+	@ResponseBody
+	public String tempStoreEmail(@ModelAttribute MailVO mailVO,
+			@RequestParam(value = "uploadFile",required = false) MultipartFile[] uploadFile) {
+		mailVO.setEmailClTy("2");
+		log.info("tempStore -> mailVO : " + mailVO);
+		if(uploadFile!=null) {
+			log.info("tempStore -> uploadFile : " + uploadFile);
+			for(MultipartFile file : uploadFile) {
+				log.info(file.getOriginalFilename());
+			}
+		}
+		
+		int result = mailService.tempStoreEmail(mailVO,uploadFile);
+		return "/mail";
+	}
+	@GetMapping("/emailTemp")
+	public String emailTemp(Model model, @RequestParam(value = "emailNo") int emailNo,
+			@AuthenticationPrincipal CustomUser customUser) {
+		log.info("emailTemp -> emailNo : "+emailNo);
+		EmployeeVO employeeVO = customUser.getEmpVO();
+		List<MailLabelVO> mailLabelList = mailLabelService.getLabelList(employeeVO);
+		MailVO mailVO = new MailVO();
+		mailVO.setEmailNo(emailNo);
+		mailVO = mailService.emailDetail(mailVO);
+		log.info("emailDetail -> mailVO : "+mailVO);
+//		List<AttachFileVO> attachFileVOList = mailService.getAtchFile(mailVO.getAtchFileNo());
+		List<AttachFileVO> fileList = attachFileService.getFileAttachList(mailVO.getAtchFileNo());
+		model.addAttribute("mailVO",mailVO);
+		model.addAttribute("fileList",fileList);
+		model.addAttribute("mailLabelList", mailLabelList);
+		log.info("emailDetail -> mailService.emailDetail -> mailVO : "+mailVO);
+		log.info("emailDetail -> attachFileService.getFileAttachList -> fileList : "+fileList);
+		log.info("emailDetail -> mailLabelService.getLabelList -> mailLabelList : "+mailLabelList);
+		
+		return "mail/mailSend";
 	}
 	
 	@PostMapping("/delete")
@@ -194,7 +284,24 @@ public class MailController {
 	public String deleteLbl(@RequestParam(value = "lblNo") String lblNo) {
 		log.info("deleteLbl -> lblNo : "+lblNo);
 		int result = mailLabelService.deleteLbl(lblNo);
-		return "";
+		return "success";
+	}
+	
+	@PostMapping("/labelingUpt")
+	@ResponseBody
+	public String labelingUpt(@RequestParam(value = "lblNo")int lblNo,
+							  @RequestParam(value = "checkedList")List<String>checkedList) {
+		log.info("labelingUpt -> lblNo : "+lblNo);
+		log.info("labelingUpt -> checkedList : "+checkedList);
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("lblNo", lblNo);
+		map.put("checkedList", checkedList);
+		int result = mailService.labelingUpt(map);
+		String col = "";
+		if(lblNo != 0) {
+			col = mailLabelService.getCol(lblNo);
+		}
+		return col;
 	}
 	
 	@ResponseBody

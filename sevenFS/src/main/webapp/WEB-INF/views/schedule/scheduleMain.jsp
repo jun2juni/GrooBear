@@ -178,6 +178,7 @@
 				let textColor=''
 				let durationEditable = true
 				let startEditable = true
+				let title = data.schdulSj;
 				if(data.schdulTy == '1'){
 					console.log('일정 타입',data.schdulTy);
 					console.log('일정 넘버',data.schdulNo);
@@ -186,6 +187,7 @@
 					textColor='#000000'
 					durationEditable=false
 					startEditable=false
+					title = '[부]'+title;
 				}else if(data.schdulTy == '2'){
 					console.log('일정 타입',data.schdulTy);
 					console.log('일정 넘버',data.schdulNo);
@@ -194,15 +196,12 @@
 					textColor='#000000'
 					durationEditable=false
 					startEditable=false
+					title = '[전]'+title;
 				}else{
 					if(selLabel){
 						lblColor = selLabel.lblColor;
 					}
-					if(chk){
-						borderColor="#ffffff"
-					}else{
-						borderColor = lblColor;
-					}
+					borderColor=lblColor
 				}
 				console.log("lblColor : ",lblColor);
 				console.log("borderColor : ",borderColor);
@@ -211,7 +210,7 @@
 				   "id":data.schdulNo,
 				   "start":data.schdulBeginDt,
 				   "end":data.schdulEndDt,
-				   "title":data.schdulSj,
+				   "title":title,
 				   "schdulCn":data.schdulCn,
 				   "schdulTy":data.schdulTy,
 				   "lblNo":data.lblNo,
@@ -591,6 +590,10 @@
 			$("#modalSubmit").text("수정");
 			// $('#deleteBtn').css('display','block');
 			$('#deleteBtn').show();
+			let title = info.event._def.title;
+			if(info.event._def.extendedProps.schdulTy!='0'){
+				title = title.split(']')[1];
+			}
 			// if($("#deleteBtn").length==0){
 				// $("#btnGroup").append('<button type="button" id="deleteBtn" class="main-btn btn btn-danger btn-hover" onclick="fCalDel(event)">삭제</button>');
 			// }
@@ -602,7 +605,7 @@
 			$('#schStartTime').val(time2Str(start));
 			$('#schEnd').val(date2Str(end));
 			$('#schEndTime').val(time2Str(end));
-			$('#schTitle').val(info.event._def.title);
+			$('#schTitle').val(title);
 			$('#schContent').val(info.event._def.extendedProps.schdulCn);
 			$('#schdulTy').val(info.event._def.extendedProps.schdulTy);
 			console.log($('#scheduleLabel').val(info.event._def.extendedProps.lblNo));
@@ -813,7 +816,8 @@
 		// $('.fc-button').attr('class',btnclass+' btn-primary');
 		// $('.fc-button').prop('class','btn btn-primary');
 		$('.fc-button').css('background-color','#0d6efd');
-		$('.fc-button').css('border','0px');
+		// $('.fc-button').css('margin','0.5px');
+		// $('.fc-button').css('border','0px');
 		$('.fc-daygrid-day-number').css('text-decoration','none');
 		$('.fc-col-header-cell-cushion').css('text-decoration','none');
 
@@ -822,21 +826,47 @@
 			let code = `<div class="fc-daygrid-bg-harness" style="left: 0px; right: 0px;"><div class="fc-highlight"></div></div>`;
 			$(this).find('.fc-daygrid-day-bg').append(code);
 		});
-
+		// fc-listWeek-view fc-view fc-list fc-list-sticky
 		$(document).on('mouseleave', '.fc-daygrid-day-frame', function() {
 			$(this).find('.fc-daygrid-bg-harness').remove();
 		});
-		$("#myCalendar").on('wheel',function(event){
-			// console.log(event);
+
+		// 휠 이벤트
+		// function throttle(callback,limit){
+		// 	let waiting = false;
+		// 	return function(...arguments){
+		// 		if(!waiting){
+		// 			callback.apply(this,arguments);
+		// 			waiting = true;
+		// 			setTimeout(function(){
+		// 				waiting = false;
+		// 			},limit)
+		// 		}
+		// 	};
+		// }
+		// $(document).on('wheel',"#myCalendar .fc-dayGridMonth-view,#myCalendar .fc-listWeek-view", throttle(function(event){
+		// 	console.log(event);
+		// 	if(event.originalEvent.deltaY<0){
+		// 		console.log('위로');
+		// 		$('.fc-prev-button').trigger('click');
+		// 	}else{
+		// 		console.log('아래로');
+		// 		$('.fc-next-button').trigger('click');
+
+		// 	}
+		// }),500)
+		$(document).on('wheel',"#myCalendar .fc-dayGridMonth-view,#myCalendar .fc-listWeek-view", function(event){
+			console.log(event);
 			if(event.originalEvent.deltaY<0){
-				// console.log('위로');
+				console.log('위로');
 				$('.fc-prev-button').trigger('click');
 			}else{
-				// console.log('아래로');
+				console.log('아래로');
 				$('.fc-next-button').trigger('click');
 
 			}
 		})
+
 		$('#myCalendar').mousedown(function(e){
 			if(e.which == 2){
 				e.preventDefault();
@@ -855,6 +885,12 @@
 	
 </body>
 <style>
+	.fc-button-active {
+		/* background-color: rgb(13, 110, 253); */
+		color: white;
+		transform: scale(1.1);
+		transition: transform 0.3s ease, background-color 0.3s ease;
+	}
 	.fc-date:hover{
 		background-color: #BCE8F14D;
 	}

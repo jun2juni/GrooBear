@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.mapper.mail;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,6 +16,10 @@ public interface MailLabelMapper {
 	List<MailLabelVO> getLabelList(EmployeeVO employeeVO);
 
 	int deleteLbl(String lblNo);
+
+	int mailLblUpt(MailLabelVO labelVO);
+
+	String getCol(int lblNo);
 
 
 }
