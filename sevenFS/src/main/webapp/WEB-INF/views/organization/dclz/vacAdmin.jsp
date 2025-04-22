@@ -210,6 +210,7 @@
 	                  	</td>
                         <td>
                         	<input class="inputTotalCnt" id="inputTotalCnt${status.count}" type="text" readonly="readonly" value="${allVacData.totYrycDaycnt}" style="width:50px;" />개		
+                        	<input id="hiddenValueTotal${status.count}" type="hidden" value="${allVacData.totYrycDaycnt}"/>	
                         </td>
                         <td>
                           <c:choose>
@@ -223,6 +224,7 @@
                         </td>
                         <td>
 			                <input type="text" id="yrycRemndrDaycnt${status.count}" value="${allVacData.yrycRemndrDaycnt}" readonly style="width:50px;">개
+			                <input type="hidden" id="hiddenRemainTotal${status.count}" value="${allVacData.yrycRemndrDaycnt}" >
                         </td>
                       <form action="/dclz/addVacInsert" method="get" id="addVacationForm${status.count}">
                         <td>
@@ -501,11 +503,6 @@ $(function(){
 		const id = $(this).attr('id');
 		const idx = id.match(/\d+/)[0];
 		
-		let hiddenInputTotal = $('#hiddenInputTotal'+idx).val();
-		let hiddenRemndrDaycnt = $('#hiddenRemndrDaycnt'+idx).val();
-		let hiddenCmpnstnCnt = $('#hiddenCmpnstnCnt'+id).val();
-					
-		
 		if($('#inputTotalCnt'+idx).val() >= 25){
 			swal('연차는 최대 25일까지 지급할 수 있습니다.');
 			$('#inputTotalCnt'+idx).val(hiddenInputTotal);
@@ -521,8 +518,12 @@ $(function(){
 			$('.excessWorkYryc').val('0.0');
 		}
 		
+		let hiddenInputTotal = $('#hiddenValueTotal'+idx).val();
+		let hiddenRemndrDaycnt = $('#hiddenRemainTotal'+idx).val();
+		let hiddenCmpnstnCnt = $('#hiddenCmpnstnCnt'+id).val();
 		// 초기화 버튼 눌렀을때
 		$('#resetBtn'+idx).on('click', function(){
+			
 			swal({
 	            title: "정말 초기화 하시겠습니까?",
 	            icon: "warning",
@@ -545,6 +546,11 @@ $(function(){
 					$('#inputTotalCnt'+idx).val(hiddenInputTotal);
 					$('.cmpnstnYrycCnt').val('0.0');
 					$('.excessWorkYryc').val('0.0');
+					
+					/* console.log('잔여연차 : ' , $('#yrycRemndrDaycnt'+idx).val());
+					console.log('총 연차 : ' , $('#inputTotalCnt'+idx).val());
+					console.log('hiddenInputTotal : ' , hiddenInputTotal);
+					console.log('hiddenRemndrDaycnt : ' , hiddenRemndrDaycnt); */
 				}
 			})
 		})

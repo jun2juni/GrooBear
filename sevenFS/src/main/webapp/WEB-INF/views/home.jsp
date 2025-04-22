@@ -1230,21 +1230,19 @@ console.log(todEndTime); */
 		})
 	}
 }) */
-// 퇴근 한번더 누르면 swal 띄우기
 $(function(){	
-const todWoTime = $('#todayWorkTime').val();
-
-if(todWoTime != null && todWoTime != ''){
-	$('#workStartButton').prop('disabled', true);
-}
-
-// 공지사항 눌렀을때 1전송
-$('#notice-tab').on('click', function(e){
-	e.preventDefault();
-	//alert('djfjhsadjhfkjsdahfkj');
-	$('#noticeForm').submit();
-})
+	// 퇴근 한번더 누르면 swal 띄우기
+	const todWoTime = $('#todayWorkTime').val();
+	if(todWoTime != null && todWoTime != ''){
+		$('#workStartButton').prop('disabled', true);
+	}
 	
+	// 공지사항 눌렀을때 1전송
+	$('#notice-tab').on('click', function(e){
+		e.preventDefault();
+		//alert('djfjhsadjhfkjsdahfkj');
+		$('#noticeForm').submit();
+	})
 	
 function updateClock() {
   seconds++;

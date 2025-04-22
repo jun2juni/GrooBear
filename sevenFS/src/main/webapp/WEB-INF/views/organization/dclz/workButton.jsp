@@ -43,7 +43,6 @@
 		
 		
 	$("#workEndButton").on("click", function(){
-		
 		//alert("퇴근");		
 		
 		const endTime = $('#endTime').val();	
@@ -94,7 +93,7 @@
 						value: true,
 						closeModal: true
 					}
-				}
+				} 
 				})
 				.then((willConfirm) => {
 					if(willConfirm){
