@@ -182,13 +182,13 @@ public class DclzTypeController {
 			@RequestParam(defaultValue = "10") int size,
 			@RequestParam(defaultValue = "") String keyword,
 			@RequestParam(defaultValue = "") String keywordSearch,
-			@RequestParam(required = false) String emplNo
+			@RequestParam(required = false) String targetEmplNo
 			) {
 		
 		//model.addAttribute("title","나의 연차 내역 by박호산나");
 		
-//		String emplNo = (targetEmplNo != null && !targetEmplNo.isEmpty())
-//						? targetEmplNo : principal.getName();
+		String emplNo = (targetEmplNo != null && !targetEmplNo.isEmpty())
+						? targetEmplNo : principal.getName();
 		
 		log.info("keyword" + keyword);
 		log.info("keywordSearch" + keywordSearch);

@@ -49,7 +49,7 @@
 	          </div> --%>
              </div>
             <div class="card-style mb-3" style="height:130px;'">
-			<div class="row">			
+			<div class="row">	
 	            <div class="col-2" style="border:none;">
 	                <div class="mx-auto text-center">
 	                  <div>
@@ -62,7 +62,7 @@
 		                  	</c:when>
 		                  	<c:otherwise>
 			                    <h4><span class="text-center">
-			                    	${mplVacation.cmpnstnYryc}개
+			                    	${emplVacation.cmpnstnYryc}개
 			                    </span></h4>
 		                  	</c:otherwise>
 	                  	</c:choose>
