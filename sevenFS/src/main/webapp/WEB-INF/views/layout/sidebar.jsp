@@ -33,7 +33,7 @@
 <aside class="sidebar-nav-wrapper">
   <div class="navbar-logo">
     <a href="/">
-      <img src="/assets/images/logo/logo.svg" alt="logo" />
+      <img src="/assets/images/logo/GoobearTitle.png" alt="logo" style="width: 150px; height: auto;"/>
     </a>
   </div>
   <nav class="sidebar-nav">
@@ -89,7 +89,7 @@
                     </span>
                     <span class="text">전자결재</span>
                   </a>
-                  <ul id="atrz" class="dropdown-nav collapse ${fn:contains(currentURL, '/atrz') ? 'show' : ''}" style="">
+                  <ul id="atrz" class="dropdown-nav collapse ${fn:contains(currentURL, '/atrz') ? 'show' : ''}" >
                     <li>
                       <a href="/atrz/home" class="${fn:contains(currentURL, '/atrz/home') ? 'active' : ''}"> 전자결재 </a>
                     </li>
