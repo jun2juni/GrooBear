@@ -23,6 +23,27 @@
 .nav-item-has-children:not(:has(ul)) > a::after {
   display: none !important;
 }
+/* logoTitle스타일 */
+@keyframes logoTitle {
+  0% { 
+    transform: scale(1.0); 
+  }
+  50% { 
+    transform: scale(1.3); 
+  }
+  100% {
+    ttransform: scale(1.0); 
+    }
+}
+#logoTitle:hover{
+  animation: logoTitle 0.5s ease-in-out;
+  transform: scale(1); /* 마우스 오버 시 크기 조정 */
+  transition: transform 30s ease-in-out; /* 부드러운 전환 효과 */
+  cursor: pointer; /* 마우스 포인터 변경 */
+  /* 조금더 천천히*/
+  animation-duration: 1s; /* 애니메이션 지속 시간 */
+  animation-timing-function: ease-in-out; /* 애니메이션 타이밍 함수 */
+}
 </style>
 
 <div id="preloader">
@@ -33,7 +54,7 @@
 <aside class="sidebar-nav-wrapper">
   <div class="navbar-logo">
     <a href="/">
-      <img src="/assets/images/logo/GoobearTitle.png" alt="logo" style="width: 150px; height: auto;"/>
+      <img src="/assets/images/logo/GoobearTitle.png" alt="logo" id="logoTitle" style="width: 150px; height: auto;"/>
     </a>
   </div>
   <nav class="sidebar-nav">
