@@ -38,6 +38,7 @@ SELECT E.EMPL_NM
     ,M.trnsmit_dt
     ,M.readng_at
     ,M.email_group_no
+    ,M.starred
     ,ML.LBL_NO
     ,ML.LBL_COL
     ,ML.LBL_NM
@@ -61,7 +62,7 @@ WHERE M.EMPL_NO=#{searchVo.emplNo}
 			</otherwise>
 		</choose>
 	</if>
-	ORDER BY TRNSMIT_DT
+	ORDER BY TRNSMIT_DT DESC
 	OFFSET (#{currentPage} - 1) * 10 ROWS
 	FETCH NEXT 10 ROWS ONLY	
 </select>
@@ -81,6 +82,7 @@ WHERE M.EMPL_NO=#{searchVo.emplNo}
     ,M.trnsmit_dt
     ,M.readng_at
     ,M.email_group_no
+    ,M.starred
     ,ML.LBL_NO
     ,ML.LBL_COL
     ,ML.LBL_NM
@@ -88,6 +90,8 @@ FROM MAIL M
 INNER JOIN EMPLOYEE E ON M.EMPL_NO = E.EMPL_NO
 LEFT JOIN MAIL_LABEL ML ON M.lbl_no = ML.lbl_no
 where m.lbl_no = #{lblNo}
+  and (m.email_cl_ty = '0' or m.email_cl_ty = '1')
+ORDER BY M.trnsmit_dt DESC
 </select>
 
 <select id="emailDetail" parameterType="kr.or.ddit.sevenfs.vo.mail.MailVO" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO">
@@ -113,6 +117,23 @@ WHERE m.email_group_no = (
     FROM mail
     WHERE email_no = #{emailNo}
 )
+</select>
+
+<update id="readingAt" parameterType="int">
+	update MAIL
+	set readng_at = 'Y'
+	where email_no = #{emailNo}
+</update>
+
+<select id="emailDetails" parameterType="java.util.List" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO">
+ select email_no
+ 		,email_trnsmis_ty
+ 		,email_cl_ty
+ from mail
+ where email_no in
+ 	<foreach collection="list" item="mail" open="(" close=")" separator=",">
+ 		#{mail}
+ 	</foreach>
 </select>
 
 <select id="mailRepl" parameterType="kr.or.ddit.sevenfs.vo.mail.MailVO" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO">
@@ -180,6 +201,32 @@ CONNECT BY LEVEL &lt;= #{count}
 <update id="mailDelete" parameterType="java.util.List">
 	update mail
 	set email_cl_ty = '4'
+	where email_no in
+	<foreach collection="list" item="emailNo" open="(" separator="," close=")">
+		#{emailNo}	        
+	</foreach>
+</update>
+
+<update id = "restoration" parameterType="java.util.List">
+	BEGIN
+	<foreach collection="list" item="mailVO" separator=" " open="" close="">
+		update mail
+		<choose>
+			<when test="mailVO.emailTrnsmisTy==0">
+				set email_cl_ty = '0'
+			</when>
+			<when test="mailVO.emailTrnsmisTy!=0">
+				set email_cl_ty = '1'
+			</when>
+		</choose>
+			where email_no = #{mailVO.emailNo};
+	</foreach>
+	END;
+</update>
+
+<update id="delY2N" parameterType="java.util.List">
+	update mail
+	set DEL_AT = 'Y'
 	where email_no in
 	<foreach collection="list" item="emailNo" open="(" separator="," close=")">
 		#{emailNo}	        
@@ -275,4 +322,16 @@ map.put("checkedList", checkedList); -->
 				</foreach>
 				)
 </update>
+<update id="mailStarred" parameterType="hashmap">
+	update mail 
+	set starred = #{starred}
+	where email_no = #{emailNo}
+</update>
+
+<update id="delLblFromMail" parameterType="int">
+	update mail 
+	set lbl_no is null
+	where email_no = #{emailNo}
+</update>
+
 </mapper>

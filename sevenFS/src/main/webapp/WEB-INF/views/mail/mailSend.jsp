@@ -59,8 +59,8 @@
     #emailTree{
         border: 1px solid #e5e5e5;
         position: fixed;
-        top: 50%;
-        left: 50%;
+        top: 65%;
+        left: 60%;
         transform: translate(-50%, -50%);
         width: 500px; /* 원하는 크기로 조정 가능 */
         max-width: 90%;
@@ -207,7 +207,7 @@
                                                     <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                                 </div>
                                             </c:forEach>
-                                            <c:if test="emplNm!=null and emplNm != ''">
+                                            <c:if test="${emplNm!=null and emplNm != ''}">
                                                 <div class="emailListDiv"  name="recpEmailTemp" id="recpEmailTemp" style="border: 1px solid #ddd; border-radius: 4px; padding: 2px 5px; margin: 2px; align-items: center; display: inline-flex;">
                                                     <span id="recpEmailInpSpan">${emplNm}/</span>
                                                     <input type="text" name="recpEmail" id="recpEmail" data-emplno="${emplNo}" class="recpEmailInp emailInput" value="${recptnEmail}" style="border: 0px; width: 1px;" readonly>
@@ -299,11 +299,6 @@
                                 <label class="form-label">내용</label>
                                 <div id="descriptionTemp">
                                     ${mailVO.emailCn}
-                                    <!-- <pre>
-                                        ${mailVO}
-                                        ${fileList}
-                                        ${mailLabelList}
-                                    </pre> -->
                                 </div>
                                 <textarea id="emailCn" name="emailCn" rows="3" cols="30" class="form-control" hidden>${mailVO.emailCn}</textarea>
                             </div><br>

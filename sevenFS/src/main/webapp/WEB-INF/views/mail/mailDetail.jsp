@@ -32,14 +32,14 @@
     
     /* 사이드바 스타일 개선 */
     .email-sidebar {
-      width: 240px;
+      width: 260px;
       background-color: #ffffff;
       border-right: 1px solid #e0e0e0;
-      height: 100%;
       overflow-y: auto;
-      transition: width 0.3s ease;
+      transition: all 0.3s ease;
       padding-top: 12px;
-      flex-shrink: 0; /* 사이드바 너비 고정 */
+      flex-shrink: 0; /*사이드바 너비 고정*/
+      /* height: 100%; */
     }
     
     .sidebar-compose {
@@ -50,17 +50,16 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 12px 16px;
-      background-color: #3b82f6;
+      padding: 14px 18px;
+      background: linear-gradient(135deg, #4776E6, #3b82f6);
       color: white;
-      border-radius: 16px;
+      border-radius: 24px;
       border: none;
       font-weight: 500;
       cursor: pointer;
       font-size: 15px;
       transition: all 0.2s;
       width: 100%;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
     
     .compose-button:hover {
@@ -144,7 +143,7 @@
       flex-grow: 1;
       overflow: hidden;
       height: 100%; /* 높이 100% 설정 */
-    }
+    /* } */
     
     .email-section-detail {
       display: flex;
@@ -152,19 +151,9 @@
       background-color: #fff;
       overflow-y: auto;
       border-radius: 8px;
-      margin: 16px;
+      /* margin: 16px; */
       /* box-shadow: 0 1px 3px rgba(0,0,0,0.1); */
       flex-grow: 1;
-    }
-    
-    .email-detail-toolbar {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 16px;
-      border-bottom: 1px solid #e5e7eb;
-      background-color: #fff;
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
     }
     
     .toolbar-actions {
@@ -197,6 +186,7 @@
     }
     
     .email-date-detail {
+      display: flex;
       margin-right: 16px;
       color: #6b7280;
       font-size: 14px;
@@ -243,8 +233,8 @@
     }
     
     .email-participants {
-  margin-bottom: 20px;
-}
+      margin-bottom: 20px;
+    }
 
 .participant-row {
   display: flex;
@@ -332,7 +322,7 @@
     }
     
     .email-detail-body {
-      padding: 8px 0 24px;
+      padding: 8px 24px 24px;
       font-size: 15px;
       line-height: 1.6;
       color: #374151;
@@ -389,6 +379,7 @@
       margin-top: 32px;
       display: flex;
       gap: 8px;
+      padding: 8px;
     }
     
     .back-to-list {
@@ -405,7 +396,8 @@
     .back-to-list:hover {
       color: #1f2937;
     }
-    .dropdown-toggle::after {
+    .email-sidebar .dropdown-toggle::after,
+    .email-sidebar .dropdown .dropdown-toggle::after {
       display: none !important;
     }
     </style>
@@ -424,25 +416,25 @@
             </div>
             <!-- 사이드 바 -->
             <div class="sidebar-section">
-              <div class="sidebar-item active">
+              <div class="sidebar-item type-select" data-emailClTy="0">
+                <i class="fas fa-paper-plane"></i>
+                <span class="sidebar-label">보낸편지함</span>
+              </div>
+              <div class="sidebar-item type-select" data-emailClTy="1">
                 <i class="fas fa-inbox"></i>
                 <span class="sidebar-label">받은편지함</span>
                 <!-- <span class="sidebar-count">2,307</span> -->
               </div>
-              <div class="sidebar-item">
-                <i class="fas fa-paper-plane"></i>
-                <span class="sidebar-label">보낸편지함</span>
-              </div>
-              <div class="sidebar-item">
+              <div class="sidebar-item type-select" data-emailClTy="2">
                 <i class="far fa-file-alt"></i>
                 <span class="sidebar-label">임시보관함</span>
                 <!-- <span class="sidebar-count">11</span> -->
               </div>
-              <div class="sidebar-item">
-                <i class="fas fa-star"></i>
-                <span class="sidebar-label">별표편지함</span>
+              <div class="sidebar-item type-select" data-emailClTy="3">
+                <i class="far fa-file-alt"></i>
+                <span class="sidebar-label">스팸함</span>
               </div>
-              <div class="sidebar-item">
+              <div class="sidebar-item type-select" data-emailClTy="4">
                 <i class="far fa-trash-alt"></i>
                 <span class="sidebar-label">휴지통</span>
               </div>
@@ -476,41 +468,16 @@
           <div class="email-box">
             <!-- 이메일 detailSection 시작 -->
             <div class="email-section-detail">
-              <div class="email-detail-toolbar">
-                <div class="toolbar-actions">
-                  <button class="toolbar-button back-to-list">
-                    <i class="fas fa-arrow-left"></i>
-                  </button>
-                  <button class="toolbar-button">
-                    <i class="fas fa-archive"></i>
-                  </button>
-                  <button class="toolbar-button">
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
-                  <button class="toolbar-button">
-                    <i class="fas fa-envelope"></i>
-                  </button>
-                  <button class="toolbar-button">
-                    <i class="fas fa-clock"></i>
-                  </button>
-                  <button class="toolbar-button">
-                    <i class="fas fa-tag"></i>
-                  </button>
-                </div>
-                <div class="toolbar-actions-right">
-                  <span class="email-date-detail">${mailVO.trnsmitDt}</span>
-                  <button class="toolbar-button">
-                    <i class="fas fa-print"></i>
-                  </button>
-                  <button class="toolbar-button">
-                    <i class="fas fa-ellipsis-v"></i>
-                  </button>
-                </div>
-              </div>
-    
               <div class="email-detail-content">
                 <div class="email-detail-header">
-                  <h2 class="email-detail-subject">${mailVO.emailSj}</h2>
+                  <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <h2 class="email-detail-subject">${mailVO.emailSj}</h2>
+                      <button class="toolbar-button">
+                      <i class="fas fa-ellipsis-v"></i>
+                      </button>
+                    </div>
+                  </div>
                   <div class="email-detail-info">
                     <div class="email-participants">
                       <!-- 보낸 사람 -->
@@ -566,18 +533,26 @@
                           </div>
                         </div>
                       </c:if>
+                      <div>
+                        <div class="participant-row">
+                          <div class="participant-type">보낸 날짜:</div>
+                          <div class="email-date-detail">${mailVO.trnsmitDt}</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                    <div class="email-detail-actions">
-                      <button class="reply-button" ${mailVO.emailClTy == '0' ? 'hidden' : ''}>
-                        <i class="fas fa-reply"></i>
-                        <span>답장</span>
-                      </button>
-                      <button class="forward-button">
-                        <i class="fas fa-share"></i>
-                        <span>전달</span>
-                      </button>
-                    </div>
+                    <c:if test="${mailVO.emailTrnsmisTy != '2' && mailVO.emailTrnsmisTy != '3'}">
+                      <div class="email-detail-actions">
+                        <button class="reply-button" id="replyBtn">
+                          <i class="fas fa-reply"></i>
+                          <span>답장</span>
+                        </button>
+                        <button class="forward-button" id="mailTrnsms">
+                          <i class="fas fa-share"></i>
+                          <span>전달</span>
+                        </button>
+                      </div>
+                    </c:if>
                   </div>
                 </div>
     
@@ -621,7 +596,12 @@
           </div>
         </div>
       </div>
-    
+    <style>
+      .email-sidebar .dropdown-toggle::after,
+      .email-sidebar .dropdown .dropdown-toggle::after {
+        display: none !important;
+      }
+    </style>
     <script>
       // 아바타 이니셜 생성
       document.addEventListener('DOMContentLoaded', function() {
@@ -632,13 +612,19 @@
           window.location.href="/mail"
         })
 
-        $('.sidebar-item').on('click', function() {
-            $('.sidebar-item').removeClass('active');
-            $(this).addClass('active');
-            emailClTy = $(this).attr('data-emailClTy');
-            console.log('emailClTy -> ',emailClTy);
-            window.location.href="/mail"
+        $('.sidebar-item.type-select').on('click', function() {
+          emailClTy = $(this).attr('data-emailClTy');
+          if(emailClTy){
+            // console.log('emailClTy -> ',emailClTy);
+            window.location.href = "/mail?emailClTy="+emailClTy;
+          }
         });
+        $('.sidebar-item.label-select').on('click',function(){
+          // console.log('.label-select 클릭 이벤트 : ',this);
+          let lblNo = $(this).data('lblno');
+          console.log('.label-select 클릭 이벤트 lblNo : ',lblNo);
+          window.location.href="/mail/labeling?lblNo="+lblNo;
+        })
 
         $('.participant-item').on('click',function(){
           let emplNm = $(this).find('.participant-name').text();
@@ -667,13 +653,25 @@
           // })
         })
 
-        $('#replyBtn').on('click',function(){
-          let emplNm = $('#trnsmitEmplNm').text();
-          let emplEmail = $('#trnsmitEmail').text();
-          console.log('답장 이벤트 emplEmail : ',emplEmail);
-          console.log('답장 이벤트 emplNm : ',emplNm);
-          window.location.href=`/mail/mailSend?emplNm=\${emplNm}&&email=\${emplEmail}`;
+        $('#mailTrnsms').on('click',function(){
+          let queryString = window.location.search.substring(1);
+          let param = queryString.split("=")[1];
+          console.log(param);
+          window.location.href=`/mail/mailTrnsms?emailNo=\${param}`;
         })
+
+        $('#replyBtn').on('click',function(){
+          let queryString = window.location.search.substring(1);
+          let param = queryString.split("=")[1];
+          console.log(param);
+
+          // let emplNm = $('#trnsmitEmplNm').text();
+          // let emplEmail = $('#trnsmitEmail').text();
+          // console.log('답장 이벤트 emplEmail : ',emplEmail);
+          // console.log('답장 이벤트 emplNm : ',emplNm);
+          window.location.href=`/mail/mailRepl?emailNo=\${param}`;
+        })
+
         $('#mailWrite').on('click',function(){
           window.location.href="/mail/mailSend";
         })

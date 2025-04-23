@@ -118,6 +118,7 @@ public class MailController {
 								@AuthenticationPrincipal CustomUser customUser) {
 		log.info("emailDetail -> emailNo : "+emailNo);
 		EmployeeVO employeeVO = customUser.getEmpVO();
+		int result = mailService.readingAt(emailNo);
 		List<MailLabelVO> mailLabelList = mailLabelService.getLabelList(employeeVO);
 		MailVO mailVO = new MailVO(emailNo);
 		log.info("emailDetail -> mailVO : "+mailVO);
@@ -177,7 +178,7 @@ public class MailController {
 		// 전달
 		MailVO mailVO = new MailVO();
 		mailVO.setEmailNo(emailNo);
-		mailVO = mailService.emailDetail(mailVO);
+		mailVO = mailService.mailTrnsms(mailVO);
 		List<AttachFileVO> attachFileVOList = mailService.getAtchFile(mailVO.getAtchFileNo());
 		
 		model.addAttribute("mailVO",mailVO);
@@ -265,6 +266,15 @@ public class MailController {
 		int result = mailService.mailDelete(emailNoList);
 		return "/mail";
 	}
+	@PostMapping("/restoration")
+	@ResponseBody
+	public String restoration(@RequestParam(value = "checkedList")List<String>checkedList) {
+		log.info("restoration -> checkedList : "+checkedList);
+		List<MailVO> mailVOList = mailService.emailDetails(checkedList);
+		log.info("restoration -> emailDetails ->  mailVOList : "+mailVOList);
+		int result = mailService.restoration(mailVOList);
+		return "";
+	}
 	
 	@PostMapping("/mailLblAdd")
 	public String mailLblAdd(@ModelAttribute MailLabelVO labelVO) {
@@ -274,8 +284,14 @@ public class MailController {
 	}
 	@PostMapping("/starred")
 	@ResponseBody
-	public String mailStarred(@ModelAttribute MailVO mailVO){
-		log.info("mailStarred -> mailVO : "+mailVO);
+	public String mailStarred(@RequestParam(value = "emailNo") int emailNo,
+								@RequestParam(value = "starred") String starred){
+		log.info("mailStarred -> emailNo : "+emailNo);
+		log.info("mailStarred -> starred : "+starred);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("emailNo", emailNo);
+		map.put("starred", starred);
+		int result = mailService.mailStarred(map);
 		return "success";
 	}
 	
@@ -283,7 +299,8 @@ public class MailController {
 	@ResponseBody
 	public String deleteLbl(@RequestParam(value = "lblNo") String lblNo) {
 		log.info("deleteLbl -> lblNo : "+lblNo);
-		int result = mailLabelService.deleteLbl(lblNo);
+		int result = mailService.delLblFromMail(lblNo);
+		result += mailLabelService.deleteLbl(lblNo);
 		return "success";
 	}
 	

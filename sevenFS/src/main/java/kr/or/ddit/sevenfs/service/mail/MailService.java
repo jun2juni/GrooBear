@@ -35,5 +35,18 @@ public interface MailService {
 
 	Map<String, Object> mailRepl(MailVO mailVO);
 
+	MailVO mailTrnsms(MailVO mailVO);
+
+	int restoration(List<MailVO> checkedList);
+
+	List<MailVO> emailDetails(List<String> checkedList);
+
+	int mailStarred(Map<String, Object> map);
+
+	int readingAt(int emailNo);
+
+	int delLblFromMail(String lblNo);
+
+
 
 }

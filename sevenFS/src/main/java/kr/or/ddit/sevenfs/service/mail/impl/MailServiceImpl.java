@@ -244,23 +244,43 @@ public class MailServiceImpl implements MailService{
 	@Override
 	public MailVO emailDetail(MailVO mailVO) {
 		// mailVO에 emailNo가 들어있음
+		int emailNo = mailVO.getEmailNo();
+		String name="";
+		log.info("mailVO 확인 : "+mailVO);
+		log.info("이메일 번호 확인 : "+emailNo);
 		List<MailVO> mailVOList = mailMapper.emailDetail(mailVO);
 //		Map<String, Object> returnMap = new HashMap<String, Object>();
 		log.info("MailServiceImpl emailDetail -> mailVOList : "+mailVOList);
+		Map<String,Object> trnsmitMap = new HashMap<String,Object>();
 		List<Map<String, Object>> recptnList = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> refEmailList = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> hiddenRefEmailList = new ArrayList<Map<String, Object>>();
 		for(int i = 0; i < mailVOList.size(); i++ ) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			log.info("MailServiceImpl emailDetail -> map : "+mailVOList.get(i));
-			if(mailVOList.get(i).getEmailTrnsmisTy().equals("0")) {
+			if(mailVOList.get(i).getEmailNo() == emailNo) {
 				mailVO = mailVOList.get(i);
-			}else if(mailVOList.get(i).getEmailTrnsmisTy().equals("1")) {
+				log.info("if(mailVO.getEmailNo() == emailNo) mailVOList.get(i) "+mailVOList.get(i));
+				
+			}
+			if(mailVOList.get(i).getEmailTrnsmisTy().equals("0")) {
+//				mailVOList.get(i).getEmpl
+//				map.put("emplNo", (String)mailVOList.get(i).getEmplNo());
+//				map.put("emplNm", (String)mailVOList.get(i).getEmplNm());
+//				map.put("recptnEmail", (String)mailVOList.get(i).getRecptnEmail());
+				log.info("mailVOList.get(i).getEmplNm() : "+mailVOList.get(i).getEmplNm());
+				mailVO.setEmplNm(mailVOList.get(i).getEmplNm());
+				mailVO.setEmplNo(mailVOList.get(i).getEmplNo());
+				log.info("mailVOList.get(i).getEmplNm() 세팅 후 : "+mailVO.getEmplNm());
+				name = mailVOList.get(i).getEmplNm();
+//				recptnList.add(map);
+			} else if(mailVOList.get(i).getEmailTrnsmisTy().equals("1")) {
 				map.put("emplNo", (String)mailVOList.get(i).getEmplNo());
 				map.put("emplNm", (String)mailVOList.get(i).getEmplNm());
 				map.put("recptnEmail", (String)mailVOList.get(i).getRecptnEmail());
 				recptnList.add(map);
 			}else if(mailVOList.get(i).getEmailTrnsmisTy().equals("2")) {
+				log.info("실행여부 mailVOList.get(i).getEmailTrnsmisTy().equals(\"2\")");
 				map.put("emplNo", (String)mailVOList.get(i).getEmplNo());
 				map.put("emplNm", (String)mailVOList.get(i).getEmplNm());
 				map.put("recptnEmail", (String)mailVOList.get(i).getRecptnEmail());
@@ -275,6 +295,7 @@ public class MailServiceImpl implements MailService{
 		mailVO.setRecptnMapList(recptnList);
 		mailVO.setRefMapList(refEmailList);
 		mailVO.setHiddenRefMapList(hiddenRefEmailList);
+		mailVO.setEmplNm(name);
 		log.info("MailServiceImpl emailDetail -> mailVO : "+mailVO);
 		return mailVO;
 	}
@@ -349,10 +370,46 @@ public class MailServiceImpl implements MailService{
 				+emailCn;
 		mailVO.setEmailCn(emailCn);
 		log.info("service -> mailRepl -> mailVO : "+mailVO);
+		mailVO.setEmailSj("");
 		map.put("mailVO", mailVO);
 		map.put("fromEmplNm", fromEmplNm);
 		map.put("fromEmplNo", (String)empMap.get("EMPL_NO"));
 		log.info("service -> mailRepl -> map : "+map);
 		return map;
+	}
+
+	@Override
+	public MailVO mailTrnsms(MailVO mailVO) {
+		mailVO = mailMapper.mailRepl(mailVO);
+		log.info("mailTrnsms 확인"+mailVO);
+//		mailVO.set
+		return mailVO;
+	}
+
+	@Override
+	public int restoration(List<MailVO> mailVOList) {
+		mailVOList.stream().forEach(mail->{
+			log.info(mail.getEmailTrnsmisTy());
+		});
+		return mailMapper.restoration(mailVOList);
+	}
+
+	@Override
+	public List<MailVO> emailDetails(List<String> checkedList) {
+		return mailMapper.emailDetails(checkedList);
+	}
+	@Override
+	public int mailStarred(Map<String, Object> map) {
+		return mailMapper.mailStarred(map);
+	}
+
+	@Override
+	public int readingAt(int emailNo) {
+		return mailMapper.readingAt(emailNo);
+	}
+
+	@Override
+	public int delLblFromMail(String lblNo) {
+		return mailMapper.delLblFromMail(lblNo);
 	}
 }

@@ -26,5 +26,10 @@ public interface MailMapper {
 	MailVO mailRepl(MailVO mailVO);
 	int tempStoreEmail(List<MailVO> mailVOList);
 	Map<String, Object> findEmplByEmail(String trnsmitEmail);
+	int restoration(List<MailVO> mailVOList);
+	List<MailVO> emailDetails(List<String> checkedList);
+	int mailStarred(Map<String, Object> map);
+	int readingAt(int emailNo);
+	int delLblFromMail(String lblNo);
 
 }

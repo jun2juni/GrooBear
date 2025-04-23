@@ -101,6 +101,28 @@
         window.location.href="/mail/mailTrnsms?emailNo="+emailNo;
       })
 
+      $('#tab-restoration').on('click',function(){
+        let lblNo = this.value
+        console.log('라벨 no : ',lblNo);
+        console.log('checkedList 라벨링 : ',checkedList);
+        data = {
+          checkedList:checkedList
+        }
+        $.ajax({
+          url:'/mail/restoration',
+          data:data,
+          method:'post',
+          success:function(resp){
+            console.log(resp);
+            // $('#labeling option:eq(0)').prop('selected',true);
+            $('.email-checkbox').prop("checked",false);
+          },
+          error:function(err){
+            console.log(err);
+          }
+        })
+      })
+
       $('#labeling').on('change',function(){
         let lblNo = this.value
         console.log('라벨 no : ',lblNo);
@@ -139,7 +161,7 @@
               console.log('이미 라벨 존재',$(`.email-item[data-emailno=\${mailiNo}]`).find(`.fas.fa-tag[data-lblno=\${lblNo}]`));
             }else{
               console.log('라벨 추가 혹은 변경')
-              $(`.email-item[data-emailno=\${mailiNo}]`).find('.email-subject').before(`<i class="fas fa-tag" data-col="\${color}" data-lblno="\${lblNo}" style="color: \${color};"></i>`);
+              $(`.email-item[data-emailno=\${mailiNo}]`).find('.email-subject').before(`<i class="fas fa-tag" data-col="\${color}" data-lblno="\${lblNo}" style="color: \${color}; margin-right: 2px;"></i>`);
             }
           }
         })
@@ -187,7 +209,8 @@
         })
       })
       let checkedList;
-      $('.email-checkbox').change(function(){
+      // $(document).on('change','.email-checkbox',function(){
+      $('.email-checkbox').on('change',function(){
         // 현재 URL에서 쿼리스트링 가져오기
         let queryString = window.location.search;
 
@@ -200,6 +223,7 @@
         console.log('클릭 확인 : ',this)
         let chkList = $('.email-checkbox:checked').get();
         console.log(chkList);
+        console.log("$('#tab-restoration')",$('#tab-restoration'));
         chkList.forEach(chk=>{
           let emailNo = $(chk).closest('.email-item').attr('data-emailno');
           emailNoList.push(emailNo);
@@ -208,16 +232,19 @@
         console.log("체크된 리스트 길이 : ",emailNoList.length);
         if(emailNoList.length>1){
           $('#tab-del').prop('disabled',false);
+          $('#tab-restoration').prop('disabled',false);
           $("#tab-repl").prop('disabled',true);
           $("#tab-trnsms").prop('disabled',true);
           $('#labeling').prop('disabled',false);
         }else if(emailNoList.length == 0){
           $('#tab-del').prop('disabled',true);
+          $('#tab-restoration').prop('disabled',true);
           $("#tab-repl").prop('disabled',true);
           $("#tab-trnsms").prop('disabled',true);
           $('#labeling').prop('disabled',true);
         }else if(emailNoList.length == 1){
           $('#tab-del').prop('disabled',false);
+          $('#tab-restoration').prop('disabled',false);
           $("#tab-repl").prop('disabled',false);
           $("#tab-trnsms").prop('disabled',false);
           $('#labeling').prop('disabled',false);
@@ -393,7 +420,7 @@
               <button id="cancel-label" type="button" style="padding: 8px 16px; border: none; background-color: #e5e7eb; border-radius: 4px; cursor: pointer;">취소</button>
               <button id="save-label" type="submit" style="padding: 8px 16px; border: none; background-color: #2563eb; color: white; border-radius: 4px; cursor: pointer;">저장</button>
             </div>
-          <!-- </form>  -->
+          </form> 
         </div>
 
         <script>
@@ -453,14 +480,19 @@
           <button class="tab" id="tab-del">삭제</button>
           <button class="tab" id="tab-repl">답장</button>
           <button class="tab" id="tab-trnsms">전달</button>
-          <select class="tab" name="mailLbl" id="labeling">
-            <option id="defaultOption" value="" disabled selected>라벨 선택</option>
-            <c:forEach items="${mailLabelList}" var="mailLabel">
-              <option value="${mailLabel.lblNo}">${mailLabel.lblNm}</option>
-            </c:forEach>
-            <option id="detLabel" value="0">라벨 해제</option>
-          </select>
-              </div>
+          <c:if test="${mailVO.emailClTy == '4'}">
+            <button class="tab" id="tab-restoration">복구</button>
+          </c:if>
+          <c:if test="${mailVO.emailClTy == '0'||mailVO.emailClTy == '1'}">
+            <select class="tab" name="mailLbl" id="labeling">
+              <option id="defaultOption" value="" disabled selected>라벨 선택</option>
+              <c:forEach items="${mailLabelList}" var="mailLabel">
+                <option value="${mailLabel.lblNo}">${mailLabel.lblNm}</option>
+              </c:forEach>
+              <option id="detLabel" value="0">라벨 해제</option>
+            </select>
+          </c:if>
+          </div>
           <div class="d-flex justify-content-end align-items-center" style="margin-left: auto; gap: 10px;">
           <c:set var="searchOption" value="${param.searchOption}"/>
           <form action="/mail" class="d-flex align-items-center" style="gap: 10px;">
@@ -490,13 +522,15 @@
               <div class="email-item ${mailVO.readngAt}" data-emailclty="${mailVO.emailClTy}" data-emailNo="${mailVO.emailNo}">
               <div class="email-actions">
                 <input type="checkbox" class="email-checkbox">
-                <button class="star-button ${mailVO.starred}" data-emailNo="${mailVO.emailNo}">
-                <i class="${mailVO.starred=='Y'?'fas':'far'} fa-star"></i>
-                </button>
+                <c:if test="${mailVO.emailClTy == '0' || mailVO.emailClTy == '1'}">
+                  <button class="star-button ${mailVO.starred}" data-emailNo="${mailVO.emailNo}">
+                    <i class="${mailVO.starred=='Y'?'fas':'far'} fa-star"></i>
+                  </button>
+                </c:if>
               </div>
               <div class="email-sender" style="flex: 1;">${mailVO.trnsmitEmail}</div>
               <div class="email-content" style="flex: 2;">
-                <c:if test="${mailVO.lblCol != null and mailVO.lblCol != ''}">
+                <c:if test="${(mailVO.lblCol != null and mailVO.lblCol != '')&&(mailVO.emailClTy=='0' || mailVO.emailClTy=='1')}">
                   <i class="fas fa-tag" data-col="${mailVO.lblCol}" data-lblNo="${mailVO.lblNo}" style="color: ${mailVO.lblCol};"></i>
                 </c:if>
                 <c:if test="${mailVO.emailSj != null}">
@@ -506,7 +540,6 @@
                 <span class="email-subject">(제목 없음)</span>
                 </c:if>
                 <c:if test="${mailVO.emailCn != null}">
-                <!-- -<span class="email-content-summary">${mailVO.emailCn}</span> -->
                 </c:if>
               </div>
               <div class="email-date" style="flex: 1; text-align: center;">${mailVO.trnsmitDt}</div>
@@ -573,6 +606,7 @@ body {
   overflow-y: auto;
   transition: all 0.3s ease;
   padding-top: 12px;
+  flex-shrink: 0;
   /* box-shadow: 1px 0 5px rgba(0,0,0,0.05); */
 }
 
@@ -594,7 +628,6 @@ body {
   font-size: 15px;
   transition: all 0.2s;
   width: 100%;
-  /* box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3); */
 }
 
 .compose-button:hover {
@@ -847,11 +880,11 @@ body {
   /* box-shadow: 0 1px 3px rgba(0,0,0,0.05); */
 }
 
-.email-item.unread {
+.email-item.N {
   background-color: #f0f7ff;
 }
 
-.email-item.unread:hover {
+.email-item.N:hover {
   background-color: #e6f0fd;
 }
 
@@ -866,7 +899,7 @@ body {
   transition: background-color 0.2s;
 }
 
-.email-item.unread::after {
+.email-item.N::after {
   background-color: #3b82f6;
 }
 
@@ -940,7 +973,7 @@ body {
   text-overflow: ellipsis;
 }
 
-.email-item.unread .email-date {
+.email-item.N .email-date {
   color: #4b5563;
   font-weight: 500;
 }
@@ -1079,7 +1112,7 @@ body {
   color: #374151;
 }
     
-  </style>
+</style>
     
   
   
