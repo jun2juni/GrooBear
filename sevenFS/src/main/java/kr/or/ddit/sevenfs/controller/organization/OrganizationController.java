@@ -1,5 +1,6 @@
 package kr.or.ddit.sevenfs.controller.organization;
 
+import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -173,17 +174,19 @@ public class OrganizationController {
 	@GetMapping("/getLowerdeptList")
 	public Map<String, Object> getLowerdeptList(
 			@RequestParam String upperCmmnCode
-		   ,@RequestParam String emplNo) {
-		
+		   ,@RequestParam(defaultValue = "") String emplNo) {
+
 		//log.info("emplNo 왔을까유 ?? : " + emplNo);
 		List<CommonCodeVO> lowerDep = organizationService.lowerDepList(upperCmmnCode);
 		
-		// 사원 상세
-		EmployeeVO emplDetail = organizationService.emplDetail(emplNo);
-		
 		Map<String, Object> map = new HashMap<>();
+		if(emplNo != null && emplNo != "") {
+			// 사원 상세
+			EmployeeVO emplDetail = organizationService.emplDetail(emplNo);
+			map.put("emplDetail", emplDetail);
+		}
+		
 		map.put("lowerDep", lowerDep);
-		map.put("emplDetail", emplDetail);
 		
 		// 하위부서 리스트 반환
 		return map;

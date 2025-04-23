@@ -11,7 +11,8 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<div class="card-style mb-3" style="height:130px;'">
+	<div class="card-style mb-3" style="height:200px;'">
+          <h6 class="text-medium mb-30">👨‍💼 ${emplVac.emplNm} 연차 현황</h6>
 			<div class="row">			
 	            <div class="col-2" style="border:none;">
 	                <div class="mx-auto text-center">
@@ -129,7 +130,7 @@
 	            </div>
 			</div>
 		</div>
-		<div>
+		<%-- <div>
           <div class="">
             <div class="card-style  mb-30 col-12">
 	            <div class="title d-flex flex-wrap">
@@ -162,6 +163,7 @@
 					  </form>
 					  <!-- 달력 페이지네이션 -->
 	                </div>
+	                
 	                <div class="input-group mb-3 ms-auto justify-content-end w-20">
 	                <a href="/dclz/vacation?targetEmplNo=${emplVac.emplNo}" id="moreViewEmplVacation" class="btn-sm main-btn light-btn-light btn-hover mr-10 rounded">더보기</a>
 	                <!-- <form action="/dclz/vacationAdmin" method="get" id="keywordSearchFome"> -->
@@ -176,7 +178,7 @@
 					       </span> -->
 	                </div>
 	              </div>
-	             <%-- ${emplCmmnVacationList} --%>
+	             ${emplCmmnVacationList}
               <div class="table-wrapper table-responsive">
                 <table class="table clients-table" id="vacTable">
                   <thead>
@@ -233,18 +235,18 @@
                 <!-- end table -->
               </div>
                <!-- 페이지네이션 -->
-               <%-- <page-navi id="page"
+               <page-navi id="page"
 				   url="/dclz/vacation?"
 				   current="${param.get("currentPage")}"
 				   show-max="10"
 				   total="${articlePage.totalPages}">
-			   </page-navi> --%>
+			   </page-navi>
 			   <!-- 페이지네이션 -->
             <!-- end card -->
           </div>
           <!-- end col -->
         </div>
-		</div>
+		</div> --%>
 		
 <script type="text/javascript">
 

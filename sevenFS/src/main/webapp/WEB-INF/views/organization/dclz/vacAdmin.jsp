@@ -39,40 +39,46 @@
        		<!-- Button trigger modal -->
        		<form action="/dclz/vacAdmin" method="get" id="vacAdminSearchForm">
        		<div class="col-lg-12 mb-10">
-              <div class="card-style d-flex gap-3 justify-content-center">
-              <div class="col-2">
-              	<span class="form-label">사원이름</span>
-              	<input class="form-control" type="text" value="" name="keywordName" id="searchEmplNm">
-              </div>
-              <div class="col-2">
-              	<span class="form-label">부서명</span>
-              	<input class="form-control" data-bs-toggle="modal" data-bs-target="#orgListModal" type="text" value="" name="keywordDept" id="searchDeptNm" readonly="readonly" >
-              </div>
-              <div class="col-3">
-              	<span class="form-label">입사일자</span>
-              	<input class="form-control" type="date" id="ecnyDt">
-              	<input type="hidden" value="" name="keywordEcny" id="hidEncyDt">
-              </div>
-              <!-- <div class="col-3">
-              	<span class="form-label">퇴사일자</span>
-              	<input class="form-control" type="date" id="retireDt">
-              	<input type="hidden" value="" name="keywordRetire" id="hidRetireDt">
-              </div> -->
-              	<button type="button" id="vacAdminSearch" class="main-btn light-btn square-btn btn-hover btn-sm mt-30" style="height:40px;">검색</button>
+              <div class="card-style d-flex gap-3 justify-content-between"  
+              		style="position:sticky; top:0px; z-index:1;  background-color: white;">
+                <div class="">
+                  <h6>**<span class="mt-3" style="color:lightcoral">사원 이름을 클릭하시면 해당 사원의 연차 갯수 현황을 조회할 수 있습니다.</span></h6>
+                  <h6>**<span class="mt-3" style="color:lightcoral">추가로 지급할 성과보상 또는 근무보상 일수를 지급해주세요.</span></h6>
+              	</div>
+	           	<div class="d-flex gap-3 justify-content-end">
+	              <div>
+	              	<span class="form-label">사원이름</span>
+	              	<input class="form-control" type="text" value="${param.keywordName}" name="keywordName" id="searchEmplNm" onkeydown="fnSearch(event)">
+	              </div>
+	              <div>
+	              	<span class="form-label">부서명</span>
+	              	<input class="form-control" data-bs-toggle="modal" data-bs-target="#orgListModal" type="text" value="${param.keywordDept}" name="keywordDept" id="searchDeptNm" readonly="readonly" >
+	              </div>
+	             <!--  <div class="col-3">
+	              	<span class="form-label">입사일자</span>
+	              	<input class="form-control" type="date" id="ecnyDt">
+	              	<input type="hidden" value="" name="keywordEcny" id="hidEncyDt">
+	              </div> -->
+	              <!-- <div class="col-3">
+	              	<span class="form-label">퇴사일자</span>
+	              	<input class="form-control" type="date" id="retireDt">
+	              	<input type="hidden" value="" name="keywordRetire" id="hidRetireDt">
+	              </div> -->
+	              	<button type="button" id="vacAdminSearch" class="main-btn light-btn square-btn btn-hover btn-sm mt-30" 
+	              			 style="height:40px;">검색</button>
+	            </div>
               </div>
    			</div>
-   			</form>
+   			</form>	
 			<div class="row">
             <div class="col-lg-12">
               <div class="card-style">
                 <div class="table-wrapper table-responsive">
                   <table class="table">
                   <h6>전체사원 연차 관리</h6>
-                  <h6>**<span class="mt-3" style="color:lightcoral">사원 이름을 클릭하시면 해당 사원의 이번달 연차 사용 현황을 조회할 수 있습니다.</span></h6>
-                  <h6>**<span class="mt-3" style="color:lightcoral">추가로 지급할 성과보상 또는 근무보상 일수를 지급해주세요.</span></h6>
                   <div class="mb-10 d-flex justify-content-end col-12">
                    <div>
-                   	 <a href="/dclz/vacAdmin" class="btn-sm light-btn-light btn-hover mr-10 rounded-md">전체 목록 보기</a>
+                   	 <a id="allListBtn" href="/dclz/vacAdmin" class="btn-sm light-btn-light btn-hover mr-10 rounded-md">전체 목록 보기</a>
                    </div>
                   <%--  <form action="/dclz/vacAdmin" method="get" id="selTypeForm">
                   	<c:set var="duplTypes" value="" />
@@ -229,8 +235,8 @@
                       <form action="/dclz/addVacInsert" method="get" id="addVacationForm${status.count}">
                         <td>
 	                         <div class="d-flex flex-column gap-1">
-				                <button type="button" id="sendVacBtn${status.count}" class="main-btn primary-btn-light square-btn btn-hover btn-sm" style="width: 60px; height: 40px;">지급하기</button>
-				                <button type="button" id="resetBtn${status.count}" class="main-btn danger-btn-light square-btn btn-hover btn-sm" style="width: 60px; height: 40px;">초기화</button>
+				                <button type="button" id="sendVacBtn${status.count}" class="main-btn primary-btn-light square-btn btn-hover btn-sm" style="width: 80px; height: 40px;">지급하기</button>
+				                <button type="button" id="resetBtn${status.count}" class="main-btn danger-btn-light square-btn btn-hover btn-sm" style="width: 80px; height: 40px;">초기화</button>
                         	</div>
                         </td>
                       </tr>
@@ -247,7 +253,7 @@
                   </table>
                   <!-- end table -->
                   <!-- 페이지네이션 -->
-                  <div>
+                  <div id="pageNaviDiv">
                   <page-navi
 					url="/dclz/vacAdmin?"
 					current="${param.get('currentPage')}"
@@ -266,7 +272,7 @@
         <!-- 연차 Modal -->
         <!-- <form id="vacationSub"> -->
 		<div class="modal fade" tabindex="-1" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true"> 
-		  <div class="modal-dialog modal-xl">
+		  <div class="modal-dialog modal-lg">
 		    <div class="modal-content">
 		      <div class="modal-header" id="emplVacationModal">
 		        <h5 class="modal-title" id="exampleModalLabel"></h5>
@@ -296,13 +302,12 @@
 		</div>
 		</div>
 		<!-- 조직도 Modal -->
+		</div>
 	</section>
   <%@ include file="../../layout/footer.jsp" %>
 </main>
 <%@ include file="../../layout/prescript.jsp" %>
 <script type="text/javascript">
-
-
 
 // 부서명 클릭했을때 조직도 띄우기
 $('#searchDeptNm').on('click', function () {
@@ -311,18 +316,31 @@ $('#searchDeptNm').on('click', function () {
   deptModal.show();
 });
 
+// 부서 선택시 input채우고 모달 닫기
 function clickDept(data){
 	  //console.log(data.node.text);
 	  const deptNm = data.node.text;
 	  $('#searchDeptNm').val(deptNm);
 	  $('#orgListModal .btn-close').trigger('click');
 }
-
+// 사원 선택 못함
 function clickEmp(){
 	swal('부서만 선택할 수 있습니다.')
 }
-
-
+// 검색시 엔터 눌렀을경우
+function fnSearch(e){
+	if(e.code==="Enter"){
+		$('#vacAdminSearchForm').submit();
+	}
+}
+// 검색한 이름
+$('#searchEmplNm').on('input', function(){
+	sessionStorage.setItem('keywordName', $(this).val());
+});
+// 검색한 부서
+$('#searchDeptNm').on('input', function(){
+	sessionStorage.setItem('keywordDept', $(this).val());
+})
 // 사원 이름 눌렀을때
 $('.vacation-modal-btn').on('click', function(){
 	const emplNo = $(this).data('empl-no');
@@ -336,18 +354,17 @@ $('.vacation-modal-btn').on('click', function(){
 		 })
 		.then(resp => resp.text())
 		.then(res => {
-			$('#vacationModalBody').html(res);
-			$('#exampleModal').show();
-			//console.log('res : ' , res);
-			
-			$('#moreViewEmplVacation').on('click', function(){
-				location.href = '/dclz/vacation?emplNo='+emplNo;
-			})
+		$('#vacationModalBody').html(res);
+		$('#exampleModal').show();
+		//console.log('res : ' , res);
+		
+		$('#moreViewEmplVacation').on('click', function(){
+			location.href = '/dclz/vacation?emplNo='+emplNo;
+		})
 	}) 
 })
 
 $(function(){	
-	
 	//------- 성과보상
 	let previousValue = 0;
 	$('.cmpnstnYrycCnt').on('focus', function() {
@@ -430,74 +447,74 @@ $(function(){
 		//------- 성과보상
 			
 		//------- 근무보상
-		 let previousVal = 0;
-		$('.excessWorkYryc').on('focus', function() {
-			previousVal = parseFloat($(this).val());
-			//console.log('previousVal' , previousVal);
-		});
-		$('.excessWorkYryc').on('input', function(){
-			const workId = $(this).attr('id');
-			const workVal = $(this).val();
-			//console.log('workId ' , workId);
-			//console.log('workVal ' , workVal);
-			
-			const currentVal = parseFloat($(this).val());
-			const diffVal = currentVal - previousVal;
-			//console.log('diffVal' , diffVal);
-			
-			const index = workId.match(/\d+/)[0];
-			const inputTotalId = $('#inputTotalCnt'+index);
-			const yrycRemndrDaycnt = $('#yrycRemndrDaycnt'+index).val();
-			//console.log($('#inputTotalCnt'+index).val());
-			
-			let sumTotal = 0;
-			let sumRemain = 0;
-			let excessWork = 0;
-			// 성과보상만큼 총 연차일수도 계산해주기
-			if (diffVal === 0.5) {
-				let totalId = $('#inputTotalCnt'+index);
-				let remainId = $('#yrycRemndrDaycnt'+index);
-				let excessWorkCnt = $('#hiddenexcessWork'+index);
+			let previousVal = 0;
+			$('.excessWorkYryc').on('focus', function() {
+				previousVal = parseFloat($(this).val());
+				//console.log('previousVal' , previousVal);
+			});
+			$('.excessWorkYryc').on('input', function(){
+				const workId = $(this).attr('id');
+				const workVal = $(this).val();
+				//console.log('workId ' , workId);
+				//console.log('workVal ' , workVal);
 				
-				let total = totalId.val();
-				let remain = remainId.val();
-				let excessWork = excessWorkCnt.val();
-				//console.log('근무잃수 : ' , excessWork);
+				const currentVal = parseFloat($(this).val());
+				const diffVal = currentVal - previousVal;
+				//console.log('diffVal' , diffVal);
 				
-				sumTotal =  Number(total) + diffVal;
-				sumRemain = Number(remain) + diffVal;
-				// 기존 성과보상 + 추가 성과보상
-				// 기존 근무보상 + 추가 근무보상
-				sumExcessWork = Number(excessWork) + diffVal;
-				//console.log('더한 근무보상 : ' , sumExcessWork);
-				// 보내줘야할 초과 보상일수
-				$('#hiddenexcessWork'+index).val(sumExcessWork);
+				const index = workId.match(/\d+/)[0];
+				const inputTotalId = $('#inputTotalCnt'+index);
+				const yrycRemndrDaycnt = $('#yrycRemndrDaycnt'+index).val();
+				//console.log($('#inputTotalCnt'+index).val());
 				
-				$('#inputTotalCnt'+index).val(sumTotal);
-				$('#yrycRemndrDaycnt'+index).val(sumRemain);
-				$('#hiddenInputTotal'+index).val(sumTotal);
-				$('#hiddenRemndrDaycnt'+index).val(sumRemain);
-				//console.log('hiddenCmpnstnCnt : ' , $('#hiddenCmpnstnCnt'+idx).val())
-				
-				//console.log(id + ':' + value);
-			} else if (diffVal === -0.5) {
-				let totalId = $('#inputTotalCnt'+index);
-				let remainId = $('#yrycRemndrDaycnt'+index);
-				total = totalId.val();
-				remain = remainId.val();
-				sumTotal = Number(total)+(diffVal) ;
-				sumRemain = Number(remain) + diffVal;
-				//console.log(sumTotal);
-				$('#inputTotalCnt'+index).val(sumTotal);
-				$('#yrycRemndrDaycnt'+index).val(sumRemain);
-				$('#hiddenexcessWork'+index).val(value);
-				$('#hiddenInputTotal'+index).val(sumTotal);
-				$('#hiddenRemndrDaycnt'+index).val(sumRemain);
-				//console.log('hiddenCmpnstnCnt : ' , $('#hiddenCmpnstnCnt'+idx).val())
-			} 
-			previousVal = currentVal;
-		})
-	//——— 근무보상
+				let sumTotal = 0;
+				let sumRemain = 0;
+				let excessWork = 0;
+				// 성과보상만큼 총 연차일수도 계산해주기
+				if (diffVal === 0.5) {
+					let totalId = $('#inputTotalCnt'+index);
+					let remainId = $('#yrycRemndrDaycnt'+index);
+					let excessWorkCnt = $('#hiddenexcessWork'+index);
+					
+					let total = totalId.val();
+					let remain = remainId.val();
+					let excessWork = excessWorkCnt.val();
+					//console.log('근무잃수 : ' , excessWork);
+					
+					sumTotal =  Number(total) + diffVal;
+					sumRemain = Number(remain) + diffVal;
+					// 기존 성과보상 + 추가 성과보상
+					// 기존 근무보상 + 추가 근무보상
+					sumExcessWork = Number(excessWork) + diffVal;
+					//console.log('더한 근무보상 : ' , sumExcessWork);
+					// 보내줘야할 초과 보상일수
+					$('#hiddenexcessWork'+index).val(sumExcessWork);
+					
+					$('#inputTotalCnt'+index).val(sumTotal);
+					$('#yrycRemndrDaycnt'+index).val(sumRemain);
+					$('#hiddenInputTotal'+index).val(sumTotal);
+					$('#hiddenRemndrDaycnt'+index).val(sumRemain);
+					//console.log('hiddenCmpnstnCnt : ' , $('#hiddenCmpnstnCnt'+idx).val())
+					
+					//console.log(id + ':' + value);
+				} else if (diffVal === -0.5) {
+					let totalId = $('#inputTotalCnt'+index);
+					let remainId = $('#yrycRemndrDaycnt'+index);
+					total = totalId.val();
+					remain = remainId.val();
+					sumTotal = Number(total)+(diffVal) ;
+					sumRemain = Number(remain) + diffVal;
+					//console.log(sumTotal);
+					$('#inputTotalCnt'+index).val(sumTotal);
+					$('#yrycRemndrDaycnt'+index).val(sumRemain);
+					$('#hiddenexcessWork'+index).val(value);
+					$('#hiddenInputTotal'+index).val(sumTotal);
+					$('#hiddenRemndrDaycnt'+index).val(sumRemain);
+					//console.log('hiddenCmpnstnCnt : ' , $('#hiddenCmpnstnCnt'+idx).val())
+				} 
+				previousVal = currentVal;
+			})
+	//------- 근무보상
 	$('.excessWorkYryc, .cmpnstnYrycCnt').on('input', function(){
 		const id = $(this).attr('id');
 		const idx = id.match(/\d+/)[0];
@@ -520,6 +537,7 @@ $(function(){
 		let hiddenInputTotal = $('#hiddenValueTotal'+idx).val();
 		let hiddenRemndrDaycnt = $('#hiddenRemainTotal'+idx).val();
 		let hiddenCmpnstnCnt = $('#hiddenCmpnstnCnt'+id).val();
+
 		// 초기화 버튼 눌렀을때
 		$('#resetBtn'+idx).on('click', function(){
 			
@@ -576,6 +594,7 @@ $(function(){
 				if(wilDelete){
 					const empNo = $('#emplNo'+idx).val();
 					const currentPage = $('#currentPage'+idx).val();
+					const searchEmplNm = $('#searchEmplNm').val();
 					//console.log(empNo);
 					$('#emplNo'+idx).val(empNo);
 					$('#currentPage'+idx).val(currentPage);
@@ -590,56 +609,57 @@ $(function(){
 		})
 	})
 	
-	$('#ecnyDt').on('change', function(){
-		let ecnyDt = $('#ecnyDt').val();
-		let ecnyReplace = ecnyDt.replaceAll('-', '');
-		console.log('선택 입사일자 : ' , ecnyReplace);
-		$('#hidEncyDt').val(ecnyReplace);
-	})
-	
-	$('#retireDt').on('change', function(){
-		let retireDt = $('#retireDt').val();
-		let retireReplace = retireDt.replaceAll('-', '');
-		console.log('선택한 퇴사일자 : ' , retireReplace);
-		$('#hidRetireDt').val(retireReplace);
-	})
-	
 	// 검색 눌렀을시
 	$('#vacAdminSearch').on('click', function(){
 		// 사원이름 검색
 		//let searchEmplNm = $('#searchEmplNm').val();
 		//console.log('검색한 사원명 : ' , searchEmplNm);
-		$('#vacAdminSearchForm').submit();
+		// 검색 내용 유지시키기
+		$('#searchEmplNm').on('input', function(){
+			sessionStorage.setItem('keywordName', $(this).val());
+		});
+		$('#searchDeptNm').on('input', function(){
+			sessionStorage.setItem('keywordDept', $(this).val());
+		})
+		$('#vacAdminSearchForm').submit(); 
 	})
 	
-	 /* 
-	 // 검색한 사원의 사원번호 가져오기
-	 let searchEmpl = null;
-	 // 이름 검색하고 엔터 눌렀을시
-	 function fSchEnder(e) {
-	    if (e.code === "Enter") {
-	 	
-	 	 $('#jstree').jstree(true).search($("#schName").val());   
-	 	 
-	    	/* fetch('/emplDetailData?emplNo=' + ,{
-	    		method : 'get',
-	    		headers : {
-	    	        "Content-Type": "application/json"
-	    	    }
-	    	 })
-	    	 .then(resp => resp.json())
-	    	 .then(res => {
-	    		 searchEmpl = res.empDetail;
-	    		 console.log('fetch결과 : ' ,searchEmpl);
-	    		 let emplNm = searchEmpl.emplNm;
-	 		 let emplPos = searchEmpl.posNm;
-	 		 let deptNm = searchEmpl.deptNm;
-	 		 $('#username').val(emplNm+' '+emplPos);
-	 		 $('#emplDep').val(deptNm);
-	    	 
-	    	 })  
-	    }
-	 }   */
+	// 검색했을때 페이지네이션 없애기
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams(queryString);
+	const keywordName = urlParams.get('keywordName');
+	const keywordDept = urlParams.get('keywordDept');
+	const currentPage = urlParams.get('currentPage');
+	
+	if(keywordName || keywordDept){
+		$('#pageNaviDiv').css('display', 'none'); 
+		$('#pageNaviDiv').hide();
+	}
+	// 검색 안했을때 input 비우기
+	if(!queryString){
+		 $('#searchEmplNm').val('');
+		 $('#searchDeptNm').val('');
+		 sessionStorage.removeItem('keywordName');
+		 sessionStorage.removeItem('keywordDept');
+	}
+	
+	// 검색 내용 유지시키기
+	const saveKeywordName = sessionStorage.getItem('keywordName');
+	const saveKeywordDept = sessionStorage.getItem('keywordDept');
+	if(saveKeywordName){
+		$('#searchEmplNm').val(saveKeywordName);
+	}
+	if(saveKeywordDept){
+		$('#searchDeptNm').val(saveKeywordDept);
+	}
+
+	// 전체 목록보기 눌렀을시 input 비우기
+	$('#allListBtn').on('click' , function(){
+		 $('#searchEmplNm').val('');
+		 $('#searchDeptNm').val('');
+		 sessionStorage.removeItem('keywordName');
+		 sessionStorage.removeItem('keywordDept');
+	})
 }) // end fn
 	
 	

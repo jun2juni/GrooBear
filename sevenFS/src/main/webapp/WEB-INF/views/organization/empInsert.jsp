@@ -299,9 +299,10 @@ $("#upperDept").on("change", function(){
 	.then(res => {
 		console.log("선택한 부서의 하위부서 리스트 : ", res);
 		 // 여기서 $("#lowerDepartment") 내부 비우기
+		 lowerDepList = res.lowerDep;
 		  $("#lowerDepartment").html("");
-		 res.map((lowerDep, idx) => {
-				//console.log("lowerDep : " , lowerDep.cmmnCodeNm);
+		  lowerDepList.map((lowerDep, idx) => {
+				console.log("lowerDep : " , lowerDep.cmmnCodeNm);
 				const id = idx;
 				//console.log("id" , id);
 					
