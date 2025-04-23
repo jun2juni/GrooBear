@@ -330,8 +330,8 @@ WITH U AS(
     AND cc.cmmn_code_group='ATTEND'
        AND (
          (TO_CHAR(dt.dclz_begin_dt, 'YYYY-mm')) LIKE '%' || #{keyword} || '%'
-             AND((TO_CHAR(dt.dclz_begin_dt, 'YYYY')) LIKE '%' || #{keywordSearch} || '%'
-             OR cc.cmmn_code_nm  LIKE '%' || #{keywordSearch} || '%' )
+             AND((TO_CHAR(dt.dclz_begin_dt, 'YYYY')) LIKE '%' || #{keywordSearch} || '%')
+             AND (cc.cmmn_code_nm  LIKE '%' || #{keywordSearch} || '%' )
 		)
     )
     D
@@ -365,7 +365,7 @@ WITH U AS(
         ,#{totYrycDaycnt}
         ,0
         ,0
-        ,0
+        ,#{yrycRemndrDaycnt}
         ,0
         ,0
         ,'20'

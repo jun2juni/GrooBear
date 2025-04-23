@@ -217,11 +217,11 @@
                 <table class="table clients-table" id="vacTable">
                   <thead>
                     <tr>
-                      <th>
+                      <th style="width: 60px; white-space: nowrap;">
                         <h6>연차 유형</h6>
                       </th>
                       <th>
-                        <h6>사용 기간</h6>
+                        <h6 class="text-center">사용 기간</h6>
                       </th>
                       <th>
                         <h6>연차사유</h6>
@@ -232,9 +232,14 @@
                   <tbody id="vacBody">
 					<c:forEach var="emplVacationData" items="${emplCmmnVacationList}" >
                     <tr>
-                      <td class="min-width">
+                      <td class="min-width"  style="width: 60px; white-space: nowrap;">
                       	<c:if test="${emplVacationData.cmmnCodeNm == '연차'}">
 	                      	<h4><span class="badge rounded-pill text-white" style="background-color:pink" id="vacData">
+	                      		${emplVacationData.cmmnCodeNm}
+	                      	</span></h4>
+                      	</c:if>
+                      	<c:if test="${emplVacationData.cmmnCodeNm == '반차'}">
+	                      	<h4><span class="badge rounded-pill text-white" style="background-color:plum" id="vacData">
 	                      		${emplVacationData.cmmnCodeNm}
 	                      	</span></h4>
                       	</c:if>
@@ -250,7 +255,7 @@
                       	</c:if>
                       </td>
                       <td class="min-width">
-                        <p><span class="text-medium text-dark">
+                        <p class="text-center"><span class="text-medium text-dark">
                         <fmt:formatDate value="${emplVacationData.dclzBeginDt}" pattern="yyyy-MM-dd" />
                          ~ <fmt:formatDate value="${emplVacationData.dclzEndDt}" pattern="yyyy-MM-dd" />
                          </span></p>

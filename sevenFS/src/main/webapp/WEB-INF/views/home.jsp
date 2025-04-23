@@ -104,6 +104,7 @@ String serverDate = dateFormat.format(now);
 <meta name="viewport"
 	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
 <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <title>${title}</title>
 <%@ include file="./layout/prestyle.jsp"%>
 </head>
@@ -149,19 +150,17 @@ String serverDate = dateFormat.format(now);
 						<!-- 출퇴근 -->
 
 						<!-- 메일 + 일정 -->
-						<div class="card-style mb-3 d-flex flex justify-content-center"
+						<div class="card-style mb-3 d-flex justify-content-center align-items-center"
 							style="box-shadow: 1px 1px 20px 1px rgba(0, 0, 2, 0.1); backdrop-filter: blur(15px);">
-							<div class="d-flex justify-content-center">
+							<div class="d-flex justify-content-center gap-1">
 								<!-- 메일 위젯 -->
-								<div class="text-center mr-15">
-									<p class="text-sm">
+								<div class="text-center">
+									<a href="#" class="text-sm text-dark">
 										미확인 <span class="text-xl text-bold text-dark ml-2">0</span>건
-									</p>
-									<div class="rounded-4"
-										style="background-color: rgb(230, 230, 250, 0.5); display: inline-block;">
-										<a href="/mail/mailSend"
-											class="btn-sm main-btn square-btn btn-hover text-dark"
-											style="padding: 8px;"> <i class="lni lni-envelope"></i>
+									</a>
+									<div class="rounded-4 mt-2" style="background-color: rgb(230, 230, 250, 0.5); display: inline-block;">
+										<a href="/mail/mailSend" class="btn-sm main-btn square-btn btn-hover text-dark"
+											style="padding: 10px;"> <i class="lni lni-envelope"></i>
 											메일쓰기
 										</a>
 									</div>
@@ -171,14 +170,13 @@ String serverDate = dateFormat.format(now);
 								<!-- 메일 위젯 -->
 								<!-- 일정 위젯 -->
 								<div class="text-center">
-									<a href="/myCalendar" class="text-sm text-dark">오늘 일정 <span
-										class="text-xl text-bold text-dark ml-2">${todayCalendarCnt}</span>건
+									<a href="/myCalendar" class="text-sm text-dark">오늘 일정 
+										<span class="text-xl text-bold text-dark ml-2">${todayCalendarCnt}</span>건
 									</a>
-									<div class="rounded-4"
-										style="background-color: rgb(230, 230, 250, 0.5); display: inline-block;">
+									<div class="rounded-4 mt-2" style="background-color: rgb(230, 230, 250, 0.5); display: inline-block;">
 										<a href="/myCalendar?openModal=true"
-											class="btn-sm main-btn square-btn btn-hover mr-10 text-dark"
-											style="padding: 8px;"> <i class="lni lni-calendar"></i>
+											class="btn-sm main-btn square-btn btn-hover text-dark"
+											style="padding: 10px;"> <i class="lni lni-calendar"></i>
 											일정등록
 										</a>
 									</div>
@@ -355,7 +353,14 @@ String serverDate = dateFormat.format(now);
 								<!-- 게시판 시작 -->
 								<div id="mainBbs" class="col-lg-6">
 									<div class="card-style mb-30">
-										<h6 class="mb-30">전사게시판 최근글</h6>
+									
+										<div class="d-flex justify-content-between">
+											<h6 class="mb-30">전사게시판 최근글</h6>
+											<a id="bbsMoreBtn" href="#" class="text-sm fw-bolder" style="color: #4a6cf7;">더보기 
+												<span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
+											</a>
+										</div>
+										
 										<ul class="nav nav-tabs" id="myTab" role="tablist">
 											<!-- 공지사항 -->
 											<%--bbsCtgryNo --%>
@@ -391,21 +396,18 @@ String serverDate = dateFormat.format(now);
 														<div class="mb-4">
 															<div>
 																<c:if test="${bbsNoticeList.upendFixingYn == 'Y'}">
-																	<span class="" style="color: red;"> <svg
-																			xmlns="http://www.w3.org/2000/svg" width="16"
-																			height="16" fill="currentColor"
-																			class="bi bi-pin-angle-fill" viewBox="0 0 16 16">
-											  <path
-																				d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a6 6 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707s.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a6 6 0 0 1 1.013.16l3.134-3.133a3 3 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146" />
-											</svg>
-																	</span>
+																	<i class="bi bi-pin-angle-fill" style="color: red;"></i>
 																</c:if>
 																<a href="/bbs/bbsDetail?bbsSn=${bbsNoticeList.bbsSn}"
 																	class="text-black text-bold text-sm">
 																	${bbsNoticeList.bbscttSj} </a>
 															</div>
-															<span class="text-sm text-gray">
-																${bbsNoticeList.emplNm} ${bbsNoticeList.bbscttCreatDt} </span>
+															<div class="d-flex justify-content-between">
+																<c:set var="date" value="${bbsNoticeList.bbscttCreatDt.substring(0,10)}"></c:set>
+																<c:set var="time" value="${bbsNoticeList.bbscttCreatDt.substring(10)}"></c:set>
+																<span class="text-sm text-gray">${bbsNoticeList.emplNm}</span>
+																<span class="text-sm text-gray">${date}&nbsp;&nbsp;&nbsp;${time}</span>
+															</div>
 														</div>
 														<hr />
 
@@ -1197,7 +1199,7 @@ String serverDate = dateFormat.format(now);
 	</main>
 	<%@ include file="./layout/prescript.jsp"%>
 
-	<script type="text/javascript">
+<script type="text/javascript">
 //디지털시계
 let timeParts = '<%=serverTime%>'.split(':');
 let hours = parseInt(timeParts[0]);
@@ -1230,6 +1232,9 @@ console.log(todEndTime); */
 		})
 	}
 }) */
+// 메인페이지 로딩시 공지사항 경로로 기본값 세팅
+$('#bbsMoreBtn').attr('href', '/bbs/bbsList?bbsCtgryNo=1');
+
 $(function(){	
 	// 퇴근 한번더 누르면 swal 띄우기
 	const todWoTime = $('#todayWorkTime').val();
@@ -1267,6 +1272,25 @@ function updateClock() {
 }
 updateClock();
 setInterval(updateClock, 1000);
+
+
+	// 탭에 따라 더보기 링크 바꾸기
+	let notice = '/bbs/bbsList?bbsCtgryNo=1';
+	let community = '/bbs/bbsList?bbsCtgryNo=2';
+	let menu = '/bbs/bbsList?bbsCtgryNo=3';
+
+	$('#notice-tab').on('click', function(){
+		$('#bbsMoreBtn').attr('href', notice);
+	})
+	$('#cummunity-tab').on('click', function(){
+		$('#bbsMoreBtn').attr('href', community);
+	})
+	$('#menu-tab').on('click', function(){
+		$('#bbsMoreBtn').attr('href', menu);
+	})
+
+
+
 // ----------------------------------------------- 여기 부터는 비동기 게시판 불러오기
 let categoryNo  = 1;
 let bbsDiv = document.querySelector('#notice .bbsDiv');
@@ -1309,7 +1333,7 @@ document.querySelectorAll("#mainBbs .nav-item").forEach(dom => {
         $('.currentPage').val(currentPage);
         noticeList.map((item) => {
           //const newDiv = document.createElement('div');
-          const isFixed = item.upendFixingYn === 'Y' ? '<span style="color: red;">[고정]</span>' : '';
+          const isFixed = item.upendFixingYn === 'Y' ? '<i class="bi bi-pin-angle-fill" style="color: red;"></i>' : '';
           const newData = `
 		        	  <div class="mb-4">
 			              <div>
@@ -1318,9 +1342,10 @@ document.querySelectorAll("#mainBbs .nav-item").forEach(dom => {
 			              		\${item.bbscttSj}
 			              	</a>
 			              </div>
-		                  <span class="text-sm text-gray">
-		                 	 \${item.emplNm} \${item.bbscttCreatDt} 
-		                  </span>
+			              <div class="d-flex justify-content-between">
+							<span class="text-sm text-gray">\${item.emplNm}</span>
+							<span class="text-sm text-gray">\${item.bbscttCreatDt.substring(0,10)}&nbsp;&nbsp;&nbsp;\${item.bbscttCreatDt.substring(10)} </span>
+						  </div>
 			           </div>
 			           <hr/>
 				`
@@ -1367,7 +1392,7 @@ $('.prevBtn').on('click', function(){
 		$('.currentPage').val(currentPage);
 		noticeList.map((item) => {
 			//const newDiv = document.createElement('div');
-			const isFixed = item.upendFixingYn === 'Y' ? '<span style="color: red;">[고정]</span>' : '';
+			const isFixed = item.upendFixingYn === 'Y' ? '<i class="bi bi-pin-angle-fill" style="color: red;"></i>' : '';
 			const newData = `
 				<div class="mb-4">
 	              <div>
@@ -1376,9 +1401,10 @@ $('.prevBtn').on('click', function(){
 	              		\${item.bbscttSj}
 	              	</a>
 	              </div>
-	                <span class="text-sm text-gray">
-	              		  \${item.emplNm} \${item.bbscttCreatDt} 
-	                </span>
+	              <div class="d-flex justify-content-between">
+					<span class="text-sm text-gray">\${item.emplNm}</span>
+					<span class="text-sm text-gray">\${item.bbscttCreatDt.substring(0,10)}&nbsp;&nbsp;&nbsp;\${item.bbscttCreatDt.substring(10)} </span>
+				  </div>
                </div>
                <hr/>
 				`
@@ -1424,7 +1450,7 @@ $('.nextPage').on('click', function(){
 		
 		noticeList.map((item) => {
 			//const newDiv = document.createElement('div');
-			const isFixed = item.upendFixingYn === 'Y' ? '<span style="color: red; font-weight: bold;">[고정]</span>' : '';
+			const isFixed = item.upendFixingYn === 'Y' ? '<i class="bi bi-pin-angle-fill" style="color: red;"></i>' : '';
 			const newData = `
 				<div class="mb-4">
 		              <div>
@@ -1433,9 +1459,10 @@ $('.nextPage').on('click', function(){
 			              		\${item.bbscttSj}
 			              	</a>
 		              </div>
-	                  <span class="text-sm text-gray">
-	                  		\${item.emplNm} \${item.bbscttCreatDt} 
-	                  </span>
+		              <div class="d-flex justify-content-between">
+						<span class="text-sm text-gray">\${item.emplNm}</span>
+						<span class="text-sm text-gray">\${item.bbscttCreatDt.substring(0,10)}&nbsp;&nbsp;&nbsp;\${item.bbscttCreatDt.substring(10)} </span>
+					  </div>
 	             </div>
 	             <hr/>
 				`

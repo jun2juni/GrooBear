@@ -42,7 +42,7 @@
               <div class="card-style d-flex gap-3 justify-content-between"  
               		style="position:sticky; top:0px; z-index:1;  background-color: white;">
                 <div class="">
-                  <h6>**<span class="mt-3" style="color:lightcoral">사원 이름을 클릭하시면 해당 사원의 연차 갯수 현황을 조회할 수 있습니다.</span></h6>
+                  <h6>**<span class="mt-3" style="color:lightcoral">사원 이름을 클릭하시면 해당 사원의 연차 개수 현황을 조회할 수 있습니다.</span></h6>
                   <h6>**<span class="mt-3" style="color:lightcoral">추가로 지급할 성과보상 또는 근무보상 일수를 지급해주세요.</span></h6>
               	</div>
 	           	<div class="d-flex gap-3 justify-content-end">

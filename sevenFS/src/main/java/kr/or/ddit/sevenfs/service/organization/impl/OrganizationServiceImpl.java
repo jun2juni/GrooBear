@@ -224,6 +224,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 		if(clsfMap.containsKey(clsfCode)) {
 			yrycCnt = (int) clsfMap.get(clsfCode);
 			vacationVO.setTotYrycDaycnt(yrycCnt);
+			vacationVO.setYrycRemndrDaycnt(yrycCnt);
 		}else {
 			yrycCnt = 0;
 		}

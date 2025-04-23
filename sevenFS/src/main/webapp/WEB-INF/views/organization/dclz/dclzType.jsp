@@ -188,7 +188,7 @@
 	                  <thead>
 	                    <tr>
 	                      <th>
-	                        <h6 class="text-sm text-medium">일자</h6>
+	                        <h6 class="text-sm text-center text-medium" style="text-center;">근무일자</h6>
 	                      </th>
 	                      <th>
 	                        <h6 class="text-sm text-medium">근태유형</h6>
@@ -220,7 +220,7 @@
 	                    <tr>
 	                      <td>
 	                        <div>
-	                          <p class="text-sm">${year}-${month}-${day}</p>
+	                          <p class="text-sm text-center">${year}-${month}-${day}</p>
 	                        </div>
 	                      </td>
 	                      <td>
