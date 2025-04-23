@@ -55,12 +55,6 @@
 							<div>
 								<ul class="nav nav-tabs" id="myTab" role="tablist">
 									<li class="nav-item" role="presentation">
-										<button class="nav-link" id="tab1" data-bs-toggle="tab"
-											data-bs-target="#content1" type="button"
-											onClick="location.href='statisticsHome'" role="tab"
-											aria-controls="content1" aria-selected="true">Home</button>
-									</li>
-									<li class="nav-item" role="presentation">
 										<button class="nav-link active" id="tab2" data-bs-toggle="tab"
 											data-bs-target="#content2" type="button" role="tab"
 											aria-controls="content2" aria-selected="false">직원관리</button>
