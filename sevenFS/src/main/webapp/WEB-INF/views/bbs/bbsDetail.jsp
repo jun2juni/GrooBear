@@ -26,7 +26,11 @@
 	    transform: scale(1.2);
 	}
 	    
-    
+    #likeButton:hover {
+	  color: yellow; /* hover 시 아이콘 색 보이게 */
+	}
+	
+	
     
     
 </style>
@@ -47,17 +51,20 @@
 
             <!-- 게시글 본문 -->
             <div class="mb-4">
-              <h3 class="mb-3 text-dark fw-bold">${bbsVO.bbscttSj}</h3><br>
-              <div class="text-muted mb-3" style="text-align: right;">
-                <small>
-                  작성자: ${bbsVO.emplNm} · 작성일: ${fn:substring(bbsVO.bbscttCreatDt, 0, 10)}
+            	<div class="d-flex justify-content-between align-items-center">
+              <h3 class="mb-3 text-dark fw-bold">${bbsVO.bbscttSj}</h3>
+				<small class="text-muted" style="text-align: right;">
+                  작성일시: ${fn:replace(bbsVO.bbscttCreatDt," ","&nbsp;&nbsp;&nbsp;&nbsp;")} <br> 작성자: ${bbsVO.emplNm} 
+                  <!--  ${fn:substring(bbsVO.bbscttCreatDt, 0, 10)} -->
                 </small>
-              </div><br>
-              <div class="mb-3">
-                <c:out value="${bbsVO.bbscttCn}" escapeXml="false" />
-              </div><br><br>
-
+                </div>
+                <hr>
+                <h5><i class="bi bi-chat-left-text"></i> 게시글 내용</h5>
+                	<br>
+				  <p>${bbsVO.bbscttCn}</p>
+              <br><br>
               <!-- 첨부파일 -->
+              <hr>
               <div class="mb-3">
                 <h6 class="text-secondary fw-bold">📎 첨부파일</h6>
                 <c:if test="${not empty bbsVO.files}">
@@ -93,13 +100,15 @@
                   <p class="text-muted">첨부파일이 없습니다.</p>
                 </c:if>
               </div>
-
               <!-- 좋아요 버튼 -->
               <div class="d-flex align-items-center gap-2 mt-4">
-                <i id="likeIcon" class="bi bi-hand-thumbs-up fs-3 text-warning" onclick="toggleLike()" style="cursor: pointer;"></i>
-				<span id="likeCount">${bbsVO.likeCnt}</span>
-              </div>
-            </div>
+				  <button type="button" id="likeButton" class="btn btn-outline-warning d-flex align-items-center gap-2" onclick="toggleLike()" style="min-width: 70px;">
+				    <i id="likeIcon" class="bi bi-hand-thumbs-up fs-5"></i>
+				    <span id="likeCount" style="display: inline-block; width: 20px;">${bbsVO.likeCnt}</span>
+				  </button>
+				  </div>
+				</div>
+			<hr>
 
             <!-- 하단 버튼 -->
             <div class="d-flex justify-content-between">
@@ -265,6 +274,7 @@
 	                            \${depth > 0 ? '<span class="badge text-bg-secondary">답글</span>' : ''}
 	                          </div>
 	                          <small class="text-muted">\${formattedDate}</small>
+	                           
 	                        </div>
 
 	                        <!-- 댓글 본문 -->

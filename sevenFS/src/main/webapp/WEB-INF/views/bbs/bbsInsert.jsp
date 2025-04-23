@@ -75,13 +75,12 @@
 								></file-upload>
 								
 								<!-- 상단 고정 여부 -->
-								<div class="mb-3">
-									<label class="form-label">상단 고정 여부</label>
-									<select name="upendFixingYn" class="form-control">
-										<option value="N">고정 안함</option>
-										<option value="Y">고정</option>
-									</select>
+								<div class="mb-3 form-check">
+								  <input type="checkbox" class="form-check-input" id="upendFixingYn" name="upendFixingYn" value="Y"
+								         <c:if test="${bbsVO.upendFixingYn eq 'Y'}">checked</c:if>>
+								  <label class="form-check-label" for="upendFixingYn">상단 고정</label>
 								</div>
+
 								
 								<!-- 카테고리 번호 지정 -->
 								<input type="hidden" value="${bbsVO.bbsCtgryNo}" name="bbsCtgryNo">

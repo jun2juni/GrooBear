@@ -88,13 +88,12 @@
                                 </div>
                                 <br>
                                 <!-- 상단 고정 여부 -->
-								<div class="mb-3">
-									<label class="form-label">상단 고정 여부</label>
-									<select name="upendFixingYn" class="form-control">
-										<option value="N" ${bbsVO.upendFixingYn == 'N' ? 'selected' : ''}>고정 안함</option>
-										<option value="Y" ${bbsVO.upendFixingYn == 'Y' ? 'selected' : ''}>고정</option>
-									</select>
-								</div>
+								<div class="mb-3 form-check">
+  <input type="checkbox" class="form-check-input" id="upendFixingYn" name="upendFixingYn" value="Y"
+         <c:if test="${bbsVO.upendFixingYn eq 'Y'}">checked</c:if>>
+  <label class="form-check-label" for="upendFixingYn">상단 고정</label>
+</div>
+
 								<br>
                                 <div>
                                     <a href="javascript:history.back();" class="btn btn-outline-secondary">취소</a>&nbsp;
