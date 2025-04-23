@@ -74,7 +74,7 @@ public class ArticlePage<T> {
 	
 	//오버로딩
 	//전자결재 동기 전용
-	public ArticlePage(int total, int currentPage, int size, List<T> content, Map<String,Object> keyword) {
+	public ArticlePage(int total, int currentPage, int size, List<T> content, Map<String,Object> map) {
 		// size : 한 화면에 보여질 목록의 행 수
 		this.total = total;
 		this.currentPage = currentPage;
@@ -113,22 +113,37 @@ public class ArticlePage<T> {
 			}
 			
 			String duration = "";
+			String tab = "";
+			String keyword = "";
+			String searchType = "";
 			
-			if(keyword!=null && keyword.get("duration")!=null) {
-				duration = keyword.get("duration").toString();
+			//Map<String,object> keyword
+			if(map!=null && map.get("duration")!=null) {
+				duration = map.get("duration").toString();
 			}
+			if(map!=null && map.get("tab")!=null) {
+				tab = map.get("tab").toString();
+			}
+			if(map!=null && map.get("keyword")!=null) {
+				tab = map.get("keyword").toString();
+			}
+			if(map!=null && map.get("searchType")!=null) {
+				tab = map.get("searchType").toString();
+			}
+			
+			
 			
 			//***** 페이징 블록 처리 시작 *****
 		      this.pagingArea += "<page-navi url='#' current='1' show-max='5' total='1'>";
 		      this.pagingArea += "<ul class='pagination w-fit mx-auto'>";
-		      this.pagingArea += "<li class='page-item'><a href='/atrz/approval?currentPage=1&tab=1&duration="+duration+"' class='page-link' data-page='1'>«</a></li>";
+		      this.pagingArea += "<li class='page-item'><a href='/atrz/approval?currentPage=1&tab="+tab+"&keyword="+keyword+"&searchType="+searchType+"&duration="+duration+"' class='page-link' data-page='1'>«</a></li>";
 		      
 		      String strHide = "";
 		      if(this.startPage < 6) {
 		         strHide = "style='display:none;'";
 		      }
 		      this.pagingArea += "<li class='page-item' "+strHide+">";
-		      this.pagingArea += "<a href='/atrz/approval?currentPage="+(this.startPage-5)+"&tab=1&duration="+duration+"' class='page-link' data-page='1'>&lt;</a></li>";
+		      this.pagingArea += "<a href='/atrz/approval?currentPage="+(this.startPage-5)+"&tab="+tab+"&keyword="+keyword+"&searchType="+searchType+"&duration="+duration+"' class='page-link' data-page='1'>&lt;</a></li>";
 		      
 		      String str = "";      
 		      for(int pNo=this.startPage;pNo<=this.endPage;pNo++) {
@@ -138,7 +153,7 @@ public class ArticlePage<T> {
 		        	 str = "active";
 		         }
 		         this.pagingArea += "<li class='page-item "+str+"'><a href='/atrz/approval?currentPage="+pNo
-		               +"&tab=1&duration="+duration+"' class='page-link' data-page='1'>"+pNo+"</a></li>";
+		               +"&tab="+tab+"&duration="+duration+"' class='page-link' data-page='1'>"+pNo+"</a></li>";
 		      }//end for
 		      
 		      String strEHide = "";
@@ -146,10 +161,10 @@ public class ArticlePage<T> {
 		         strEHide = "style='display:none;'";
 		      }
 		      this.pagingArea += "<li class='page-item' "+strEHide+">";
-		      this.pagingArea += "<a href='/atrz/approval?currentPage="+(this.startPage+5)+"&tab=1&duration="+duration+"' class='page-link' data-page='1'>&gt;</a>";
+		      this.pagingArea += "<a href='/atrz/approval?currentPage="+(this.startPage+5)+"&tab="+tab+"&keyword="+keyword+"&searchType="+searchType+"&duration="+duration+"' class='page-link' data-page='1'>&gt;</a>";
 		      this.pagingArea += "</li>";
 		      this.pagingArea += "<li class='page-item'>";
-		      this.pagingArea += "<a href='/atrz/approval?currentPage="+this.totalPages+"&tab=1&duration="+duration+"' class='page-link'>»</a>";
+		      this.pagingArea += "<a href='/atrz/approval?currentPage="+this.totalPages+"&tab="+tab+"&keyword="+keyword+"&searchType="+searchType+"&duration="+duration+"' class='page-link'>»</a>";
 		      this.pagingArea += "</li></ul></page-navi>";
 		      //***** 페이징 블록 처리 끝 *****
 		}

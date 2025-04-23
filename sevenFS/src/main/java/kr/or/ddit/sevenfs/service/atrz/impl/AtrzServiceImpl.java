@@ -819,8 +819,8 @@ public class AtrzServiceImpl implements AtrzService {
 	
 	// 결재대기문서목록 행의 수
 	@Override
-	public int approvalTotal(String emplNo) {
-		return atrzMapper.approvalTotal(emplNo);
+	public int approvalTotal(Map<String,Object> map) {
+		return atrzMapper.approvalTotal(map);
 	}
 	
 	

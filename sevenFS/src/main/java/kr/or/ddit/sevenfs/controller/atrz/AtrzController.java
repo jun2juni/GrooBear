@@ -114,6 +114,7 @@ public class AtrzController {
 			@RequestParam(defaultValue = "1") int currentPage,@RequestParam(defaultValue = "10") int size
 			, @RequestParam(defaultValue = "",required = false) String keyword
 			, @RequestParam(defaultValue = "title",required = false) String searchType
+			, @RequestParam(defaultValue = "tab",required = true) String tab
 			, @RequestParam(defaultValue = "all",required = false) String duration
 			, @RequestParam(required = false) String fromDate
 			, @RequestParam(required = false) String toDate
@@ -132,23 +133,29 @@ public class AtrzController {
 		map.put("emplNo", emplNo);
 		map.put("keyword", keyword);
 		map.put("searchType", searchType);
+		map.put("tab", tab);
 		map.put("duration", duration);
 		map.put("fromDate", fromDate);
 		map.put("toDate", toDate);
 		//2. 검색조건 map.put하기
 		
+		//{duration=all, fromDate=2025-04-22, size=10, searchType=title, toDate=2025-04-22, emplNo=20250004, currentPage=1, keyword=계란}
 		log.info("atrzApprovalList-> 검색 조건 map : " + map);
 		
 		List<AtrzVO> atrzApprovalList = atrzService.atrzApprovalList(map);
 		log.info("atrzApprovalList : " + atrzApprovalList);
 		
 		// I-2) 결재대기문서목록 행의 수
-		int approvalTotal = atrzService.approvalTotal(emplNo);
+		int approvalTotal = atrzService.approvalTotal(map);
+		log.info("I-2->approvalTotal : " + approvalTotal);
+		
 		model.addAttribute("approvalTotal", approvalTotal);
 		// I-3) 결재대기문서목록 페이징
 		ArticlePage<AtrzVO> approvalArticlePage = new ArticlePage<AtrzVO>(approvalTotal, currentPage, size, atrzApprovalList, map);
 		model.addAttribute("atrzApprovalList", atrzApprovalList);
 		model.addAttribute("approvalArticlePage", approvalArticlePage);
+		
+		
 		
 		//참조대기문서
 		List<AtrzVO> atrzReferList = atrzService.atrzReferList(emplNo);

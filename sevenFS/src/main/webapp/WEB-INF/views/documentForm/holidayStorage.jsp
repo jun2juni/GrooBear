@@ -764,17 +764,17 @@ $(document).ready(function() {
 
 		
 		//결재선 지정확인
-		if(".s_eap_draft_app" == null) {
-			swal({
-				title: "결재선이 지정되지 않았습니다.",
-				text: "결재선을 지정해주세요.",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false,
-				button: "확인"
-			});
-			return;
-		}
+		// if(".s_eap_draft_app" == null) {
+		// 	swal({
+		// 		title: "결재선이 지정되지 않았습니다.",
+		// 		text: "결재선을 지정해주세요.",
+		// 		icon: "error",
+		// 		closeOnClickOutside: false,
+		// 		closeOnEsc: false,
+		// 		button: "확인"
+		// 	});
+		// 	return;
+		// }
 
 		// 날짜 계산
 		var start = new Date($('#s_ho_start').val() + 'T' + $('#s_start_time').val());

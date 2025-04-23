@@ -118,7 +118,7 @@
 									<form id="searchForm" method="get" action="/atrz/approval" class="d-flex gap-2">
 										<input type="hidden" name="currentPage" id="currentPage" value="${param.currentPage}" />
 										<input type="hidden" name="tab" id="tab" value="${param.tab}" />
-										<input type="hidden" name="duration" id="duration" value="${param.duration}" />
+										<input type="hidden" name="duration" value="${param.duration}" />
 									<select id="duration" class="form-select w-auto">
 									<option value="all" <c:if test="${param.duration == 'all'}">selected</c:if>>전체기간</option>
 									<option value="1" <c:if test="${param.duration == '1'}">selected</c:if>>1개월</option>
@@ -142,7 +142,7 @@
 									<div class="search_wrap d-flex align-items-center border rounded px-2">
 										<!--focus되면 "search_focus" multi class로 추가해주세요.-->
 										<input id="keyword" class="form-control border-0" type="text" name="keyword" value="${param.keyword}" placeholder="검색"> 
-											<button type="submit" id="searchBtn" class="border-0 bg-transparent">
+											<button type="button" id="searchBtn" class="border-0 bg-transparent">
 												<span class="material-symbols-outlined">search</span>
 											</button>
 									</div>
@@ -179,7 +179,7 @@
 										</div>
 										<div class="table-wrapper table-responsive">
 											<c:choose>
-												<c:when test="${empty atrzApprovalList}">
+												<c:when test="${empty approvalArticlePage.content}">
 													<div class="text-center emptyList" >
 														결재 대기중인 문서가 없습니다.
 													</div>
@@ -606,6 +606,16 @@ function moveTab(tabNo) {
 
 
 $(document).ready(function() {
+	// 검색 후 기간입력이 선택되어 있을 경우 기간입력 div를 보여줌
+	let duration = $("#duration option:selected").val();
+	console.log("duration : ", duration);
+
+	if (duration == "period") {//기간입력 선택 시
+		$("#durationPeriod").removeClass("d-none").addClass("d-flex");
+	} else {
+		$("#durationPeriod").removeClass("d-flex").addClass("d-none");
+	}
+
 	// 체크박스 전체 선택
 	$("#checkbox-all").click(function() {
 		if ($(this).is(":checked")) {
@@ -618,7 +628,9 @@ $(document).ready(function() {
 
 //기간입력 선택시 활성화 시키는 스크립트
 document.getElementById("duration").addEventListener("change",function() {
+	//기간입력 선택시 활성화 시키는 스크립트
 	var durationPeriod = document.getElementById("durationPeriod");
+	console.log("duration : ",this.value);
 	if (this.value == "period") {
 		durationPeriod.classList.remove("d-none");
 		durationPeriod.classList.add("d-flex");
@@ -628,19 +640,34 @@ document.getElementById("duration").addEventListener("change",function() {
 	}
 })
 //검색버튼 클릭시 컨트롤러로 파라이터 넘겨주기
-$('#searchBtn').on("click",function(){
+$('#searchBtn').on("click",function(event){
+	event.preventDefault(); // 기본 동작 방지
+
 	const keyword = $('#keyword').val();
-	const searchtype = $('#searchType').val();
+	const searchType = $('#searchType').val();
 	const duration = $('#duration').val();
 	const fromDate = $('#fromDate').val();
 	const toDate = $('#toDate').val();
+	let tab = "${param.tab}";
 
-	let url = `/approval?keyword=\${encodeURIComponent(keyword)}&searchType=\${searchType}&duration=\${duration}`;
+	if(tab == null || tab == ""){
+		tab = "1";
+	}
+
+	console.log("keyword : ", keyword);//계란
+	console.log("searchType : ", searchType);//title
+	console.log("duration : ", duration);//period
+	console.log("fromDate : ", fromDate);//2025-04-22
+	console.log("toDate : ", toDate);//2025-04-22
+
+	let url = `/atrz/approval?tab=\${tab}&keyword=\${encodeURIComponent(keyword)}&searchType=\${searchType}&duration=\${duration}`;
     if (duration === "period") {
-        url += `&fromDate=${fromDate}&toDate=${toDate}`;
+        url += `&fromDate=\${fromDate}&toDate=\${toDate}`;
     }
+	console.log("url : ", url);
+
 	location.href = url;
-})
+});
 
 </script>
 	<!--일괄결재모달 시작-->

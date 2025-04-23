@@ -896,7 +896,29 @@ $(document).ready(function() {
 				closeOnEsc: false,
 				button: "확인"
 			});
-			return false;
+			return;
+		}
+		if ($("#s_ho_start").val() === "") {
+			swal({
+				title: "시작일자가 비어있습니다.",
+				text: "시작일자를 선택해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+			return;
+		}
+		if ($("#s_ho_end").val() === "") {
+			swal({
+				title: "종료일자가 비어있습니다.",
+				text: "종료일자를 선택해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+			return;
 		}
 
 
@@ -979,7 +1001,7 @@ $(document).ready(function() {
 						closeOnEsc: false,
 						button: "확인"
 					}).then(() => {
-						location.replace("/atrz/document");
+						// location.replace("/atrz/document");
 					});
 				}
 			},

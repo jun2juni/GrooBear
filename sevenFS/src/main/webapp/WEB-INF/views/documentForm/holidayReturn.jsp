@@ -275,7 +275,31 @@ select.ui-datepicker-year {
 /* .ui-icon ui-icon-circle-triangle-e{ */
 	
 /* } */
-
+/* 툴팁 스타일 */
+.tooltip-inner {
+  min-width: 150px;  /* 최소 너비 확보 */
+  max-width: none;   /* Bootstrap 기본값 제한 해제 */
+  background-color: rgb(13, 110, 253)!important; /* 밝은 파란색 */
+  color: #fff !important; /* 텍스트는 흰색 */
+  font-size: 0.85rem;
+  padding: 6px 10px;
+  border-radius: 4px;
+  padding: 8px 12px;
+  text-align: center;
+  white-space: normal;  /* 줄바꿈 허용 */
+}
+.tooltip.bs-tooltip-bottom .tooltip-arrow {
+	border-bottom-color: #0583F2 !important; /* 꼭지점 색 변경 */
+}
+.tooltip-inner {
+	background-color: #0583F2 !important; /* 툴팁 배경색 */
+	color: #fff !important; /* 툴팁 텍스트 색 */
+	font-size: 0.9rem; /* 툴팁 글자 크기 */
+	padding: 8px 12px; /* 툴팁 여백 */
+	border-radius: 4px; /* 툴팁 모서리 둥글기 */
+	text-align: center; /* 텍스트 정렬 */
+	max-width: 250px; /* 툴팁 최대 너비 */
+}
 
 
 </style>
@@ -300,7 +324,8 @@ select.ui-datepicker-year {
 							<div class="tool_bar">
 								<div class="critical d-flex gap-2 mb-3">
 									<!--성진스 버튼-->
-									<button id="s_eap_app_top" type="button" 
+									<button id="s_eap_app_top" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" 
+										title="재기안 시 결재선을 지정해야 합니다."
 										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
 										<span class="material-symbols-outlined fs-5">upload</span> 결재요청
@@ -551,7 +576,7 @@ select.ui-datepicker-year {
 							<div class="tool_bar">
 								<div class="critical d-flex gap-2 mt-3">
 									<!--성진스 버튼-->
-									<button id="s_eap_app_bottom" type="button" 
+									<button id="s_eap_app_bottom" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top"
 										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
 										<span class="material-symbols-outlined fs-5">upload</span> 결재요청
@@ -1351,7 +1376,11 @@ $(document).ready(function() {
 	});//ajax
 	//여기서 결재선에 담긴 애들을 다 하나씩 담아서 post로
 })
-
+//결재요청시 재기안시 결재선을 다시 지정해주세요 라는 툴팁이 뜨게 하기 위해서
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})
 
 	// datepicker위젯
 	$("#s_ho_start").datepicker({

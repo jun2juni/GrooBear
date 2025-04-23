@@ -157,7 +157,7 @@ public interface AtrzMapper {
 	public void deleteAtrzLineWriting(String atrzDocNo);
 
 	// 결재대기문서목록 행의 수
-	public int approvalTotal(String emplNo);
+	public int approvalTotal(Map<String, Object> map);
 	
 
 	

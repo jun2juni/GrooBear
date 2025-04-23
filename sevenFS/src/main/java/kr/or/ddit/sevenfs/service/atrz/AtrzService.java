@@ -108,7 +108,7 @@ public interface AtrzService {
 	//기안작성중 도중 취소한경우에는 남은 atrz와 atrzLine을 삭제처리해야한다.
 	public void deleteAtrzWriting(String atrzDocNo);
 	// 결재대기문서목록 행의 수
-	public int approvalTotal(String emplNo);
+	public int approvalTotal(Map<String, Object> map);
 	
 	// home 결재대기문서목록
 	public List<AtrzVO> homeAtrzApprovalList(String emplNo);

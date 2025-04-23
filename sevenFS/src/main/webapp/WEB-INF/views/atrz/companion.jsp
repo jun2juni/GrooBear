@@ -113,7 +113,7 @@
 										class="form-control" type="text" style="width: 100px;">
 								</div>
 								<!-- 검색 유형 선택 -->
-								<select id="searchtype" class="form-select w-auto">
+								<select id="searchType" class="form-select w-auto">
 									<option value="title">제목</option>
 									<option value="drafterName">기안자</option>
 									<option value="drafterDeptName">기안부서</option>

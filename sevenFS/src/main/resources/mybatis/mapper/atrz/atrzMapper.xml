@@ -51,6 +51,8 @@
 		  ON A.atrz_doc_no = L.atrz_doc_no
 		WHERE A.atrz_compt_dt IS NULL
 			AND A.atrz_sttus_code IS NOT NULL
+			AND A.atrz_sttus_code = '00'
+			AND A.atrz_sttus_code != '99'
 		ORDER BY A.atrz_drft_dt DESC
 	</select>
 	
@@ -107,6 +109,7 @@
 			LEFT JOIN DOC_FORM DF ON A.doc_form_no = DF.DOC_FORM_NO
 			WHERE A.atrz_compt_dt IS NULL
 				AND A.atrz_sttus_code IS NOT NULL
+				AND A.atrz_sttus_code = '00'
 			<!-- 검색조건 -->
 			<if test="keyword != null and keyword != ''">
 			    <choose>
@@ -127,12 +130,14 @@
 			    </choose>
 			</if>
 			
-			<!-- 날짜 필터 -->
+			<!-- 날짜 필터
+			{duration=all, fromDate=2025-04-22, size=10, searchType=title, toDate=2025-04-22, emplNo=20250004, currentPage=1, keyword=계란}
+			 -->
 			<if test="duration != null and duration != 'all'">
 			    <choose>
 			        <when test="duration == 'period'">
 					    <if test="fromDate != null and fromDate != ''">
-					        AND A.atrz_drft_dt <![CDATA[ <= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
+					        AND A.atrz_drft_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
 					    </if>
 					    <if test="toDate != null and toDate != ''">
 					        AND A.atrz_drft_dt <![CDATA[ <= ]]>TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
@@ -157,7 +162,7 @@
 	결재대기문서목록 행의 수
 	public int approvalTotal(String emplNo)
 	 -->
-	<select id="approvalTotal" parameterType="String" resultType="int">
+	<select id="approvalTotal" parameterType="hashMap" resultType="int">
 		WITH my_turn_lines AS (					/* AtrzMapper.atrzApprovalList */
 		    SELECT L.*
 		    FROM atrz_line L
@@ -204,7 +209,7 @@
 			    <choose>
 			        <when test="duration == 'period'">
 					    <if test="fromDate != null and fromDate != ''">
-					        AND A.atrz_drft_dt <![CDATA[ <= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
+					        AND A.atrz_drft_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
 					    </if>
 					    <if test="toDate != null and toDate != ''">
 					        AND A.atrz_drft_dt <![CDATA[ <= ]]>TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
