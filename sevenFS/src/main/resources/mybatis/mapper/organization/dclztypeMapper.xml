@@ -147,7 +147,7 @@
         RIGHT OUTER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
         WHERE cmmn_code_group='ATTEND'
         AND EMPL_NO=#{emplNo}
-        AND dt.dclz_code='01' OR dt.dclz_code='11'
+        AND (dt.dclz_code='01' OR dt.dclz_code='11')
         ORDER BY dt.dclz_no DESC
 </select>
 

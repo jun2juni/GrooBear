@@ -160,13 +160,12 @@ public class HomeController {
 	@ResponseBody
 	@GetMapping("/todayWorkStart")
 	public String todayWorkStart(Principal principal, Model model, DclzTypeVO dclzTypeVO) {
+		 // 현재 로그인한 사용자
+		 String emplNo = principal.getName();
+		 dclzTypeVO.setEmplNo(emplNo);
 		
-		String emplNo = principal.getName();
-		dclzTypeVO.setEmplNo(emplNo);
-
 		 LocalTime now = LocalTime.now();
 		 int nowHour = now.getHour();
-		 
 		 //log.info("nowHour : " + nowHour);
 		 
 		 // 시간이 9시 이전이면 출근 insert 근태넘버 11
@@ -176,10 +175,7 @@ public class HomeController {
 		 else { // 시간이 9시 이후면 지각 insert 근태넘버 01
 			 dclzTypeVO.setDclzCode("01");
 		 }
-		
-		//log.info("출근한사람~~ : " + emplNo);
-		
-		 // 현재 로그인한 사원번호 가져오기
+		 log.info("출근한사람~~ : " + emplNo);
          // 출근시간 insert
     	 int result = dclztypeService.workBeginInsert(dclzTypeVO);
     	 //log.info("result : " + result);
@@ -188,7 +184,6 @@ public class HomeController {
          if(result == 1) {
          	DclzTypeVO workTime = dclztypeService.getTodayWorkTime(dclzTypeVO);
          	//log.info("workTime : " + workTime);
-         	
          	// 출근시간 return
          	String todayWorkTime = workTime.getTodayWorkStartTime();
          	//log.info("controller 출근시간 : " + todayWorkTime);

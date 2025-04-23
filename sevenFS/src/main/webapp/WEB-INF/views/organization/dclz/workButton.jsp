@@ -9,37 +9,42 @@
 // 비동기로 출퇴근 시간 출력하기
  document.addEventListener("DOMContentLoaded", function() {
 	 
+	 const startTime = $('#inputTodWorkTime').val();
+	 console.log('startTime : ' ,startTime);
+		
 	 $("#workStartButton").on("click", function(){
 		//alert("출근");
 		
-		const startTime = $('#startTime').val();
-		
-		// 비동기로 insert 하고 출근 시간 가져오기
-		fetch("/main/todayWorkStart", {
-			method : "get",
-			headers : {
-				"Content-Type": "application/json"
-			}
-		})
-		.then(resp => resp.text())
-		.then(res => {
-			if(res != null){
-				swal("출근이 등록되었습니다.", " ", "success")
-				.then((value) => {
-				//console.log("출근 시간 : " , res);
-				$("#startTime").html(res);
-				//$("#workStartButton").prop("disabled", true);
-				location.href="/main/home";
-				
+		//const startTime = $('#startTime').val();
+		/* if(startTime == null && startTime == ''){ */
+			// 비동기로 insert 하고 출근 시간 가져오기
+			fetch("/main/todayWorkStart", {
+				method : "get",
+				headers : {
+					"Content-Type": "application/json"
+				}
 			})
-			}else{
+			.then(resp => resp.text())
+			.then(res => {
+				if(res != null){
+					swal("출근이 등록되었습니다.", " ", "success")
+					.then((value) => {
+					//console.log("출근 시간 : " , res);
+					$("#startTime").html(res);
+					//$("#workStartButton").prop("disabled", true);
+					location.href="/main/home";
+					
+				})
+				}else{
+					swal("출근 버튼을 다시 눌러주세요.", " ", "warning");
+				};
+			})
+			.catch(err => {
 				swal("출근 버튼을 다시 눌러주세요.", " ", "warning");
-			};
-		})
-		.catch(err => {
-			swal("출근 버튼을 다시 눌러주세요.", " ", "warning");
-		})// end fetch
-	}) // end startBtn 
+			})// end fetch
+		/* } */
+		}) // end startBtn 
+	
 		
 		
 	$("#workEndButton").on("click", function(){

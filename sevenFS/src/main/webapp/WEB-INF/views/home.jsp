@@ -127,7 +127,7 @@ String serverDate = dateFormat.format(now);
 									<div id="clock" style="font-size: 24px; font-weight: bold;"></div>
 									<div class="d-flex mb-30 mt-3 justify-content-center">
 										<div class="content mr-30">
-											<input type="hidden" value="${todayWorkTime}"
+											<input type="hidden" id="inputTodWorkTime" value="${todayWorkTime}"
 												id="todayWorkTime">
 											<button type="button"
 												id="${todayWorkTime != null ? '' : 'workStartButton'}"
