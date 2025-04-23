@@ -321,6 +321,7 @@
 	</insert>
 	
 	
+	
 	<select id="comunityClubList" parameterType="kr.or.ddit.sevenfs.vo.bbs.ComunityVO" resultType="kr.or.ddit.sevenfs.vo.bbs.ComunityVO">
 	  SELECT 
 	    e.empl_no,

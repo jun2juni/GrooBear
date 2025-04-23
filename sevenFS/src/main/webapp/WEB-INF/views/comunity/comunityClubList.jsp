@@ -95,7 +95,34 @@
 				                      	<!-- 프로필사진  -->
 				                        <td style="text-align: left;">
 				                          <div class="employee-image">
-				                            <img src="assets/images/lead/lead-1.png" alt="">
+				                             <form id="profileForm_${club.emplNo}" 
+										          action="/fileUpload" 
+										          method="post" 
+										          enctype="multipart/form-data">
+										      <!-- 프로필 이미지 (클릭 시 업로드) -->
+										      <img src="<c:choose>
+										                  <c:when test='${not empty club.profileImgPath}'>
+										                    ${club.profileImgPath}
+										                  </c:when>
+										                  <c:otherwise>
+										                    assets/images/default-profile.png
+										                  </c:otherwise>
+										                </c:choose>"
+										           id="profileImage_${club.emplNo}"
+									           style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; cursor: pointer;"
+									           alt="프로필이미지"
+									           onerror="파일경로잡아야함~~!~!!~@~!#~%@%^#&#%%*#%*#$*##@$@#$$##$#@#$;">
+									
+									      <!-- 숨겨진 파일 input -->
+									      <input type="file" 
+									             id="uploadFile_${club.emplNo}" 
+									             name="uploadFile" 
+									             accept="image/*" 
+									             style="display:none;">
+									             
+									      <!-- 사번 hidden 처리 -->
+									      <input type="hidden" name="emplNo" value="${club.emplNo}">
+									    </form>
 				                          </div>
 				                        </td>
 				                        <!-- 사원이름+이모지  -->

@@ -163,6 +163,29 @@ public class ComunityController {
 		return  "redirect:/comunity/comunityClubList"; // 성공 시 리다이렉트
 	} // insertEmoji 삽입
 	
+	@PostMapping("/insertProfile")
+	public String insertProfile(@ModelAttribute ComunityVO comunityVO,
+			@RequestParam("profile") String profile ,
+			Principal principal) {
+		
+		String emplNo = principal.getName(); // Principal 객체에서 사번 가져오기 
+		
+		if (emplNo == null) {
+			// 세션에 사번 없으면 로그인 페이지로 보내기
+			return "redirect:/auth/login";
+		}
+		
+		comunityVO.setBbsCtgryNo(17); // 예시: insertEmoji 전용 카테고리 번호
+		comunityVO.setBbscttUseYn("N"); // 게시글 사용 여부
+		comunityVO.setEmplNo(emplNo); // Principal 객체에서 사번 가져오기 , 임시값
+		
+		comunityServiceImpl.insertContent(comunityVO);
+		
+		
+		// 입력 이후 => redirect를 통해서 상세보기로 가주려함 
+		return  "redirect:/comunity/comunityClubList"; // 성공 시 리다이렉트
+	} // insertProfile 삽입
+	
 	
 	
 	
