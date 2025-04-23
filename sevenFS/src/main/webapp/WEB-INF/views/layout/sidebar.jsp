@@ -184,21 +184,13 @@
         </c:if>
         <%--알림 사이드 바 --%>
         
-        <%--통계 사이드 바 --%>
+       <%--통계 사이드 바 --%>
         <c:if test="${readStatics}">
         <li class="nav-item nav-item-has-children">
           <a href="/statistics/statisticsAWOL" class="${fn:contains(currentURL, '/statistics') ? '' : 'collapsed'}">
             <span class="icon material-symbols-outlined">monitoring</span>
             <span class="text">통계</span>
           </a>
-<!--           <ul id="statistics" class="dropdown-nav collapse" style=""> -->
-<!--             <li> -->
-<!--               <a href="/statistics/statisticsHome"> 통계1 </a> -->
-<!--             </li> -->
-<!--             <li> -->
-<!--               <a href="/statistics"> 2뎁스 </a> -->
-<!--             </li> -->
-<!--           </ul> -->
         </li>
         </c:if>
         <%--통계 사이드 바 --%>
@@ -206,20 +198,10 @@
         <%--커뮤니티 사이드 바 --%>
         <c:if test="${readComunity}">
         <li class="nav-item nav-item-has-children">
-          <a href="#7" class="${fn:contains(currentURL, '/comunity') ? '' : 'collapsed'}"
-             data-bs-toggle="collapse" data-bs-target="#comunity"
-             aria-controls="comunity" aria-expanded="false" aria-label="Toggle navigation">
+          <a href="/comunity/comunityClubList" class="${fn:contains(currentURL, '/comunity') ? '' : 'collapsed'}" >
             <span class="icon material-symbols-outlined">face</span>
             <span class="text">커뮤니티</span>	
           </a>
-          <ul id="comunity" class="dropdown-nav collapse" style="">
-            <li>
-              <a href="/comunity/comunityClubList"> 스느스 </a>
-            </li>
-            <li>
-              <a href="comunity"> 2뎁스 </a>
-            </li>
-          </ul>
         </li>
         </c:if>
         <%--커뮤니티 사이드 바 --%>
