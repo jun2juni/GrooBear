@@ -31,12 +31,6 @@ public class StatisticsConrtoller {
 	StatisticsServiceImpl statisticsServiceImpl;
 	
 	
-	// 통계 홈 
-	@GetMapping("/statisticsHome")
-	public String statisticsHome() {
-		
-		return "statistics/statisticsHome";
-	}
 	
 	
 	// 통계 LATE 지각

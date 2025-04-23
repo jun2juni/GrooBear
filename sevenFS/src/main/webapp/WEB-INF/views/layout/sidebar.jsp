@@ -166,20 +166,18 @@
         <%--통계 사이드 바 --%>
         <c:if test="${readStatics}">
         <li class="nav-item nav-item-has-children">
-          <a href="#7" class="${fn:contains(currentURL, '/statistics') ? '' : 'collapsed'}"
-             data-bs-toggle="collapse" data-bs-target="#statistics"
-             aria-controls="statistics" aria-expanded="false" aria-label="Toggle navigation">
+          <a href="/statistics/statisticsAWOL" class="${fn:contains(currentURL, '/statistics') ? '' : 'collapsed'}">
             <span class="icon material-symbols-outlined">monitoring</span>
             <span class="text">통계</span>
           </a>
-          <ul id="statistics" class="dropdown-nav collapse" style="">
-            <li>
-              <a href="/statistics/statisticsHome"> 통계1 </a>
-            </li>
-            <li>
-              <a href="/statistics"> 2뎁스 </a>
-            </li>
-          </ul>
+<!--           <ul id="statistics" class="dropdown-nav collapse" style=""> -->
+<!--             <li> -->
+<!--               <a href="/statistics/statisticsHome"> 통계1 </a> -->
+<!--             </li> -->
+<!--             <li> -->
+<!--               <a href="/statistics"> 2뎁스 </a> -->
+<!--             </li> -->
+<!--           </ul> -->
         </li>
         </c:if>
         <%--통계 사이드 바 --%>
