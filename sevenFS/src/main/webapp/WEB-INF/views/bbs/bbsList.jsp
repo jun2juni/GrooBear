@@ -122,7 +122,7 @@ table.table-hover.align-middle.text-center tbody tr td {
                   <th style="width: 2%;"></th>
                   <th style="width: 50%;">제목</th>
                   <th style="width: 10%;">작성자</th>
-                  <th style="width: 15%;">작성일</th>
+                  <th style="width: 18%;">작성일시</th>
                   <th style="width: 8%;">조회수</th>
                   <th style="width: 8%;">좋아요</th>
                 </tr>
@@ -152,7 +152,8 @@ table.table-hover.align-middle.text-center tbody tr td {
                       
                     </td>
                     <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;border-bottom:1px solid #efefef;">${bbsVO.emplNm}</td>
-                    <td style="border-bottom:1px solid #efefef;">${fn:substring(bbsVO.bbscttCreatDt, 0, 16)}</td>
+                    <td style="border-bottom:1px solid #efefef; text-align: center;">${fn:replace(bbsVO.bbscttCreatDt," ","&nbsp;&nbsp;&nbsp;&nbsp;")}</td>
+
                     <td style="border-bottom:1px solid #efefef;">
                       ${bbsVO.rdcnt}
                     </td>
