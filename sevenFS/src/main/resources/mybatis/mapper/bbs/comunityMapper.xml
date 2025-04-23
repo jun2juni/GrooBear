@@ -320,6 +320,7 @@
 		  )
 	</insert>
 	
+	
 	<select id="comunityClubList" parameterType="kr.or.ddit.sevenfs.vo.bbs.ComunityVO" resultType="kr.or.ddit.sevenfs.vo.bbs.ComunityVO">
 	  SELECT 
 	    e.empl_no,
@@ -371,7 +372,9 @@
 	    ) AS lastUpdate
 	
 	  FROM employee e
-	  ORDER BY lastUpdate DESC NULLS LAST
+	  ORDER BY
+    	CASE WHEN e.empl_no = #{loginEmplNo} THEN 0 ELSE 1 END,  
+    	lastUpdate DESC NULLS LAST
 
 </select>
 
@@ -421,7 +424,9 @@
         ) AS lastUpdate
 
       FROM employee e
-      ORDER BY lastUpdate DESC
+      ORDER BY
+    	CASE WHEN e.empl_no = #{loginEmplNo} THEN 0 ELSE 1 END,  
+    	lastUpdate DESC NULLS LAST
 
     ) inner_table
     WHERE ROWNUM &lt; #{offset} + #{limit}

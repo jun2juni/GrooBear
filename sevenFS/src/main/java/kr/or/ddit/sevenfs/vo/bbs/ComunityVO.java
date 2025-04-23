@@ -36,6 +36,10 @@ public class ComunityVO {
 	private String todayContent;    // bbscttCn where bbs_ctgry_no = 15
 	private String emoji;     // bbscttCn where bbs_ctgry_no = 16
 	
+	
+	// 보안용	
+	private String loginEmplNo; // 로그인한 사원번호
+	
 	//  페이징용
     private int offset;
     private int limit;

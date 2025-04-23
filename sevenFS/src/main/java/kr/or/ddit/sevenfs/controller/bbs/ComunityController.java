@@ -57,11 +57,6 @@ public class ComunityController {
 	AttachFile attachFile;
 	
 	
-	@GetMapping("/comunityHome")
-	public String comunityHome(
-								) {
-		return "comunity/comunityHome";	
-	} // comunityHome
 	
 	@GetMapping("/comunityClubList")
 	public String comunityClubList(

@@ -28,15 +28,9 @@
 				<div class="row mt-5" name="row">
 					<div class="col-12">
 						<div class="card-style">
-							<!-- 상위탭 시작  -->
-							<div class="mb-20">
+							<!-- 상위탭 시작  기능 일시정지 -->
+							<!-- <div class="mb-20">
 								<ul class="nav nav-tabs" id="myTab" role="tablist">
-									<li class="nav-item" role="presentation">
-										<button class="nav-link" id="tab1" data-bs-toggle="tab"
-											data-bs-target="#content1" type="button"
-											onClick="location.href='comunityHome'" role="tab"
-											aria-controls="content1" aria-selected="true">Home</button>
-									</li>
 									<li class="nav-item" role="presentation">
 										<button class="nav-link" id="tab2" data-bs-toggle="tab"
 											data-bs-target="#content2" type="button" role="tab"
@@ -44,22 +38,10 @@
 											aria-controls="content2" aria-controls="content2"
 											aria-selected="false">스느스</button>
 									</li>
-									<li class="nav-item" role="presentation">
-										<button class="nav-link" id="tab3" data-bs-toggle="tab"
-											data-bs-target="#content3" type="button" role="tab"
-											onClick="location.href='comunitySurveyList'"	
-											aria-controls="content3" aria-selected="false">설문조사/투표</button>
-									</li>
-									<li class="nav-item" role="presentation">
-										<button class="nav-link" id="tab4" data-bs-toggle="tab"
-											data-bs-target="#content4" type="button"
-											onClick="location.href='comunityMonthMenuList'" role="tab"
-											aria-controls="content4" aria-selected="false">월별식단표</button>
-									</li>
 								</ul>
-							</div> <!--내부 탭 분리 지점   -->
+							</div>  -->
+							<!--상위 탭 끝 기능 일시정지  -->
 							<div class="row-5">
-			            <div class="col-12 card-style">
 			              <div class=" mb-30">		
 			                <div class="table-wrapper table-responsive">
 			                  <table class="table">
@@ -80,7 +62,7 @@
 									      data-bs-toggle="tooltip"
 									      data-bs-html="true"
 									      data-bs-placement="top"
-									      title="사원의 이름입니다.<br>때로는<br>잘 고른 이모지 1개가<br>여러분의 많은 감정을 대변해 줄 수 있죠!<br>여러분의 감정을 골라주세요!!!">
+									      title="사원의 이름입니다.<br>때로는 잘 고른 이모지 1개가<br>여러분의 많은 감정을 대변해 줄 수 있죠!<br>여러분의 감정을 골라주세요!!!">
 									      이름
 									    </span>
 									  </th>
@@ -105,104 +87,203 @@
 									    </span>
 									  </th>
 									</tr>
-
 								</thead>
 			                    <tbody id="clubListBody">
-			                    <c:forEach var="clubList" items="${clubList}">
-			                      <tr>
-			                      	<!-- 프로필사진  -->
-			                        <td style="text-align: left;">
-			                          <div class="employee-image">
-			                            <img src="assets/images/lead/lead-1.png" alt="">
-			                          </div>
-			                        </td>
-			                        <!-- 사원이름+이모지  -->
-			                        <td style="text-align: left; white-space: nowrap;">
-									  <!-- 이름은 무조건 출력 -->
-										<span style="display: inline-block; font-weight: bold; font-size: 1.05rem; color: #2C3E50;">
-										  ${clubList.emplNm}
-										</span>
-									<!-- 이모지는 사원 본인만 클릭 가능 -->
-									  <c:choose>
-							          <c:when test="${clubList.emplNo == loginEmplNo}">
-							            <a href="#" data-bs-toggle="modal" data-bs-target="#emojiModal"
-							               style="display: inline-block; margin-left: 6px; text-decoration: none; font-size: 1.2rem;">
-							              <c:choose>
-							                <c:when test="${not empty clubList.emoji}">
-							                  <span style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji'">
-							                    ${clubList.emoji}
-							                  </span>
-							                </c:when>
-							                <c:otherwise><p>😆</p></c:otherwise>
-							              </c:choose>
-							            </a>
-							          </c:when>
-							          <c:otherwise>
-							            <span style="margin-left: 6px;">
-							              <c:choose>
-							                <c:when test="${not empty clubList.emoji}">${clubList.emoji}</c:when>
-							                <c:otherwise><p>😆</p></c:otherwise>
-							              </c:choose>
-							            </span>
-							          </c:otherwise>
-							        </c:choose>
-							      </td>
-			                        <!-- 사원이름+이모지  -->
-			                        
-			                       <!-- T.T-MI -->
-									<td class="ttmi-col" title="${clubList.ttmiContent}">
-									  <c:choose>
-									    <c:when test="${clubList.emplNo == loginEmplNo}">
-									      <!-- 본인이면 입력 가능 -->
-									      <a href="#" data-bs-toggle="modal" data-bs-target="#100Modal">
-									        <c:choose>
-									          <c:when test="${not empty clubList.ttmiContent}">
-									            <span class="ttmi-text">${clubList.ttmiContent}</span>
-									          </c:when>
-									          <c:otherwise>✍️ 등록하기</c:otherwise>
-									        </c:choose>
-									      </a>
-									    </c:when>
-									    <c:otherwise>
-									      <!-- 타인이면 보기만 가능 -->
-									      <span>
-									        <c:choose>
-									          <c:when test="${not empty clubList.ttmiContent}">
-									            <span class="ttmi-text">${clubList.ttmiContent}</span>
-									          </c:when>
-									          <c:otherwise>🙈 아직 업데이트 하지 않았어요 ㅠ.ㅠ</c:otherwise>
-									        </c:choose>
-									      </span>
-									    </c:otherwise>
-									  </c:choose>
-									</td>
-			                        <!-- 오늘의 한 줄 -->
-									<td class="today-col" title="${clubList.todayContent}">
-									  <c:choose>
-									    <c:when test="${clubList.emplNo == loginEmplNo}">
-									      <a href="#" data-bs-toggle="modal" data-bs-target="#todayModal">
-									        <c:choose>
-									          <c:when test="${not empty clubList.todayContent}">
-									            <span class="today-text">${clubList.todayContent}</span>
-									          </c:when>
-									          <c:otherwise>📝 작성 전</c:otherwise>
-									        </c:choose>
-									      </a>
-									    </c:when>
-									    <c:otherwise>
-									      <span>
-									        <c:choose>
-									          <c:when test="${not empty clubList.todayContent}">
-									            <span class="today-text">${clubList.todayContent}</span>
-									          </c:when>
-									          <c:otherwise>🙊 한 줄을 써주세요!!</c:otherwise>
-									        </c:choose>
-									      </span>
-									    </c:otherwise>
-									  </c:choose>
-									</td>
-			                      </tr>
+			                    <c:forEach var="club" items="${clubList}">
+			                     	<c:if test="${club.emplNo == loginEmplNo}">
+				                      <tr>
+				                      	<!-- 프로필사진  -->
+				                        <td style="text-align: left;">
+				                          <div class="employee-image">
+				                            <img src="assets/images/lead/lead-1.png" alt="">
+				                          </div>
+				                        </td>
+				                        <!-- 사원이름+이모지  -->
+				                        <td style="text-align: left; white-space: nowrap;">
+										  <!-- 이름은 무조건 출력 -->
+											<span style="display: inline-block; font-weight: bold; font-size: 1.05rem; color: #2C3E50;">
+											  ${club.emplNm}
+											</span>
+										<!-- 이모지는 사원 본인만 클릭 가능 -->
+										  <c:choose>
+								          <c:when test="${club.emplNo == loginEmplNo}">
+								            <a href="#" data-bs-toggle="modal" data-bs-target="#emojiModal"
+								               style="display: inline-block; margin-left: 6px; text-decoration: none; font-size: 1.2rem;">
+								              <c:choose>
+								                <c:when test="${not empty club.emoji}">
+								                  <span style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji'">
+								                    ${club.emoji}
+								                  </span>
+								                </c:when>
+								                <c:otherwise><p>😆</p></c:otherwise>
+								              </c:choose>
+								            </a>
+								          </c:when>
+								          <c:otherwise>
+								            <span style="margin-left: 6px;">
+								              <c:choose>
+								                <c:when test="${not empty club.emoji}">${club.emoji}</c:when>
+								                <c:otherwise><p>😆</p></c:otherwise>
+								              </c:choose>
+								            </span>
+								          </c:otherwise>
+								        </c:choose>
+								      </td>
+				                        <!-- 사원이름+이모지  -->
+				                        
+				                       <!-- T.T-MI -->
+										<td class="ttmi-col" title="${club.ttmiContent}">
+										  <c:choose>
+										    <c:when test="${club.emplNo == loginEmplNo}">
+										      <!-- 본인이면 입력 가능 -->
+										      <a href="#" data-bs-toggle="modal" data-bs-target="#100Modal">
+										        <c:choose>
+										          <c:when test="${not empty club.ttmiContent}">
+										            <span class="ttmi-text">${club.ttmiContent}</span>
+										          </c:when>
+										          <c:otherwise>✍️ 등록하기</c:otherwise>
+										        </c:choose>
+										      </a>
+										    </c:when>
+										    <c:otherwise>
+										      <!-- 타인이면 보기만 가능 -->
+										      <span>
+										        <c:choose>
+										          <c:when test="${not empty club.ttmiContent}">
+										            <span class="ttmi-text">${club.ttmiContent}</span>
+										          </c:when>
+										          <c:otherwise>🙈 아직 업데이트 하지 않았어요 ㅠ.ㅠ</c:otherwise>
+										        </c:choose>
+										      </span>
+										    </c:otherwise>
+										  </c:choose>
+										</td>
+				                        <!-- 오늘의 한 줄 -->
+										<td class="today-col" title="${club.todayContent}">
+										  <c:choose>
+										    <c:when test="${club.emplNo == loginEmplNo}">
+										      <a href="#" data-bs-toggle="modal" data-bs-target="#todayModal">
+										        <c:choose>
+										          <c:when test="${not empty club.todayContent}">
+										            <span class="today-text">${club.todayContent}</span>
+										          </c:when>
+										          <c:otherwise>📝 작성 전</c:otherwise>
+										        </c:choose>
+										      </a>
+										    </c:when>
+										    <c:otherwise>
+										      <span>
+										        <c:choose>
+										          <c:when test="${not empty club.todayContent}">
+										            <span class="today-text">${club.todayContent}</span>
+										          </c:when>
+										          <c:otherwise>🙊 한 줄을 써주세요!!</c:otherwise>
+										        </c:choose>
+										      </span>
+										    </c:otherwise>
+										  </c:choose>
+										</td>
+				                      </tr>
+				                     </c:if>
 			                      </c:forEach>
+			                      <!-- end table row 내정보 로우  -->
+			                       <c:forEach var="club" items="${clubList}">
+				                     <c:if test="${club.emplNo != loginEmplNo}">
+				                     	<tr>
+				                      	<!-- 프로필사진  -->
+				                        <td style="text-align: left;">
+				                          <div class="employee-image">
+				                            <img src="assets/images/lead/lead-1.png" alt="">
+				                          </div>
+				                        </td>
+				                        <!-- 사원이름+이모지  -->
+				                        <td style="text-align: left; white-space: nowrap;">
+										  <!-- 이름은 무조건 출력 -->
+											<span style="display: inline-block; font-weight: bold; font-size: 1.05rem; color: #2C3E50;">
+											  ${club.emplNm}
+											</span>
+										<!-- 이모지는 사원 본인만 클릭 가능 -->
+										  <c:choose>
+								          <c:when test="${club.emplNo == loginEmplNo}">
+								            <a href="#" data-bs-toggle="modal" data-bs-target="#emojiModal"
+								               style="display: inline-block; margin-left: 6px; text-decoration: none; font-size: 1.2rem;">
+								              <c:choose>
+								                <c:when test="${not empty club.emoji}">
+								                  <span style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji'">
+								                    ${club.emoji}
+								                  </span>
+								                </c:when>
+								                <c:otherwise><p>😆</p></c:otherwise>
+								              </c:choose>
+								            </a>
+								          </c:when>
+								          <c:otherwise>
+								            <span style="margin-left: 6px;">
+								              <c:choose>
+								                <c:when test="${not empty club.emoji}">${club.emoji}</c:when>
+								                <c:otherwise><p>😆</p></c:otherwise>
+								              </c:choose>
+								            </span>
+								          </c:otherwise>
+								        </c:choose>
+								      </td>
+				                        <!-- 사원이름+이모지  -->
+				                        
+				                       <!-- T.T-MI -->
+										<td class="ttmi-col" title="${club.ttmiContent}">
+										  <c:choose>
+										    <c:when test="${club.emplNo == loginEmplNo}">
+										      <!-- 본인이면 입력 가능 -->
+										      <a href="#" data-bs-toggle="modal" data-bs-target="#100Modal">
+										        <c:choose>
+										          <c:when test="${not empty club.ttmiContent}">
+										            <span class="ttmi-text">${club.ttmiContent}</span>
+										          </c:when>
+										          <c:otherwise>✍️ 등록하기</c:otherwise>
+										        </c:choose>
+										      </a>
+										    </c:when>
+										    <c:otherwise>
+										      <!-- 타인이면 보기만 가능 -->
+										      <span>
+										        <c:choose>
+										          <c:when test="${not empty club.ttmiContent}">
+										            <span class="ttmi-text">${club.ttmiContent}</span>
+										          </c:when>
+										          <c:otherwise>🙈 아직 업데이트 하지 않았어요 ㅠ.ㅠ</c:otherwise>
+										        </c:choose>
+										      </span>
+										    </c:otherwise>
+										  </c:choose>
+										</td>
+				                        <!-- 오늘의 한 줄 -->
+										<td class="today-col" title="${club.todayContent}">
+										  <c:choose>
+										    <c:when test="${club.emplNo == loginEmplNo}">
+										      <a href="#" data-bs-toggle="modal" data-bs-target="#todayModal">
+										        <c:choose>
+										          <c:when test="${not empty club.todayContent}">
+										            <span class="today-text">${club.todayContent}</span>
+										          </c:when>
+										          <c:otherwise>📝 작성 전</c:otherwise>
+										        </c:choose>
+										      </a>
+										    </c:when>
+										    <c:otherwise>
+										      <span>
+										        <c:choose>
+										          <c:when test="${not empty club.todayContent}">
+										            <span class="today-text">${club.todayContent}</span>
+										          </c:when>
+										          <c:otherwise>🙊 한 줄을 써주세요!!</c:otherwise>
+										        </c:choose>
+										      </span>
+										    </c:otherwise>
+										  </c:choose>
+										</td>
+				                      </tr>
+				                     </c:if>
+  								  </c:forEach>
 			                      <!-- end table row -->
 			                    </tbody>
 			                  </table>
@@ -213,8 +294,6 @@
 								</div>
 			                </div>
 			              </div>
-			              <!-- end card -->
-			            </div>
 	            <!-- end col -->
 	          </div>
 						</div>
@@ -313,12 +392,22 @@ td, th {
   text-overflow: ellipsis;
   word-break: break-word;
 }
-
+/* 테이블 스타일 */
+.table {
+  table-layout: fixed;
+  width: 100%;
+}
+/* 테이블 헤더 스타일 */	
+.table th {
+  min-width: 100px;
+}
 /* 테이블 헤더 고정 및 스타일 */
 .table-wrapper {
   overflow-x: auto;
+  overflow-y: visible; 
+  position: relative; 
+  max-height: 800px;
 }
-
 /* 헤더 스타일 정리 - 겹침 방지용 */
 .table-wrapper thead th {
   position: sticky;
@@ -328,7 +417,6 @@ td, th {
   border-bottom: 2px solid #ccc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06); /* 살짝 그림자 */
 }
-
 /* 필요 시 tbody의 셀 테두리 정리 */
 .table-wrapper tbody td {
   border-top: 1px solid #e9ecef;
@@ -347,11 +435,7 @@ td, th {
   text-align: center;
   white-space: normal;  /* 줄바꿈 허용 */
 }
-/* 테이블 스타일 */
-.table {
-  table-layout: fixed;
-  width: 100%;
-}
+
 /* 이모지 버튼 스타일 */
 .emoji-btn {
   position: relative;
