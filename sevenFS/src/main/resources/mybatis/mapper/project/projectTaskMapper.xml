@@ -167,18 +167,24 @@
 
 
 	
-	  <update id="updateTask">
-	    UPDATE PROJECT_TASK
-	    SET
-	      TASK_NM = #{taskNm},
-	      TASK_CN = #{taskCn},
-	      TASK_BEGIN_DT = #{taskBeginDt},
-	      TASK_END_DT = #{taskEndDt},
-	      TASK_GRAD = #{taskGrad},
-	      PRIORT = #{priort},
-	      CHARGER_EMPNO = #{chargerEmpno}
-	    WHERE TASK_NO = #{taskNo}
-	  </update>
+	<update id="updateTask">
+	  UPDATE PROJECT_TASK
+	  SET
+	    TASK_NM = #{taskNm},
+	    TASK_CN = #{taskCn},
+	    TASK_BEGIN_DT = #{taskBeginDt},
+	    TASK_END_DT = #{taskEndDt},
+	    TASK_GRAD = #{taskGrad},
+	    PRIORT = #{priort},
+	    CHARGER_EMPNO = #{chargerEmpno},
+	    TASK_STTUS = #{taskSttus},
+	    PROGRSRT = #{progrsrt},
+	    UPPER_TASK_NO = #{upperTaskNo},
+	    TASK_DAYCNT = #{taskDaycnt},
+	    ATCH_FILE_NO = #{atchFileNo}
+	  WHERE TASK_NO = #{taskNo}
+	</update>
+
 
  	<!-- 프로젝트 업무 삭제 -->
 	 <delete id="deleteTask" parameterType="long">

@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -77,46 +79,56 @@ public class ProjectTaskController {
 	    return "project/taskEditModal"; // 모달용 JSP 경로
 	}
 
+	// 업무 추가 모달 반환
+	@GetMapping("/taskAddModal")
+	public String taskAddModal(@RequestParam("prjctNo") int prjctNo, Model model) {
+	    // 프로젝트 상세 + 참여자 + 업무 리스트까지 조회
+	    ProjectVO project = projectService.projectDetail(prjctNo);
+	    model.addAttribute("project", project);
 
-	// 프로젝트 업무 수정
+	    return "project/taskAddModal"; 
+	}
+
+// 프로젝트 업무 수정
 	@PostMapping("/update")
-	public String updateTask(ProjectTaskVO taskVO,
+	public String updateTask(@ModelAttribute ProjectTaskVO taskVO,
+	                         BindingResult bindingResult,
 	                         @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
 	                         @RequestParam(value = "removeFileId", required = false) int[] removeFileIds,
+	                         @RequestParam(value = "source", required = false) String source,
 	                         RedirectAttributes ra) {
+
+	    // 1. 검증 오류가 있을 경우
+	    if (bindingResult.hasErrors()) {
+	        log.error("📛 업무 수정 시 바인딩 오류 발생: {}", bindingResult);
+	        ra.addFlashAttribute("message", "업무 수정 실패: 입력값 오류");
+	        return "redirect:/project/projectDetail?prjctNo=" + taskVO.getPrjctNo();
+	    }
+
 	    log.info("📌 업무 수정 요청 - taskNo: {}", taskVO.getTaskNo());
 
-	    // 첨부파일 정보 구성
+	    // 2. 파일 처리
 	    AttachFileVO fileVO = new AttachFileVO();
 	    fileVO.setAtchFileNo(taskVO.getAtchFileNo());
 	    fileVO.setRemoveFileId(removeFileIds);
 
-	    // 파일 수정 처리
 	    if ((uploadFiles != null && uploadFiles.length > 0) || removeFileIds != null) {
 	        int result = attachFileService.updateFileList("project/task", uploadFiles, fileVO);
-	        log.info("📂 파일 저장 결과: {}", result);
-
-	        // 저장된 파일 번호가 있으면 VO에 설정
 	        if (result > 0) {
 	            taskVO.setAtchFileNo(fileVO.getAtchFileNo());
 	        }
 	    }
 
-	    // 로그 출력
-	    log.info("📝 수정할 업무명: {}", taskVO.getTaskNm());
-	    log.info("📎 파일 수: {}", uploadFiles != null ? uploadFiles.length : 0);
-	    if (uploadFiles != null) {
-	        for (MultipartFile mf : uploadFiles) {
-	            log.info(" - {} ({} bytes)", mf.getOriginalFilename(), mf.getSize());
-	        }
-	    }
-
-	    // 업무 업데이트 수행
 	    int updated = projectTaskService.updateTask(taskVO);
 	    ra.addFlashAttribute("message", updated > 0 ? "수정 성공" : "수정 실패");
 
-	    return "redirect:/project/projectDetail?prjctNo=" + taskVO.getPrjctNo();
+	    if ("gantt".equals(source)) {
+	        return "redirect:/project/tab?tab=gantt&prjctNo=" + taskVO.getPrjctNo();
+	    } else {
+	        return "redirect:/project/projectDetail?prjctNo=" + taskVO.getPrjctNo();
+	    }
 	}
+
 
 	
 	@GetMapping("/download")
@@ -127,30 +139,24 @@ public class ProjectTaskController {
 
 	@PostMapping("/insert")
 	@ResponseBody
-	public ResponseEntity<?> insertTask(@ModelAttribute ProjectTaskVO taskVO,
-	                                    @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles) {
+	public ResponseEntity<?> insertTask(
+	    @ModelAttribute ProjectTaskVO taskVO,
+	    @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
+	    @RequestParam(value = "source", required = false) String source) {
+	    
 	    try {
-	        log.info("프로젝트 업무 등록 시작");
-	        log.info("업무명: {}", taskVO.getTaskNm());
-
+	        log.info("프로젝트 업무 등록 시작 - 소스: {}", source);
+	        log.info("업무명: {}, 상위업무: {}", taskVO.getTaskNm(), taskVO.getUpperTaskNo());
 	        
 	        // 파일 확인 로깅
 	        if (uploadFiles != null) {
 	            log.info("첨부 파일 개수: {}", uploadFiles.length);
-	            for (int i = 0; i < uploadFiles.length; i++) {
-	                MultipartFile file = uploadFiles[i];
-	                log.info("파일[{}]: 이름={}, 크기={}, 타입={}", 
-	                       i, 
-	                       file.getOriginalFilename(), 
-	                       file.getSize(),
-	                       file.getContentType());
-	            }
 	        } else {
 	            log.info("첨부 파일 없음");
 	        }
-	        // 반드시 직접 attachFileNo를 먼저 설정해줘야 함
+	        
 	        if (uploadFiles != null && uploadFiles.length > 0) {
-	            long atchFileNo = attachFileService.getAttachFileNo(); // 시퀀스 미리 생성
+	            long atchFileNo = attachFileService.getAttachFileNo();
 	            taskVO.setAtchFileNo(atchFileNo);
 	        }
 
@@ -161,26 +167,15 @@ public class ProjectTaskController {
 	        response.put("taskNo", taskNo);
 	        response.put("prjctNo", taskVO.getPrjctNo());
 	        
-	        log.info("업무명: {}", taskVO.getTaskNm());
-	        log.info("파일 개수: {}", uploadFiles != null ? uploadFiles.length : 0);
-	        if (uploadFiles != null) {
-	            for (MultipartFile mf : uploadFiles) {
-	                log.info("파일 이름: {}, 크기: {}", mf.getOriginalFilename(), mf.getSize());
-	            }
-	        }
-
-
 	        return ResponseEntity.ok(response);
 	    } catch (Exception e) {
 	        log.error("업무 등록 중 오류", e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
-	        
-	        
+	        Map<String, Object> errorResponse = new HashMap<>();
+	        errorResponse.put("success", false);
+	        errorResponse.put("message", e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
 	    }
-
 	}
-
-
 
 	@GetMapping("/partialList")
 	public String partialTaskList(@RequestParam("prjctNo") Long prjctNo, Model model) {

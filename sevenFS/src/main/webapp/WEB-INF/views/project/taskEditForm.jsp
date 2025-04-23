@@ -10,7 +10,6 @@
   <meta charset="UTF-8" />
   <title>${title}</title>
   <%@ include file="../layout/prestyle.jsp" %>
-  
 </head>
 <body>
 <%@ include file="../layout/sidebar.jsp" %>
@@ -29,14 +28,14 @@
               <input type="hidden" name="prjctNo" value="${task.prjctNo}" />
               <input type="hidden" name="chargerEmpno" id="chargerEmpno" value="${task.chargerEmpno}" />
               <input type="hidden" name="atchFileNo" value="${task.atchFileNo}" />
+              <input type="hidden" name="source" value="form" />
 
-				<c:if test="${not empty task.parentTaskNm}">
-				  <div class="mb-3">
-				    <label class="form-label fw-semibold">상위 업무</label>
-				    <input type="text" class="form-control bg-light" value="${task.parentTaskNm}" readonly />
-				  </div>
-				</c:if>
-
+              <c:if test="${not empty task.parentTaskNm}">
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">상위 업무</label>
+                  <input type="text" class="form-control bg-light" value="${task.parentTaskNm}" readonly />
+                </div>
+              </c:if>
 
               <div class="mb-3">
                 <label class="form-label fw-semibold">업무명</label>
@@ -80,6 +79,21 @@
                     <option value="D" ${task.taskGrad == 'D' ? 'selected' : ''}>D</option>
                     <option value="E" ${task.taskGrad == 'E' ? 'selected' : ''}>E</option>
                   </select>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">업무 상태</label>
+                  <select name="taskSttus" class="form-select">
+                    <option value="00" ${task.taskSttus == '00' ? 'selected' : ''}>대기</option>
+                    <option value="01" ${task.taskSttus == '01' ? 'selected' : ''}>진행중</option>
+                    <option value="02" ${task.taskSttus == '02' ? 'selected' : ''}>완료</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">진행률 (%)</label>
+                  <input type="number" name="progrsrt" min="0" max="100" class="form-control" value="${task.progrsrt}" />
                 </div>
               </div>
 
@@ -179,7 +193,6 @@
     document.getElementById('chargerEmpno').value = empNo;
     document.getElementById('chargerEmpNm').value = empNm;
   }
-
 </script>
 </body>
 </html>

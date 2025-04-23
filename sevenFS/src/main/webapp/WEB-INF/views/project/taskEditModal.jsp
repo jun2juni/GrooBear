@@ -1,11 +1,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
 
 <!-- 업무 수정 모달 -->
 <div class="modal fade" id="taskEditModal" tabindex="-1" aria-labelledby="taskEditModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
-      <form id="taskEditForm" action="/projectTask/update" method="post" enctype="multipart/form-data">
+      <form id="taskEditForm" method="post" enctype="multipart/form-data" action="/projectTask/update">
         <div class="modal-header bg-primary text-white">
           <h5 class="modal-title" id="taskEditModalLabel"><i class="fas fa-edit me-2"></i>업무 수정</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="닫기"></button>
@@ -15,6 +16,8 @@
           <input type="hidden" name="taskNo" value="${task.taskNo}" />
           <input type="hidden" name="prjctNo" value="${task.prjctNo}" />
           <input type="hidden" name="atchFileNo" value="${task.atchFileNo}" />
+          <input type="hidden" name="source" value="gantt" />
+          
 
           <c:if test="${not empty task.parentTaskNm}">
             <div class="mb-2">
@@ -31,9 +34,16 @@
           <div class="mb-3">
             <label class="form-label fw-semibold">담당자</label>
             <select name="chargerEmpno" class="form-select">
-              <c:forEach var="emp" items="${project.allParticipantList}">
-                <option value="${emp.prtcpntEmpno}" ${emp.prtcpntEmpno == task.chargerEmpno ? 'selected' : ''}>${emp.emplNm} (${emp.posNm})</option>
-              </c:forEach>
+<c:forEach var="emp" items="${project.responsibleList}">
+  <option value="${emp.prtcpntEmpno}" ${emp.prtcpntEmpno == task.chargerEmpno ? 'selected' : ''}>${emp.emplNm} (${emp.posNm})</option>
+</c:forEach>
+<c:forEach var="emp" items="${project.participantList}">
+  <option value="${emp.prtcpntEmpno}" ${emp.prtcpntEmpno == task.chargerEmpno ? 'selected' : ''}>${emp.emplNm} (${emp.posNm})</option>
+</c:forEach>
+<c:forEach var="emp" items="${project.observerList}">
+  <option value="${emp.prtcpntEmpno}" ${emp.prtcpntEmpno == task.chargerEmpno ? 'selected' : ''}>${emp.emplNm} (${emp.posNm})</option>
+</c:forEach>
+
             </select>
           </div>
 
@@ -113,10 +123,62 @@
 
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">수정 완료</button>
+          <button type="button" id="submitEditTaskBtn" class="btn btn-primary">수정 완료</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
         </div>
       </form>
     </div>
   </div>
 </div>
+
+<script>
+(function () {
+  const submitBtn = document.getElementById("submitEditTaskBtn");
+  if (!submitBtn) {
+    console.error("❌ 수정 버튼이 존재하지 않음");
+    return;
+  }
+
+  submitBtn.addEventListener("click", function () {
+    const form = document.getElementById("taskEditForm");
+    if (!form) {
+      console.error("❌ 폼이 존재하지 않음");
+      return;
+    }
+
+    const formData = new FormData(form);
+    formData.append("source", "gantt");
+
+    fetch("/projectTask/update", {
+      method: "POST",
+      body: formData
+    })
+      .then(res => res.text())
+      .then(() => {
+        const modal = bootstrap.Modal.getInstance(document.getElementById("taskEditModal"));
+        if (modal) modal.hide();
+        if (typeof loadGanttData === "function") loadGanttData();
+        executeInlineScripts();
+
+        swal("수정 완료!", "업무가 성공적으로 수정되었습니다.", "success");
+      })
+      .catch(err => {
+        console.error("❌ 업무 수정 실패:", err);
+        swal("수정 실패", "오류가 발생했습니다.\n" + err.message, "error");
+      });
+  });
+})();
+
+function executeInlineScripts() {
+	  document.querySelectorAll("script").forEach(script => {
+	    const newScript = document.createElement("script");
+	    if (script.src) {
+	      newScript.src = script.src;
+	    } else {
+	      newScript.textContent = script.textContent;
+	    }
+	    document.head.appendChild(newScript).parentNode.removeChild(newScript);
+	  });
+	}
+
+</script>

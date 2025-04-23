@@ -85,6 +85,7 @@
 					<th class="bg-light text-center">업무 내용</th>
 					<td class="ps-4">${task.taskCn}</td>
 				</tr>
+				<!-- 현준이 댓글, 알림  -->
 			</tbody>
 		</table>
 

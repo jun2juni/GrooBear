@@ -76,12 +76,22 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
     @Override
     public int updateTask(ProjectTaskVO taskVO) {
+        // 1. taskDaycnt 계산 추가
+        if (taskVO.getTaskBeginDt() != null && taskVO.getTaskEndDt() != null) {
+            long diff = taskVO.getTaskEndDt().getTime() - taskVO.getTaskBeginDt().getTime();
+            taskVO.setTaskDaycnt((int)(diff / (1000 * 60 * 60 * 24)) + 1);
+        }
+
+        // 2. 첨부파일 처리
         if (taskVO != null && taskVO.getAtchFileNo() > 0) {
             List<AttachFileVO> attachFiles = attachFileMapper.getFileAttachList(taskVO.getAtchFileNo());
             taskVO.setAttachFileList(attachFiles);
         }
+
+        // 3. 업데이트 실행
         return projectTaskMapper.updateTask(taskVO);
     }
+
 
 
 
