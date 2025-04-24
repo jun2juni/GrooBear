@@ -89,14 +89,13 @@
           	let result = await swal({
                 title: "정말 삭제하시겠습니까?",
                 icon: "warning",
-                confirmButtonColor : '#d33',
                 buttons: {
                     cancle : {
-                        text : '삭제 취소',
+                        text : '취소',
                         value : false
                     },
                     confirm : {
-                        text : '확인',
+                        text : '삭제',
                         value : true
                     }
                 },
