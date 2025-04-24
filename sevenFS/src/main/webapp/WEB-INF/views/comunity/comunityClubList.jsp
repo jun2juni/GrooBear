@@ -50,7 +50,6 @@
 									  <th style="width: 80px; text-align: left;">
 									    <span
 									      data-bs-toggle="tooltip"
-									      data-bs-custom-class="custom-tooltip"
 									      data-bs-html="true"
 									      data-bs-placement="top"
 									      title="이곳은 여러분의 <br>프로필 사진이 나오는 곳입니다!<br>프로필 사진을 변경해주세요">
@@ -61,7 +60,6 @@
 									  <th style="width: 200px; text-align: left;">
 									    <span
 									      data-bs-toggle="tooltip"
-									      data-bs-custom-class="custom-tooltip"
 									      data-bs-html="true"
 									      data-bs-placement="top"
 									      title="사원의 이름입니다.<br>때로는 잘 고른 이모지 1개가<br>여러분의 많은 감정을 대변해 줄 수 있죠!<br>여러분의 감정을 골라주세요!!!">
@@ -72,7 +70,6 @@
 									  <th style="width: 280px; text-align: left;">
 									    <span
 									      data-bs-toggle="tooltip"
-									      data-bs-custom-class="custom-tooltip"
 									      data-bs-html="true"
 									      data-bs-placement="top"
 									      title="여러분의<br>사소한 정보와 이야기를<br>여기 남겨주세요!!">
@@ -83,7 +80,6 @@
 									  <th style="width: 320px; text-align: left;">
 									    <span
 									      data-bs-toggle="tooltip"
-									      data-bs-custom-class="custom-tooltip"
 									      data-bs-html="true"
 									      data-bs-placement="top"
 									      title="여러분의 일상의 오늘 말 하고 싶은 말들!<br>좌우명도 좋아요 한 마디씩 남겨주세요!">
@@ -100,13 +96,12 @@
 				                        <td style="text-align: left;">
 				                          <div class="employee-image">
 				                            <img
-				                            	 src="<c:choose>
-										         <c:when test='${not empty club.profileImg}'>/upload/${club.profileImg}</c:when>
-										         <c:otherwise>/images/default.png</c:otherwise>
-										       </c:choose>"	
-										  alt=""
-										  style="cursor: pointer"
-										  onclick="document.getElementById('hiddenProfileInput').click();" />
+				                            	 src="/upload/${club.profileImg}" 
+				                            	 alt="     "
+				                            	 style="cursor: pointer"
+				                            	 onerror="this.src='/assets/images/profileDefaultImage.jpg';"
+				                            	 onclick="document.getElementById('hiddenProfileInput').click();"
+				                            	 >
 				                          </div>
 				                        </td>
 				                        <!--프로필 사진 끝  -->
@@ -114,7 +109,9 @@
 				                        <td style="text-align: left; white-space: nowrap;">
 										  <!-- 이름은 무조건 출력 -->
 											<span style="display: inline-block; font-weight: bold; font-size: 1.05rem; color: #2C3E50;">
-											  ${club.emplNm}
+												<a>
+											  		${club.emplNm}
+											 	 </a>
 											</span>
 										<!-- 이모지는 사원 본인만 클릭 가능 -->
 										  <c:choose>
@@ -207,8 +204,9 @@
 				                          <div class="employee-image">
 				                            <img
 				                            	 src="/upload/${club.profileImg}" 
-				                            	 alt=""
+				                            	 alt="     "
 				                            	 style="cursor: pointer"
+				                            	 onerror="this.src='/assets/images/profileDefaultImage.jpg';"
 				                            	 onclick="document.getElementById('hiddenProfileInput').click();"
 				                            	 >
 				                          </div>
@@ -432,6 +430,11 @@
 		<%@ include file="../layout/footer.jsp"%>
 	</main>
 	<%@ include file="../layout/prescript.jsp"%>
+	<script type="text/javascript">
+	function emptyFile(){
+		console.log("emptyFile----",this);
+	}
+	</script>
 </body>
 <style>
 /* 테이블 헤더 스타일 */
@@ -477,21 +480,14 @@ td, th {
   .tooltip-inner {
   min-width: 120px;  /* 최소 너비 확보 */
   max-width: none;   /* Bootstrap 기본값 제한 해제 */
-  /*background-color: #365CF5 !important; !* 밝은 파란색 *!
-  color: #fff !important; !* 텍스트는 흰색 *!*/
+  background-color: #365CF5 !important; /* 밝은 파란색 */
+  color: #fff !important; /* 텍스트는 흰색 */
   font-size: 0.85rem;
   padding: 6px 10px;
   border-radius: 4px;
   padding: 8px 12px;
   text-align: center;
   white-space: normal;  /* 줄바꿈 허용 */
-}
-
-
-/* 툴팁 커스텀 색상 */
-.custom-tooltip {
---bs-tooltip-bg: #365CF5 !important;
---bs-tooltip-color:#fff !important;
 }
 
 /* 이모지 버튼 스타일 */
@@ -549,6 +545,7 @@ fileInput.addEventListener('change', function () {
     document.getElementById('profileImgForm').submit();
   }
 });
+
 
 
 let offset = 0;
