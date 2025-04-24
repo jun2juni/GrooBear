@@ -294,8 +294,8 @@ function buildChatMessage(dom, {message}) {
   const messageHTML = message.mssageWritngEmpno === emp.emplNo ? `
       <div class="d-flex flex-row justify-content-end">
           <div class="chat-message text-end d-flex flex-column align-items-end" style="width: 80%">
-              <p class="small me-4" style="font-size: 0.5rem">${message.emplNm}</p>
-              <div class="d-flex align-items-end me-3 mb-1">
+              <p class="small me-4" style="font-size: 14px">${message.emplNm}</p>
+              <div class="d-flex justify-content-end align-items-end me-3 mb-1">
                   <!-- 안읽은것만 -->
                   ${message.read ? `<span class="read-count-badge me-1 badge text-bg-warning" style="height: 18px;color: white !important;font-size: 10px;">1</span>` : ''}
                   ${ message.type === TALK ? 
@@ -311,7 +311,7 @@ function buildChatMessage(dom, {message}) {
                        </p>`
                     : `<img src="/upload/${message.mssageCn}" class="rounded float-start w-50" alt"프로필 이미지" onerror="this.src='/assets/images/image-error.png'" >`}
                   </div>
-              <p class="small me-3 mb-3 rounded-3 text-muted" style="font-size: 0.5rem">${formatDate(new Date(message.mssageCreatDt))}</p>
+              <p class="small me-3 mb-3 rounded-3 text-muted" style="font-size: 14px">${formatDate(new Date(message.mssageCreatDt))}</p>
           </div>
           <img src="/upload/${message.proflPhotoUrl}"
                onerror="this.src='/assets/images/image-error.png'"
@@ -325,8 +325,8 @@ function buildChatMessage(dom, {message}) {
                onerror="this.src='/assets/images/image-error.png'"
                alt="avatar 1" class="chat-avatar rounded-circle" style="height: 45px;">
           <div class="chat-message d-flex flex-column align-items-start" style="width: 80%">
-              <p class="small ms-4" style="font-size: 0.5rem">${message.emplNm}</p>
-              <div class="d-flex align-items-end ms-3 mb-1">
+              <p class="small ms-4" style="font-size: 14px">${message.emplNm}</p>
+              <div class="d-flex justify-content-start align-items-end ms-3 mb-1">
                 ${ message.type === TALK ?
                     `<p class="small p-2 rounded-3 bg-body-secondary">${message.mssageCn}</p>`
                   : message.type === FILE ?
@@ -340,7 +340,7 @@ function buildChatMessage(dom, {message}) {
                      </p>`
                   : `<img src="/upload/${message.mssageCn}" class="rounded float-start w-50" alt="프로필 이미지" onerror="this.src='/assets/images/image-error.png'">`}
               </div>
-              <p class="small ms-3 mb-3 rounded-3 text-muted float-end" style="font-size: 0.5rem">${formatDate(new Date(message.mssageCreatDt))}</p>
+              <p class="small ms-3 mb-3 rounded-3 text-muted float-end" style="font-size: 14px">${formatDate(new Date(message.mssageCreatDt))}</p>
           </div>
       </div>
   `;

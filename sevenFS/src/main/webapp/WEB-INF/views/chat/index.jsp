@@ -210,14 +210,16 @@
 					<input type="text" class="form-control form-control-lg" id="messageInput" placeholder="메세지를 입력해주세요." />
 					<%--파일--%>
 					<label for="uploadFiles" style="cursor: pointer">
-					  <i class="fas fa-paperclip"></i>
+					  <span class="material-symbols-outlined">attach_file</span>
 					</label>
 					
 					<%-- 숨겨진 파일 인풋 --%>
 					<input type="file" name="uploadFiles" id="uploadFiles" class="d-none">
 					<a id="submitMessage" class="text-muted" href="#!">
-					  <i class="fas fa-paper-plane"></i>
+					  <span class="material-symbols-outlined">arrow_upward</span>
 					</a>
+					
+					
 				  </div>
 				</div>
 			  </div>
