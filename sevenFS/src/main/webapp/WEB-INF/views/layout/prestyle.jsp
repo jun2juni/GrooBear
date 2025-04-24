@@ -7,7 +7,8 @@
 	clsfNm: "${myEmpInfo.clsfCodeNm}"
   }
 </script>
-
+<%-- 파비콘 --%>
+<link rel="icon" href="${pageContext.request.contextPath}/assets/images/favicon.ico" />
 
 <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
 <link rel="stylesheet" href="/assets/css/lineicons.css" type="text/css" />
