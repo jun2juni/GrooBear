@@ -123,23 +123,20 @@
               <li>
                <sec:authentication property="principal.empVO" var="emp" />
                 <a href="/emplDetailHeader?emplNo=${emp.emplNo}">
-                  <i class="lni lni-user"></i> View Profile
+                  <i class="lni lni-user"></i> 상세보기
                 </a>
               </li>
               <li>
-                <a href="#0">
-                  <i class="lni lni-alarm"></i> Notifications
+                <a href="notification/list">
+                  <i class="lni lni-alarm"></i> 알림
                 </a>
               </li>
               <li>
-                <a href="#0"> <i class="lni lni-inbox"></i> Messages </a>
-              </li>
-              <li>
-                <a href="#0"> <i class="lni lni-cog"></i> Settings </a>
+                <a href="chat/list"> <i class="lni lni-inbox"></i> 채팅 </a>
               </li>
               <li class="divider"></li>
               <li>
-                <a href="/logout"> <i class="lni lni-exit"></i> Sign Out </a>
+                <a href="/logout"> <i class="lni lni-exit"></i> 로그아웃 </a>
               </li>
             </ul>
           </div>

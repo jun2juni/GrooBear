@@ -463,10 +463,10 @@ function readNotification(ntcnSn) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-        "ntcnSn": ntcnSn
-    })
+    body: ntcnSn
   })
+    .then((res) => res.json())
+    .then((result) => console.log(result))
 }
 
 function getNotification() {

@@ -57,9 +57,10 @@ public class NotificationController {
     @ResponseBody
     @PostMapping("/readNotification")
     public String readNotification(@AuthenticationPrincipal CustomUser user,
-                                                int ntcnSn) {
+                                   @RequestBody String ntcnSn) {
+        log.debug("ntcnSn: {}", ntcnSn);
         EmployeeVO empVO = user.getEmpVO();
-        int i = notificationService.updateNotificationRead(empVO.getEmplNo(), ntcnSn);
+        int i = notificationService.updateNotificationRead(empVO.getEmplNo(), Integer.parseInt(ntcnSn));
 
         return i > 0 ? "success" : "fail";
     }
