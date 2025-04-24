@@ -35,6 +35,7 @@ public class ComunityVO {
 	private String ttmiContent;     // bbscttCn where bbs_ctgry_no = 14
 	private String todayContent;    // bbscttCn where bbs_ctgry_no = 15
 	private String emoji;     // bbscttCn where bbs_ctgry_no = 16
+	private String profileImg;	//  where bbs_ctgry_no = 17
 	
 	
 	// 보안용	

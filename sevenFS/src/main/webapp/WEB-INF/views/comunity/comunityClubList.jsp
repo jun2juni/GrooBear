@@ -95,34 +95,12 @@
 				                      	<!-- 프로필사진  -->
 				                        <td style="text-align: left;">
 				                          <div class="employee-image">
-				                             <form id="profileForm_${club.emplNo}" 
-										          action="/fileUpload" 
-										          method="post" 
-										          enctype="multipart/form-data">
-										      <!-- 프로필 이미지 (클릭 시 업로드) -->
-										      <img src="<c:choose>
-										                  <c:when test='${not empty club.profileImgPath}'>
-										                    ${club.profileImgPath}
-										                  </c:when>
-										                  <c:otherwise>
-										                    assets/images/default-profile.png
-										                  </c:otherwise>
-										                </c:choose>"
-										           id="profileImage_${club.emplNo}"
-									           style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; cursor: pointer;"
-									           alt="프로필이미지"
-									           onerror="파일경로잡아야함~~!~!!~@~!#~%@%^#&#%%*#%*#$*##@$@#$$##$#@#$;">
-									
-									      <!-- 숨겨진 파일 input -->
-									      <input type="file" 
-									             id="uploadFile_${club.emplNo}" 
-									             name="uploadFile" 
-									             accept="image/*" 
-									             style="display:none;">
-									             
-									      <!-- 사번 hidden 처리 -->
-									      <input type="hidden" name="emplNo" value="${club.emplNo}">
-									    </form>
+				                            <img
+				                            	 src="/upload/${club.profileImg}" 
+				                            	 alt=""
+				                            	 style="cursor: pointer"
+				                            	 onclick="document.getElementById('hiddenProfileInput').click();"
+				                            	 >
 				                          </div>
 				                        </td>
 				                        <!-- 사원이름+이모지  -->
@@ -220,7 +198,12 @@
 				                      	<!-- 프로필사진  -->
 				                        <td style="text-align: left;">
 				                          <div class="employee-image">
-				                            <img src="assets/images/lead/lead-1.png" alt="">
+				                            <img
+				                            	 src="/upload/${club.profileImg}" 
+				                            	 alt=""
+				                            	 style="cursor: pointer"
+				                            	 onclick="document.getElementById('hiddenProfileInput').click();"
+				                            	 >
 				                          </div>
 				                        </td>
 				                        <!-- 사원이름+이모지  -->
@@ -404,6 +387,40 @@
 				</div>     
 			</form>
        		 <!-- 오늘의 이모지 모달 끝  -->
+			 <!-- 프로팔 사진  모달 시작  -->
+			 <form id="profileImgForm" action="/comunity/insertProfile" method="post" enctype="multipart/form-data">
+				<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h1 class="modal-title fs-5" id="exampleModalLabel">프로필파일 선택</h1>
+				        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				      </div>
+				      <div class="modal-body">
+						<div class="emoji-picker my-3">
+						  <!-- 이모지 버튼이 여기에 동적으로 들어갈 예정 -->
+						</div>				      
+				        <div class="input-style-1">
+				          <input type="file" id="hiddenProfileInput" name="uploadFile" accept=".jpg,.jpeg,.png,.gif,.webp" style="display:none" />
+		                  <file-upload
+								label="파일 1장만 업로드 할수있습니다."
+								name="uploadFile"
+								max-files="1"
+								 accept=".jpg,.jpeg,.png,.gif,.webp"
+								contextPath="${pageContext.request.contextPath}"
+						></file-upload>
+		                </div>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" id="profileResetBtn" class="btn btn-outline-danger btn-sm mt-2">선택 초기화</button>
+				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+				        <button type="submit" class="btn btn-primary">프로필 사진 저장하기</button>
+				      </div>	
+				    </div>
+				  </div> 
+				</div>     
+			</form>
+       		 <!-- 오늘의 이모지 모달 끝  -->
 		</section>
 		<%@ include file="../layout/footer.jsp"%>
 	</main>
@@ -511,6 +528,14 @@ td, th {
 </style>
 
 <script type="text/javascript">
+/* 파일이 존재 할 때. 프로필이미지 변경  */
+const fileInput = document.getElementById('hiddenProfileInput');
+fileInput.addEventListener('change', function () {
+  if (this.files.length > 0) {
+    document.getElementById('profileImgForm').submit();
+  }
+});
+
 
 let offset = 0;
 const limit = 10;

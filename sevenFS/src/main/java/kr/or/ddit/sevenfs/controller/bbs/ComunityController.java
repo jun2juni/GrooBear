@@ -163,21 +163,32 @@ public class ComunityController {
 		return  "redirect:/comunity/comunityClubList"; // 성공 시 리다이렉트
 	} // insertEmoji 삽입
 	
+	//프로필 이미지 변경
 	@PostMapping("/insertProfile")
 	public String insertProfile(@ModelAttribute ComunityVO comunityVO,
-			@RequestParam("profile") String profile ,
+			MultipartFile[] uploadFile,
 			Principal principal) {
 		
-		String emplNo = principal.getName(); // Principal 객체에서 사번 가져오기 
+		String emplNo = principal.getName(); // Principal 객체에서 사번 가져오기
+		log.info("insertProfile->emplNo : " + emplNo);
 		
 		if (emplNo == null) {
 			// 세션에 사번 없으면 로그인 페이지로 보내기
 			return "redirect:/auth/login";
 		}
 		
+		// 프로필	매우중요 앞으로 쓸거면 이거 땡겨 써야.함 코드 리팩터링 필수 
+		 long attachFileNm = attachFileService.insertFileList("insertProfile", uploadFile);
+		 log.info("insertProfile->attachFileNm : " + attachFileNm);
+		 
+		 comunityVO.setAtchFileNo(attachFileNm);
+		
 		comunityVO.setBbsCtgryNo(17); // 예시: insertEmoji 전용 카테고리 번호
+		comunityVO.setBbscttCn("sns프로필사진 NULL방지용"); // 예시: insertEmoji 전용 카테고리 번호
 		comunityVO.setBbscttUseYn("N"); // 게시글 사용 여부
 		comunityVO.setEmplNo(emplNo); // Principal 객체에서 사번 가져오기 , 임시값
+		
+		log.info("insertProfile->comunityVO : " + comunityVO);
 		
 		comunityServiceImpl.insertContent(comunityVO);
 		

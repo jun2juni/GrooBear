@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Configuration
 public class FileConfig implements WebMvcConfigurer {
+	// C:/upload/
     @Value("${file.save.abs.path}")
     private String absPath;
 
@@ -19,6 +20,6 @@ public class FileConfig implements WebMvcConfigurer {
         log.debug("fileConfig 실행되었는지 check?");
 
         registry.addResourceHandler("/upload/**") // 웹 접근 경로
-        	.addResourceLocations("file://" + absPath);  // 서버내 실제 경로
+        	.addResourceLocations("file:///"+absPath);  // 서버내 실제 경로
     }
 }

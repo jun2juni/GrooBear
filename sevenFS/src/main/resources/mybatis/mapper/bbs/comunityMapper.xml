@@ -363,6 +363,12 @@
 	      ) WHERE ROWNUM = 1
 	    ) AS emoji,
 	    
+	    -- 프로필
+	    (
+	      SELECT F.FILE_STRE_PATH FROM ATTATCH_FILE F WHERE F.ATCH_FILE_NO = 
+            (SELECT MAX(BB.ATCH_FILE_NO) FROM BBS BB WHERE BB.BBS_CTGRY_NO = 17 AND BB.EMPL_NO = e.empl_no AND BB.bbsctt_use_yn = 'N')
+	    ) AS PROFILE_IMG,
+	    
 	    -- 가장 최근 업데이트 날짜
 	    (
 	      SELECT MAX(b.bbsctt_creat_dt)
