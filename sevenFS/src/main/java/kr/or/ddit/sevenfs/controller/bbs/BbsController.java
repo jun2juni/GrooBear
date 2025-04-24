@@ -62,11 +62,6 @@ public class BbsController {
 	NotificationService notificationService;
 	
 	
-    @GetMapping("/bbs")
-    public String bbs() {
-    	
-    	return "bbs/bbs";
-    }
     
     
     /**
