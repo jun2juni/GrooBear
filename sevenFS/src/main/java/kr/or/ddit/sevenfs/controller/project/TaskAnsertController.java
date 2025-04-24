@@ -9,9 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
+import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import kr.or.ddit.sevenfs.vo.project.TaskAnsertVO;
 import lombok.extern.slf4j.Slf4j;
 import kr.or.ddit.sevenfs.service.notification.NotificationService;
+import kr.or.ddit.sevenfs.service.project.ProjectTaskService;
 import kr.or.ddit.sevenfs.service.project.TaskAnsertService;
 
 @RestController
@@ -24,6 +28,9 @@ public class TaskAnsertController {
 
     @Autowired
     NotificationService notificationService;
+    
+    @Autowired
+    ProjectTaskService projectTaskService;
 
     // 댓글 등록
     @PostMapping("/answer")
@@ -39,13 +46,30 @@ public class TaskAnsertController {
         vo.setTaskNo(taskNo);
         vo.setAnswerCn(answerCn);
         vo.setAnswerWritngEmpno(emplNo);
-
         vo.setParentAnswerNo(parentAnswerNo != null ? parentAnswerNo : 0);
         vo.setAnswerDepth(parentAnswerNo != null ? answerDepth : 0);
-
         vo.setAnswerCreatDt(new Date());
 
         taskAnsertService.saveTaskAnswer(vo);
+        
+        // ================= 알림 처리 =================
+        // 담당자 정보 조회
+        ProjectTaskVO task = projectTaskService.getTaskById((long) taskNo); // 업무 정보 조회
+        String receiverEmpNo = String.valueOf(task.getChargerEmpno());
+        String receiverName = task.getChargerEmpNm(); // 표시용
+
+        if (!receiverEmpNo.equals(emplNo)) { // 본인이 작성한 댓글이 아닐 경우에만 알림
+            EmployeeVO receiver = new EmployeeVO();
+            receiver.setEmplNo(receiverEmpNo);
+
+            NotificationVO notificationVO = new NotificationVO();
+            notificationVO.setNtcnSj("[업무 댓글 알림]");
+            notificationVO.setNtcnCn(receiverName + "님, 담당 업무에 피드백이 등록되었습니다.");
+            notificationVO.setOriginPath("/projectTask/detail?taskNo=" + taskNo); // 업무 상세 페이지
+            notificationVO.setSkillCode("02"); // 업무 관련 알림 코드
+
+            notificationService.insertNotification(notificationVO, List.of(receiver));
+        }
 
         return ResponseEntity.ok("댓글 등록 완료");
     }

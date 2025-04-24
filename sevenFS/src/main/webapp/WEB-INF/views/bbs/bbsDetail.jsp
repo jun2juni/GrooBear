@@ -66,7 +66,7 @@
               <!-- 첨부파일 -->
               <hr>
               <div class="mb-3">
-                <h6 class="text-secondary fw-bold">📎 첨부파일</h6>
+                <h6 class="text-secondary fw-bold"><i class="bi bi-clipboard-check-fill"></i> 첨부파일</h6>
                 <c:if test="${not empty bbsVO.files}">
                   <div class="d-flex flex-wrap gap-3 mt-2">
                     <c:forEach var="file" items="${bbsVO.files}">
