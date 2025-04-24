@@ -90,7 +90,7 @@
 		  <div class="" id="chat3">
 			
 			  <div class="row">
-				<div class="col-md-4">
+				<div class="col-md-5">
 				  <div>
 					<%--채팅방 목록--%>
 					<ul id="chatRoomList" class="list-unstyled mb-0 card card-body">
@@ -112,6 +112,7 @@
 							  <div>
 								<p class="fw-bold mb-0">
 									${chatRoom.chttRoomTy == '0' ? chatRoom.emplNm : chatRoom.chttRoomNm}
+									  <span class="text-xs fw-normal text-gray">[${chatRoom.deptNm}, ${chatRoom.clsfNm}]</span>
 								</p>
 								<p class="chat-last-msg small text-muted text-truncate-2">
 									${empty chatRoom.lastMsg ?
@@ -163,7 +164,7 @@
 				  </div>
 				</div>
 				
-				<div id="chat-no" class="col-8 card card-body">
+				<div id="chat-no" class="col-7 card card-body">
 				  <div class="card text-center py-5">
 					<div class="card-body">
 					  <h5 class="card-title mt-3">선택한 채팅방이 없습니다</h5>
@@ -172,7 +173,7 @@
 				  </div>
 				</div>
 				
-				<div id="chat" class="col-8 position-relative card card-body d-flex justify-content-between d-none">
+				<div id="chat" class="col-7 position-relative card card-body d-flex justify-content-between d-none">
 				  <div id="chatList" class="pt-3 pe-3">
 					<div id="loader" class="d-none text-center">
 					  <div class="spinner-border" role="status">

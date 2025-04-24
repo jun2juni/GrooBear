@@ -21,6 +21,8 @@ public class ChatRoomVO {
     private String emplNm; // 채팅 상대방 이름
     private String targetEmplNo; // 상대방 넘버
 
+    private String deptNm; // 부서 정보
+    private String clsfNm; // 직급 정보
 
     // 채팅방에 들어가 있는 사람들
     private String[] emplNoList;
