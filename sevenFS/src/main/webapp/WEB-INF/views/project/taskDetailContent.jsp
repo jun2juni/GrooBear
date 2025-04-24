@@ -1,6 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<script>
+    const loginUserEmplNo = "${myEmpInfo.emplNo}";
+</script>
 
 <div data-task-no="${task.taskNo}">
 	<div class="p-3">
@@ -9,6 +12,7 @@
 		</h5>
 
 		<table class="table table-bordered table-sm">
+		
 			<tbody>
 				<tr>
 					<th class="bg-light w-25 text-center">상위 업무</th>
@@ -86,6 +90,23 @@
 					<td class="ps-4">${task.taskCn}</td>
 				</tr>
 				<!-- 현준이 댓글, 알림  -->
+				<tr>
+					<th class="bg-light text-center">피드백</th>
+					<td class="ps-4">
+					<!-- 댓글 영역 -->
+			            <div><input type="hidden" id="taskNo" value="${task.taskNo}" />
+			              <textarea id="answerCn" rows="3" class="form-control" placeholder="피드백을 입력하세요."></textarea>
+			              <div class="d-flex justify-content-end mt-2">
+			                <button type="button" class="btn btn-primary btn-sm" onclick="submitTaskComment()">피드백 등록</button>
+			              </div>
+			            </div>
+			
+			            <div id="answerContent" class="mt-4">
+			              <%-- AJAX로 댓글 목록 들어올 영역 --%>
+			            </div>
+					</td>
+				</tr>
+				<!-- 현준이 댓글, 알림 끝  -->
 			</tbody>
 		</table>
 
@@ -114,4 +135,6 @@
 	function goToTaskEdit(taskNo) {
 		location.href = `/projectTask/editForm?taskNo=${taskNo}`;
 	}
+
 </script>
+<!-- 현준이 댓글 스크립트 -->

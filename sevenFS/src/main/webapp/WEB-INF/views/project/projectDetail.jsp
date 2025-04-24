@@ -10,11 +10,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <title>${title}</title>
   <%@ include file="../layout/prestyle.jsp" %>
+<script>
+   const loginUserEmplNo = "${myEmpInfo.emplNo}";
+</script>
+<style type="text/css">
+	.swal2-top-modal-fix {
+    z-index: 9999 !important;
+}
+</style>
 </head>
 <body>
 <%@ include file="../layout/sidebar.jsp" %>
+
 <c:if test="${not empty message}">
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -351,5 +362,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	
 	</script>
+	<script src="/js/project/taskAnswer.js"></script>
+		
 	</body>
 </html>
