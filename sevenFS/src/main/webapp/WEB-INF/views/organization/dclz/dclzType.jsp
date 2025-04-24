@@ -47,7 +47,8 @@
 				</div>
 				<div class="content">
 				  <h6 class="mb-10">근무</h6>
-				  <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.work == null ? 0 : dclzCnt.work}<span class="text-gray text-sm">건</span></h3>
+				  <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.work == null ? 0 : dclzCnt.work}<span
+					  class="text-gray text-sm">건</span></h3>
 				  <p class="text-sm text-success">
 					<span></span>
 				  </p>
@@ -64,7 +65,8 @@
 				<div class="content">
 				  <h6 class="mb-10">출장</h6>
 				  <h3 style="margin-top: 20px;"
-					  class="text-bold mb-10">${dclzCnt.businessTrip == null ? 0 : dclzCnt.businessTrip}<span class="text-gray text-sm">건</span></h3>
+					  class="text-bold mb-10">${dclzCnt.businessTrip == null ? 0 : dclzCnt.businessTrip}<span
+					  class="text-gray text-sm">건</span></h3>
 				  <p class="text-sm text-gray">
 					<c:forEach var="dclzType" items="${empDetailDclzTypeCnt}" varStatus="status">
 					  <c:choose>
@@ -93,7 +95,8 @@
 				<div class="content">
 				  <h6 class="mb-10">휴가</h6>
 				  <h3 style="margin-top: 20px;"
-					  class="text-bold mb-10">${dclzCnt.vacation == null ? 0 : dclzCnt.vacation}<span class="text-gray text-sm">건</span></h3>
+					  class="text-bold mb-10">${dclzCnt.vacation == null ? 0 : dclzCnt.vacation}<span
+					  class="text-gray text-sm">건</span></h3>
 				  <p class="text-sm text-gray">
 					<c:forEach var="dclzType" items="${empDetailDclzTypeCnt}" varStatus="status">
 					  <c:choose>
@@ -117,7 +120,8 @@
 				</div>
 				<div class="content">
 				  <h6 class="mb-10">기타</h6>
-				  <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.bad == null ? 0 : dclzCnt.bad}<span class="text-gray text-sm">건</span></h3>
+				  <h3 style="margin-top: 20px;" class="text-bold mb-10">${dclzCnt.bad == null ? 0 : dclzCnt.bad}<span
+					  class="text-gray text-sm">건</span></h3>
 				  <p class="text-sm text-danger">
 					<c:forEach var="dclzType" items="${empDetailDclzTypeCnt}" varStatus="status">
 					  <c:choose>
@@ -176,7 +180,7 @@
 				  <form action="/dclz/dclzType" method="get" id="keywordSearchFome">
 					<input type="search" class="form-control rounded" placeholder="년도, 근태유형 입력" aria-label="Search"
 						   aria-describedby="search-addon" id="schName" name="keywordSearch"
-						   onkeydown="fSchEnder(event)"/>
+						   onkeydown="fSchEnder(event)" />
 				  </form>
 				  <span class="input-group-text" id="search-addon" onclick="fSch()">
 					 <i class="fas fa-search"></i>
@@ -212,7 +216,9 @@
 				  <tbody id="dclzBody">
 				  <c:choose>
 					<c:when test="${dclzTypeList.size() == 0}">
-					  <td>해당 날짜에 대한 근태현황이 없습니다.</td>
+					  <td colspan="5">
+						<div class="alert alert-light m-2 mt-4 text-center" role="alert">해당 날짜에 대한 근태현황이 없습니다.</div>
+					  </td>
 					</c:when>
 					<c:otherwise>
 					  <c:forEach var="dclzWork" items="${empDclzList}">
@@ -276,7 +282,7 @@
 								<p class="text-sm">0시간 0분</p>
 							  </c:when>
 							  <c:when test="${dclzWork.workEndTime == null}">
-								<p class="text-sm"></p>
+								<p class="text-sm">0시간 0분</p>
 							  </c:when>
 							  <c:otherwise>
 								<p class="text-sm">${dclzWork.workHour}시간 ${dclzWork.workMinutes}분</p>
