@@ -43,6 +43,7 @@
 		        </h5>
 		        <ul class="mb-0 ps-3">
 		          <li class="mb-2 text-dark"><span class="text-danger">*</span>&nbsp;&nbsp;사원의 초기 비밀번호는 java로 부여됩니다.</li>
+		          <li class="mb-2 text-dark"><span class="text-danger">*</span>&nbsp;&nbsp;소속부서가 없을 경우 초기 부서는 기타로 등록됩니다.</li>
 		        </ul>
 		      </div>
    			</div>
@@ -72,8 +73,8 @@
 						<label class="form-label required">소속팀
 								<span class="text-danger">*</span>
 						</label> 
-					    <div class="" id="lowerDepartment">
-					    
+					    <div class="d-flex gap-3" id="lowerDepartment">
+					    	
 					    </div>
 					</div>
 				  </div>
@@ -121,7 +122,8 @@
 	  	          <div class="row col-12">
 	  	          <div class="input-style-1 form-group col-4" style="margin-left:15%;">
 		            <label for="emailId" class="form-label required">이메일<span class="text-danger">*</span></label>
-		            <input type="text" name="emailId" class="form-control" id="emailId" value="" required="required">
+		            <input type="text" name="emailId" class="form-control" id="emailId" value=""
+		            	   oninput="this.value = this.value.replace(/[^a-zA-Z0-9@._-]/g, '')" 	required="required">
 		            <div class="invalid-feedback">이메일을 입력해주세요.</div>
 		          </div>
 					<div class="col-4">
@@ -163,7 +165,8 @@
 		          </div>
          		  <div class="input-style-1 form-group col-3" style="margin-left: 10px;">
 		            <label for="acnutno" class="form-label required">계좌번호<span class="text-danger"> *</span></label>
-		            <input type="text" name="acnutno" class="form-control" id="acnutno" required>
+		            <input type="text" name="acnutno" class="form-control" id="acnutno" required
+		            		oninput="this.value = this.value.replace(/[^0-9]/g, '')">
 		            <div class="invalid-feedback">계좌번호를 등록해주세요.</div>
 		          </div>
 		          <div class="input-style-1 form-group col-4" style="margin-left: 10px;">
@@ -214,24 +217,21 @@
 <%@ include file="../layout/footer.jsp" %>
 <%@ include file="../layout/prescript.jsp" %>
  <script type="text/javascript">
+ 
+ 
+ if($('#upperDept').val() === '01'){
+	$("#lowerDepartment").append(
+		`
+		<div class="d-flex">
+			<input type="radio" value="02" id="noDept" name="deptCode" checked>
+	  		<label for="noDept">부서없음</label>
+  		</div>
+  		`
+	);
+} 
+ 
+ 
 $(function(){
-	
-	
-	/*$("#emplInsertBtn").on("click", function(){
-		
- 		$("#emplInsertForm").submit();
-		
-		 Swal.fire({
-			  title: "등록되었습니다.",
-			  icon: "success",
-			  draggable: true
-			})
-			.then((result) =>{
-				if(result.isConfirmed){
-				$("#emplInsertForm").submit();
-				}
-			}); 
-		}); */
 		
 	// 급여 입력시 쉼표처리
 	const salaryInput = document.getElementById("anslry");
@@ -251,6 +251,7 @@ $(function(){
 $('#emplInsertBtn').on('click', function(e){
 	e.preventDefault();
 	
+	// 계좌
 	let anslryId = $('#anslry').val();
 	let anslry = anslryId.replaceAll(',' , '');
 	//console.log("입력한 급여 : " , anslry);
@@ -275,11 +276,27 @@ $('#emplInsertBtn').on('click', function(e){
 	$('#brthdy').val(cleanBirth);
 	//console.log($('#brthdy').val());
 	
-	swal('등록되었습니다.')
-	.then((result) => {
-		document.getElementById('emplInsertForm').requestSubmit();
-	})
+	// 이름
+	const employeeName = $('#emplNm').val();
+	// 휴대폰번호
+	const telno = $('#telno').val();
 	
+	if(!employeeName || !anslryId || !emailId || !selBirth || !telno){
+		swal({
+			icon : 'error',
+			text : '사원 정보를 입력해주세요.'
+		})
+			return false;
+	}
+	else{
+		swal({
+			icon : 'success',
+			text : '등록되었습니다.'
+		})
+		.then((result) => {
+			document.getElementById('emplInsertForm').requestSubmit();
+		})
+	}
 	return true;
 })
 
@@ -305,17 +322,15 @@ $("#upperDept").on("change", function(){
 				console.log("lowerDep : " , lowerDep.cmmnCodeNm);
 				const id = idx;
 				//console.log("id" , id);
-					
 				 $("#lowerDepartment").append(
 					`
-					 <div>
+					 <div class="d-flex">
 					 <input type="radio" value="\${lowerDep.cmmnCode}" id="\${id}" name="deptCode">
 		      		 <label for="\${id}">\${lowerDep.cmmnCodeNm}</label>
 					</div>
 					`
 				); 
  			 }) // end map   
- 			
 	})// end result
 }) // end click event
 });	// end fn

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.sevenfs.mapper.MainMapper">
 
-<!-- 결재 대기중인 갯수 가져오기 -->
+<!-- 결재 대기중인 개수 가져오기 -->
 <select id="getAtrzApprovalCnt" parameterType="String" resultType="int">
 	WITH my_turn_lines AS (					
 		    SELECT L.*
@@ -28,7 +28,7 @@
 		ORDER BY A.atrz_drft_dt DESC
 </select>	
 
-<!-- 결재 진행중 갯수 -->
+<!-- 결재 진행중 개수 -->
 <select id="getAtrzSubminCnt" parameterType="String" resultType="int">
 	SELECT COUNT(*)
 	  FROM atrz
@@ -37,7 +37,7 @@
 	   AND atrz_delete_yn = 'N'
 </select>
 
-<!-- 결재 완료 갯수  -->
+<!-- 결재 완료 개수  -->
 <select id="getAtrzCompletedCnt" parameterType="String" resultType="int">
 	SELECT COUNT(*)
 	  FROM atrz
@@ -46,13 +46,23 @@
 	   AND atrz_delete_yn = 'N'
 </select>
 
-<!-- 결재 반려 갯수 -->
+<!-- 결재 반려 개수 -->
 <select id="getAtrzRejectedCnt" parameterType="String" resultType="int">
 	SELECT COUNT(*)
 	  FROM atrz
 	 WHERE drafter_empno = #{emplNo}
 	   AND atrz_sttus_code = '20'
 	   AND atrz_delete_yn = 'N'
+</select>
+
+<!-- 미확인 메일 개수  -->
+<select id="notReadMailCnt" parameterType="String" resultType="int">
+	SELECT COUNT(*)
+	FROM mail
+	WHERE empl_no = #{emplNo}
+	AND EMAIL_TRNSMIS_TY='1'
+	AND READNG_AT='N'
+	AND DEL_AT='N'
 </select>
 
 <!-- 공지사항 목록 가져오기 (size 3) -->

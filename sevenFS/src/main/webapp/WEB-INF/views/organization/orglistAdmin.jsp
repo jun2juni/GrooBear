@@ -263,6 +263,7 @@ function clickEmp(data) {
  
 //부서 클릭 한 경우
 function clickDept(data) {
+   console.log('data : ' , data.node.children_d);
   fetch("/deptDetail?cmmnCode=" + data.node.id, {
     method : "get",
     headers : {
@@ -277,51 +278,60 @@ function clickDept(data) {
     // 부서 삭제 - 관리자만 가능
     $(function(){
       $("#deptDeleteBtn").on("click", function(){
-    	  swal({
-              title: "정말 삭제하시겠습니까?",
-              icon: "warning",
-              buttons : {
-            	  cancle : {
-            		  text : '삭제 취소',
-            		  value : false
-            	  },
-            	  confirm : {
-            		  text : '확인',
-            		  value : true
-            	  }
-              }
-              })
-          .then((willDelete) => {
-            if (willDelete) {
-              fetch("deptDelete?cmmnCode="+ data.node.id,{
-                method : "get",
-                headers : {
-                  "Content-Type": "application/json"
-                }
-              })
-                .then(resp => resp.text())
-                .then(res => {
-                  //console.log("삭제성공? : " , res);
-                })
-              swal("삭제되었습니다.", {
-                icon: "success",
-              })
-                .then((res)=>{
-                  location.href = "/orglistAdmin";
-                })
-            } else {
-            	swal({
-             		  title: "취소되었습니다.",
-             		  icon: "info",
-             		  buttons: {
-             		    confirm: {
-             		      text: "확인",
-             		      value: true
-             		    }
-             		  }
-             		});
-            }
-          });
+    	  // 하위부서팀이나 사원이 있을경우 삭제 안됨
+    	  if(data.node.children.length > 0 || data.node.children_d > 0){
+    		  swal('소속된 사원이 있어 부서 삭제가 불가능합니다.')
+    		  .then(() => {
+	    		  location.href = '/orglistAdmin';
+    		  })
+    	  }
+    	  else{
+	    	  swal({
+	              title: "정말 삭제하시겠습니까?",
+	              icon: "warning",
+	              buttons : {
+	            	  cancle : {
+	            		  text : '삭제 취소',
+	            		  value : false
+	            	  },
+	            	  confirm : {
+	            		  text : '확인',
+	            		  value : true
+	            	  }
+	              }
+	              })
+	          .then((willDelete) => {
+	            if (willDelete) {
+	              fetch("deptDelete?cmmnCode="+ data.node.id,{
+	                method : "get",
+	                headers : {
+	                  "Content-Type": "application/json"
+	                }
+	              })
+	                .then(resp => resp.text())
+	                .then(res => {
+	                  //console.log("삭제성공? : " , res);
+	                })
+	              swal("삭제되었습니다.", {
+	                icon: "success",
+	              })
+	                .then((res)=>{
+	                  location.href = "/orglistAdmin";
+	                })
+	            } else {
+	            	swal({
+	             		  title: "취소되었습니다.",
+	             		  icon: "info",
+	             		  buttons: {
+	             		    confirm: {
+	             		      text: "확인",
+	             		      value: true
+	             		    }
+	             		  }
+	             		});
+	            	}
+	          });
+    	  }
       }); // end function
     }); // end del function
   })

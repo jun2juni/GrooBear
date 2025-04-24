@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.tags.shaded.org.apache.bcel.generic.RETURN;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,28 +18,34 @@ public class MainServiceImpl implements MainService {
 	@Autowired
 	MainMapper mainMapper;
 	
-	// 대기중인 결재 갯수
+	// 대기중인 결재 개수
 	@Override
 	public int getAtrzApprovalCnt(String emplNo) {
 		return mainMapper.getAtrzApprovalCnt(emplNo);
 	}
 
-	// 진행중인 결재 갯수
+	// 진행중인 결재 개수
 	@Override
 	public int getAtrzSubminCnt(String emplNo) {
 		return mainMapper.getAtrzSubminCnt(emplNo);
 	}
 	
-	// 완료된 결재 갯수
+	// 완료된 결재 개수
 	@Override
 	public int getAtrzCompletedCnt(String emplNo) {
 		return mainMapper.getAtrzCompletedCnt(emplNo);
 	}
 
-	// 반려된 결재 갯수
+	// 반려된 결재 개수
 	@Override
 	public int getAtrzRejectedCnt(String emplNo) {
 		return mainMapper.getAtrzRejectedCnt(emplNo);
+	}
+	
+	// 미확인 메일 개수
+	@Override
+	public int notReadMailCnt(String emplNo) {
+		return mainMapper.notReadMailCnt(emplNo);
 	}
 
 	// 공지사항 게시글 가져오기
@@ -57,5 +64,7 @@ public class MainServiceImpl implements MainService {
 	public int getEmplTodayCalendar(Map<String, Object> map) {
 		return mainMapper.getEmplTodayCalendar(map);
 	}
+
+	
 	
 }

@@ -117,7 +117,7 @@ $('#jstree').on('ready.jstree', function() {
       headers : {
         "Content-Type": "application/json"
       }
-    })
+      })
       .then(resp => resp.text())
       .then(res => {
         //console.log("부서상세정보 : " , res);
@@ -126,6 +126,13 @@ $('#jstree').on('ready.jstree', function() {
         // 부서 삭제 - 관리자만 가능
         $(function(){
           $("#deptDeleteBtn").on("click", function(){
+        	  	if($('.jstree-children').length > 0){
+        	  		swal('소속된 사원이 있어 부서 삭제가 불가능합니다.')
+        	  		.then(()=>{
+        	  			location.href = '/orglistAdmin';	
+        	  		})
+        	  	}	
+          else{
             	swal({
                     title: "정말 삭제하시겠습니까?",
                     icon: "warning",
@@ -173,6 +180,7 @@ $('#jstree').on('ready.jstree', function() {
                		});
                   }
               });
+          }
           }); // end function
         }); // end del function
       })

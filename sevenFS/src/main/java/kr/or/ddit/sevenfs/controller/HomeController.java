@@ -101,6 +101,10 @@ public class HomeController {
      	int todayCalendarCnt = mainService.getEmplTodayCalendar(calMap);
      	//log.info("오늘 일정 : " + todayCalendarCnt);
         model.addAttribute("todayCalendarCnt" , todayCalendarCnt);
+        
+        // 미확인 메일 개수
+        int notReadMail = mainService.notReadMailCnt(emplNo);
+        model.addAttribute("notReadMail", notReadMail);
      	
         dclzTypeVO.setEmplNo(emplNo);
 		// 사원 출퇴근 시간 가져오기

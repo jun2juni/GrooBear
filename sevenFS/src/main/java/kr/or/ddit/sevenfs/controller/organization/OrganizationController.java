@@ -418,7 +418,7 @@ public class OrganizationController {
 	
 	// 사원 수정 확인 눌렀을때 이동
 	@PostMapping("/emplUpdatePost")
-	public String emplUpdatePost(EmployeeVO employeeVO, MultipartFile[] uploadFile, AttachFileVO attachFileVO) {
+	public String emplUpdatePost(EmployeeVO employeeVO, MultipartFile[] uploadFile, AttachFileVO attachFileVO, Principal principal) {
 		
 		//log.info("넘겨받은 employeeVO ?????? : " + employeeVO);
 		
@@ -458,17 +458,24 @@ public class OrganizationController {
 		// 사원번호 꺼내기
 		String emplNoParam = employeeVO.getEmplNo();
 		
+		// 관리자면 조직관리 페이지로 이동시키기
+		String adminEmplNo = principal.getName();
+		if(adminEmplNo.equals("20250000")) {
+			return "redirect:/orglistAdmin";
+		}
+		
 		// 수정 요청한 사원과 같으면 페이지 이동
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth != null && auth.getPrincipal() instanceof CustomUser) {
 		    CustomUser customUser = (CustomUser) auth.getPrincipal();
 		    EmployeeVO empVO = customUser.getEmpVO();
+		    log.info("sisisisiisis : " + empVO);
 		    // empVO 사용
 		    if(empVO.getEmplNo().equals(emplNoParam)) {
 		    	return "redirect:/orglist";
 		    }
 		}
-		return "redirect:/orglistAdmin";
+			return "redirect:/orglistAdmin"; 
 	}
 	
 	// 사원 삭제
