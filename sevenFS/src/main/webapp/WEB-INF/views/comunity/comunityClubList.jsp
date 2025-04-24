@@ -96,13 +96,16 @@
 				                        <td style="text-align: left;">
 				                          <div class="employee-image">
 				                            <img
-				                            	 src="/upload/${club.profileImg}" 
-				                            	 alt=""
-				                            	 style="cursor: pointer"
-				                            	 onclick="document.getElementById('hiddenProfileInput').click();"
-				                            	 >
+				                            	 src="<c:choose>
+										         <c:when test='${not empty club.profileImg}'>/upload/${club.profileImg}</c:when>
+										         <c:otherwise>/images/default.png</c:otherwise>
+										       </c:choose>"	
+										  alt=""
+										  style="cursor: pointer"
+										  onclick="document.getElementById('hiddenProfileInput').click();" />
 				                          </div>
 				                        </td>
+				                        <!--프로필 사진 끝  -->
 				                        <!-- 사원이름+이모지  -->
 				                        <td style="text-align: left; white-space: nowrap;">
 										  <!-- 이름은 무조건 출력 -->
