@@ -3,22 +3,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<style>
-.groobear-btn {
-    background-color: #2D84C8; /* 로고의 파란 계열과 어울리는 색상 */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: 500;
-    font-family: 'Segoe UI', sans-serif;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
-}
-</style>
 <header class="header mb-4">
   <div class="container-fluid">
     <div class="row">
