@@ -96,13 +96,14 @@
 					<ul id="chatRoomList" class="list-unstyled mb-0 card card-body">
 					  <c:forEach var="chatRoom" items="${chatRoomVOList}">
 						<li class="p-2 rounded border-bottom chatRoom" data-chtt-room-no="${chatRoom.chttRoomNo}" data-target-empl-no="${chatRoom.targetEmplNo}">
+						  <span class="text-xs fw-normal text-gray" style="margin-left: 49px">[${chatRoom.deptNm}, ${chatRoom.clsfNm}]</span>
 						  <div class="d-flex justify-content-between text-truncate" style="cursor: pointer">
 							<div class="d-flex flex-row">
 								<%-- 채팅방 상대 이미지 --%>
 							  <div>
 								  <%--채팅방 이미지--%>
 								<img src="/upload/${chatRoom.proflPhotoUrl}"
-									alt="avatar" class="d-flex align-self-center me-3 rounded-circle chat-avatar"
+									alt="avatar" class="d-flex align-self-center me-2 rounded-circle chat-avatar"
 									onerror="this.src='/assets/images/image-error.png'"
 								>
 								<span class="badge bg-success badge-dot"></span>
@@ -112,7 +113,6 @@
 							  <div>
 								<p class="fw-bold mb-0">
 									${chatRoom.chttRoomTy == '0' ? chatRoom.emplNm : chatRoom.chttRoomNm}
-									  <span class="text-xs fw-normal text-gray">[${chatRoom.deptNm}, ${chatRoom.clsfNm}]</span>
 								</p>
 								<p class="chat-last-msg small text-muted text-truncate-2">
 									${empty chatRoom.lastMsg ?
