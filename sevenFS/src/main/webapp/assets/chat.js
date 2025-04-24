@@ -218,6 +218,7 @@ function chatWebSocketConnect({chttRoomNo}) {
       // message.mssageWritngEmpno = emp.emplNo; // 내 번호로 변경
       // stompClientMap[chttRoomNo]?.send(`/pub/chat/reading`, {}, JSON.stringify(message));
 
+      console.log("asd")
       buildChatMessage(
         document.querySelector("#realChatList"),
         {message}
@@ -254,6 +255,8 @@ function submitMessage({messageValue, type, chttRoomNo, emplNo}) {
     mssageCn: messageValue,
     mssageCreatDt: new Date(),
     bPrevChat: false,
+    deptNm: emp.deptNm ?? "칠프스",
+    clsfNm: emp.clsfNm ?? "인턴",
   };
 
   stompClientMap[chttRoomNo]?.send(`/pub/chat/message`, {}, JSON.stringify(message));
@@ -291,10 +294,11 @@ function submitMessage({messageValue, type, chttRoomNo, emplNo}) {
  */
 function buildChatMessage(dom, {message}) {
   // 보내는 사람이랑 받는 사람이 같은 경우는 내가보낸 것
-  const messageHTML = message.mssageWritngEmpno === emp.emplNo ? `
+
+  const messageHTML = message.mssageWritngEmpno === emp.emplNo ? ` <!-- 보낸 메세지 -->
       <div class="d-flex flex-row justify-content-end">
           <div class="chat-message text-end d-flex flex-column align-items-end" style="width: 80%">
-              <p class="small me-4" style="font-size: 14px">${message.emplNm}</p>
+              <p class="small me-4" style="font-size: 14px">${message.emplNm} [${message.deptNm}, ${message.clsfNm}]</p>
               <div class="d-flex justify-content-end align-items-end me-3 mb-1">
                   <!-- 안읽은것만 -->
                   ${message.read ? `<span class="read-count-badge me-1 badge text-bg-warning" style="height: 18px;color: white !important;font-size: 10px;">1</span>` : ''}
@@ -317,7 +321,7 @@ function buildChatMessage(dom, {message}) {
                onerror="this.src='/assets/images/image-error.png'"
                alt="avatar 1" class="chat-avatar rounded-circle" style="height: 45px">
       </div>
-  ` // 보낸 메세지
+  `
     : // 받은 메세지
     `
       <div class="d-flex flex-row justify-content-start">
@@ -325,7 +329,7 @@ function buildChatMessage(dom, {message}) {
                onerror="this.src='/assets/images/image-error.png'"
                alt="avatar 1" class="chat-avatar rounded-circle" style="height: 45px;">
           <div class="chat-message d-flex flex-column align-items-start" style="width: 80%">
-              <p class="small ms-4" style="font-size: 14px">${message.emplNm}</p>
+              <p class="small ms-4" style="font-size: 14px">${message.emplNm} [${message.deptNm}, ${message.clsfNm}]</p>
               <div class="d-flex justify-content-start align-items-end ms-3 mb-1">
                 ${ message.type === TALK ?
                     `<p class="small p-2 rounded-3 bg-body-secondary">${message.mssageCn}</p>`

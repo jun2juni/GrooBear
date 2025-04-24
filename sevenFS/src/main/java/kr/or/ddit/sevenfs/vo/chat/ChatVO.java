@@ -29,6 +29,9 @@ public class ChatVO {
     private String proflPhotoUrl; // 채팅방 대표 이미지
     private String recipient; // 채팅 받는 사원 번호
 
+    private String deptNm; // 부서 정보
+    private String clsfNm; // 직급 정보
+
     private boolean read;
     private String readStr;
 

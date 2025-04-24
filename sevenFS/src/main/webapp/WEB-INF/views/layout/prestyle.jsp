@@ -3,6 +3,8 @@
   	emplNo: "${myEmpInfo.emplNo}",
     emplNM: "${myEmpInfo.emplNm}",
     proflPhotoUrl: "${myEmpInfo.proflPhotoUrl}",
+    deptNm: "${myEmpInfo.deptNm}",
+	clsfNm: "${myEmpInfo.clsfCodeNm}"
   }
 </script>
 
