@@ -99,6 +99,27 @@ String serverDate = dateFormat.format(now);
 #menu-tab {
 	color: #696969;
 }
+
+/* 업무명 40% 넓이 설정 + 좌측 정렬 */
+#urgentTaskTable th:nth-child(1),
+#urgentTaskTable td:nth-child(1) {
+  width: 40%;
+  text-align: left;
+  padding-left: 2%;
+}
+
+/* 나머지 컬럼 최소 너비 + nowrap */
+#urgentTaskTable th:nth-child(2),
+#urgentTaskTable th:nth-child(3),
+#urgentTaskTable th:nth-child(4),
+#urgentTaskTable th:nth-child(5) {
+  width: 60px;
+  white-space: nowrap;
+}
+.scroll-table {
+  max-height: 300px;
+  overflow-y: auto;
+}
 </style>
 <meta charset="UTF-8" />
 <meta name="viewport"
@@ -316,33 +337,41 @@ String serverDate = dateFormat.format(now);
 							<!-- 프로젝트 -->
 							<div class="col-lg-12">
 								<div class="card-style mb-30">
-									<h6 class="mb-10">진행중인 프로젝트 업무</h6>
-									<div class="card-body scroll-table"
-										style="max-height: 350px; overflow-y: auto;">
-										<table
-											class="table table-bordered text-center hover-highlight"
-											id="urgentTaskTable">
-											<thead class="table-light">
-												<tr>
-													<th>업무명</th>
-													<th>등급</th>
-													<th>중요도</th>
-													<th>종료일</th>
-												</tr>
-											</thead>
-											<tbody>
-												<c:forEach var="t" items="${urgentTasks}">
-													<tr>
-														<td class="text-start ps-2">${t.taskNm}</td>
-														<td><span class="badge grade-${t.taskGrad}">${t.taskGrad}</span></td>
-														<td><span class="badge priort-${t.priort}">${commonCodes['PRIORT'][t.priort]}</span></td>
-														<td><fmt:formatDate value="${t.taskEndDt}"
-																pattern="yyyy-MM-dd" /></td>
-													</tr>
-												</c:forEach>
-											</tbody>
-										</table>
+								<div class="d-flex justify-content-between align-items-center mb-3">
+									  <h6 class="mb-0 fw-bold">진행중인 프로젝트 (마감 임박 업무)</h6>
+									  <a href="/project/tab?tab=list" class="text-sm fw-bolder" style="color: #4a6cf7;">
+									    더보기 
+									    <span class="material-symbols-outlined align-middle">chevron_right</span>
+									  </a>
 									</div>
+									 <div class="card-body scroll-table">
+								    <table class="table table-bordered text-center hover-highlight" id="urgentTaskTable">
+								      <thead class="table-light">
+								        <tr>
+								          <th>[프로젝트명] 업무명</th>
+								          <th>등급</th>
+								          <th>중요도</th>
+								          <th>진행률</th>
+								          <th>종료일</th>
+								        </tr>
+								      </thead>
+										<tbody>
+								        <c:forEach var="t" items="${urgentTasks}">
+								          <tr>
+								            <td class="text-start ps-2">[${t.prjctNm}] ${t.taskNm}</td>
+								            <td><span class="badge grade-${t.taskGrad}">${t.taskGrad}</span></td>
+								            <td><span class="badge priort-${t.priort}">${commonCodes['PRIORT'][t.priort]}</span></td>
+								            <td>${t.progrsrt != null ? t.progrsrt : 0}%</td>
+								            <td><fmt:formatDate value="${t.taskEndDt}" pattern="yyyy-MM-dd"/></td>
+								          </tr>
+								        </c:forEach>
+								      </tbody>
+								    </table>
+								  </div>
+								</div>
+
+										
+								
 								</div>
 							</div>
 							<!-- 프로젝트 -->

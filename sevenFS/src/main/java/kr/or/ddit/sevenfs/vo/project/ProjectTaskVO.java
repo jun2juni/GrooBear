@@ -52,6 +52,18 @@ public class ProjectTaskVO {
 
     private List<MultipartFile> files;
     private List<AttachFileVO> attachFileList;
+    
+    private String prjctNm;
+
+    public String getPrjctNm() {
+        return prjctNm;
+    }
+
+    public void setPrjctNm(String prjctNm) {
+        this.prjctNm = prjctNm;
+    }
+
+    
 
     // 💡 간트 연동용 getter
     public String getText() {

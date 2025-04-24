@@ -78,25 +78,31 @@ public class ProjectTaskController {
 
 	    return "project/taskEditModal"; // 모달용 JSP 경로
 	}
-
-	// 업무 추가 모달 반환
+	
 	@GetMapping("/taskAddModal")
-	public String taskAddModal(@RequestParam("prjctNo") int prjctNo, Model model) {
-	    // 프로젝트 상세 + 참여자 + 업무 리스트까지 조회
+	public String taskAddModal(@RequestParam("prjctNo") int prjctNo,
+	                           @RequestParam(value = "mode", defaultValue = "default") String mode,
+	                           Model model) {
 	    ProjectVO project = projectService.projectDetail(prjctNo);
 	    model.addAttribute("project", project);
 
-	    return "project/taskAddModal"; 
+	    
+	    if ("gantt".equals(mode)) {
+	        return "project/taskAddModal_gantt";
+	    } else {
+	        return "project/taskAddModal"; // 기존 projectDetail용
+	    }
 	}
+
 
 // 프로젝트 업무 수정
 	@PostMapping("/update")
 	public String updateTask(@ModelAttribute ProjectTaskVO taskVO,
-	                         BindingResult bindingResult,
-	                         @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
-	                         @RequestParam(value = "removeFileId", required = false) int[] removeFileIds,
-	                         @RequestParam(value = "source", required = false) String source,
-	                         RedirectAttributes ra) {
+	                       BindingResult bindingResult,
+	                       @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
+	                       @RequestParam(value = "removeFileId", required = false) int[] removeFileIds,
+	                       @RequestParam(value = "source", required = false) String source,
+	                       RedirectAttributes ra) {
 
 	    // 1. 검증 오류가 있을 경우
 	    if (bindingResult.hasErrors()) {
@@ -106,6 +112,15 @@ public class ProjectTaskController {
 	    }
 
 	    log.info("📌 업무 수정 요청 - taskNo: {}", taskVO.getTaskNo());
+	    
+	    // NULL 값 처리: 업무 상태 필드가 NULL인 경우 기본값 설정
+	    if (taskVO.getTaskSttus() == null) {
+	        // 기본값으로 '대기(00)' 상태 설정
+	        taskVO.setTaskSttus("00");
+	        log.info("📌 업무 상태 NULL 감지, 기본값 '00'(대기) 설정");
+	    }
+	    
+	    // 진행률은 primitive 타입이므로 기본값은 setter에서 처리됨
 
 	    // 2. 파일 처리
 	    AttachFileVO fileVO = new AttachFileVO();
@@ -128,7 +143,6 @@ public class ProjectTaskController {
 	        return "redirect:/project/projectDetail?prjctNo=" + taskVO.getPrjctNo();
 	    }
 	}
-
 
 	
 	@GetMapping("/download")
@@ -168,6 +182,7 @@ public class ProjectTaskController {
 	        response.put("prjctNo", taskVO.getPrjctNo());
 	        
 	        return ResponseEntity.ok(response);
+	        
 	    } catch (Exception e) {
 	        log.error("업무 등록 중 오류", e);
 	        Map<String, Object> errorResponse = new HashMap<>();
@@ -176,10 +191,47 @@ public class ProjectTaskController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
 	    }
 	}
+	
+
 
 	@GetMapping("/partialList")
-	public String partialTaskList(@RequestParam("prjctNo") Long prjctNo, Model model) {
-	    ProjectVO project = projectService.projectDetail(prjctNo); // ← taskList 포함
+	public String partialTaskList(
+	        @RequestParam("prjctNo") Long prjctNo, 
+	        @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+	        Model model) {
+	    
+	    // 프로젝트 정보 조회 (taskList 포함)
+	    ProjectVO project = projectService.projectDetail(prjctNo);
+	    
+	    // 프로젝트가 존재하고 태스크 리스트가 있을 경우에만 페이지네이션 처리
+	    if (project != null && project.getTaskList() != null && !project.getTaskList().isEmpty()) {
+	        List<ProjectTaskVO> allTasks = project.getTaskList();
+	        
+	        // 페이지 파라미터 및 페이지당 아이템 수 설정
+	        int itemsPerPage = 10; // 페이지당 10개 아이템
+	        int totalItems = allTasks.size();
+	        int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
+	        
+	        // 현재 페이지 유효성 검사
+	        if (page < 1) page = 1;
+	        if (page > totalPages) page = totalPages;
+	        
+	        // 현재 페이지에 해당하는 태스크만 추출
+	        int fromIndex = (page - 1) * itemsPerPage;
+	        int toIndex = Math.min(fromIndex + itemsPerPage, totalItems);
+	        
+	        List<ProjectTaskVO> pagedTasks;
+	        if (fromIndex < totalItems) {
+	            pagedTasks = allTasks.subList(fromIndex, toIndex);
+	            // 원래 프로젝트의 태스크 리스트를 페이징된 리스트로 교체
+	            project.setTaskList(pagedTasks);
+	        }
+	        
+	        // 페이지네이션 정보 모델에 추가
+	        model.addAttribute("currentPage", page);
+	        model.addAttribute("totalPages", totalPages);
+	    }
+	    
 	    model.addAttribute("project", project);
 	    return "project/taskListPartial"; 
 	}

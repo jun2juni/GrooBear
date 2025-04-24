@@ -27,25 +27,35 @@
     <div class="card-style">
       <!-- 검색 폼 -->
       <div class="row mb-4">
-  <div class="col-md-10 mx-auto">
-    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-        
-      <form id="searchForm" class="input-group flex-grow-1 me-2" style="max-width: 700px;">
-        <input type="text" id="keywordInput" class="form-control" placeholder="프로젝트명, 카테고리, 담당자 검색" value="${param.keyword}">
-        <button type="submit" class="btn btn-primary d-flex align-items-center">
-          <span class="material-icons-outlined">search</span>
-          <span class="ms-1">검색</span>
-        </button>
-      </form>
-      <a href="/project/insert" class="btn btn-success d-flex align-items-center">
-        <span class="material-icons-outlined me-1">add</span>
-        프로젝트 생성
-      </a>
-          
+        <div class="col-md-12">
+          <div class="d-flex align-items-center justify-content-between">
+            <form id="searchForm" class="input-group" style="max-width: 700px;">
+              <input type="text" id="keywordInput" class="form-control" placeholder="프로젝트명, 카테고리, 담당자 검색" value="${param.keyword}">
+              <button type="submit" class="btn btn-primary d-flex align-items-center">
+                <span class="material-icons-outlined">search</span>
+                <span class="ms-1">검색</span>
+              </button>
+            </form>
+            
+            <div class="d-flex gap-2">
+              <a href="/project/downloadExcel?keyword=${param.keyword}" class="btn btn-outline-secondary">엑셀 다운로드</a>
+              <a href="/project/insert" class="btn btn-success d-flex align-items-center">
+                <span class="material-icons-outlined me-1">add</span>
+                프로젝트 생성
+              </a>
+            </div>
+          </div>
         </div>
       </div>
-      </div>
-
+<!-- 총 건수 표시 -->
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <div class="fw-bold">
+    <span>총 ${articlePage.total}건</span>
+    <c:if test="${not empty param.keyword}">
+      <span class="ms-2 text-primary">"${param.keyword}" 검색결과</span>
+    </c:if>
+  </div>
+</div>
       <!-- 프로젝트 목록 테이블 -->
       <div class="card shadow-sm border-0">
         <div class="card-body p-0">
@@ -60,7 +70,7 @@
                   <th class="text-center">상태</th>
                   <th class="text-center">등급</th>
                   <th class="text-center">기간</th>
-                  <th class="text-center">액션</th>
+                  <th class="text-center"></th>
                 </tr>
               </thead>
               <tbody>
@@ -87,21 +97,19 @@
                     <td class="text-center">
                       <small class="text-muted">${project.prjctBeginDateFormatted} ~ ${project.prjctEndDateFormatted}</small>
                     </td>
-					<td class="text-center">
-					  <div class="dropdown">
-					    <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
-					      <i class="material-icons-outlined">more_vert</i>
-					    </button>
-					    <ul class="dropdown-menu">
-					      <li><a class="dropdown-item gantt-tab-link" href="javascript:void(0)" onclick="loadGanttChart(${project.prjctNo})">간트차트 보기</a></li>
-					      <li><a class="dropdown-item" href="/project/projectDetail?prjctNo=${project.prjctNo}">상세보기</a></li>
-					      <li><a class="dropdown-item" href="/project/editForm?prjctNo=${project.prjctNo}">수정</a></li>
-					      <li><hr class="dropdown-divider"></li>
-					      <li><a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(event, ${project.prjctNo})">삭제</a></li>
-					    </ul>
-					  </div>
-					</td>
-					
+                    <td class="text-center">
+                      <div class="dropdown">
+                        <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
+                          <i class="material-icons-outlined">more_vert</i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="/project/projectDetail?prjctNo=${project.prjctNo}">상세보기</a></li>
+                          <li><a class="dropdown-item" href="/project/editForm?prjctNo=${project.prjctNo}">수정</a></li>
+                          <li><hr class="dropdown-divider"></li>
+                          <li><a href="javascript:void(0)" class="dropdown-item text-danger" onclick="confirmDelete(event, ${project.prjctNo})">삭제</a></li>
+                        </ul>
+                      </div>
+                    </td>
                   </tr>
                 </c:forEach>
                 <c:if test="${empty projectList}">
@@ -113,28 +121,33 @@
         </div>
 
         <!-- 페이지네이션 -->
-		<div class="d-flex justify-content-center align-items-center flex-wrap gap-3 m-4">
-		  <nav>
-		    <ul class="pagination pagination-sm mb-0">
-		      <c:if test="${articlePage.currentPage > 1}">
-		        <a class="page-link" href="javascript:void(0)" onclick="loadPage(${i})">${i}</a>
-		        <li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="loadPage(${articlePage.currentPage - 1})">&lsaquo;</a></li>
-		      </c:if>
-		
-		      <c:forEach begin="${articlePage.startPage}" end="${articlePage.endPage}" var="i">
-		        <li class="page-item ${i == articlePage.currentPage ? 'active' : ''}">
-		          <a class="page-link" href="javascript:void(0)" onclick="loadPage(${i})">${i}</a>
-		        </li>
-		      </c:forEach>
-		
-		      <c:if test="${articlePage.currentPage < articlePage.totalPages}">
-		        <li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="loadPage(${articlePage.currentPage + 1})">&rsaquo;</a></li>
-		        <li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="loadPage(${articlePage.totalPages})">&raquo;</a></li>
-		      </c:if>
-		    </ul>
-		  </nav>
-		</div>
-        
+        <div class="d-flex justify-content-center align-items-center flex-wrap gap-3 m-4">
+          <nav>
+            <ul class="pagination pagination-sm mb-0">
+              <c:if test="${articlePage.currentPage > 1}">
+                <li class="page-item">
+                  <a class="page-link" href="javascript:void(0)" onclick="loadPage(1)">&laquo;</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="javascript:void(0)" onclick="loadPage(${articlePage.currentPage - 1})">&lsaquo;</a>
+                </li>
+              </c:if>
+              <c:forEach begin="${articlePage.startPage}" end="${articlePage.endPage}" var="i">
+                <li class="page-item ${i == articlePage.currentPage ? 'active' : ''}">
+                  <a class="page-link" href="javascript:void(0)" onclick="loadPage(${i})">${i}</a>
+                </li>
+              </c:forEach>
+              <c:if test="${articlePage.currentPage < articlePage.totalPages}">
+                <li class="page-item">
+                  <a class="page-link" href="javascript:void(0)" onclick="loadPage(${articlePage.currentPage + 1})">&rsaquo;</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="javascript:void(0)" onclick="loadPage(${articlePage.totalPages})">&raquo;</a>
+                </li>
+              </c:if>
+            </ul>
+          </nav>
+        </div>
       </div>
     </div>
   </c:otherwise>
@@ -146,6 +159,11 @@ var currentPage = ${articlePage.currentPage != null ? articlePage.currentPage : 
 
 // 페이지 로드 함수 - 전역에 정의
 function loadPage(page) {
+  if (!page || isNaN(page)) {
+    console.error("유효하지 않은 페이지 번호:", page);
+    return;
+  }
+  
   console.log("페이지 로드: " + page);
   currentPage = page;
   var keyword = document.getElementById("keywordInput") ? document.getElementById("keywordInput").value : '';
@@ -163,6 +181,17 @@ function loadPage(page) {
     .catch(err => console.error("페이지 로드 실패", err));
 }
 
+// 엑셀 다운로드 함수
+window.downloadExcel = function() {
+  var keyword = document.getElementById("keywordInput") ? document.getElementById("keywordInput").value : '';
+  var encodedKeyword = encodeURIComponent(keyword);
+  
+  // 현재 사용자의 검색 키워드를 포함한 URL 생성
+  var url = "/project/downloadExcel?keyword=" + encodedKeyword;
+  
+  // 다운로드 요청
+  window.location.href = url;
+};
 
 // 삭제 확인 함수 - 전역에 정의
 function confirmDelete(event, prjctNo) {
@@ -312,12 +341,23 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
   });
+  
+  document.querySelector('a[onclick*="downloadExcel"]').addEventListener('click', function(e) {
+	    e.preventDefault();
+	    var keyword = document.getElementById("keywordInput") ? document.getElementById("keywordInput").value : '';
+	    var encodedKeyword = encodeURIComponent(keyword);
+	    
+	    // 다운로드 URL 생성
+	    var url = "/project/downloadExcel?keyword=" + encodedKeyword;
+	    
+	    // 다운로드 요청
+	    window.location.href = url;
+	  });
 });
 
-//검색
+// 검색
 document.getElementById("searchForm")?.addEventListener("submit", function(e) {
-	  e.preventDefault();
-	  loadPage(1);
-	});
-
+  e.preventDefault();
+  loadPage(1);
+});
 </script>

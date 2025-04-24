@@ -10,6 +10,7 @@
   <meta charset="UTF-8" />
   <title>${title}</title>
   <%@ include file="../layout/prestyle.jsp" %>
+  
 </head>
 <body>
 <%@ include file="../layout/sidebar.jsp" %>
@@ -28,14 +29,17 @@
               <input type="hidden" name="prjctNo" value="${task.prjctNo}" />
               <input type="hidden" name="chargerEmpno" id="chargerEmpno" value="${task.chargerEmpno}" />
               <input type="hidden" name="atchFileNo" value="${task.atchFileNo}" />
-              <input type="hidden" name="source" value="form" />
+              
+              <!-- 상위 업무 ID 추가 -->
+              <input type="hidden" name="upperTaskNo" value="${task.upperTaskNo}" />
 
-              <c:if test="${not empty task.parentTaskNm}">
-                <div class="mb-3">
-                  <label class="form-label fw-semibold">상위 업무</label>
-                  <input type="text" class="form-control bg-light" value="${task.parentTaskNm}" readonly />
-                </div>
-              </c:if>
+				<c:if test="${not empty task.parentTaskNm}">
+				  <div class="mb-3">
+				    <label class="form-label fw-semibold">상위 업무</label>
+				    <input type="text" class="form-control bg-light" value="${task.parentTaskNm}" readonly />
+				  </div>
+				</c:if>
+
 
               <div class="mb-3">
                 <label class="form-label fw-semibold">업무명</label>
@@ -73,16 +77,21 @@
                 <div class="col-md-6">
                   <label class="form-label fw-semibold">업무 등급</label>
                   <select name="taskGrad" class="form-select">
-                    <option value="A" ${task.taskGrad == 'A' ? 'selected' : ''}>A</option>
-                    <option value="B" ${task.taskGrad == 'B' ? 'selected' : ''}>B</option>
-                    <option value="C" ${task.taskGrad == 'C' ? 'selected' : ''}>C</option>
-                    <option value="D" ${task.taskGrad == 'D' ? 'selected' : ''}>D</option>
-                    <option value="E" ${task.taskGrad == 'E' ? 'selected' : ''}>E</option>
+                    <option value="A" ${task.taskGrad == 'A' ? 'selected' : ''}>A등급</option>
+                    <option value="B" ${task.taskGrad == 'B' ? 'selected' : ''}>B등급</option>
+                    <option value="C" ${task.taskGrad == 'C' ? 'selected' : ''}>C등급</option>
+                    <option value="D" ${task.taskGrad == 'D' ? 'selected' : ''}>D등급</option>
+                    <option value="E" ${task.taskGrad == 'E' ? 'selected' : ''}>E등급</option>
                   </select>
                 </div>
               </div>
 
+              <!-- 업무 상태와 진행률 -->
               <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">진행률 (%)</label>
+                  <input type="number" name="progrsrt" min="0" max="100" class="form-control" value="${task.progrsrt}" />
+                </div>
                 <div class="col-md-6">
                   <label class="form-label fw-semibold">업무 상태</label>
                   <select name="taskSttus" class="form-select">
@@ -90,10 +99,6 @@
                     <option value="01" ${task.taskSttus == '01' ? 'selected' : ''}>진행중</option>
                     <option value="02" ${task.taskSttus == '02' ? 'selected' : ''}>완료</option>
                   </select>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label fw-semibold">진행률 (%)</label>
-                  <input type="number" name="progrsrt" min="0" max="100" class="form-control" value="${task.progrsrt}" />
                 </div>
               </div>
 

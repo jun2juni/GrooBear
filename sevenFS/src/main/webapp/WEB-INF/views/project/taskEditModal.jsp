@@ -18,6 +18,9 @@
           <input type="hidden" name="atchFileNo" value="${task.atchFileNo}" />
           <input type="hidden" name="source" value="gantt" />
           
+          <!-- 중요: 상위 업무 ID 추가 -->
+          <input type="hidden" name="upperTaskNo" value="${task.upperTaskNo}" />
+          
 
           <c:if test="${not empty task.parentTaskNm}">
             <div class="mb-2">
@@ -43,7 +46,6 @@
 <c:forEach var="emp" items="${project.observerList}">
   <option value="${emp.prtcpntEmpno}" ${emp.prtcpntEmpno == task.chargerEmpno ? 'selected' : ''}>${emp.emplNm} (${emp.posNm})</option>
 </c:forEach>
-
             </select>
           </div>
 
@@ -73,11 +75,11 @@
             <div class="col-md-6">
               <label class="form-label fw-semibold">업무 등급</label>
               <select name="taskGrad" class="form-select">
-                <option value="A" ${task.taskGrad == 'A' ? 'selected' : ''}>A</option>
-                <option value="B" ${task.taskGrad == 'B' ? 'selected' : ''}>B</option>
-                <option value="C" ${task.taskGrad == 'C' ? 'selected' : ''}>C</option>
-                <option value="D" ${task.taskGrad == 'D' ? 'selected' : ''}>D</option>
-                <option value="E" ${task.taskGrad == 'E' ? 'selected' : ''}>E</option>
+                <option value="A" ${task.taskGrad == 'A' ? 'selected' : ''}>A등급</option>
+                <option value="B" ${task.taskGrad == 'B' ? 'selected' : ''}>B등급</option>
+                <option value="C" ${task.taskGrad == 'C' ? 'selected' : ''}>C등급</option>
+                <option value="D" ${task.taskGrad == 'D' ? 'selected' : ''}>D등급</option>
+                <option value="E" ${task.taskGrad == 'E' ? 'selected' : ''}>E등급</option>
               </select>
             </div>
           </div>
@@ -132,7 +134,16 @@
 </div>
 
 <script>
-(function () {
+// IIFE 패턴에서 즉시 실행 함수로 변경하여 중복 바인딩 방지
+document.addEventListener("DOMContentLoaded", function() {
+  setupModalHandler();
+});
+
+// 모달 핸들러 설정 함수 - 중복 바인딩 방지
+let isHandlerAttached = false;
+function setupModalHandler() {
+  if (isHandlerAttached) return;
+  
   const submitBtn = document.getElementById("submitEditTaskBtn");
   if (!submitBtn) {
     console.error("❌ 수정 버튼이 존재하지 않음");
@@ -147,18 +158,26 @@
     }
 
     const formData = new FormData(form);
-    formData.append("source", "gantt");
+    
+    // 이미 source 필드가 있는지 확인
+    if (!formData.has("source")) {
+      formData.append("source", "gantt");
+    }
 
     fetch("/projectTask/update", {
       method: "POST",
       body: formData
     })
-      .then(res => res.text())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error("서버 응답 오류: " + res.status);
+        }
+        return res.text();
+      })
       .then(() => {
         const modal = bootstrap.Modal.getInstance(document.getElementById("taskEditModal"));
         if (modal) modal.hide();
         if (typeof loadGanttData === "function") loadGanttData();
-        executeInlineScripts();
 
         swal("수정 완료!", "업무가 성공적으로 수정되었습니다.", "success");
       })
@@ -167,18 +186,8 @@
         swal("수정 실패", "오류가 발생했습니다.\n" + err.message, "error");
       });
   });
-})();
-
-function executeInlineScripts() {
-	  document.querySelectorAll("script").forEach(script => {
-	    const newScript = document.createElement("script");
-	    if (script.src) {
-	      newScript.src = script.src;
-	    } else {
-	      newScript.textContent = script.textContent;
-	    }
-	    document.head.appendChild(newScript).parentNode.removeChild(newScript);
-	  });
-	}
-
+  
+  isHandlerAttached = true;
+  console.log("✅ 모달 핸들러 설정 완료");
+}
 </script>

@@ -1,7 +1,10 @@
 package kr.or.ddit.sevenfs.controller.project;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,6 +13,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +45,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kr.or.ddit.sevenfs.mapper.common.CommonCodeMapper;
 import kr.or.ddit.sevenfs.mapper.project.ProjectTaskMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
@@ -392,6 +404,68 @@ public class ProjectController {
         }
     }
 
-    
+    //엑셀 다운로드
+    @GetMapping("/downloadExcel")
+    public void downloadExcel(
+            HttpServletResponse response,
+            @RequestParam(value = "currentPage", required = false, defaultValue = "1") int currentPage,
+            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword) throws IOException {
+        
+        // 모든 프로젝트를 가져오기 위해 페이지 크기를 크게 설정
+        Map<String, Object> map = new HashMap<>();
+        map.put("currentPage", 1);  // 모든 데이터를 가져오기 위해 첫 페이지로 설정
+        map.put("size", 1000);      // 큰 값으로 설정하여 모든 데이터 가져오기
+        map.put("keyword", keyword);
+        
+        List<ProjectVO> projects = projectService.projectList(map);
+        
+        // Excel 파일 생성
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("프로젝트 목록");
+        
+        // 헤더 스타일
+        CellStyle headerStyle = workbook.createCellStyle();
+        XSSFFont headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerStyle.setFont(headerFont);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+        
+        // 헤더 행 생성
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"순번", "프로젝트명", "카테고리", "책임자", "상태", "등급", "시작일", "종료일"};
+        
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+            sheet.setColumnWidth(i, 4000); // 칼럼 너비 설정
+        }
+        
+        // 데이터 행 생성
+        int rowNum = 1;
+        for (ProjectVO project : projects) {
+            Row row = sheet.createRow(rowNum++);
+            
+            row.createCell(0).setCellValue(rowNum - 1);
+            row.createCell(1).setCellValue(project.getPrjctNm());
+            row.createCell(2).setCellValue(project.getCtgryNm());
+            row.createCell(3).setCellValue(project.getPrtcpntNm());
+            row.createCell(4).setCellValue(project.getPrjctSttusNm());
+            row.createCell(5).setCellValue(project.getPrjctGrad());
+            row.createCell(6).setCellValue(project.getPrjctBeginDateFormatted());
+            row.createCell(7).setCellValue(project.getPrjctEndDateFormatted());
+        }
+        
+        // 파일 다운로드 설정
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        String fileName = URLEncoder.encode("프로젝트_목록_" + LocalDate.now() + ".xlsx", "UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+        
+        // 파일 출력
+        ServletOutputStream outputStream = response.getOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+        outputStream.close();
+    }
     
 }

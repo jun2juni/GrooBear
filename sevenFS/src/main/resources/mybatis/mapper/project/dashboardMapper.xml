@@ -3,16 +3,18 @@
 <mapper namespace="kr.or.ddit.sevenfs.mapper.project.DashboardMapper">
 
   <!--  프로젝트 상태 통계 (공통코드 기반 매핑) -->
-  <select id="countProjectByStatus" resultType="map">
-    SELECT
-      CC.CMMN_CODE_NM AS STATUS_NM,
-      COUNT(P.PRJCT_STTUS) AS CNT
-    FROM PROJECT P
-    JOIN COMMON_CODE CC
-      ON P.PRJCT_STTUS = CC.CMMN_CODE
-     AND CC.CMMN_CODE_GROUP = 'PRJCT_STTUS'
-    GROUP BY CC.CMMN_CODE_NM
-  </select>
+	<select id="countProjectByStatus" resultType="map">
+	  SELECT
+	    CC.CMMN_CODE AS STATUS_CODE,
+	    CC.CMMN_CODE_NM AS STATUS_NM,
+	    COUNT(P.PRJCT_STTUS) AS CNT
+	  FROM PROJECT P
+	  JOIN COMMON_CODE CC
+	    ON P.PRJCT_STTUS = CC.CMMN_CODE
+	   AND CC.CMMN_CODE_GROUP = 'PRJCT_STTUS'
+	  GROUP BY CC.CMMN_CODE, CC.CMMN_CODE_NM
+	</select>
+
 
   <!-- 업무 상태 통계 (진행중/완료/피드백/변경만) -->
 	<select id="countTaskMainStatus" resultType="map">
@@ -75,7 +77,7 @@
 	  WHERE T.TASK_END_DT BETWEEN SYSDATE AND SYSDATE + 7
 	  ORDER BY T.TASK_END_DT ASC
 	</select> -->
-	<select id="selectUrgentTasks" resultType="ProjectTaskVO">
+	<select id="selectUrgentTasks" resultType="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO">
 	  SELECT
 	    T.TASK_NO,
 	    T.TASK_NM,
@@ -83,19 +85,22 @@
 	    T.PROGRSRT,
 	    T.TASK_GRAD,
 	    T.PRIORT,
+	    P.PRJCT_NM AS PRJCT_NM,
 	    E.EMPL_NM AS CHARGER_EMP_NM
 	  FROM PROJECT_TASK T
+	  JOIN PROJECT P ON T.PRJCT_NO = P.PRJCT_NO
 	  LEFT JOIN EMPLOYEE E ON T.CHARGER_EMPNO = E.EMPL_NO
 	  WHERE T.TASK_END_DT IS NOT NULL
 	    AND T.TASK_END_DT BETWEEN SYSDATE AND SYSDATE + 7
 	  ORDER BY T.TASK_END_DT ASC
 	</select>
+
 	
 
 
 
   <!-- 내가 참여한 프로젝트 -->
-	<select id="selectMyProjects" parameterType="int" resultType="ProjectVO">
+	<select id="selectMyProjects" parameterType="int" resultType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
 	  SELECT 
 	    P.*,
 	    CC.CMMN_CODE_NM AS PRJCT_STTUS_NM,

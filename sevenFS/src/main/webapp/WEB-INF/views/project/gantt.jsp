@@ -23,13 +23,64 @@
     <button class="btn btn-outline-secondary" id="scale_month">월</button>
   </div>
 </div>
+<!-- 모달 삽입 영역 -->
+<div id="modalArea"></div>
 
 <div id="gantt_here" style="width: 100%; height: 600px;"></div>
 
-<!-- SweetAlert v1 -->
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<style>
+.task-status-00 .gantt_task_content {
+  background-color: #757575 !important;  
+  border-color: #616161 !important;
+  color: white;
+}
+
+
+.task-status-02 .gantt_task_content {
+  background-color: #66bb6a !important; 
+  border-color: #388e3c !important;
+  color: white;
+}
+
+.task-parent {
+  background-color: #f3e5f5 !important;
+}
+
+.gantt-saturday {
+  background-color: #e3f2fd !important; 
+}
+
+.gantt-sunday {
+  background-color: #ffebee !important;  
+}
+
+</style>
 
 <script>
+
+gantt.templates.task_class = function (start, end, task) {
+	  return "task-status-" + task.status;
+	};
+// 상위 업무(row)의 목록 색상
+gantt.templates.grid_row_class = (start, end, task) => {
+	  return (!task.parent || task.parent === 0) ? "task-parent" : "";
+	};
+
+	
+function executeInlineScripts(container) {
+	  const scripts = container.querySelectorAll("script");
+	  scripts.forEach(oldScript => {
+	    const newScript = document.createElement("script");
+	    if (oldScript.src) {
+	      newScript.src = oldScript.src;
+	    } else {
+	      newScript.textContent = oldScript.textContent;
+	    }
+	    document.body.appendChild(newScript);
+	    document.body.removeChild(newScript);
+	  });
+	}
+
 (function () {
   const prjctNo = "${prjctNo}";
   let currentStatusFilter = "";
@@ -158,15 +209,30 @@
   });
 
   document.getElementById("addTaskBtn").addEventListener("click", () => {
-    fetch(`/projectTask/taskAddModal?prjctNo=\${prjctNo}`)
-      .then(res => res.text())
-      .then(html => {
-        document.getElementById("taskAddModal")?.remove();
-        document.body.insertAdjacentHTML("beforeend", html);
-        new bootstrap.Modal(document.getElementById("taskAddModal")).show();
-      })
-      .catch(err => swal("모달 오류", "업무 추가 모달을 불러올 수 없습니다.", "error"));
-  });
+	  const prjctNo = "${prjctNo}";
+
+	  fetch(`/projectTask/taskAddModal?prjctNo=\${prjctNo}&mode=gantt`)
+	    .then(res => res.text())
+	    .then(html => {
+	      document.getElementById("modalArea").innerHTML = html;
+	      executeInlineScripts(document.getElementById("modalArea"));
+	      
+	      // ✅ 바인딩 함수 수동 실행
+	      if (typeof bindTaskAddModalEvents === "function") {
+	        bindTaskAddModalEvents();
+	      }
+
+	      new bootstrap.Modal(document.getElementById("taskAddModal")).show();
+	    })
+	    .catch(err => {
+	      console.error("모달 로딩 실패:", err);
+	      swal("오류", "업무 추가 모달을 불러오는 데 실패했습니다.", "error");
+	    });
+	});
+
+
+
+
 
   gantt.attachEvent("onAfterTaskUpdate", function (id, task) {
     const updateData = {

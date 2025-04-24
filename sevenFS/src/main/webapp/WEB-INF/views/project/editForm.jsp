@@ -10,6 +10,7 @@
   <meta charset="UTF-8" />
   <title>${title}</title>
   <c:import url="../layout/prestyle.jsp" />
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
   <c:import url="../layout/sidebar.jsp" />
@@ -17,47 +18,112 @@
     <c:import url="../layout/header.jsp" />
     <section class="section">
       <div class="container-fluid">
-		<form id="projectForm" action="/project/update" method="post" enctype="multipart/form-data">
+        <form id="projectForm" action="/project/update" method="post" enctype="multipart/form-data">
           <input type="hidden" name="prjctNo" value="${project.prjctNo}" />
           <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
               <div class="card p-4 shadow-sm">
                 <h4 class="fw-bold mb-4"><i class="fas fa-edit me-2 text-primary"></i>프로젝트 수정</h4>
 
                 <!-- 1. 기본 정보 -->
                 <h5 class="fw-semibold mb-2">1. 기본 정보</h5>
                 
-               <div class="row g-3 align-items-end">
-				  <div class="col-md-6">
-				    <label class="form-label fw-semibold">프로젝트명<span class="text-danger">*</span></label>
-				    <input type="text" name="prjctNm" class="form-control" value="${project.prjctNm}" required />
-				  </div>
-				  <div class="col-md-6">
-				    <label class="form-label fw-semibold">사업 분류 <span class="text-danger">*</span></label>
-				    <select name="ctgryNo" class="form-select" required>
-				      <option value="">사업 분류를 선택하세요</option>
-				      <option value="1" ${project.ctgryNo == 1 ? 'selected' : ''}>국가지원사업</option>
-				      <option value="2" ${project.ctgryNo == 2 ? 'selected' : ''}>법인자체사업</option>
-				      <option value="3" ${project.ctgryNo == 3 ? 'selected' : ''}>산학협력사업</option>
-				      <option value="4" ${project.ctgryNo == 4 ? 'selected' : ''}>민간수주사업</option>
-				      <option value="5" ${project.ctgryNo == 5 ? 'selected' : ''}>해외협력사업</option>
-				    </select>
-				  </div>
-				  <!-- 프로젝트 설명 (내용) -->
-					<div class="mb-3">
-					  <label class="form-label fw-semibold">프로젝트 설명 <span class="text-danger">*</span></label>
-					  <textarea name="prjctCn" class="form-control" rows="4" required>${project.prjctCn}</textarea>
-					</div>
-				  
-				  
-				</div>
+                <div class="row g-3 align-items-end">
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">프로젝트명<span class="text-danger">*</span></label>
+                    <input type="text" name="prjctNm" class="form-control" value="${project.prjctNm}" required />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">사업 분류 <span class="text-danger">*</span></label>
+                    <select name="ctgryNo" class="form-select" required>
+                      <option value="">사업 분류를 선택하세요</option>
+                      <option value="1" ${project.ctgryNo == 1 ? 'selected' : ''}>국가지원사업</option>
+                      <option value="2" ${project.ctgryNo == 2 ? 'selected' : ''}>법인자체사업</option>
+                      <option value="3" ${project.ctgryNo == 3 ? 'selected' : ''}>산학협력사업</option>
+                      <option value="4" ${project.ctgryNo == 4 ? 'selected' : ''}>민간수주사업</option>
+                      <option value="5" ${project.ctgryNo == 5 ? 'selected' : ''}>해외협력사업</option>
+                    </select>
+                  </div>
+                  
+                  <!-- 프로젝트 설명 (내용) -->
+                  <div class="col-12 mb-3">
+                    <label class="form-label fw-semibold">프로젝트 설명 <span class="text-danger">*</span></label>
+                    <textarea name="prjctCn" class="form-control" rows="4" required>${project.prjctCn}</textarea>
+                  </div>
+                </div>
 
-                <!-- 2. 참여 인원 -->
-                <h5 class="fw-semibold mb-2 mt-4">2. 참여 인원</h5>
+                <!-- 3. 세부 정보 (기본 정보 아래로 이동) -->
+                <h5 class="fw-semibold mb-2 mt-4">2. 세부 정보</h5>
+                <div class="row g-3">
+                  <div class="col-md-3">
+                    <label class="form-label fw-semibold">시작일<span class="text-danger">*</span></label>
+                    <input type="date" name="prjctBeginDate" class="form-control" value="${project.prjctBeginDateFormatted}" />
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label fw-semibold">종료일<span class="text-danger">*</span></label>
+                    <input type="date" name="prjctEndDate" class="form-control" value="${project.prjctEndDateFormatted}" />
+                  </div>
+                  
+                  <div class="col-md-3">
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">프로젝트 상태 <span class="text-danger">*</span></label>
+                      <select name="prjctSttus" class="form-select" required>
+                        <option value="">선택하세요</option>
+                        <option value="00" ${project.prjctSttus == '00' ? 'selected' : ''}>대기</option>
+                        <option value="01" ${project.prjctSttus == '01' ? 'selected' : ''}>진행중</option>
+                        <option value="02" ${project.prjctSttus == '02' ? 'selected' : ''}>완료</option>
+                        <option value="03" ${project.prjctSttus == '03' ? 'selected' : ''}>취소</option>
+                      </select>
+                    </div>
+                  </div>
+              
+                  <div class="col-md-3">
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">프로젝트 등급 <span class="text-danger">*</span></label>
+                      <select name="prjctGrad" class="form-select" required>
+                        <option value="">선택하세요</option>
+                        <option value="A" ${project.prjctGrad == 'A' ? 'selected' : ''}>A</option>
+                        <option value="B" ${project.prjctGrad == 'B' ? 'selected' : ''}>B</option>
+                        <option value="C" ${project.prjctGrad == 'C' ? 'selected' : ''}>C</option>
+                        <option value="D" ${project.prjctGrad == 'D' ? 'selected' : ''}>D</option>
+                        <option value="E" ${project.prjctGrad == 'E' ? 'selected' : ''}>E</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">수주 금액</label>
+                    <input type="text" id="prjctRcvordAmount" name="prjctRcvordAmount" class="form-control" value="<fmt:formatNumber value="${project.prjctRcvordAmount}" pattern="#,###" />" />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">URL</label>
+                    <input type="url" name="prjctUrl" class="form-control" value="${project.prjctUrl}" />
+                  </div>
+                  
+                  <!-- 주소 API 적용 -->
+		<div class="col-md-12 mb-3">
+		  <label class="form-label fw-semibold">프로젝트 주소</label>
+		  <div class="input-style-1 mb-3">
+		    <input type="text" class="form-control address-select" id="restaurantAdd1" 
+		           placeholder="주소를 입력하세요." value="${fn:substringBefore(project.prjctAdres, ',')}" required="required" style="width: 70%; background-color: white;" readonly>
+		    <div class="invalid-feedback restaurantAdd1">프로젝트 주소 찾기를 진행해주세요</div>
+		    <input type="text" class="form-control mt-3" id="addressDetail" 
+		           maxlength="30" placeholder="상세주소를 입력하세요." 
+		           value="${fn:substringAfter(project.prjctAdres, ', ')}" 
+		           required="required" style="width: 70%; background-color: white;">
+		    <div class="invalid-feedback">상세주소를 입력해주세요</div>
+		    <input type="hidden" name="prjctAdres" id="prjctAdres" value="${project.prjctAdres}" />
+		  </div>
+		</div>
+                  
+                </div>
+
+                <!-- 2. 참여 인원 (번호 수정) -->
+                <h5 class="fw-semibold mb-2 mt-4">3. 참여 인원</h5>
                 <div class="btn-group mb-3" role="group">
-                  <button type="button" class="btn btn-outline-danger open-org-chart" data-target="responsibleManager">책임자</button>
-                  <button type="button" class="btn btn-outline-primary open-org-chart" data-target="participants">참여자</button>
-                  <button type="button" class="btn btn-outline-secondary open-org-chart" data-target="observers">참조자</button>
+                  <button type="button" class="btn btn-outline-danger open-org-chart" data-bs-toggle="modal" data-bs-target="#orgChartModal" data-target="responsibleManager">책임자</button>
+                  <button type="button" class="btn btn-outline-primary open-org-chart" data-bs-toggle="modal" data-bs-target="#orgChartModal" data-target="participants">참여자</button>
+                  <button type="button" class="btn btn-outline-secondary open-org-chart" data-bs-toggle="modal" data-bs-target="#orgChartModal" data-target="observers">참조자</button>
                 </div>
                 <div class="table-responsive">
                   <table class="table table-bordered table-hover" id="selectedMembersTable">
@@ -73,119 +139,71 @@
                       </tr>
                     </thead>
                     <tbody>
-						<c:forEach var="emp" items="${project.projectEmpVOList}">
-						  <tr data-empno="${emp.prtcpntEmpno}">
-						    <td class="text-center">
-							<c:choose>
-							  <c:when test="${emp.prtcpntRole eq '00'}">책임자</c:when>
-							  <c:when test="${emp.prtcpntRole eq '01'}">참여자</c:when>
-							  <c:when test="${emp.prtcpntRole eq '02'}">참조자</c:when>
-							  <c:otherwise>알 수 없음</c:otherwise>
-							</c:choose>
-						    </td>
-						    <td>${emp.emplNm}</td>
-						    <td>${emp.deptNm}</td>
-						    <td>${emp.posNm}</td>
-						    <td>${emp.telno}</td>
-						    <td>${emp.email}</td>
-						    <td class="text-center">
-						      <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()">삭제</button>
-						    </td>
-						  </tr>
-						</c:forEach>
-
+                      <c:forEach var="emp" items="${project.projectEmpVOList}">
+                        <tr data-empno="${emp.prtcpntEmpno}" data-role="${emp.prtcpntRole}">
+                          <td class="text-center">
+                            <c:choose>
+                              <c:when test="${emp.prtcpntRole eq '00'}">책임자</c:when>
+                              <c:when test="${emp.prtcpntRole eq '01'}">참여자</c:when>
+                              <c:when test="${emp.prtcpntRole eq '02'}">참조자</c:when>
+                              <c:otherwise>알 수 없음</c:otherwise>
+                            </c:choose>
+                          </td>
+                          <td>${emp.emplNm}</td>
+                          <td>${emp.deptNm}</td>
+                          <td>${emp.posNm}</td>
+                          <td>${emp.telno}</td>
+                          <td>${emp.email}</td>
+                          <td class="text-center">
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove(); updateProjectEmpIndexes();">삭제</button>
+                          </td>
+                        </tr>
+                      </c:forEach>
                     </tbody>
                   </table>
                 </div>
-
-                <!-- 3. 세부 정보 -->
-                <h5 class="fw-semibold mb-2 mt-4">3. 세부 정보</h5>
-                <div class="row g-3">
-                  <div class="col-md-3">
-                    <label class="form-label fw-semibold">시작일<span class="text-danger">*</span></label>
-                    <input type="date" name="prjctBeginDate" class="form-control" value="${project.prjctBeginDateFormatted}" />
-                  </div>
-                  <div class="col-md-3">
-                    <label class="form-label fw-semibold">종료일<span class="text-danger">*</span></label>
-                    <input type="date" name="prjctEndDate" class="form-control" value="${project.prjctEndDateFormatted}" />
-                  </div>
-                  
-		          <div class="col-md-3">
-		            <div class="mb-4">
-		              <label class="form-label fw-semibold">프로젝트 상태 <span class="text-danger">*</span></label>
-		              <select name="prjctSttus" class="form-select" required>
-		                <option value="">선택하세요</option>
-		                <option value="00" selected>대기</option>
-		                <option value="01">진행중</option>
-		                <option value="02">완료</option>
-		                <option value="03">취소</option>
-		              </select>
-		            </div>
-		          </div>
-		
-		          <div class="col-md-3">
-		            <div class="mb-4">
-		              <label class="form-label fw-semibold">프로젝트 등급 <span class="text-danger">*</span></label>
-		              <select name="prjctGrad" class="form-select" required>
-		                <option value="">선택하세요</option>
-		                <option value="A">A</option>
-		                <option value="B">B</option>
-		                <option value="C" selected>C</option>
-		                <option value="D">D</option>
-		                <option value="E">E</option>
-		              </select>
-		            </div>
-		          </div>
-                  
-                  
-                  <div class="col-md-6">
-                    <label class="form-label fw-semibold">수주 금액</label>
-                    <input type="number" name="prjctRcvordAmount" class="form-control" value="${project.prjctRcvordAmount}" />
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label fw-semibold">URL</label>
-                    <input type="url" name="prjctUrl" class="form-control" value="${project.prjctUrl}" />
-                  </div>
-                  <div class="col-12">
-                    <label class="form-label fw-semibold">주소</label>
-                    <input type="text" name="prjctAdres" class="form-control" value="${project.prjctAdres}" />
-                  </div>
-                </div>
+                
                 <div class="mt-4 d-flex justify-content-between">
                   <a href="/project/tab?tab=list" class="btn btn-secondary">목록</a>
                   <button type="submit" class="btn btn-primary">수정 완료</button>
                 </div>
               </div>
             </div>
-
-		  <div class="col-md-4">
-		    <div class="card border rounded-3 shadow-sm">
-		      <div class="card-body p-4">
-		        <h5 class="card-title fw-bold mb-4">
-		          <i class="fas fa-sitemap text-primary me-2"></i>조직도
-		        </h5>
-		         <div class="">
-		        	 <div class="mb-1">
-		 		  	<c:import url="../organization/searchBar.jsp"></c:import>
-		 		  	</div>
-					<div class="card-style overflow-scroll" style="max-height: 90vh;" >
-				  		<c:import url="../organization/orgList.jsp" />
-					</div>
-				  </div>
-		      </div>
-		    </div>
-		  </div>
           </div>
         </form>
       </div>
     </section>
     <c:import url="../layout/footer.jsp" />
   </main>
-  <c:import url="../layout/prescript.jsp" />
   
+  <!-- 조직도 모달 -->
+  <div class="modal fade" id="orgChartModal" tabindex="-1" aria-labelledby="orgChartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orgChartModalLabel">
+            <i class="fas fa-sitemap text-primary me-2"></i>조직도
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <c:import url="../organization/searchBar.jsp"></c:import>
+          </div>
+          <div class="card-style overflow-scroll" style="max-height: 60vh;">
+            <c:import url="../organization/orgList.jsp" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <c:import url="../layout/prescript.jsp" />
 
 <script>
-
 //변수 선언
 let currentTarget = "participants"; // 기본값
 
@@ -199,8 +217,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // 조직도 로드
   loadOrgTree();
   
-  // 기존 행 스타일링
+  // 기존 행 스타일링 및 정렬
   styleExistingRows();
+  sortParticipantTable();
   
   // 폼 제출 이벤트 설정
   setupFormSubmission();
@@ -208,8 +227,34 @@ document.addEventListener('DOMContentLoaded', function() {
   // 버튼 이벤트 설정
   setupButtonEvents();
   
+  // 수주 금액 입력 이벤트 설정
+  setupAmountInputFormat();
+  
+  // 주소 초기화
+  const addr1 = document.getElementById('restaurantAdd1')?.value || '';
+  const addr2 = document.getElementById('addressDetail')?.value || '';
+  document.getElementById('prjctAdres').value = addr1 + (addr2 ? ', ' + addr2 : '');
+  
   console.log("초기화 완료");
 });
+
+// 금액 입력 포맷팅
+function setupAmountInputFormat() {
+  const amountInput = document.getElementById('prjctRcvordAmount');
+  if (!amountInput) return;
+  
+  amountInput.addEventListener('input', function(e) {
+    // 숫자만 추출
+    let value = this.value.replace(/[^\d]/g, '');
+    
+    // 천단위 콤마 추가
+    if (value) {
+      value = parseInt(value, 10).toLocaleString('ko-KR');
+    }
+    
+    this.value = value;
+  });
+}
 
 // 날짜 필드 포맷팅
 function formatDateFields() {
@@ -268,13 +313,24 @@ function setupButtonEvents() {
       if (currentTarget === 'responsibleManager') this.classList.add('btn-danger');
       else if (currentTarget === 'participants') this.classList.add('btn-primary');
       else if (currentTarget === 'observers') this.classList.add('btn-secondary');
+      
+      // 모달 타이틀 업데이트
+      let roleText = '참여자';
+      if (currentTarget === 'responsibleManager') roleText = '책임자';
+      else if (currentTarget === 'observers') roleText = '참조자';
+      
+      document.getElementById('orgChartModalLabel').innerHTML = 
+    	  '<i class="fas fa-sitemap text-primary me-2"></i>조직도 - <span class="badge ' + 
+    	  (currentTarget === 'responsibleManager' ? 'bg-danger' : currentTarget === 'participants' ? 'bg-primary' : 'bg-secondary') + 
+    	  '">' + roleText + ' 선택</span>';
     });
   });
   
   // 기본 버튼 활성화
   const defaultBtn = document.querySelector('.open-org-chart[data-target="participants"]');
   if (defaultBtn) {
-    defaultBtn.click();
+    defaultBtn.classList.add('active', 'btn-primary');
+    defaultBtn.classList.remove('btn-outline-primary');
   }
 }
 
@@ -401,19 +457,23 @@ function clickEmp(data) {
   let roleLabel = "";
   let badgeClass = "";
   let roleIcon = "";
+  let roleValue = "";
 
   if (currentTarget === "responsibleManager") {
     roleLabel = "책임자";
     badgeClass = "bg-danger";
     roleIcon = "fas fa-user-tie";
+    roleValue = "00";
   } else if (currentTarget === "participants") {
     roleLabel = "참여자";
     badgeClass = "bg-primary";
     roleIcon = "fas fa-user-check";
+    roleValue = "01";
   } else {
     roleLabel = "참조자";
     badgeClass = "bg-secondary";
     roleIcon = "fas fa-user-clock";
+    roleValue = "02";
   }
 
   // 빈 테이블 행 제거
@@ -439,7 +499,7 @@ function clickEmp(data) {
   // 새 행 추가
   const tr = document.createElement("tr");
   tr.setAttribute("data-empno", empno);
-  tr.setAttribute("data-role", currentTarget);
+  tr.setAttribute("data-role", roleValue);
   
   // 행에 클래스 추가
   if (currentTarget === 'responsibleManager') {
@@ -467,18 +527,19 @@ function clickEmp(data) {
       </button>
     </td>
     <input type="hidden" name="projectEmpVOList[0].prtcpntEmpno" value="\${empno}">
-    <input type="hidden" name="projectEmpVOList[0].prtcpntRole" value="\${currentTarget}">
+    <input type="hidden" name="projectEmpVOList[0].prtcpntRole" value="\${roleValue}">
     <input type="hidden" name="projectEmpVOList[0].prjctAuthor" value="0000">
-    <input type="hidden" name="projectEmpVOList[0].evlManEmpno" value="\${empno}">
-    <input type="hidden" name="projectEmpVOList[0].evlCn" value="프로젝트 참여">
-    <input type="hidden" name="projectEmpVOList[0].evlGrad" value="1">
-    <input type="hidden" name="projectEmpVOList[0].secsnYn" value="N">
   `;
   
   tbody.appendChild(tr);
   
-  // 인덱스 업데이트
+  // 테이블 정렬 및 인덱스 업데이트
+  sortParticipantTable();
   updateProjectEmpIndexes();
+  
+  // 모달 닫기
+  const modal = bootstrap.Modal.getInstance(document.getElementById('orgChartModal'));
+  if (modal) modal.hide();
 }
 
 // 삭제 버튼 클릭 시 참여자 제거
@@ -520,6 +581,27 @@ function updateProjectEmpIndexes() {
   });
 }
 
+// 참여자 테이블 정렬 (책임자, 참여자, 참조자 순)
+function sortParticipantTable() {
+  const tbody = document.querySelector("#selectedMembersTable tbody");
+  if (!tbody) return;
+  
+  const rows = Array.from(tbody.querySelectorAll('tr:not(.empty-row)'));
+  if (rows.length <= 1) return;
+  
+  // 역할 우선순위: 책임자(00) > 참여자(01) > 참조자(02)
+  rows.sort((a, b) => {
+    const roleA = a.getAttribute('data-role') || '';
+    const roleB = b.getAttribute('data-role') || '';
+    return roleA.localeCompare(roleB);
+  });
+  
+  // 정렬된 행 다시 추가
+  rows.forEach(row => tbody.appendChild(row));
+  
+  console.log("참여자 테이블 정렬 완료");
+}
+
 // 기존 행 스타일링
 function styleExistingRows() {
   const rows = document.querySelectorAll('#selectedMembersTable tbody tr');
@@ -532,7 +614,7 @@ function styleExistingRows() {
     if (!roleCell) return;
     
     const roleText = roleCell.textContent.trim();
-    let roleClass, badgeClass, roleIcon, roleLabel;
+    let roleClass, badgeClass, roleIcon, roleLabel, roleValue;
     
     // 역할에 따른 스타일 결정
     if (roleText.includes('책임자')) {
@@ -540,17 +622,23 @@ function styleExistingRows() {
       badgeClass = 'bg-danger';
       roleIcon = 'fas fa-user-tie';
       roleLabel = '책임자';
+      roleValue = '00';
     } else if (roleText.includes('참여자')) {
       roleClass = 'table-primary';
       badgeClass = 'bg-primary';
       roleIcon = 'fas fa-user-check';
       roleLabel = '참여자';
+      roleValue = '01';
     } else {
       roleClass = 'table-secondary';
       badgeClass = 'bg-secondary';
       roleIcon = 'fas fa-user-clock';
       roleLabel = '참조자';
+      roleValue = '02';
     }
+    
+    // 역할 값 설정
+    row.setAttribute('data-role', roleValue);
     
     // 행 클래스 설정
     row.className = roleClass;
@@ -632,7 +720,7 @@ function setupFormSubmission() {
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     
- // PRJCT_CN 필드 확인 및 기본값 설정
+    // PRJCT_CN 필드 확인 및 기본값 설정
     const prjctCnInput = document.querySelector('[name="prjctCn"]');
     if (!prjctCnInput || !prjctCnInput.value.trim()) {
       // PRJCT_CN이 없거나 비어있으면 기본값 추가
@@ -642,6 +730,13 @@ function setupFormSubmission() {
       hiddenPrjctCn.value = '프로젝트 내용 없음'; // 기본값 설정
       form.appendChild(hiddenPrjctCn);
       console.log("프로젝트 내용 기본값 설정");
+    }
+    
+    // 수주 금액 콤마 제거
+    const amountInput = document.getElementById('prjctRcvordAmount');
+    if (amountInput) {
+      const numericAmount = amountInput.value.replace(/,/g, '');
+      amountInput.value = numericAmount;
     }
     
     // 전송할 데이터 확인 (콘솔 로그)
@@ -688,11 +783,11 @@ function setupFormSubmission() {
     }
     
     // 프로젝트 번호 확인
-    const prjctNo = document.querySelector('input[name="prjctNo"]').value;
-    if (!prjctNo) {
-      alert('프로젝트 번호가 없습니다.');
-      return false;
-    }
+	 const prjctNo = document.querySelector('input[name="prjctNo"]')?.value;
+	if (!prjctNo || prjctNo.trim() === '') {
+	  swal("오류", "프로젝트 번호가 없습니다.", "error");
+	  return;
+	}
     
     // 참여자 정보 수집
     const empNos = [];
@@ -710,14 +805,7 @@ function setupFormSubmission() {
       
       if (empNoInput && roleInput) {
         empNos.push(empNoInput.value);
-        
-        // 역할 코드 변환
-        let roleCode = '01'; // 기본값: 참여자
-        const roleValue = roleInput.value;
-        if (roleValue === 'responsibleManager') roleCode = '00';
-        else if (roleValue === 'observers') roleCode = '02';
-        
-        empRoles.push(roleCode);
+        empRoles.push(roleInput.value);
       }
     });
     
@@ -737,14 +825,20 @@ function setupFormSubmission() {
       console.log(`\${key}: \${value}`);
     }
     
- // 모든 필수 필드 확인
-    const requiredFields = ['prjctNo', 'ctgryNo', 'prjctNm', 'prjctCn', 'prjctSttus', 'prjctGrad'];
+    // 모든 필수 필드 확인
+    const requiredFields = ['prjctNo', 'ctgryNo', 'prjctNm', 'prjctCn', 'prjctSttus', 'prjctGrad', 'prjctAdres', 'prjctBeginDate', 'prjctEndDate'];
     const missingFields = [];
 
     requiredFields.forEach(fieldName => {
-      const field = document.querySelector(`[name="${fieldName}"]`);
-      if (!field || !field.value.trim()) {
-        missingFields.push(fieldName);
+    	let field = document.querySelector(`[name="${fieldName}"]`);
+    	if (!field) {
+    	  // 날짜 필드처럼 name을 변경한 경우를 대비해 히든 필드도 체크
+    	  field = document.querySelector(`input[type="hidden"][name="${fieldName}"]`);
+    	}
+    	if (!field || field.value == null || field.value.trim() === '') {
+    	  missingFields.push(fieldName);
+    	}
+
         
         // 기본값 설정 (가능한 경우)
         if (fieldName === 'prjctCn') {
@@ -760,8 +854,9 @@ function setupFormSubmission() {
 
     if (missingFields.length > 0) {
       console.warn("누락된 필수 필드:", missingFields);
+      alert('필수 입력 항목을 모두 입력해주세요.');
+      return false;
     }
-    
     
     // AJAX 요청 전송
     console.log("프로젝트 수정 요청 전송...");
@@ -802,6 +897,34 @@ function setupFormSubmission() {
   });
 }
 
+// 다음 주소 검색 API
+function searchAddress() {
+  new daum.Postcode({
+    oncomplete: function(data) {
+      // 주소 정보 가져오기
+      const fullAddress = data.address;
+      const extraAddress = '';
+      
+      // 건물명이 있으면 추가
+      if (data.buildingName !== '') {
+        extraAddress += (extraAddress !== '' ? ', ' + data.buildingName : data.buildingName);
+      }
+      
+      // 주소 설정
+      document.getElementById('prjctAdres').value = fullAddress + (extraAddress !== '' ? ' (' + extraAddress + ')' : '');
+      
+      // 상세주소 입력란 표시
+      document.getElementById('detailAddress').style.display = 'block';
+      
+      // 상세주소 입력 시 이벤트 설정
+      document.getElementById('detailAdres').addEventListener('change', function() {
+        if (this.value.trim() !== '') {
+          document.getElementById('prjctAdres').value = fullAddress + (extraAddress !== '' ? ' (' + extraAddress + ')' : '') + ', ' + this.value.trim();
+        }
+      });
+    }
+  }).open();
+}
 </script>
 
 </body>

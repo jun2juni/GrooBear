@@ -64,24 +64,35 @@
 
 <section class="section">
   <div class="container-fluid">
-    <!-- 탭 메뉴 -->
-<div class="tab-grid d-grid gap-3 mb-4" id="custom-tab-buttons" role="tablist">
-  <button class="tab-btn tab-blue active" data-bs-toggle="pill" data-bs-target="#tab1">
-    <span class="material-icons-outlined">grid_view</span> 대시보드
-  </button>
-  <button class="tab-btn tab-green" data-bs-toggle="pill" data-bs-target="#tab2">
-    <span class="material-icons-outlined">format_list_bulleted</span> 프로젝트 목록
-  </button>
-  <button class="tab-btn tab-orange" data-bs-toggle="pill" data-bs-target="#tab-gantt">
-    <span class="material-icons-outlined">dvr</span> 간트차트
-  </button>
-  <button class="tab-btn tab-purple" data-bs-toggle="pill" data-bs-target="#projectKanban">
-    <span class="material-icons-outlined">view_kanban</span> 프로젝트 칸반보드
-  </button>
-  <button class="tab-btn tab-yellow" data-bs-toggle="pill" data-bs-target="#taskKanban">
-    <span class="material-icons-outlined">checklist</span> 업무 칸반보드
-  </button>
+<!-- 탭 메뉴 -->
+<div class="row mb-4" id="custom-tab-buttons" role="tablist">
+  <div class="col">
+    <button class="tab-btn tab-blue w-100 active" data-bs-toggle="pill" data-bs-target="#tab1">
+      <span class="material-icons-outlined">grid_view</span> 대시보드
+    </button>
+  </div>
+  <div class="col">
+    <button class="tab-btn tab-green w-100" data-bs-toggle="pill" data-bs-target="#tab2">
+      <span class="material-icons-outlined">format_list_bulleted</span> 프로젝트 목록
+    </button>
+  </div>
+  <div class="col">
+    <button class="tab-btn tab-orange w-100" data-bs-toggle="pill" data-bs-target="#tab-gantt">
+      <span class="material-icons-outlined">dvr</span> 간트차트
+    </button>
+  </div>
+  <div class="col">
+    <button class="tab-btn tab-purple w-100" data-bs-toggle="pill" data-bs-target="#projectKanban">
+      <span class="material-icons-outlined">view_kanban</span> 프로젝트 칸반보드
+    </button>
+  </div>
+  <div class="col">
+    <button class="tab-btn tab-yellow w-100" data-bs-toggle="pill" data-bs-target="#taskKanban">
+      <span class="material-icons-outlined">checklist</span> 업무 칸반보드
+    </button>
+  </div>
 </div>
+
 
 <!-- 탭 콘텐츠 -->
 <div class="tab-content" id="pills-tabContent">
