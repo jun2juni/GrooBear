@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
 import kr.or.ddit.sevenfs.vo.atrz.BankAccountVO;
@@ -158,6 +159,9 @@ public interface AtrzMapper {
 
 	// 결재대기문서목록 행의 수
 	public int approvalTotal(Map<String, Object> map);
+
+	//첨부파일 상세보기를 위한것
+	public List<AttachFileVO> getAtchFile(long atchFileNo);
 	
 
 	

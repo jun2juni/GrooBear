@@ -285,7 +285,6 @@ select.ui-datepicker-year {
 </head>
 <body>
 	<sec:authentication property="principal.empVO" var="empVO" />
-	<%-- <p> ${empVO.emplNm} ${empVO.emplNo}</p> --%>
 	<%@ include file="../layout/sidebar.jsp"%>
 	<main class="main-wrapper">
 		<%@ include file="../layout/header.jsp"%>
@@ -293,6 +292,9 @@ select.ui-datepicker-year {
 		<form id="atrz_ho_form" action="/atrz/insertAtrzLine" method="post" enctype="multipart/form-data">
 			<div class="container-fluid">
 				<!-- 여기서 작업 시작 -->
+
+				 <p>${atrzVO}</p>
+				 <p>${attachFileVOList}</p>
 				<div class="row">
 					<div class="col-sm-12 mb-3 mb-sm-0">
 						<!-- 결재요청 | 임시저장 | 결재선지정 | 취소  -->
@@ -384,12 +386,14 @@ select.ui-datepicker-year {
 												<table border="1" class="s_eap_draft_app">
 													<tbody>
 														<!-- 결재자: atrzTy = 'N' -->
-														<tr>
+														<tr id="trAtrzLine">
 															<th rowspan="3">결재</th>
 															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 																<c:if test="${atrzLineVO.atrzTy eq '1'}">
 																	<!-- <p>${atrzLineVO}</p> -->
-																	<td>${atrzLineVO.sanctnerClsfNm}</td>
+																	<td data-atrz-ln-sn="${atrzLineVO.atrzLnSn}" data-sanctner-empno="${atrzLineVO.sanctnerEmpno}"
+																		data-atrz-ty="${atrzLineVO.atrzTy}" data-dcrb-author-yn="${atrzLineVO.dcrbAuthorYn}"
+																		data-sanctner-clsf-code="${atrzLineVO.sanctnerClsfCode}">${atrzLineVO.sanctnerClsfNm}</td>
 																</c:if>
 															</c:forEach>
 														</tr>
@@ -571,18 +575,19 @@ select.ui-datepicker-year {
 														style="resize: none; height: 150px;" id="s_ho_co" name="atrzCn" 
 														required="required" rows="2" cols="20" wrap="hard">${atrzVO.atrzCn}</textarea>
 												</div>
-
-												
-
-												<div style="padding: 10px 0;">
-													<div class="s_frm_title">파일첨부</div>
-													<div id="s_file_upload">
-														<input type="file" name="uploadFile" id="eap_file_path" multiple />
-													</div>
-													<input type="hidden" name="fileUrl" id="fileUrl">
+												<%--첨부파일 구성하기--%>
+												<div class="mb-3">
+													<form action="/fileUpload" method="post" enctype="multipart/form-data">
+														<file-upload
+																label="첨부파일"
+																name="uploadFile"
+																max-files="1"
+																contextPath="${pageContext.request.contextPath }"
+																uploaded-file="${attachFileVOList}"
+																atch-file-no="${atrzVO.atchFileNo}"
+														></file-upload>
+													</form>
 												</div>
-
-
 											</div>
 										</div>
 									</div>
@@ -883,7 +888,7 @@ $(document).ready(function() {
 	
 		formData.append("holiUseDays", $('#s_date_cal').text());  //연차사용일수 
 
-		if(jnForm.uploadFile.files.length){
+		if(jnForm.uploadFile.files?.length){
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
 			formData.append("uploadFile",jnForm.uploadFile.files[i]);
 		}
@@ -977,7 +982,7 @@ $(document).ready(function() {
 	
 		formData.append("holiUseDays", $('#s_date_cal').text());  //연차사용일수 
 
-		if(jnForm.uploadFile.files.length){
+		if(jnForm.uploadFile.files?.length){
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
 			formData.append("uploadFile",jnForm.uploadFile.files[i]);
 		}
@@ -989,18 +994,42 @@ $(document).ready(function() {
 		*/
 		
 		let atrzLineList = [];
-		for(let i=0; i< authList.length; i++){
-			let auth = authList[i];
-			let atrzLine = {
-				atrzLnSn: auth.atrzLnSn ,
-				sanctnerEmpno: auth.emplNo,
-			    atrzTy: auth.auth,
-			    dcrbAuthorYn: auth.flex,
-				sanctnerClsfCode: auth.clsfCode,
+
+		$("#trAtrzLine").children("td").each(function(idx, atrzLine){
+			let atrzLine2 = {
+				atrzLnSn: $(this).data("atrzLnSn"),
+				sanctnerEmpno: $(this).data("sanctnerEmpno"),
+			    atrzTy: $(this).data("atrzTy"),
+			    dcrbAuthorYn: $(this).data("dcrbAuthorYn"),
+				sanctnerClsfCode:$(this).data("sanctnerClsfCode")
 			}
-			atrzLineList.push(atrzLine);			
-		}
-		console.log("atrzLineList",atrzLineList);
+			atrzLineList.push(atrzLine2);	
+
+			formData.append("atrzLineVOList["+idx+"].atrzLnSn",atrzLine2.atrzLnSn);
+			formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",atrzLine2.sanctnerEmpno);
+			formData.append("atrzLineVOList["+idx+"].atrzTy",atrzLine2.atrzTy);
+			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",atrzLine2.dcrbAuthorYn);
+			formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",atrzLine2.sanctnerClsfCode);
+		});
+
+		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
+			formData.append("removeFileId", element.value);
+		});
+
+		// console.log("authList.length : ", authList.length);
+
+		// for(let i=0; i< authList.length; i++){
+		// 	let auth = authList[i];
+		// 	let atrzLine = {
+		// 		atrzLnSn: auth.atrzLnSn ,
+		// 		sanctnerEmpno: auth.emplNo,
+		// 	    atrzTy: auth.auth,
+		// 	    dcrbAuthorYn: auth.flex,
+		// 		sanctnerClsfCode: auth.clsfCode,
+		// 	}
+			// atrzLineList.push(atrzLine);			
+		// }
+		console.log("atrzLineList : ",atrzLineList);
 
 			
 		let docHoliday = {
@@ -1014,6 +1043,7 @@ $(document).ready(function() {
 		// 가끔 VO가 depth가 깊어 복잡할 땡!, 파일과 별개로
 		// BACKEND에서 @RequestPart("test")로 받아 버리장
 		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
+		
 		formData.append("docHoliday",new Blob([JSON.stringify(docHoliday)],{type:"application/json"}));
 		
 		formData.append("emplNo",secEmplNo);
@@ -1026,6 +1056,11 @@ $(document).ready(function() {
 					console.log("error: " + error);
             }
 
+		for(const [key,value] of formData.entries()){
+			console.log(key + " => " + value);
+		}
+
+			
 		$.ajax({
 			url:"/atrz/atrzHolidayStorage",
 			processData:false,
@@ -1044,12 +1079,24 @@ $(document).ready(function() {
 						closeOnEsc: false,
 						button: "확인"
 					}).then(() => {
-						location.replace("/atrz/document");
+						//location.replace("/atrz/document");
+					});
+				}else{
+					swal({
+						title: "다시 확인해주세요",
+						text: "",
+						icon: "success",
+						closeOnClickOutside: false,
+						closeOnEsc: false,
+						button: "재시도"
+					}).then(() => {
+						//location.replace("/atrz/document");
 					});
 				}
 			},
 			error: junyError
 		})
+			
 	});
 	//임시저장 후 끝
 	

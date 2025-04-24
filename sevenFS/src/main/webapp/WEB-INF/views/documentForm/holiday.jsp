@@ -477,13 +477,15 @@ select.ui-datepicker-year {
 														required="required" rows="2" cols="20" wrap="hard"></textarea>
 												</div>
 
-												<div style="padding: 10px 0;">
-													<div class="s_frm_title">파일첨부</div>
-													<div id="s_file_upload">
-														<input type="file" name="uploadFile" id="eap_file_path" multiple />
-													</div>
-													<input type="hidden" name="fileUrl" id="fileUrl">
-												</div>
+												<form action="/fileUpload" method="post" enctype="multipart/form-data">
+													
+													<file-upload
+															label="첨부파일"
+															name="uploadFile"
+															max-files="1"
+															contextPath="${pageContext.request.contextPath }"
+													></file-upload>
+												</form>
 											</div>
 										</div>
 									</div>
@@ -828,7 +830,7 @@ $(document).ready(function() {
 		// BACKEND에서 @RequestPart("test")로 받아 버리장
 		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
 		formData.append("docHoliday",new Blob([JSON.stringify(docHoliday)],{type:"application/json"}));
-		
+		//파일업로드시 
 		formData.append("emplNo",secEmplNo);
 		formData.append("emplNm",secEmplNm);
 		formData.append("atrzDocNo",$("#s_dfNo").text());
@@ -982,7 +984,7 @@ $(document).ready(function() {
 					console.log("message: " + request.responseText)
 					console.log("error: " + error);
 			}
-
+			//길죽이 임시저장
 		$.ajax({
 			url:"/atrz/atrzHolidayStorage",
 			processData:false,
@@ -1003,6 +1005,7 @@ $(document).ready(function() {
 					}).then(() => {
 						// location.replace("/atrz/document");
 					});
+					alert("왔다");
 				}
 			},
 			error: junyError

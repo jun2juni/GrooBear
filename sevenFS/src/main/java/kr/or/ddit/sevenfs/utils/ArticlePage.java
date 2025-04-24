@@ -116,6 +116,8 @@ public class ArticlePage<T> {
 			String tab = "";
 			String keyword = "";
 			String searchType = "";
+			String fromDate = "";
+			String toDate = "";
 			
 			//Map<String,object> keyword
 			if(map!=null && map.get("duration")!=null) {
@@ -125,47 +127,62 @@ public class ArticlePage<T> {
 				tab = map.get("tab").toString();
 			}
 			if(map!=null && map.get("keyword")!=null) {
-				tab = map.get("keyword").toString();
+				keyword = map.get("keyword").toString();
 			}
 			if(map!=null && map.get("searchType")!=null) {
-				tab = map.get("searchType").toString();
+				searchType = map.get("searchType").toString();
 			}
+			if(map!=null && map.get("fromDate")!=null) {
+				fromDate = map.get("fromDate").toString();
+			}
+			if(map!=null && map.get("toDate")!=null) {
+				toDate = map.get("toDate").toString();
+			}
+			
+			
+			String baseUrl = "/atrz/approval?tab=" + tab 
+		               + "&keyword=" + keyword 
+		               + "&searchType=" + searchType 
+		               + "&duration=" + duration
+		               + "&fromDate=" + fromDate
+		               + "&toDate=" + toDate;
 			
 			
 			
 			//***** 페이징 블록 처리 시작 *****
 		      this.pagingArea += "<page-navi url='#' current='1' show-max='5' total='1'>";
 		      this.pagingArea += "<ul class='pagination w-fit mx-auto'>";
-		      this.pagingArea += "<li class='page-item'><a href='/atrz/approval?currentPage=1&tab="+tab+"&keyword="+keyword+"&searchType="+searchType+"&duration="+duration+"' class='page-link' data-page='1'>«</a></li>";
+		      this.pagingArea += "<li class='page-item'><a href='"+baseUrl+"&currentPage=1' class='page-link' data-page='1'>«</a></li>";
 		      
+		      // 이전 블럭으로 가는 링크
 		      String strHide = "";
-		      if(this.startPage < 6) {
-		         strHide = "style='display:none;'";
+		      if (this.startPage < 11) {
+		          strHide = "style='display:none;'";
 		      }
-		      this.pagingArea += "<li class='page-item' "+strHide+">";
-		      this.pagingArea += "<a href='/atrz/approval?currentPage="+(this.startPage-5)+"&tab="+tab+"&keyword="+keyword+"&searchType="+searchType+"&duration="+duration+"' class='page-link' data-page='1'>&lt;</a></li>";
+		      this.pagingArea += "<li class='page-item' " + strHide + ">";
+		      this.pagingArea += "<a href='" + baseUrl + "&currentPage=" + (this.startPage - 10) + "' class='page-link' data-page='1'>&lt;</a></li>";
 		      
 		      String str = "";      
-		      for(int pNo=this.startPage;pNo<=this.endPage;pNo++) {
-		         if(this.currentPage != pNo) {
-		            str = "";
-		         }else {
-		        	 str = "active";
-		         }
-		         this.pagingArea += "<li class='page-item "+str+"'><a href='/atrz/approval?currentPage="+pNo
-		               +"&tab="+tab+"&duration="+duration+"' class='page-link' data-page='1'>"+pNo+"</a></li>";
+		      // 페이지 번호 링크
+		      for (int pNo = this.startPage; pNo <= this.endPage; pNo++) {
+		          String active = (this.currentPage == pNo) ? "active" : "";
+		          this.pagingArea += "<li class='page-item " + active + "'>";
+		          this.pagingArea += "<a href='" + baseUrl + "&currentPage=" + pNo + "' class='page-link' data-page='1'>" + pNo + "</a></li>";
 		      }//end for
 		      
+		      // 다음 블럭으로 가는 링크
 		      String strEHide = "";
-		      if(this.endPage >= this.totalPages) {
-		         strEHide = "style='display:none;'";
+		      if (this.endPage >= this.totalPages) {
+		          strEHide = "style='display:none;'";
 		      }
-		      this.pagingArea += "<li class='page-item' "+strEHide+">";
-		      this.pagingArea += "<a href='/atrz/approval?currentPage="+(this.startPage+5)+"&tab="+tab+"&keyword="+keyword+"&searchType="+searchType+"&duration="+duration+"' class='page-link' data-page='1'>&gt;</a>";
-		      this.pagingArea += "</li>";
+		      this.pagingArea += "<li class='page-item' " + strEHide + ">";
+		      this.pagingArea += "<a href='" + baseUrl + "&currentPage=" + (this.startPage + 10) + "' class='page-link' data-page='1'>&gt;</a></li>";
+
+		      // 마지막 페이지 링크
 		      this.pagingArea += "<li class='page-item'>";
-		      this.pagingArea += "<a href='/atrz/approval?currentPage="+this.totalPages+"&tab="+tab+"&keyword="+keyword+"&searchType="+searchType+"&duration="+duration+"' class='page-link'>»</a>";
-		      this.pagingArea += "</li></ul></page-navi>";
+		      this.pagingArea += "<a href='" + baseUrl + "&currentPage=" + this.totalPages + "' class='page-link'>»</a></li>";
+
+		      this.pagingArea += "</ul></page-navi>";
 		      //***** 페이징 블록 처리 끝 *****
 		}
 	}

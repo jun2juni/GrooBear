@@ -112,6 +112,10 @@ public interface AtrzService {
 	
 	// home 결재대기문서목록
 	public List<AtrzVO> homeAtrzApprovalList(String emplNo);
+	public void deleteAtrzLineByDocNo(String atrzDocNo);
+	
+	//첨부파일 상세보기를 위한것
+	public List<AttachFileVO> getAtchFile(long atchFileNo);
 	
 	
 	

@@ -610,7 +610,7 @@
 	
 		INSERT INTO     /* AtrzMapper.insertAtrz */
 	<!-- 	전자결재번호, 기안자사번, 직급코드, 이름, 부서코드,  -->
-			 atrz
+			 ATRZ
 		(
 			  atrz_doc_no
 			, drafter_empno
@@ -618,6 +618,7 @@
 			, drafter_empnm
 			, drafter_dept
 			, bkmk_yn
+			, atch_file_no
 			, doc_form_no
 		)
 		VALUES
@@ -628,6 +629,7 @@
 			,#{emplNm}
 			,#{deptCode}
 			,'N'
+			, #{atchFileNo}
 			, #{docFormNo}
 		)
 	</insert>
@@ -719,7 +721,8 @@
 	        ATRZ_SJ = #{atrzSj},
 	        ATRZ_CN = #{atrzCn},
 	        ATRZ_TMPR_STRE_DT = SYSDATE,
-	        ATRZ_STTUS_CODE = '99'
+	        ATRZ_STTUS_CODE = '99',
+	        ATCH_FILE_NO = #{atchFileNo}
 	    WHERE ATRZ_DOC_NO = #{atrzDocNo}
 	</update>
 	
@@ -754,11 +757,12 @@
 	<insert id="atrzHolidayStorage" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
 	       INSERT INTO 
 	       			ATRZ (
-		         ATRZ_DOC_NO,
+		         ATRZ_DOC_NO
 		        ,DRAFTER_EMPNO
 		        ,DRAFTER_CLSF
 		        ,DRAFTER_EMPNM
 		        ,DRAFTER_DEPT
+		        ,ATCH_FILE_NO
 		        ,ATRZ_SJ
 		        ,ATRZ_CN
 		        ,ATRZ_TMPR_STRE_DT
@@ -766,11 +770,12 @@
 		        ,DOC_FORM_NO
 		    )
 		    VALUES (
-		         #{atrzDocNo},
+		         #{atrzDocNo}
 		        ,#{drafterEmpno}
 		        ,#{drafterClsf}
 		        ,#{drafterEmpnm}
 		        ,#{drafterDept}
+		        ,#{atchFileNo}
 		        ,#{atrzSj}
 		        ,#{atrzCn}
 		        ,SYSDATE
@@ -815,6 +820,29 @@
 	<delete id="deleteAtrzLineByDocNo" parameterType="string">
 	    DELETE FROM ATRZ_LINE WHERE ATRZ_DOC_NO = #{atrzDocNo}
 	</delete>
+	<!-- 파일 상세보기를 위한것 -->
+	<select id="getAtchFile" parameterType="long" resultType="kr.or.ddit.sevenfs.vo.AttachFileVO">
+		SELECT
+		    atch_file_no,
+		    file_sn,
+		    file_stre_path,
+		    file_nm,
+		    file_stre_nm,
+		    file_extsn,
+		    file_mime,
+		    file_size,
+		    file_view_size,
+		    dwld_co,
+		    empl_no,
+		    file_use_yn,
+		    file_creat_dt
+		FROM
+		    attatch_file
+		WHERE 
+		    atch_file_no = #{atchFileNo}
+		</select>
+	
+	
 	
 	<!-- 임시저장 select조회 상세보기 -->
 		<!-- 전자결재(임시저장포함) 상세조회 -->
@@ -906,6 +934,7 @@
 		    	,ATRZ_CN = #{atrzCn}
 		        ,DRAFTER_CLSF = #{clsfCode}
 		        ,DRAFTER_DEPT = #{deptCode}
+		        ,ATCH_FILE_NO = #{atchFileNo}
 		        ,ATRZ_DRFT_DT = SYSDATE
 		        ,ATRZ_STTUS_CODE = '10'
 		    WHERE ATRZ_DOC_NO = #{atrzDocNo}

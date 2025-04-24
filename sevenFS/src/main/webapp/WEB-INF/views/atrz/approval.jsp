@@ -76,6 +76,11 @@
 	color: gray;
 }
 
+.nav-link.active {
+  background-color: rgb(45, 132, 200); /* 원하는 색상으로 변경 */
+  color: white; /* 텍스트 색상 */
+}
+
 </style>
 <body>
 <%@ include file="../layout/sidebar.jsp" %>
@@ -259,7 +264,7 @@
 																		<p>
 																			<c:choose>
 																				<c:when test="${atrzVO.atrzSttusCode == '00' }">
-																					<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
+																					<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #dd9e5f;">진행중</span>
 																				</c:when>
 																				<c:when test="${atrzVO.atrzSttusCode == '10' }">
 																					<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
@@ -406,7 +411,7 @@
 																			<p>
 																				<c:choose>
 																					<c:when test="${atrzVO.atrzSttusCode == '00' }">
-																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
+																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #dd9e5f;">진행중</span>
 																					</c:when>
 																					<c:when test="${atrzVO.atrzSttusCode == '10' }">
 																						<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
@@ -532,7 +537,7 @@
 																			<p>
 																				<c:choose>
 																					<c:when test="${atrzVO.atrzSttusCode == '00' }">
-																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
+																						<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #dd9e5f;">진행중</span>
 																					</c:when>
 																					<c:when test="${atrzVO.atrzSttusCode == '10' }">
 																						<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>

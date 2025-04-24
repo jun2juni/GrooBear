@@ -18,6 +18,7 @@ import kr.or.ddit.sevenfs.service.notification.NotificationService;
 import kr.or.ddit.sevenfs.service.organization.DclztypeService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.utils.CommonCode;
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
 import kr.or.ddit.sevenfs.vo.atrz.BankAccountVO;
@@ -268,7 +269,6 @@ public class AtrzServiceImpl implements AtrzService {
 	    documHolidayVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
 	    atrzMapper.insertOrUpdateHoliday(documHolidayVO); // insert/update 구분해서
 	    
-	    
 	    //결재선은 기본의 것을 삭제후 새로 저장하는 방식 권장(중복방지)
 	    //여기서 새로 결재선 선택시 다시 업데이트 해줘야함
 	    atrzMapper.deleteAtrzLineByDocNo(atrzVO.getAtrzDocNo()); // 새로 추가할 것
@@ -281,6 +281,7 @@ public class AtrzServiceImpl implements AtrzService {
 	    
 	    // 연차정보 등록
 	    log.info("atrzHolidayStorage->임시저장 완료 문서번호 : "+atrzVO.getAtrzDocNo());
+	    
 		
 	    return 1;  //성공여부 반환
 	}
@@ -399,8 +400,6 @@ public class AtrzServiceImpl implements AtrzService {
 		    // 알림 전송
 		    notificationService.insertNotification(notificationVO, employeeVOList);
 		}
-		
-	    
 	    
 		//1) maxStep : 마지막 결재자 순서번호
 		//2) nextStep : 나 다음에 결재할 사람
@@ -673,8 +672,31 @@ public class AtrzServiceImpl implements AtrzService {
 //		if (atrzStorageVO == null || !"99".equals(atrzStorageVO.getAtrzSttusCode())) {
 //			throw new IllegalArgumentException("임시저장된 문서가 아닙니다.");
 //		}
+		/*
+		AtrzVO(atrzDocNo=H_20250424_00003, drafterEmpno=20250004, drafterClsf=02, drafterEmpnm=길준희, drafterDept=91, 
+		bkmkYn=N, atchFileNo=0, atrzSj=기안중 임시저장 버튼으로 파일 확인, atrzCn=기안중 임시저장 버튼으로 파일 확인, 
+		atrzOpinion=null, atrzTmprStreDt=Thu Apr 24 10:12:48 KST 2025, atrzDrftDt=null, atrzComptDt=null, 
+		atrzRtrvlDt=null, atrzSttusCode=99, eltsgnImage=null, docFormNo=1, atrzDeleteYn=N, schdulRegYn=null, 
+		docFormNm=null, emplNoArr=null, fileAttachFileVOList=null, emplNo=null, emplNm=null, clsfCode=null, 
+		clsfCodeNm=null, deptCode=null, deptCodeNm=null, authorize=null, uploadFile=null, 
+		atrzLineVOList=[AtrzLineVO(atrzDocNo=H_20250424_00003, atrzLnSn=0, sanctnerEmpno=null, sanctnerClsfCode=null, 
+		contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=null, 
+		sanctnProgrsSttusCode=null, dcrbAuthorYn=null, contdAuthorYn=null, sanctnOpinion=null, eltsgnImage=null, 
+		sanctnConfmDt=null, atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null, 
+		befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, 
+		maxAtrzLnSn=0)], holidayVO=null, spendingVO=null, salaryVO=null, bankAccountVO=null, draftVO=null,
+		 emplDetailList=null, authorStatus=null, sanctnProgrsSttusCode=null)
+		 */
 		log.info("getAtrzStorage->atrzStorageVO : "+atrzStorageVO);
 		List<AtrzLineVO> atrzStorageVOList = atrzStorageVO.getAtrzLineVOList();
+		/* atrzLnSn=0이 0이면 안됨
+		AtrzLineVO(atrzDocNo=H_20250424_00003, atrzLnSn=0, sanctnerEmpno=null, sanctnerClsfCode=null, 
+		contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=null, 
+		sanctnProgrsSttusCode=null, dcrbAuthorYn=null, contdAuthorYn=null, sanctnOpinion=null, eltsgnImage=null, 
+		sanctnConfmDt=null, atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null, 
+		befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, 
+		maxAtrzLnSn=0)]
+		 */
 		log.info("getAtrzStorage->atrzStorageVOList : "+atrzStorageVOList);
 		
 		atrzStorageVO.getAtrzLineVOList();
@@ -708,30 +730,44 @@ public class AtrzServiceImpl implements AtrzService {
 	@Override
 	public void updateHoliday(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, HolidayVO documHolidayVO) throws Exception {
 		
-	    // 1. 사원 정보 보완
-	    EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
-	    atrzVO.setClsfCode(emplDetail.getClsfCode());
-	    atrzVO.setDeptCode(emplDetail.getDeptCode());
-		
+		// 1. 사원 정보 보완
+	    if (atrzVO != null && atrzVO.getEmplNo() != null) {
+	        EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
+	        if (emplDetail != null) {
+	            atrzVO.setClsfCode(emplDetail.getClsfCode());
+	            atrzVO.setDeptCode(emplDetail.getDeptCode());
+	        }
+	    }
+
 	    // 2. 연차 날짜 설정
-	    String holiStartStr = documHolidayVO.getHoliStartArr()[0] + " " + documHolidayVO.getHoliStartArr()[1] + ":00";
-	    String holiEndStr = documHolidayVO.getHoliEndArr()[0] + " " + documHolidayVO.getHoliEndArr()[1] + ":00";
-	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    documHolidayVO.setHoliStart(sdf.parse(holiStartStr));
-	    documHolidayVO.setHoliEnd(sdf.parse(holiEndStr));
-	    documHolidayVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
+	    if (documHolidayVO != null && documHolidayVO.getHoliStartArr() != null && documHolidayVO.getHoliEndArr() != null) {
+	        String holiStartStr = documHolidayVO.getHoliStartArr()[0] + " " + documHolidayVO.getHoliStartArr()[1] + ":00";
+	        String holiEndStr = documHolidayVO.getHoliEndArr()[0] + " " + documHolidayVO.getHoliEndArr()[1] + ":00";
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	        documHolidayVO.setHoliStart(sdf.parse(holiStartStr));
+	        documHolidayVO.setHoliEnd(sdf.parse(holiEndStr));
+	        documHolidayVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
+	    }
 
-	    // 3. 전자결재 테이블 업데이트
-	    atrzMapper.updateHolidayAtrz(atrzVO); // 기존 insertUpdateAtrz 메서드 분리 권장
+	    // 3. 전자결재 테이블 업데이트 (null 아닐 때만)
+	    if (atrzVO != null) {
+	        atrzMapper.updateHolidayAtrz(atrzVO);
+	    }
 
-	    // 4. 연차 신청서 테이블 업데이트 (중복 여부 고려)
-	    atrzMapper.updateOrInsertHoliday(documHolidayVO);
+	    // 4. 연차 신청서 테이블 업데이트 (null 아닐 때만)
+	    if (documHolidayVO != null) {
+	        atrzMapper.updateOrInsertHoliday(documHolidayVO);
+	    }
 
-	    // 5. 결재선 목록 등록 (기존 삭제 후 재등록 방식 고려)
-	    atrzMapper.deleteAtrzLineByDocNo(atrzVO.getAtrzDocNo()); // 기존 데이터 제거
-	    for (AtrzLineVO atrzLineVO : atrzLineList) {
-	    	atrzLineVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
-	        atrzMapper.updateAtrzLine(atrzLineVO);
+	    // 5. 결재선 목록 등록 (null 체크 + 비어있는 리스트 여부 확인)
+	    if (atrzLineList != null && !atrzLineList.isEmpty()) {
+	        atrzMapper.deleteAtrzLineByDocNo(atrzVO.getAtrzDocNo()); // 기존 데이터 제거
+	        for (AtrzLineVO atrzLineVO : atrzLineList) {
+	            if (atrzLineVO != null) {
+	                atrzLineVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
+	                atrzMapper.updateAtrzLine(atrzLineVO);
+	            }
+	        }
 	    }
 	    
 	    
@@ -804,6 +840,21 @@ public class AtrzServiceImpl implements AtrzService {
 	public int approvalTotal(Map<String,Object> map) {
 		return atrzMapper.approvalTotal(map);
 	}
+
+	//임시저장후 결재선 재등록시 결재선 삭제처리
+	@Override
+	public void deleteAtrzLineByDocNo(String atrzDocNo) {
+		atrzMapper.deleteAtrzLineByDocNo(atrzDocNo);
+	}
+
+	//첨부파일 상세보기를 위한것
+	@Override
+	public List<AttachFileVO> getAtchFile(long atchFileNo) {
+		return atrzMapper.getAtchFile(atchFileNo);
+	}
+
+
+	
 	
 	
 

@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -35,6 +38,7 @@ import kr.or.ddit.sevenfs.service.atrz.AtrzService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.utils.CommonCode;
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
@@ -50,17 +54,19 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/atrz")
 public class AtrzController {
-
-	@Autowired
-	private AtrzService atrzService;
+	
+	@Value("${file.save.abs.path}")
+	private String saveDir;
+	
 	
 	@Autowired
-	private AtrzMapper atrzMapper;
+	private AtrzService atrzService;
 	
 	// 사원 정보를 위해 가져온것
 	@Autowired
 	private OrganizationService organizationService;
 
+	
 	// 파일 전송을 위한 방법
 	@Autowired
 	private AttachFileService attachFileService;
@@ -315,7 +321,7 @@ public class AtrzController {
 	// 전자결재 상세보기
 	@GetMapping("/selectForm/atrzDetail")
 	public String selectAtrzDetail(@RequestParam String atrzDocNo, Model model
-			,@AuthenticationPrincipal CustomUser customUser) {
+			,@AuthenticationPrincipal CustomUser customUser,String fileName) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String empNo = empVO.getEmplNo();
@@ -330,6 +336,9 @@ public class AtrzController {
 		AtrzVO atrzVO = atrzService.getAtrzDetail(atrzDocNo);
 		log.info("selectAtrzDetail->atrzVO: " + atrzVO);
 		
+		//첨부파일 조회를 위한것
+		List<AttachFileVO> attachFileVOList = attachFileService.getFileAttachList(atrzVO.getAtchFileNo());
+		log.info("selectAtrzDetail->attachFileVOList: " + attachFileVOList);
 		String drafterEmplNo = atrzVO.getDrafterEmpno();
 		EmployeeVO drafterInfo = organizationService.emplDetail(drafterEmplNo);
 		atrzVO.setEmplNm(drafterInfo.getEmplNm());
@@ -419,6 +428,10 @@ public class AtrzController {
 		model.addAttribute("sanEmplVOList",sanEmplVOList);
 		model.addAttribute("atrzVO", atrzVO);
 		model.addAttribute("employeeVO", drafterInfo);
+		
+		//파일불러오기모델이 담기
+		model.addAttribute("attachFileVOList",attachFileVOList);
+		attachFileService.downloadFile(fileName);
 		
 		//제목설정을 위한것
 		String title = switch (docPrefix) {
@@ -563,61 +576,7 @@ public class AtrzController {
 	
 	
 	
-	
-	// 지출결의서 양식조회
-	@GetMapping("/selectForm/spendingForm")
-	public String selectSpendingForm() {
-		return "documentForm/spendingForm";
-	}
 
-	// 지출결의서 입력양식
-	@GetMapping("/selectForm/spending")
-	public String selectSpending(Model model) {
-		model.addAttribute("title", "지출결의서");
-		return "documentForm/spending";
-	}
-
-	// 기안서 양식조회
-	@GetMapping("/selectForm/draftForm")
-	public String selectDraftForm(Model model) {
-		model.addAttribute("title", "기안서");
-		return "documentForm/draftForm";
-	}
-
-	// 1) 기안서 입력양식
-	@GetMapping("/selectForm/draft")
-	public String selectDraft(Model model) {
-		model.addAttribute("title", "기안서");
-		return "documentForm/draft";
-	}
-
-	// 급여명세서 양식조회
-	@GetMapping("/selectForm/salaryForm")
-	public String selectSalaryForm(Model model) {
-		model.addAttribute("title", "급여명세서");
-		return "documentForm/salaryForm";
-	}
-
-	// 급여명세서 입력양식
-	@GetMapping("/selectForm/salary")
-	public String selectSalary(Model model) {
-		model.addAttribute("title", "급여명세서");
-		return "documentForm/salary";
-	}
-
-	// 급여계좌변경신청서 양식조회
-	@GetMapping("/selectForm/bankAccountForm")
-	public String bankAccountForm(Model model) {
-		model.addAttribute("title", "급여계좌변경신청서");
-		return "documentForm/bankAccountForm";
-	}
-
-	// 급여계좌변경신청서 입력양식
-	@GetMapping("/selectForm/bankAccount")
-	public String bankAccount(Model model) {
-		model.addAttribute("title", "급여계좌변경신청서");
-		return "documentForm/bankAccount";
-	}
 
 	// 기안자 정보 등록 전자결재 등록
 	// 결재선지정 시 직원명 클릭하면 emplNo을 파라미터로 받아 DB select를 하여 JSON String으로 해당 직원 정보를 응답해줌
@@ -718,7 +677,7 @@ public class AtrzController {
 	//연차신청서 임시저장 불러오기 
 	@GetMapping("selectForm/getAtrzStorage")
 	public String getAtrzStorage(@RequestParam String atrzDocNo, Model model
-			,@AuthenticationPrincipal CustomUser customUser) {
+			,@AuthenticationPrincipal CustomUser customUser,String fileName) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String empNo = empVO.getEmplNo();
@@ -726,6 +685,17 @@ public class AtrzController {
 		
 		AtrzVO atrzVO = atrzService.getAtrzStorage(atrzDocNo);
 
+		
+		//첨부파일 조회를 위한것
+		List<AttachFileVO> attachFileVOList = attachFileService.getFileAttachList(atrzVO.getAtchFileNo());
+		
+		log.info("getAtrzStorage->atrzVO: " + atrzVO);
+		log.info("getAtrzStorage->attachFileVOList: " + attachFileVOList);
+		
+		//파일불러오기모델이 담기
+		model.addAttribute("attachFileVOList",attachFileVOList);
+		attachFileService.downloadFile(fileName);
+		
 		Double checkHo= atrzService.readHoCnt(empNo);
 		model.addAttribute("checkHo",checkHo);
 		model.addAttribute("atrzVO",atrzVO);
@@ -750,7 +720,7 @@ public class AtrzController {
 	
 	
 	
-	//임시저장 연차신청서  업데이트()
+	//임시저장 연차신청서 업데이트()
 	@ResponseBody
 	@PostMapping("atrzHolidayUpdate")
 	public String updateHolidayForm(AtrzVO atrzVO, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList,
@@ -771,13 +741,26 @@ public class AtrzController {
 	// 연차신청서 등록(문서번호가 이미 있는 상태임)
 	@ResponseBody
 	@PostMapping(value = "atrzHolidayInsert")
-	public String insertHolidayForm(AtrzVO atrzVO, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList,
-			@RequestPart("docHoliday") HolidayVO documHolidayVO) {
+	public String insertHolidayForm(AtrzVO atrzVO
+			,@RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList
+			,@RequestPart("docHoliday") HolidayVO documHolidayVO
+			,@RequestParam(value = "uploadFile",required = false) MultipartFile[] uploadFile) {
 
 		log.info("atrz(최초) : {}", atrzVO);
 		log.info("atrzLineList(최초) : {}", atrzLineList);
 		log.info("documHolidayVO(최초) : {}", documHolidayVO);
-
+		
+		// 파일 업로드 처리 (있는 경우만)
+	    if (uploadFile != null && uploadFile[0].getOriginalFilename().length() > 0) {
+	        long attachFileNm = attachFileService.insertFileList("atrzUploadFile", uploadFile);
+	        log.info("업로드된 파일 수: "+ attachFileNm);
+	        // VO에 파일 번호 저장
+	        //파일다운로드를 위한것
+	        atrzVO.setAtchFileNo(attachFileNm);
+	    }
+		//파일확인
+		log.info("업로드된 파일 수: "+ uploadFile.length);
+		
 		// 여기서 담기지 않았음.. 사원정보가 오지 않음
 
 		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
@@ -832,7 +815,6 @@ public class AtrzController {
 		int documHolidayResult = atrzService.insertHoliday(documHolidayVO);
 		log.info("insertHolidayForm->documHolidayResult : " + documHolidayResult);
 		
-		
 		return "쭈니성공";
 	}
 	
@@ -840,13 +822,57 @@ public class AtrzController {
 	@ResponseBody
 	@PostMapping(value = "atrzHolidayStorage")
 	public String atrzHolidayStorage(
-			AtrzVO atrzVO
+			  AtrzVO atrzVO
 			, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList
 			, @RequestPart("docHoliday") HolidayVO documHolidayVO
-			) {
+			, int[] removeFileId
+			,@RequestParam(value = "uploadFile",required = false) MultipartFile[] uploadFile) {
+		
+		/*
+		AtrzVO(atrzDocNo=H_20250424_00003, drafterEmpno=null, drafterClsf=null, drafterEmpnm=null, drafterDept=null, 
+		bkmkYn=null, atchFileNo=0, atrzSj=기안중 임시저장 버튼으로 파일 확인, atrzCn=기안중 임시저장 버튼으로 파일 확인, 
+		atrzOpinion=null, atrzTmprStreDt=null, atrzDrftDt=null, atrzComptDt=null, atrzRtrvlDt=null, 
+		atrzSttusCode=null, eltsgnImage=null, docFormNo=1, atrzDeleteYn=null, schdulRegYn=null, docFormNm=H, 
+		emplNoArr=null, fileAttachFileVOList=null, emplNo=20250004, emplNm=길준희, clsfCode=null, clsfCodeNm=null,
+		 deptCode=null, deptCodeNm=null, authorize=null, uploadFile=null, atrzLineVOList=null, holidayVO=null, 
+		 spendingVO=null, salaryVO=null, bankAccountVO=null, draftVO=null, emplDetailList=null, authorStatus=null, 
+		 sanctnProgrsSttusCode=null)
+		 */
 		log.info("atrzHolidayStorage->atrzVO : " + atrzVO);
+		//1) 
+		//여기서 결재문서번호를 활용해서 atrzVO에 다시 셋팅해준다.
+		AtrzVO atrzStorageVO = atrzService.getAtrzStorage(atrzVO.getAtrzDocNo());
+		log.info("atrzHolidayStorage->atrzStorageVO : " + atrzStorageVO);
+		
+		//2) atrzVO의 atrzLineVOList를 atrzLineList에 할당
+		//*** atrzHolidayStorage->atrzLineList : []
 		log.info("atrzHolidayStorage->atrzLineList : " + atrzLineList);
+		/*HolidayVO(holiActplnNo=0, atrzDocNo=null, holiCode=23, holiStartArr=[2025-05-07, 09:00:00], 
+		holiStart=null, holiEndArr=[2025-05-07, 18:00:00], holiEnd=null, holiUseDays=0, holiDelete=null, 
+				atrzLineVOList=null, atrzVO=null)
+		*/
 		log.info("atrzHolidayStorage->documHolidayVO : " + documHolidayVO);
+		
+		// 파일 업로드 처리 (있는 경우만)
+		if (uploadFile != null && uploadFile[0].getOriginalFilename().length() > 0) {
+		    if (atrzStorageVO.getAtchFileNo() == 0L) {
+		        // 기존 파일이 없으면 insert
+		        long attachFileNo = attachFileService.insertFileList("atrzUploadFile", uploadFile);
+		        atrzVO.setAtchFileNo(attachFileNo);
+		        log.info("신규 업로드된 파일 번호: " + attachFileNo);
+		    } else {
+		    	 // 기존 파일이 있으면 update
+		        AttachFileVO attachFileVO = new AttachFileVO();
+		        attachFileVO.setAtchFileNo(atrzStorageVO.getAtchFileNo()); // 여기!!
+		        attachFileVO.setRemoveFileId(removeFileId);
+		        attachFileService.updateFileList("atrzUploadFile", uploadFile, attachFileVO);
+		        atrzVO.setAtchFileNo(atrzStorageVO.getAtchFileNo()); // VO에 기존 번호 세팅해줘야 이후 로직에도 활용 가능
+		        log.info("기존 파일 번호 " + atrzStorageVO.getAtchFileNo() + "에 파일 업데이트 완료");
+		    }
+		}
+		// 파일 확인 로그
+		log.info("업로드된 파일 배열: " + Arrays.toString(uploadFile));
+		
 		
 		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
 		// 여기서 VO를 하나 씩 담아야 하는건가...싶다.
@@ -913,7 +939,8 @@ public class AtrzController {
 //		String atrzDocNo = atrzVO.getAtrzDocNo();
 		log.info("updateAtrzLine->atrzVO"+atrzVO);
 		List<AtrzLineVO> atrzLineList = atrzVO.getAtrzLineVOList();
-		atrzMapper.deleteAtrzLineByDocNo(atrzDocNo);
+		//임시저장후 결재선 다시 지정시 결재선 삭제 처리
+		atrzService.deleteAtrzLineByDocNo(atrzDocNo);
 		for(AtrzLineVO atrzLineVO : atrzLineList) {
 			atrzLineVO.setAtrzDocNo(atrzDocNo);
 			atrzService.updateAtrzLine(atrzLineVO);
@@ -1102,6 +1129,61 @@ public class AtrzController {
 
 		return "쭈니성공";
 	}
+	
+	
+	// 지출결의서 양식조회
+	@GetMapping("/selectForm/spendingForm")
+	public String selectSpendingForm() {
+		return "documentForm/spendingForm";
+	}
 
+	// 지출결의서 입력양식
+	@GetMapping("/selectForm/spending")
+	public String selectSpending(Model model) {
+		model.addAttribute("title", "지출결의서");
+		return "documentForm/spending";
+	}
+
+	// 기안서 양식조회
+	@GetMapping("/selectForm/draftForm")
+	public String selectDraftForm(Model model) {
+		model.addAttribute("title", "기안서");
+		return "documentForm/draftForm";
+	}
+
+	// 1) 기안서 입력양식
+	@GetMapping("/selectForm/draft")
+	public String selectDraft(Model model) {
+		model.addAttribute("title", "기안서");
+		return "documentForm/draft";
+	}
+
+	// 급여명세서 양식조회
+	@GetMapping("/selectForm/salaryForm")
+	public String selectSalaryForm(Model model) {
+		model.addAttribute("title", "급여명세서");
+		return "documentForm/salaryForm";
+	}
+
+	// 급여명세서 입력양식
+	@GetMapping("/selectForm/salary")
+	public String selectSalary(Model model) {
+		model.addAttribute("title", "급여명세서");
+		return "documentForm/salary";
+	}
+
+	// 급여계좌변경신청서 양식조회
+	@GetMapping("/selectForm/bankAccountForm")
+	public String bankAccountForm(Model model) {
+		model.addAttribute("title", "급여계좌변경신청서");
+		return "documentForm/bankAccountForm";
+	}
+
+	// 급여계좌변경신청서 입력양식
+	@GetMapping("/selectForm/bankAccount")
+	public String bankAccount(Model model) {
+		model.addAttribute("title", "급여계좌변경신청서");
+		return "documentForm/bankAccount";
+	}
 
 }

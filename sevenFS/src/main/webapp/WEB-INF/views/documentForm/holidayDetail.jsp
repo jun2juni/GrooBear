@@ -106,6 +106,8 @@
 			<div class="container-fluid">
 				<!-- 여기서 작업 시작 -->
 				<!-- <p>${atrzVO}</p> -->
+				<p>${attachFileVOList}</p>
+				<!-- <p>${attachFileVOList[0].fileStrePath}</p> -->
 				<!-- <p>${sanEmplVOList}</p> -->
 				<div class="row">
 					<div class="col-sm-12 mb-3 mb-sm-0">
@@ -405,16 +407,63 @@
 														style="resize: none; height: 150px;" id="s_ho_co" name="atrzCn" 
 														disabled rows="2" cols="20" wrap="hard">${atrzVO.atrzCn}</textarea>
 												</div>
-
-												<div style="padding: 10px 0;">
-													<div class="s_frm_title">파일첨부</div>
-													<div id="s_file_upload">
-														<input type="file" name="uploadFile" id="eap_file_path" multiple  disabled/>
-													</div>
-													<input type="hidden" name="fileUrl" id="fileUrl">
+												<%--첨부파일 구성하기--%>
+												<div class="mb-3">
+													<div class="s_frm_title mb-2"> 미리보기</div>
+													<c:if test="${not empty attachFileVOList}">
+														<div class="d-flex flex-wrap gap-3 mt-2">
+														<c:forEach var="attachFileVO" items="${attachFileVOList}">
+															<c:set var="ext" value="${fn:toLowerCase(fn:substringAfter(attachFileVO.fileNm, '.'))}" />
+															<c:choose>
+																<%-- 이미지 파일일 경우 썸네일로 출력 --%>
+																<c:when test="${ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'gif' || ext == 'bmp'}">
+																	<div class="border rounded p-3 bg-light d-inline-flex flex-column align-items-center" style="max-width: 450px;">
+																	<!-- <a class="attachment-item" href="/download?fileName=${attachFileVO.fileStrePath}"> -->
+																		<img src="/upload/${attachFileVO.fileStrePath}" 
+																			alt="${attachFileVO.fileNm}" 
+																			style="max-width: 300px; max-height: 300px; object-fit: cover;" />
+																	<!-- </a> -->
+																	<div class="mt-2 text-truncate w-100 text-center" style="max-width: 180px;" title="${attachFileVO.fileNm}">
+																		${attachFileVO.fileNm}
+																	</div>
+																	</div>
+																</c:when>
+															<%-- 그 외 파일은 아이콘으로 출력 --%>
+															<c:otherwise>
+																<div class="border p-2 rounded bg-light">
+																	<a class="attachment-item" href="/download?fileName=${attachFileVO.fileStrePath}">
+																	<i class="far fa-attachFileVO-pdf attachment-icon"></i>
+																	<span class="attachment-name">${attachFileVO.fileNm} (${attachFileVO.fileViewSize})</span>
+																	</a>
+																</div>
+															</c:otherwise>
+															</c:choose>
+														</c:forEach>
+														</div>
+													</c:if>
+													
+													<c:if test="${empty attachFileVOList}">
+														<p class="text-muted">첨부파일이 없습니다.</p>
+													</c:if>
 												</div>
 
-
+													<!-- 대현님 첨부파일다운로드-->
+													<div class="email-detail-attachments">
+														<div class="attachment-title">첨부파일 (${attachFileVOList.size()})</div>
+														<div class="attachment-list">
+															<c:forEach items="${attachFileVOList}" var="attachFileVO">
+															<a class="attachment-item" href="/download?fileName=${attachFileVO.fileStrePath}">
+																<i class="far fa-file-pdf attachment-icon"></i>
+																<span class="attachment-name">${attachFileVO.fileNm} (${attachFileVO.fileViewSize})</span>
+															</a>
+															<!-- <div class="attachment-item">
+																<i class="far fa-file-pdf attachment-icon"></i>
+																<span class="attachment-name">${attachFileVO.fileNm} (${attachFileVO.fileViewSize})</span>
+															</div> -->
+															</c:forEach>
+														</div>
+														</div>
+													<!-- 대현님 첨부파일다운로드-->
 											</div>
 										</div>
 									</div>

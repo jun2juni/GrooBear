@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.Data;
 
@@ -17,7 +18,8 @@ public class AtrzVO {
 	private String drafterEmpnm; //기안자 이름*
 	private String drafterDept; //기안자 부서*
 	private String bkmkYn; // 즐겨찾기 여부*
-	private int atchFileNo; // 첨부 파일 번호
+	//파일 첨부를 위한것
+	private long atchFileNo; // 첨부 파일 번호
 	private String atrzSj; // 전자결재 제목*
 	private String atrzCn; // 작성 문서 내용*
 	private String atrzOpinion; // 전자결재 의견
@@ -35,6 +37,8 @@ public class AtrzVO {
 	
 	private String[] emplNoArr; // 결재자 사원번호 배열
 	
+	//파일 배열로 받기 
+	private List<AttachFileVO> fileAttachFileVOList;//
 	
 	//전자결재 사원정보를 위한것
 	private String emplNo;   	//사원번호
@@ -51,6 +55,7 @@ public class AtrzVO {
 	private MultipartFile[] uploadFile;
 	
 	//atrz: atrzLine 1: N
+	//       List<AtrzLineVO> atrzLineList
 	private List<AtrzLineVO> atrzLineVOList;
 	
 	// 검색필터

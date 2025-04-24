@@ -38,7 +38,7 @@
 }
 
 .actBtn {
-	width: 50px;
+	width: 60px;
 	height: 20px;
 	font-size: 0.8em;
 	padding: 0;
@@ -140,7 +140,7 @@
 										class="form-control" type="text" style="width: 150px;">
 								</div>
 								<!-- 검색 유형 선택 -->
-								<select id="searchType" class="form-select w-auto">
+								<select id="searchtype" class="form-select w-auto">
 									<option value="title">제목</option>
 									<option value="drafterName">기안자</option>
 									<option value="drafterDeptName">기안부서</option>
@@ -194,7 +194,7 @@
 																<div class="row g-0 text-center">
 																	<c:choose>
 																		<c:when test="${atrzVO.atrzSttusCode == '00' }">
-																			<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #d68c41;">진행중</span>
+																			<span class="status-btn close-btn actBtn col-sm-6 col-md-4" style="background-color: #fbf5b1; color: #dd9e5f;">진행중</span>
 																		</c:when>
 																		<c:when test="${atrzVO.atrzSttusCode == '10' }">
 																			<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
