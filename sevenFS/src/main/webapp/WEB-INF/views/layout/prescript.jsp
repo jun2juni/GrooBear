@@ -9,7 +9,8 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 <%-- 폰트 어썸 --%>
-<script src="https://kit.fontawesome.com/48b6cd0b56.js" crossorigin="anonymous"></script>
+<%--<script src="https://kit.fontawesome.com/48b6cd0b56.js" crossorigin="anonymous"></script>--%>
+<script src="https://kit.fontawesome.com/808b092597.js" crossorigin="anonymous"></script>
 
 <%-- sweetalert 스위트얼러트를 위한것 --%>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
