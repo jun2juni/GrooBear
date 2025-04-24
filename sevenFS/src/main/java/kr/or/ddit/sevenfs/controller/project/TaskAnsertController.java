@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
+import kr.or.ddit.sevenfs.vo.project.ProjectVO;
 import kr.or.ddit.sevenfs.vo.project.TaskAnsertVO;
 import lombok.extern.slf4j.Slf4j;
 import kr.or.ddit.sevenfs.service.notification.NotificationService;
@@ -38,8 +39,9 @@ public class TaskAnsertController {
                                               @RequestParam String answerCn,
                                               @RequestParam(required = false) Integer parentAnswerNo,
                                               @RequestParam(defaultValue = "0") int answerDepth,
-                                              @AuthenticationPrincipal(expression = "username") String emplNo) {
-
+                                              @AuthenticationPrincipal(expression = "username") String emplNo,
+                                              ProjectVO projectVO) {
+    	
         log.info("업무 댓글 등록");
 
         TaskAnsertVO vo = new TaskAnsertVO();
@@ -57,15 +59,19 @@ public class TaskAnsertController {
         ProjectTaskVO task = projectTaskService.getTaskById((long) taskNo); // 업무 정보 조회
         String receiverEmpNo = String.valueOf(task.getChargerEmpno());
         String receiverName = task.getChargerEmpNm(); // 표시용
-
+        long projectNo = task.getPrjctNo(); // ← 이게 진짜 프로젝트 번호!
+        String taskNm = task.getTaskNm();
+        log.info("프로젝트 번호 : " + projectNo);
+        
+        
         if (!receiverEmpNo.equals(emplNo)) { // 본인이 작성한 댓글이 아닐 경우에만 알림
             EmployeeVO receiver = new EmployeeVO();
             receiver.setEmplNo(receiverEmpNo);
 
             NotificationVO notificationVO = new NotificationVO();
             notificationVO.setNtcnSj("[업무 댓글 알림]");
-            notificationVO.setNtcnCn(receiverName + "님, 담당 업무에 피드백이 등록되었습니다.");
-            notificationVO.setOriginPath("/projectTask/detail?taskNo=" + taskNo); // 업무 상세 페이지
+            notificationVO.setNtcnCn(receiverName + "님, 담당 업무("+taskNm+")에 피드백이 등록되었습니다.");
+            notificationVO.setOriginPath("/project/projectDetail?prjctNo=" + projectNo); // 업무 상세 페이지
             notificationVO.setSkillCode("02"); // 업무 관련 알림 코드
 
             notificationService.insertNotification(notificationVO, List.of(receiver));
