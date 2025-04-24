@@ -1,8 +1,10 @@
 package kr.or.ddit.sevenfs.controller;
 
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.or.ddit.sevenfs.config.jwt.JwtTokenProvider;
+import kr.or.ddit.sevenfs.service.auth.AuthService;
 import kr.or.ddit.sevenfs.service.auth.impl.EmpDetailImpl;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
@@ -16,8 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,10 +42,51 @@ public class AuthController {
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private OrganizationService orgService;
+    @Autowired
+    private AuthService authService;
 
     @GetMapping("/auth/login")
     public String login() {
         return "auth/login";
+    }
+    
+    @GetMapping("/auth/passWord")
+    public String passwordPage() {
+    	return"auth/editPassword";
+    }
+    
+    @ResponseBody
+    @PostMapping("/auth/changePassword")
+    public String changePassword(
+    			  String currentPassword
+    			, String confirmPassword) {
+    	
+    	//log.info("currentPassword : " + currentPassword);
+    	//log.info("넘어온 새 비번 : " + confirmPassword);
+    	
+    	// DB저장 비번 가져오기
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    	CustomUser customUser = (CustomUser)auth.getPrincipal();
+    	String password = customUser.getEmpVO().getPassword();
+    	//log.info("비번확인 : " + password);
+    	
+    	// 현재 사용자 사원번호 가져오기
+    	String emplNo = customUser.getEmpVO().getEmplNo();
+    	
+    	// 사원 입력값과 현재 비밀번호가 일치한지 비교
+    	boolean matches = bCryptPasswordEncoder.matches(currentPassword, password);
+    	if(!matches) {
+    		return "실패";
+    	}
+    	log.info("match ? :" + matches);
+    	
+    	// 암호화된 비번으로 변경해주기
+    	String encodeNewPw = bCryptPasswordEncoder.encode(confirmPassword);
+    	EmployeeVO emp = customUser.getEmpVO();
+    	emp.setPassword(encodeNewPw);
+    	emp.setEmplNo(emplNo);
+    	authService.emplChangePw(emp);
+    	return "성공";
     }
 
     @ResponseBody

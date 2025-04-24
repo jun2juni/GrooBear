@@ -86,6 +86,9 @@
 	     	<c:if test="${emp.emplNo == empDetail.emplNo || emp.emplNo == '20250000'}">
 		    	 <a href="/emplUpdate?emplNo=${empDetail.emplNo}" class="main-btn active-btn-light btn-hover btn-sm">수정</a>
 		     </c:if>
+		     <c:if test="${emp.emplNo == empDetail.emplNo}">
+		     	<a href="/auth/passWord" class="ml-5 main-btn success-btn-light btn-hover btn-sm">비밀번호 변경</a>
+		     </c:if>
 		     <c:if test="${emp.emplNo == '20250000'}">
 		     	<button type="button" id="emplDeleteBtn" class="main-btn danger-btn-light square-btn btn-hover btn-sm">삭제</button>
 	     	 </c:if>

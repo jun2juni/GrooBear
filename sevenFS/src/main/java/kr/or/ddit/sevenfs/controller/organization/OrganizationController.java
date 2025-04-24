@@ -369,7 +369,7 @@ public class OrganizationController {
 		model.addAttribute("title" , "사원 수정");
 		
 		EmployeeVO emplDetail = organizationService.emplDetail(emplNo);
-		//log.info("사원상세 : " + emplDetail);
+		log.info("사원상세 : " + emplDetail);
 		
 		// 전체 직급 가져오기
 		List<CommonCodeVO> posList = organizationService.posList();

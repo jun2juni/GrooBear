@@ -99,7 +99,8 @@
 		FROM EMPLOYEE e
 		LEFT JOIN AUTH a on(e.empl_no = a.empl_no)
         LEFT JOIN common_code cc on(cc.cmmn_code = e.dept_code)
-		WHERE e.EMPL_NO = #{emplNo}
+        WHERE cc.cmmn_code_group='DEPARTMENT'
+		  AND e.EMPL_NO = #{emplNo}
 		  AND ENABLED = '1'
 	</select>
 	

@@ -38,5 +38,4 @@ public class CustomUser extends User {
 
         this.empVO = empVO;
     }
-
 }

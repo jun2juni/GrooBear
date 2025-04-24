@@ -79,7 +79,7 @@
         <%-- 메인 --%>
         
         <%-- 메인 --%>
-        <li class="nav-item ${fn:contains(currentURL, '/main/home') ? 'active' : ''}">
+        <li class="nav-item ${fn:contains(currentURL, '/views/home') ? 'active' : ''}">
           <a href="/main/home">
             <span class="icon material-symbols-outlined">home</span>
             <span class="text">메인</span>

@@ -45,4 +45,11 @@
         FROM EMPLOYEE e left outer join auth a on(e.empl_no = e.empl_no)
         WHERE e.EMPL_NO = #{param1}
     </select>
+    
+    <!-- 사원 비밀번호 변경 -->
+    <update id="emplChangePw" parameterType="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
+    	UPDATE employee
+		   SET password = #{password}
+		 WHERE empl_no = #{emplNo}
+    </update>
 </mapper>

@@ -1,7 +1,9 @@
 package kr.or.ddit.sevenfs.service.auth;
 
-public interface AuthService {
-    public void saveRefreshToken(String emplNo, String refreshToken);
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 
-    public void deleteRefreshToken(String emplNo);
+public interface AuthService {
+    
+    // 비밀번호 변경
+    public int emplChangePw(EmployeeVO employeeVO);
 }

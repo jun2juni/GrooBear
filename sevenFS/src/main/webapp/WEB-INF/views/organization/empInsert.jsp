@@ -185,7 +185,7 @@
 						<option value="SC제일은행">SC제일은행</option>
 						<option value="씨티은행">씨티은행</option>
 					</select>
-					<div class="invalid-feedback">은행을 선택헤주세요.</div>
+					<div class="invalid-feedback">은행을 선택해주세요.</div>
 	          	</div>
 	          	</div>
 	  	        <div class="input-style-1 form-group col-8" style="margin-left:15%;">
@@ -218,7 +218,6 @@
 <%@ include file="../layout/prescript.jsp" %>
  <script type="text/javascript">
  
- 
  if($('#upperDept').val() === '01'){
 	$("#lowerDepartment").append(
 		`
@@ -230,9 +229,8 @@
 	);
 } 
  
- 
 $(function(){
-		
+
 	// 급여 입력시 쉼표처리
 	const salaryInput = document.getElementById("anslry");
 	
@@ -331,15 +329,14 @@ $("#upperDept").on("change", function(){
 					`
 				); 
  			 }) // end map   
-	})// end result
-}) // end click event
+		})// end result
+	}) // end click event
 });	// end fn
 
 //동적으로 만든 라디오 클릭시
 $(document).on('change', "input:radio[name=deptCode]", function(e) {
     const val = e.target.value;
     console.log(val);
-    
  });
 
 
