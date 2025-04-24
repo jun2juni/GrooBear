@@ -52,14 +52,14 @@
 			// dragScroll:true,
 		//  slotHeight:25,
 			buttonText: {
-					today: '오늘',
-					month: '월',
-					week: '주',
-					day: '일',
-					list: '목록'
-				},
+				today: '오늘',
+				month: '월',
+				week: '주',
+				day: '일',
+				list: '목록'
+			},
 			handleWindowResize:true,
-			// height: 'auto', // ✅ 부모 높이에 맞춤
+			// height: '100px', // ✅ 부모 높이에 맞춤
 			contentHeight: 650,
 			expandRows : false,
 			headerToolbar : headerToolbar,

@@ -15,10 +15,12 @@ import org.springframework.web.multipart.MultipartFile;
 import kr.or.ddit.sevenfs.mapper.mail.MailMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.mail.MailService;
+import kr.or.ddit.sevenfs.service.notification.NotificationService;
 import kr.or.ddit.sevenfs.service.schedule.ScheduleLabelService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.mail.MailVO;
+import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +37,9 @@ public class MailServiceImpl implements MailService{
 	@Autowired
 	AttachFileService attachFileService;
 	
+	@Autowired
+	NotificationService notificationService;
+	
 	@Override
 	public int sendMail(MailVO mailVO, MultipartFile[] uploadFile) {
 		/*
@@ -43,10 +48,13 @@ public class MailServiceImpl implements MailService{
 	 		
 			emailClTy 메일함분류시 사용 0 보낸메일, 1 받은메일, 2 임시메일, 3 스팸함, 4 휴지통
 		 * */
+		String trnsmtEmplNm = mailVO.getEmplNm();
 		List<String> recptnEmailList = mailVO.getRecptnEmailList();
 		List<String> refEmailList = mailVO.getRefEmailList();
 		List<String> hiddenRefEmailList = mailVO.getHiddenRefEmailList();
 		List<MailVO> mailVOList = new ArrayList<MailVO>();
+		List<EmployeeVO> notificationEmail = new ArrayList<EmployeeVO>();
+		
 		int totalMailNoCnt = 1;
 		if(recptnEmailList!=null) {
 			totalMailNoCnt += recptnEmailList.size();
@@ -69,6 +77,7 @@ public class MailServiceImpl implements MailService{
 		// 보낸 메일함
 		mailVO.setEmailTrnsmisTy("0");
 		mailVO.setEmailClTy("0");
+		mailVO.setReadngAt("Y");
 		mailVO.setRecptnEmail(recptnEmailList.get(0).split("_")[1]);
 		
 		int emailGroupNo = mailMapper.getEmailGroupNo();
@@ -76,6 +85,7 @@ public class MailServiceImpl implements MailService{
 		mailVO.setEmailGroupNo(emailGroupNo);
 		mailVO.setReadngAt("Y");
 		mailVOList.add(mailVO);
+		
 		// 받은 메일함
 		if(recptnEmailList != null) {
 			for(int i = 0; i < recptnEmailList.size(); i++) {
@@ -92,6 +102,11 @@ public class MailServiceImpl implements MailService{
 				vo.setEmailGroupNo(emailGroupNo);
 				vo.setReadngAt("N");
 				mailVOList.add(vo);
+				
+				EmployeeVO employeeVO = new EmployeeVO();
+				employeeVO.setEmail(emplNoEmail[1]);
+				employeeVO.setEmplNo(emplNoEmail[0]);
+				notificationEmail.add(employeeVO);
 			}
 		}
 		// 받은 메일함 - 참조
@@ -109,6 +124,11 @@ public class MailServiceImpl implements MailService{
 				vo.setEmailGroupNo(emailGroupNo);
 				vo.setReadngAt("N");
 				mailVOList.add(vo);
+				
+				EmployeeVO employeeVO = new EmployeeVO();
+				employeeVO.setEmail(emplNoEmail[1]);
+				employeeVO.setEmplNo(emplNoEmail[0]);
+				notificationEmail.add(employeeVO);
 			}
 		}
 		// 받은 메일함 - 숨은참조
@@ -126,8 +146,24 @@ public class MailServiceImpl implements MailService{
 				vo.setEmailGroupNo(emailGroupNo);
 				vo.setReadngAt("N");
 				mailVOList.add(vo);
+
+				EmployeeVO employeeVO = new EmployeeVO();
+				employeeVO.setEmail(emplNoEmail[1]);
+				employeeVO.setEmplNo(emplNoEmail[0]);
+				notificationEmail.add(employeeVO);
 			}
 		}
+		
+		NotificationVO notificationVO = new NotificationVO();
+		notificationVO.setNtcnSj("[메일 알림]");
+        notificationVO.setNtcnCn(trnsmtEmplNm+"님이 메일을 송신하였습니다.");
+        // 클릭시 어디로 보내줄 것인지
+        notificationVO.setOriginPath("/mail?emailClTy=1");
+        notificationVO.setSkillCode("05");
+        
+        notificationService.insertNotification(notificationVO, notificationEmail);
+        log.info("notificationService -> insertNotification -> notificationVO : "+notificationVO);
+        log.info("notificationService -> insertNotification -> notificationEmail : "+notificationEmail);
 		log.info("MailServiceImpl -> sendMail -> mailVOList : "+mailVOList);
 		int result = mailMapper.sendMail(mailVOList);
 		return result;
@@ -409,7 +445,7 @@ public class MailServiceImpl implements MailService{
 	}
 
 	@Override
-	public int delLblFromMail(String lblNo) {
+	public int delLblFromMail(int lblNo) {
 		return mailMapper.delLblFromMail(lblNo);
 	}
 }

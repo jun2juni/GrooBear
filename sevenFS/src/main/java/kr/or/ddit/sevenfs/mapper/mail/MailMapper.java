@@ -30,6 +30,6 @@ public interface MailMapper {
 	List<MailVO> emailDetails(List<String> checkedList);
 	int mailStarred(Map<String, Object> map);
 	int readingAt(int emailNo);
-	int delLblFromMail(String lblNo);
+	int delLblFromMail(int lblNo);
 
 }

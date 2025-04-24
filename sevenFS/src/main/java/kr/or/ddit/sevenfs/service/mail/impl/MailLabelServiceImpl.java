@@ -39,7 +39,7 @@ public class MailLabelServiceImpl implements MailLabelService {
 	}
 
 	@Override
-	public int deleteLbl(String lblNo) {
+	public int deleteLbl(int lblNo) {
 		return labelMapper.deleteLbl(lblNo);
 	}
 

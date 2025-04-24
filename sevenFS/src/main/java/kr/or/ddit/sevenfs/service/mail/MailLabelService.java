@@ -12,7 +12,7 @@ public interface MailLabelService {
 
 	List<MailLabelVO> getLabelList(EmployeeVO employeeVO);
 
-	int deleteLbl(String lblNo);
+	int deleteLbl(int lblNo);
 
 	String getCol(int lblNo);
 

@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style type="text/css">
     * {
       margin: 0;
@@ -43,7 +44,7 @@
     }
     
     .sidebar-compose {
-      margin: 8px 12px 16px;
+      margin: 8px 12px 20px;
     }
     
     .compose-button {
@@ -63,9 +64,8 @@
     }
     
     .compose-button:hover {
-      background-color: #2563eb;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-      transform: translateY(-1px);
+      background: linear-gradient(135deg, #3b6fe3, #2563eb);
+      transform: translateY(-2px);
     }
     
     .compose-button i {
@@ -80,14 +80,15 @@
     .sidebar-item {
       display: flex;
       align-items: center;
-      padding: 10px 16px;
+      padding: 12px 18px;
       color: #4b5563;
       font-size: 14px;
       cursor: pointer;
-      border-top-right-radius: 20px;
-      border-bottom-right-radius: 20px;
-      transition: background-color 0.2s, color 0.2s;
+      border-top-right-radius: 24px;
+      border-bottom-right-radius: 24px;
+      transition: all 0.2s;
       margin: 2px 0;
+      position: relative;
     }
     
     .sidebar-item:hover {
@@ -150,7 +151,7 @@
       flex-direction: column;
       background-color: #fff;
       overflow-y: auto;
-      border-radius: 8px;
+      /* border-radius: 8px; */
       /* margin: 16px; */
       /* box-shadow: 0 1px 3px rgba(0,0,0,0.1); */
       flex-grow: 1;
@@ -408,59 +409,114 @@
         <div class="email-main-content">
           <!-- 이메일 사이드바 -->
           <div class="email-sidebar">
-            <div class="sidebar-compose">
-              <button class="compose-button" id="mailWrite">
-                <i class="fas fa-plus"></i>
-                <span>편지쓰기</span>
-              </button>
-            </div>
-            <!-- 사이드 바 -->
-            <div class="sidebar-section">
-              <div class="sidebar-item type-select" data-emailClTy="0">
-                <i class="fas fa-paper-plane"></i>
-                <span class="sidebar-label">보낸편지함</span>
+            <div id="fixed" style="position: fixed; width: 260px; height: auto;">
+              <div class="sidebar-compose">
+                <button class="compose-button" id="mailWrite">
+                  <i class="fas fa-plus"></i>
+                  <span>편지쓰기</span>
+                </button>
               </div>
-              <div class="sidebar-item type-select" data-emailClTy="1">
-                <i class="fas fa-inbox"></i>
-                <span class="sidebar-label">받은편지함</span>
-                <!-- <span class="sidebar-count">2,307</span> -->
+              <!-- 사이드 바 -->
+              <c:set var="emailClTy" value="${param.emailClTy}" />
+              <div class="sidebar-section " id="emailClTy">
+          
+                <div class="sidebar-item type-select ${mailVO.emailClTy eq '0' ? 'active' : ''}" data-emailClTy="0">
+                  <i class="fas fa-paper-plane"></i>
+                  <span class="sidebar-label">보낸편지함</span>
+                </div>
+                <div class="sidebar-item type-select ${mailVO.emailClTy eq '1' ? 'active' : ''}" data-emailClTy="1">
+                  <i class="fas fa-inbox"></i>
+                  <span class="sidebar-label">받은편지함</span>
+                  <!-- <span class="sidebar-count">2,307</span> -->
+                </div>
+                <div class="sidebar-item type-select ${mailVO.emailClTy eq '2' ? 'active' : ''}" data-emailClTy="2">
+                  <i class="far fa-file-alt"></i>
+                  <span class="sidebar-label">임시보관함</span>
+                  <!-- <span class="sidebar-count">11</span> -->
+                </div>
+                <!-- <div class="sidebar-item type-select ${mailVO.emailClTy eq '3' ? 'active' : ''}" data-emailClTy="3">
+                  <i class="far fa-file-alt"></i>
+                  <span class="sidebar-label">스팸함</span>
+                  <span class="sidebar-count">11</span>
+                </div> -->
+                <div class="sidebar-item type-select ${mailVO.emailClTy eq '5' ? 'active' : ''}" data-emailClTy="5">
+                  <i class="fas fa-star"></i>
+                  <span class="sidebar-label">중요 메일함</span>
+                  <!-- <span class="sidebar-count">11</span> -->
+                </div>
+                <div class="sidebar-item type-select ${mailVO.emailClTy eq '4' ? 'active' : ''}" data-emailClTy="4">
+                  <i class="far fa-trash-alt"></i>
+                  <!-- <i class="fas fa-trash"></i> -->
+                  <span class="sidebar-label">휴지통</span>
+                  <!-- <span class="sidebar-count">11</span> -->
+                </div>
               </div>
-              <div class="sidebar-item type-select" data-emailClTy="2">
-                <i class="far fa-file-alt"></i>
-                <span class="sidebar-label">임시보관함</span>
-                <!-- <span class="sidebar-count">11</span> -->
-              </div>
-              <div class="sidebar-item type-select" data-emailClTy="3">
-                <i class="far fa-file-alt"></i>
-                <span class="sidebar-label">스팸함</span>
-              </div>
-              <div class="sidebar-item type-select" data-emailClTy="4">
-                <i class="far fa-trash-alt"></i>
-                <span class="sidebar-label">휴지통</span>
-              </div>
-            </div>
-            
-            <div class="sidebar-section">
-              <div class="sidebar-section-header">라벨</div>
-              <c:forEach items="${mailLabelList}" var="mailLabel">
-                <div class="sidebar-item label-select ${mailVO.lblNo == mailLabel.lblNo ? 'active' : ''}" data-lblNo="${mailLabel.lblNo}">
-                  <i class="fas fa-tag" data-col="${mailLabel.lblCol}" style="color: ${mailLabel.lblCol};"></i>
-                  <span class="sidebar-label">${mailLabel.lblNm}</span>
-                  <div class="dropdown label-actions" style="margin-left: auto; position: relative;">
-                    <button class="dropdown-toggle" style="background: none; border: none; cursor: pointer;">
-                      <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    <div class="dropdown-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;">
-                      <button class="dropdown-item edit-label" type="button" data-lblNo="${mailLabel.lblNo}" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left;">
-                        <i class="fas fa-edit" style="margin-right: 8px;"></i> 수정
+              
+              <div class="sidebar-section">
+                <div class="sidebar-section-header">라벨</div>
+                <c:forEach items="${mailLabelList}" var="mailLabel">
+                  <div class="sidebar-item label-select ${mailVO.lblNo == mailLabel.lblNo ? 'active' : ''}" data-lblNo="${mailLabel.lblNo}">
+                    <i class="fas fa-tag" data-col="${mailLabel.lblCol}" style="color: ${mailLabel.lblCol};"></i>
+                    <span class="sidebar-label">${mailLabel.lblNm}</span>
+                    <div class="dropdown label-actions" style="margin-left: auto; position: relative;">
+                      <button class="dropdown-toggle" style="background: none; border: none; cursor: pointer;">
+                        <i class="fas fa-ellipsis-v"></i>
                       </button>
-                      <button class="dropdown-item delete-label" type="button" data-lblNo="${mailLabel.lblNo}" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left;">
-                        <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> 삭제
-                      </button>
+                      <div class="dropdown-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;">
+                        <button class="dropdown-item edit-label" type="button" data-lblNo="${mailLabel.lblNo}" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left;">
+                          <i class="fas fa-edit" style="margin-right: 8px;"></i> 수정
+                        </button>
+                        <button class="dropdown-item delete-label" type="button" data-lblNo="${mailLabel.lblNo}" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left;">
+                          <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> 삭제
+                        </button>
+                      </div>
                     </div>
                   </div>
+                </c:forEach>
+                <div class="sidebar-item" id="addLabelBtn" style="cursor: pointer;">
+                  <i class="fas fa-plus-circle" style="color: #34a853;"></i>
+                  <span class="sidebar-label">라벨 추가</span>
                 </div>
-              </c:forEach>
+              </div>
+              <!-- 라벨 추가 팝업 -->
+        <div id="label-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;">
+          <h3 style="margin-bottom: 10px;" id="lblPopTitle">라벨 추가</h3>
+          <form action="/mail/mailLblAdd" method="post">
+            <input type="text" name="lblNm" id="label-name" placeholder="라벨 이름 입력" style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 4px;">
+            <input type="hidden" name="lblNo" id="lblNo" value="0">
+            <input type="hidden" name="lblCol" id="lblCol">
+            <input type="hidden" name="emplNo" value="${emplNo}">
+            <label for="label-color" style="display: block; margin-bottom: 5px;">라벨 색상 선택</label>
+            <div id="label-color" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;">
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #D50000; border-radius: 50%; cursor: pointer;" data-color="#D50000"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #C51162; border-radius: 50%; cursor: pointer;" data-color="#C51162"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #AA00FF; border-radius: 50%; cursor: pointer;" data-color="#AA00FF"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #6200EA; border-radius: 50%; cursor: pointer;" data-color="#6200EA"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #304FFE; border-radius: 50%; cursor: pointer;" data-color="#304FFE"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #2962FF; border-radius: 50%; cursor: pointer;" data-color="#2962FF"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #0091EA; border-radius: 50%; cursor: pointer;" data-color="#0091EA"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #00B8D4; border-radius: 50%; cursor: pointer;" data-color="#00B8D4"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #00BFA5; border-radius: 50%; cursor: pointer;" data-color="#00BFA5"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #00C853; border-radius: 50%; cursor: pointer;" data-color="#00C853"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #64DD17; border-radius: 50%; cursor: pointer;" data-color="#64DD17"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #AEEA00; border-radius: 50%; cursor: pointer;" data-color="#AEEA00"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #FFD600; border-radius: 50%; cursor: pointer;" data-color="#FFD600"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #FFAB00; border-radius: 50%; cursor: pointer;" data-color="#FFAB00"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #FF6D00; border-radius: 50%; cursor: pointer;" data-color="#FF6D00"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #DD2C00; border-radius: 50%; cursor: pointer;" data-color="#DD2C00"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #8D6E63; border-radius: 50%; cursor: pointer;" data-color="#8D6E63"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #9E9E9E; border-radius: 50%; cursor: pointer;" data-color="#9E9E9E"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #607D8B; border-radius: 50%; cursor: pointer;" data-color="#607D8B"></div>
+              <div class="color-option" style="width: 24px; height: 24px; background-color: #000000; border-radius: 50%; cursor: pointer;" data-color="#000000"></div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+              <button id="cancel-label" type="button" style="padding: 8px 16px; border: none; background-color: #e5e7eb; border-radius: 4px; cursor: pointer;">취소</button>
+              <button id="save-label" type="submit" style="padding: 8px 16px; border: none; background-color: #2563eb; color: white; border-radius: 4px; cursor: pointer;">저장</button>
+            </div>
+          </form> 
+        </div>
+		<!-- 팝업 배경 -->
+		<div id="popup-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
             </div>
           </div>
     
@@ -612,20 +668,6 @@
           window.location.href="/mail"
         })
 
-        $('.sidebar-item.type-select').on('click', function() {
-          emailClTy = $(this).attr('data-emailClTy');
-          if(emailClTy){
-            // console.log('emailClTy -> ',emailClTy);
-            window.location.href = "/mail?emailClTy="+emailClTy;
-          }
-        });
-        $('.sidebar-item.label-select').on('click',function(){
-          // console.log('.label-select 클릭 이벤트 : ',this);
-          let lblNo = $(this).data('lblno');
-          console.log('.label-select 클릭 이벤트 lblNo : ',lblNo);
-          window.location.href="/mail/labeling?lblNo="+lblNo;
-        })
-
         $('.participant-item').on('click',function(){
           let emplNm = $(this).find('.participant-name').text();
           let emplEmail = $(this).find('.participant-email').text();
@@ -672,9 +714,115 @@
           window.location.href=`/mail/mailRepl?emailNo=\${param}`;
         })
 
-        $('#mailWrite').on('click',function(){
-          window.location.href="/mail/mailSend";
-        })
+        
+
+       /*사이드바 관련 함수 시작*/
+        			// 사이드바 아이템 클릭 이벤트 시작 //
+              $('.sidebar-item.type-select').on('click', function() {
+        // $('.sidebar-item').removeClass('active');
+        // $(this).addClass('active');
+        emailClTy = $(this).attr('data-emailClTy');
+        if(emailClTy){
+          // console.log('emailClTy -> ',emailClTy);
+          window.location.href = "/mail?emailClTy="+emailClTy;
+        }
+      });
+      
+      $('.sidebar-item.label-select').on('click',function(){
+        // console.log('.label-select 클릭 이벤트 : ',this);
+        let lblNo = $(this).data('lblno');
+        console.log('.label-select 클릭 이벤트 lblNo : ',lblNo);
+        window.location.href="/mail/labeling?lblNo="+lblNo;
+      })
+      // 사이드바 아이템 클릭 이벤트 끝 //
+      let selectedColor = "#000000"; // Default color
+
+// 라벨 추가 버튼 클릭 이벤트
+$('#addLabelBtn').on('click', function() {
+  $('#label-popup').show();
+  $('#popup-overlay').show();
+  $('.color-option').css('border', 'none');
+  $('#label-name').val('');
+  $('#lblPopTitle').text('라벨 추가');
+});
+
+// 라벨 색상 선택 이벤트
+$('.color-option').on('click', function() {
+  $('.color-option').css('border', 'none'); // Reset border
+  $(this).css('border', '3px solid #2563eb');// Highlight selected color
+  selectedColor = $(this).data('color');
+  $('#lblCol').val(selectedColor);
+  console.log("$('#lblCol').val() : ",$('#lblCol').val());
+});
+
+// 저장 버튼 클릭 이벤트
+$('#save-label').on('click', function() {
+  let labelName = $('#label-name').val().trim();
+  let labelCol = $('#lblCol').val();
+  console.log('라벨 추가 labelName: ',labelName);
+  console.log('라벨 추가 labelCol: ',labelCol);
+});
+
+// 취소 버튼 클릭 이벤트
+$('#cancel-label').on('click', function() {
+  $('#label-popup').hide();
+  $('#popup-overlay').hide();
+});
+            // 드롭다운 토글
+            $('.dropdown-toggle').on('click', function(e) {
+              e.stopPropagation();
+              const dropdownMenu = $(this).siblings('.dropdown-menu');
+              $('.dropdown-menu').not(dropdownMenu).hide(); // 다른 드롭다운 닫기
+              dropdownMenu.toggle();
+            });
+
+            // 페이지 외부 클릭 시 드롭다운 닫기
+            $(document).on('click', function() {
+              $('.dropdown-menu').hide();
+            });
+
+            // 라벨 수정 버튼 클릭 이벤트
+            $('.edit-label').on('click', function(e) {
+              e.stopPropagation();
+              // console.log(this);
+              const lblNo = $(this).data('lblno');
+              const lblNm = $(this).closest('.dropdown-menu').parent().siblings('.sidebar-label').text();
+              const lblCol = $(this).closest('.dropdown-menu').parent().siblings('.fas').data('col');
+              console.log('수정 -> lblNo : ',lblNo);
+              console.log('수정 -> lblNm : ',lblNm);
+              console.log('수정 -> lblCol : ',lblCol);
+              $('#lblNo').val(lblNo);
+              $('#addLabelBtn').trigger('click');
+              $('#lblPopTitle').text('라벨 수정');
+              // $(`.color-option[data-color=\${lblCol}]`).css('border', '2px solid #2563eb');
+              $('.color-option[data-color="' + lblCol + '"]').css('border', '3px solid #2563eb');
+              $('#label-name').val(lblNm);
+              $('#lblCol').val(lblCol);
+              // $('color-option').css('border', '2px solid #2563eb'); // Highlight selected color
+            });
+            
+            // 라벨 삭제 버튼 클릭 이벤트
+            $('.delete-label').on('click', function(e) {
+              e.stopPropagation();
+              const lblNo = $(this).data('lblno');
+              console.log('삭제 -> lblNo : ',lblNo);
+              $.ajax({
+                url:'mail/deleteLbl',
+                method:'post',
+                data:{lblNo:lblNo},
+                success:function(resp){
+                  if(resp=='success'){
+                    $('.label-select[data-lblno="' + lblNo + '"]').hide();
+                  }else{
+
+                  }
+                },
+                error:function(err){
+                  console.log('ajax요청결과 에러 발생 : ',err);
+                }
+              })
+            });
+        /*사이드바 관련 함수 끝*/
 
       });
     </script>

@@ -15,6 +15,7 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 	<title>${title}</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 	<c:import url="../layout/prestyle.jsp" />
 </head>
 <style>
@@ -158,140 +159,325 @@
         border-radius: 4px;
         align-items: center;
     }
+
+    /*사이드바 스타일 시작*/
+    /* 사이드바 스타일 개선 */
+    .email-sidebar {
+      width: 260px;
+      background-color: #ffffff;
+      border-right: 1px solid #e0e0e0;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+      padding-top: 12px;
+      flex-shrink: 0; /*사이드바 너비 고정*/
+      /* height: 100%; */
+    }
+    
+    .sidebar-compose {
+      margin: 8px 12px 20px;
+    }
+    
+    .compose-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 18px;
+      background: linear-gradient(135deg, #4776E6, #3b82f6);
+      color: white;
+      border-radius: 24px;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.2s;
+      width: 100%;
+    }
+    
+    .compose-button:hover {
+      background: linear-gradient(135deg, #3b6fe3, #2563eb);
+      transform: translateY(-2px);
+    }
+    
+    .compose-button i {
+      margin-right: 12px;
+      font-size: 16px;
+    }
+    
+    .sidebar-section {
+      margin-bottom: 12px;
+    }
+    
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 18px;
+      color: #4b5563;
+      font-size: 14px;
+      cursor: pointer;
+      border-top-right-radius: 24px;
+      border-bottom-right-radius: 24px;
+      transition: all 0.2s;
+      margin: 2px 0;
+      position: relative;
+    }
+    
+    .sidebar-item:hover {
+      background-color: #eaecef;
+      color: #1f2937;
+    }
+    
+    .sidebar-item.active {
+      background-color: #dbeafe;
+      color: #2563eb;
+      font-weight: 500;
+    }
+    
+    .sidebar-item i {
+      width: 24px;
+      margin-right: 16px;
+      text-align: center;
+      font-size: 16px;
+    }
+    
+    .sidebar-item.active i {
+      color: #2563eb;
+    }
+    
+    .sidebar-label {
+      flex-grow: 1;
+    }
+    
+    .sidebar-count {
+      font-size: 12px;
+      font-weight: 500;
+      color: #6b7280;
+      background-color: #e5e7eb;
+      padding: 2px 8px;
+      border-radius: 10px;
+      min-width: 24px;
+      text-align: center;
+    }
+    
+    .sidebar-section-header {
+      font-size: 12px;
+      color: #6b7280;
+      padding: 8px 16px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    /*사이드바 스타일 끝*/
+
+    .email-sidebar .dropdown-toggle::after,
+    .email-sidebar .dropdown .dropdown-toggle::after {
+        display: none !important;
+    }
 </style>
 <script src="../organization/orgList.jsp"></script>
 <body>
 <c:import url="../layout/sidebar.jsp" />
 <main class="main-wrapper">
 	<c:import url="../layout/header.jsp" />
-	<section class="section" style="z-index: 999;">
-		<div class="container-fluid">
-			<section class="section">
-			<div class="container-fluid">
-                <!--
-                    == 메일 전송에 필요한 데이터 ==
-                    * emailTrnsmisTy ( 참조시에 필요 )
-                    * emailClTy (메일함 분류시 필요)
-                  v * trnsmitEmail (송신 이메일)
-                  v * recptnEmail	(수신 이메일)
-                  v * emailSj
-                  v * emailCn
-                  v * 첨부파일
-                -->
-                <input type="hidden" id="modelEmplNm" value="${emplNm}">
-                <input type="hidden" id="modelEmail" value="${email}">
-                <input type="hidden" id="emailNo" value="${mailVO.emailNo}">
-				<div class="row">
-					<div class="col-12">
-						<div class="card-style">
-							<!-- <h2 class="text-primary text-center"></h2> -->
-                            <div>
-                                <div id="emailInpSection" >
-                                    <!-- 송신 이메일 -->
-                                    <input type="hidden" id="trnsmitEmail" name="trnsmitEmail" class="form-control" placeholder="hidden처리할 예정" readonly>
-                                    <!-- 수신 이메일 -->
-                                    <div class="mb-3" id="recpInp" >
-                                        <label class="form-label">수신 이메일</label>
-                                        <div class="form-control" id="recpEmailList">
-                                            <div class="emailListDiv"  name="recpEmailTemp" id="recpEmailTemp">
-                                                <span id="recpEmailInpSpan"></span>
-                                                <input type="text" id="cloneInp" style="border: 0px; width: 1px;" class="form-control">
-                                                <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
-                                                <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
-                                            </div>
-                                            <c:forEach items="${mailVO.recptnMapList}" var="recptnMap">
-                                                <div class="emailListDiv"  name="recpEmailTemp" id="recpEmailTemp" style="border: 1px solid #ddd; border-radius: 4px; padding: 2px 5px; margin: 2px; align-items: center; display: inline-flex;">
-                                                    <span id="recpEmailInpSpan">${recptnMap.emplNm}/</span>
-                                                    <input type="text" name="recpEmail" id="recpEmail" data-emplno="${recptnMap.emplNo}" class="recpEmailInp emailInput" value="${recptnMap.recptnEmail}" style="border: 0px; width: 1px;" readonly>
-                                                    <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
-                                                    <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
-                                                </div>
-                                            </c:forEach>
-                                            <c:if test="${emplNm!=null and emplNm != ''}">
-                                                <div class="emailListDiv"  name="recpEmailTemp" id="recpEmailTemp" style="border: 1px solid #ddd; border-radius: 4px; padding: 2px 5px; margin: 2px; align-items: center; display: inline-flex;">
-                                                    <span id="recpEmailInpSpan">${emplNm}/</span>
-                                                    <input type="text" name="recpEmail" id="recpEmail" data-emplno="${emplNo}" class="recpEmailInp emailInput" value="${recptnEmail}" style="border: 0px; width: 1px;" readonly>
-                                                    <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
-                                                    <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
-                                                </div>
-                                            </c:if>
-                                            <input type="text" name="recpEmailInp" id="recpEmailInp" style="margin: 3px; border: 1px;" >
-                                        </div>
-                                        <button class="emailTreeBtn btn btn-secondary" type="button" data-event="recpEmailInp">주소록</button>
-                                    </div>
-                                    <!-- 원본 -->
-                                    <!-- <div class="mb-3" >
-                                        <span id="recptnEmailSpan"></span>
-                                        <input type="text" id="recptnEmail" name="recptnEmail" class="form-control emailInput" required>
-                                        <button class="emailTreeBtn" type="button" data-event="recptnEmail">주소록</button>
-                                    </div> -->
+    <section class="section" style=" padding-left: 40px; padding-right: 40px; z-index: 999; display: flex; flex-direction: row; align-items: stretch; height: 100vh;">
+        <!--  사이드바 시작 -->
+        <div id="fixed" style="margin: 0px; position: sticky; top: 0; width: 260px; height: 100%; overflow-y: auto; flex-shrink: 0;">
+            <div class="email-sidebar" style="width: 100%; height: 100%; background-color: #ffffff; border-right: 1px solid #e0e0e0; padding-top: 12px;">
+                <div class="sidebar-compose">
+                    <button class="compose-button" id="mailWrite">
+                        <i class="fas fa-plus"></i>
+                        <span>편지쓰기</span>
+                    </button>
+                </div>
+                <!-- 사이드 바 -->
+                <c:set var="emailClTy" value="${param.emailClTy}" />
+                <div class="sidebar-section" id="emailClTy">
+                    <div class="sidebar-item type-select ${mailVO.emailClTy eq '0' ? 'active' : ''}" data-emailClTy="0">
+                        <i class="fas fa-paper-plane"></i>
+                        <span class="sidebar-label">보낸편지함</span>
+                    </div>
+                    <div class="sidebar-item type-select ${mailVO.emailClTy eq '1' ? 'active' : ''}" data-emailClTy="1">
+                        <i class="fas fa-inbox"></i>
+                        <span class="sidebar-label">받은편지함</span>
+                    </div>
+                    <div class="sidebar-item type-select ${mailVO.emailClTy eq '2' ? 'active' : ''}" data-emailClTy="2">
+                        <i class="far fa-file-alt"></i>
+                        <span class="sidebar-label">임시보관함</span>
+                    </div>
+                    <div class="sidebar-item type-select ${mailVO.emailClTy eq '5' ? 'active' : ''}" data-emailClTy="5">
+                        <i class="fas fa-star"></i>
+                        <span class="sidebar-label">중요 메일함</span>
+                    </div>
+                    <div class="sidebar-item type-select ${mailVO.emailClTy eq '4' ? 'active' : ''}" data-emailClTy="4">
+                        <i class="far fa-trash-alt"></i>
+                        <span class="sidebar-label">휴지통</span>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-header">라벨</div>
+                    <c:forEach items="${mailLabelList}" var="mailLabel">
+                        <div class="sidebar-item label-select ${mailVO.lblNo == mailLabel.lblNo ? 'active' : ''}" data-lblNo="${mailLabel.lblNo}">
+                            <i class="fas fa-tag" data-col="${mailLabel.lblCol}" style="color: ${mailLabel.lblCol};"></i>
+                            <span class="sidebar-label">${mailLabel.lblNm}</span>
+                            <div class="dropdown label-actions" style="margin-left: auto; position: relative;">
+                                <button class="dropdown-toggle" style="background: none; border: none; cursor: pointer;">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="dropdown-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;">
+                                    <button class="dropdown-item edit-label" type="button" data-lblNo="${mailLabel.lblNo}" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left;">
+                                        <i class="fas fa-edit" style="margin-right: 8px;"></i> 수정
+                                    </button>
+                                    <button class="dropdown-item delete-label" type="button" data-lblNo="${mailLabel.lblNo}" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left;">
+                                        <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> 삭제
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </c:forEach>
+                    <div class="sidebar-item" id="addLabelBtn" style="cursor: pointer;">
+                        <i class="fas fa-plus-circle" style="color: #34a853;"></i>
+                        <span class="sidebar-label">라벨 추가</span>
+                    </div>
+                </div>
+                <!-- 라벨 추가 팝업 -->
+        <div id="label-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;">
+            <h3 style="margin-bottom: 10px;" id="lblPopTitle">라벨 추가</h3>
+            <form action="/mail/mailLblAdd" method="post">
+              <input type="text" name="lblNm" id="label-name" placeholder="라벨 이름 입력" style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 4px;">
+              <input type="hidden" name="lblNo" id="lblNo" value="0">
+              <input type="hidden" name="lblCol" id="lblCol">
+              <input type="hidden" name="emplNo" value="${emplNo}">
+              <label for="label-color" style="display: block; margin-bottom: 5px;">라벨 색상 선택</label>
+              <div id="label-color" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;">
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #D50000; border-radius: 50%; cursor: pointer;" data-color="#D50000"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #C51162; border-radius: 50%; cursor: pointer;" data-color="#C51162"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #AA00FF; border-radius: 50%; cursor: pointer;" data-color="#AA00FF"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #6200EA; border-radius: 50%; cursor: pointer;" data-color="#6200EA"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #304FFE; border-radius: 50%; cursor: pointer;" data-color="#304FFE"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #2962FF; border-radius: 50%; cursor: pointer;" data-color="#2962FF"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #0091EA; border-radius: 50%; cursor: pointer;" data-color="#0091EA"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #00B8D4; border-radius: 50%; cursor: pointer;" data-color="#00B8D4"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #00BFA5; border-radius: 50%; cursor: pointer;" data-color="#00BFA5"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #00C853; border-radius: 50%; cursor: pointer;" data-color="#00C853"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #64DD17; border-radius: 50%; cursor: pointer;" data-color="#64DD17"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #AEEA00; border-radius: 50%; cursor: pointer;" data-color="#AEEA00"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #FFD600; border-radius: 50%; cursor: pointer;" data-color="#FFD600"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #FFAB00; border-radius: 50%; cursor: pointer;" data-color="#FFAB00"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #FF6D00; border-radius: 50%; cursor: pointer;" data-color="#FF6D00"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #DD2C00; border-radius: 50%; cursor: pointer;" data-color="#DD2C00"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #8D6E63; border-radius: 50%; cursor: pointer;" data-color="#8D6E63"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #9E9E9E; border-radius: 50%; cursor: pointer;" data-color="#9E9E9E"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #607D8B; border-radius: 50%; cursor: pointer;" data-color="#607D8B"></div>
+                <div class="color-option" style="width: 24px; height: 24px; background-color: #000000; border-radius: 50%; cursor: pointer;" data-color="#000000"></div>
+              </div>
+              <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                <button id="cancel-label" type="button" style="padding: 8px 16px; border: none; background-color: #e5e7eb; border-radius: 4px; cursor: pointer;">취소</button>
+                <button id="save-label" type="submit" style="padding: 8px 16px; border: none; background-color: #2563eb; color: white; border-radius: 4px; cursor: pointer;">저장</button>
+              </div>
+            </form> 
+          </div>
+          <!-- 팝업 배경 -->
+          <div id="popup-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+            </div>
+        </div>
+        <!--  사이드바 끝 -->
 
-                                    <!-- 참조 -->
-                                    <div class="mb-3" id="refInp" >
-                                        <div class="form-label">
-                                            <span id="hiddenIconSpan" style="margin-right: 5px;"><i class='fas fa-chevron-down' id="hiddenRefBtn" style="cursor: pointer;"></i></span><label>참조</label>
+        <!-- 메일 작성창 시작 -->
+        <div class="container-fluid" style="flex: 1; background-color: #ffffff; padding: 20px; border: 1px solid #e0e0e0;">
+            <section class="section">
+                <div class="container-fluid">
+                    <input type="hidden" id="modelEmplNm" value="${emplNm}">
+                    <input type="hidden" id="modelEmail" value="${email}">
+                    <input type="hidden" id="emailNo" value="${mailVO.emailNo}">
+                    <div class="row">
+                        <div class="col-12" style="margin-top: 20px;">
+                            <div id="emailInpSection">
+                                <!-- 송신 이메일 -->
+                                <input type="hidden" id="trnsmitEmail" name="trnsmitEmail" class="form-control" readonly>
+                                <!-- 수신 이메일 -->
+                                <div class="mb-3" id="recpInp">
+                                    <label class="form-label">수신 이메일</label>
+                                    <div class="form-control" id="recpEmailList">
+                                        <div class="emailListDiv" name="recpEmailTemp" id="recpEmailTemp">
+                                            <span id="recpEmailInpSpan"></span>
+                                            <input type="text" id="cloneInp" style="border: 0px; width: 1px;" class="form-control">
+                                            <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                            <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                         </div>
-                                        <div class="form-control" id="refEmailList" >
-                                            <div class="emailListDiv"  name="refEmailTemp" id="refEmailTemp">
-                                                <span id="refEmailInpSpan"></span>
-                                                <input type="text" id="cloneInp" style="border: 0px; width: 1px;" class="form-control">
+                                        <c:forEach items="${mailVO.recptnMapList}" var="recptnMap">
+                                            <div class="emailListDiv" name="recpEmailTemp" id="recpEmailTemp" style="border: 1px solid #ddd; border-radius: 4px; padding: 2px 5px; margin: 2px; align-items: center; display: inline-flex;">
+                                                <span id="recpEmailInpSpan">${recptnMap.emplNm}/</span>
+                                                <input type="text" name="recpEmail" id="recpEmail" data-emplno="${recptnMap.emplNo}" class="recpEmailInp emailInput" value="${recptnMap.recptnEmail}" style="border: 0px; width: 1px;" readonly>
                                                 <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                                 <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                             </div>
-                                            <c:forEach items="${mailVO.refMapList}" var="refMap">
-                                                <div class="emailListDiv"  name="recpEmailTemp" id="refEmailTemp" style="border: 1px solid #ddd; border-radius: 4px; padding: 2px 5px; margin: 2px; align-items: center; display: inline-flex;">
-                                                    <span id="refEmailInpSpan">${refMap.emplNm}/</span>
-                                                    <input type="text" name="refEmail" id="refEmail" data-emplno="${refMap.emplNo}" style="border: 0px; width: 1px;" class="refEmailInp emailInput" value="${refMap.recptnEmail}" readonly>
-                                                    <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
-                                                    <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
-                                                </div>
-                                            </c:forEach>
-                                            <input type="text" name="refEmailInp" id="refEmailInp" style="margin: 3px; border: 1px;" >
-                                        </div>
-                                        <button class="emailTreeBtn btn btn-secondary" type="button" data-event="refEmailInp">주소록</button>
+                                        </c:forEach>
+                                        <input type="text" name="recpEmailInp" id="recpEmailInp" style="margin: 3px; border: 1px;">
                                     </div>
-                                    <!-- 숨은 참조 -->
-                                    <div class="mb-3" id="hiddenRefInp"  >
-                                        <label class="form-label">숨은 참조</label>
-                                        <div class="form-control" id="hiddenRefEmailList">
-                                            <div class="emailListDiv" name="hiddenRefEmailTemp" id="hiddenRefEmailTemp">
-                                                <span id="hiddenRefEmailInpSpan"></span>
-                                                <input type="text" id="cloneInp" style="border: 0px; width: 1px;" class="form-control">
+                                    <button class="emailTreeBtn btn btn-secondary" type="button" data-event="recpEmailInp">주소록</button>
+                                </div>
+                                <!-- 참조 -->
+                                <div class="mb-3" id="refInp">
+                                    <div class="form-label">
+                                        <span id="hiddenIconSpan" style="margin-right: 5px;"><i class='fas fa-chevron-down' id="hiddenRefBtn" style="cursor: pointer;"></i></span><label>참조</label>
+                                    </div>
+                                    <div class="form-control" id="refEmailList">
+                                        <div class="emailListDiv" name="refEmailTemp" id="refEmailTemp">
+                                            <span id="refEmailInpSpan"></span>
+                                            <input type="text" id="cloneInp" style="border: 0px; width: 1px;" class="form-control">
+                                            <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                            <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                        </div>
+                                        <c:forEach items="${mailVO.refMapList}" var="refMap">
+                                            <div class="emailListDiv" name="recpEmailTemp" id="refEmailTemp" style="border: 1px solid #ddd; border-radius: 4px; padding: 2px 5px; margin: 2px; align-items: center; display: inline-flex;">
+                                                <span id="refEmailInpSpan">${refMap.emplNm}/</span>
+                                                <input type="text" name="refEmail" id="refEmail" data-emplno="${refMap.emplNo}" style="border: 0px; width: 1px;" class="refEmailInp emailInput" value="${refMap.recptnEmail}" readonly>
                                                 <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                                 <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                             </div>
-                                            <c:forEach items="${mailVO.hiddenRefMapList}" var="hiddenRefMap">
-                                                <div class="emailListDiv"  name="recpEmailTemp" id="hiddenRefEmailTemp" style="border: 1px solid #ddd; border-radius: 4px; padding: 2px 5px; margin: 2px; align-items: center; display: inline-flex;">
-                                                    <span id="hiddenRefEmailInpSpan">${hiddenRefMap.emplNm}/</span>
-                                                    <input type="text" name="refEmail" id="refEmail" data-emplno="${hiddenRefMap.emplNo}" style="border: 0px; width: 1px;" class="hiddenRefEmailInp emailInput" value="${hiddenRefMap.recptnEmail}" readonly>
-                                                    <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
-                                                    <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
-                                                </div>
-                                            </c:forEach>
-                                            <input type="text" name="hiddenRefEmailInp" id="hiddenRefEmailInp" style="margin: 3px; border: 0px;" >
+                                        </c:forEach>
+                                        <input type="text" name="refEmailInp" id="refEmailInp" style="margin: 3px; border: 1px;">
+                                    </div>
+                                    <button class="emailTreeBtn btn btn-secondary" type="button" data-event="refEmailInp">주소록</button>
+                                </div>
+                                <!-- 숨은 참조 -->
+                                <div class="mb-3" id="hiddenRefInp">
+                                    <label class="form-label">숨은 참조</label>
+                                    <div class="form-control" id="hiddenRefEmailList">
+                                        <div class="emailListDiv" name="hiddenRefEmailTemp" id="hiddenRefEmailTemp">
+                                            <span id="hiddenRefEmailInpSpan"></span>
+                                            <input type="text" id="cloneInp" style="border: 0px; width: 1px;" class="form-control">
+                                            <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                            <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                         </div>
-                                        <button class="emailTreeBtn btn btn-secondary" type="button" data-event="hiddenRefEmailInp">주소록</button>
+                                        <c:forEach items="${mailVO.hiddenRefMapList}" var="hiddenRefMap">
+                                            <div class="emailListDiv" name="recpEmailTemp" id="hiddenRefEmailTemp" style="border: 1px solid #ddd; border-radius: 4px; padding: 2px 5px; margin: 2px; align-items: center; display: inline-flex;">
+                                                <span id="hiddenRefEmailInpSpan">${hiddenRefMap.emplNm}/</span>
+                                                <input type="text" name="refEmail" id="refEmail" data-emplno="${hiddenRefMap.emplNo}" style="border: 0px; width: 1px;" class="hiddenRefEmailInp emailInput" value="${hiddenRefMap.recptnEmail}" readonly>
+                                                <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                                <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                            </div>
+                                        </c:forEach>
+                                        <input type="text" name="hiddenRefEmailInp" id="hiddenRefEmailInp" style="margin: 3px; border: 0px;">
                                     </div>
+                                    <button class="emailTreeBtn btn btn-secondary" type="button" data-event="hiddenRefEmailInp">주소록</button>
                                 </div>
-                                <!-- 조직도 -->
-                                <div style="width: 40%; float: right; margin-left: 30px;" id="emailTree">
-                                    <div id="searchBar">
-                                        <c:import url="../organization/searchBar.jsp" />
-                                    </div>
-                                    <div id="orgTree" style=" display: block;">
-                                        <c:import url="../organization/orgList.jsp" />
-                                    </div>
-                                    <input id="btnEvent" type="hidden" value="ss" />
-                                    <button id="emailTreeClose" type="button">닫기</button>
+                            </div>
+                            <!-- 조직도 -->
+                            <div style="width: 40%; float: right; margin-left: 30px;" id="emailTree">
+                                <div id="searchBar">
+                                    <c:import url="../organization/searchBar.jsp" />
                                 </div>
+                                <div id="orgTree" style="display: block;">
+                                    <c:import url="../organization/orgList.jsp" />
+                                </div>
+                                <input id="btnEvent" type="hidden" value="ss" />
+                                <button id="emailTreeClose" type="button">닫기</button>
                             </div>
                             <!-- 메일 제목 -->
-                            <div class="mb-3" style="margin-top: 15px;">
-                                <label class="form-label">제목</label> 
-                                <input type="text" id="emailSj" name="emailSj" class="form-control" placeholder="제목을 입력해 주세요." required value="${mailVO.emailSj}">
+                            <div class="mb-3">
+                                <label class="form-label" >제목</label>
+                                <input type="text" id="emailSj" name="emailSj" class="form-control" placeholder="제목을 입력해 주세요." required value="${mailVO.emailSj}" style="flex: 1;">
                             </div>
-                            
-                            
                             <!-- 작성자 번호 -->
                             <input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
                             <!-- 게시글 내용 (CKEditor) -->
@@ -302,45 +488,30 @@
                                 </div>
                                 <textarea id="emailCn" name="emailCn" rows="3" cols="30" class="form-control" hidden>${mailVO.emailCn}</textarea>
                             </div><br>
-
                             <!-- 작성자 이름 -->
                             <div class="mb-3">
                                 <input type="hidden" name="emplNo" class="form-control" value="${myEmpInfo.emplNo}" readonly>
                             </div>
-
                             <!-- 파일 업로드 -->
                             <c:choose>
                                 <c:when test="${not empty fileList}">
-                                        <file-upload
-                                        label="첨부파일"
-                                        name="uploadFile"
-                                        max-files="5"
-                                        contextPath="${pageContext.request.contextPath}"
-                                        uploaded-file="${fileList}"
-                                        atch-file-no="${mailVO.atchFileNo}"
-                                        ></file-upload>
+                                    <file-upload label="첨부파일" name="uploadFile" max-files="5" contextPath="${pageContext.request.contextPath}" uploaded-file="${fileList}" atch-file-no="${mailVO.atchFileNo}"></file-upload>
                                 </c:when>
                                 <c:otherwise>
-                                    <file-upload
-                                    label="첨부파일"
-                                    name="uploadFile"
-                                    max-files="5"
-                                    contextPath="${pageContext.request.contextPath}"
-                                    ></file-upload>
+                                    <file-upload label="첨부파일" name="uploadFile" max-files="5" contextPath="${pageContext.request.contextPath}"></file-upload>
                                 </c:otherwise>
-                             </c:choose>
+                            </c:choose>
                             <!-- 전송 버튼 -->
                             <button type="button" id="sendMail" data-ty="sub" class="btn btn-primary storeMail">전송</button>
                             <button type="button" id="toList" class="btn btn-secondary">목록</button>
-                            <!-- <button type="button" id="tempStore" class="btn btn-secondary">임시저장</button> -->
                             <button type="button" id="tempStore" data-ty="temp" class="btn btn-secondary storeMail">임시저장</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-		</div>
-	</section>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <!-- 메일 작성창 끝 -->
+    </section>
 	<c:import url="../layout/footer.jsp" />
 </main>
 <c:import url="../layout/prescript.jsp" />
@@ -438,6 +609,8 @@
         // <input type="hidden" id="modelEmail" value="${email}">
         // if($('#modelEmail').length&&$('#modelEmplNm').length){
         // console.log("${mailVO}")
+
+        // 주석
         {
             $('.emailInput').each(function(){
                 const $this = $(this);
@@ -446,19 +619,20 @@
                 $this.css('width', width + 'px');
             })
         }
-        if($('#modelEmail').val() && $('#modelEmplNm').val()){
-            console.log($('#modelEmail').val())
-            console.log($('#modelEmplNm').val())
-            let email = $('#modelEmail').val();
-            let emplNm = $('#modelEmplNm').val();
-            console.log("email : ",email,"  emplNm : ",emplNm)
-            $('#modelEmail').remove();
-            $('#recpEmailInp').val(email);
-            $('#recpEmailInpSpan').text(emplNm);
-            setTimeout(function() {
-                $('#recpEmailInp').trigger('change');
-            }, 50);
-        }
+        // if($('#modelEmail').val() && $('#modelEmplNm').val()){
+        //     console.log($('#modelEmail').val())
+        //     console.log($('#modelEmplNm').val())
+        //     let email = $('#modelEmail').val();
+        //     let emplNm = $('#modelEmplNm').val();
+        //     console.log("email : ",email,"  emplNm : ",emplNm)
+        //     $('#modelEmail').remove();
+        //     $('#recpEmailInp').val(email);
+        //     $('#recpEmailInpSpan').text(emplNm);
+        //     setTimeout(function() {
+        //         $('#recpEmailInp').trigger('change');
+        //     }, 50);
+        // }
+        // ^^주석^^
 
         // ckeditor5 시작
         $(".ck-blurred").keydown(function(){
@@ -954,6 +1128,114 @@
         function isValidEmail(email) {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
         }
+
+        /*사이드바 관련 함수 시작*/
+        			// 사이드바 아이템 클릭 이벤트 시작 //
+      $('.sidebar-item.type-select').on('click', function() {
+        // $('.sidebar-item').removeClass('active');
+        // $(this).addClass('active');
+        emailClTy = $(this).attr('data-emailClTy');
+        if(emailClTy){
+          // console.log('emailClTy -> ',emailClTy);
+          window.location.href = "/mail?emailClTy="+emailClTy;
+        }
+      });
+      
+      $('.sidebar-item.label-select').on('click',function(){
+        // console.log('.label-select 클릭 이벤트 : ',this);
+        let lblNo = $(this).data('lblno');
+        console.log('.label-select 클릭 이벤트 lblNo : ',lblNo);
+        window.location.href="/mail/labeling?lblNo="+lblNo;
+      })
+      // 사이드바 아이템 클릭 이벤트 끝 //
+      let selectedColor = "#000000"; // Default color
+
+// 라벨 추가 버튼 클릭 이벤트
+$('#addLabelBtn').on('click', function() {
+  $('#label-popup').show();
+  $('#popup-overlay').show();
+  $('.color-option').css('border', 'none');
+  $('#label-name').val('');
+  $('#lblPopTitle').text('라벨 추가');
+});
+
+// 라벨 색상 선택 이벤트
+$('.color-option').on('click', function() {
+  $('.color-option').css('border', 'none'); // Reset border
+  $(this).css('border', '3px solid #2563eb');// Highlight selected color
+  selectedColor = $(this).data('color');
+  $('#lblCol').val(selectedColor);
+  console.log("$('#lblCol').val() : ",$('#lblCol').val());
+});
+
+// 저장 버튼 클릭 이벤트
+$('#save-label').on('click', function() {
+  let labelName = $('#label-name').val().trim();
+  let labelCol = $('#lblCol').val();
+  console.log('라벨 추가 labelName: ',labelName);
+  console.log('라벨 추가 labelCol: ',labelCol);
+});
+
+// 취소 버튼 클릭 이벤트
+$('#cancel-label').on('click', function() {
+  $('#label-popup').hide();
+  $('#popup-overlay').hide();
+});
+            // 드롭다운 토글
+            $('.dropdown-toggle').on('click', function(e) {
+              e.stopPropagation();
+              const dropdownMenu = $(this).siblings('.dropdown-menu');
+              $('.dropdown-menu').not(dropdownMenu).hide(); // 다른 드롭다운 닫기
+              dropdownMenu.toggle();
+            });
+
+            // 페이지 외부 클릭 시 드롭다운 닫기
+            $(document).on('click', function() {
+              $('.dropdown-menu').hide();
+            });
+
+            // 라벨 수정 버튼 클릭 이벤트
+            $('.edit-label').on('click', function(e) {
+              e.stopPropagation();
+              // console.log(this);
+              const lblNo = $(this).data('lblno');
+              const lblNm = $(this).closest('.dropdown-menu').parent().siblings('.sidebar-label').text();
+              const lblCol = $(this).closest('.dropdown-menu').parent().siblings('.fas').data('col');
+              console.log('수정 -> lblNo : ',lblNo);
+              console.log('수정 -> lblNm : ',lblNm);
+              console.log('수정 -> lblCol : ',lblCol);
+              $('#lblNo').val(lblNo);
+              $('#addLabelBtn').trigger('click');
+              $('#lblPopTitle').text('라벨 수정');
+              // $(`.color-option[data-color=\${lblCol}]`).css('border', '2px solid #2563eb');
+              $('.color-option[data-color="' + lblCol + '"]').css('border', '3px solid #2563eb');
+              $('#label-name').val(lblNm);
+              $('#lblCol').val(lblCol);
+              // $('color-option').css('border', '2px solid #2563eb'); // Highlight selected color
+            });
+            
+            // 라벨 삭제 버튼 클릭 이벤트
+            $('.delete-label').on('click', function(e) {
+              e.stopPropagation();
+              const lblNo = $(this).data('lblno');
+              console.log('삭제 -> lblNo : ',lblNo);
+              $.ajax({
+                url:'mail/deleteLbl',
+                method:'post',
+                data:{lblNo:lblNo},
+                success:function(resp){
+                  if(resp=='success'){
+                    $('.label-select[data-lblno="' + lblNo + '"]').hide();
+                  }else{
+
+                  }
+                },
+                error:function(err){
+                  console.log('ajax요청결과 에러 발생 : ',err);
+                }
+              })
+            });
+        /*사이드바 관련 함수 끝*/
     });
     // $(window).unload(function() {
     //     // 언로드시 임시저장 (적힌게 있다면 y/n으로 물어보고 y면 저장 아니면 날림)

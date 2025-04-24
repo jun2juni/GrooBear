@@ -46,7 +46,14 @@ FROM MAIL M
 INNER JOIN EMPLOYEE E ON M.EMPL_NO = E.EMPL_NO
 LEFT JOIN MAIL_LABEL ML ON M.lbl_no = ML.lbl_no
 WHERE M.EMPL_NO=#{searchVo.emplNo}
-  AND M.email_cl_ty = #{searchVo.emailClTy}
+  <choose>
+	<when test="searchVo.emailClTy == 5">
+		AND m.STARRED = 'Y'
+	</when>
+	<otherwise>
+		AND m.EMAIL_CL_TY = #{searchVo.emailClTy}
+	</otherwise>
+</choose>
   AND M.DEL_AT = 'N'
 	<if test = "searchVo.keyword != null and searchVo.keyword !=''">
 		<choose>
@@ -171,7 +178,14 @@ WHERE email_no = #{emailNo}
 SELECT count(*)
 FROM mail m
 WHERE m.EMPL_NO = #{emplNo}
-AND m.EMAIL_CL_TY = #{mailVO.emailClTy}
+<choose>
+	<when test="mailVO.emailClTy == 5">
+		and m.STARRED = 'Y'
+	</when>
+	<otherwise>
+		AND m.EMAIL_CL_TY = #{mailVO.emailClTy}
+	</otherwise>
+</choose>
 AND m.DEL_AT = 'N'
 	<if test = "mailVO.keyword != null and mailVO.keyword !=''">
 		<choose>
@@ -249,7 +263,8 @@ CONNECT BY LEVEL &lt;= #{count}
 					    email_sj,
 					    email_cn,
 					    atch_file_no,
-					    email_group_no)
+					    email_group_no,
+					    readng_at)
                 VALUES (
                     #{mail.emailNo},
                     #{mail.emplNo},
@@ -263,7 +278,8 @@ CONNECT BY LEVEL &lt;= #{count}
                     #{mail.emailSj},
                     #{mail.emailCn},
                     #{mail.atchFileNo},
-                    #{mail.emailGroupNo}
+                    #{mail.emailGroupNo},
+                    #{mail.readngAt}
                 )
             </foreach>
     	SELECT * FROM dual
@@ -330,8 +346,8 @@ map.put("checkedList", checkedList); -->
 
 <update id="delLblFromMail" parameterType="int">
 	update mail 
-	set lbl_no is null
-	where email_no = #{emailNo}
+	set lbl_no = null
+	where lbl_no = #{lblNo}
 </update>
 
 </mapper>

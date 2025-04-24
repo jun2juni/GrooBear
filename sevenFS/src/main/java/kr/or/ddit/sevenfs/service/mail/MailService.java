@@ -45,7 +45,7 @@ public interface MailService {
 
 	int readingAt(int emailNo);
 
-	int delLblFromMail(String lblNo);
+	int delLblFromMail(int lblNo);
 
 
 

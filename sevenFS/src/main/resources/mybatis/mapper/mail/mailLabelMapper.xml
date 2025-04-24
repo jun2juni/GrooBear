@@ -50,7 +50,7 @@ set
 where LBL_NO=#{lblNo}
 </update>
 
-<delete id="deleteLbl" parameterType="String">
+<delete id="deleteLbl" parameterType="int">
 	DELETE FROM mail_label
 	WHERE 
 		lbl_no = #{lblNo}

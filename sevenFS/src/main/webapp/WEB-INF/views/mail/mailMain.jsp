@@ -5,6 +5,7 @@
 
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <script type="text/javascript">
   $(document).ready(function(){
       $('.tab').prop('disabled',true)
@@ -34,7 +35,8 @@
       //   $(this).addClass('active');
       // });
       
-      // 사이드바 아이템 클릭 이벤트
+
+      // 사이드바 아이템 클릭 이벤트 시작 //
       $('.sidebar-item.type-select').on('click', function() {
         // $('.sidebar-item').removeClass('active');
         // $(this).addClass('active');
@@ -50,6 +52,19 @@
         let lblNo = $(this).data('lblno');
         console.log('.label-select 클릭 이벤트 lblNo : ',lblNo);
         window.location.href="/mail/labeling?lblNo="+lblNo;
+      })
+      // 사이드바 아이템 클릭 이벤트 끝 //
+
+
+      $('#select-all').on('change',function(){
+        console.log(this);
+        console.log($(this).is(":checked"));
+        if($(this).is(":checked")){
+          $('.email-checkbox').prop('checked',true);
+        }else{
+          $('.email-checkbox').prop('checked',false);
+        }
+        $('.email-checkbox').first().trigger('change');
       })
 
       // 삭제
@@ -93,6 +108,7 @@
         window.location.href="/mail/mailRepl?emailNo="+emailNo;
         // window.location.href=`/mail/mailSend?emplNm=\${emplNm}&&email=\${emplEmail}`;
       })
+
       $('#tab-trnsms').on('click',function(){
         console.log('전달 버튼 클릭 : ',this);
         let chk = $('.email-checkbox:checked').get()[0];
@@ -146,6 +162,7 @@
           }
         })
       })
+
       function labeling(mailList,lblNo,color){
         mailList.forEach(mail => {
           console.log('mail : ',mail);
@@ -167,11 +184,10 @@
         })
       }
 
-
       // 리스트 클릭 이벤트
-      $('.email-content').on('click',function(){
-        let emailNoSel = $(this).closest('.email-item').attr('data-emailno');
-        let emailcltySel = $(this).closest('.email-item').attr('data-emailclty');
+      $('.email-item').on('click',function(){
+        let emailNoSel = $(this).attr('data-emailno');
+        let emailcltySel = $(this).attr('data-emailclty');
         console.log('emailNo -> ',emailNoSel);
         console.log('emailclty -> ',emailcltySel);
         if(emailcltySel == '2'){
@@ -182,7 +198,8 @@
       })
 
       // 별표 클릭
-      $('.fa-star').on('click',function(){
+      $('.fa-star').on('click',function(e){
+        e.stopPropagation();
         let starredYN = '';
         $(this).toggleClass('fas');
         $(this).toggleClass('far');
@@ -208,7 +225,12 @@
           }
         })
       })
+
+
       let checkedList;
+      $('.email-checkbox').on('click', function(e) {
+        e.stopPropagation(); // 이벤트 전파 중단
+      });
       // $(document).on('change','.email-checkbox',function(){
       $('.email-checkbox').on('change',function(){
         // 현재 URL에서 쿼리스트링 가져오기
@@ -249,14 +271,17 @@
           $("#tab-trnsms").prop('disabled',false);
           $('#labeling').prop('disabled',false);
         }
+
         if(paramValue != '1' && paramValue == ''){
           $("#tab-repl").prop('disabled',true);
         }
+
         checkedList = emailNoList;
+
       })
       // <i class="${mailVO.starred=='Y'?'fas':'far'} fa-star"></i>
-      
   });
+
 </script>
   <div class="email-container">
     <!-- 메인 콘텐츠 영역 (사이드바 + 이메일 영역) -->
@@ -287,13 +312,19 @@
             <span class="sidebar-label">임시보관함</span>
             <!-- <span class="sidebar-count">11</span> -->
           </div>
-          <div class="sidebar-item type-select ${mailVO.emailClTy eq '3' ? 'active' : ''}" data-emailClTy="3">
+          <!-- <div class="sidebar-item type-select ${mailVO.emailClTy eq '3' ? 'active' : ''}" data-emailClTy="3">
             <i class="far fa-file-alt"></i>
             <span class="sidebar-label">스팸함</span>
+            <span class="sidebar-count">11</span>
+          </div> -->
+          <div class="sidebar-item type-select ${mailVO.emailClTy eq '5' ? 'active' : ''}" data-emailClTy="5">
+            <i class="fas fa-star"></i>
+            <span class="sidebar-label">중요 메일함</span>
             <!-- <span class="sidebar-count">11</span> -->
           </div>
           <div class="sidebar-item type-select ${mailVO.emailClTy eq '4' ? 'active' : ''}" data-emailClTy="4">
-            <i class="far fa-file-alt"></i>
+            <i class="far fa-trash-alt"></i>
+            <!-- <i class="fas fa-trash"></i> -->
             <span class="sidebar-label">휴지통</span>
             <!-- <span class="sidebar-count">11</span> -->
           </div>
@@ -373,6 +404,8 @@
                 success:function(resp){
                   if(resp=='success'){
                     $('.label-select[data-lblno="' + lblNo + '"]').hide();
+                    $('.fas.fa-tag[data-lblno="' + lblNo + '"]').remove();
+                    console.log('dwasdwas');
                   }else{
 
                   }
@@ -583,7 +616,7 @@ body {
 .email-container {
   font-family: 'Roboto', 'Noto Sans KR', Arial, sans-serif;
   background-color: #ffffff;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   height: 80vh;
   width: 100%;
   display: flex;
@@ -1006,38 +1039,6 @@ body {
   .email-sender {
     width: 120px;
   }
-}
-
-/* 알림 바 (현재 주석 처리되어 있지만 스타일 유지) */
-.notification-bar {
-  background: linear-gradient(135deg, #1a202c, #2d3748);
-  color: #fff;
-  padding: 12px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-  /* box-shadow: 0 2px 8px rgba(0,0,0,0.15); */
-}
-
-.notification-actions {
-  display: flex;
-}
-
-.notification-button {
-  background: none;
-  border: 1px solid rgba(255,255,255,0.2);
-  color: #90cdf4;
-  cursor: pointer;
-  margin-left: 16px;
-  padding: 6px 12px;
-  border-radius: 4px;
-  transition: all 0.2s;
-}
-
-.notification-button:hover {
-  background-color: rgba(255,255,255,0.1);
-  color: #bde0fe;
 }
 
 .close-button {

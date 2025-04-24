@@ -66,19 +66,32 @@ public class MailController {
 			@RequestParam(defaultValue = "1", required = false) int currentPage,
 			@RequestParam(defaultValue = "1", required = false) String emailClTy) {
 		EmployeeVO employeeVO = customUser.getEmpVO();
-		mailVO.setEmailClTy(emailClTy);
-		mailVO.setEmplNo(employeeVO.getEmplNo());
 		log.info("CustomUser -> employeeVO" + employeeVO);
 		log.info("mailHome -> MailVO -> 검색을 위함 : " + mailVO);
 		log.info("mailHome -> MailVO -> 페이지 : " + currentPage);
 		log.info("mailHome -> MailVO -> 메일함 : " + emailClTy);
 		model.addAttribute("title","메일함");
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		map.put("emplNo", employeeVO.getEmplNo());
-		map.put("mailVO", mailVO);
-		map.put("currentPage", currentPage);
-		map.put("size", 10);
+		if(emailClTy.equals("5")) {
+			mailVO.setEmailClTy(emailClTy);
+			mailVO.setEmplNo(employeeVO.getEmplNo());
+			
+			map.put("emplNo", employeeVO.getEmplNo());
+			map.put("mailVO", mailVO);
+			map.put("currentPage", currentPage);
+			map.put("size", 10);
+		}else {
+			mailVO.setEmailClTy(emailClTy);
+			mailVO.setEmplNo(employeeVO.getEmplNo());
+			
+			map.put("emplNo", employeeVO.getEmplNo());
+			map.put("mailVO", mailVO);
+			map.put("currentPage", currentPage);
+			map.put("size", 10);
+		}
+		
 		int total = mailService.getTotal(map);
 		log.info("mailService.getTotal(map) -> total : "+total);
 		ArticlePage<MailVO> articlePage = new ArticlePage<MailVO>(total, currentPage, 10);
@@ -140,13 +153,15 @@ public class MailController {
 										@RequestParam(value = "emplNo",required = false) String emplNo,
 										@AuthenticationPrincipal CustomUser customUser) {
 		EmployeeVO employeeVO = customUser.getEmpVO();
+		List<MailLabelVO> mailLabelList = mailLabelService.getLabelList(employeeVO);
+		model.addAttribute("mailLabelList",mailLabelList);
 		model.addAttribute("title","메일함");
 		model.addAttribute("myEmplNo",employeeVO.getEmplNo());
 		model.addAttribute("emplNo",emplNo);
 		model.addAttribute("emplNm",emplNm);
-		model.addAttribute("email",email);
+		model.addAttribute("recptnEmail",email);
 		log.info("mailSend get요청 -> emplNm : "+emplNm);
-		log.info("mailSend get요청 -> email : "+email);
+		log.info("mailSend get요청 -> recptnEmail : "+email);
 		log.info("mailSend get요청 -> emplNo : "+emplNo);
 		return "mail/mailSend";
 	}
@@ -207,8 +222,12 @@ public class MailController {
 	@PostMapping("/sendMail")
 	@ResponseBody
 	public String sendEmail(@ModelAttribute MailVO mailVO,
-							@RequestParam(value = "uploadFile",required = false) MultipartFile[] uploadFile) {
+							@RequestParam(value = "uploadFile",required = false) MultipartFile[] uploadFile,
+							@AuthenticationPrincipal CustomUser customUser ) {
 		log.info("sendEmail");
+		EmployeeVO employeeVO = customUser.getEmpVO();
+		mailVO.setEmplNo(employeeVO.getEmplNo());
+		mailVO.setEmplNm(employeeVO.getEmplNm());
 		log.info("sendEmail -> mailVO : " + mailVO);
 		if(uploadFile!=null) {
 			log.info("sendEmail -> uploadFile : " + uploadFile);
@@ -217,6 +236,7 @@ public class MailController {
 			}
 		}
 		int result = mailService.sendMail(mailVO,uploadFile);
+		
 		return "/mail";
 	}
 	@PostMapping("/tempStore")
@@ -277,7 +297,9 @@ public class MailController {
 	}
 	
 	@PostMapping("/mailLblAdd")
-	public String mailLblAdd(@ModelAttribute MailLabelVO labelVO) {
+	public String mailLblAdd(@ModelAttribute MailLabelVO labelVO, @AuthenticationPrincipal CustomUser customUser) {
+		EmployeeVO employeeVO = customUser.getEmpVO(); 
+		labelVO.setEmplNo(employeeVO.getEmplNo()); 
 		log.info("mailLblAdd -> labelVO : "+labelVO);
 		mailLabelService.mailLblAdd(labelVO);
 		return "redirect:/mail";
@@ -297,7 +319,7 @@ public class MailController {
 	
 	@PostMapping("/deleteLbl")
 	@ResponseBody
-	public String deleteLbl(@RequestParam(value = "lblNo") String lblNo) {
+	public String deleteLbl(@RequestParam(value = "lblNo") int lblNo) {
 		log.info("deleteLbl -> lblNo : "+lblNo);
 		int result = mailService.delLblFromMail(lblNo);
 		result += mailLabelService.deleteLbl(lblNo);
