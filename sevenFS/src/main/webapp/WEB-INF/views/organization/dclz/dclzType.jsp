@@ -142,7 +142,7 @@
 			<!-- </div> -->
 		  </div>
 		</div>
-		<div class="c0l-12">
+		<div class="col-12">
 		  <div class="">
 			<div class="card-style mb-30" id="divPage">
 			  <div class="title d-flex flex-wrap">
