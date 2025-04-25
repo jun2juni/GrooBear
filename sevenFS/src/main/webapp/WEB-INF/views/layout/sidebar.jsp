@@ -115,10 +115,10 @@
                       <a href="/atrz/home" class="${fn:contains(currentURL, '/atrz/home') ? 'active' : ''}"> 전자결재 </a>
                     </li>
                     <li>
-                      <a href="/atrz/approval" class="${fn:contains(currentURL, '/atrz/approval') ? 'active' : ''}"> 수신문서함 </a>
+                      <a href="/atrz/approval?tab=1" class="${fn:contains(currentURL, '/atrz/approval') ? 'active' : ''}"> 수신문서함 </a>
                     </li>
                     <li>
-                      <a href="/atrz/document" class="${fn:contains(currentURL, '/atrz/document') ? 'active' : ''}"> 개인문서함 </a>
+                      <a href="/atrz/document?tab=1" class="${fn:contains(currentURL, '/atrz/document') ? 'active' : ''}"> 개인문서함 </a>
                     </li>
                     <li>
                       <a href="/atrz/companion" class="${fn:contains(currentURL, '/atrz/companion') ? 'active' : ''}"> 반려문서함 </a>
