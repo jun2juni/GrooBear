@@ -235,9 +235,9 @@
 }
 
 .ui-state-highlight, .ui-widget-content .ui-state-highlight,
-	.ui-widget-header .ui-state-highlight {
+.ui-widget-header .ui-state-highlight {
 	border: 0px;
-	background: #b0e0e6  ;
+	background: rgb(255, 192, 203);
 	border-radius: 50%;
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -296,12 +296,11 @@ padding: 10px !important;
 <body>
 	<sec:authentication property="principal.empVO" var="empVO" />
 	<%-- <p> ${empVO.emplNm} ${empVO.emplNo}</p> --%>
-	<!-- <p>empVO: ${empVO}</p> -->
 	<%@ include file="../layout/sidebar.jsp"%>
 	<main class="main-wrapper">
 		<%@ include file="../layout/header.jsp"%>
 		<section class="section">
-		<form id="atrz_ho_form" action="/atrz/appLineList" method="post" enctype="multipart/form-data">
+		<form id="atrz_sp_form" action="/atrz/insertAtrzLine" method="post" enctype="multipart/form-data">
 			<div class="container-fluid">
 				<!-- 여기서 작업 시작 -->
 				<div class="row">
@@ -313,21 +312,24 @@ padding: 10px !important;
 								<div class="critical d-flex gap-2 mb-3">
 									<!--성진스 버튼-->
 									<button id="s_eap_app_top" type="button" 
-										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app">
-										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
+										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+										<span class="material-symbols-outlined fs-5">upload</span> 결재요청
 									</button>
-									<a id="s_eap_stor" type="button"
-										class="btn btn-outline-success d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
-										class="material-symbols-outlined fs-5">error</span> 임시저장
-									</a> <a id="s_appLine_btn" type="button"
+									<a id="s_eap_storTo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+										<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
+									</a> 
+									<a id="s_appLine_btn" type="button"
 										class="btn btn-outline-info d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
-										class="material-symbols-outlined fs-5">error</span> 결재선 지정
-									</a> <a type="button"
-										class="btn btn-outline-danger d-flex align-items-center gap-1"
-										href="/atrz/home"> <span
-										class="material-symbols-outlined fs-5">cancel</span> 취소
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
+									</a> 
+									<a type="button" id="cancelButton"
+										class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
 							</div>
@@ -373,23 +375,22 @@ padding: 10px !important;
 													</table>
 												</div>
 
-											<div style="float: left; width: 130px; margin-left: 20px; margin-right: 20px;">
-												<table border="1" id="s_eap_draft">
-													<tr>
-														<th rowspan="2">신청</th>
-														<td>${empVO.clsfCodeNm}</td>
-													</tr>
-													<tr>
-														<td>${empVO.emplNm}</td>
-													</tr>
-												</table>
-											</div>
+												<div style="float: left; width: 130px; margin-right: 10px;">
+													<table border="1" id="s_eap_draft">
+														<tr>
+															<th rowspan="2">신청</th>
+															<td>${empVO.clsfCodeNm}</td>
+														</tr>
+														<tr>
+															<td>${empVO.emplNm}</td>
+														</tr>
+													</table>
+												</div>
 
-											
-											<div style="float: right; margin-right: 10px;" id=s_eap_draft_app>
-											</div>
-											<div id="s_eap_final">
-											<div>
+												<div style="float: right;  margin-right: 10px;"
+												id=s_eap_draft_app>
+												
+												</div>
 												<div style="padding: 50px 10px 20px; clear: both;">
 													<div
 														style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목
@@ -458,18 +459,16 @@ padding: 10px !important;
 														<button type="button" id="s_add_sp_detail" class="btn btn-success" onclick="addTr()">내역 추가</button>
 													</div>
 
-													<div style="padding: 10px 0;">
-														<div class="s_frm_title">파일첨부</div>
-														<!-- <input type="file" class="form-control"> -->
-														<div id="s_file_upload">
-															<input type="file" id="eap_file_path" name="uploadFile" />
-														</div>
-														<input type="hidden" name="fileUrl" id="fileUrl">
-													</div>
+													<form action="/fileUpload" method="post" enctype="multipart/form-data">
+													
+														<file-upload
+																label="첨부파일"
+																name="uploadFile"
+																max-files="1"
+																contextPath="${pageContext.request.contextPath }"
+														></file-upload>
+													</form>
 												</div>
-
-											</div>
-										</div>
 
 
 											</div>
@@ -486,27 +485,30 @@ padding: 10px !important;
 								<div class="critical d-flex gap-2 mt-3">
 									<!--성진스 버튼-->
 									<button id="s_eap_app_bottom" type="button" 
-										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app">
-										<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
+										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+										<span class="material-symbols-outlined fs-5">upload</span> 결재요청
 									</button>
-									<a id="s_eap_stor" type="button"
-										class="btn btn-outline-success d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
-										class="material-symbols-outlined fs-5">error</span> 임시저장
-									</a> <a id="s_appLine_btn" type="button"
-									
-										class="btn btn-outline-info d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
-										class="material-symbols-outlined fs-5">error</span> 결재선 지정
-									</a> <a type="button"
-										class="btn btn-outline-danger d-flex align-items-center gap-1"
-										href="/atrz/home"> <span
-										class="material-symbols-outlined fs-5">cancel</span> 취소
+									<a id="s_eap_storBo" type="button" 
+										class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+										<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
+									</a> 
+									<a id="s_appLine_btn" type="button" class="btn btn-outline-info d-flex align-items-center gap-1"
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
+									</a> 
+									<a type="button" href="/atrz/home"
+										class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;" > 
+										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
 							</div>
 						<!-- 상하 버튼 추가 -->
-						</form>
+						
+					</form>
 					</div>
 				</div>
 				<!-- 여기서 작업 끝 -->
@@ -519,6 +521,29 @@ padding: 10px !important;
 
 
 <script>
+//제목 너무 길게 입력하면 입력초과 스왈
+document.getElementById('s_sp_tt').addEventListener('input', function (event) {
+        const maxLength = 60; // 최대 길이 설정
+        const inputField = this;
+        const inputValue = inputField.value;
+
+        // 입력값이 최대 길이를 초과할 경우
+        if (inputValue.length > maxLength) {
+            swal({
+                title: "입력 초과",
+                text: "제목은 최대 60자까지 입력 가능합니다.",
+                icon: "warning",
+                button: "확인"
+            }).then(() => {
+                // 초과된 부분을 잘라내기
+                inputField.value = inputValue.substring(0, maxLength);
+            });
+
+            // 입력 처리를 중단
+            event.preventDefault();
+            return;
+        }
+    });
 //내역추가
 function addTr() {
 	$(".s_default_tbody_cl").append(
@@ -536,6 +561,12 @@ function addTr() {
 		+ '</tr>'	
 	);
 }
+
+
+
+
+
+
 // 합계 구하기
 function total() {
 	var spCnt = 0;
@@ -616,8 +647,8 @@ if(!regexp.test(x)){
 		});
 	}
 	}
-
-
+</script>
+<script>
 
 //JSON Object List
 let authList = [];
@@ -677,52 +708,179 @@ $(document).ready(function() {
 		
 		//보고 가져온것 끝
 		
-		let jnForm = document.querySelector("#atrz_ho_form");
+		let jnForm = document.querySelector("#atrz_sp_form");
 		// console.log("${empVO}" + empVO);
 		let formData = new FormData();
 		formData.append("docFormNm","S");
 		formData.append("docFormNo",2);
 		formData.append("atrzSj",jnForm.atrzSj.value);
 		formData.append("atrzCn",jnForm.atrzCn.value);
+
 		if(jnForm.uploadFile.files.length){
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
 			formData.append("uploadFile",jnForm.uploadFile.files[i]);
 		}
+
 		let atrzLineList = [];
 		for(let i=0; i< authList.length; i++){
 			let auth = authList[i];
 			let atrzLine = {
 				atrzLnSn: auth.atrzLnSn ,
 				sanctnerEmpno: auth.emplNo,
-				atrzTy: auth.flex,
-				dcrbAuthorYn: auth.auth
+				atrzTy: auth.auth,
+				dcrbAuthorYn: auth.flex,
+				sanctnerClsfCode: auth.clsfCode,
 			}
 			atrzLineList.push(atrzLine);			
 		}
 		console.log("atrzLineList",atrzLineList);
 
+		let docSpending = {
+				expenseDate: $('.s_sp_date').val(),
+				itemDescription: $('.s_sp_detail').val(),
+				itemQuantity: $('.s_sp_count').val(),
+				itemAmount: $('.s_sp_amount').val(),
+				paymentMethod: $('.s_select').val()
+			};
 
-		formData.append("emplNo","${empVO.emplNo}");//EL 변수 ->  J/S에서 사용(큰따옴표로 묶어준다.)
-		formData.append("drafterEmpno","${empVO.emplNo}");
-		formData.append("emplNm","${empVO.emplNm}");
-		formData.append("drafterEmpnm","${empVO.emplNm}");
-		formData.append("clsfCode","${empVO.clsfCode}");
-		formData.append("clsfCodeNm","${empVO.clsfCodeNm}");
-		formData.append("deptCode","${empVO.deptCode}");
-		formData.append("deptCodeNm","${empVO.deptNm}");
+		formData.append("docSpending",new Blob([JSON.stringify(docSpending)],{type:"application/json"}));
 
-		formData.append("expenseDate", $('.s_sp_date').val());
-		formData.append("itemDescription", $('.s_sp_detail').val());
-		formData.append("itemQuantity", $('.s_sp_count').val());
-		formData.append("itemAmount", $('.s_sp_amount').val());
-		formData.append("paymentMethod", $('.s_select').val());
-		// formData.append("eap_title", $('#s_sp_tt').val());
-		// formData.append("eap_content", $('#eap_content').val());
+
+		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
+
+		formData.append("emplNo",secEmplNo);
+		formData.append("emplNm",secEmplNm);
+		formData.append("atrzDocNo",$("#s_dfNo").text());
+
+		console.log("전송하기 체킁 확인");
+		console.log("s_eap_app_bottom->formData : ", formData);
+	
+		const junyError = (request, status, error) => {
+					console.log("code: " + request.status)
+					console.log("message: " + request.responseText)
+					console.log("error: " + error);
+            }
+
+		$.ajax({
+			url:"/atrz/atrzSpendingInsert",
+			processData:false,
+			contentType:false,
+			type:"post",
+			data: formData,
+			dataType:"text",
+			success : function(result){
+				console.log("체킁:",result);
+				if(result=="쭈니성공"){
+					//location.href = "컨트롤러주소";  //  .href 브라우져 성능 향상을 위해서 캐쉬가 적용 될 수도 있고, 안 될 수도 있어
+					swal({
+						title: "결재요청이 완료되었습니다.",
+						text: "",
+						icon: "success",
+						closeOnClickOutside: false,
+						closeOnEsc: false,
+						button: "확인"
+					}).then(() => {
+						location.replace("/atrz/home")
+					});
+				}
+			},
+			error: junyError
+		})
+	});
+
+	//임시저장 클릭시 
+	$(".s_eap_stor").on("click",function(){
+		event.preventDefault();
+		// alert("체킁");
+		console.log("전송하기 체킁 확인");
+		console.log("s_eap_app_bottom->authList : ", authList);
 		
-		if(jnForm.uploadFile.files.length){
-			for(let i=0; i< jnForm.uploadFile.files.length; i++)
-			formData.append("uploadFile",jnForm.uploadFile.files[i]);
+
+		if ($(".s_appLine_tbody_new .clsTr").length === 0) {
+		swal({
+			title: "결재선이 지정되지 않았습니다.",
+			text: "결재선을 지정해주세요.",
+			icon: "error",
+			closeOnClickOutside: false,
+			closeOnEsc: false,
+			button: "확인"
+		});
+		return;
 		}
+
+		// 제목, 내용이 비어있을 때
+		if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
+			swal({
+					title: "제목 또는 내용이 비어있습니다.",
+					text: "다시 확인해주세요.",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
+			return;
+		}
+		
+		// 지출 내역이 비어있을 때
+		if($('.s_sp_date').val() == "" || $('.s_sp_detail').val() == "" || $('.s_sp_count').val() == "" || $('.s_sp_amount').val() == "") {
+			swal({
+					title: "지출 내역을 다시 확인하여 입력해주세요.",
+					text: "",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
+			return;
+		}
+		
+		// 지출 날짜가 'YYYY-MM-DD'형태로 입력이 되지 않았을 때
+		if($('.s_sp_date').val().length != 10) {
+			swal({
+					title: "날짜를 'YYYY-MM-DD'형태로 입력해주세요.",
+					text: "",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
+			return;
+		}
+		
+		var eap_content = $('#s_sp_co').val();
+
+		
+		// textarea에 \r \n같은 문자를 <br>로 바꿔주기
+		eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
+
+		//formData로 담아주기 위한것
+		let jnForm = document.querySelector("#atrz_sp_form");
+		let formData = new FormData();
+		formData.append("docFormNm","S");
+		formData.append("docFormNo",2);
+		formData.append("atrzSj",jnForm.atrzSj.value);
+		formData.append("atrzCn",jnForm.atrzCn.value);
+
+		let atrzLineList = [];
+		for(let i=0; i< authList.length; i++){
+			let auth = authList[i];
+			let atrzLine = {
+				atrzLnSn: auth.atrzLnSn ,
+				sanctnerEmpno: auth.emplNo,
+				atrzTy: auth.auth,
+				dcrbAuthorYn: auth.flex,
+				sanctnerClsfCode: auth.clsfCode,
+			}
+			atrzLineList.push(atrzLine);			
+		}
+		console.log("atrzLineList",atrzLineList);
+
+		let docSpending = {
+				expenseDate: $('.s_sp_date').val(),
+				itemDescription: $('.s_sp_detail').val(),
+				itemQuantity: $('.s_sp_count').val(),
+				itemAmount: $('.s_sp_amount').val(),
+				paymentMethod: $('.s_select').val()
+			};
+		console.log("docSpending",docSpending);
+		formData.append("docSpending",new Blob([JSON.stringify(docSpending)],{type:"application/json"}));
 
 
 		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
@@ -737,8 +895,9 @@ $(document).ready(function() {
 					console.log("error(ajaxError): " + error);
         }
 
+		//지출결의서 임시저장 시작
 		$.ajax({
-			url:"/atrz/atrzSpendingInsert",
+			url:"/atrz/atrzSpendingStorage",
 			processData:false,
 			contentType:false,
 			type:"post",
@@ -746,27 +905,30 @@ $(document).ready(function() {
 			dataType:"text",
 			success : function(result){
 				console.log("체킁:",result);
-				if(result=="쭈니성공"){
-					//location.href = "컨트롤러주소";  //  .href 브라우져 성능 향상을 위해서 캐쉬가 적용 될 수도 있고, 안 될 수도 있어
-					location.replace("/atrz/home")
+				if(result=="임시저장성공"){
+					swal({
+						title: "임시저장이 완료되었습니다.",
+						text: "",
+						icon: "success",
+						closeOnClickOutside: false,
+						closeOnEsc: false,
+						button: "확인"
+					}).then(() => {
+						// location.replace("/atrz/document");
+					});
+					alert("왔다");
 				}
 			},
 			error: junyError
 		})
-	});
+		//지출결의서 임시저장 끝
+	})
+
+
+
 	
 	//버튼눌렀을때 작동되게 하기 위해서 변수에 담아준다.
 	let emplNo = null;  //선택된 사원 번호 저장
-	//숫자만 있는경우에는 
-	//jsp안에서 자바언어 model에 담아서 보내는것은 그냥 이엘태그로 사용해도 가능하지만
-	//jsp에서 선언한 변수와 jsp에서 사용했던것은 자바에서 사용하지 못하도록 역슬래시(이스케이프문자)를 사용해서 달러중괄호 를 모두 그대로담아가게 한다.
-	//그리고 순서는 자바언어 -> jsp 이렇게 순서로 진행된다. 
-	//숫자만 있는경우에는 작은따옴표 사이에 넣지 않아도되지만, 만약의 사태를 대비해서 그냥 작은 따옴표로 묶어서 사용하도록!!
-	/*
-	jsp주석은 이것이다.	
-	아니면 역슬레시를 사용해서 jsp언어라는것을 말해줘야한다.
-	*/
-	
 // 	let secEMPL = '\${customUser.userName}';
 
 	let secEmplNo = '${empVO.emplNo}';
@@ -801,33 +963,33 @@ $(document).ready(function() {
 		console.log("appAppLine->emplNo : ", emplNo);
 
 		if(!emplNo){
-			swal({ text: "선택한 사원이 없습니다.", icon: "error" });
-			return;
+			swal({ text: "선택한 사원이 없습니다.", icon: "error",	button: "확인" });
+		return;
 		}
 		if(secEmplNo == emplNo){
-			swal({ text: "본인은 결재선 리스트에 추가할 수 없습니다.", icon: "error" });
-			return;
+			swal({ text: "본인은 결재선 리스트에 추가할 수 없습니다.", icon: "error",button: "확인" });
+		return;
 		}
 		for(let i = 0; i< $('.s_td_no').length; i++){
 			if($('.s_td_no').eq(i).text() == emplNo){
-				swal({ text: "이미 추가된 사원입니다.", icon: "error" });
+				swal({ text: "이미 추가된 사원입니다.", icon: "error", button: "확인" });
 				return;
 			}
 		}
 
-	
+		//기안자 정보담기
 		$.ajax({
 			url:"/atrz/insertAtrzEmp",
 			data:{"emplNo":emplNo},
 			type:"post",
 			dataType:"json",
 			success:function(result){
-				let noLen = $(".clsTr").length;
+				let noLen = $(".clsPo").length;
 
 				let selectHtml = `
 					<select class="form-select selAuth" aria-label="Default select example">
-						<option value="0" \${selectedType == "sign" ? "selected" : ""}>결재</option>
-						<option value="1" \${selectedType == "ref" ? "selected" : ""}>참조</option>
+						<option value="1" \${selectedType == "sign" ? "selected" : ""}>결재</option>
+						<option value="0" \${selectedType == "ref" ? "selected" : ""}>참조</option>
 					</select>
 				`;
 
@@ -839,56 +1001,157 @@ $(document).ready(function() {
 					`;
 				}
 
+				let strA = `
+					<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
+						<th>\${noLen+1}</th>
+						<th style="display: none;" hidden class="s_td_no">\${result.emplNo}</th>
+						<th class="s_td_name">\${result.emplNm}</th>
+						<th>\${result.deptNm}</th>
+						<th class="clsPo">\${result.posNm}</th>
+						<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
+						<input type="hidden" name="clsfCode" class="clsfCode" value="\${result.clsfCode}"/>
+						log.info("결재선지정->result : ",result);
+						<th hidden>\${selectHtml}</th>
+						<th>\${checkboxHtml}</th>
+					</tr>
+				`;
 
-
-				let str = `
-						<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
-							<th>\${noLen+1}</th>
-							<th style="display: none;" class="s_td_no">\${result.emplNo}</th>
-							<th class="s_td_name">\${result.emplNm}</th>
-							<th>\${result.deptNm}</th>
-							<th>\${result.posNm}</th>
-							<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
-							<input type="hidden" name="clsfCode" class="clsfCode" value="\${result.clsfCode}"/>
-							<th hidden>\${selectHtml}</th>
-							<th>\${checkboxHtml}</th>
-						</tr>
-					`;
+				let strB = `
+					<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
+						<th></th>
+						<th style="display: none;" hidden class="s_td_no">\${result.emplNo}</th>
+						<th class="s_td_name">\${result.emplNm}</th>
+						<th>\${result.deptNm}</th>
+						<th>\${result.posNm}</th>
+						<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
+						<input type="hidden" name="clsfCode" class="clsfCode" value="\${result.clsfCode}"/>
+						log.info("결재선지정->result : ",result);
+						<th hidden>\${selectHtml}</th>
+						<th>\${checkboxHtml}</th>
+					</tr>
+				`;
 
 				// ✅ 타입에 따라 위치 다르게 append
 				if(selectedType === "sign"){
-					$(".s_appLine_tbody_new").append(str);  // 위쪽 결재선
+					$(".s_appLine_tbody_new").append(strA);  // 위쪽 결재선
 				}else{
-					$(".s_appLine_tbody_ref").append(str);  // 아래쪽 참조자
+					$(".s_appLine_tbody_ref").append(strB);  // 아래쪽 참조자
 				}
 			}
 		});
 	
 	}//end addAppLine()
 	
-	//왼쪽버튼의 경우에는 결재선선택과는 거리가 멀기 때문에 필요없음
-	//왼쪽 버튼을 눌렀을때 삭제처리되어야함
 	//결재자 리스트 삭제
 	$(document).on("click", "#remo_appLine",function(){
 		let lastRow = $(".s_appLine_tbody_new .clsTr");   //가장마지막에 추가된 tr
 		//삭제대상확인 
-		// console.log("삭제대상 :", lastRow.prop("outerHTML"));
 		
 		if(lastRow.length > 0){
 			lastRow.last().remove(); 
 			reindexApprovalLines();
-
+				// lastRow.remove();
+				// console.log("삭제후 남은 행의갯수 : ",$(".s_appLine_tbody_new .clsTr").length);
+				// lastRow.children().last().remove();
 			}else{
 				swal({
 					title: "",
-					text: "삭제할 사원이 없습니다.",
+					text: "삭제할 결재자가 없습니다.",
 					icon: "error",
 					closeOnClickOutside: false,
-					closeOnEsc: false
+					closeOnEsc: false,
+					button: "확인"
 				});
 					return;
 			}
 		});
+
+		// 우선 버튼을 누르면 정말로 기안을 취소하시겠습니까라고 알려준다.
+$(".atrzLineCancelBtn").on("click", function(event) {
+	event.preventDefault();
+	swal({
+		title: "작성중인 기안을 취소하시겠습니까?",
+		text: "취소 후에는 기안이 삭제됩니다.",
+		icon: "warning",
+		buttons: {
+			cancel: "아니요",
+			confirm: {
+				text: "예",
+				value: true,
+				className: "atrzLineCancelBtn"
+			}
+		},
+		dangerMode: true,
+	}).then((willDelete) => {
+		if (willDelete) {
+			// 취소 요청을 처리하는 fetch 호출
+			fetch('/atrz/deleteAtrzWriting', 
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ atrzDocNo: $("#s_dfNo").text() }) // 문서 번호를 전송
+			})
+			.then(res => res.text())  // 👈 여기!
+			.then(result => {
+			if(result === "success") {
+				swal("취소 완료!", "", "success");
+					location.replace("/atrz/home")
+			} else {
+				swal("삭제 실패", "관리자에게 문의하세요", "error");
+			}
+			});
+					}
+				});
+			});
+			//뒤로가기 진행시 기안취소되게 만들기
+			let hasDoc = !!$("#s_dfNo").text(); // 문서번호 존재 시만 동작
+			let isCanceled = false;
+
+			// history state push (현재 상태 저장)
+			if (hasDoc) {
+				history.pushState(null, document.title, location.href);
+			}
+
+			window.addEventListener('popstate', function (event) {
+				if (hasDoc && !isCanceled) {
+				event.preventDefault(); // 뒤로가기 중지
+				swal({
+					title: "기안을 취소하시겠습니까?",
+					text: "지정된 결재선이 삭제됩니다.",
+					icon: "warning",
+					buttons: ["취소", "확인"],
+					dangerMode: true
+				}).then((willDelete) => {
+					if (willDelete) {
+					fetch('/atrz/deleteAtrzWriting', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ atrzDocNo: $("#s_dfNo").text() })
+					})
+					.then(res => res.text())
+					.then(result => {
+						if (result === "success") {
+						isCanceled = true;
+						swal("기안이 취소되었습니다!", "", "success")
+							.then(() => {
+							history.back(); // 진짜 뒤로가기
+							});
+						} else {
+						swal("기안 취소 실패", "다시 시도해주세요", "error");
+						history.pushState(null, document.title, location.href); // 다시 뒤로 못 가게 복원
+						}
+					});
+					} else {
+					// 뒤로가기 막기 위해 다시 앞으로 push
+					history.pushState(null, document.title, location.href);
+					}
+				});
+				}
+			});
+
+
 	//전체테이블 순번 다시 매기기
 	function reindexApprovalLines() {
 		$(".clsTr").each(function(index) {
@@ -916,7 +1179,6 @@ $(document).ready(function() {
     }
 });
 
-	
 	//결재선지정에서 확인버튼 눌렀을때
 	$("#s_add_appLine_list").click(function(){
 		if($(".s_appLine_tbody_new .clsTr").length==0){
@@ -925,7 +1187,8 @@ $(document).ready(function() {
 				text: "결재할 사원을 추가해주세요!",
 				icon: "error",
 				closeOnClickOutside: false,
-				closeOnEsc: false
+				closeOnEsc: false,
+				button: "확인"
 			});
 			return;
 		}
@@ -973,40 +1236,22 @@ $(document).ready(function() {
 				"atrzLnSn":(idx+1)
 			};
 			
-			authList.push(data);
+			//결재선 목록
+			authList.push(data);			
+
 			formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",data.emplNo);
 			formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",data.clsfCode);
-			formData.append("atrzLineVOList["+idx+"].atrzTy",data.flex);//Y / N
-			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.auth);//  1 / 0
+			formData.append("atrzLineVOList["+idx+"].atrzTy",data.auth);//Y / N 결재자 / 참조자
+			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.flex);//  1 / 0 전결여부
 			formData.append("atrzLineVOList["+idx+"].atrzLnSn",data.atrzLnSn);
 		});	
 		
 		console.log("순번권한전결여부authList : ", authList);
-		
-// 		let flexList = [];
-		
-		//III. 전결여부(.flexCheckDefault)
-// 		$(".flexCheckDefault").each(function(idx,flex){
-// 			console.log("flex : ", $(this).is(":checked"));
-			
-// 			if($(this).is(":checked")){
-// 				flexList.push("Y");
-// 			}else{
-// 				flexList.push("N");
-// 			}
-			
-// 		});
 		formData.append("docFormNm","S");
 		formData.append("docFormNo",2);
 
-		/*
-		["20250008","20250010"]
-		*/
 		console.log("obj.emplNo : ",obj.emplNo);
-		//이게 굳이 필요있나 싶음
-		//결재선 리스트에 있는 사원번호를 가져와 결재선 jsp에 이름 부서 직책 찍기
-
-//asnyc를 써서 
+		//asnyc를 써서 
 		$.ajax({
 			url:"/atrz/insertAtrzLine",
 			processData:false,
@@ -1015,80 +1260,82 @@ $(document).ready(function() {
 			data: formData,
 			dataType:"json",
 			success : function(atrzVO){
-		$(".btn-close").trigger('click');
-		console.log("atrzVO : ", atrzVO);
+				swal({
+					title: "결재선 지정이 완료되었습니다.",
+					text: "",
+					icon: "success",
+					closeOnClickOutside: false,
+					closeOnEsc: false,
+					button: "확인"
+				});
+				$(".btn-close").trigger('click');
+				console.log("atrzVO : ", atrzVO);
 
-		//문서번호 채우기
-		$("#s_dfNo").html(atrzVO.atrzDocNo);
+				//문서번호 채우기
+				$("#s_dfNo").html(atrzVO.atrzDocNo);
 
-		let result = atrzVO.emplDetailList;
+				let result = atrzVO.emplDetailList;
 
-		let tableHtml = `<table border="1" class="s_eap_draft_app"><tbody>`;
+				//result : List<EmployeeVO>
+				console.log("result : ", result);
 
-		// authList를 기반으로 분리
-		const approvalList = [];
-		const referenceList = [];
+				let tableHtml = `<table border="1" class="s_eap_draft_app"><tbody>`;
 
-		$.each(authList, function(i, authItem) {
-			const matched = result.find(emp => emp.emplNo === authItem.emplNo);
-			if (matched) {
-				matched.flex = authItem.flex; // flex 정보도 보존
-				if (authItem.auth === "0") {
-					approvalList.push(matched);
-				} else if (authItem.auth === "1") {
-					referenceList.push(matched);
+				// authList를 기반으로 분리
+				const approvalList = [];
+				const referenceList = [];
+
+				$.each(authList, function(i, authItem) {
+					const matched = result.find(emp => emp.emplNo === authItem.emplNo);
+					if (matched) {
+						matched.flex = authItem.flex; // flex 정보도 보존
+						if (authItem.auth === "1") {
+							approvalList.push(matched);
+						} else if (authItem.auth === "0") {
+							referenceList.push(matched);
+						}
+					}
+				});
+				//길준희 여기부터 시작
+				// 가. 결재파트 시작
+				if (approvalList.length > 0) {
+					tableHtml += `<tr><th rowspan="2">결재</th>`;
+					$.each(approvalList, function(i, employeeVO){
+						$("#atrz_ho_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
+						tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
+					});
+					tableHtml += `</tr><tr>`;
+					$.each(approvalList, function(i, employeeVO){
+						tableHtml += `<td><img src="/assets/images/atrz/before.png"
+							style="width: 50px;">
+							<span style="display: block; margin-top: 5px; name="sanctnerEmpno">\${employeeVO.emplNm}</span></td>`;				
+						});
+					tableHtml += `</tr>`;
 				}
-			}
-		});
 
-		// 가. 결재파트 시작
-		if (approvalList.length > 0) {
-			tableHtml += `<tr><th rowspan="3">결재</th>`;
-			$.each(approvalList, function(i, employeeVO){
-				$("#atrz_ho_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
-				tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
-			});
+				// 나. 참조파트 시작
+				if (referenceList.length > 0) {
+					tableHtml += `<tr><th rowspan="2">참조</th>`;
+					$.each(referenceList, function(i, employeeVO){
+						$("#atrz_ho_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
+						tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
+					});
 
-			tableHtml += `</tr><tr>`;
-			$.each(approvalList, function(i, employeeVO){
-				tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
-			});
+					tableHtml += `</tr><tr>`;
+					$.each(referenceList, function(i, employeeVO){
+						tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
+					});
 
-			tableHtml += `</tr><tr>`;
-			$.each(approvalList, function(i, employeeVO){
-				tableHtml += `<td><img
-					src="/assets/images/atrz/before.png"
-					style="width: 50px;"></td>`;
-			});
+					tableHtml += `</tr>`;
+				}
 
-			tableHtml += `</tr>`;
-		}
+				tableHtml += `</tbody></table>`;
 
-		// 나. 참조파트 시작
-		if (referenceList.length > 0) {
-			tableHtml += `<tr><th rowspan="2">참조</th>`;
-			$.each(referenceList, function(i, employeeVO){
-				$("#atrz_ho_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
-				tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
-			});
-
-			tableHtml += `</tr><tr>`;
-			$.each(referenceList, function(i, employeeVO){
-				tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
-			});
-
-			tableHtml += `</tr>`;
-		}
-
-		tableHtml += `</tbody></table>`;
-
-		$("#s_eap_draft_app").html(tableHtml);
-		}
+				$("#s_eap_draft_app").html(tableHtml);
+			}//end success
 	});//ajax
 	//여기서 결재선에 담긴 애들을 다 하나씩 담아서 post로
 })
-
-
 
 
 	// 합계 구하기

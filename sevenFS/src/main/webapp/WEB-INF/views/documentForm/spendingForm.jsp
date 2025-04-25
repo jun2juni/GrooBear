@@ -55,7 +55,7 @@
 		<div style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">지출결의서</div>
 		<div style="padding: 50px 10px 20px; clear: both;">
 			<div style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목 : </div> 
-			<input type="text" class="form-control" style="display: inline-block; width: 583px; margin-left: 5px;" readonly>
+			<input type="text" class="form-control" style="display: inline-block; width: 583px; margin-left: 5px;" disabled>
 		</div>
 		
 		<div style="border: 1px solid lightgray; margin: 10px;"></div>
@@ -63,7 +63,7 @@
 		
 			<div style="padding: 10px 0;">
 				<div class="s_frm_title"><b>지출 내용</b></div>
-				<textarea class="form-control" style="resize: none;" readonly></textarea>
+				<textarea class="form-control" style="resize: none;" disabled></textarea>
 			</div>
 			
 			<div style="padding: 10px 0;">
@@ -80,10 +80,10 @@
 				  </thead>
 				  <tbody id="s_default_tbody" class="s_default_tbody_cl">
 				    <tr>
-				      <th scope="row"><input type="date" class="form-control" name="sp_date" readonly></th>
-				      <td><input type="text" class="form-control" name="sp_detail" readonly></td>
-				      <td><input type="number" class="form-control" readonly></td>
-				      <td><input type="text" class="form-control" readonly></td>
+				      <th scope="row"><input type="date" class="form-control" name="sp_date" disabled></th>
+				      <td><input type="text" class="form-control" name="sp_detail" disabled></td>
+				      <td><input type="number" class="form-control" disabled></td>
+				      <td><input type="text" class="form-control" disabled></td>
 				      <td>
 				      	<select class="form-select" aria-label="Default select example" disabled="disabled">
 				      		<option value="c">신용카드</option>

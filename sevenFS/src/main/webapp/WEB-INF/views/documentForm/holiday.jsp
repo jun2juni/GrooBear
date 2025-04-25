@@ -336,9 +336,7 @@ select.ui-datepicker-year {
 									
 									<div id="s_eap_content_box_left" class="s_scroll">
 										<div class="s_div_container s_scroll">
-											<div
-												style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">연차신청서</div>
-
+											<div style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">연차신청서</div>
 											<div style="float: left; width: 230px; margin: 0 30px;">
 												<table border="1" id="s_eap_draft_info" class="text-center">
 													<tr>
@@ -409,7 +407,7 @@ select.ui-datepicker-year {
 															<label class="form-check-label" for="flexRadioDefault2">오후반차</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault3" value="22"> 
+															<input class="form-check-input" type="radio" checked name="holiCode" id="flexRadioDefault3" value="22"> 
 																<label class="form-check-label"	for="flexRadioDefault3">연차</label>
 														</div>
 														<div class="form-check mr-5" style="display: inline-block;">
@@ -538,7 +536,7 @@ select.ui-datepicker-year {
 <script>
 //제목 너무 길게 입력하면 입력초과 스왈
 document.getElementById('s_ho_tt').addEventListener('input', function (event) {
-        const maxLength = 160; // 최대 길이 설정
+        const maxLength = 60; // 최대 길이 설정
         const inputField = this;
         const inputValue = inputField.value;
 
@@ -546,7 +544,7 @@ document.getElementById('s_ho_tt').addEventListener('input', function (event) {
         if (inputValue.length > maxLength) {
             swal({
                 title: "입력 초과",
-                text: "제목은 최대 160자까지 입력 가능합니다.",
+                text: "제목은 최대 60자까지 입력 가능합니다.",
                 icon: "warning",
                 button: "확인"
             }).then(() => {
@@ -1024,7 +1022,7 @@ $(document).ready(function() {
 			}
 			//길죽이 임시저장
 		$.ajax({
-			url:"/atrz/atrzHolidayStorage",
+			url:"/atrz/atrzDocStorage",
 			processData:false,
 			contentType:false,
 			type:"post",
@@ -1048,8 +1046,8 @@ $(document).ready(function() {
 			},
 			error: junyError
 		})
-	});
-	//임시저장 후 끝
+	});//임시저장 후 끝
+	
 	
 	//버튼눌렀을때 작동되게 하기 위해서 변수에 담아준다.
 	let emplNo = null;  //선택된 사원 번호 저장
@@ -1179,14 +1177,10 @@ $(document).ready(function() {
 	$(document).on("click", "#remo_appLine",function(){
 		let lastRow = $(".s_appLine_tbody_new .clsTr");   //가장마지막에 추가된 tr
 		//삭제대상확인 
-		// console.log("삭제대상 :", lastRow.prop("outerHTML"));
 		
 		if(lastRow.length > 0){
 			lastRow.last().remove(); 
 			reindexApprovalLines();
-				// console.log("개똥이장군");
-				// console.log("lastRow : ",lastRow);
-				
 				// lastRow.remove();
 				// console.log("삭제후 남은 행의갯수 : ",$(".s_appLine_tbody_new .clsTr").length);
 				// lastRow.children().last().remove();

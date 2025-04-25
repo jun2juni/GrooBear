@@ -642,9 +642,12 @@ select.ui-datepicker-year {
 
 
 <script>
+//페이지이동시 바로 
+//dateCnt() 실행하기
+
 //제목 너무 길게 입력하면 입력초과 스왈
 document.getElementById('s_ho_tt').addEventListener('input', function (event) {
-        const maxLength = 160; // 최대 길이 설정
+        const maxLength = 60; // 최대 길이 설정
         const inputField = this;
         const inputValue = inputField.value;
 
@@ -652,7 +655,7 @@ document.getElementById('s_ho_tt').addEventListener('input', function (event) {
         if (inputValue.length > maxLength) {
             swal({
                 title: "입력 초과",
-                text: "제목은 최대 160자까지 입력 가능합니다.",
+                text: "제목은 최대 60자까지 입력 가능합니다.",
                 icon: "warning",
                 button: "확인"
             }).then(() => {
@@ -1097,7 +1100,7 @@ $(document).ready(function() {
 
 			
 		$.ajax({
-			url:"/atrz/atrzHolidayStorage",
+			url:"/atrz/atrzDocStorage",
 			processData:false,
 			contentType:false,
 			type:"post",

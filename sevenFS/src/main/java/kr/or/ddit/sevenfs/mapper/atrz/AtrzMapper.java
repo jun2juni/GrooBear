@@ -110,9 +110,9 @@ public interface AtrzMapper {
 	public int atrzLineCancelUpdate(AtrzVO atrzVO);
 	
 	//연차신청서 임시저장 인서트
-	public void atrzHolidayStorage(AtrzVO atrzVO);
+	public void atrzDocStorage(AtrzVO atrzVO);
 	//전자결재 업데이트
-	public int storageHolidayUpdate(AtrzVO atrzVO);
+	public int storageDocUpdate(AtrzVO atrzVO);
 	//연차신청서 테이블 임시저장(MERGE INTO)
 	public void insertOrUpdateHoliday(HolidayVO documHolidayVO);
 	//결재선 삭제!
@@ -162,9 +162,12 @@ public interface AtrzMapper {
 
 	//첨부파일 상세보기를 위한것
 	public List<AttachFileVO> getAtchFile(long atchFileNo);
-	
 
-	
+	//지출결의서 임시저장을 위한것
+	public int storageSpendingUpdate(AtrzVO atrzVO);
 
+	//지출결의서 임시저장 지출결의서 테이블 
+	public void insertOrUpdateSpending(SpendingVO spendingVO);
+	
 	
 }

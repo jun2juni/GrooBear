@@ -572,7 +572,7 @@ aria-labelledby="approvalSaveModalLabel" aria-hidden="true">
 			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		</div>
 		<div class="modal-body border-0">
-			<h4 class="form-label">임시 저장 문서를 삭제하시겠습니까?</h4>
+			<h4 class="form-label" style="margin-left: 10px;">임시 저장 문서를 삭제하시겠습니까?</h4>
 		</div>
 			<div class="modal-footer border-0">
 				<button type="button" class="main-btn primary-btn rounded-full btn-hover modalBtn" id="storageDeleteBtn">확인</button>

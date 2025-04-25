@@ -404,7 +404,7 @@
 												<div style="padding: 10px 0;">
 													<div class="s_frm_title mb-2"> 내용</div>
 													<textarea class="form-control s_scroll"
-														style="resize: none; height: 150px;" id="s_ho_co" name="atrzCn" 
+														style="resize: none; height: 200px;" id="s_ho_co" name="atrzCn" 
 														disabled rows="2" cols="20" wrap="hard">${atrzVO.atrzCn}</textarea>
 												</div>
 												<%--첨부파일 구성하기--%>

@@ -715,7 +715,7 @@
 	</select>
 	
 	<!-- 전자결재 임시저장 update -->
-	<update id="storageHolidayUpdate" parameterType="AtrzVO">
+	<update id="storageDocUpdate" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
 	    UPDATE ATRZ
 	    SET
 	        ATRZ_SJ = #{atrzSj},
@@ -754,7 +754,7 @@
 		</insert>
 	
 	<!-- 전자결재 임시저장 인서트 -->
-	<insert id="atrzHolidayStorage" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+	<insert id="atrzDocStorage" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
 	       INSERT INTO 
 	       			ATRZ (
 		         ATRZ_DOC_NO
@@ -812,6 +812,44 @@
 	            , #{holiStart}
 	            , #{holiEnd}
 	            , #{holiUseDays}
+	        )
+	</insert>
+	
+	<!-- 지출결의서 임시저장 murge into -->
+	<insert id="insertOrUpdateSpending" parameterType="kr.or.ddit.sevenfs.vo.atrz.SpendingVO">
+		<selectKey resultType="int" order="BEFORE" keyProperty="spendingReportNo">
+			SELECT NVL(MAX(SPENDING_REPORT_NO),0)+1 FROM DOCUM_SPENDING
+		</selectKey>
+	    MERGE INTO DOCUM_SPENDING A
+	    USING (SELECT #{atrzDocNo} AS ATRZ_DOC_NO FROM dual) B
+	    ON (A.ATRZ_DOC_NO = B.ATRZ_DOC_NO)
+	    WHEN MATCHED THEN
+	        UPDATE SET
+	              EXPENSE_ORDER = #{expenseOrder}
+	            , EXPENSE_DATE = #{expenseDate}
+	            , ITEM_DESCRIPTION = #{itemDescription}
+	            , ITEM_QUANTITY = #{itemQuantity}
+	            , ITEM_AMOUNT = #{itemAmount}
+	            , PAYMENT_METHOD = #{paymentMethod}
+	    WHEN NOT MATCHED THEN
+	        INSERT (
+	        	  SPENDING_REPORT_NO
+	        	, ATRZ_DOC_NO
+	        	, EXPENSE_ORDER
+	        	, EXPENSE_DATE
+	        	, ITEM_DESCRIPTION
+	        	, ITEM_QUANTITY
+	        	, ITEM_AMOUNT
+	        	, PAYMENT_METHOD
+	        ) VALUES (
+		          #{spendingReportNo}
+				, #{atrzDocNo}
+	            , #{expenseOrder}
+	            , #{expenseDate}
+	            , #{itemDescription}
+	            , #{itemQuantity}
+	            , #{itemAmount}
+	            , #{paymentMethod}
 	        )
 	</insert>
 	

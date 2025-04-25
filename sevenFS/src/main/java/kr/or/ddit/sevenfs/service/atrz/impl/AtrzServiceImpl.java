@@ -241,8 +241,8 @@ public class AtrzServiceImpl implements AtrzService {
 	//연차신청서 임시저장
 	@Override
 	@Transactional
-	public int atrzHolidayStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, HolidayVO documHolidayVO) {
-		log.info("atrzHolidayStorage->임시저장 : "+atrzVO);
+	public int atrzDocStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, HolidayVO documHolidayVO) {
+		log.info("atrzDocStorage->임시저장 : "+atrzVO);
 		
 		 // 1. 날짜 합치기
 	    try {
@@ -258,11 +258,11 @@ public class AtrzServiceImpl implements AtrzService {
 	    // 2. ATRZ 테이블 임시저장 상태로 업데이트 (예: sanctnProgrsSttusCode = '00')
 	    atrzVO.setSanctnProgrsSttusCode("99"); // 임시저장 상태
 	    
-	    int updateCount=  atrzMapper.storageHolidayUpdate(atrzVO);
+	    int updateCount=  atrzMapper.storageDocUpdate(atrzVO);
 	    
 	    // 3.ATRZ테이블에 insert처리
 	    if(updateCount==0) {
-	    	atrzMapper.atrzHolidayStorage(atrzVO);
+	    	atrzMapper.atrzDocStorage(atrzVO);
 	    }
 	    
 	    // 4. 연차 신청서 테이블에도 등록 (임시)
@@ -280,7 +280,7 @@ public class AtrzServiceImpl implements AtrzService {
 	    }
 	    
 	    // 연차정보 등록
-	    log.info("atrzHolidayStorage->임시저장 완료 문서번호 : "+atrzVO.getAtrzDocNo());
+	    log.info("atrzDocStorage->임시저장 완료 문서번호 : "+atrzVO.getAtrzDocNo());
 	    
 		
 	    return 1;  //성공여부 반환
@@ -851,6 +851,43 @@ public class AtrzServiceImpl implements AtrzService {
 	@Override
 	public List<AttachFileVO> getAtchFile(long atchFileNo) {
 		return atrzMapper.getAtchFile(atchFileNo);
+	}
+
+	//지출결의서 임시저장을 위한것
+	@Transactional
+	@Override
+	public int atrzSpendingStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, SpendingVO spendingVO) {
+		log.info("atrzDocStorage->임시저장 : "+atrzVO);
+		//임시저장시 값 세팅해주기
+	    // 2. ATRZ 테이블 임시저장 상태로 업데이트 (예: sanctnProgrsSttusCode = '00')
+	    atrzVO.setSanctnProgrsSttusCode("99"); // 임시저장 상태
+	    
+	    int updateCount=  atrzMapper.storageSpendingUpdate(atrzVO);
+	    
+	    // 3.ATRZ테이블에 insert처리
+	    if(updateCount==0) {
+	    	atrzMapper.atrzDocStorage(atrzVO);
+	    }
+	    
+	    // 4. 지출결의서 테이블에도 등록 (임시)
+	    spendingVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
+	    atrzMapper.insertOrUpdateSpending(spendingVO); // insert/update 구분해서
+	    
+	    //결재선은 기본의 것을 삭제후 새로 저장하는 방식 권장(중복방지)
+	    //여기서 새로 결재선 선택시 다시 업데이트 해줘야함
+	    atrzMapper.deleteAtrzLineByDocNo(atrzVO.getAtrzDocNo()); // 새로 추가할 것
+	    // 4. 결재선 정보도 같이 저장
+	    for (AtrzLineVO atrzLineVO : atrzLineList) {
+	    	atrzLineVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
+	    	atrzLineVO.setSanctnProgrsSttusCode("00"); // 대기중
+	        atrzMapper.insertAtrzLine(atrzLineVO); // insert 로직
+	    }
+	    
+	    // 연차정보 등록
+	    log.info("atrzDocStorage->임시저장 완료 문서번호 : "+atrzVO.getAtrzDocNo());
+	    
+		
+	    return 1;  //성공여부 반환
 	}
 
 
