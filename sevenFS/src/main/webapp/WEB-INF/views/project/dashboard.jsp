@@ -143,14 +143,17 @@
     <div class="col-md-4">
       <div class="card dashboard-card shadow h-100 border-white border-2 d-flex align-items-center justify-content-center bg-success p-2 text-white">
         <div class="card-body d-flex align-items-center justify-content-center">
-          <i class="material-icons text-warning me-3 fs-1">work</i>
+<%--          <i class="material-icons text-warning me-3 fs-1">work</i>--%>
           <h5 id="projectCountText" class="mb-0 fw-bold text-white project-title-big text-center">
-          
-            프로젝트 진행중<br> 
+            프로젝트 진행중
+            <br>
+            <br>
             <c:forEach var="status" items="${projectStatus}">
-              <c:if test="${status.STATUS_NM eq '진행중'}"><strong>${status.CNT}</c:if>
+              <c:if test="${status.STATUS_NM eq '진행중'}">
+                <strong>${status.CNT}</strong>
+              </c:if>
             </c:forEach>
-             </strong>건
+             <span class="text-sm">건</span>
           </h5>
         </div>
       </div>
@@ -172,7 +175,8 @@
                   <c:choose>
                     <c:when test="${taskMainStatus[statusIndex] != null}">${taskMainStatus[statusIndex].CNT}</c:when>
                     <c:otherwise>0</c:otherwise>
-                  </c:choose> 건
+                  </c:choose>
+                  <span class="text-sm">건</span>
                 </div>
               </div>
             </div>
@@ -188,10 +192,10 @@
     <!-- 임박한 업무 -->
     <div class="col-md-8">
       <div class="card shadow h-100">
-        <div class="card-header d-flex justify-content-center align-items-center">
+        <div class="card-header d-flex justify-content-center align-items-center mb-3">
           <span class="fw-bold">임박한 업무 (7일 이내)</span>
         </div>
-        <div class="card-body scroll-table">
+        <div class="card-body pt-0 scroll-table">
           <table class="table table-bordered text-center hover-highlight" id="urgentTaskTable">
             <thead class="table-light">
               <tr>
@@ -235,7 +239,12 @@
             <div class="card-body">
               <c:if test="${not empty projectStatus}">
                 <table class="table table-bordered text-center hover-highlight">
-                  <thead class="table-light"><tr><th>상태</th><th>건수</th></tr></thead>
+                  <thead class="table-light">
+                    <tr>
+                      <th>상태</th>
+                      <th>건수</th>
+                    </tr>
+                  </thead>
                   <tbody>
                     <c:set var="progressOrder" value="01,00,02,03"/>
 					<c:forEach var="order" items="${fn:split(progressOrder, ',')}">
@@ -250,7 +259,7 @@
                                 ${p.STATUS_NM}
                               </span>
                             </td>
-                            <td>${p.CNT}</td>
+                            <td> <fmt:formatNumber value="${p.CNT}" /> <span class="text-sm">건</span></td>
                           </tr>
 					    </c:if>
 					  </c:forEach>
@@ -274,7 +283,7 @@
                     <c:forEach var="g" items="${taskGrade}">
                       <tr>
                         <td><span class="badge grade-${g.TASK_GRAD}">${g.TASK_GRAD}</span></td>
-                        <td>${g.CNT}</td>
+                        <td><fmt:formatNumber value="${g.CNT}" /> <span class="text-sm">건</span></td>
                       </tr>
                     </c:forEach>
                   </tbody>
