@@ -247,6 +247,7 @@
                       	<input type="hidden" id="hiddenRemndrDaycnt${status.count}" name="yrycRemndrDaycnt" value="${allVacData.yrycRemndrDaycnt}">
                       	<input type="hidden" id="currentPage${status.count}" name="currentPage" value="${articlePage.currentPage}"/>
                       	<input type="hidden" id="searchEmplName${status.count}" name="keywordName" value=""/>
+                      	<input type="hidden" id="searchEmplDept${status.count}" name="keywordDept" value=""/>
                       </form>
                       </c:forEach>
                       <!-- end table row -->
@@ -387,6 +388,11 @@ $(function(){
 			const diff = currentValue - previousValue;
 			//console.log('diff' , diff);
 			
+			const queryString = window.location.search;
+			const urlParams = new URLSearchParams(queryString);
+			const keywordName = urlParams.get('keywordName');
+			const keywordDept = urlParams.get('keywordDept');
+			
 			let sumTotal = 0;
 			let sumRemain = 0;
 			let cmpnstn = 0;
@@ -426,7 +432,7 @@ $(function(){
 						text : '해당 사원의 성과 보상 일수가 0개 입니다.'
 					})
 					.then(() =>{
-						location.href = '/dclz/vacAdmin?keywordName='+keywordName;
+						location.href = '/dclz/vacAdmin?keywordName='+keywordName + "&keywordDept="+keywordDept;
 					})
 					return true;
 				}
@@ -481,6 +487,7 @@ $(function(){
 				const queryString = window.location.search;
 				const urlParams = new URLSearchParams(queryString);
 				const keywordName = urlParams.get('keywordName');
+				const keywordDept = urlParams.get('keywordDept');
 				// 성과보상만큼 총 연차일수도 계산해주기
 				if (diffVal === 0.5) {
 					let totalId = $('#inputTotalCnt'+index);
@@ -514,7 +521,7 @@ $(function(){
 							text : '해당 사원의 근무 보상 일수가 0개 입니다.'
 						})
 						.then(() =>{
-							location.href = '/dclz/vacAdmin?keywordName='+keywordName;
+							location.href = '/dclz/vacAdmin?keywordName='+keywordName+"&keywordDept="+keywordDept;
 						})
 						return true;
 					}
@@ -543,22 +550,32 @@ $(function(){
 			})
 	//------- 근무보상
 	$('.excessWorkYryc, .cmpnstnYrycCnt').on('input', function(){
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+		const keywordName = urlParams.get('keywordName');
+		const keywordDept = urlParams.get('keywordDept');
 		const id = $(this).attr('id');
 		const idx = id.match(/\d+/)[0];
 		
-		if($('#inputTotalCnt'+idx).val() >= 25){
-			swal('연차는 최대 25일까지 지급할 수 있습니다.');
-			$('#inputTotalCnt'+idx).val(hiddenInputTotal);
+		if($('#inputTotalCnt'+idx).val() > 30){
+			swal('연차는 최대 30일까지 지급할 수 있습니다.')
+			.then(() => {
+				location.href = '/dclz/vacAdmin?keywordName='+keywordName+"&keywordDept="+keywordDept;
+			})
+			/* $('#inputTotalCnt'+idx).val(hiddenInputTotal);
 			//console.log('inputTotalCnt : ', hiddenInputTotal);
 			$('.cmpnstnYrycCnt').val('0.0');
-			$('.excessWorkYryc').val('0.0');
+			$('.excessWorkYryc').val('0.0'); */
 		}
 		
-		if($('#yrycRemndrDaycnt'+idx).val() >= 25){
-			swal('잔여 연차가 25일을 초과합니다.');
-			$('#yrycRemndrDaycnt'+idx).val(hiddenRemndrDaycnt);
+		if($('#yrycRemndrDaycnt'+idx).val() > 30){
+			swal('잔여 연차가 30일을 초과합니다.')
+			.then(() => {
+				location.href = '/dclz/vacAdmin?keywordName='+keywordName+"&keywordDept="+keywordDept;
+			})
+			/* $('#yrycRemndrDaycnt'+idx).val(hiddenRemndrDaycnt);
 			$('.cmpnstnYrycCnt').val('0.0');
-			$('.excessWorkYryc').val('0.0');
+			$('.excessWorkYryc').val('0.0'); */
 		}
 		
 		let hiddenInputTotal = $('#hiddenValueTotal'+idx).val();
@@ -570,6 +587,7 @@ $(function(){
 			const queryString = window.location.search;
 			const urlParams = new URLSearchParams(queryString);
 			const keywordName = urlParams.get('keywordName');
+			const keywordDept = urlParams.get('keywordDept');
 			swal({
 	            title: "정말 초기화 하시겠습니까?",
 	            icon: "warning",
@@ -588,7 +606,7 @@ $(function(){
 	          })
 			.then((wilDelete) => {
 				if(wilDelete){
-					location.href = '/dclz/vacAdmin?keywordName='+keywordName;
+					location.href = '/dclz/vacAdmin?keywordName='+keywordName+"&keywordDept="+keywordDept;
 				}
 			})
 		})
@@ -597,6 +615,7 @@ $(function(){
 			const queryString = window.location.search;
 			const urlParams = new URLSearchParams(queryString);
 			const keywordName = urlParams.get('keywordName');
+			const keywordDept = urlParams.get('keywordDept');
 			swal({
 	            title: "연차를 지급하시겠습니까?",
 	            icon: "warning",
@@ -622,6 +641,7 @@ $(function(){
 					$('#emplNo'+idx).val(empNo);
 					$('#currentPage'+idx).val(currentPage);
 					$('#searchEmplName'+idx).val(keywordName);
+					$('#searchEmplDept'+idx).val(keywordDept);
 					/* console.log('성과연차 : ' , $('#hiddenCmpnstnCnt'+idx).val());
 					console.log('근무연차 : ' , $('#hiddenexcessWork'+idx).val());
 					console.log('총 연차 : ' , $('#hiddenInputTotal'+idx).val());

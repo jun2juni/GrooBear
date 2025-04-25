@@ -310,7 +310,7 @@ public class DclzTypeController {
 	@GetMapping("/vacAdmin")
 	public String vacationAdmin( Model model
 			,@RequestParam(defaultValue = "1") int currentPage
-			,@RequestParam(defaultValue = "5") int size
+			,@RequestParam(defaultValue = "10") int size
 			,@RequestParam(defaultValue = "") String keywordName
 			,@RequestParam(defaultValue = "") String keywordDept
 			,@RequestParam(defaultValue = "") String keywordEcny
@@ -318,6 +318,7 @@ public class DclzTypeController {
 			) {
 		
 		Map<String, Object> map = new HashMap<>();
+		map.put("size", size);
 		map.put("currentPage", currentPage);
 		map.put("keywordName", keywordName);
 		map.put("keywordDept", keywordDept);
@@ -350,9 +351,11 @@ public class DclzTypeController {
 	@GetMapping("/addVacInsert")
 	public String addVacInsert(VacationVO vacationVO
 				, @RequestParam(defaultValue = "1") String currentPage
-				, @RequestParam(defaultValue = "")String keywordName) {
+				, @RequestParam(defaultValue = "") String keywordName
+				, @RequestParam(defaultValue = "") String keywordDept) {
 		
 		String keyword = URLEncoder.encode(keywordName, StandardCharsets.UTF_8);
+		String keyDept = URLEncoder.encode(keywordDept, StandardCharsets.UTF_8);
 		log.info("addVacInsert->vacationVO : " + vacationVO);
 		log.info("addVacInsert->currentPage : " + currentPage);
 		log.info("addVacInsert->keywordName : " + keyword);
@@ -361,6 +364,6 @@ public class DclzTypeController {
 		log.info("지급 결과 : " + result);
 		
 		// 선택사원 연차정보 UPDATE해주기
-		return "redirect:/dclz/vacAdmin?currentPage=" + currentPage +"&keywordName=" + keyword;
+		return "redirect:/dclz/vacAdmin?currentPage=" + currentPage + "&keywordName=" + keyword + "&keywordDept=" + keyDept;
 	}
 }

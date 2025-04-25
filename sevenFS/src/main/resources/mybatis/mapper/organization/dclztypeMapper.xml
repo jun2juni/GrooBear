@@ -481,18 +481,14 @@ WITH U AS(
     WHERE cc.cmmn_code_group='DEPARTMENT'
     AND emp.enabled='1'   
     AND vac.YRYC_YEAR = TO_CHAR(SYSDATE, 'YYYY')
-    AND (
-        (emp.empl_nm LIKE '%' || #{keywordName} || '%'
-	    AND (cc.cmmn_code_nm  LIKE '%' || #{keywordDept} || '%'
-	    AND emp.ecny_date LIKE '%' || #{keywordEcny} || '%'
-        OR emp.retire_date LIKE '%' || #{keywordRetire} || '%' ))
-    )
+    AND (emp.empl_nm LIKE '%' || #{keywordName} || '%'
+	    AND (cc.cmmn_code_nm  LIKE '%' || #{keywordDept} || '%'))
     )
     V
     )
     SELECT U.*
         FROM U
-        WHERE U.RNUM BETWEEN (#{currentPage} * 5)-(5-1) AND (#{currentPage} * 5)
+        WHERE U.RNUM BETWEEN (#{currentPage} * #{size})-(#{size}-1) AND (#{currentPage} * #{size})
 </select>
 
 <!-- 전사 연차현황 목록 총 갯수 -->
