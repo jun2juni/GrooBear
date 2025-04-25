@@ -276,29 +276,15 @@ select.ui-datepicker-year {
 	
 /* } */
 /* 툴팁 스타일 */
-.tooltip-inner {
-  min-width: 150px;  /* 최소 너비 확보 */
-  max-width: none;   /* Bootstrap 기본값 제한 해제 */
-  background-color: rgb(13, 110, 253)!important; /* 밝은 파란색 */
-  color: #fff !important; /* 텍스트는 흰색 */
-  font-size: 0.85rem;
-  padding: 6px 10px;
-  border-radius: 4px;
-  padding: 8px 12px;
-  text-align: center;
-  white-space: normal;  /* 줄바꿈 허용 */
+
+/* 툴팁 커스텀 색상 */
+.custom-tooltip {
+--bs-tooltip-bg:#0583F2  !important;
+--bs-tooltip-color: #fff !important;
 }
-.tooltip.bs-tooltip-bottom .tooltip-arrow {
-	border-bottom-color: #0583F2 !important; /* 꼭지점 색 변경 */
-}
-.tooltip-inner {
-	background-color: #0583F2 !important; /* 툴팁 배경색 */
-	color: #fff !important; /* 툴팁 텍스트 색 */
-	font-size: 0.9rem; /* 툴팁 글자 크기 */
-	padding: 8px 12px; /* 툴팁 여백 */
-	border-radius: 4px; /* 툴팁 모서리 둥글기 */
-	text-align: center; /* 텍스트 정렬 */
-	max-width: 250px; /* 툴팁 최대 너비 */
+.custom-tooltip-sto {
+--bs-tooltip-bg:rgb(25, 135, 84)  !important;
+--bs-tooltip-color: #fff !important;
 }
 
 
@@ -325,12 +311,14 @@ select.ui-datepicker-year {
 								<div class="critical d-flex gap-2 mb-3">
 									<!--성진스 버튼-->
 									<button id="s_eap_app_top" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" 
-										title="재기안 시 결재선을 지정해야 합니다."
+										data-bs-custom-class="custom-tooltip"title="재기안시 결재선을 지정해야 합니다."
 										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
 										<span class="material-symbols-outlined fs-5">upload</span> 결재요청
 									</button>
-									<a id="s_eap_storTo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
+									<a id="s_eap_storTo" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" 
+										data-bs-custom-class="custom-tooltip-sto"title="재기안시 결재선을 지정해야 합니다."
+										class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
 									</a> 
@@ -400,7 +388,9 @@ select.ui-datepicker-year {
 															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 																<c:if test="${atrzLineVO.atrzTy eq '1'}">
 																	<!-- <p>${atrzLineVO}</p> -->
-																	<td>${atrzLineVO.sanctnerClsfNm}</td>
+																	<td data-atrz-ln-sn="${atrzLineVO.atrzLnSn}" data-sanctner-empno="${atrzLineVO.sanctnerEmpno}"
+																	data-atrz-ty="${atrzLineVO.atrzTy}" data-dcrb-author-yn="${atrzLineVO.dcrbAuthorYn}"
+																	data-sanctner-clsf-code="${atrzLineVO.sanctnerClsfCode}">${atrzLineVO.sanctnerClsfNm}</td>
 																</c:if>
 															</c:forEach>
 														</tr>
@@ -439,7 +429,9 @@ select.ui-datepicker-year {
 															<tr>
 																<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 																	<c:if test="${atrzLineVO.atrzTy eq '0'}">
-																		<td>
+																		<td data-atrz-ln-sn="${atrzLineVO.atrzLnSn}" data-sanctner-empno="${atrzLineVO.sanctnerEmpno}"
+																		data-atrz-ty="${atrzLineVO.atrzTy}" data-dcrb-author-yn="${atrzLineVO.dcrbAuthorYn}"
+																		data-sanctner-clsf-code="${atrzLineVO.sanctnerClsfCode}">
 																			${atrzLineVO.sanctnerEmpNm}
 																			<input type="hidden" name="atrzLnSn" value="${atrzLineVO.atrzLnSn}" />
 																			<input type="hidden" name="sanctnerEmpno" value="${atrzLineVO.sanctnerEmpno}" />
@@ -472,27 +464,29 @@ select.ui-datepicker-year {
 												<div class="row align-items-start" style="padding: 10px 0;">
 													<div class="col-auto">
 														<div class="s_frm_title mb-2"><b>유형</b></div>
-														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault1"  value="20">
-															<label class="form-check-label" for="flexRadioDefault1">오전반차</label>
-														</div>
-														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2"  value="21">
-															<label class="form-check-label" for="flexRadioDefault2">오후반차</label>
-														</div>
-														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio"
-																name="holiCode" id="flexRadioDefault3" 
-																value="22"> 
-																<label class="form-check-label"	for="flexRadioDefault3">연차</label>
-														</div>
-														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault4" value="23">
-															<label class="form-check-label" for="flexRadioDefault4">공가</label>
-														</div>
-														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault5" value="24">
-															<label class="form-check-label" for="flexRadioDefault5">병가</label>
+														<div class="mb-2">
+															<div class="form-check mr-5" style="display: inline-block;">
+																<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault1"  value="20"<c:if test="${atrzVO.holidayVO.holiCode eq '20'}">checked</c:if>>
+																<label class="form-check-label" for="flexRadioDefault1">오전반차</label>
+															</div>
+															<div class="form-check mr-5" style="display: inline-block;">
+																<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault2"  value="21"<c:if test="${atrzVO.holidayVO.holiCode eq '21'}">checked</c:if>>
+																<label class="form-check-label" for="flexRadioDefault2">오후반차</label>
+															</div>
+															<div class="form-check mr-5" style="display: inline-block;">
+																<input class="form-check-input" type="radio"
+																	name="holiCode" id="flexRadioDefault3" 
+																	value="22" <c:if test="${atrzVO.holidayVO.holiCode eq '22'}">checked</c:if>> 
+																	<label class="form-check-label"	for="flexRadioDefault3">연차</label>
+															</div>
+															<div class="form-check mr-5" style="display: inline-block;">
+																<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault4" value="23"<c:if test="${atrzVO.holidayVO.holiCode eq '23'}">checked</c:if>>
+																<label class="form-check-label" for="flexRadioDefault4">공가</label>
+															</div>
+															<div class="form-check mr-5" style="display: inline-block;">
+																<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault5" value="24"<c:if test="${atrzVO.holidayVO.holiCode eq '24'}">checked</c:if>>
+																<label class="form-check-label" for="flexRadioDefault5">병가</label>
+															</div>
 														</div>
 													</div>
 													
@@ -525,8 +519,11 @@ select.ui-datepicker-year {
 																style="width: 150px; display: none;" value=${onlyEnTime}
 																id="s_end_time" min="09:00:00" max="18:00:00" value="18:00:00"
 																disabled onchange="dateCnt();" name="holiEndArr" /> 까지
+															<div class="d-inline-block" style="display: none !important;">
+																(총 <span id="s_date_cal">0</span>일) &nbsp;&nbsp;&nbsp;
+															</div>
 															<div class="d-inline-block" >
-																(총 <span id="s_date_cal">0</span>일)
+																(총 <span id="s_date_calView">0</span>일) &nbsp;&nbsp;&nbsp;
 															</div>
 														</div>
 														<div id="halfTypeArea" style="display: none; margin-top: 5px;">
@@ -554,14 +551,16 @@ select.ui-datepicker-year {
 														required="required" rows="2" cols="20" wrap="hard">${atrzVO.atrzCn}</textarea>
 												</div>
 
-												<div style="padding: 10px 0;">
-													<div class="s_frm_title">파일첨부</div>
-													<div id="s_file_upload">
-														<input type="file" name="uploadFile" id="eap_file_path" multiple />
-													</div>
-													<input type="hidden" name="fileUrl" id="fileUrl">
-												</div>
-
+												<form action="/fileUpload" method="post" enctype="multipart/form-data">
+													
+													<file-upload
+															label="첨부파일"
+															name="uploadFile"
+															max-files="1"
+															contextPath="${pageContext.request.contextPath }"
+															
+													></file-upload>
+												</form>
 
 											</div>
 										</div>
@@ -576,12 +575,15 @@ select.ui-datepicker-year {
 							<div class="tool_bar">
 								<div class="critical d-flex gap-2 mt-3">
 									<!--성진스 버튼-->
-									<button id="s_eap_app_bottom" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top"
+									<button id="s_eap_app_bottom" data-bs-toggle="tooltip" data-bs-placement="bottom" 
+										data-bs-custom-class="custom-tooltip"title="재기안시 결재선을 지정해야 합니다."
 										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
 										<span class="material-symbols-outlined fs-5">upload</span> 결재요청
 									</button>
-									<a id="s_eap_storBo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
+									<a id="s_eap_storBo" type="button"data-bs-toggle="tooltip" data-bs-placement="bottom" 
+										data-bs-custom-class="custom-tooltip-sto"title="재기안시 결재선을 지정해야 합니다."
+										class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
 									</a> 
@@ -613,14 +615,36 @@ select.ui-datepicker-year {
 
 
 <script>
+//제목 너무 길게 입력하면 입력초과 스왈
+document.getElementById('s_ho_tt').addEventListener('input', function (event) {
+        const maxLength = 160; // 최대 길이 설정
+        const inputField = this;
+        const inputValue = inputField.value;
+
+        // 입력값이 최대 길이를 초과할 경우
+        if (inputValue.length > maxLength) {
+            swal({
+                title: "입력 초과",
+                text: "제목은 최대 160자까지 입력 가능합니다.",
+                icon: "warning",
+                button: "확인"
+            }).then(() => {
+                // 초과된 부분을 잘라내기
+                inputField.value = inputValue.substring(0, maxLength);
+            });
+
+            // 입력 처리를 중단
+            event.preventDefault();
+            return;
+        }
+    });
+
 // 총 일수 계산 함수
 function dateCnt() {
 	// 공가(23) 또는 병가(24)일 경우 총일수를 0으로 설정
 	if ($("input[name='holiCode']:checked").val() === '23' || $("input[name='holiCode']:checked").val() === '24') {
 		$('#s_date_cal').text('0');
-		$('#s_date_calView').text('0');
 		//신청종료일자를 초기화 시켜줘
-		//신청종료일자를 없애고 다시 셋팅할수있게 해줘
 		
 		return;
 	}
@@ -737,11 +761,13 @@ $(document).ready(function() {
 	eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
 	var ho_code = $("input[name='holiCode']:checked").val();
 	var ho_start = $('#s_ho_start').val() + " " + $('#s_start_time').val();
+	var ho_start_D = $('#s_ho_start').val();
 	var ho_end = $('#s_ho_end').val() + " " + $('#s_end_time').val();
+	var ho_end_D = $('#s_ho_end').val();
 	var ho_use_count = $('#s_date_cal').text();
 	var ho_use_countView = $('#s_date_calView').text();
 	
-	// 결재선 지정 여부 확인
+	//결재선 지정 여부 확인
 	if ($(".s_appLine_tbody_new .clsTr").length === 0) {
 		swal({
 			title: "결재선이 지정되지 않았습니다.",
@@ -862,13 +888,34 @@ $(document).ready(function() {
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
 			formData.append("uploadFile",jnForm.uploadFile.files[i]);
 		}
+
+		let atrzLineList = [];
+
+		$("#trAtrzLine").children("td").each(function(idx, atrzLine){
+			let atrzLine2 = {
+				atrzLnSn: $(this).data("atrzLnSn"),
+				sanctnerEmpno: $(this).data("sanctnerEmpno"),
+			    atrzTy: $(this).data("atrzTy"),
+			    dcrbAuthorYn: $(this).data("dcrbAuthorYn"),
+				sanctnerClsfCode:$(this).data("sanctnerClsfCode")
+			}
+			atrzLineList.push(atrzLine2);	
+
+			formData.append("atrzLineVOList["+idx+"].atrzLnSn",atrzLine2.atrzLnSn);
+			formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",atrzLine2.sanctnerEmpno);
+			formData.append("atrzLineVOList["+idx+"].atrzTy",atrzLine2.atrzTy);
+			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",atrzLine2.dcrbAuthorYn);
+			formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",atrzLine2.sanctnerClsfCode);
+		});
+
+		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
+			formData.append("removeFileId", element.value);
+		});
+
+		console.log("atrzLineList : ",atrzLineList);
 	
-		/* 값 체킁
-		for(let [name,value] of formData.entries()){
-			console.log("주니체킁:",name,value);
-		}
-		*/
-		
+
+
 		for(let i=0; i< authList.length; i++){
 			let auth = authList[i];
 			let atrzLine = {
@@ -935,6 +982,19 @@ $(document).ready(function() {
 	//임시저장 클릭 시
 	$(".s_eap_stor").on("click",function(){
 		event.preventDefault();
+
+	//결재선 지정 여부 확인
+	if ($(".s_appLine_tbody_new .clsTr").length === 0) {
+			swal({
+				title: "결재선이 지정되지 않았습니다.",
+				text: "결재선을 지정해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+			return;
+		}
 		// alert("체킁");
 		console.log("전송하기 체킁 확인");
 		console.log("s_eap_app_bottom->authList : ", authList);

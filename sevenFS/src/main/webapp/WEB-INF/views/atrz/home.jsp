@@ -123,40 +123,6 @@
 								</ul>
 							</div>
 
-							<!-- 오른쪽: 검색창 -->
-							<div class="table_search d-flex align-items-center gap-2">
-								
-								<select id="duration" class="form-select w-auto">
-									<option value="all">전체기간</option>
-									<option value="1">1개월</option>
-									<option value="6">6개월</option>
-									<option value="12">1년</option>
-									<option value="period">기간입력</option>
-								</select>
-								<div id="durationPeriod"
-									class="search_option d-none align-items-center">
-									<input id="fromDate" class="form-control" type="text"
-										style="width: 150px;"> ~ <input id="toDate"
-										class="form-control" type="text" style="width: 150px;">
-								</div>
-								<!-- 검색 유형 선택 -->
-								<select id="searchtype" class="form-select w-auto">
-									<option value="title">제목</option>
-									<option value="drafterName">기안자</option>
-									<option value="drafterDeptName">기안부서</option>
-									<option value="formName">결재양식</option>
-									<option value="activityUserName">결재선</option>
-								</select>
-								<section class="search2">
-									<div
-										class="search_wrap d-flex align-items-center border rounded px-2">
-										<!--focus되면 "search_focus" multi class로 추가해주세요.-->
-										<input id="keyword" class="form-control border-0"
-											type="text" placeholder="검색"> <span
-											class="material-symbols-outlined">search</span>
-									</div>
-								</section>
-							</div>
 
 						</div>
 					</div>
@@ -292,6 +258,8 @@
 																<tr>
 																	<td>
 																		<p class="fw-bolder" style="text-align: center;">
+																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
 																			${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp; ${onlyTime}</p>
 																	</td>
 																	<td>

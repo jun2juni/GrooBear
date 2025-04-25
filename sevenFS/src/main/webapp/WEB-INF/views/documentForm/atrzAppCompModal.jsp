@@ -35,14 +35,14 @@
                                 <td><textarea class="form-control" id="approvalMessage">승인합니다.</textarea></td>
                             </tr>
                             
-                            <tr>
+                            <!-- <tr>
                                 <td>결재옵션</td>
                                 <td>
                                     <input type="checkbox" id="authorStatus">
                                     <label for="authorStatus">전결</label>
                                     <span>(체크시 모든 결재가 완료처리 됩니다)</span>
                                 </td>
-                            </tr>
+                            </tr> -->
                             </c:forEach>
                         </table>
                     </form>

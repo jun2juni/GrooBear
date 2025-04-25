@@ -536,12 +536,36 @@ select.ui-datepicker-year {
 
 
 <script>
+//제목 너무 길게 입력하면 입력초과 스왈
+document.getElementById('s_ho_tt').addEventListener('input', function (event) {
+        const maxLength = 160; // 최대 길이 설정
+        const inputField = this;
+        const inputValue = inputField.value;
+
+        // 입력값이 최대 길이를 초과할 경우
+        if (inputValue.length > maxLength) {
+            swal({
+                title: "입력 초과",
+                text: "제목은 최대 160자까지 입력 가능합니다.",
+                icon: "warning",
+                button: "확인"
+            }).then(() => {
+                // 초과된 부분을 잘라내기
+                inputField.value = inputValue.substring(0, maxLength);
+            });
+
+            // 입력 처리를 중단
+            event.preventDefault();
+            return;
+        }
+    });
+
+
 // 총 일수 계산 함수
 function dateCnt() {
 	// 공가(23) 또는 병가(24)일 경우 총일수를 0으로 설정
 	if ($("input[name='holiCode']:checked").val() === '23' || $("input[name='holiCode']:checked").val() === '24') {
 		$('#s_date_cal').text('0');
-		$('#s_date_calView').text('0');
 		//신청종료일자를 초기화 시켜줘
 		//신청종료일자를 없애고 다시 셋팅할수있게 해줘
 		
@@ -659,7 +683,9 @@ $(document).ready(function() {
 	eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
 	var ho_code = $("input[name='holiCode']:checked").val();
 	var ho_start = $('#s_ho_start').val() + " " + $('#s_start_time').val();
+	var ho_start_D = $('#s_ho_start').val();
 	var ho_end = $('#s_ho_end').val() + " " + $('#s_end_time').val();
+	var ho_end_D = $('#s_ho_end').val();
 	var ho_use_count = $('#s_date_cal').text();
 	var ho_use_countView = $('#s_date_calView').text();
 	
@@ -719,7 +745,19 @@ $(document).ready(function() {
 			});
 			return;
 		}
-	
+
+	//신청시간과 종료일자가 비어있을때
+	if(ho_start_D == "" || ho_end_D ==""){
+		swal({
+				title: "신청기간이 잘못되었습니다.",
+				text: "다시 확인해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+		return;
+	}
 	// 제목, 내용이 비어있을 때
 	if(eap_title == "" || eap_content == "") {
 		swal({
@@ -1005,7 +1043,7 @@ $(document).ready(function() {
 					}).then(() => {
 						// location.replace("/atrz/document");
 					});
-					alert("왔다");
+					// alert("왔다");
 				}
 			},
 			error: junyError
@@ -1393,7 +1431,7 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 			.then(res => res.text())  // 👈 여기!
 			.then(result => {
 			if(result === "success") {
-				swal("삭제 완료!", "", "success");
+				swal("취소 완료!", "", "success");
 					location.replace("/atrz/home")
 			} else {
 				swal("삭제 실패", "관리자에게 문의하세요", "error");

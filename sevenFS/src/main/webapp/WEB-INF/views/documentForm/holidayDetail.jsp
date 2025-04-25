@@ -106,7 +106,7 @@
 			<div class="container-fluid">
 				<!-- 여기서 작업 시작 -->
 				<!-- <p>${atrzVO}</p> -->
-				<p>${attachFileVOList}</p>
+				<!-- <p>${attachFileVOList}</p> -->
 				<!-- <p>${attachFileVOList[0].fileStrePath}</p> -->
 				<!-- <p>${sanEmplVOList}</p> -->
 				<div class="row">

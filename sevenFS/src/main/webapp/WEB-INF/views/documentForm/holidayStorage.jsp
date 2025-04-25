@@ -292,9 +292,7 @@ select.ui-datepicker-year {
 		<form id="atrz_ho_form" action="/atrz/insertAtrzLine" method="post" enctype="multipart/form-data">
 			<div class="container-fluid">
 				<!-- 여기서 작업 시작 -->
-
-				 <p>${atrzVO}</p>
-				 <p>${attachFileVOList}</p>
+				<!-- <p>${attachFileVOList}</p> -->
 				<div class="row">
 					<div class="col-sm-12 mb-3 mb-sm-0">
 						<!-- 결재요청 | 임시저장 | 결재선지정 | 취소  -->
@@ -386,7 +384,7 @@ select.ui-datepicker-year {
 												<table border="1" class="s_eap_draft_app">
 													<tbody>
 														<!-- 결재자: atrzTy = 'N' -->
-														<tr id="trAtrzLine">
+														<tr id="trAtrzLine" class="trAtrzLine">
 															<th rowspan="3">결재</th>
 															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 																<c:if test="${atrzLineVO.atrzTy eq '1'}">
@@ -457,11 +455,13 @@ select.ui-datepicker-year {
 														</c:forEach>
 												
 														<c:if test="${hasReference eq true}">
-															<tr>
+															<tr class="trAtrzLine">
 																<th rowspan="2">참조</th>
 																<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 																	<c:if test="${atrzLineVO.atrzTy eq '0'}">
-																		<td>${atrzLineVO.sanctnerClsfNm}</td>
+																		<td data-atrz-ln-sn="${atrzLineVO.atrzLnSn}" data-sanctner-empno="${atrzLineVO.sanctnerEmpno}"
+																		data-atrz-ty="${atrzLineVO.atrzTy}" data-dcrb-author-yn="${atrzLineVO.dcrbAuthorYn}"
+																		data-sanctner-clsf-code="${atrzLineVO.sanctnerClsfCode}">${atrzLineVO.sanctnerClsfNm}</td>
 																	</c:if>
 																</c:forEach>
 															</tr>
@@ -547,8 +547,12 @@ select.ui-datepicker-year {
 																style="width: 150px; display: none;" value=${onlyEnTime}
 																id="s_end_time" min="09:00:00" max="18:00:00" value="18:00:00"
 																disabled onchange="dateCnt();" name="holiEndArr" /> 까지
+
+															<div class="d-inline-block" style="display: none !important;">
+																(총 <span id="s_date_cal">0</span>일) &nbsp;&nbsp;&nbsp;
+															</div>
 															<div class="d-inline-block" >
-																(총 <span id="s_date_cal">0</span>일)
+																(총 <span id="s_date_calView">0</span>일) &nbsp;&nbsp;&nbsp;
 															</div>
 														</div>
 														<div id="halfTypeArea" style="display: none; margin-top: 5px;">
@@ -638,14 +642,36 @@ select.ui-datepicker-year {
 
 
 <script>
+//제목 너무 길게 입력하면 입력초과 스왈
+document.getElementById('s_ho_tt').addEventListener('input', function (event) {
+        const maxLength = 160; // 최대 길이 설정
+        const inputField = this;
+        const inputValue = inputField.value;
+
+        // 입력값이 최대 길이를 초과할 경우
+        if (inputValue.length > maxLength) {
+            swal({
+                title: "입력 초과",
+                text: "제목은 최대 160자까지 입력 가능합니다.",
+                icon: "warning",
+                button: "확인"
+            }).then(() => {
+                // 초과된 부분을 잘라내기
+                inputField.value = inputValue.substring(0, maxLength);
+            });
+
+            // 입력 처리를 중단
+            event.preventDefault();
+            return;
+        }
+    });
+
+
 // 총 일수 계산 함수
 function dateCnt() {
 	// 공가(23) 또는 병가(24)일 경우 총일수를 0으로 설정
 	if ($("input[name='holiCode']:checked").val() === '23' || $("input[name='holiCode']:checked").val() === '24') {
 		$('#s_date_cal').text('0');
-		$('#s_date_calView').text('0');
-		//신청종료일자를 초기화 시켜줘
-		//신청종료일자를 없애고 다시 셋팅할수있게 해줘
 		
 		return;
 	}
@@ -763,7 +789,9 @@ $(document).ready(function() {
 		eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
 		var ho_code = $("input[name='holiCode']:checked").val();
 		var ho_start = $('#s_ho_start').val() + " " + $('#s_start_time').val();
+		var ho_start_D = $('#s_ho_start').val();
 		var ho_end = $('#s_ho_end').val() + " " + $('#s_end_time').val();
+		var ho_end_D = $('#s_ho_end').val();
 		var ho_use_count = $('#s_date_cal').text();
 		var ho_use_countView = $('#s_date_calView').text();
 
@@ -811,6 +839,19 @@ $(document).ready(function() {
 			});
 			return;
 		}
+
+	//신청시간과 종료일자가 비어있을때
+	if(ho_start_D == "" || ho_end_D ==""){
+		swal({
+				title: "신청기간이 잘못되었습니다.",
+				text: "다시 확인해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+		return;
+	}
 	
 	// 제목, 내용이 비어있을 때
 	if(eap_title == "" || eap_content == "") {
@@ -986,16 +1027,10 @@ $(document).ready(function() {
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
 			formData.append("uploadFile",jnForm.uploadFile.files[i]);
 		}
-	
-		/* 값 체킁
-		for(let [name,value] of formData.entries()){
-			console.log("주니체킁:",name,value);
-		}
-		*/
 		
 		let atrzLineList = [];
 
-		$("#trAtrzLine").children("td").each(function(idx, atrzLine){
+		$(".trAtrzLine").children("td").each(function(idx, atrzLine){
 			let atrzLine2 = {
 				atrzLnSn: $(this).data("atrzLnSn"),
 				sanctnerEmpno: $(this).data("sanctnerEmpno"),
