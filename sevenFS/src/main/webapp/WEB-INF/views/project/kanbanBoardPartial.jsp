@@ -6,37 +6,33 @@
 <!-- 숨겨진 프로젝트 번호 -->
 <div id="projectKanbanBoard" data-prjct-no="${prjctNo}" style="display:none;"></div>
 
-<!-- 칸반보드 5개 상태 컬럼 -->
+<!-- 칸반보드 3개 상태 컬럼 -->
 <div class="d-flex gap-3 kanban-board-container w-100">
   <c:set var="columns">
-  <c:out value="00:대기,01:진행중,02:완료,03:피드백,04:변경" />
+    <c:out value="00:대기,01:진행중,02:완료" />
   </c:set>
-  
-  <!-- 5개 상태 컬럼 반복 -->
+
+  <!-- 3개 상태 컬럼 반복 -->
   <c:forEach var="col" items="${fn:split(columns, ',')}">
-  <c:set var="statusCode" value="${fn:split(col, ':')[0]}" />
-  <c:set var="statusName" value="${fn:split(col, ':')[1]}" />
-  <div class="kanban-col">
-    <div class="kanban-header bg-light-${statusName eq '대기' ? 'gray' :
-      statusName eq '진행중' ? 'yellow' :
-      statusName eq '완료' ? 'green' :
-      statusName eq '피드백' ? 'red' :
-      'blue'}">
-      <h6 class="status-title">${statusName}</h6>
+    <c:set var="statusCode" value="${fn:split(col, ':')[0]}" />
+    <c:set var="statusName" value="${fn:split(col, ':')[1]}" />
+    <div class="kanban-col">
+      <div class="kanban-header bg-light-${statusName eq '대기' ? 'gray' :
+        statusName eq '진행중' ? 'yellow' :
+        statusName eq '완료' ? 'green' : 'blue'}">
+        <h6 class="status-title">${statusName}</h6>
+      </div>
+      <div class="kanban-column" id="status-${statusCode}" ondragover="allowDrop(event)" ondrop="drop(event)">
+        <c:forEach var="task" items="${statusCode eq '00' ? queuedCards :
+          statusCode eq '01' ? servingCards :
+          completedCards}">
+          <div class="kanban-card" data-id="${task.taskNo}" data-status="${task.taskSttus}" draggable="true"
+              ondragstart="drag(event)" onclick="viewCardDetails(${task.taskNo})">
+            ${task.taskNm}
+          </div>
+        </c:forEach>
+      </div>
     </div>
-    <div class="kanban-column" id="status-${statusCode}" ondragover="allowDrop(event)" ondrop="drop(event)">
-      <c:forEach var="task" items="${statusCode eq '00' ? queuedCards :
-        statusCode eq '01' ? servingCards :
-        statusCode eq '02' ? completedCards :
-        statusCode eq '03' ? feedbackCards :
-        changedCards}">
-        <div class="kanban-card" data-id="${task.taskNo}" data-status="${task.taskSttus}" draggable="true"
-            ondragstart="drag(event)" onclick="viewCardDetails(${task.taskNo})">
-          ${task.taskNm}
-        </div>
-      </c:forEach>
-    </div>
-  </div>
   </c:forEach>
 </div>
 <!-- 업무 상세 정보 모달 -->
@@ -102,7 +98,7 @@
 /* 칸반 컬럼 스타일 */
 .kanban-col {
   min-width: 240px;
-  max-width: 20%;
+  flex: 1; 
   display: flex;
   flex-direction: column;
   border-radius: 8px;
@@ -301,11 +297,6 @@
   justify-content: space-between;
 }
 
-.kanban-col {
-  flex: 1;
-  min-width: 0;
-  margin-right: 10px;
-}
 
 .kanban-col:last-child {
   margin-right: 0;
@@ -334,9 +325,9 @@
 /* 칸반보드 컨테이너 조정 */
 #kanbanBoardContainer {
   flex: 1;
-  max-width: calc(100% - 250px);
+  width: 100%;
   padding-left: 15px;
-  padding-right: 0;
+  padding-right: 15px;
 }
 
 /* 칸반 컬럼들 균등 분배 */

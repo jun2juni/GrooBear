@@ -49,6 +49,16 @@ public class ProjectTaskVO {
     private Integer depth;
     private String parentTaskNm;
     private String tempParentIndex;
+    
+    private Long taskId;
+    private String startDate;
+    private String endDate;
+    private Double progress;
+    private Long parentId;
+    private String owner;
+    private String status;
+    private String priority;
+
 
     private List<MultipartFile> files;
     private List<AttachFileVO> attachFileList;

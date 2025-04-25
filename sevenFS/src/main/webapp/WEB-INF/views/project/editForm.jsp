@@ -127,30 +127,35 @@
       </div>
       
       <!-- 조직도 모달 -->
-	<div class="modal fade" id="orgChartModal" tabindex="-1" aria-labelledby="orgChartModalLabel" aria-hidden="true">
-	  <div class="modal-dialog modal-lg modal-dialog-scrollable">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title" id="orgChartModalLabel">
-	          <i class="fas fa-sitemap text-primary me-2"></i>조직도
-	        </h5>
-	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-	      </div>
-	      <div class="modal-body">
-	        <!-- 조직도 검색창 -->
-	        <c:import url="../organization/searchBar.jsp" />
-	        
-	        <!-- 조직도 본체 -->
-	        <div class="card-style overflow-scroll mt-3" style="max-height: 60vh;">
-	          <c:import url="../organization/orgList.jsp" />
-	        </div>
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-	      </div>
-	    </div>
-	  </div>
-	</div>
+<div class="modal fade" id="orgChartModal" tabindex="-1" aria-labelledby="orgChartModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+    
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-sitemap text-primary me-2"></i> 조직도
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+      </div>
+      
+      <div class="modal-body p-4">
+        <!--  검색창 먼저 -->
+        <c:import url="../organization/searchBar.jsp" />
+        
+        <!-- 조직도 트리 -->
+        <div class="card-style overflow-scroll mt-3" style="max-height: 75vh;">
+          <c:import url="../organization/orgList.jsp" />
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
       
     </section>
     <c:import url="../layout/footer.jsp" />

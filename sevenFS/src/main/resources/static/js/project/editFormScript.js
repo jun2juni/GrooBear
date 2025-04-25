@@ -5,12 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
   formatDateFields();
   setupAmountInputFormat();
   setupFormSubmitWithValidation();
-
-  // 부트스트랩 모달 수동 강제 초기화 처리
-  const modalEl = document.getElementById('orgChartModal');
-  if (modalEl && typeof bootstrap !== 'undefined') {
-    bootstrap.Modal.getOrCreateInstance(modalEl);
-  }
+  setupOrgChartModalButtonHandler();
 });
 
 function initAddressFields() {
@@ -28,12 +23,8 @@ function formatDateFields() {
   const beginDateInput = document.querySelector('[name="prjctBeginDate"]');
   const endDateInput = document.querySelector('[name="prjctEndDate"]');
 
-  if (beginDateInput) {
-    beginDateInput.value = convertToInputDate(beginDateInput.value);
-  }
-  if (endDateInput) {
-    endDateInput.value = convertToInputDate(endDateInput.value);
-  }
+  if (beginDateInput) beginDateInput.value = convertToInputDate(beginDateInput.value);
+  if (endDateInput) endDateInput.value = convertToInputDate(endDateInput.value);
 }
 
 function convertToInputDate(val) {
@@ -47,16 +38,12 @@ function setupAmountInputFormat() {
   const amountInput = document.getElementById('prjctRcvordAmount');
   if (!amountInput) return;
 
-  // 입력 시 천단위 콤마 표시
   amountInput.addEventListener('input', function () {
     let value = this.value.replace(/[^0-9]/g, '');
-    if (value) {
-      value = parseInt(value, 10).toLocaleString('ko-KR');
-    }
+    if (value) value = parseInt(value, 10).toLocaleString('ko-KR');
     this.value = value;
   });
 }
-
 
 function setupFormSubmitWithValidation() {
   const form = document.getElementById('projectForm');
@@ -68,9 +55,7 @@ function setupFormSubmitWithValidation() {
 
     requiredFields.forEach(name => {
       const input = form.querySelector(`[name="${name}"]`) || form.querySelector(`input[type="hidden"][name="${name}"]`);
-      if (!input || input.value.trim() === '') {
-        missing.push(name);
-      }
+      if (!input || input.value.trim() === '') missing.push(name);
     });
 
     if (missing.length > 0) {
@@ -79,10 +64,9 @@ function setupFormSubmitWithValidation() {
       return;
     }
 
-    // 날짜 → YYYYMMDD 포맷으로 히든 전달
+    // 날짜 포맷 변경
     const begin = form.querySelector('[name="prjctBeginDate"]');
     const end = form.querySelector('[name="prjctEndDate"]');
-
     if (begin) {
       form.appendChild(createHiddenField('prjctBeginDate', begin.value.replace(/-/g, '')));
       begin.name = 'prjctBeginDateDisplay';
@@ -92,19 +76,15 @@ function setupFormSubmitWithValidation() {
       end.name = 'prjctEndDateDisplay';
     }
 
-    // 수주 금액 콤마, 역슬래시 제거
-	const amtInput = document.getElementById('prjctRcvordAmount');
-	if (amtInput) {
-	  amtInput.value = amtInput.value.replace(/[^0-9]/g, '');  // 콤마 제거
-	}
+    // 수주금액 숫자만
+    const amtInput = document.getElementById('prjctRcvordAmount');
+    if (amtInput) amtInput.value = amtInput.value.replace(/[^0-9]/g, '');
 
-
-    // 주소 병합 처리
+    // 주소 병합
     const addr1 = document.getElementById('restaurantAdd1')?.value || '';
     const addr2 = document.getElementById('addressDetail')?.value || '';
     document.getElementById('prjctAdres').value = addr1 + (addr2 ? ', ' + addr2 : '');
 
-    // 최종 제출
     form.submit();
   });
 }
@@ -117,32 +97,55 @@ function createHiddenField(name, value) {
   return input;
 }
 
-function removeMemberRow(button) {
-  const tr = button.closest('tr');
-  if (tr) {
-    tr.remove();
-    updateProjectEmpIndexes();
-  }
+function removeMember(button) {
+  const row = button.closest('tr');
+  if (row) row.remove();
+  updateProjectEmpIndexes();
 }
 
 function updateProjectEmpIndexes() {
-  const table = document.getElementById('selectedMembersTable');
-  const hiddenInputs = table.querySelectorAll('input.member-hidden-input');
+  const table = document.getElementById("selectedMembersTable");
+  const rows = table.querySelectorAll("tbody tr:not(.empty-row)");
 
-  // 역할별로 인덱싱
-  let responsibleIdx = 0;
-  let participantIdx = 0;
-  let observerIdx = 0;
+  let idx = { "00": 0, "01": 0, "02": 0 };
 
-  hiddenInputs.forEach(input => {
-    const role = input.dataset.role; // '00' 책임자, '01' 참여자, 나머지 참조자
+  rows.forEach(row => {
+    const role = row.getAttribute("data-role");
+    const empno = row.getAttribute("data-empno");
 
-    if (role === '00') {
-      input.name = `responsibleManager[${responsibleIdx++}]`;
-    } else if (role === '01') {
-      input.name = `participants[${participantIdx++}]`;
-    } else {
-      input.name = `observers[${observerIdx++}]`;
-    }
+    row.querySelectorAll('input[type="hidden"]').forEach(el => el.remove());
+
+    const input = document.createElement("input");
+    input.type = "hidden";
+    if (role === "00") input.name = `responsibleManager[${idx[role]}]`;
+    else if (role === "01") input.name = `participants[${idx[role]}]`;
+    else if (role === "02") input.name = `observers[${idx[role]}]`;
+    input.value = empno;
+    row.appendChild(input);
+
+    idx[role]++;
+  });
+
+  if (rows.length === 0) {
+    const tbody = table.querySelector("tbody");
+    const tr = document.createElement("tr");
+    tr.className = "empty-row";
+    tr.innerHTML = `<td colspan="7" class="text-center text-muted py-4">
+      <i class="fas fa-info-circle me-1"></i> 선택된 인원이 없습니다. 조직도에서 프로젝트 참여자를 선택해주세요.
+    </td>`;
+    tbody.appendChild(tr);
+  }
+}
+
+function setupOrgChartModalButtonHandler() {
+  document.querySelectorAll(".open-org-chart").forEach(button => {
+    button.addEventListener("click", function () {
+      const modalEl = document.getElementById("orgChartModal");
+      const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+      // 강제로 aria-hidden 제거 (Bootstrap 버그 우회)
+      modalEl.removeAttribute("aria-hidden");
+      bsModal.show();
+    });
   });
 }

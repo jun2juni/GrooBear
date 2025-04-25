@@ -161,32 +161,33 @@ public class ProjectController {
 
 	
 	@PostMapping("/insert")
-	public String insertProject(@ModelAttribute ProjectVO projectVO,
-	                           @RequestParam("projectTasksJson") String projectTasksJson,
-	                           @RequestParam("projectEmpListJson") String projectEmpListJson,
-	                           RedirectAttributes redirectAttrs,
-	                           MultipartHttpServletRequest multiReq) {
+	@ResponseBody
+	public Map<String, Object> insertProject(@ModelAttribute ProjectVO projectVO,
+	                                         @RequestParam("projectTasksJson") String projectTasksJson,
+	                                         @RequestParam("projectEmpListJson") String projectEmpListJson,
+	                                         MultipartHttpServletRequest multiReq) {
 	    log.info("====== [insertProject] 요청 도착 ======");
+
+	    Map<String, Object> result = new HashMap<>();
 
 	    try {
 	        // 1. JSON 문자열에서 업무 목록 파싱
 	        ObjectMapper objectMapper = new ObjectMapper();
 	        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-	        
+
 	        List<ProjectTaskVO> taskList = objectMapper.readValue(projectTasksJson, 
 	            new TypeReference<List<ProjectTaskVO>>() {});
 	        
 	        List<ProjectEmpVO> empList = objectMapper.readValue(projectEmpListJson,
 	            new TypeReference<List<ProjectEmpVO>>() {});
-	            
+
 	        log.info("파싱된 업무 개수: {}", taskList.size());
 	        log.info("파싱된 참여자 개수: {}", empList.size());
 
 	        // 2. 업무 파일 처리
 	        for (int index = 0; index < taskList.size(); index++) {
 	            ProjectTaskVO task = taskList.get(index);
-	            
-	            // 파일 처리
+
 	            String fileKey = "uploadFiles_task_" + index;
 	            List<MultipartFile> fileList = multiReq.getFiles(fileKey);
 
@@ -200,22 +201,25 @@ public class ProjectController {
 	        // 3. 참여자 목록 설정
 	        projectVO.setProjectEmpVOList(empList);
 
-	        // 4. 프로젝트 서비스 호출 (업무 목록 포함)
+	        // 4. 프로젝트 + 업무 저장
 	        projectService.createProject(projectVO, taskList);
 
 	        // 5. 상위-하위 업무 관계 처리
 	        updateTaskHierarchy(taskList);
 
+	        // 6. 성공 응답
+	        result.put("status", "success");
+	        result.put("redirectUrl", "/project/projectTab?tab=list&highlight=" + projectVO.getPrjctNo());
+	        
 	    } catch (Exception e) {
 	        log.error("프로젝트 생성 중 오류", e);
-	        redirectAttrs.addFlashAttribute("errorMessage", "프로젝트 등록 실패: " + e.getMessage());
-	        return "redirect:/project/insert";
+	        result.put("status", "error");
+	        result.put("message", "프로젝트 등록 실패: " + e.getMessage());
 	    }
 
-	    redirectAttrs.addFlashAttribute("successMessage", "프로젝트가 성공적으로 등록되었습니다!");
-	    return "redirect:/project/projectTab?tab=list&highlight=" + projectVO.getPrjctNo();
-
+	    return result;
 	}
+
 
 	// 업무 계층 구조 업데이트 메서드
 	private void updateTaskHierarchy(List<ProjectTaskVO> taskList) {

@@ -52,39 +52,51 @@
               </c:otherwise>
             </c:choose>
 
-
-<tr class="${rowClass}" data-empno="${emp.prtcpntEmpno}" data-role="${emp.prtcpntRole}">
+            <tr class="${rowClass}" data-empno="${emp.prtcpntEmpno}" data-role="${emp.prtcpntRole}">
+              <td class="text-center align-middle">
+                <span class="badge ${badgeClass} p-2">
+                  <i class="${roleIcon} me-1"></i> ${roleLabel}
+                </span>
+              </td>
+              <td class="text-center align-middle"><strong>${emp.emplNm}</strong></td>
+              <td class="text-center align-middle">${emp.deptNm}</td>
+              <td class="text-center align-middle">${emp.posNm}</td>
+              <td class="text-center align-middle">
+                <i class="fas fa-phone-alt me-1 text-muted"></i>
+                <c:choose>
+                  <c:when test="${fn:length(emp.telno) == 11}">
+                    ${fn:substring(emp.telno, 0, 3)}-${fn:substring(emp.telno, 3, 7)}-${fn:substring(emp.telno, 7, 11)}
+                  </c:when>
+                  <c:when test="${fn:length(emp.telno) == 10}">
+                    <c:choose>
+                      <c:when test="${fn:startsWith(emp.telno, '02')}">
+                        ${fn:substring(emp.telno, 0, 2)}-${fn:substring(emp.telno, 2, 6)}-${fn:substring(emp.telno, 6, 10)}
+                      </c:when>
+                      <c:otherwise>
+                        ${fn:substring(emp.telno, 0, 3)}-${fn:substring(emp.telno, 3, 6)}-${fn:substring(emp.telno, 6, 10)}
+                      </c:otherwise>
+                    </c:choose>
+                  </c:when>
+                  <c:otherwise>
+                    ${emp.telno}
+                  </c:otherwise>
+                </c:choose>
+              </td>
+              <td class="text-start align-middle ps-3">
+                <i class="fas fa-envelope me-1 text-muted"></i> ${emp.email}
+              </td>
   <td class="text-center align-middle">
-    <span class="badge ${badgeClass} p-2">
-      <i class="${roleIcon} me-1"></i> ${roleLabel}
-    </span>
-  </td>
-  <td class="text-center align-middle"><strong>${emp.emplNm}</strong></td>
-  <td class="text-center align-middle">${emp.deptNm}</td>
-  <td class="text-center align-middle">${emp.posNm}</td>
-  <td class="text-center align-middle">
-    <i class="fas fa-phone-alt me-1 text-muted"></i>
-    <c:choose>
-      <c:when test="${fn:length(emp.telno) == 11}">
-        ${fn:substring(emp.telno, 0, 3)}-${fn:substring(emp.telno, 3, 7)}-${fn:substring(emp.telno, 7, 11)}
-      </c:when>
-      <c:otherwise>${emp.telno}</c:otherwise>
-    </c:choose>
-  </td>
-  <td class="text-start align-middle ps-3">
-    <i class="fas fa-envelope me-1 text-muted"></i> ${emp.email}
-  </td>
-  <td class="text-center align-middle">
-    <!-- 반드시 input은 tr 안에 같이 들어가야 함 -->
-    <input type="hidden" class="member-hidden-input" 
-           value="${emp.prtcpntEmpno}" 
-           data-role="${emp.prtcpntRole}" />
-    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeMemberRow(this)">
+    <input type="hidden" name="<c:choose>
+                                  <c:when test='${emp.prtcpntRole eq "00"}'>responsibleManager</c:when>
+                                  <c:when test='${emp.prtcpntRole eq "01"}'>participants</c:when>
+                                  <c:otherwise>observers</c:otherwise>
+                               </c:choose>[${loop.index}]" 
+           value="${emp.prtcpntEmpno}" />
+    <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove(); updateProjectEmpIndexes();">
       <i class="fas fa-times"></i>
     </button>
   </td>
-</tr>
-
+            </tr>
             
             
             

@@ -18,11 +18,12 @@
 	  <result property="chargerEmpNm" column="CHARGER_EMP_NM"/>
 	  <result property="parentTaskNm" column="PARENT_TASK_NM"/>
 
-	  
-	  
 	</resultMap>
 
-
+	
+	
+	
+	
    <insert id="insertProjectTaskBatch">
 	 <selectKey resultType="int" order="BEFORE" keyProperty="taskNo">
 		SELECT SEQ_PROJECT.NEXTVAL FROM DUAL

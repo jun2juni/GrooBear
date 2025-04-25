@@ -1,177 +1,101 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 
 <div class="project-kanban-container" id="projectKanbanContent">
   <!-- 대기 상태 -->
-  <div class="project-kanban-column" id="status-00">
-    <div class="column-header bg-secondary bg-opacity-25">
-      <h5><i class="fas fa-hourglass-start me-2"></i>대기</h5>
-      <span class="badge bg-secondary rounded-pill ms-2">${fn:length(waitingProjects)}</span>
-    </div>
-    <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, '00')">
-      <c:forEach var="project" items="${waitingProjects}">
-        <div class="project-card grade-${project.prjctGrad}" data-project-no="${project.prjctNo}" data-project-status="${project.prjctSttus}" draggable="true" ondragstart="drag(event)">
-          <div class="card-header">
-            <h6 class="project-title">${project.prjctNm}</h6>
-            <span class="project-grade grade-badge-${project.prjctGrad}">${project.prjctGrad}</span>
-          </div>
-          <div class="card-body">
-            <div class="project-info">
-              <div class="info-row">
-                <i class="fas fa-calendar-alt"></i>
-                <span>${project.prjctBeginDate} ~ ${project.prjctEndDate}</span>
-              </div>
-              <c:if test="${not empty project.prjctRcvordAmount}">
-                <div class="info-row">
-                  <i class="fas fa-coins"></i>
-                  <span class="amount"><fmt:formatNumber value="${project.prjctRcvordAmount}" type="number" pattern="#,#00"/></span>
-                </div>
-              </c:if>
-              <div class="project-timeline">
-                <div class="timeline-bar" data-begin="${project.prjctBeginDate}" data-end="${project.prjctEndDate}"></div>
-              </div>
-            </div>
-          </div>
-		<!-- 카드 푸터 수정 -->
-<div class="card-footer">
-  <span class="category-tag">${project.ctgryNm}</span>
-  <a href="/project/projectDetail?prjctNo=${project.prjctNo}" class="detail-badge ms-auto">
-    <i class="fas fa-info-circle me-1"></i>상세보기
-  </a>
-</div>
-        </div>
-      </c:forEach>
-    </div>
-  </div>
+    <c:set var="statuses" value="00,01,02,03" />
+    <c:forEach var="status" items="${fn:split(statuses, ',')}">
+      <c:choose>
+        <c:when test="${status eq '00'}">
+          <c:set var="projects" value="${waitingProjects}" />
+          <c:set var="title" value="대기" />
+          <c:set var="color" value="secondary" />
+          <c:set var="icon" value="fa-hourglass-start" />
+        </c:when>
+        <c:when test="${status eq '01'}">
+          <c:set var="projects" value="${inProgressProjects}" />
+          <c:set var="title" value="진행중" />
+          <c:set var="color" value="primary" />
+          <c:set var="icon" value="fa-spinner" />
+        </c:when>
+        <c:when test="${status eq '02'}">
+          <c:set var="projects" value="${completedProjects}" />
+          <c:set var="title" value="완료" />
+          <c:set var="color" value="success" />
+          <c:set var="icon" value="fa-check-circle" />
+        </c:when>
+        <c:when test="${status eq '03'}">
+          <c:set var="projects" value="${canceledProjects}" />
+          <c:set var="title" value="취소" />
+          <c:set var="color" value="danger" />
+          <c:set var="icon" value="fa-ban" />
+        </c:when>
+      </c:choose>
 
-  <!-- 진행중 상태 -->
-  <div class="project-kanban-column" id="status-01">
-    <div class="column-header bg-primary bg-opacity-25">
-      <h5><i class="fas fa-spinner me-2"></i>진행중</h5>
-      <span class="badge bg-primary rounded-pill ms-2">${fn:length(inProgressProjects)}</span>
-    </div>
-    <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, '01')">
-      <c:forEach var="project" items="${inProgressProjects}">
-        <%-- 동일한 구조 --%>
-        <div class="project-card grade-${project.prjctGrad}" data-project-no="${project.prjctNo}" data-project-status="${project.prjctSttus}" draggable="true" ondragstart="drag(event)">
-          <div class="card-header">
-            <h6 class="project-title">${project.prjctNm}</h6>
-            <span class="project-grade grade-badge-${project.prjctGrad}">${project.prjctGrad}</span>
-          </div>
-          <div class="card-body">
-            <div class="project-info">
-              <div class="info-row">
-                <i class="fas fa-calendar-alt"></i>
-                <span>${project.prjctBeginDate} ~ ${project.prjctEndDate}</span>
-              </div>
-              <c:if test="${not empty project.prjctRcvordAmount}">
-                <div class="info-row">
-                  <i class="fas fa-coins"></i>
-                  <span class="amount"><fmt:formatNumber value="${project.prjctRcvordAmount}" type="number" pattern="#,#00"/></span>
-                </div>
-              </c:if>
-              <div class="project-timeline">
-                <div class="timeline-bar" data-begin="${project.prjctBeginDate}" data-end="${project.prjctEndDate}"></div>
-              </div>
-            </div>
-          </div>
-		<!-- 카드 푸터 수정 -->
-<div class="card-footer">
-  <span class="category-tag">${project.ctgryNm}</span>
-  <a href="/project/projectDetail?prjctNo=${project.prjctNo}" class="detail-badge ms-auto">
-    <i class="fas fa-info-circle me-1"></i>상세보기
-  </a>
-</div>
+      <div class="project-kanban-column" id="status-${status}">
+        <div class="column-header bg-${color} bg-opacity-25">
+          <h5><i class="fas ${icon} me-2"></i>${title}</h5>
+          <span class="badge bg-${color} rounded-pill ms-2" id="count-${status}">${fn:length(projects)}</span>
         </div>
-      </c:forEach>
-    </div>
-  </div>
+        <div class="column-body" id="body-${status}" ondragover="allowDrop(event)" ondrop="drop(event, '${status}')">
+          <c:forEach var="project" items="${projects}">
+            <div class="project-card grade-${project.prjctGrad} ${status eq '03' ? 'canceled-project' : ''}"
+                 data-project-no="${project.prjctNo}"
+                 data-project-status="${project.prjctSttus}"
+                 draggable="true" ondragstart="drag(event)">
 
-  <!-- 완료 상태 -->
-  <div class="project-kanban-column" id="status-02">
-    <div class="column-header bg-success bg-opacity-25">
-      <h5><i class="fas fa-check-circle me-2"></i>완료</h5>
-      <span class="badge bg-success rounded-pill ms-2">${fn:length(completedProjects)}</span>
-    </div>
-    <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, '02')">
-      <c:forEach var="project" items="${completedProjects}">
-        <%-- 동일한 카드 구조 --%>
-        <div class="project-card grade-${project.prjctGrad}" data-project-no="${project.prjctNo}" data-project-status="${project.prjctSttus}" draggable="true" ondragstart="drag(event)">
-          <div class="card-header">
-            <h6 class="project-title">${project.prjctNm}</h6>
-            <span class="project-grade grade-badge-${project.prjctGrad}">${project.prjctGrad}</span>
-          </div>
-          <div class="card-body">
-            <div class="project-info">
-              <div class="info-row">
-                <i class="fas fa-calendar-alt"></i>
-                <span>${project.prjctBeginDate} ~ ${project.prjctEndDate}</span>
+              <div class="card-header">
+                <h6 class="project-title">${project.prjctNm}</h6>
+                <span class="project-grade grade-badge-${project.prjctGrad}">${project.prjctGrad}</span>
               </div>
-              <c:if test="${not empty project.prjctRcvordAmount}">
-                <div class="info-row">
-                  <i class="fas fa-coins"></i>
-                  <span class="amount"><fmt:formatNumber value="${project.prjctRcvordAmount}" type="number" pattern="#,#00"/></span>
-                </div>
-              </c:if>
-              <div class="project-timeline">
-                <div class="timeline-bar timeline-completed" style="width: 100%"></div>
-              </div>
-            </div>
-          </div>
-		<!-- 카드 푸터 수정 -->
-<div class="card-footer">
-  <span class="category-tag">${project.ctgryNm}</span>
-  <a href="/project/projectDetail?prjctNo=${project.prjctNo}" class="detail-badge ms-auto">
-    <i class="fas fa-info-circle me-1"></i>상세보기
-  </a>
-</div>
-        </div>
-      </c:forEach>
-    </div>
-  </div>
 
-  <!-- 취소 상태 -->
-  <div class="project-kanban-column" id="status-03">
-    <div class="column-header bg-danger bg-opacity-25">
-      <h5><i class="fas fa-ban me-2"></i>취소</h5>
-      <span class="badge bg-danger rounded-pill ms-2">${fn:length(canceledProjects)}</span>
-    </div>
-    <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, '03')">
-      <c:forEach var="project" items="${canceledProjects}">
-        <div class="project-card grade-${project.prjctGrad} canceled-project" data-project-no="${project.prjctNo}" data-project-status="${project.prjctSttus}" draggable="true" ondragstart="drag(event)">
-          <div class="card-header">
-            <h6 class="project-title">${project.prjctNm}</h6>
-            <span class="project-grade grade-badge-${project.prjctGrad}">${project.prjctGrad}</span>
-          </div>
-          <div class="card-body">
-            <div class="project-info">
-              <div class="info-row">
-                <i class="fas fa-calendar-alt"></i>
-                <span>${project.prjctBeginDate} ~ ${project.prjctEndDate}</span>
-              </div>
-              <c:if test="${not empty project.prjctRcvordAmount}">
-                <div class="info-row">
-                  <i class="fas fa-coins"></i>
-                  <span class="amount"><fmt:formatNumber value="${project.prjctRcvordAmount}" type="number" pattern="#,#00"/></span>
+              <div class="card-body">
+                <div class="project-info">
+                  <div class="info-row">
+                    <i class="fas fa-calendar-alt"></i>
+                    <!-- 날짜 표시 (JS 포맷팅 예정) -->
+					<span class="project-dates" 
+					      data-begin="${project.prjctBeginDate}" 
+					      data-end="${project.prjctEndDate}">
+					  ${project.prjctBeginDate} ~ ${project.prjctEndDate}
+					</span>
+
+
+                  </div>
+
+                  <c:if test="${not empty project.prjctRcvordAmount}">
+                    <div class="info-row">
+                      <i class="fas fa-coins"></i>
+                      <span class="amount">
+                        <fmt:formatNumber value="${project.prjctRcvordAmount}" type="number" pattern="#,#00"/>
+                      </span>
+                    </div>
+                  </c:if>
+
+                  <div class="project-timeline">
+                    <div class="timeline-bar ${status eq '02' ? 'timeline-completed' : status eq '03' ? 'timeline-canceled' : ''}"
+                         data-begin="${project.prjctBeginDate}"
+                         data-end="${project.prjctEndDate}"></div>
+                  </div>
                 </div>
-              </c:if>
-              <div class="project-timeline">
-                <div class="timeline-bar timeline-canceled" data-begin="${project.prjctBeginDate}" data-end="${project.prjctEndDate}"></div>
+              </div>
+
+              <div class="card-footer">
+                <span class="category-tag">${project.ctgryNm}</span>
+                <a href="/project/projectDetail?prjctNo=${project.prjctNo}" class="detail-badge ms-auto">
+                  <i class="fas fa-info-circle me-1"></i>상세보기
+                </a>
               </div>
             </div>
-          </div>
-		<!-- 카드 푸터 수정 -->
-<div class="card-footer">
-  <span class="category-tag">${project.ctgryNm}</span>
-  <a href="/project/projectDetail?prjctNo=${project.prjctNo}" class="detail-badge ms-auto">
-    <i class="fas fa-info-circle me-1"></i>상세보기
-  </a>
-</div>
+          </c:forEach>
         </div>
-      </c:forEach>
-    </div>
+      </div>
+    </c:forEach>
   </div>
+</div>
 </div>
 
 
@@ -189,7 +113,7 @@
 
 /* 칸반 컬럼 스타일 */
 .project-kanban-column {
-  flex: 0 0 320px;
+  flex: 1 1 320px;
   display: flex;
   flex-direction: column;
   background-color: #f0f2f5;
@@ -500,87 +424,86 @@
 <script>
 // 전역 변수
 let draggedCard = null;
+let originalPosition = null;
+
+// 날짜 포맷팅 함수
+function formatDate(yyyymmdd) {
+  if (!yyyymmdd || yyyymmdd.length !== 8) return yyyymmdd;
+  return `\${yyyymmdd.slice(0, 4)}-\${yyyymmdd.slice(4, 6)}-\${yyyymmdd.slice(6, 8)}`;
+}
 
 // 드롭 허용
 function allowDrop(event) {
   event.preventDefault();
-  // 드래그 오버 시 시각적 효과
   event.currentTarget.classList.add('drag-over');
 }
 
 // 드래그 시작
 function drag(event) {
   draggedCard = event.target;
-  // 원래 상태 저장 (실패 시 되돌리기 위해)
-  draggedCard.dataset.originalColumn = draggedCard.parentElement.id;
-  event.dataTransfer.setData("text/plain", event.target.dataset.projectNo);
-  
-  // 드래그 중인 카드 스타일 추가
+  draggedCard.dataset.originalColumn = draggedCard.closest('.column-body').id;
+  originalPosition = {
+    parent: draggedCard.parentElement,
+    nextSibling: draggedCard.nextElementSibling
+  };
+  event.dataTransfer.setData("text/plain", draggedCard.dataset.projectNo);
   draggedCard.classList.add('dragging');
-  
-  // 드래그 오버 효과 제거 이벤트 추가
-  document.querySelectorAll('.column-body').forEach(column => {
-    column.addEventListener('dragleave', function(e) {
-      e.currentTarget.classList.remove('drag-over');
-    }, { once: true });
-  });
 }
 
 // 드롭 처리
 function drop(event, newStatus) {
   event.preventDefault();
-  // 드래그 오버 효과 제거
   event.currentTarget.classList.remove('drag-over');
-  
+
   const projectNo = event.dataTransfer.getData("text/plain");
-  
-  // UI 먼저 업데이트
-  if (draggedCard) {
-    // 드래그 스타일 제거
-    draggedCard.classList.remove('dragging');
-    
-    // 카드를 새 컬럼으로 즉시 이동
-    event.currentTarget.appendChild(draggedCard);
-    
-    // 이동 효과 추가
-    draggedCard.classList.add('just-moved');
-    setTimeout(() => {
-      draggedCard.classList.remove('just-moved');
-    }, 1000);
-    
-    // 상태 데이터 업데이트
-    draggedCard.dataset.projectStatus = newStatus;
-    
-    // 취소 상태인 경우 시각적 변경
-    if (newStatus === '03') {
-      draggedCard.classList.add('canceled-project');
-    } else {
-      draggedCard.classList.remove('canceled-project');
+  const originalColumnId = draggedCard.dataset.originalColumn;
+  const currentColumnId = event.currentTarget.id;
+
+  draggedCard.classList.remove('dragging');
+
+  if (originalColumnId === currentColumnId) {
+    // 같은 컬럼이면 원래 위치 유지
+    if (originalPosition && originalPosition.nextSibling) {
+      event.currentTarget.insertBefore(draggedCard, originalPosition.nextSibling);
     }
+    return;
   }
-  
-  // 서버에 상태 변경 요청
+
+  event.currentTarget.appendChild(draggedCard);
+  draggedCard.dataset.projectStatus = newStatus;
+
+  if (newStatus === '03') {
+    draggedCard.classList.add('canceled-project');
+  } else {
+    draggedCard.classList.remove('canceled-project');
+  }
+
+  draggedCard.classList.add('just-moved');
+  setTimeout(() => draggedCard.classList.remove('just-moved'), 1000);
+
+  updateStatusCounts();
+
+  // 서버 업데이트
   fetch("/project/kanban/update-project-status", {
     method: "POST",
-    headers: { 
+    headers: {
       "Content-Type": "application/json",
-      "X-CSRF-TOKEN": document.querySelector("meta[name='_csrf']")?.getAttribute("content") 
+      "X-CSRF-TOKEN": document.querySelector("meta[name='_csrf']")?.getAttribute("content")
     },
     body: JSON.stringify({ projectNo: projectNo, status: newStatus })
   })
   .then(res => res.json())
   .then(data => {
     if (!data.success) {
-      // 실패 시 사용자에게 알림
       alert("상태 변경 실패: " + data.message);
-      
-      // 원래 위치로 되돌리기
-      const originalColumn = document.getElementById(draggedCard.dataset.originalColumn);
-      if (originalColumn && draggedCard) {
-        originalColumn.appendChild(draggedCard);
-        // 원래 상태로 데이터 되돌리기
-        const originalStatus = draggedCard.dataset.projectStatus;
-        draggedCard.dataset.projectStatus = originalStatus;
+      const originalColumn = document.getElementById(originalColumnId);
+      if (originalColumn) {
+        if (originalPosition && originalPosition.nextSibling) {
+          originalColumn.insertBefore(draggedCard, originalPosition.nextSibling);
+        } else {
+          originalColumn.appendChild(draggedCard);
+        }
+        updateStatusCounts();
       }
     }
   })
@@ -590,70 +513,27 @@ function drop(event, newStatus) {
   });
 }
 
-// 프로젝트 상세 정보 모달 열기
-function openProjectDetailModal(projectNo) {
-  // AJAX로 프로젝트 상세 정보 가져오기
-  fetch(`/project/detail?projectNo=${projectNo}`)
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById('projectDetailModalContent').innerHTML = html;
-      
-      // 수정 버튼에 이벤트 추가
-      document.getElementById('editProjectBtn').addEventListener('click', function() {
-        location.href = `/project/edit?projectNo=${projectNo}`;
-      });
-      
-      // 모달 표시
-      const modal = new bootstrap.Modal(document.getElementById('projectDetailModal'));
-      modal.show();
-    })
-    .catch(error => {
-      console.error('프로젝트 상세 정보를 불러오는 데 실패했습니다:', error);
-      alert('프로젝트 상세 정보를 불러오는 데 실패했습니다.');
-    });
-}
-
-// 프로젝트 기간 기반 진행률 계산 함수
-function calculateProgress(beginDate, endDate) {
-  if (!beginDate || !endDate) return 0;
-  
-  const today = new Date();
-  const begin = new Date(
-    beginDate.substring(0, 4), 
-    beginDate.substring(4, 6) - 1, 
-    beginDate.substring(6, 8)
-  );
-  const end = new Date(
-    endDate.substring(0, 4), 
-    endDate.substring(4, 6) - 1, 
-    endDate.substring(6, 8)
-  );
-  
-  // 프로젝트 아직 시작 안 함
-  if (today < begin) return 0;
-  
-  // 프로젝트 이미 종료
-  if (today > end) return 100;
-  
-  // 진행 중인 프로젝트 진행률 계산
-  const totalDuration = end - begin;
-  const elapsedDuration = today - begin;
-  return Math.round((elapsedDuration / totalDuration) * 100);
-}
-
-// 프로젝트 칸반보드 초기화 (페이지 로드/탭 클릭 시 호출)
-document.addEventListener("DOMContentLoaded", function() {
-  // 프로젝트 칸반보드 탭이 표시될 때 초기화
-  document.querySelector('[data-bs-target="#projectKanban"]')?.addEventListener("shown.bs.tab", function() {
-    // 프로젝트 카드 클릭 이벤트
-    document.querySelectorAll('#projectKanban .project-card').forEach(card => {
-      card.addEventListener('click', function(e) {
-        if (!e.target.closest('.card-action-btn')) {
-          const projectNo = this.dataset.projectNo;
-          openProjectDetailModal(projectNo);
-        }
-      });
-    });
+// 상태별 카운터 업데이트
+function updateStatusCounts() {
+  ['00', '01', '02', '03'].forEach(status => {
+    const count = document.querySelectorAll(`#status-\${status} .project-card`).length;
+    const badge = document.querySelector(`#count-\${status}`);
+    if (badge) badge.textContent = count;
   });
+}
+
+// 칸반보드 초기화
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll('.project-dates').forEach(span => {
+    const begin = span.dataset.begin;
+    const end = span.dataset.end;
+    if (begin && end) {
+      // 하이픈(-) 붙인 날짜로 textContent 교체
+      span.textContent = `\${formatDate(begin)} ~ \${formatDate(end)}`;
+    }
+  });
+
+  updateStatusCounts();
 });
+
 </script>
