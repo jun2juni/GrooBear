@@ -497,7 +497,7 @@ WITH U AS(
 
 <!-- 전사 연차현황 목록 총 갯수 -->
 <select id="allEmplVacationAdminCnt" resultType="int">
-	SELECT COUNT(*)
+	SELECT COUNT(DISTINCT emp.empl_no)
     FROM VACATION vac
     LEFT JOIN employee emp ON vac.empl_no = emp.empl_no
     LEFT JOIN common_code cc ON emp.dept_code = cc.cmmn_code AND cc.cmmn_code_group='DEPARTMENT'
