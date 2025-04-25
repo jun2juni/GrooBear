@@ -23,10 +23,10 @@
             <div class="row g-0 auth-row">
                 <!-- 좌측 영역 -->
                 <div class="col-lg-6">
-                    <div class="auth-cover-wrapper bg-primary-100">
+                    <div class="auth-cover-wrapper bg-success-100">
                         <div class="auth-cover">
                             <div class="title text-center">
-                                <h1 class="text-primary mb-10">비밀번호 수정</h1>
+                                <h1 class="text-success mb-10">비밀번호 변경</h1>
                                 <p class="text-medium">새 비밀번호를 입력해주세요</p>
                             </div>
                         </div>
@@ -38,10 +38,9 @@
                 <div class="col-lg-6">
                     <div class="signin-wrapper">
                         <div class="form-wrapper">
-                            <form action="/auth/changePassword" method="post" class="needs-validation" novalidate>
                                 <div class="input-style-1 form-group">
                                     <label for="currentPassword" class="form-label">현재 비밀번호</label>
-                                    <input type="text" name="currentPassword" class="form-control" id="currentPassword"
+                                    <input type="password" name="currentPassword" class="form-control" id="currentPassword"
                                            placeholder="현재 비밀번호를 입력해주세요" required maxlength="30">
                                     <div class="invalid-feedback">현재 비밀번호를 입력해주세요.</div>
                                 </div>
@@ -67,8 +66,7 @@
                                     </div>
                                 </c:if>
 
-                                <button id="changePwButton" type="button" class="btn submit btn-primary col-12">비밀번호 변경</button>
-                            </form>
+                                <button id="changePwButton" type="button" class="btn submit btn-success col-12">비밀번호 변경</button>
                         </div>
                     </div>
                 </div>

@@ -291,7 +291,7 @@
               <a href="/dclz/dclzType" class="${fn:contains(currentURL, '/dclz/dclzType') ? 'active' : ''}"> 근태현황 </a>	
             </li>
             <li>
-              <a href="/dclz/vacation" class="${fn:contains(currentURL, '/dclz/vacation') ? 'active' : ''}"> 연차 </a>
+              <a href="/dclz/vacation" class="${fn:contains(currentURL, '/dclz/vacation') ? 'active' : ''}"> 연차현황 </a>
             </li>
             <sec:authorize access="hasRole('ROLE_ADMIN')">
             <li>
