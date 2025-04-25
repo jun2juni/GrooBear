@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 public class ProjectVO {
 	
+	private int rnum;
 	private int prjctNo;
     private int ctgryNo;
     private String prjctNm;

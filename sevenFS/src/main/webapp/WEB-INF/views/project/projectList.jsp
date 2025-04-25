@@ -76,7 +76,7 @@
               <tbody>
                 <c:forEach var="project" items="${projectList}" varStatus="status">
                   <tr class="align-middle" id="project-row-${project.prjctNo}">
-                    <td class="text-center">${startNumber - status.index}</td>
+                    <td class="text-center">${project.rnum}</td>
                     <td class="text-start ps-4">
                       <a href="/project/projectDetail?prjctNo=${project.prjctNo}" class="text-decoration-none text-primary">
                         ${project.prjctNm}
