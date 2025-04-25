@@ -411,6 +411,14 @@
                                                 <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
                                             </div>
                                         </c:forEach>
+                                        <c:if test="${recptnEmail != null && recptnEmail!=''}">
+                                            <div class="emailListDiv" name="recpEmailTemp" id="recpEmailTemp" style="border: 1px solid #ddd; border-radius: 4px; padding: 2px 5px; margin: 2px; align-items: center; display: inline-flex;">
+                                                <span id="recpEmailInpSpan">${emplNm}/</span>
+                                                <input type="text" name="recpEmail" id="recpEmail" data-emplno="${emplNo}" class="recpEmailInp emailInput" value="${recptnEmail}" style="border: 0px; width: 1px;" readonly>
+                                                <i class='fas fa-edit' id="editEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                                <i class='fas fa-times' id="delEmail" style="margin-left: 3px; cursor: pointer;"></i>
+                                            </div>
+                                        </c:if>
                                         <input type="text" name="recpEmailInp" id="recpEmailInp" style="margin: 3px; border: 1px;">
                                     </div>
                                     <button class="emailTreeBtn btn btn-secondary" type="button" data-event="recpEmailInp">주소록</button>

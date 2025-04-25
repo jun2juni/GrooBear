@@ -47,6 +47,8 @@ public interface MailService {
 
 	int delLblFromMail(int lblNo);
 
+	int mailRealDelete(List<String> emailNoList);
+
 
 
 }

@@ -49,6 +49,8 @@
 		};
 
 		const calendarOption = {
+			// nextDayThreshold: '00:00:00',
+			// eventDisplay: 'block',
 			// dragScroll:true,
 		//  slotHeight:25,
 			buttonText: {
@@ -65,6 +67,7 @@
 			headerToolbar : headerToolbar,
 			initialView : 'dayGridMonth',
 			locale : 'ko', // 'kr'에서 'ko'로 수정
+			// timeZone:'Asia/Seoul',
 			selectable : true,
 			selectMirror : true,
 			navLinks : true,
@@ -86,7 +89,7 @@
 						data:JSON.stringify(updData),
 						contentType:'application/json',
 					});
-			}
+			},
 		};
 		var calendar = new FullCalendar.Calendar(calendarEl, calendarOption);
 		window.globalCalendar = calendar;
@@ -179,6 +182,7 @@
 				let durationEditable = true
 				let startEditable = true
 				let title = data.schdulSj;
+				let eventContent;
 				if(data.schdulTy == '1'){
 					console.log('일정 타입',data.schdulTy);
 					console.log('일정 넘버',data.schdulNo);
@@ -187,7 +191,7 @@
 					textColor='#000000'
 					durationEditable=false
 					startEditable=false
-					title = '[부]'+title;
+					title = '[부] '+title
 				}else if(data.schdulTy == '2'){
 					console.log('일정 타입',data.schdulTy);
 					console.log('일정 넘버',data.schdulNo);
@@ -196,32 +200,38 @@
 					textColor='#000000'
 					durationEditable=false
 					startEditable=false
-					title = '[전]'+title;
+					title = '[전] '+title;
 				}else{
 					if(selLabel){
 						lblColor = selLabel.lblColor;
 					}
 					borderColor=lblColor
 				}
-				console.log("lblColor : ",lblColor);
-				console.log("borderColor : ",borderColor);
+				// console.log("lblColor : ",lblColor);
+				// console.log("borderColor : ",borderColor);
+				// console.log("chngData -> schdulNo : ",data.schdulNo);
+
+				// console.log('chngData -> : startDate',startDate);
+				// console.log('chngData -> : endDate',endDate);
+
 				returnData.push({
 				   "emplNo":data.emplNo,
 				   "id":data.schdulNo,
-				   "start":data.schdulBeginDt,
-				   "end":data.schdulEndDt,
+				   "start":startDate,
+				   "end":endDate,
 				   "title":title,
 				   "schdulCn":data.schdulCn,
 				   "schdulTy":data.schdulTy,
 				   "lblNo":data.lblNo,
 				   "schdulPlace":data.schdulPlace,
 				   "deptCode":data.deptCode,
-				   "allDay":chk,
 				   "durationEditable": durationEditable,
 				   "startEditable":startEditable,
 				   "backgroundColor":lblColor,
 				   "borderColor":borderColor,
-				   "textColor":textColor
+				   "textColor":textColor,
+				   "allDay":chk
+				//    "allDay":false
 				})
 			});
 			return returnData;
@@ -285,7 +295,8 @@
 
 			// console.log('startDate : ',startDate,'  endDate : ',endDate);
 			
-
+			$('.timeInput-toggle.date').css('display','block');
+			$('.timeInput-toggle.time').css('display','none');
 			$("#allDay").prop("checked",false);
 
 			if(info.view.type=='timeGridDay'||info.view.type=='timeGridWeek'){
@@ -427,6 +438,7 @@
 				$('#scheduleLabel').prop('disabled',false);
 			}
 		})
+
 		/*
 		*/
 		function dateValidate(e){
@@ -534,7 +546,7 @@
 			}
 			*/
 		}
-		$('.dateInput').on('change',function(){
+		$('.dateInp').on('change',function(){
 			dateValidate($(this));
 		})
 
@@ -620,33 +632,44 @@
 			console.log("allDay 실행 : ",e);
 			console.log("allDay 이벤트 객체 확인 : ",e.target);
 			let isCheck = $("#allDay").prop("checked");
-			console.log("allDay : ",isCheck);
-			let startStr = $("#schStart").val();
-			let endStr = $("#schEnd").val();
-			console.log("startStr : ",startStr," , endStr : ",endStr);
-			
 			if(isCheck){
-				let dateStr = new Date(startStr);
-				console.log("dateStr : ",(dateStr));
-				dateStr.setDate(dateStr.getDate()+1)
-				// console.log("dateStr-2 : ",(dateStr.getDate()-2));
-				console.log("dateStr+1 : ",dateStr.toISOString().split("T")[0]);
+				$('.timeInput-toggle.time').css('display','block');
+				$('.timeInput-toggle.date').css('display','none');
+			}else{
+				$('.timeInput-toggle.time').css('display','none');
+				$('.timeInput-toggle.date').css('display','block');
 
-				$("#schEnd").val(dateStr.toISOString().split("T")[0]);
-				$("#schStartTime").val("00:00");
-				$("#schEndTime").val("00:00");
 			}
+			console.log("allDay : ",isCheck);
+			/* 주석 시작 */
+			// let startStr = $("#schStart").val();
+			// let endStr = $("#schEnd").val();
+			// console.log("startStr : ",startStr," , endStr : ",endStr);
+			/* 주석 끝 */
+
+			// if(isCheck){
+			// 	let dateStr = new Date(startStr);
+			// 	console.log("dateStr : ",(dateStr));
+			// 	dateStr.setDate(dateStr.getDate()+1)
+			// 	// console.log("dateStr-2 : ",(dateStr.getDate()-2));
+			// 	console.log("dateStr+1 : ",dateStr.toISOString().split("T")[0]);
+
+			// 	$("#schEnd").val(dateStr.toISOString().split("T")[0]);
+			// 	$("#schStartTime").val("00:00");
+			// 	$("#schEndTime").val("00:00");
+			// }
 		});
-		document.querySelectorAll('.dateInput').forEach(input=>{
-			input.addEventListener('change',function(){
-				let isChecked = $("#allDay").prop("checked");
-				// console.log("시간 변경, isChecked 변경 전 : ",isChecked);
-				if(isChecked){
-					$("#allDay").prop("checked",false);
-					// console.log("시간 변경, isChecked 변경 후 : ",$("#allDay").prop("checked"));
-				}
-			})
-		})
+
+		// document.querySelectorAll('.dateInp').forEach(input=>{
+		// 	input.addEventListener('change',function(){
+		// 		let isChecked = $("#allDay").prop("checked");
+		// 		// console.log("시간 변경, isChecked 변경 전 : ",isChecked);
+		// 		if(isChecked){
+		// 			$("#allDay").prop("checked",false);
+		// 			// console.log("시간 변경, isChecked 변경 후 : ",$("#allDay").prop("checked"));
+		// 		}
+		// 	})
+		// })
 		// allDay 관련 함수들 끝
 
 
@@ -672,18 +695,44 @@
 		const clickEvent2Date = function(e){
 			// 시작 날짜와 종료 날짜를 Date타입으로 리턴한다.
 			// 이 함수는 추후에 필요없는거같으면 지울 예정이다.
-			let startStr = e.target.form.start.value;
-			let startTimeStr = e.target.form.startTime.value;
+			let chk = e.target.form.allDay.checked;
+			// console.log('clickEvent2Date -> : ',chk)
+			let startStr;
+			let startTimeStr;
+			let endStr;
+			let endTimeStr;
+			let startDate;
+			let endDate;
+			console.log('e.target.form',e.target.form)
+			if(chk){
+				startStr = e.target.form.date.value;
+				startTimeStr = e.target.form.startTime.value;
+				endStr = e.target.form.date.value;
+				endTimeStr = e.target.form.endTime.value;
+				
+				startDate = new Date(startStr.split("-")[0],parseInt(startStr.split("-")[1])-1+"",startStr.split("-")[2],startTimeStr.split(":")[0],startTimeStr.split(":")[1]);
+				endDate = new Date(endStr.split("-")[0],parseInt(endStr.split("-")[1])-1+"",endStr.split("-")[2],endTimeStr.split(":")[0],endTimeStr.split(":")[1]);
+			}else{
+				startStr = e.target.form.start.value;
+				endStr = e.target.form.end.value;
+				
+				startDate = new Date(startStr.split("-")[0],parseInt(startStr.split("-")[1])-1+"",startStr.split("-")[2]);
+				endDate = new Date(endStr.split("-")[0],parseInt(endStr.split("-")[1])-1+"",endStr.split("-")[2]);
+			}
+			// console.log('clickEvent2Date -> startStr: ',startStr);
+			// console.log('clickEvent2Date -> startTimeStr: ',startTimeStr);
+			// console.log('clickEvent2Date -> endStr: ',endStr);
+			// console.log('clickEvent2Date -> endTimeStr: ',endTimeStr);
 
-			let endStr = e.target.form.end.value;
-			let endTimeStr = e.target.form.endTime.value;
-
-			let startDate = new Date(startStr.split("-")[0],parseInt(startStr.split("-")[1])-1+"",startStr.split("-")[2],startTimeStr.split(":")[0],startTimeStr.split(":")[1]);
-			let endDate = new Date(endStr.split("-")[0],parseInt(endStr.split("-")[1])-1+"",endStr.split("-")[2],endTimeStr.split(":")[0],endTimeStr.split(":")[1]);
+			// console.log('clickEvent2Date -> : ',{startDate,endDate});
 			return {startDate,endDate}
 		}
 
 		window.fCalAdd= function(e){
+			// 여기 분기처리 해야함!
+			// 하루종일 체크 여부에 따라 input 선택하는거 달라짐
+
+			// e는 버튼을 가져오려고
 			e.preventDefault();
 			console.log("실행!!!!!!!!!",e)
 			if($('#scheduleLabel').val()!=0){
@@ -705,6 +754,7 @@
 			let {startDate,endDate} = clickEvent2Date(e);
 			console.log("fCalAdd -> startDate : ",startDate);
 			console.log("fCalAdd -> endDate : ",endDate);
+			// return
 			let frmData = new FormData();
 			frmData.append("emplNo",emplNo);
 			frmData.append("deptCode",deptCode);
@@ -807,15 +857,33 @@
 			$('#calAddFrm input').val('');
 			$('#schdulTy').val(0);
 			$('#scheduleLabel').val(0);
-			console.log("calAddFrm",calAddFrm);
+			$('')
+			// console.log("calAddFrm",calAddFrm);
 			$('#schdulTy').prop('disabled',false);
 			$('#scheduleLabel').prop('disabled',false);
+			$('.timeInput-toggle.date').css('display','block');
+			$('.timeInput-toggle.time').css('display','none');
 			insModal.hide();
 		};
 		// let btnclass = $('.fc-button').attr('class');
 		// $('.fc-button').attr('class',btnclass+' btn-primary');
 		// $('.fc-button').prop('class','btn btn-primary');
 		$('.fc-button').css('background-color','#0d6efd');
+
+		$('.fc-dayGridMonth-button.fc-button.fc-button-primary').css('background-color','#88A1F8');
+		$('.fc-timeGridWeek-button.fc-button.fc-button-primary').css('background-color','#88A1F8');
+		$('.fc-timeGridDay-button.fc-button.fc-button-primary').css('background-color','#88A1F8');
+		$('.fc-listWeek-button.fc-button.fc-button-primary').css('background-color','#88A1F8');
+
+		$('.fc-button-active').css('background-color','#0d6efd');
+		$('.fc-button').on('click',function(){
+			$('.fc-button-active').css('background-color','#0d6efd');
+
+			$('.fc-dayGridMonth-button.fc-button.fc-button-primary').not('.fc-button-active').css('background-color','#88A1F8');
+			$('.fc-timeGridWeek-button.fc-button.fc-button-primary').not('.fc-button-active').css('background-color','#88A1F8');
+			$('.fc-timeGridDay-button.fc-button.fc-button-primary').not('.fc-button-active').css('background-color','#88A1F8');
+			$('.fc-listWeek-button.fc-button.fc-button-primary').not('.fc-button-active').css('background-color','#88A1F8');
+		})
 		// $('.fc-button').css('margin','0.5px');
 		// $('.fc-button').css('border','0px');
 		$('.fc-daygrid-day-number').css('text-decoration','none');
@@ -885,11 +953,18 @@
 	
 </body>
 <style>
+	.fc-event-title-container{
+		cursor: pointer;
+	}
+	.fc-button{
+		background-color: #88A1F8;
+	}
 	.fc-button-active {
 		/* background-color: rgb(13, 110, 253); */
 		color: white;
 		transform: scale(1.1);
 		transition: transform 0.3s ease, background-color 0.3s ease;
+		
 	}
 	.fc-date:hover{
 		background-color: #BCE8F14D;

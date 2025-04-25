@@ -176,15 +176,16 @@ public class MailController {
 		MailVO mailVO = new MailVO();
 		mailVO.setEmailNo(emailNo);
 		Map<String, Object> map = mailService.mailRepl(mailVO);
+		log.info("map"+map);
 		mailVO = (MailVO)map.get("mailVO");
 		
-		model.addAttribute("emplNm",map.get("fromEmplNm"));
-		model.addAttribute("emplNo",mailVO.getEmplNo());
-		model.addAttribute("recptnEmail",mailVO.getRecptnEmail());
+		model.addAttribute("emplNm",(String)map.get("fromEmplNm"));
+		model.addAttribute("emplNo",(String)map.get("fromEmplNo"));
+		model.addAttribute("recptnEmail",mailVO.getTrnsmitEmail());
 		model.addAttribute("mailVO",mailVO);
-		log.info("emplNo : " + mailVO.getEmplNo());
+		log.info("emplNo : " + (String)map.get("fromEmplNo"));
 		log.info("emplNm : " + map.get("fromEmplNm"));
-		log.info("recptnEmail : " + mailVO.getRecptnEmail());
+		log.info("recptnEmail : " + mailVO.getTrnsmitEmail());
 		return"mail/mailSend";
 	}
 	
@@ -225,10 +226,12 @@ public class MailController {
 							@RequestParam(value = "uploadFile",required = false) MultipartFile[] uploadFile,
 							@AuthenticationPrincipal CustomUser customUser ) {
 		log.info("sendEmail");
+		log.info("sendEmail -> mailVO 이전: " + mailVO);
 		EmployeeVO employeeVO = customUser.getEmpVO();
 		mailVO.setEmplNo(employeeVO.getEmplNo());
 		mailVO.setEmplNm(employeeVO.getEmplNm());
-		log.info("sendEmail -> mailVO : " + mailVO);
+		mailVO.setTrnsmitEmail(employeeVO.getEmail());
+		log.info("sendEmail -> mailVO 이후: " + mailVO);
 		if(uploadFile!=null) {
 			log.info("sendEmail -> uploadFile : " + uploadFile);
 			for(MultipartFile file : uploadFile) {
@@ -239,6 +242,7 @@ public class MailController {
 		
 		return "/mail";
 	}
+	
 	@PostMapping("/tempStore")
 	@ResponseBody
 	public String tempStoreEmail(@ModelAttribute MailVO mailVO,
@@ -284,6 +288,15 @@ public class MailController {
 			log.info("mailDelete -> emailNo : "+emailNo);
 		}
 		int result = mailService.mailDelete(emailNoList);
+		return "/mail";
+	}
+	@PostMapping("/realDelete")
+	@ResponseBody
+	public String mailRealDelete(@RequestParam(value = "emailNoList") List<String> emailNoList) {
+		for(String emailNo : emailNoList) {
+			log.info("realDelete -> emailNo : "+emailNo);
+		}
+		int result = mailService.mailRealDelete(emailNoList);
 		return "/mail";
 	}
 	@PostMapping("/restoration")

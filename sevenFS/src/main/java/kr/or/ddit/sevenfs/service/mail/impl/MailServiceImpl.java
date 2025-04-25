@@ -448,4 +448,10 @@ public class MailServiceImpl implements MailService{
 	public int delLblFromMail(int lblNo) {
 		return mailMapper.delLblFromMail(lblNo);
 	}
+
+	@Override
+	public int mailRealDelete(List<String> emailNoList) {
+		int result = mailMapper.mailRealDelete(emailNoList);
+		return result;
+	}
 }

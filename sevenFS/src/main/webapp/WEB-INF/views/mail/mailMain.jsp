@@ -6,6 +6,7 @@
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <script type="text/javascript">
   $(document).ready(function(){
       $('.tab').prop('disabled',true)
@@ -80,14 +81,26 @@
 
         // URLSearchParams 객체를 사용하여 쿼리스트링을 파싱
         let urlParams = new URLSearchParams(queryString);
-
+        
         // 특정 파라미터 값 가져오기
         let paramValue = urlParams.get('emailClTy'); // 'name'이라는 키의 값을 가져옴
-
+        // console.log('전',paramValue);
+        if(paramValue == null || paramValue == ''){
+          paramValue='1';
+        }
+        let url="";
+        // console.log('후',paramValue);
+        if(paramValue == '4'){
+          url = "/mail/realDelete"
+          console.log('realDelete')
+        }else{
+          url="/mail/delete"
+          console.log('delete')
+        }
         console.log(paramValue);
         console.log('삭제 할 메일',emailNoList);
         $.ajax({
-          url:"/mail/delete",
+          url:url,
           method:'post',
           data:{"emailNoList":emailNoList},
           success:function(resp){
@@ -351,6 +364,23 @@
               </div>
             </div>
           </c:forEach>
+          <!-- <div class="sidebar-item label-select ${mailVO.lblNo == mailLabel.lblNo ? 'active' : ''}" data-lblNo="${mailLabel.lblNo}">
+            <i class="bi bi-pin-angle-fill" style="color: red;"></i>
+            <span class="sidebar-label">이 아이콘은 어떤가?</span>
+            <div class="dropdown label-actions" style="margin-left: auto; position: relative;">
+              <button class="dropdown-toggle" style="background: none; border: none; cursor: pointer;">
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+              <div class="dropdown-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;">
+                <button class="dropdown-item edit-label" type="button" data-lblNo="${mailLabel.lblNo}" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left;">
+                  <i class="fas fa-edit" style="margin-right: 8px;"></i> 수정
+                </button>
+                <button class="dropdown-item delete-label" type="button" data-lblNo="${mailLabel.lblNo}" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left;">
+                  <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> 삭제
+                </button>
+              </div>
+            </div>
+          </div> -->
           <div class="sidebar-item" id="addLabelBtn" style="cursor: pointer;">
             <i class="fas fa-plus-circle" style="color: #34a853;"></i>
             <span class="sidebar-label">라벨 추가</span>
@@ -546,37 +576,38 @@
             <div class="email-list" id="email-list">
               <!-- 헤더 추가 -->
               <div class="email-list-header" style="display: flex; padding: 10px; border-bottom: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: bold;">
-              <div class="email-header-sender" style="flex: 1; text-align: center;">이메일</div>
-              <div class="email-header-subject" style="flex: 2; text-align: center;">제목</div>
-              <div class="email-header-date" style="flex: 1; text-align: center;">날짜</div>
+                <div id="balnk" style="width: 68px;"></div>
+                <div class="email-header-sender" style="flex: 1; text-align: left; padding-right: 12px ;">이메일</div>
+                <div class="email-header-subject" style="flex: 2; text-align: left;">제목</div>
+                <div class="email-header-date" style="flex: 1; text-align: center;">날짜</div>
               </div>
               <!-- forEach 시작 -->
               <c:forEach items="${mailVOList}" var="mailVO">
-              <div class="email-item ${mailVO.readngAt}" data-emailclty="${mailVO.emailClTy}" data-emailNo="${mailVO.emailNo}">
-              <div class="email-actions">
-                <input type="checkbox" class="email-checkbox">
-                <c:if test="${mailVO.emailClTy == '0' || mailVO.emailClTy == '1'}">
-                  <button class="star-button ${mailVO.starred}" data-emailNo="${mailVO.emailNo}">
-                    <i class="${mailVO.starred=='Y'?'fas':'far'} fa-star"></i>
-                  </button>
-                </c:if>
-              </div>
-              <div class="email-sender" style="flex: 1;">${mailVO.trnsmitEmail}</div>
-              <div class="email-content" style="flex: 2;">
-                <c:if test="${(mailVO.lblCol != null and mailVO.lblCol != '')&&(mailVO.emailClTy=='0' || mailVO.emailClTy=='1')}">
-                  <i class="fas fa-tag" data-col="${mailVO.lblCol}" data-lblNo="${mailVO.lblNo}" style="color: ${mailVO.lblCol};"></i>
-                </c:if>
-                <c:if test="${mailVO.emailSj != null}">
-                <span class="email-subject">${mailVO.emailSj}</span>
-                </c:if>
-                <c:if test="${mailVO.emailSj == null}">
-                <span class="email-subject">(제목 없음)</span>
-                </c:if>
-                <c:if test="${mailVO.emailCn != null}">
-                </c:if>
-              </div>
-              <div class="email-date" style="flex: 1; text-align: center;">${mailVO.trnsmitDt}</div>
-              </div>
+                <div class="email-item ${mailVO.readngAt}" data-emailclty="${mailVO.emailClTy}" data-emailNo="${mailVO.emailNo}">
+                <div class="email-actions">
+                  <input type="checkbox" class="email-checkbox">
+                  <c:if test="${mailVO.emailClTy == '0' || mailVO.emailClTy == '1'}">
+                    <button class="star-button ${mailVO.starred}" data-emailNo="${mailVO.emailNo}">
+                      <i class="${mailVO.starred=='Y'?'fas':'far'} fa-star"></i>
+                    </button>
+                  </c:if>
+                </div>
+                <div class="email-sender" style="flex: 1;">${mailVO.trnsmitEmail}</div>
+                <div class="email-content" style="flex: 2;">
+                  <c:if test="${(mailVO.lblCol != null and mailVO.lblCol != '')&&(mailVO.emailClTy=='0' || mailVO.emailClTy=='1')}">
+                    <i class="fas fa-tag" data-col="${mailVO.lblCol}" data-lblNo="${mailVO.lblNo}" style="color: ${mailVO.lblCol};"></i>
+                  </c:if>
+                  <c:if test="${mailVO.emailSj != null}">
+                    <span class="email-subject">${mailVO.emailSj}</span>
+                  </c:if>
+                  <c:if test="${mailVO.emailSj == null}">
+                    <span class="email-subject">(제목 없음)</span>
+                  </c:if>
+                    <c:if test="${mailVO.emailCn != null}">
+                  </c:if>
+                </div>
+                <div class="email-date" style="flex: 1; text-align: center;">${mailVO.trnsmitDt}</div>
+                </div>
               </c:forEach>
               <!-- forEach 끝 -->
             </div>
@@ -597,7 +628,10 @@
     </div>
   </div>
 <style>
-   /* 기본 스타일 */
+  .star-button>i {
+    color: #FFD700; /* 밝은 금색으로 변경 */
+  }
+  /* 기본 스타일 */
 * {
   margin: 0;
   padding: 0;

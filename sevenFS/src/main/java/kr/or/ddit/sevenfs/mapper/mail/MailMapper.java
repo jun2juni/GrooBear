@@ -31,5 +31,6 @@ public interface MailMapper {
 	int mailStarred(Map<String, Object> map);
 	int readingAt(int emailNo);
 	int delLblFromMail(int lblNo);
+	int mailRealDelete(List<String> emailNoList);
 
 }

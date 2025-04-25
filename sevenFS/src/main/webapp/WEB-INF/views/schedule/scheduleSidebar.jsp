@@ -15,7 +15,7 @@
         <!-- 일정 필터 -->
         <div class="filter-section">
             <h3>일정 필터</h3>
-            <button type="button" id="filterAll" class="btn btn-primary">전체 보기</button>
+            <!-- <button type="button" id="filterAll" class="btn btn-primary">전체 보기</button> -->
             <button id="addLabelBtn" type="button" class="btn btn-primary">추가</button>
             <!-- 라벨 추가 팝업 -->
             <div id="labelPopup" class="label-popup input-style-1" style="display: none;">
@@ -36,6 +36,11 @@
                 </div>
             </div>
             <div id="filterSection">
+                <div class="checkbox-container">
+                    <label>전체 선택
+                        <input type="checkbox" class="event-filter filterAll" value="" checked>
+                    </label>
+                </div>
                 <div class="checkbox-container">
                     <label>전체 일정
                         <input type="checkbox" class="event-filter" value="2" checked>
@@ -338,7 +343,9 @@
             $('.modal-title').text("일정 등록");
 			$("#modalSubmit").text("등록");
 //             console.log('$("#deleteBtn")',$("#deleteBtn"))
-            
+            let today = new Date().toISOString().split('T')[0];
+            $('#schStart').val(today);
+            $('#schEnd').attr('min',today);
             insModal.show();
 			$("#deleteBtn").css('display','none');
         })
@@ -574,9 +581,50 @@
                 }
             });
         });
-        $(document).on('change', '.event-filter', function() {
-            // console.log('changed 확인');
+         
+        $('.filterAll').on('change',function(){
+            // console.log('filter changed 확인');
             let filtered = [];
+            let labeled = [];
+            let chk = $(this).is(':checked')
+            // console.log('chk',chk);
+            if(chk){
+                $('.event-filter').not('.filterAll').each(function() {
+                    this.checked = true;
+                    filtered.push($(this).val()); // 체크된 요소의 값만 가져옴
+                 });
+                $('.label-filter').each(function() {
+                    this.checked = true;
+                    labeled.push($(this).val()); // 체크된 요소의 값만 가져옴
+                });
+            }else{
+                $('.event-filter').not('.filterAll').each(function() {
+                    this.checked = false;
+                 });
+                $('.label-filter').each(function() {
+                    this.checked = false;
+                });
+            }  
+            // $('.event-filter').not('.filterAll').first().trigger('change');
+            // $('.label-filter').first().trigger('change');
+            fltrLbl.schdulTyList = filtered;
+            fltrLbl.lblNoList = labeled;
+            console.log('fltrLbl : ',fltrLbl);
+            fltrLblAjx();
+        })
+
+        // 일정 필터링
+        $(document).on('change', '.event-filter', function() {
+            let filtered = [];
+            let allChecked = $('.event-filter').not('.filterAll').length + $('.label-filter').length === 
+                            $('.event-filter:checked').not('.filterAll').length + $('.label-filter:checked').length;
+            console.log(allChecked);
+            if(!$(this).is(':checked')){
+                $('.filterAll').prop('checked',false);
+            }
+            if(allChecked){
+                $('.filterAll').prop('checked',true);
+            }
             $('.event-filter:checked').each(function() {
                 filtered.push($(this).val()); // 체크된 요소의 값만 가져옴
             });
@@ -584,29 +632,19 @@
             fltrLbl.schdulTyList = filtered;
             console.log(fltrLbl);
             fltrLblAjx();
-        }) 
-            $('#filterAll').on('click',function(){
-                // console.log('filter changed 확인');
-                let filtered = [];
-                let labeled = [];
-                $('.event-filter').each(function() {
-                    this.checked = true;
-                    filtered.push($(this).val()); // 체크된 요소의 값만 가져옴
-                });
-                $('.label-filter').each(function() {
-                    this.checked = true;
-                    labeled.push($(this).val()); // 체크된 요소의 값만 가져옴
-                });
-                console.log('필터 결과 : ',filtered);
-                console.log('필터 결과 : ',labeled);
-                fltrLbl.schdulTyList = filtered;
-                fltrLbl.lblNoList = labeled;
-                console.log(fltrLbl);
-                fltrLblAjx();
-            })
-        // 라벨 필터링 이벤트 처리 (문서 전체에 위임)
+        })
+        // 라벨 필터링 이벤트 처리
         $(document).on('change', '.label-filter', function() {
             let labeled = [];
+            let allChecked = $('.event-filter').not('.filterAll').length + $('.label-filter').length === 
+                            $('.event-filter:checked').not('.filterAll').length + $('.label-filter:checked').length;
+            console.log(allChecked);
+            if(!$(this).is(':checked')){
+                $('.filterAll').prop('checked',false);
+            }
+            if(allChecked){
+                $('.filterAll').prop('checked',true);
+            }
             $('.label-filter:checked').each(function() {
                 labeled.push($(this).val());
             });

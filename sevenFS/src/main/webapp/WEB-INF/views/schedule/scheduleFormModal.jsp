@@ -229,23 +229,41 @@ textarea {
 				<!-- <input type="text" id="schContent" name="content" class="form-control" placeholder="일정 내용을 입력하세요" /> -->
 				<textarea type="text" name="content" id="schContent" class="form-control" placeholder="일정 내용을 입력하세요"></textarea>
 			  </div>
-  
-			  <!-- 시작/종료 일시 -->
-			  <div class="col-md-6">
-				<label class="form-label fw-semibold text-dark">시작일</label>
-				<div class="d-flex gap-2">
-				  <input type="date" id="schStart" name="start" class="form-control" />
-				  <input type="time" id="schStartTime" name="startTime" class="form-control" />
+			  
+				<div class="timeInput-toggle date" style="display: block;">
+				  <!-- 시작/종료 일시 -->
+				  <div class="col-md-6">
+					  <label class="form-label fw-semibold text-dark">시작일</label>
+					  <div class="d-flex gap-2">
+						  <input type="date" id="schStart" name="start" class="form-control dateInp" />
+						  <!-- <input type="time" id="schStartTime" name="startTime" class="form-control" /> -->
+						</div>
+					</div>
+					<div class="col-md-6">
+						<label class="form-label fw-semibold text-dark">종료일</label>
+						<div class="d-flex gap-2">
+							<input type="date" id="schEnd" name="end" class="form-control dateInp" />
+							<!-- <input type="time" id="schEndTime" name="endTime" class="form-control" /> -->
+						</div>
+					</div>
 				</div>
-			  </div>
-  
-			  <div class="col-md-6">
-				<label class="form-label fw-semibold text-dark">종료일</label>
-				<div class="d-flex gap-2">
-				  <input type="date" id="schEnd" name="end" class="form-control" />
-				  <input type="time" id="schEndTime" name="endTime" class="form-control" />
+
+				<div class="timeInput-toggle time" style="display: none;">
+					<!-- 시작/종료 일시 -->
+					<div class="col-md-6">
+						<label class="form-label fw-semibold text-dark">날짜 선택</label>
+						<div class="d-flex gap-2">
+							<input type="date" id="schStart" name="date" class="form-control dateInp" />
+						</div>
+					</div>
+					<div class="col-md-6">
+						<label class="form-label fw-semibold text-dark">시간 선택</label>
+						<div class="d-flex gap-2">
+							  <input type="time" id="schStartTime" name="startTime" class="form-control" />
+							  <input type="time" id="schEndTime" name="endTime" class="form-control" />
+						  </div>
+					  </div>
 				</div>
-			  </div>
   
 			  <!-- 하루종일 체크 -->
 			  <div class="col-12 d-flex align-items-center">

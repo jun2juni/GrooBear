@@ -238,7 +238,7 @@ CONNECT BY LEVEL &lt;= #{count}
 	END;
 </update>
 
-<update id="delY2N" parameterType="java.util.List">
+<update id="mailRealDelete" parameterType="java.util.List">
 	update mail
 	set DEL_AT = 'Y'
 	where email_no in
