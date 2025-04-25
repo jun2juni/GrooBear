@@ -5,7 +5,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%--해당 파일에 타이틀 정보를 넣어준다--%>
-<c:set var="title" scope="application" value="메인" />
+<c:set var="title" scope="application" value="알림" />
 
 <!DOCTYPE html>
 <html lang="en">
@@ -16,6 +16,77 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>${title}</title>
   <%@ include file="../layout/prestyle.jsp" %>
+  <style>
+  .notification {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    transition: transform 0.2s ease;
+  }
+
+  .notification:hover {
+    transform: translateY(-3px);
+  }
+
+  .notification .image {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--bs-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .notification .content {
+    flex-grow: 1;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .notification .content h6 {
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .notification .content p {
+    margin-bottom: 4px;
+    font-size: 14px;
+    color: #6c757d;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 60px;
+  }
+
+  .notification .content span {
+    font-size: 12px;
+    color: #adb5bd;
+  }
+
+  .notification .delete-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 14px;
+    color: #adb5bd;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s ease;
+  }
+
+  .notification .delete-btn:hover {
+    color: #dc3545;
+  }
+</style>
 </head>
 <body>
 <%@ include file="../layout/sidebar.jsp" %>
@@ -24,7 +95,7 @@
   <section class="section">
     <div class="container-fluid">
 
-      <div class="card-style">
+      <div class="">
         <jsp:useBean id="notificationVOList" scope="request" type="java.util.List" />
         <c:if test="${notificationVOList.size() == 0}">
             <div style="padding: 2rem; text-align: center; color: #999; font-size: 1.1rem; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
@@ -32,40 +103,28 @@
             </div>
         </c:if>
 
-        <c:forEach var="notification" items="${notificationVOList}">
-          <div class="single-notification">
-            <div class="notification">
-              <div class="image ${notification.notificationColor}">
-                ${notification.notificationIcon}
-              </div>
-              <a href="${notification.originPath}" class="content">
-                <h6>${notification.ntcnSj}</h6>
-                <p class="text-sm text-gray">
-                  ${notification.ntcnCn}
-                </p>
-                <span class="text-sm text-medium text-gray">
-                  <fmt:formatDate value="${notification.ntcnCreatDt}" pattern="YYYY.MM.dd. HH:mm"/>
-                </span>
-              </a>
-            </div>
-  
-            <div class="action">
-              <%--설정 버튼?--%>
-              <button class="more-btn dropdown-toggle" id="moreAction" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="lni lni-more-alt"></i>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction" style="">
-                <li class="dropdown-item">
-                <a href="#" class="delete-btn text-gray" data-empl-no="${notification.emplNo}" data-ntcn-sn="${notification.ntcnSn}">
+        <div class="row g-4">
+          <c:forEach var="notification" items="${notificationVOList}">
+            <div class="single-notification-remove col-12 col-md-6">
+              <div class="notification">
+                <div class="image ${notification.notificationColor} text-white">
+                  ${notification.notificationIcon}
+                </div>
+                <a href="${notification.originPath}" class="content">
+                  <h6>${notification.ntcnSj}</h6>
+                  <p>${notification.ntcnCn}</p>
+                  <span>
+                    <fmt:formatDate value="${notification.ntcnCreatDt}" pattern="yyyy-MM-dd. HH:mm"/>
+                  </span>
+                </a>
+                <a href="#" class="delete-btn" data-empl-no="${notification.emplNo}" data-ntcn-sn="${notification.ntcnSn}">
                   <i class="lni lni-trash-can"></i>
                   <span>삭제</span>
                 </a>
-                </li>
-              </ul>
+              </div>
             </div>
-          </div>
-          <!-- end single notification -->
-        </c:forEach>
+          </c:forEach>
+        </div>
         
         <div class="mt-4"></div>
         <page-navi
@@ -115,7 +174,7 @@
                 .then((res) => res.json())
                 .then((data) => {
                   if (data.result === "success") {
-                    document.querySelectorAll(".single-notification")[idx].remove();
+                    document.querySelectorAll(".single-notification-remove")[idx].remove();
                     swal("삭제 완료", "알림이 삭제되었습니다.", "success");
                   }
                 })
