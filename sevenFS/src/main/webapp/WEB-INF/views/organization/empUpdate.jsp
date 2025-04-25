@@ -97,8 +97,7 @@
 								value="${emp.partclrMatter}" />
 						</sec:authorize>
 						<div class="activity-meta text-start" style="margin-top: 20px;">
-							<input type="hidden" id="hiddenEmplNo" name="emplNo"
-								value="${emp.emplNo}">
+							<input type="hidden" id="hiddenEmplNo" name="emplNo" value="${emp.emplNo}">
 							<!-- <div class="input-style-1 form-group col-8" style="margin-left:15%;">
 				            <label for="password" class="form-label required">비밀번호-수정필요<span class="text-danger">*</span></label>				            
 				           <div class="invalid-feedback"></div>
@@ -278,23 +277,13 @@
 										</select>
 										<div class="invalid-feedback">은행을 선택해주세요.</div>
 									</div>
-
-
 								</div>
-								<div class="input-style-1 form-group col-6"
-									style="margin-left: 15%;">
-									<label for="partclrMatter" class="form-label">특이사항</label>
-									<textarea rows="4" name="partclrMatter" id="partclrMatter"
-										value="${emp.partclrMatter}">${emp.partclrMatter}</textarea>
-									<div class="invalid-feedback"></div>
-								</div>
-
 							</sec:authorize>
 							<div class="input-style-1 form-group col-8"
 								style="margin-left: 15%;">
 								<label for="cmmnCode" class="form-label required">주소 <span
 									class="text-danger"></span></label>
-								<div class="row">
+								<div class="row">  
 									<div class="col-8">
 										<div class="mb-4">
 											<input type="text" name="adres" value="${emp.adres}"
@@ -310,6 +299,15 @@
 								</div>
 								<div class="invalid-feedback"></div>
 							</div>
+							<sec:authorize access="hasRole('ROLE_ADMIN')">
+								<div class="input-style-1 form-group col-6"
+									style="margin-left: 15%;">
+									<label for="partclrMatter" class="form-label">특이사항</label>
+									<textarea rows="4" name="partclrMatter" id="partclrMatter"
+										value="${emp.partclrMatter}">${emp.partclrMatter}</textarea>
+									<div class="invalid-feedback"></div>
+								</div>
+							</sec:authorize>
 							<div class="content text-center">
 								<button type="button" id="emplUpdateBtn"
 									class="main-btn primary-btn-light square-btn btn-hover btn-sm mr-5">확인</button>

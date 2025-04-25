@@ -215,13 +215,10 @@
 		SET CMMN_CODE_GROUP='DEPARTMENT',
 			CMMN_CODE_NM = #{cmmnCodeNm},
 		    CMMN_CODE_DC = #{cmmnCodeDc},
-		    CMMN_CODE = (
-		                SELECT MAX(CMMN_CODE)+1
-		                FROM COMMON_CODE
-		                WHERE CMMN_CODE_GROUP='DEPARTMENT'
-		                AND UPPER_CMMN_CODE= #{upperCmmnCode}
-		                ),
-		    UPPER_CMMN_CODE = #{upperCmmnCode}
+		    CMMN_CODE = #{cmmnCode},
+            USE_YN = 'Y',
+		    UPPER_CMMN_CODE = #{upperCmmnCode},
+            CMMN_CODE_SN = #{cmmnCodeSn}
 		WHERE CMMN_CODE = #{cmmnCode}
 		AND CMMN_CODE_GROUP = 'DEPARTMENT'
 	</update>

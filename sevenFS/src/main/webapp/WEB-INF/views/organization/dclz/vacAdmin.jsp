@@ -209,13 +209,13 @@
                        		 </c:choose>
                         </td> --%>
                         <td>
-		                   <input class="cmpnstnYrycCnt" id="cmpnstnCnt${status.count}" type="number" step="0.5" min="0" max="25" style="width:50px;" value="0.0">개
+		                   <input class="cmpnstnYrycCnt" id="cmpnstnCnt${status.count}" type="number" step="0.5" max="25" style="width:55px;" value="0.0">개
 	                  	</td>
 	                  	<td> 
-	                  		<input class="excessWorkYryc" id="excessWorkYryc${status.count}" type="number" step="0.5" min="0" max="25" style="width:50px;" value="0.0">개
+	                  		<input class="excessWorkYryc" id="excessWorkYryc${status.count}" type="number" step="0.5" max="25" style="width:55px;" value="0.0">개
 	                  	</td>
                         <td>
-                        	<input class="inputTotalCnt" id="inputTotalCnt${status.count}" type="text" readonly="readonly" value="${allVacData.totYrycDaycnt}" style="width:50px;" />개		
+                        	<input class="inputTotalCnt text-bold" id="inputTotalCnt${status.count}" type="text" readonly="readonly" value="${allVacData.totYrycDaycnt}" style="width:50px; border: none;" />개		
                         	<input id="hiddenValueTotal${status.count}" type="hidden" value="${allVacData.totYrycDaycnt}"/>	
                         </td>
                         <td>
@@ -229,7 +229,7 @@
 	                  	</c:choose>
                         </td>
                         <td>
-			                <input type="text" id="yrycRemndrDaycnt${status.count}" value="${allVacData.yrycRemndrDaycnt}" readonly style="width:50px;">개
+			                <input class="text-bold" type="text" id="yrycRemndrDaycnt${status.count}" value="${allVacData.yrycRemndrDaycnt}" readonly style="width:50px; border: none;">개
 			                <input type="hidden" id="hiddenRemainTotal${status.count}" value="${allVacData.yrycRemndrDaycnt}" >
                         </td>
                       <form action="/dclz/addVacInsert" method="get" id="addVacationForm${status.count}">

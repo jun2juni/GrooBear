@@ -20,6 +20,11 @@
     <div class="col-8 activity-meta text-start" style="margin-top: 20px;">
       <ul>
         <li class="row">
+          <span class="col-4 text-end" >사원번호</span>
+          <span class="col-8 text-medium text-dark">${empDetail.emplNo}</span>
+        </li>
+        <hr>
+        <li class="row">
           <span class="col-4 text-end" >입사일자</span>
           <c:set var="year" value="${empDetail.ecnyDate.substring(0,4)}"></c:set>
           <c:set var="month" value="${empDetail.ecnyDate.substring(4,6)}"></c:set>

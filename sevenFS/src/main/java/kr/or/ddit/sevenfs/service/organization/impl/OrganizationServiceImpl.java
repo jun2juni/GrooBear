@@ -206,7 +206,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 		
 		// 직급 코드에 해당하는 연차 갯수 등록하기
 		Map<String, Integer> clsfMap = new HashMap<>();
-		clsfMap.put("00", 0);  // 인턴
+		clsfMap.put("00", 10);  // 인턴
 		clsfMap.put("01", 15); // 사원
 		clsfMap.put("02", 16); // 대리
 		clsfMap.put("03", 18); // 과장
@@ -225,6 +225,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 			yrycCnt = (int) clsfMap.get(clsfCode);
 			vacationVO.setTotYrycDaycnt(yrycCnt);
 			vacationVO.setYrycRemndrDaycnt(yrycCnt);
+			log.info("사원 등록시 연차 부여 vacationVO : " , vacationVO);
 		}else {
 			yrycCnt = 0;
 		}

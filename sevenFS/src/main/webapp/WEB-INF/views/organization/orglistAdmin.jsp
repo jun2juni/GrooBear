@@ -148,10 +148,13 @@ function deptInsert(){
                return;
            }
        	if(departmentName != "" && departmentDesc != ""){
-       		swal("등록되었습니다.")
-               .then((value)=>{
-                   $("#depInsertForm").submit();
-               });
+       		swal({
+       			'icon' : 'success',
+       			'text' : '등록되었습니다.'
+       		})
+            .then((value)=>{
+                $("#depInsertForm").submit();
+            });
        	}
        });
 	})

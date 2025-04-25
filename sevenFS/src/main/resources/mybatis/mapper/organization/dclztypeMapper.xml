@@ -501,6 +501,7 @@ WITH U AS(
     FROM VACATION vac
     LEFT JOIN employee emp ON vac.empl_no = emp.empl_no
     LEFT JOIN common_code cc ON emp.dept_code = cc.cmmn_code AND cc.cmmn_code_group='DEPARTMENT'
+    WHERE emp.enabled='1'
 </select>
 
 </mapper>
