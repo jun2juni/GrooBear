@@ -265,53 +265,39 @@ document.addEventListener("DOMContentLoaded", function () {
 	function deleteTask() {
 		  const taskDetailEl = document.querySelector('#taskDetailContent [data-task-no]');
 		  if (!taskDetailEl) {
-		    Swal.fire({
-		      icon: 'error',
-		      title: '오류',
-		      text: '업무 정보가 없습니다.'
-		    });
+		    swal("오류", "업무 정보가 없습니다.", "error");
 		    return;
 		  }
-		  
+
 		  const taskNo = taskDetailEl.getAttribute('data-task-no');
 		  const prjctNo = "${project.prjctNo}";
-		  
+
 		  // 하위 업무 존재 여부 확인
 		  fetch(`/projectTask/hasChildTasks?taskNo=\${taskNo}`)
 		    .then(res => res.json())
 		    .then(data => {
 		      if (data.hasChildren) {
-		        Swal.fire({
-		          icon: 'warning',
-		          title: '삭제 불가',
-		          text: '하위 업무가 있는 업무는 삭제할 수 없습니다. 먼저 하위 업무를 삭제해주세요.'
-		        });
+		        swal("삭제 불가", "하위 업무가 있는 업무는 삭제할 수 없습니다.\n먼저 하위 업무를 삭제해주세요.", "warning");
 		      } else {
-		        Swal.fire({
-		          title: '업무 삭제',
-		          text: "정말 이 업무를 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.",
-		          icon: 'warning',
-		          showCancelButton: true,
-		          confirmButtonColor: '#d33',
-		          cancelButtonColor: '#3085d6',
-		          confirmButtonText: '삭제',
-		          cancelButtonText: '취소'
-		        }).then((result) => {
-		          if (result.isConfirmed) {
-		            location.href = `/projectTask/delete?taskNo=\${taskNo}\&prjctNo=\${prjctNo}`;
+		        swal({
+		          title: "업무 삭제",
+		          text: "정말 이 업무를 삭제하시겠습니까?\n삭제 후에는 복구할 수 없습니다.",
+		          icon: "warning",
+		          buttons: ["취소", "삭제"],
+		          dangerMode: true
+		        }).then((willDelete) => {
+		          if (willDelete) {
+		            location.href = `/projectTask/delete?taskNo=\${taskNo}&prjctNo=\${prjctNo}`;
 		          }
 		        });
 		      }
 		    })
 		    .catch(err => {
 		      console.error("확인 실패:", err);
-		      Swal.fire({
-		        icon: 'error',
-		        title: '오류',
-		        text: '업무 확인 중 오류가 발생했습니다.'
-		      });
+		      swal("오류", "업무 확인 중 오류가 발생했습니다.", "error");
 		    });
 		}
+
 	
 	// 프로젝트 상세 페이지 JS에 추가할 코드 (페이지네이션 함수)
 	// project/projectDetail.jsp 파일의 기존 script 태그 내부에 추가

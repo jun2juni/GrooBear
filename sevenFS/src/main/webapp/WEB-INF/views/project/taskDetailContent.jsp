@@ -133,7 +133,7 @@
 <script>
 	const currentTaskNo = "${task.taskNo}";
 	function goToTaskEdit(taskNo) {
-		location.href = `/projectTask/editForm?taskNo=${taskNo}`;
+		location.href = `/projectTask/editForm?taskNo=\${taskNo}`;
 	}
 
 </script>

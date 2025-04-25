@@ -18,10 +18,10 @@
 		<result property="prjctEndDate" column="PRJCT_END_DATE"/>
 		
 		<!-- 프로젝트 참여자 컬렉션 매핑 -->
-		<collection property="projectEmpVOList" ofType="projectEmpVO" column="PRJCT_NO" select="selectProjectEmps"/>
+		<collection property="projectEmpVOList" ofType="kr.or.ddit.sevenfs.vo.project.ProjectEmpVO" column="PRJCT_NO" select="selectProjectEmps"/>
 				
 		<!-- 프로젝트 과제 컬렉션 매핑 -->
-		<collection property="projectTaskVOList" ofType="projectTaskVO" column="PRJCT_NO" 
+		<collection property="projectTaskVOList" ofType="kr.or.ddit.sevenfs.vo.project.ProjectTaskVO" column="PRJCT_NO" 
             select="kr.or.ddit.sevenfs.mapper.project.ProjectTaskMapper.selectProjectTasks"/>
 
 	</resultMap>
@@ -343,7 +343,7 @@
 	</resultMap>
 	
 	
-	<select id="selectAllProjects" resultType="ProjectVO">
+	<select id="selectAllProjects" resultType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
 	    SELECT PRJCT_NO, PRJCT_NM 
 	    FROM PROJECT 
 	    ORDER BY PRJCT_NO DESC

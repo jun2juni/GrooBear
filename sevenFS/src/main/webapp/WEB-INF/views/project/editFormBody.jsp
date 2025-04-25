@@ -10,22 +10,8 @@
   <meta charset="UTF-8" />
   <title>${title}</title>
   <c:import url="../layout/prestyle.jsp" />
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-  <style>
-    input[readonly] {
-      background-color: #f8f9fa;
-    }
-    .form-label {
-      font-weight: 600;
-    }
-    .badge i {
-      vertical-align: middle;
-    }
-    .table td, .table th {
-      vertical-align: middle;
-    }
-  </style>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 <body>
   <c:import url="../layout/sidebar.jsp" />
@@ -33,18 +19,17 @@
     <c:import url="../layout/header.jsp" />
     <section class="section">
       <div class="container-fluid">
-      <div class="card bg-white border-0 shadow-sm p-4">
         <form id="projectForm" action="/project/update" method="post" enctype="multipart/form-data">
           <input type="hidden" name="prjctNo" value="${project.prjctNo}" />
 
           <!-- 기본 정보 -->
           <div class="row mb-3">
             <div class="col-md-6">
-              <label class="form-label">프로젝트명 <span class="text-danger">*</span></label>
+              <label class="form-label fw-semibold">프로젝트명 <span class="text-danger">*</span></label>
               <input type="text" name="prjctNm" class="form-control" value="${project.prjctNm}" required />
             </div>
             <div class="col-md-6">
-              <label class="form-label">사업 분류 <span class="text-danger">*</span></label>
+              <label class="form-label fw-semibold">사업 분류 <span class="text-danger">*</span></label>
               <select name="ctgryNo" class="form-select" required>
                 <option value="">사업 분류 선택</option>
                 <option value="1" ${project.ctgryNo == 1 ? 'selected' : ''}>국가지원사업</option>
@@ -58,22 +43,22 @@
 
           <!-- 프로젝트 설명 -->
           <div class="mb-3">
-            <label class="form-label">프로젝트 설명 <span class="text-danger">*</span></label>
+            <label class="form-label fw-semibold">프로젝트 설명 <span class="text-danger">*</span></label>
             <textarea name="prjctCn" class="form-control" rows="4" required>${project.prjctCn}</textarea>
           </div>
 
           <!-- 세부 정보 -->
           <div class="row g-3 mb-4">
             <div class="col-md-3">
-              <label class="form-label">시작일 <span class="text-danger">*</span></label>
+              <label class="form-label fw-semibold">시작일 <span class="text-danger">*</span></label>
               <input type="date" name="prjctBeginDate" class="form-control" value="${project.prjctBeginDateFormatted}" />
             </div>
             <div class="col-md-3">
-              <label class="form-label">종료일 <span class="text-danger">*</span></label>
+              <label class="form-label fw-semibold">종료일 <span class="text-danger">*</span></label>
               <input type="date" name="prjctEndDate" class="form-control" value="${project.prjctEndDateFormatted}" />
             </div>
             <div class="col-md-3">
-              <label class="form-label">상태 <span class="text-danger">*</span></label>
+              <label class="form-label fw-semibold">상태 <span class="text-danger">*</span></label>
               <select name="prjctSttus" class="form-select" required>
                 <option value="">선택</option>
                 <option value="00" ${project.prjctSttus == '00' ? 'selected' : ''}>대기</option>
@@ -83,7 +68,7 @@
               </select>
             </div>
             <div class="col-md-3">
-              <label class="form-label">등급 <span class="text-danger">*</span></label>
+              <label class="form-label fw-semibold">등급 <span class="text-danger">*</span></label>
               <select name="prjctGrad" class="form-select" required>
                 <option value="">선택</option>
                 <option value="A" ${project.prjctGrad == 'A' ? 'selected' : ''}>A</option>
@@ -93,21 +78,19 @@
                 <option value="E" ${project.prjctGrad == 'E' ? 'selected' : ''}>E</option>
               </select>
             </div>
-			<div class="col-md-6">
-			  <label class="form-label">수주 금액</label>
-			  <input type="text" id="prjctRcvordAmount" name="prjctRcvordAmount" class="form-control"
-			         value="${project.prjctRcvordAmount}" placeholder="숫자만 입력하세요" />
-			</div>
-
             <div class="col-md-6">
-              <label class="form-label">URL</label>
+              <label class="form-label fw-semibold">수주 금액</label>
+              <input type="text" id="prjctRcvordAmount" name="prjctRcvordAmount" class="form-control" value="<fmt:formatNumber value="${project.prjctRcvordAmount}" pattern="#\,###" />" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">URL</label>
               <input type="url" name="prjctUrl" class="form-control" value="${project.prjctUrl}" />
             </div>
           </div>
 
           <!-- 주소 -->
           <div class="mb-4">
-            <label class="form-label">프로젝트 주소</label>
+            <label class="form-label fw-semibold">프로젝트 주소</label>
             <div class="d-flex flex-column gap-2">
               <input type="text" class="form-control" id="restaurantAdd1" placeholder="주소" value="${fn:contains(project.prjctAdres, ',') ? fn:substringBefore(project.prjctAdres, ',') : project.prjctAdres}" readonly>
               <input type="text" class="form-control" id="addressDetail" placeholder="상세주소" value="${fn:contains(project.prjctAdres, ',') ? fn:substringAfter(project.prjctAdres, ', ') : ''}" />
@@ -115,43 +98,15 @@
             </div>
           </div>
 
-          <!-- 참여자 테이블 include -->
+          <!-- 참여 인원 (생략) -->
           <jsp:include page="editFormMembers.jsp" />
 
-          <div class="text-end mt-4">
+          <div class="text-end">
             <a href="/project/tab?tab=list" class="btn btn-secondary">목록</a>
             <button type="submit" class="btn btn-primary">수정 완료</button>
           </div>
         </form>
       </div>
-      </div>
-      
-      <!-- 조직도 모달 -->
-	<div class="modal fade" id="orgChartModal" tabindex="-1" aria-labelledby="orgChartModalLabel" aria-hidden="true">
-	  <div class="modal-dialog modal-lg modal-dialog-scrollable">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title" id="orgChartModalLabel">
-	          <i class="fas fa-sitemap text-primary me-2"></i>조직도
-	        </h5>
-	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-	      </div>
-	      <div class="modal-body">
-	        <!-- 조직도 검색창 -->
-	        <c:import url="../organization/searchBar.jsp" />
-	        
-	        <!-- 조직도 본체 -->
-	        <div class="card-style overflow-scroll mt-3" style="max-height: 60vh;">
-	          <c:import url="../organization/orgList.jsp" />
-	        </div>
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-	      </div>
-	    </div>
-	  </div>
-	</div>
-      
     </section>
     <c:import url="../layout/footer.jsp" />
   </main>
