@@ -42,4 +42,10 @@ public class AnswerServiceImpl implements AnswerService {
 		answerMapper.deleteAnswer(answerNo);
 	}
 
+	@Override
+	public AnswerVO findById(Integer parentAnswerNo) {
+		// TODO Auto-generated method stub
+		return answerMapper.findById(parentAnswerNo);
+	}
+
 }

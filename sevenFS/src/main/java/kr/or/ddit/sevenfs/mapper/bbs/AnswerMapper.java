@@ -18,4 +18,6 @@ public interface AnswerMapper {
 
 	public void deleteAnswer(int answerNo);
 
+	public AnswerVO findById(Integer parentAnswerNo);
+
 }

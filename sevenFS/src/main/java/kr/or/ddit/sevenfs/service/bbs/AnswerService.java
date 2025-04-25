@@ -14,4 +14,6 @@ public interface AnswerService {
 	public void updateAnswer(int answerNo, String answerCn);
 
 	public void deleteAnswer(int answerNo);
+
+	public AnswerVO findById(Integer parentAnswerNo);
 }

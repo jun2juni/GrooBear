@@ -49,6 +49,17 @@
 	    DELETE FROM BBS_ANSWER
 	    WHERE ANSWER_NO = #{answerNo}
 	  </delete>
+	  
+	    <!-- 댓글 번호로 단일 댓글 조회 (답글 알림용) -->
+	  <select id="findById" parameterType="int" resultType="AnswerVO">
+	    SELECT 
+	      A.*,
+	      E.EMPL_NM
+	    FROM BBS_ANSWER A
+	    JOIN EMPLOYEE E ON A.EMPL_NO = E.EMPL_NO
+	    WHERE A.ANSWER_NO = #{answerNo}
+	  </select>
+		  
 		
 		
 </mapper>

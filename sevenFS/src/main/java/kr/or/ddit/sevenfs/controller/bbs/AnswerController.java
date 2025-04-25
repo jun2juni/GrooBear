@@ -76,6 +76,27 @@ public class AnswerController {
 
 	        notificationService.insertNotification(notificationVO, List.of(receiver));
 	    }
+	    
+	 // ========== 2. 댓글에 대한 답글 알림 추가 ==========
+	    if (parentAnswerNo != null) {
+	        // 부모 댓글 조회
+	        AnswerVO parentAnswer = answerService.findById(parentAnswerNo);
+
+	        if (parentAnswer != null && !parentAnswer.getEmplNo().equals(emplNo)) {
+	            String parentWriterNo = parentAnswer.getEmplNo();
+
+	            EmployeeVO receiver = new EmployeeVO();
+	            receiver.setEmplNo(parentWriterNo);
+
+	            NotificationVO replyNotification = new NotificationVO();
+	            replyNotification.setNtcnSj("[답글 알림]");
+	            replyNotification.setNtcnCn(parentAnswer.getEmplNm() + "님, 댓글에 답글이 달렸습니다.");
+	            replyNotification.setOriginPath("/bbs/bbsDetail?bbsSn=" + bbsSn);
+	            replyNotification.setSkillCode("02");
+
+	            notificationService.insertNotification(replyNotification, List.of(receiver));
+	        }
+	    }
 	    // ========== 알림 처리 끝 ==========
 
 	    return ResponseEntity.ok("등록 완료");
