@@ -246,6 +246,7 @@
                       	<input id="hiddenInputTotal${status.count}" type="hidden" readonly="readonly" name="totYrycDaycnt" value="${allVacData.totYrycDaycnt}" style="width:15px;"/>
                       	<input type="hidden" id="hiddenRemndrDaycnt${status.count}" name="yrycRemndrDaycnt" value="${allVacData.yrycRemndrDaycnt}">
                       	<input type="hidden" id="currentPage${status.count}" name="currentPage" value="${articlePage.currentPage}"/>
+                      	<input type="hidden" id="searchEmplName${status.count}" name="keywordName" value=""/>
                       </form>
                       </c:forEach>
                       <!-- end table row -->
@@ -364,7 +365,7 @@ $('.vacation-modal-btn').on('click', function(){
 	}) 
 })
 
-$(function(){	
+$(function(){
 	//------- 성과보상
 	let previousValue = 0;
 	$('.cmpnstnYrycCnt').on('focus', function() {
@@ -382,7 +383,6 @@ $(function(){
 			const inputTotalId = $('#inputTotalCnt'+idx);
 			const yrycRemndrDaycnt = $('#yrycRemndrDaycnt'+idx).val();
 			//console.log($('#inputTotalCnt'+idx).val());
-			
 			const currentValue = parseFloat($(this).val());
 			const diff = currentValue - previousValue;
 			//console.log('diff' , diff);
@@ -408,39 +408,47 @@ $(function(){
 				sumRemain = Number(remain) + diff;
 				// 기존 성과보상 + 추가 성과보상
 				sumCmpnstn =  Number(cmpstn) + diff;
-				// 기존 근무보상 + 추가 근무보상
-				//sumExcessWork = Number(excessWork) + diff;
 				//console.log('더한 근무보상 : ' , sumExcessWork);
 				//console.log('더한 성과보상 : ' , sumCmpnstn);
 				// 보내줘야할 성과, 초과 보상일수
 				$('#hiddenCmpnstnCnt'+idx).val(sumCmpnstn);
 				//$('#hiddenexcessWork'+idx).val(sumExcessWork);
-				
 				//console.log('sumCmpnstn : ',sumCmpnstn);
 				$('#inputTotalCnt'+idx).val(sumTotal);
 				$('#yrycRemndrDaycnt'+idx).val(sumRemain);
 				$('#hiddenInputTotal'+idx).val(sumTotal);
 				$('#hiddenRemndrDaycnt'+idx).val(sumRemain);
-				//$('#hiddenCmpnstnCnt'+idx).val(diff);
-				//$('#hiddenexcessWork'+idx).val(value);
 				//console.log('hiddenCmpnstnCnt : ' , $('#hiddenCmpnstnCnt'+idx).val())
-				
-				//console.log(id + ':' + value);
 			} else if (diff === -0.5) {
-				let totalId = $('#inputTotalCnt'+idx);
-				let remainId = $('#yrycRemndrDaycnt'+idx);
-				total = totalId.val();
-				remain = remainId.val();
-				sumTotal = Number(total)+(diff) ;
-				sumRemain = Number(remain) + diff;
-				//console.log(sumTotal);
-				$('#inputTotalCnt'+idx).val(sumTotal);
-				$('#yrycRemndrDaycnt'+idx).val(sumRemain);
-				$('#hiddenCmpnstnCnt'+idx).val(diff);
-				$('#hiddenInputTotal'+idx).val(sumTotal);
-				$('#hiddenRemndrDaycnt'+idx).val(sumRemain);
-				//$('#hiddenexcessWork'+idx).val(value);
-				//console.log('hiddenCmpnstnCnt : ' , $('#hiddenCmpnstnCnt'+idx).val())
+			 	if($('#hiddenCmpnstnCnt'+idx).val() == 0){
+					swal({
+						icon : 'error',
+						text : '해당 사원의 성과 보상 일수가 0개 입니다.'
+					})
+					.then(() =>{
+						location.href = '/dclz/vacAdmin?keywordName='+keywordName;
+					})
+					return true;
+				}
+			 	else{
+			 		let totalId = $('#inputTotalCnt'+idx);
+					let remainId = $('#yrycRemndrDaycnt'+idx);
+					let cmpnstn = $('#hiddenCmpnstnCnt'+idx);
+					total = totalId.val();
+					remain = remainId.val();
+					cmpnstn = cmpnstn.val();
+					sumTotal = Number(total)+(diff);
+					sumRemain = Number(remain) + diff;
+					sumCmpnstn = Number(cmpnstn) + (diff);
+					//console.log('성과 : ' , sumCmpnstn);
+					$('#inputTotalCnt'+idx).val(sumTotal);
+					$('#yrycRemndrDaycnt'+idx).val(sumRemain);
+					$('#hiddenCmpnstnCnt'+idx).val(sumCmpnstn);
+					$('#hiddenInputTotal'+idx).val(sumTotal);
+					$('#hiddenRemndrDaycnt'+idx).val(sumRemain);
+					//$('#hiddenexcessWork'+idx).val(value);
+					console.log('hiddenCmpnstnCnt : ' , $('#hiddenCmpnstnCnt'+idx).val())
+			 	}
 			} 
 			previousValue = currentValue;
 		})
@@ -466,30 +474,32 @@ $(function(){
 				const inputTotalId = $('#inputTotalCnt'+index);
 				const yrycRemndrDaycnt = $('#yrycRemndrDaycnt'+index).val();
 				//console.log($('#inputTotalCnt'+index).val());
-				
+				let value = $(this).val();
 				let sumTotal = 0;
 				let sumRemain = 0;
 				let excessWork = 0;
+				const queryString = window.location.search;
+				const urlParams = new URLSearchParams(queryString);
+				const keywordName = urlParams.get('keywordName');
 				// 성과보상만큼 총 연차일수도 계산해주기
 				if (diffVal === 0.5) {
 					let totalId = $('#inputTotalCnt'+index);
 					let remainId = $('#yrycRemndrDaycnt'+index);
 					let excessWorkCnt = $('#hiddenexcessWork'+index);
 					
-					let total = totalId.val();
-					let remain = remainId.val();
-					let excessWork = excessWorkCnt.val();
-					//console.log('근무잃수 : ' , excessWork);
+					totalId = totalId.val();
+					remainId = remainId.val();
+					excessWorkCnt = excessWorkCnt.val();
+					console.log('근무일수 : ' , excessWorkCnt);
 					
-					sumTotal =  Number(total) + diffVal;
-					sumRemain = Number(remain) + diffVal;
+					sumTotal =  Number(totalId) + diffVal;
+					sumRemain = Number(remainId) + diffVal;
 					// 기존 성과보상 + 추가 성과보상
 					// 기존 근무보상 + 추가 근무보상
-					sumExcessWork = Number(excessWork) + diffVal;
+					sumExcessWork = Number(excessWorkCnt) + diffVal;
 					//console.log('더한 근무보상 : ' , sumExcessWork);
 					// 보내줘야할 초과 보상일수
 					$('#hiddenexcessWork'+index).val(sumExcessWork);
-					
 					$('#inputTotalCnt'+index).val(sumTotal);
 					$('#yrycRemndrDaycnt'+index).val(sumRemain);
 					$('#hiddenInputTotal'+index).val(sumTotal);
@@ -498,19 +508,36 @@ $(function(){
 					
 					//console.log(id + ':' + value);
 				} else if (diffVal === -0.5) {
-					let totalId = $('#inputTotalCnt'+index);
-					let remainId = $('#yrycRemndrDaycnt'+index);
-					total = totalId.val();
-					remain = remainId.val();
-					sumTotal = Number(total)+(diffVal) ;
-					sumRemain = Number(remain) + diffVal;
-					//console.log(sumTotal);
-					$('#inputTotalCnt'+index).val(sumTotal);
-					$('#yrycRemndrDaycnt'+index).val(sumRemain);
-					$('#hiddenexcessWork'+index).val(value);
-					$('#hiddenInputTotal'+index).val(sumTotal);
-					$('#hiddenRemndrDaycnt'+index).val(sumRemain);
-					//console.log('hiddenCmpnstnCnt : ' , $('#hiddenCmpnstnCnt'+idx).val())
+					if($('#hiddenexcessWork'+index).val() == 0){
+						swal({
+							icon : 'error',
+							text : '해당 사원의 근무 보상 일수가 0개 입니다.'
+						})
+						.then(() =>{
+							location.href = '/dclz/vacAdmin?keywordName='+keywordName;
+						})
+						return true;
+					}
+					else{
+						let totalId = $('#inputTotalCnt'+index);
+						let remainId = $('#yrycRemndrDaycnt'+index);
+						let excessWork = $('#hiddenexcessWork'+index);
+						
+						totalId = totalId.val();
+						remainId = remainId.val();
+						excessWork = excessWork.val();
+						
+						sumTotal = Number(totalId)+(diffVal) ;
+						sumRemain = Number(remainId) + diffVal;
+						sumExcessWork = Number(excessWork) + (diffVal);
+						//console.log(sumTotal);
+						$('#inputTotalCnt'+index).val(sumTotal);
+						$('#yrycRemndrDaycnt'+index).val(sumRemain);
+						$('#hiddenexcessWork'+index).val(sumExcessWork);
+						$('#hiddenInputTotal'+index).val(sumTotal);
+						$('#hiddenRemndrDaycnt'+index).val(sumRemain);
+						console.log('hiddenexcessWork : ' , $('#hiddenexcessWork'+index).val())
+					}
 				} 
 				previousVal = currentVal;
 			})
@@ -540,7 +567,9 @@ $(function(){
 
 		// 초기화 버튼 눌렀을때
 		$('#resetBtn'+idx).on('click', function(){
-			
+			const queryString = window.location.search;
+			const urlParams = new URLSearchParams(queryString);
+			const keywordName = urlParams.get('keywordName');
 			swal({
 	            title: "정말 초기화 하시겠습니까?",
 	            icon: "warning",
@@ -559,21 +588,15 @@ $(function(){
 	          })
 			.then((wilDelete) => {
 				if(wilDelete){
-					$('#yrycRemndrDaycnt'+idx).val(hiddenRemndrDaycnt);
-					$('#inputTotalCnt'+idx).val(hiddenInputTotal);
-					$('.cmpnstnYrycCnt').val('0.0');
-					$('.excessWorkYryc').val('0.0');
-					
-					/* console.log('잔여연차 : ' , $('#yrycRemndrDaycnt'+idx).val());
-					console.log('총 연차 : ' , $('#inputTotalCnt'+idx).val());
-					console.log('hiddenInputTotal : ' , hiddenInputTotal);
-					console.log('hiddenRemndrDaycnt : ' , hiddenRemndrDaycnt); */
+					location.href = '/dclz/vacAdmin?keywordName='+keywordName;
 				}
 			})
 		})
-		
-		// 지급하기 버튼 눌렀을때
+		// 지급하기 버튼 눌렀을때 - 쿼리스트링으로 검색한이름 보내주기
 		$('#sendVacBtn'+idx).on('click', function(){
+			const queryString = window.location.search;
+			const urlParams = new URLSearchParams(queryString);
+			const keywordName = urlParams.get('keywordName');
 			swal({
 	            title: "연차를 지급하시겠습니까?",
 	            icon: "warning",
@@ -594,21 +617,22 @@ $(function(){
 				if(wilDelete){
 					const empNo = $('#emplNo'+idx).val();
 					const currentPage = $('#currentPage'+idx).val();
-					const searchEmplNm = $('#searchEmplNm').val();
+					//const searchEmplNm = $('#searchEmplNm').val();
 					//console.log(empNo);
 					$('#emplNo'+idx).val(empNo);
 					$('#currentPage'+idx).val(currentPage);
+					$('#searchEmplName'+idx).val(keywordName);
 					/* console.log('성과연차 : ' , $('#hiddenCmpnstnCnt'+idx).val());
 					console.log('근무연차 : ' , $('#hiddenexcessWork'+idx).val());
 					console.log('총 연차 : ' , $('#hiddenInputTotal'+idx).val());
 					console.log('잔여 연차 : ' , $('#hiddenRemndrDaycnt'+idx).val());
-					console.log('현재페이지 : ' , $('#currentPage'+idx).val()); */
+					console.log('현재페이지 : ' , $('#currentPage'+idx).val());
+					console.log('검색한 이름 : ' , $('#searchEmplName'+idx).val()); */
 					$('#addVacationForm'+idx).submit();
 				}
 			})
 		})
 	})
-	
 	// 검색 눌렀을시
 	$('#vacAdminSearch').on('click', function(){
 		// 사원이름 검색

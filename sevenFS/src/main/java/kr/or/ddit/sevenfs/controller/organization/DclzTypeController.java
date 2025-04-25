@@ -1,5 +1,7 @@
 package kr.or.ddit.sevenfs.controller.organization;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -304,10 +306,6 @@ public class DclzTypeController {
 		return "organization/dclz/vacationAdmin";
 	}
 	
-	
-	
-	
-	
 	// 연차관리 페이지(관리자)
 	@GetMapping("/vacAdmin")
 	public String vacationAdmin( Model model
@@ -319,26 +317,25 @@ public class DclzTypeController {
 			,@RequestParam(defaultValue = "") String keywordRetire
 			) {
 		
-		log.info("받은 키워드 :" + keywordName);
-		log.info("받은 키워드 :" + keywordDept);
-		log.info("받은 키워드 :" + keywordEcny);
-		log.info("받은 키워드 :" + keywordRetire);
-		
-		
 		Map<String, Object> map = new HashMap<>();
 		map.put("currentPage", currentPage);
-		//map.put("size", size);
 		map.put("keywordName", keywordName);
 		map.put("keywordDept", keywordDept);
 		map.put("keywordEcny", keywordEcny);
 		map.put("keywordRetire", keywordRetire); 
 		
+		log.info("받은 검색한 이름 :" + keywordName);
+		log.info("받은 키워드 :" + keywordDept);
+		log.info("받은 키워드 :" + keywordEcny);
+		log.info("받은 키워드 :" + keywordRetire);
+	
 		// 페이지정보
 		int total = dclztypeService.allEmplVacationAdminCnt();
 		log.info("total : " + total);
 		ArticlePage<VacationVO> articlePage = new ArticlePage<>(total, currentPage, size);
 		log.info("articlePage : " + articlePage);
 		model.addAttribute("articlePage", articlePage);
+		//map.put("size", size);
 		
 		// 모든 사원의 연차 현황
 		List<VacationVO> allEmplVacList = this.dclztypeService.allEmplVacationAdmin(map);
@@ -352,14 +349,18 @@ public class DclzTypeController {
 	// 연차관리에서 부여된 연차 update
 	@GetMapping("/addVacInsert")
 	public String addVacInsert(VacationVO vacationVO
-				, @RequestParam(defaultValue = "1") String currentPage) {
+				, @RequestParam(defaultValue = "1") String currentPage
+				, @RequestParam(defaultValue = "")String keywordName) {
+		
+		String keyword = URLEncoder.encode(keywordName, StandardCharsets.UTF_8);
 		log.info("addVacInsert->vacationVO : " + vacationVO);
 		log.info("addVacInsert->currentPage : " + currentPage);
+		log.info("addVacInsert->keywordName : " + keyword);
 		
 		int result = dclztypeService.addVacInsert(vacationVO);
 		log.info("지급 결과 : " + result);
 		
 		// 선택사원 연차정보 UPDATE해주기
-		return "redirect:/dclz/vacAdmin?currentPage="+currentPage;
+		return "redirect:/dclz/vacAdmin?currentPage=" + currentPage +"&keywordName=" + keyword;
 	}
 }
