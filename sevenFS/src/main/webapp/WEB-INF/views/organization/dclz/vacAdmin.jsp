@@ -438,6 +438,9 @@ $(function(){
 						if(keywordName != null && keywordName != '' || keywordDept != null && keywordDept != ''){
 							location.href = '/dclz/vacAdmin?keywordName='+keywordName + "&keywordDept="+keywordDept;
 						}
+						else if(!queryString){
+							location.href = '/dclz/vacAdmin';
+						}
 						else{
 							location.href = '/dclz/vacAdmin?currentPage='+currentPage;
 						}
@@ -524,6 +527,7 @@ $(function(){
 					
 					//console.log(id + ':' + value);
 				} else if (diffVal === -0.5) {
+					let pageVal = 1;			
 					if($('#hiddenexcessWork'+index).val() == 0){
 						swal({
 							icon : 'error',
@@ -533,8 +537,11 @@ $(function(){
 							if(keywordName != null && keywordName != '' || keywordDept != null && keywordDept != ''){
 								location.href = '/dclz/vacAdmin?keywordName='+keywordName + "&keywordDept="+keywordDept;
 							}
-							else{
+							else if(!queryString){
 								location.href = '/dclz/vacAdmin';
+							}
+							else{
+								location.href = '/dclz/vacAdmin?currentPage='+currentPage;
 							}
 						})
 						return true;
