@@ -66,7 +66,7 @@
               <!-- 첨부파일 -->
               <hr>
               <div class="mb-3">
-                <h6 class="text-secondary fw-bold"><i class="bi bi-clipboard-check-fill"></i> 첨부파일</h6>
+                <h6 class="text-secondary fw-bold"><i class="bi bi-paperclip"></i> 첨부파일</h6>
                 <c:if test="${not empty bbsVO.files}">
                   <div class="d-flex flex-wrap gap-3 mt-2">
                     <c:forEach var="file" items="${bbsVO.files}">
@@ -88,7 +88,7 @@
                         <c:otherwise>
                           <div class="border p-2 rounded bg-light">
                             <a href="http://localhost/download?fileName=${file.fileStrePath}" class="text-decoration-none text-primary">
-                              <i class="bi bi-file-earmark-text"></i> ${file.fileNm}
+                              <i class="bi bi-paperclip"></i> ${file.fileNm}
                             </a>
                           </div>
                         </c:otherwise>

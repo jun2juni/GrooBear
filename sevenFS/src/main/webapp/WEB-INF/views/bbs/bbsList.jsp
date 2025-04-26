@@ -143,7 +143,7 @@ table.table-hover.align-middle.text-center tbody tr td {
                     	${bbsVO.bbscttSj}
                     	<c:choose>
                         <c:when test="${not empty bbsVO.files and bbsVO.files.size() > 0}">
-                          	<i class="bi bi-clipboard-check-fill"></i>
+                          	<i class="bi bi-paperclip"></i></i>
                         </c:when>
                       </c:choose>
                       <c:if test="${bbsVO.commentCnt != null}">
