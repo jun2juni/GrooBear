@@ -168,6 +168,9 @@ public interface AtrzMapper {
 
 	//지출결의서 임시저장 지출결의서 테이블 
 	public void insertOrUpdateSpending(SpendingVO spendingVO);
+
+	//지출결의서 상세보기
+	public SpendingVO spendingDetail(String atrzDocNo);
 	
 	
 }

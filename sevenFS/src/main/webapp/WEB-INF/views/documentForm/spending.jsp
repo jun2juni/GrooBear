@@ -456,7 +456,7 @@ padding: 10px !important;
 																</tr>
 															</tfoot>
 														</table>
-														<button type="button" id="s_add_sp_detail" class="btn btn-success" onclick="addTr()">내역 추가</button>
+														<!-- <button type="button" id="s_add_sp_detail" class="btn btn-success" onclick="addTr()">내역 추가</button> -->
 													</div>
 
 													<form action="/fileUpload" method="post" enctype="multipart/form-data">
@@ -788,6 +788,11 @@ $(document).ready(function() {
 		})
 	});
 
+
+
+
+	
+
 	//임시저장 클릭시 
 	$(".s_eap_stor").on("click",function(){
 		event.preventDefault();
@@ -852,11 +857,18 @@ $(document).ready(function() {
 
 		//formData로 담아주기 위한것
 		let jnForm = document.querySelector("#atrz_sp_form");
+
 		let formData = new FormData();
 		formData.append("docFormNm","S");
 		formData.append("docFormNo",2);
 		formData.append("atrzSj",jnForm.atrzSj.value);
 		formData.append("atrzCn",jnForm.atrzCn.value);
+
+		if(jnForm.uploadFile.files.length){
+			for(let i=0; i< jnForm.uploadFile.files.length; i++)
+			formData.append("uploadFile",jnForm.uploadFile.files[i]);
+		}
+
 
 		let atrzLineList = [];
 		for(let i=0; i< authList.length; i++){
@@ -880,11 +892,12 @@ $(document).ready(function() {
 				paymentMethod: $('.s_select').val()
 			};
 		console.log("docSpending",docSpending);
+		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
 		formData.append("docSpending",new Blob([JSON.stringify(docSpending)],{type:"application/json"}));
 
-
-		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
-
+		formData.append("emplNo",secEmplNo);
+		formData.append("emplNm",secEmplNm);
+		formData.append("atrzDocNo",$("#s_dfNo").text());
 
 		console.log("전송하기 체킁 확인");
 		console.log("s_eap_app_bottom->formData : ", formData);
@@ -1067,6 +1080,7 @@ $(document).ready(function() {
 		});
 
 		// 우선 버튼을 누르면 정말로 기안을 취소하시겠습니까라고 알려준다.
+
 $(".atrzLineCancelBtn").on("click", function(event) {
 	event.preventDefault();
 	swal({
@@ -1233,12 +1247,13 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 				"clsfCode": $(this).parent().parent().find(".clsfCode").val(),
 				"auth":$(this).val(),
 				"flex":dcrbAuthorYn,
-				"atrzLnSn":(idx+1)
+				"atrzLnSn":(idx+1),
+				"atrzDocNo": $("#s_dfNo").text()
 			};
 			
 			//결재선 목록
 			authList.push(data);			
-
+			formData.append("atrzLineVOList["+idx+"].atrzDocNo",data.atrzDocNo); //결재문서번호 입력
 			formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",data.emplNo);
 			formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",data.clsfCode);
 			formData.append("atrzLineVOList["+idx+"].atrzTy",data.auth);//Y / N 결재자 / 참조자

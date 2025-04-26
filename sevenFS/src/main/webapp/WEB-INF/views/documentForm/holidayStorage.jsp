@@ -343,7 +343,7 @@ select.ui-datepicker-year {
 												<table border="1" id="s_eap_draft_info" class="text-center">
 													<tr>
 														<!-- 기안자 정보가져오기 -->
-<%-- 													<p>${empVO}</p>  --%>
+														<p>${empVO}</p>
 														<th>기안자</th>
 														<td>${empVO.emplNm}</td>
 													</tr>
@@ -1100,7 +1100,7 @@ $(document).ready(function() {
 
 			
 		$.ajax({
-			url:"/atrz/atrzDocStorage",
+			url:"/atrz/atrzHolidayStorage",
 			processData:false,
 			contentType:false,
 			type:"post",

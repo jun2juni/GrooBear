@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class SpendingVO {
-	private int spendingReportNo;      //지출결의서번호
+	private int spendingReportNo;      //지출결의서번호R
 	private String atrzDocNo;			//전자결재문서번호
 	private int expenseOrder;			//지출내역번호
 	private String expenseDate;			//지출내역날짜

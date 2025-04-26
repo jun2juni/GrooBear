@@ -1302,6 +1302,26 @@
 			    WHERE RN = 1
 	</select>
 	
+	<!-- 지출결의서 상세보기 -->
+	<select id="spendingDetail" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.SpendingVO">
+		    SELECT *		/* AtrzMapper.spendingDetail */
+			    FROM (
+			        SELECT 
+			              SPENDING_REPORT_NO
+			            , ATRZ_DOC_NO
+			            , EXPENSE_ORDER
+			            , EXPENSE_DATE
+			            , ITEM_DESCRIPTION
+			            , ITEM_QUANTITY
+			            , ITEM_AMOUNT
+			            , PAYMENT_METHOD
+			            ,ROW_NUMBER() OVER (ORDER BY SPENDING_REPORT_NO DESC) AS RN
+			        FROM DOCUM_SPENDING
+			        WHERE ATRZ_DOC_NO = #{atrzDocNo}
+			    )
+			    WHERE RN = 1
+	</select>
+	
 	
 	<!-- 나의 전자결재선 상황(1행)
 	public AtrzLineVO getAtrzLineInfo(AtrzVO atrzVO) 
@@ -1582,6 +1602,7 @@
 		<result property="itemQuantity" column="ITEM_QUANTITY"/>
 		<result property="itemAmount" column="ITEM_AMOUNT"/>
 		<result property="paymentMethod" column="PAYMENT_METHOD"/>
+		<result property="spendDelete" column="SPEND_DELETE"/>
 		<association property="atrzVO" resultMap="atrzMap"></association>
 	</resultMap>
 	
@@ -1667,7 +1688,7 @@
 	<!-- 사원 -->
 	<resultMap id="EmployeeResultMap" type="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
        <id property="emplNo" column="EMPL_NO"/>
-      <result property="emplNm" column="EMPL_NM"/>
+       <result property="emplNm" column="EMPL_NM"/>
        <result property="deptCode" column="DEPT_CODE"/>
        <result property="clsfCode" column="CLSF_CODE"/>
        <!-- 전자결재 리스트 -->

@@ -55,17 +55,9 @@ public class AtrzVO {
 	private MultipartFile[] uploadFile;
 	
 	//atrz: atrzLine 1: N
-	//       List<AtrzLineVO> atrzLineList
 	private List<AtrzLineVO> atrzLineVOList;
 	
 	// 검색필터
-//	private String type; // 검색타입
-//	private String keyword; // 검색내용
-	
-//	private List<DraftVO> drafts; // 기안 목록 (1:N 관계)
-	
-	//기안자의 정보를 가져오기 위한것
-//	private EmployeeVO empAtrzVO;
 	
 	//ARTZ : DOCUM_HOLIDAY = 1 : 1
 	private HolidayVO holidayVO; 			//연차신청서

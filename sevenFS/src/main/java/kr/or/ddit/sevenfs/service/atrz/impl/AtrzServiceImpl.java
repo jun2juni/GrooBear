@@ -147,6 +147,7 @@ public class AtrzServiceImpl implements AtrzService {
 		int result = this.atrzMapper.insertAtrz(atrzVO);
 		//atrzVO에는 전자결재 문서 번호가 생성되어있음
 		
+		
 		//2) 결재선들 등록
 		List<AtrzLineVO> atrzLineVOList = atrzVO.getAtrzLineVOList();
 		log.info("insertAtrzLine->atrzLineVOList(문서번호 생성 후) : " + atrzLineVOList);
@@ -164,6 +165,7 @@ public class AtrzServiceImpl implements AtrzService {
 	public int insertAtrzLine(AtrzLineVO atrzLineVO) {
 		return this.atrzMapper.insertAtrzLine(atrzLineVO);
 	}
+	
 	
 	@Transactional
 	@Override
@@ -241,7 +243,7 @@ public class AtrzServiceImpl implements AtrzService {
 	//연차신청서 임시저장
 	@Override
 	@Transactional
-	public int atrzDocStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, HolidayVO documHolidayVO) {
+	public int atrzHolidayStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, HolidayVO documHolidayVO) {
 		log.info("atrzDocStorage->임시저장 : "+atrzVO);
 		
 		 // 1. 날짜 합치기
@@ -286,14 +288,108 @@ public class AtrzServiceImpl implements AtrzService {
 	    return 1;  //성공여부 반환
 	}
 
-	
-	
-	
 	//지출결의서 등록
+	@Transactional
 	@Override
 	public int insertSpending(SpendingVO spendingVO) {
+		//알림 vo생성
+		//알림에 넣을 정보를 셋팅해주기 위한 공간을 만든다.
+		NotificationVO notificationVO = new NotificationVO();
+		//여기서 제목 내용을 셋팅해줘야하는데 
+		String atrzDocNo = spendingVO.getAtrzDocNo();
+		log.info("insertHoliday->atrzDocNo :"+atrzDocNo);
+		 
+		//사번 리스트를 만들기 위한 List
+		List<String> sanctnerEmpNoList = new ArrayList<>();
+		String sanctnerEmpNo= "";
+		// Step 1: 결재자들 중에서 가장 작은 순번 찾기
+		int firstSanctnerSn = Integer.MAX_VALUE;
+		
+		AtrzVO atrzVO = atrzMapper.getAtrzStorage(atrzDocNo);
+		List<AtrzLineVO> atrzLineVoList = atrzVO.getAtrzLineVOList();
+
+		// Step 1: 결재자 중 가장 작은 순번 찾기
+		for (AtrzLineVO atrzLineVO : atrzLineVoList) {
+		    if ("1".equals(atrzLineVO.getAtrzTy()) && atrzLineVO.getAtrzLnSn() < firstSanctnerSn) {
+		        firstSanctnerSn = atrzLineVO.getAtrzLnSn();
+		    }
+		}
+		// Step 2: 그 순번을 가진 결재자만 추가
+		for (AtrzLineVO atrzLineVO : atrzLineVoList) {
+		    if ("1".equals(atrzLineVO.getAtrzTy()) && atrzLineVO.getAtrzLnSn() == firstSanctnerSn) {
+		        sanctnerEmpNoList.add(atrzLineVO.getSanctnerEmpno());
+		    }
+		}
+		
+		//배열로 변환
+		String[] sanctnerEmpNoArr =sanctnerEmpNoList.toArray(new String[0]);
+		log.info("insertHoliday->sanctnerEmpNoArr :"+ Arrays.toString(sanctnerEmpNoArr));
+		log.info("insertHoliday->atrzVO :"+atrzVO);
+		
+		
+		//originPath 기능별 NO =? /board/detail?boardNo=1
+		//skillCode  전자결재 코드 넘버
+		//알림 받아야할 사원의 정보를 리스트로 받아서 넘겨준다.
+		
+		//넘버를 vo에 담아서 넣어준다.
+		List<EmployeeVO> employeeVOList = new ArrayList<>();
+		for(String empNo : sanctnerEmpNoArr) {
+			EmployeeVO employeeVO = new EmployeeVO();
+			employeeVO.setEmplNo(empNo);
+			employeeVOList.add(employeeVO);
+		}
+		
+		//알림 제목을 셋팅해준다 ntcnSj 제목
+		//허성진씨 줄바꿈이 안먹히자나~~~~~
+		notificationVO.setNtcnSj("[전자결재 알림]");
+		//알림 내용을 셋팅해준다 ntcnCn	내용
+		notificationVO.setNtcnCn(atrzVO.getDrafterEmpnm() +" 님이 결재기안을 요청하였습니다.");
+		notificationVO.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo="+atrzVO.getAtrzDocNo());
+		notificationVO.setSkillCode("02");
+		
+		// 알림을 보낼 사번을 배열로 담아준다.
+		notificationService.insertNotification(notificationVO, employeeVOList);
 		return this.atrzMapper.insertSpending(spendingVO);
 	}
+	
+		//지출결의서 임시저장
+		@Override
+		@Transactional
+		public int atrzSpendingStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, SpendingVO spendingVO) {
+			log.info("atrzSpendingStorage->임시저장 : "+atrzVO);
+			
+		    // 2. ATRZ 테이블 임시저장 상태로 업데이트 (예: sanctnProgrsSttusCode = '00')
+		    atrzVO.setSanctnProgrsSttusCode("99"); // 임시저장 상태
+		    int updateCount=  atrzMapper.storageDocUpdate(atrzVO);
+		    
+		    // 3.ATRZ테이블에 insert처리
+		    if(updateCount==0) {
+		    	atrzMapper.atrzDocStorage(atrzVO);
+		    }
+		    
+		    // 4. 연차 신청서 테이블에도 등록 (임시)
+		    spendingVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
+		    atrzMapper.insertOrUpdateSpending(spendingVO); // insert/update 구분해서
+		    
+		    //결재선은 기본의 것을 삭제후 새로 저장하는 방식 권장(중복방지)
+		    //여기서 새로 결재선 선택시 다시 업데이트 해줘야함
+		    atrzMapper.deleteAtrzLineByDocNo(atrzVO.getAtrzDocNo()); // 새로 추가할 것
+		    // 4. 결재선 정보도 같이 저장
+		    for (AtrzLineVO atrzLineVO : atrzLineList) {
+		    	atrzLineVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
+		    	atrzLineVO.setSanctnProgrsSttusCode("00"); // 대기중
+		        atrzMapper.insertAtrzLine(atrzLineVO); // insert 로직
+		    }
+		    
+		    // 연차정보 등록
+		    log.info("atrzDocStorage->임시저장 완료 문서번호 : "+atrzVO.getAtrzDocNo());
+			
+		    return 1;  //성공여부 반환
+		}
+	
+	
+	
+	
 	//급여명세서 등록
 	@Override
 	public int insertSalary(SalaryVO salaryVO) {
@@ -672,21 +768,7 @@ public class AtrzServiceImpl implements AtrzService {
 //		if (atrzStorageVO == null || !"99".equals(atrzStorageVO.getAtrzSttusCode())) {
 //			throw new IllegalArgumentException("임시저장된 문서가 아닙니다.");
 //		}
-		/*
-		AtrzVO(atrzDocNo=H_20250424_00003, drafterEmpno=20250004, drafterClsf=02, drafterEmpnm=길준희, drafterDept=91, 
-		bkmkYn=N, atchFileNo=0, atrzSj=기안중 임시저장 버튼으로 파일 확인, atrzCn=기안중 임시저장 버튼으로 파일 확인, 
-		atrzOpinion=null, atrzTmprStreDt=Thu Apr 24 10:12:48 KST 2025, atrzDrftDt=null, atrzComptDt=null, 
-		atrzRtrvlDt=null, atrzSttusCode=99, eltsgnImage=null, docFormNo=1, atrzDeleteYn=N, schdulRegYn=null, 
-		docFormNm=null, emplNoArr=null, fileAttachFileVOList=null, emplNo=null, emplNm=null, clsfCode=null, 
-		clsfCodeNm=null, deptCode=null, deptCodeNm=null, authorize=null, uploadFile=null, 
-		atrzLineVOList=[AtrzLineVO(atrzDocNo=H_20250424_00003, atrzLnSn=0, sanctnerEmpno=null, sanctnerClsfCode=null, 
-		contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=null, 
-		sanctnProgrsSttusCode=null, dcrbAuthorYn=null, contdAuthorYn=null, sanctnOpinion=null, eltsgnImage=null, 
-		sanctnConfmDt=null, atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null, 
-		befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, 
-		maxAtrzLnSn=0)], holidayVO=null, spendingVO=null, salaryVO=null, bankAccountVO=null, draftVO=null,
-		 emplDetailList=null, authorStatus=null, sanctnProgrsSttusCode=null)
-		 */
+	
 		log.info("getAtrzStorage->atrzStorageVO : "+atrzStorageVO);
 		List<AtrzLineVO> atrzStorageVOList = atrzStorageVO.getAtrzLineVOList();
 		/* atrzLnSn=0이 0이면 안됨
@@ -717,7 +799,7 @@ public class AtrzServiceImpl implements AtrzService {
 	    // 문서 폼별 서브 객체 추가
 	    switch (atrzStorageVO.getAtrzDocNo().charAt(0)) {
 	        case 'H' -> atrzStorageVO.setHolidayVO(atrzMapper.holidayDetail(atrzDocNo));
-//	        case 'S' -> atrzVO.setSpendingVO(atrzMapper.spendingDetail(atrzDocNo));
+	        case 'S' -> atrzStorageVO.setSpendingVO(atrzMapper.spendingDetail(atrzDocNo));
 	        case 'D' -> atrzStorageVO.setDraftVO(atrzMapper.draftDetail(atrzDocNo));
 	        // 필요 시 다른 타입도 추가
 	    }
@@ -783,6 +865,7 @@ public class AtrzServiceImpl implements AtrzService {
 	public Double readHoCnt(String empNo) {
 		return atrzMapper.readHoCnt(empNo);
 	}
+	
 	//재기안 get
 	@Override
 	public AtrzVO selectDocumentReturn(String atrzDocNo) {
@@ -810,19 +893,14 @@ public class AtrzServiceImpl implements AtrzService {
 	    // 문서 폼별 서브 객체 추가
 	    switch (atrzReturnVO.getAtrzDocNo().charAt(0)) {
 	        case 'H' -> atrzReturnVO.setHolidayVO(atrzMapper.holidayDetail(atrzDocNo));
-//	        case 'S' -> atrzVO.setSpendingVO(atrzMapper.spendingDetail(atrzDocNo));
+	        case 'S' -> atrzReturnVO.setSpendingVO(atrzMapper.spendingDetail(atrzDocNo));
 	        case 'D' -> atrzReturnVO.setDraftVO(atrzMapper.draftDetail(atrzDocNo));
 	        // 필요 시 다른 타입도 추가
 	    }
 
 	    return atrzReturnVO;
 	}
-	//기안서 상세
-	@Override
-	public DraftVO draftDetail(String draftNo) {
-		return this.atrzMapper.draftDetail(draftNo);
-		
-	}
+
 	
 	//임시저장함 삭제(일괄삭제)
 	@Transactional
@@ -853,42 +931,22 @@ public class AtrzServiceImpl implements AtrzService {
 		return atrzMapper.getAtchFile(atchFileNo);
 	}
 
-	//지출결의서 임시저장을 위한것
-	@Transactional
+	//지출결의서 상세보기
+	//길쥰후ㅢㅏ 다시 4/125
 	@Override
-	public int atrzSpendingStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, SpendingVO spendingVO) {
-		log.info("atrzDocStorage->임시저장 : "+atrzVO);
-		//임시저장시 값 세팅해주기
-	    // 2. ATRZ 테이블 임시저장 상태로 업데이트 (예: sanctnProgrsSttusCode = '00')
-	    atrzVO.setSanctnProgrsSttusCode("99"); // 임시저장 상태
-	    
-	    int updateCount=  atrzMapper.storageSpendingUpdate(atrzVO);
-	    
-	    // 3.ATRZ테이블에 insert처리
-	    if(updateCount==0) {
-	    	atrzMapper.atrzDocStorage(atrzVO);
-	    }
-	    
-	    // 4. 지출결의서 테이블에도 등록 (임시)
-	    spendingVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
-	    atrzMapper.insertOrUpdateSpending(spendingVO); // insert/update 구분해서
-	    
-	    //결재선은 기본의 것을 삭제후 새로 저장하는 방식 권장(중복방지)
-	    //여기서 새로 결재선 선택시 다시 업데이트 해줘야함
-	    atrzMapper.deleteAtrzLineByDocNo(atrzVO.getAtrzDocNo()); // 새로 추가할 것
-	    // 4. 결재선 정보도 같이 저장
-	    for (AtrzLineVO atrzLineVO : atrzLineList) {
-	    	atrzLineVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
-	    	atrzLineVO.setSanctnProgrsSttusCode("00"); // 대기중
-	        atrzMapper.insertAtrzLine(atrzLineVO); // insert 로직
-	    }
-	    
-	    // 연차정보 등록
-	    log.info("atrzDocStorage->임시저장 완료 문서번호 : "+atrzVO.getAtrzDocNo());
-	    
-		
-	    return 1;  //성공여부 반환
+	public SpendingVO spendingDetail(String atrzDocNo) {
+		return atrzMapper.spendingDetail(atrzDocNo);
 	}
+
+	
+	//기안서 상세
+	@Override
+	public DraftVO draftDetail(String draftNo) {
+		return this.atrzMapper.draftDetail(draftNo);
+		
+	}
+
+
 
 
 	

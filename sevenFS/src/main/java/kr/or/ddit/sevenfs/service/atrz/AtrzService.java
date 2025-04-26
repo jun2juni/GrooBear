@@ -83,7 +83,7 @@ public interface AtrzService {
 	public int atrzCancelUpdate(AtrzVO atrzVO);
 	
 	//연차신청서 임시저장
-	public int atrzDocStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, HolidayVO documHolidayVO);
+	public int atrzHolidayStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, HolidayVO documHolidayVO);
 	
 	//연차신청서 임시저장후 get
 	public AtrzVO getAtrzStorage(String atrzDocNo);
@@ -119,6 +119,8 @@ public interface AtrzService {
 	
 	//지출결의서 임시저장을 위한것
 	public int atrzSpendingStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, SpendingVO spendingVO);
+	//지출결의서 상세보기
+	public SpendingVO spendingDetail(String atrzDocNo);
 	
 	
 	

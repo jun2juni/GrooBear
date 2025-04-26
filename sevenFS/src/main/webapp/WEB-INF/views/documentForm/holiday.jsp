@@ -534,6 +534,11 @@ select.ui-datepicker-year {
 
 
 <script>
+//페이지 로딩시 합계계산
+document.addEventListener("DOMContentLoaded",function(){
+	dateCnt();
+})
+
 //제목 너무 길게 입력하면 입력초과 스왈
 document.getElementById('s_ho_tt').addEventListener('input', function (event) {
         const maxLength = 60; // 최대 길이 설정
@@ -1022,7 +1027,7 @@ $(document).ready(function() {
 			}
 			//길죽이 임시저장
 		$.ajax({
-			url:"/atrz/atrzDocStorage",
+			url:"/atrz/atrzHolidayStorage",
 			processData:false,
 			contentType:false,
 			type:"post",

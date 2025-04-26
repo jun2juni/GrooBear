@@ -54,24 +54,30 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/atrz")
 public class AtrzController {
-	
+	/**
+	 * 파일업로드 경로를 담기위한것
+	 */
 	@Value("${file.save.abs.path}")
 	private String saveDir;
 	
-	
 	@Autowired
 	private AtrzService atrzService;
-	
-	// 사원 정보를 위해 가져온것
+
+	/**
+	 *  사원 정보를 위해 가져온것
+	 */
 	@Autowired
 	private OrganizationService organizationService;
 
-	
-	// 파일 전송을 위한 방법
+	/**
+	 *  파일 전송을 위한 방법
+	 */
 	@Autowired
 	private AttachFileService attachFileService;
 	
-
+	/**
+	 * 전자결재 홈 화면
+	 */
 	@GetMapping("/home")
 	public String home(Model model, @AuthenticationPrincipal CustomUser customUser) {
 		// 로그인한 사람정보 가져오기(사번 이름)
@@ -80,11 +86,10 @@ public class AtrzController {
 		String emplNo = empVO.getEmplNo();
 		log.info("emplNo : ", emplNo);
 
-		Map<String,Object> map = new HashMap<String, Object>();
-		
+		Map<String, Object> map = new HashMap<String, Object>();
+
 		map.put("emplNo", emplNo);
-		
-		
+
 		// home 결재대기문서목록
 		List<AtrzVO> homeAtrzApprovalList = atrzService.homeAtrzApprovalList(emplNo);
 		model.addAttribute("homeAtrzApprovalList", homeAtrzApprovalList);
@@ -93,18 +98,14 @@ public class AtrzController {
 		List<AtrzVO> atrzSubmitList = atrzService.atrzSubmitList(emplNo);
 		model.addAttribute("atrzSubmitList", atrzSubmitList);
 
-		//기안진행문서 최신순 5개만 보여주기
+		// 기안진행문서 최신순 5개만 보여주기
 		List<AtrzVO> atrzMinSubmitList = atrzService.atrzMinSubmitList(emplNo);
-		model.addAttribute("atrzMinSubmitList",atrzMinSubmitList);
-		
-		//기안완료문서 최신순 5개만 보여주기
+		model.addAttribute("atrzMinSubmitList", atrzMinSubmitList);
+
+		// 기안완료문서 최신순 5개만 보여주기
 		List<AtrzVO> atrzMinCompltedList = atrzService.atrzMinCompltedList(emplNo);
-		model.addAttribute("atrzMinCompltedList",atrzMinCompltedList);
-		
-		
-		
-		
-		
+		model.addAttribute("atrzMinCompltedList", atrzMinCompltedList);
+
 		// 기안완료된 문서에 해당 완료일시 최신순으로 10개만 출력
 		List<AtrzVO> atrzCompletedList = atrzService.atrzCompletedList(emplNo);
 		model.addAttribute("atrzCompletedList", atrzCompletedList);
@@ -113,29 +114,38 @@ public class AtrzController {
 		return "atrz/home";
 	}
 
-	// 전자결재 문서함
-	//1. 검색조건 받기, required=false, defaultValue=""
+	/**
+	 *  전자결재 문서함
+	 * @param model
+	 * @param customUser
+	 * @param currentPage
+	 * @param size
+	 * @param keyword
+	 * @param searchType
+	 * @param tab
+	 * @param duration
+	 * @param fromDate
+	 * @param toDate
+	 * @return
+	 */
 	@GetMapping("/approval")
 	public String approvalList(Model model, @AuthenticationPrincipal CustomUser customUser,
-			@RequestParam(defaultValue = "1") int currentPage,@RequestParam(defaultValue = "10") int size
-			, @RequestParam(defaultValue = "",required = false) String keyword
-			, @RequestParam(defaultValue = "title",required = false) String searchType
-			, @RequestParam(defaultValue = "tab",required = true) String tab
-			, @RequestParam(defaultValue = "all",required = false) String duration
-			, @RequestParam(required = false) String fromDate
-			, @RequestParam(required = false) String toDate
-			) {
+			@RequestParam(defaultValue = "1") int currentPage, @RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "", required = false) String keyword,
+			@RequestParam(defaultValue = "title", required = false) String searchType,
+			@RequestParam(defaultValue = "tab", required = true) String tab,
+			@RequestParam(defaultValue = "all", required = false) String duration,
+			@RequestParam(required = false) String fromDate, @RequestParam(required = false) String toDate) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
-		
-		
+
 		// I. 결재대기문서목록
 		// I-1) 검색조건
-		Map<String,Object> map = new HashMap<String,Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("currentPage", currentPage);
 		map.put("size", size);
-		
+
 		map.put("emplNo", emplNo);
 		map.put("keyword", keyword);
 		map.put("searchType", searchType);
@@ -143,101 +153,95 @@ public class AtrzController {
 		map.put("duration", duration);
 		map.put("fromDate", fromDate);
 		map.put("toDate", toDate);
-		//2. 검색조건 map.put하기
-		
-		//{duration=all, fromDate=2025-04-22, size=10, searchType=title, toDate=2025-04-22, emplNo=20250004, currentPage=1, keyword=계란}
+		// 2. 검색조건 map.put하기
+
+		// {duration=all, fromDate=2025-04-22, size=10, searchType=title,
+		// toDate=2025-04-22, emplNo=20250004, currentPage=1, keyword=계란}
 		log.info("atrzApprovalList-> 검색 조건 map : " + map);
-		
+
 		List<AtrzVO> atrzApprovalList = atrzService.atrzApprovalList(map);
 		log.info("atrzApprovalList : " + atrzApprovalList);
-		
+
 		// I-2) 결재대기문서목록 행의 수
 		int approvalTotal = atrzService.approvalTotal(map);
 		log.info("I-2->approvalTotal : " + approvalTotal);
-		
+
 		model.addAttribute("approvalTotal", approvalTotal);
 		// I-3) 결재대기문서목록 페이징
-		ArticlePage<AtrzVO> approvalArticlePage = new ArticlePage<AtrzVO>(approvalTotal, currentPage, size, atrzApprovalList, map);
+		ArticlePage<AtrzVO> approvalArticlePage = new ArticlePage<AtrzVO>(approvalTotal, currentPage, size,
+				atrzApprovalList, map);
 		model.addAttribute("atrzApprovalList", atrzApprovalList);
 		model.addAttribute("approvalArticlePage", approvalArticlePage);
-		
-		
-		
-		//참조대기문서
+
+		// 참조대기문서
 		List<AtrzVO> atrzReferList = atrzService.atrzReferList(emplNo);
 		model.addAttribute("atrzReferList", atrzReferList);
-		//참조대기의 경우에는 권한을 확인해서 버튼이 보이지 않게 만들어야한다.
-		
-		
-		//결재예정문서
+		// 참조대기의 경우에는 권한을 확인해서 버튼이 보이지 않게 만들어야한다.
+
+		// 결재예정문서
 		List<AtrzVO> atrzExpectedList = atrzService.atrzExpectedList(emplNo);
 		model.addAttribute("atrzExpectedList", atrzExpectedList);
-		
+
 		return "atrz/approval";
 
 	}
-	
+	/**
+	 * 수신문서함
+	 */
 	@GetMapping("/complete")
 	public String completeList(Model model, @AuthenticationPrincipal CustomUser customUser) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
-		log.info("documentList-> emplNo : "+emplNo);
-		
+		log.info("documentList-> emplNo : " + emplNo);
+
 		List<AtrzVO> atrzCompleteList = atrzService.atrzCompleteList(emplNo);
-		model.addAttribute("atrzCompleteList",atrzCompleteList);
-		
+		model.addAttribute("atrzCompleteList", atrzCompleteList);
+
 		model.addAttribute("title", "결재 완료 문서");
 		return "atrz/complete";
-		
+
 	}
 	
-
 	@GetMapping("/document")
 	public String documentList(Model model, @AuthenticationPrincipal CustomUser customUser) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
-		log.info("documentList-> emplNo : "+emplNo);
+		log.info("documentList-> emplNo : " + emplNo);
 
-		//여기에 표시될것
-		//기안문서함
-		//기안문서함의 경우에는 내가 기안 한  목록이 표시된다.
+		// 여기에 표시될것
+		// 기안문서함
+		// 기안문서함의 경우에는 내가 기안 한 목록이 표시된다.
 		List<AtrzVO> atrzAllSubmitList = atrzService.atrzAllSubmitList(emplNo);
-		model.addAttribute("atrzAllSubmitList",atrzAllSubmitList);
-		
-		//임시저장함(로그인한 사람의 아이디를 받아서 select한다.)
+		model.addAttribute("atrzAllSubmitList", atrzAllSubmitList);
+
+		// 임시저장함(로그인한 사람의 아이디를 받아서 select한다.)
 		List<AtrzVO> atrzStorageList = this.atrzService.atrzStorageList(emplNo);
-		model.addAttribute("atrzStorageList",atrzStorageList);
-		//결재문서함
-		//결재문서함의 경우에는 결재선에 내가 포함되어있는 문서만 확인된다.
+		model.addAttribute("atrzStorageList", atrzStorageList);
+		// 결재문서함
+		// 결재문서함의 경우에는 결재선에 내가 포함되어있는 문서만 확인된다.
 		List<AtrzVO> atrzAllApprovalList = atrzService.atrzAllApprovalList(emplNo);
-		model.addAttribute("atrzAllApprovalList",atrzAllApprovalList);
-		
+		model.addAttribute("atrzAllApprovalList", atrzAllApprovalList);
+
 		model.addAttribute("title", "전자결재문서함");
 		return "atrz/documentBox";
 	}
-	
-	
-	
+
 	@GetMapping("/companion")
 	public String companionList(Model model, @AuthenticationPrincipal CustomUser customUser) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
-		log.info("documentList-> emplNo : "+emplNo);
-		
+		log.info("documentList-> emplNo : " + emplNo);
+
 		List<AtrzVO> atrzCompanionList = atrzService.atrzCompanionList(emplNo);
-		model.addAttribute("atrzCompanionList",atrzCompanionList);
-		
-		
-		
+		model.addAttribute("atrzCompanionList", atrzCompanionList);
+
 		model.addAttribute("title", "반려문서함");
 		return "atrz/companion";
-		
+
 	}
-	
-	
 
 	// 문서양식번호 생성
 	// 양식선택후 확인 클릭시 입력폼 뿌려지고, DB의 데이터를 가져오는 작업
@@ -303,56 +307,51 @@ public class AtrzController {
 
 	// 연차신청서 입력양식
 	@GetMapping("/selectForm/holiday")
-	public String selectHoliday(Model model
-			,@AuthenticationPrincipal CustomUser customUser) {
+	public String selectHoliday(Model model, @AuthenticationPrincipal CustomUser customUser) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String empNo = empVO.getEmplNo();
-		//기안자의 연차정보가져오기
-		Double checkHo= atrzService.readHoCnt(empNo);
-		model.addAttribute("checkHo",checkHo);
+		// 기안자의 연차정보가져오기
+		Double checkHo = atrzService.readHoCnt(empNo);
+		model.addAttribute("checkHo", checkHo);
 		model.addAttribute("title", "연차신청서");
 		return "documentForm/holiday";
 	}
-	
-	
-	
-	
+
 	// 전자결재 상세보기
 	@GetMapping("/selectForm/atrzDetail")
-	public String selectAtrzDetail(@RequestParam String atrzDocNo, Model model
-			,@AuthenticationPrincipal CustomUser customUser,String fileName) {
+	public String selectAtrzDetail(@RequestParam String atrzDocNo, Model model,
+			@AuthenticationPrincipal CustomUser customUser, String fileName) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String empNo = empVO.getEmplNo();
-		log.info("로그인 사용자 사번: "+ empNo); 
-		
+		log.info("로그인 사용자 사번: " + empNo);
+
 		if (atrzDocNo == null || atrzDocNo.isEmpty()) {
 			return "redirect:/error"; // 유효하지 않은 문서번호
 		}
-
 		char docPrefix = atrzDocNo.charAt(0); // 예: H, S, D, A, B, C, R
-		//상세정보를 가져오기 위한것
+		// 상세정보를 가져오기 위한것
 		AtrzVO atrzVO = atrzService.getAtrzDetail(atrzDocNo);
 		log.info("selectAtrzDetail->atrzVO: " + atrzVO);
-		
-		//첨부파일 조회를 위한것
+
+		// 첨부파일 조회를 위한것
 		List<AttachFileVO> attachFileVOList = attachFileService.getFileAttachList(atrzVO.getAtchFileNo());
 		log.info("selectAtrzDetail->attachFileVOList: " + attachFileVOList);
 		String drafterEmplNo = atrzVO.getDrafterEmpno();
 		EmployeeVO drafterInfo = organizationService.emplDetail(drafterEmplNo);
 		atrzVO.setEmplNm(drafterInfo.getEmplNm());
-		
-		//직급 코드를 통해 직급 얻기  직급명 , 부서명셋팅
+
+		// 직급 코드를 통해 직급 얻기 직급명 , 부서명셋팅
 		String drafClsf = atrzVO.getDrafterClsf();
 		String ClsfCodeNm = CommonCode.PositionEnum.INTERN.getLabelByCode(drafClsf);
 		atrzVO.setClsfCodeNm(ClsfCodeNm);
 		atrzVO.setDeptCodeNm(drafterInfo.getDeptNm());
-		
-		//권한별 상세보기 조회 막는곳
+
+		// 권한별 상세보기 조회 막는곳
 		// 기본권한 여부 : 기안자
-		Boolean isAuthorize = false;   								
-		Boolean canView = empNo.equals(atrzVO.getDrafterEmpno());   
+		Boolean isAuthorize = false;
+		Boolean canView = empNo.equals(atrzVO.getDrafterEmpno());
 
 		List<AtrzLineVO> atrzLineVOList = atrzVO.getAtrzLineVOList();
 		List<EmployeeVO> sanEmplVOList = new ArrayList<>();
@@ -363,11 +362,9 @@ public class AtrzController {
 
 		for (AtrzLineVO atrzLineVO : atrzLineVOList) {
 			String atrzTy = atrzLineVO.getAtrzTy(); // 1: 결재자, 0: 참조자
-			
-			boolean isMatched = empNo.equals(atrzLineVO.getSanctnerEmpno())
-				|| empNo.equals(atrzLineVO.getContdEmpno())
-				|| empNo.equals(atrzLineVO.getDcrbManEmpno())
-				|| empNo.equals(atrzLineVO.getAftSanctnerEmpno());
+
+			boolean isMatched = empNo.equals(atrzLineVO.getSanctnerEmpno()) || empNo.equals(atrzLineVO.getContdEmpno())
+					|| empNo.equals(atrzLineVO.getDcrbManEmpno()) || empNo.equals(atrzLineVO.getAftSanctnerEmpno());
 
 			if ("1".equals(atrzTy)) {
 				lastAtrzLnSn++;
@@ -409,131 +406,30 @@ public class AtrzController {
 			return "redirect:/error";
 		}
 
-		//다음결재할사람이 없는것(결재자가 없는것)을 계산함
+		// 다음결재할사람이 없는것(결재자가 없는것)을 계산함
 		int curAtrzLnSn = atrzLineVOList.stream()
-			    .filter(vo -> "1".equals(vo.getAtrzTy()) && "00".equals(vo.getSanctnProgrsSttusCode()))
-			    .mapToInt(AtrzLineVO::getAtrzLnSn)
-			    .min()
-			    .orElse(-1); // -1이면 더 이상 결재할 사람 없음
-			//atrzLnSn :결재순번 (본인:로그인한사람)
-			//curAtrzLnSn : 결재선 마지막번호
-			model.addAttribute("curAtrzLnSn", curAtrzLnSn);
-			model.addAttribute("lastAtrzLnSn", lastAtrzLnSn);
-			
-		//연차상세정보 셋팅
+				.filter(vo -> "1".equals(vo.getAtrzTy()) && "00".equals(vo.getSanctnProgrsSttusCode()))
+				.mapToInt(AtrzLineVO::getAtrzLnSn).min().orElse(-1); // -1이면 더 이상 결재할 사람 없음
+		// atrzLnSn :결재순번 (본인:로그인한사람)
+		// curAtrzLnSn : 결재선 마지막번호
+		model.addAttribute("curAtrzLnSn", curAtrzLnSn);
+		model.addAttribute("lastAtrzLnSn", lastAtrzLnSn);
+
+		// 연차상세정보 셋팅
 		atrzVO.setHolidayVO(atrzService.holidayDetail(atrzDocNo));
-		
-		//권한 여부는 model로 넘겨서  화면에서 결재버튼 노출여부 조절
+		atrzVO.setSpendingVO(atrzService.spendingDetail(atrzDocNo));
+
+		// 권한 여부는 model로 넘겨서 화면에서 결재버튼 노출여부 조절
 		model.addAttribute("isAuthorize", isAuthorize);
-		model.addAttribute("sanEmplVOList",sanEmplVOList);
+		model.addAttribute("sanEmplVOList", sanEmplVOList);
 		model.addAttribute("atrzVO", atrzVO);
 		model.addAttribute("employeeVO", drafterInfo);
-		
-		//파일불러오기모델이 담기
-		model.addAttribute("attachFileVOList",attachFileVOList);
-		attachFileService.downloadFile(fileName);
-		
-		//제목설정을 위한것
-		String title = switch (docPrefix) {
-		case 'H' -> "연차신청서";
-		case 'S' -> "지출결의서";
-		case 'D' -> "기안서";
-		case 'A' -> "급여명세서";
-		case 'B' -> "급여계좌변경신청서";
-		case 'C' -> "재직증명서";
-		case 'R' -> "퇴직신청서";
-		default -> "전자결재상세보기";
-	};
-	model.addAttribute("title", title);
-	
-	//뷰설정을 위한것
-	String viewName = switch (docPrefix) {
-	case 'H' -> "documentForm/holidayDetail";            // 연차신청서
-	case 'S' -> "documentForm/spendingDetail";           // 지출결의서
-	case 'D' -> "documentForm/draftDetail";              // 기안서
-	case 'A' -> "documentForm/salarySlipDetail";         // 급여명세서
-	case 'B' -> "documentForm/accountChangeDetail";      // 급여계좌변경신청서
-	case 'C' -> "documentForm/employmentCertDetail";     // 재직증명서
-	case 'R' -> "documentForm/resignDetail";             // 퇴직신청서
-	default -> "redirect:/error";                        // 알 수 없는 양식
-	};
-	
-	return viewName;
-}
-	
-	
 
-	//전자결재 승인시 상세보기 get
-	//전자결재 승인시
-	@ResponseBody
-	@PostMapping("selectForm/atrzDetailAppUpdate")
-	public String atrzDetailAppUpdate(AtrzVO atrzVO,
-			Model model,@AuthenticationPrincipal CustomUser customUser) {
-		// 로그인한 사람정보 가져오기(사번 이름)
-		EmployeeVO empVO = customUser.getEmpVO();
-		String emplNo = empVO.getEmplNo();
-		
-		atrzVO.setEmplNo(emplNo);
-		
-		int atrzAppUpdateResult = atrzService.atrzDetailAppUpdate(atrzVO);
-		
-		return "success";
-	}
-	
-	//전자결재 반려시 
-	@ResponseBody
-	@PostMapping("selectForm/atrzDetilCompUpdate")
-	public String atrzDetilCompUpdate(AtrzVO atrzVO, Model model
-			,@AuthenticationPrincipal CustomUser customUser	) {
-		
-		// 로그인한 사람정보 가져오기(사번 이름)
-		EmployeeVO empVO = customUser.getEmpVO();
-		String emplNo = empVO.getEmplNo();
-		
-		atrzVO.setEmplNo(emplNo);
-		int atrzCompUpdateResult = atrzService.atrzDetilCompUpdate(atrzVO);
-		
-		log.info("atrzDetilCompUpdate-> atrzVO : "+atrzVO);
-		return "success";
-	}
-	
-	//전자결재 기안취소
-	@ResponseBody
-	@PostMapping("selectForm/atrzCancelUpdate")
-	public String atrzCancelUpdate(AtrzVO atrzVO, Model model
-			,@AuthenticationPrincipal CustomUser customUser) {
-		
-		// 로그인한 사람정보 가져오기(사번 이름)
-		EmployeeVO empVO = customUser.getEmpVO();
-		String emplNo = empVO.getEmplNo();
-		atrzVO.setEmplNo(emplNo);
-		
-		int atrzCancelResult= atrzService.atrzCancelUpdate(atrzVO);
-		log.info("atrzCancleUpdate-> atrzCancelResult : "+atrzCancelResult);
-		
-		
-		return atrzCancelResult > 0 ? "success" : "fail";
-	}
-	
-	// 반려문서 재기안
-	@GetMapping("/selectForm/selectDocumentReturn")
-	public String selectDocumentReturn(@RequestParam String atrzDocNo, Model model
-			,@AuthenticationPrincipal CustomUser customUser) {
-		// 로그인한 사람정보 가져오기(사번 이름)
-		EmployeeVO empVO = customUser.getEmpVO();
-		String empNo = empVO.getEmplNo();
-		
-		AtrzVO atrzVO = atrzService.selectDocumentReturn(atrzDocNo);
-		log.info("selectDocumentReturn->atrzVO : "+atrzVO);
-		
-		Double checkHo= atrzService.readHoCnt(empNo);
-		model.addAttribute("checkHo",checkHo);
-		model.addAttribute("atrzVO",atrzVO);
-		model.addAttribute("empVO",empVO);
-		
-		char docPrefix = atrzDocNo.charAt(0); // 예: H, S, D, A, B, C, R
-		
-		//제목설정을 위한것
+		// 파일불러오기모델이 담기
+		model.addAttribute("attachFileVOList", attachFileVOList);
+		attachFileService.downloadFile(fileName);
+
+		// 제목설정을 위한것
 		String title = switch (docPrefix) {
 		case 'H' -> "연차신청서";
 		case 'S' -> "지출결의서";
@@ -545,42 +441,138 @@ public class AtrzController {
 		default -> "전자결재상세보기";
 		};
 		model.addAttribute("title", title);
-		
-		String viewName = switch (docPrefix){
-		case 'H' -> "documentForm/holidayReturn";            // 연차신청서
-		case 'S' -> "documentForm/spendingReturn";           // 지출결의서
-		case 'D' -> "documentForm/draftReturn";              // 기안서
-		case 'A' -> "documentForm/salaryReturn";         // 급여명세서
-		case 'B' -> "documentForm/bankAccountReturn";      // 급여계좌변경신청서
-		case 'C' -> "documentForm/employmentCertReturn";     // 재직증명서
-		case 'R' -> "documentForm/resignReturn";             // 퇴직신청서
-		default -> "redirect:/error";                        // 알 수 없는 양식
+
+		// 뷰설정을 위한것
+		String viewName = switch (docPrefix) {
+		case 'H' -> "documentForm/holidayDetail"; // 연차신청서
+		case 'S' -> "documentForm/spendingDetail"; // 지출결의서
+		case 'D' -> "documentForm/draftDetail"; // 기안서
+		case 'A' -> "documentForm/salarySlipDetail"; // 급여명세서
+		case 'B' -> "documentForm/accountChangeDetail"; // 급여계좌변경신청서
+		case 'C' -> "documentForm/employmentCertDetail"; // 재직증명서
+		case 'R' -> "documentForm/resignDetail"; // 퇴직신청서
+		default -> "redirect:/error"; // 알 수 없는 양식
 		};
-		
+
 		return viewName;
 	}
-		
-	
-	//임시저장함 삭제하기
+
+	// 전자결재 승인시 상세보기 get
+	// 전자결재 승인시
+	@ResponseBody
+	@PostMapping("selectForm/atrzDetailAppUpdate")
+	public String atrzDetailAppUpdate(AtrzVO atrzVO, Model model, @AuthenticationPrincipal CustomUser customUser) {
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String emplNo = empVO.getEmplNo();
+
+		atrzVO.setEmplNo(emplNo);
+
+		int atrzAppUpdateResult = atrzService.atrzDetailAppUpdate(atrzVO);
+
+		return "success";
+	}
+
+	// 전자결재 반려시
+	@ResponseBody
+	@PostMapping("selectForm/atrzDetilCompUpdate")
+	public String atrzDetilCompUpdate(AtrzVO atrzVO, Model model, @AuthenticationPrincipal CustomUser customUser) {
+
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String emplNo = empVO.getEmplNo();
+
+		atrzVO.setEmplNo(emplNo);
+		int atrzCompUpdateResult = atrzService.atrzDetilCompUpdate(atrzVO);
+
+		log.info("atrzDetilCompUpdate-> atrzVO : " + atrzVO);
+		return "success";
+	}
+
+	// 전자결재 기안취소
+	@ResponseBody
+	@PostMapping("selectForm/atrzCancelUpdate")
+	public String atrzCancelUpdate(AtrzVO atrzVO, Model model, @AuthenticationPrincipal CustomUser customUser) {
+
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String emplNo = empVO.getEmplNo();
+		atrzVO.setEmplNo(emplNo);
+
+		int atrzCancelResult = atrzService.atrzCancelUpdate(atrzVO);
+		log.info("atrzCancleUpdate-> atrzCancelResult : " + atrzCancelResult);
+
+		return atrzCancelResult > 0 ? "success" : "fail";
+	}
+
+	/**
+	 *  반려문서 재기안
+	 * @param atrzDocNo
+	 * @param model
+	 * @param customUser
+	 * @return
+	 */
+	@GetMapping("/selectForm/selectDocumentReturn")
+	public String selectDocumentReturn(@RequestParam String atrzDocNo, Model model,
+			@AuthenticationPrincipal CustomUser customUser) {
+		// 로그인한 사람정보 가져오기(사번 이름)
+		EmployeeVO empVO = customUser.getEmpVO();
+		String empNo = empVO.getEmplNo();
+
+		AtrzVO atrzVO = atrzService.selectDocumentReturn(atrzDocNo);
+		log.info("selectDocumentReturn->atrzVO : " + atrzVO);
+
+		Double checkHo = atrzService.readHoCnt(empNo);
+		model.addAttribute("checkHo", checkHo);
+		model.addAttribute("atrzVO", atrzVO);
+		model.addAttribute("empVO", empVO);
+
+		char docPrefix = atrzDocNo.charAt(0); // 예: H, S, D, A, B, C, R
+
+		// 제목설정을 위한것
+		String title = switch (docPrefix) {
+		case 'H' -> "연차신청서";
+		case 'S' -> "지출결의서";
+		case 'D' -> "기안서";
+		case 'A' -> "급여명세서";
+		case 'B' -> "급여계좌변경신청서";
+		case 'C' -> "재직증명서";
+		case 'R' -> "퇴직신청서";
+		default -> "전자결재상세보기";
+		};
+		model.addAttribute("title", title);
+
+		String viewName = switch (docPrefix) {
+		case 'H' -> "documentForm/holidayReturn"; // 연차신청서
+		case 'S' -> "documentForm/spendingReturn"; // 지출결의서
+		case 'D' -> "documentForm/draftReturn"; // 기안서
+		case 'A' -> "documentForm/salaryReturn"; // 급여명세서
+		case 'B' -> "documentForm/bankAccountReturn"; // 급여계좌변경신청서
+		case 'C' -> "documentForm/employmentCertReturn"; // 재직증명서
+		case 'R' -> "documentForm/resignReturn"; // 퇴직신청서
+		default -> "redirect:/error"; // 알 수 없는 양식
+		};
+
+		return viewName;
+	}
+
+	// 임시저장함 삭제하기
 	@PostMapping("/storageListDelete")
 	@ResponseBody
-	public ResponseEntity<?> storageListDelete(@RequestBody Map<String, List<String>> params){
+	public ResponseEntity<?> storageListDelete(@RequestBody Map<String, List<String>> params) {
 		List<String> atrzDocNos = params.get("atrzDocNos");
 		atrzService.storageListDelete(atrzDocNos);
 		return ResponseEntity.ok().build();
 	}
-	
-	//체크해서 삭제 처리하기 
-	
-	//일괄승인하기
-	
-	
-	
 
 
-	// 기안자 정보 등록 전자결재 등록
-	// 결재선지정 시 직원명 클릭하면 emplNo을 파라미터로 받아 DB select를 하여 JSON String으로 해당 직원 정보를 응답해줌
-	// 요청파라미터 : {"emplNo":emplNo}
+	/** 
+	 * 기안자 정보 등록 전자결재 등록
+	 * @param emplNo
+	 * @param requestData
+	 * @param model
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping(value = "/insertAtrzEmp", produces = "application/json;charset=UTF-8")
 	public EmployeeVO insertAtrzEmp(@RequestParam(name = "emplNo", required = false) String emplNo,
@@ -593,14 +585,19 @@ public class AtrzController {
 		// 여기서 사원번호를 꺼내서 사원 디테일까지가져옴
 		EmployeeVO emplDetail = organizationService.emplDetail(emplNo);
 
-
 		return emplDetail;
 	}
 
-	// 결재자 정보등록 결재선 등록
-	// 모달에서 선택한 결재선이 비동기로 담아서 보내서 확인해야함
-	// String[] empNoList : 없음
-	// String[] empAttNoList, : 없음
+	/** 
+	 * 결재자 정보 등록 결재선 등록
+	 * @param atrzVO
+	 * @param emplNoArr
+	 * @param req
+	 * @param model
+	 * @param authList
+	 * @param customUser
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping(value = "insertAtrzLine")
 	public AtrzVO insertAtrzLine(AtrzVO atrzVO, String[] emplNoArr, HttpServletRequest req, Model model,
@@ -659,152 +656,162 @@ public class AtrzController {
 		return atrzVO;
 
 	}
-	//결재선 지정후 취소를 한다면 데이터를 삭제하는 작업을 진행해야한다.
+
+	/** 
+	 * 결재선 지정후 취소를 하게 되면 결재선과 전자결재 테이블 삭제처리 해야한다.
+	 * @param payload
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping(value = "deleteAtrzWriting")
 	public ResponseEntity<String> deleteAtrzWriting(@RequestBody Map<String, String> payload) {
-		 String atrzDocNo = payload.get("atrzDocNo");
-		    try {
-		        atrzService.deleteAtrzWriting(atrzDocNo);
-		        return ResponseEntity.ok("success");
-		    } catch (Exception e) {
-		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
-		    }
+		String atrzDocNo = payload.get("atrzDocNo");
+		try {
+			atrzService.deleteAtrzWriting(atrzDocNo);
+			return ResponseEntity.ok("success");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
+		}
 	}
-	
-	
-	
-	//연차신청서 임시저장 불러오기 
+
+	/**
+	 *  임시저장 불러오기
+	 * @param atrzDocNo
+	 * @param model
+	 * @param customUser
+	 * @param fileName
+	 * @return
+	 */
 	@GetMapping("selectForm/getAtrzStorage")
-	public String getAtrzStorage(@RequestParam String atrzDocNo, Model model
-			,@AuthenticationPrincipal CustomUser customUser,String fileName) {
+	public String getAtrzStorage(@RequestParam String atrzDocNo, Model model,
+			@AuthenticationPrincipal CustomUser customUser, String fileName) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String empNo = empVO.getEmplNo();
-		log.info("로그인 사용자 사번: "+ empNo); 
-		
+		log.info("로그인 사용자 사번: " + empNo);
+
 		AtrzVO atrzVO = atrzService.getAtrzStorage(atrzDocNo);
 
-		
-		//첨부파일 조회를 위한것
+		// 첨부파일 조회를 위한것
 		List<AttachFileVO> attachFileVOList = attachFileService.getFileAttachList(atrzVO.getAtchFileNo());
-		
 		log.info("getAtrzStorage->atrzVO: " + atrzVO);
 		log.info("getAtrzStorage->attachFileVOList: " + attachFileVOList);
-		
-		//파일불러오기모델이 담기
-		model.addAttribute("attachFileVOList",attachFileVOList);
+
+		// 파일불러오기모델이 담기
 		attachFileService.downloadFile(fileName);
-		
-		Double checkHo= atrzService.readHoCnt(empNo);
-		model.addAttribute("checkHo",checkHo);
-		model.addAttribute("atrzVO",atrzVO);
-		model.addAttribute("empVO",empVO);
-		
+
+		Double checkHo = atrzService.readHoCnt(empNo);
+		model.addAttribute("attachFileVOList", attachFileVOList);
+		model.addAttribute("checkHo", checkHo);
+		model.addAttribute("atrzVO", atrzVO);
+		model.addAttribute("empVO", empVO);
+
 		char docPrefix = atrzDocNo.charAt(0); // 예: H, S, D, A, B, C, R
-		
-		String viewName = switch (docPrefix){
-		case 'H' -> "documentForm/holidayStorage";            // 연차신청서
-		case 'S' -> "documentForm/spendingStorage";           // 지출결의서
-		case 'D' -> "documentForm/draftStorage";              // 기안서
-		case 'A' -> "documentForm/salaryStorage";         // 급여명세서
-		case 'B' -> "documentForm/bankAccountStorage";      // 급여계좌변경신청서
-		case 'C' -> "documentForm/employmentCertStorage";     // 재직증명서
-		case 'R' -> "documentForm/resignStorage";             // 퇴직신청서
-		default -> "redirect:/error";                        // 알 수 없는 양식
+
+		String viewName = switch (docPrefix) {
+		case 'H' -> "documentForm/holidayStorage"; // 연차신청서
+		case 'S' -> "documentForm/spendingStorage"; // 지출결의서
+		case 'D' -> "documentForm/draftStorage"; // 기안서
+		case 'A' -> "documentForm/salaryStorage"; // 급여명세서
+		case 'B' -> "documentForm/bankAccountStorage"; // 급여계좌변경신청서
+		case 'C' -> "documentForm/employmentCertStorage"; // 재직증명서
+		case 'R' -> "documentForm/resignStorage"; // 퇴직신청서
+		default -> "redirect:/error"; // 알 수 없는 양식
 		};
-		
+
 		return viewName;
 	}
-	//결재선 업데이트
-	
-	
-	
-	//임시저장 연차신청서 업데이트()
+	// 결재선 업데이트
+
+	/**
+	 *  임시저장 연차신청서
+	 * @param atrzVO
+	 * @param atrzLineList
+	 * @param documHolidayVO
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("atrzHolidayUpdate")
 	public String updateHolidayForm(AtrzVO atrzVO, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList,
 			@RequestPart("docHoliday") HolidayVO documHolidayVO) {
-		
-		   // 서비스 호출로 로직 위임
-	    try {
-	        atrzService.updateHoliday(atrzVO, atrzLineList, documHolidayVO);
-	        return "성공적으로 등록되었습니다.";
-	    } catch (Exception e) {
-	        log.error("연차 기안 중 오류 발생", e);
-	        return "등록 중 오류가 발생했습니다.";
-	    }
-		
-		
+
+		// 서비스 호출로 로직 위임
+		try {
+			atrzService.updateHoliday(atrzVO, atrzLineList, documHolidayVO);
+			return "성공적으로 등록되었습니다.";
+		} catch (Exception e) {
+			log.error("연차 기안 중 오류 발생", e);
+			return "등록 중 오류가 발생했습니다.";
+		}
+
 	}
-	
+
 	// 연차신청서 등록(문서번호가 이미 있는 상태임)
 	@ResponseBody
 	@PostMapping(value = "atrzHolidayInsert")
-	public String insertHolidayForm(AtrzVO atrzVO
-			,@RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList
-			,@RequestPart("docHoliday") HolidayVO documHolidayVO
-			,int[] removeFileId
-			,@RequestParam(value = "uploadFile",required = false) MultipartFile[] uploadFile) {
+	public String insertHolidayForm(AtrzVO atrzVO, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList,
+			@RequestPart("docHoliday") HolidayVO documHolidayVO, int[] removeFileId,
+			@RequestParam(value = "uploadFile", required = false) MultipartFile[] uploadFile) {
 
-		log.info("insertHolidayForm->atrzVO(최초) : "+ atrzVO);
-		log.info("insertHolidayForm->atrzLineList(최초) : "+ atrzLineList);
-		log.info("insertHolidayForm->documHolidayVO(최초) : "+ documHolidayVO);
-		
+		log.info("insertHolidayForm->atrzVO(최초) : " + atrzVO);
+		log.info("insertHolidayForm->atrzLineList(최초) : " + atrzLineList);
+		log.info("insertHolidayForm->documHolidayVO(최초) : " + documHolidayVO);
+
 		AtrzVO atrzImsiVO = atrzService.getAtrzDetail(atrzVO.getAtrzDocNo());
-		log.info("insertHolidayForm->atrzImsiVO :"+ documHolidayVO);
-			
-			// 파일 업로드 처리 (있는 경우만)
-			if (uploadFile != null && uploadFile.length > 0 && uploadFile[0].getOriginalFilename().length() > 0) {
-				 // 파일 이름이 같고 사이즈도 같으면 같은 파일로 간주 (중복 저장 방지)
-				boolean isSameFile = false;
-				
-				if (atrzImsiVO.getAtchFileNo() != 0L) {
-			        List<AttachFileVO> existingFiles = attachFileService.getFileAttachList(atrzImsiVO.getAtchFileNo());
+		log.info("insertHolidayForm->atrzImsiVO :" + documHolidayVO);
 
-			        if (!existingFiles.isEmpty()) {
-			            String existingFileName = existingFiles.get(0).getFileNm();
-			            long existingFileSize = existingFiles.get(0).getFileSize();
+		// 파일 업로드 처리 (있는 경우만)
+		if (uploadFile != null && uploadFile.length > 0 && uploadFile[0].getOriginalFilename().length() > 0) {
+			// 파일 이름이 같고 사이즈도 같으면 같은 파일로 간주 (중복 저장 방지)
+			boolean isSameFile = false;
 
-			            String newFileName = uploadFile[0].getOriginalFilename();
-			            long newFileSize = uploadFile[0].getSize();
+			if (atrzImsiVO.getAtchFileNo() != 0L) {
+				List<AttachFileVO> existingFiles = attachFileService.getFileAttachList(atrzImsiVO.getAtchFileNo());
 
-			            isSameFile = existingFileName.equals(newFileName) && existingFileSize == newFileSize;
-			        }
-			    }
+				if (!existingFiles.isEmpty()) {
+					String existingFileName = existingFiles.get(0).getFileNm();
+					long existingFileSize = existingFiles.get(0).getFileSize();
 
-			    if (!isSameFile) {
-			        // 새로운 파일이라면 insert/update 수행
-			        if (atrzImsiVO.getAtchFileNo() == 0L) {
-			            long attachFileNo = attachFileService.insertFileList("atrzUploadFile", uploadFile);
-			            atrzVO.setAtchFileNo(attachFileNo);
-			            log.info("신규 업로드된 파일 번호: " + attachFileNo);
-			        } else {
-			            AttachFileVO attachFileVO = new AttachFileVO();
-			            attachFileVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
+					String newFileName = uploadFile[0].getOriginalFilename();
+					long newFileSize = uploadFile[0].getSize();
 
-			            // 실제 삭제할 파일이 있는 경우에만 설정
-			            if (removeFileId != null && removeFileId.length > 0) {
-			                attachFileVO.setRemoveFileId(removeFileId);
-			            }
-
-			            attachFileService.updateFileList("atrzUploadFile", uploadFile, attachFileVO);
-			            atrzVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
-			            log.info("기존 파일 번호 " + atrzImsiVO.getAtchFileNo() + "에 파일 업데이트 완료");
-			        }
-			    } else {
-			        // 동일한 파일이므로 처리 생략
-			        atrzVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
-			        log.info("동일 파일 재업로드 방지 → 기존 파일 유지");
-			    }
-
-			} else {
-			    // 업로드 파일 없음 → 기존 파일 유지
-			    atrzVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
+					isSameFile = existingFileName.equals(newFileName) && existingFileSize == newFileSize;
+				}
 			}
-			// 파일 확인 로그
-			log.info("업로드된 파일 배열: " + Arrays.toString(uploadFile));
-		
+
+			if (!isSameFile) {
+				// 새로운 파일이라면 insert/update 수행
+				if (atrzImsiVO.getAtchFileNo() == 0L) {
+					long attachFileNo = attachFileService.insertFileList("atrzUploadFile", uploadFile);
+					atrzVO.setAtchFileNo(attachFileNo);
+					log.info("신규 업로드된 파일 번호: " + attachFileNo);
+				} else {
+					AttachFileVO attachFileVO = new AttachFileVO();
+					attachFileVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
+
+					// 실제 삭제할 파일이 있는 경우에만 설정
+					if (removeFileId != null && removeFileId.length > 0) {
+						attachFileVO.setRemoveFileId(removeFileId);
+						log.info("attachFileVO -> :"+attachFileVO);
+					}
+
+					attachFileService.updateFileList("atrzUploadFile", uploadFile, attachFileVO);
+					atrzVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
+					log.info("기존 파일 번호 " + atrzImsiVO.getAtchFileNo() + "에 파일 업데이트 완료");
+				}
+			} else {
+				// 동일한 파일이므로 처리 생략
+				atrzVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
+				log.info("동일 파일 재업로드 방지 → 기존 파일 유지");
+			}
+
+		} else {
+			// 업로드 파일 없음 → 기존 파일 유지
+			atrzVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
+		}
+		// 파일 확인 로그
+		log.info("업로드된 파일 배열: " + Arrays.toString(uploadFile));
+
 		// 여기서 담기지 않았음.. 사원정보가 오지 않음
 
 		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
@@ -850,7 +857,7 @@ public class AtrzController {
 		log.info("insertHolidayForm->documHolidayVO :  문서번호 등록후 : " + documHolidayVO);
 
 		// 1) atrz 테이블 update
-		
+
 		// 2) 결재선지정 후에 제목, 내용, 등록일자, 상태 update
 		int result = atrzService.insertUpdateAtrz(atrzVO);
 		log.info("insertHolidayForm->result : " + result);
@@ -858,231 +865,185 @@ public class AtrzController {
 		// 3) 연차신청서 등록
 		int documHolidayResult = atrzService.insertHoliday(documHolidayVO);
 		log.info("insertHolidayForm->documHolidayResult : " + documHolidayResult);
-		
+
 		return "쭈니성공";
 	}
-	
-	//연차신청서 임시저장
+
+	// 연차신청서 임시저장
 	@ResponseBody
-	@PostMapping(value = "atrzDocStorage")
-	public String atrzDocStorage(
-			  AtrzVO atrzVO
-			, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList
-			, @RequestPart("docHoliday") HolidayVO documHolidayVO
-			, int[] removeFileId
-			,@RequestParam(value = "uploadFile",required = false) MultipartFile[] uploadFile) {
-		
-		/*
-		AtrzVO(atrzDocNo=H_20250424_00003, drafterEmpno=null, drafterClsf=null, drafterEmpnm=null, drafterDept=null, 
-		bkmkYn=null, atchFileNo=0, atrzSj=기안중 임시저장 버튼으로 파일 확인, atrzCn=기안중 임시저장 버튼으로 파일 확인, 
-		atrzOpinion=null, atrzTmprStreDt=null, atrzDrftDt=null, atrzComptDt=null, atrzRtrvlDt=null, 
-		atrzSttusCode=null, eltsgnImage=null, docFormNo=1, atrzDeleteYn=null, schdulRegYn=null, docFormNm=H, 
-		emplNoArr=null, fileAttachFileVOList=null, emplNo=20250004, emplNm=길준희, clsfCode=null, clsfCodeNm=null,
-		 deptCode=null, deptCodeNm=null, authorize=null, uploadFile=null, atrzLineVOList=null, holidayVO=null, 
-		 spendingVO=null, salaryVO=null, bankAccountVO=null, draftVO=null, emplDetailList=null, authorStatus=null, 
-		 sanctnProgrsSttusCode=null)
-		 */
+	@PostMapping(value = "atrzHolidayStorage")
+	public String atrzHolidayStorage(AtrzVO atrzVO, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList,
+			@RequestPart("docHoliday") HolidayVO documHolidayVO, int[] removeFileId,
+			@RequestParam(value = "uploadFile", required = false) MultipartFile[] uploadFile) {
+
 		log.info("atrzDocStorage->atrzVO : " + atrzVO);
-		//1) 
-		/*
-		 AtrzVO(atrzDocNo=H_20250425_00002, drafterEmpno=20250004, drafterClsf=01, drafterEmpnm=길준희, 
-		 drafterDept=91, bkmkYn=N, atchFileNo=735, atrzSj=임시저장테스트, atrzCn=임시저장테스트, atrzOpinion=null, 
-		 atrzTmprStreDt=Fri Apr 25 09:43:38 KST 2025, atrzDrftDt=null, atrzComptDt=null, atrzRtrvlDt=null, 
-		 atrzSttusCode=99, eltsgnImage=null, docFormNo=1, atrzDeleteYn=N, schdulRegYn=null, docFormNm=null, 
-		 emplNoArr=null, fileAttachFileVOList=null, emplNo=null, emplNm=null, clsfCode=null, clsfCodeNm=null, 
-		 deptCode=null, deptCodeNm=null, authorize=null, uploadFile=null, 
-		 atrzLineVOList=[AtrzLineVO(atrzDocNo=H_20250425_00002, atrzLnSn=1, sanctnerEmpno=20250024, 
-		 sanctnerClsfCode=06, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, 
-		 atrzTy=1, sanctnProgrsSttusCode=00, dcrbAuthorYn=N, contdAuthorYn=null, sanctnOpinion=null, 
-		 eltsgnImage=null, sanctnConfmDt=null, atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=상무,
-		 sanctnerEmpNm=이칠이, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null, 
-		 aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0), AtrzLineVO(atrzDocNo=H_20250425_00002, atrzLnSn=2, 
-		 sanctnerEmpno=20250034, sanctnerClsfCode=04, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null,
-		 dcrbManClsfCode=null, atrzTy=1, sanctnProgrsSttusCode=00, dcrbAuthorYn=N, contdAuthorYn=null,
-		 sanctnOpinion=null, eltsgnImage=null, sanctnConfmDt=null, atrzLastLnSn=0, atrzLineList=null,
-		 sanctnerClsfNm=부장, sanctnerEmpNm=채사원, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, 
-		 aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0), 
-		 AtrzLineVO(atrzDocNo=H_20250425_00002, atrzLnSn=3, sanctnerEmpno=20250037, 
-		 sanctnerClsfCode=02, contdEmpno=null, contdClsfCode=null,
-		 dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=0, 
-		 sanctnProgrsSttusCode=00, dcrbAuthorYn=N, contdAuthorYn=null,
-		 sanctnOpinion=null, eltsgnImage=null, sanctnConfmDt=null,
-		 atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=대리, 
-		 sanctnerEmpNm=지대리, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null, 
-		 aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0)], holidayVO=HolidayVO(holiActplnNo=68, 
-		 atrzDocNo=H_20250425_00002, holiCode=22, holiStartArr=null, holiStart=Fri Apr 25 09:00:00 KST 2025,
-		 holiEndArr=null, holiEnd=Fri Apr 25 18:00:00 KST 2025, holiUseDays=1, holiDelete=null, atrzLineVOList=null, 
-		 atrzVO=null), spendingVO=null, salaryVO=null, bankAccountVO=null, draftVO=null, emplDetailList=null, 
-		 authorStatus=null, sanctnProgrsSttusCode=null)
-		 */
-		//여기서 결재문서번호를 활용해서 atrzVO에 다시 셋팅해준다.
+		// 여기서 결재문서번호를 활용해서 atrzVO에 다시 셋팅해준다.
 		AtrzVO atrzStorageVO = atrzService.getAtrzStorage(atrzVO.getAtrzDocNo());
 		log.info("atrzDocStorage->atrzStorageVO : " + atrzStorageVO);
-		
-		//2) atrzVO의 atrzLineVOList를 atrzLineList에 할당
-		//*** atrzDocStorage->atrzLineList : []
+
+		// 2) atrzVO의 atrzLineVOList를 atrzLineList에 할당
 		log.info("atrzDocStorage->atrzLineList : " + atrzLineList);
-		/*HolidayVO(holiActplnNo=0, atrzDocNo=null, holiCode=23, holiStartArr=[2025-05-07, 09:00:00], 
-		holiStart=null, holiEndArr=[2025-05-07, 18:00:00], holiEnd=null, holiUseDays=0, holiDelete=null, 
-				atrzLineVOList=null, atrzVO=null)
-		*/
 		log.info("atrzDocStorage->documHolidayVO : " + documHolidayVO);
-		
+
 		// 파일 업로드 처리 (있는 경우만)
 		if (uploadFile != null && uploadFile.length > 0 && uploadFile[0].getOriginalFilename().length() > 0) {
-			 // 파일 이름이 같고 사이즈도 같으면 같은 파일로 간주 (중복 저장 방지)
+			// 파일 이름이 같고 사이즈도 같으면 같은 파일로 간주 (중복 저장 방지)
 			boolean isSameFile = false;
-			
+
 			if (atrzStorageVO.getAtchFileNo() != 0L) {
-		        List<AttachFileVO> existingFiles = attachFileService.getFileAttachList(atrzStorageVO.getAtchFileNo());
+				List<AttachFileVO> existingFiles = attachFileService.getFileAttachList(atrzStorageVO.getAtchFileNo());
 
-		        if (!existingFiles.isEmpty()) {
-		            String existingFileName = existingFiles.get(0).getFileNm();
-		            long existingFileSize = existingFiles.get(0).getFileSize();
+				if (!existingFiles.isEmpty()) {
+					String existingFileName = existingFiles.get(0).getFileNm();
+					long existingFileSize = existingFiles.get(0).getFileSize();
 
-		            String newFileName = uploadFile[0].getOriginalFilename();
-		            long newFileSize = uploadFile[0].getSize();
+					String newFileName = uploadFile[0].getOriginalFilename();
+					long newFileSize = uploadFile[0].getSize();
 
-		            isSameFile = existingFileName.equals(newFileName) && existingFileSize == newFileSize;
-		        }
-		    }
+					isSameFile = existingFileName.equals(newFileName) && existingFileSize == newFileSize;
+				}
+			}
 
-		    if (!isSameFile) {
-		        // 새로운 파일이라면 insert/update 수행
-		        if (atrzStorageVO.getAtchFileNo() == 0L) {
-		            long attachFileNo = attachFileService.insertFileList("atrzUploadFile", uploadFile);
-		            atrzVO.setAtchFileNo(attachFileNo);
-		            log.info("신규 업로드된 파일 번호: " + attachFileNo);
-		        } else {
-		            AttachFileVO attachFileVO = new AttachFileVO();
-		            attachFileVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
+			if (!isSameFile) {
+				// 새로운 파일이라면 insert/update 수행
+				if (atrzStorageVO.getAtchFileNo() == 0L) {
+					long attachFileNo = attachFileService.insertFileList("atrzUploadFile", uploadFile);
+					atrzVO.setAtchFileNo(attachFileNo);
+					log.info("신규 업로드된 파일 번호: " + attachFileNo);
+				} else {
+					AttachFileVO attachFileVO = new AttachFileVO();
+					attachFileVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
 
-		            // 실제 삭제할 파일이 있는 경우에만 설정
-		            if (removeFileId != null && removeFileId.length > 0) {
-		                attachFileVO.setRemoveFileId(removeFileId);
-		            }
+					// 실제 삭제할 파일이 있는 경우에만 설정
+					if (removeFileId != null && removeFileId.length > 0) {
+						attachFileVO.setRemoveFileId(removeFileId);
+					}
 
-		            attachFileService.updateFileList("atrzUploadFile", uploadFile, attachFileVO);
-		            atrzVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
-		            log.info("기존 파일 번호 " + atrzStorageVO.getAtchFileNo() + "에 파일 업데이트 완료");
-		        }
-		    } else {
-		        // 동일한 파일이므로 처리 생략
-		        atrzVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
-		        log.info("동일 파일 재업로드 방지 → 기존 파일 유지");
-		    }
+					attachFileService.updateFileList("atrzUploadFile", uploadFile, attachFileVO);
+					atrzVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
+					log.info("기존 파일 번호 " + atrzStorageVO.getAtchFileNo() + "에 파일 업데이트 완료");
+				}
+			} else {
+				// 동일한 파일이므로 처리 생략
+				atrzVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
+				log.info("동일 파일 재업로드 방지 → 기존 파일 유지");
+			}
 
 		} else {
-		    // 업로드 파일 없음 → 기존 파일 유지
-		    atrzVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
+			// 업로드 파일 없음 → 기존 파일 유지
+			atrzVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
 		}
 		// 파일 확인 로그
 		log.info("업로드된 파일 배열: " + Arrays.toString(uploadFile));
-		
-		
+
 		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
 		// 여기서 VO를 하나 씩 담아야 하는건가...싶다.
 		atrzVO.setClsfCode(emplDetail.getClsfCode());
 		atrzVO.setDeptCode(emplDetail.getDeptCode());
-		
-		int result = atrzService.atrzDocStorage(atrzVO, atrzLineList, documHolidayVO);
-		
+
+		int result = atrzService.atrzHolidayStorage(atrzVO, atrzLineList, documHolidayVO);
+
 		return result > 0 ? "임시저장성공" : "실패";
 	}
-		//지출결의서 임시저장
-		@ResponseBody
-		@PostMapping(value = "atrzSpendingStorage")
-		public String atrzSpendingStorage(
-				  AtrzVO atrzVO
-				, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList
-				, @RequestPart("docSpending")SpendingVO spendingVO
-				, int[] removeFileId
-				,@RequestParam(value = "uploadFile",required = false) MultipartFile[] uploadFile) {
-			
-			log.info("atrzSpendingStorage->atrzVO : " + atrzVO);
-			//1) 
-			//여기서 결재문서번호를 활용해서 atrzVO에 다시 셋팅해준다.
-			AtrzVO atrzStorageVO = atrzService.getAtrzStorage(atrzVO.getAtrzDocNo());
-			log.info("atrzSpendingStorage->atrzStorageVO : " + atrzStorageVO);
-			
-			//2) atrzVO의 atrzLineVOList를 atrzLineList에 할당
-			log.info("atrzSpendingStorage->atrzLineList : " + atrzLineList);
-			log.info("atrzSpendingStorage->spendingVO : " + spendingVO);
-			
-			// 파일 업로드 처리 (있는 경우만)
-			if (uploadFile != null && uploadFile.length > 0 && uploadFile[0].getOriginalFilename().length() > 0) {
-				 // 파일 이름이 같고 사이즈도 같으면 같은 파일로 간주 (중복 저장 방지)
-				boolean isSameFile = false;
-				
-				if (atrzStorageVO.getAtchFileNo() != 0L) {
-			        List<AttachFileVO> existingFiles = attachFileService.getFileAttachList(atrzStorageVO.getAtchFileNo());
 
-			        if (!existingFiles.isEmpty()) {
-			            String existingFileName = existingFiles.get(0).getFileNm();
-			            long existingFileSize = existingFiles.get(0).getFileSize();
+	// 지출결의서 임시저장
+	@ResponseBody
+	@PostMapping(value = "atrzSpendingStorage")
+	public String atrzSpendingStorage(AtrzVO atrzVO, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList,
+			@RequestPart("docSpending") SpendingVO spendingVO, int[] removeFileId,
+			@RequestParam(value = "uploadFile", required = false) MultipartFile[] uploadFile) {
 
-			            String newFileName = uploadFile[0].getOriginalFilename();
-			            long newFileSize = uploadFile[0].getSize();
+		log.info("atrzSpendingStorage->atrzVO : " + atrzVO);
+		// 1)
+		// 여기서 결재문서번호를 활용해서 atrzVO에 다시 셋팅해준다.
+		AtrzVO atrzStorageVO = atrzService.getAtrzStorage(atrzVO.getAtrzDocNo());
+		log.info("atrzSpendingStorage->atrzStorageVO : " + atrzStorageVO);
 
-			            isSameFile = existingFileName.equals(newFileName) && existingFileSize == newFileSize;
-			        }
-			    }
+		// 2) atrzVO의 atrzLineVOList를 atrzLineList에 할당
+		// *** atrzDocStorage->atrzLineList : []
+		log.info("atrzSpendingStorage->atrzLineList : " + atrzLineList);
+		/*
+		 * HolidayVO(holiActplnNo=0, atrzDocNo=null, holiCode=23,
+		 * holiStartArr=[2025-05-07, 09:00:00], holiStart=null, holiEndArr=[2025-05-07,
+		 * 18:00:00], holiEnd=null, holiUseDays=0, holiDelete=null, atrzLineVOList=null,
+		 * atrzVO=null)
+		 */
+		log.info("atrzSpendingStorage->spendingVO : " + spendingVO);
 
-			    if (!isSameFile) {
-			        // 새로운 파일이라면 insert/update 수행
-			        if (atrzStorageVO.getAtchFileNo() == 0L) {
-			            long attachFileNo = attachFileService.insertFileList("atrzUploadFile", uploadFile);
-			            atrzVO.setAtchFileNo(attachFileNo);
-			            log.info("신규 업로드된 파일 번호: " + attachFileNo);
-			        } else {
-			            AttachFileVO attachFileVO = new AttachFileVO();
-			            attachFileVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
+		// 파일 업로드 처리 (있는 경우만)
+		if (uploadFile != null && uploadFile.length > 0 && uploadFile[0].getOriginalFilename().length() > 0) {
+			// 파일 이름이 같고 사이즈도 같으면 같은 파일로 간주 (중복 저장 방지)
+			boolean isSameFile = false;
 
-			            // 실제 삭제할 파일이 있는 경우에만 설정
-			            if (removeFileId != null && removeFileId.length > 0) {
-			                attachFileVO.setRemoveFileId(removeFileId);
-			            }
+			if (atrzStorageVO.getAtchFileNo() != 0L) {
+				List<AttachFileVO> existingFiles = attachFileService.getFileAttachList(atrzStorageVO.getAtchFileNo());
 
-			            attachFileService.updateFileList("atrzUploadFile", uploadFile, attachFileVO);
-			            atrzVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
-			            log.info("기존 파일 번호 " + atrzStorageVO.getAtchFileNo() + "에 파일 업데이트 완료");
-			        }
-			    } else {
-			        // 동일한 파일이므로 처리 생략
-			        atrzVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
-			        log.info("동일 파일 재업로드 방지 → 기존 파일 유지");
-			    }
+				if (!existingFiles.isEmpty()) {
+					String existingFileName = existingFiles.get(0).getFileNm();
+					long existingFileSize = existingFiles.get(0).getFileSize();
 
-			} else {
-			    // 업로드 파일 없음 → 기존 파일 유지
-			    atrzVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
+					String newFileName = uploadFile[0].getOriginalFilename();
+					long newFileSize = uploadFile[0].getSize();
+
+					isSameFile = existingFileName.equals(newFileName) && existingFileSize == newFileSize;
+				}
 			}
-			// 파일 확인 로그
-			log.info("업로드된 파일 배열: " + Arrays.toString(uploadFile));
-			
-			
-			EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
-			// 여기서 VO를 하나 씩 담아야 하는건가...싶다.
-			atrzVO.setClsfCode(emplDetail.getClsfCode());
-			atrzVO.setDeptCode(emplDetail.getDeptCode());
-			
-			int result = atrzService.atrzSpendingStorage(atrzVO, atrzLineList, spendingVO);
-			
-			return result > 0 ? "임시저장성공" : "실패";
+
+			if (!isSameFile) {
+				// 새로운 파일이라면 insert/update 수행
+				if (atrzStorageVO.getAtchFileNo() == 0L) {
+					long attachFileNo = attachFileService.insertFileList("atrzUploadFile", uploadFile);
+					atrzVO.setAtchFileNo(attachFileNo);
+					log.info("신규 업로드된 파일 번호: " + attachFileNo);
+				} else {
+					AttachFileVO attachFileVO = new AttachFileVO();
+					attachFileVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
+
+					// 실제 삭제할 파일이 있는 경우에만 설정
+					if (removeFileId != null && removeFileId.length > 0) {
+						attachFileVO.setRemoveFileId(removeFileId);
+					}
+
+					attachFileService.updateFileList("atrzUploadFile", uploadFile, attachFileVO);
+					atrzVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
+					log.info("기존 파일 번호 " + atrzStorageVO.getAtchFileNo() + "에 파일 업데이트 완료");
+				}
+			} else {
+				// 동일한 파일이므로 처리 생략
+				atrzVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
+				log.info("동일 파일 재업로드 방지 → 기존 파일 유지");
+			}
+
+		} else {
+			// 업로드 파일 없음 → 기존 파일 유지
+			atrzVO.setAtchFileNo(atrzStorageVO.getAtchFileNo());
 		}
-	
-	
-	//임시저장후 결재선 인서트(업데이트처럼 활용)
+		// 파일 확인 로그
+		log.info("업로드된 파일 배열: " + Arrays.toString(uploadFile));
+
+		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
+		// 여기서 VO를 하나 씩 담아야 하는건가...싶다.
+		atrzVO.setClsfCode(emplDetail.getClsfCode());
+		atrzVO.setDeptCode(emplDetail.getDeptCode());
+
+		int result = atrzService.atrzSpendingStorage(atrzVO, atrzLineList, spendingVO);
+
+		return result > 0 ? "임시저장성공" : "실패";
+	}
+
+	//
+
+	// 임시저장후 결재선 인서트(업데이트처럼 활용)
 	@ResponseBody
 	@PostMapping(value = "updateAtrzLine")
-	public AtrzVO updateAtrzLine(@ModelAttribute AtrzVO atrzVO 	, @RequestParam(required = false)String[] emplNoArr , Model model
-			,@RequestParam(required = false) String[] authList, @AuthenticationPrincipal CustomUser customUser) {
+	public AtrzVO updateAtrzLine(@ModelAttribute AtrzVO atrzVO, @RequestParam(required = false) String[] emplNoArr,
+			Model model, @RequestParam(required = false) String[] authList,
+			@AuthenticationPrincipal CustomUser customUser) {
 		List<String> appLinelist = new ArrayList<String>();
-		log.debug("updateAtrzLine->emplNoArr : "+ Arrays.toString(emplNoArr)); // 결재자(o)
-		log.debug("updateAtrzLine->atrzVO : "+ atrzVO); // 결재문서
-		log.debug("updateAtrzLine->authList : "+ Arrays.toString(authList)); // 참조자
-		
-		
+		log.debug("updateAtrzLine->emplNoArr : " + Arrays.toString(emplNoArr)); // 결재자(o)
+		log.debug("updateAtrzLine->atrzVO : " + atrzVO); // 결재문서
+		log.debug("updateAtrzLine->authList : " + Arrays.toString(authList)); // 참조자
+
 		for (String emplNo : emplNoArr) {
 			// selectAppLineList->emplNo : 20250008
 			// selectAppLineList->emplNo : 20250016
@@ -1093,240 +1054,150 @@ public class AtrzController {
 		String atrzDocNo = "";
 
 		for (String authListStr : authList) {
-		    try {
-		        ObjectMapper objectMapper = new ObjectMapper();
-		        List<Map<String, Object>> authMapList = objectMapper.readValue(authListStr, new TypeReference<List<Map<String, Object>>>() {});
+			try {
+				ObjectMapper objectMapper = new ObjectMapper();
+				List<Map<String, Object>> authMapList = objectMapper.readValue(authListStr,
+						new TypeReference<List<Map<String, Object>>>() {
+						});
 
-		        // 첫 번째 항목에서 문서번호 추출
-		        if (!authMapList.isEmpty() && atrzDocNo.isEmpty()) {
-		            Object docNoObj = authMapList.get(0).get("atrzDocNo");
-		            if (docNoObj != null) {
-		                atrzDocNo = docNoObj.toString();
-		                System.out.println("추출된 atrzDocNo: " + atrzDocNo);
-		            }
-		        }
+				// 첫 번째 항목에서 문서번호 추출
+				if (!authMapList.isEmpty() && atrzDocNo.isEmpty()) {
+					Object docNoObj = authMapList.get(0).get("atrzDocNo");
+					if (docNoObj != null) {
+						atrzDocNo = docNoObj.toString();
+						System.out.println("추출된 atrzDocNo: " + atrzDocNo);
+					}
+				}
 
-		    } catch (Exception e) {
-		        e.printStackTrace();
-		    }
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
-		log.info("updateAtrzLine->atrzDocNo : "+atrzDocNo);
-		
-		
+		log.info("updateAtrzLine->atrzDocNo : " + atrzDocNo);
+
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String empNo = empVO.getEmplNo();
-		//임시저장 문서번호 set하기 
+		// 임시저장 문서번호 set하기
 		atrzVO.setAtrzDocNo(atrzDocNo);
 		log.info("updateAtrzLine->atrzVO(문서번호 생성 후) : " + atrzVO);
-		
-		
+
 		atrzVO.setEmplNo(empNo);
-		//문서조회
+		// 문서조회
 //		String atrzDocNo = atrzVO.getAtrzDocNo();
-		log.info("updateAtrzLine->atrzVO"+atrzVO);
+		log.info("updateAtrzLine->atrzVO" + atrzVO);
 		List<AtrzLineVO> atrzLineList = atrzVO.getAtrzLineVOList();
-		//임시저장후 결재선 다시 지정시 결재선 삭제 처리
+		// 임시저장후 결재선 다시 지정시 결재선 삭제 처리
 		atrzService.deleteAtrzLineByDocNo(atrzDocNo);
-		for(AtrzLineVO atrzLineVO : atrzLineList) {
+		for (AtrzLineVO atrzLineVO : atrzLineList) {
 			atrzLineVO.setAtrzDocNo(atrzDocNo);
 			atrzService.updateAtrzLine(atrzLineVO);
-			log.info("📝 결재선 - empno: {}, code: {}, ty: {}, authorYn: {}, lnSn: {}",
-			atrzLineVO.getSanctnerEmpno(), atrzLineVO.getSanctnerClsfCode(),
-			atrzLineVO.getAtrzTy(), atrzLineVO.getDcrbAuthorYn(), atrzLineVO.getAtrzLnSn());
-			
+			log.info("📝 결재선 - empno: {}, code: {}, ty: {}, authorYn: {}, lnSn: {}", atrzLineVO.getSanctnerEmpno(),
+					atrzLineVO.getSanctnerClsfCode(), atrzLineVO.getAtrzTy(), atrzLineVO.getDcrbAuthorYn(),
+					atrzLineVO.getAtrzLnSn());
+
 		}
-		log.info("updateAtrzLine->atrzVO : "+atrzVO);
+		log.info("updateAtrzLine->atrzVO : " + atrzVO);
 		return atrzService.getAtrzStorage(atrzDocNo);
 	}
-	
 
 	// 지출결의서 등록
 	@ResponseBody
 	@PostMapping(value = "atrzSpendingInsert")
 	public String insertSpendingForm(AtrzVO atrzVO, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList,
-			SpendingVO spendingVO) {
+			@RequestPart("docSpending") SpendingVO spendingVO, int[] removeFileId,
+			@RequestParam(value = "uploadFile", required = false) MultipartFile[] uploadFile) {
 
-		atrzVO.setDrafterEmpno(atrzVO.getEmplNo());
+		log.info("insertSpendingForm->atrzVO(최초) : " + atrzVO);
+		log.info("insertSpendingForm->atrzLineList(최초) : " + atrzLineList);
+		log.info("insertSpendingForm->spendingVO(최초) : " + spendingVO);
 
-		log.info("insertSpendingForm-> atrz : " + atrzVO);
-		log.info("insertSpendingForm-> atrzLineList : " + atrzLineList);
-		log.info("insertSpendingForm-> spendingVO : " + spendingVO);
+		AtrzVO atrzImsiVO = atrzService.getAtrzDetail(atrzVO.getAtrzDocNo());
+		log.info("insertSpendingForm->atrzImsiVO :" + spendingVO);
+
+		// 파일 업로드 처리 (있는 경우만)
+		if (uploadFile != null && uploadFile.length > 0 && uploadFile[0].getOriginalFilename().length() > 0) {
+			// 파일 이름이 같고 사이즈도 같으면 같은 파일로 간주 (중복 저장 방지)
+			boolean isSameFile = false;
+
+			if (atrzImsiVO.getAtchFileNo() != 0L) {
+				List<AttachFileVO> existingFiles = attachFileService.getFileAttachList(atrzImsiVO.getAtchFileNo());
+
+				if (!existingFiles.isEmpty()) {
+					String existingFileName = existingFiles.get(0).getFileNm();
+					long existingFileSize = existingFiles.get(0).getFileSize();
+
+					String newFileName = uploadFile[0].getOriginalFilename();
+					long newFileSize = uploadFile[0].getSize();
+
+					isSameFile = existingFileName.equals(newFileName) && existingFileSize == newFileSize;
+				}
+			}
+
+			if (!isSameFile) {
+				// 새로운 파일이라면 insert/update 수행
+				if (atrzImsiVO.getAtchFileNo() == 0L) {
+					long attachFileNo = attachFileService.insertFileList("atrzUploadFile", uploadFile);
+					atrzVO.setAtchFileNo(attachFileNo);
+					log.info("신규 업로드된 파일 번호: " + attachFileNo);
+				} else {
+					AttachFileVO attachFileVO = new AttachFileVO();
+					attachFileVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
+
+					// 실제 삭제할 파일이 있는 경우에만 설정
+					if (removeFileId != null && removeFileId.length > 0) {
+						attachFileVO.setRemoveFileId(removeFileId);
+					}
+
+					attachFileService.updateFileList("atrzUploadFile", uploadFile, attachFileVO);
+					atrzVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
+					log.info("기존 파일 번호 " + atrzImsiVO.getAtchFileNo() + "에 파일 업데이트 완료");
+				}
+			} else {
+				// 동일한 파일이므로 처리 생략
+				atrzVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
+				log.info("동일 파일 재업로드 방지 → 기존 파일 유지");
+			}
+
+		} else {
+			// 업로드 파일 없음 → 기존 파일 유지
+			atrzVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
+		}
+		// 파일 확인 로그
+		log.info("업로드된 파일 배열: " + Arrays.toString(uploadFile));
+
+		// 여기서 담기지 않았음.. 사원정보가 오지 않음
 
 		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
-		log.info("insertSpendingForm->emplDetail : " + emplDetail);
 		// 여기서 VO를 하나 씩 담아야 하는건가...싶다.
 		String clsfCode = emplDetail.getClsfCode();
 		String deptCode = emplDetail.getDeptCode();
 		atrzVO.setClsfCode(clsfCode);
 		atrzVO.setDeptCode(deptCode);
-		/*
-		 AtrzVO(atrzDocNo=S_20250425_00001, drafterEmpno=20250004, drafterClsf=null, drafterEmpnm=null, 
-		 drafterDept=null, bkmkYn=null, atchFileNo=0, atrzSj=지출결의서 신청 확인, atrzCn=지출결의서 신청 확인, 
-		 atrzOpinion=null, atrzTmprStreDt=null, atrzDrftDt=null, atrzComptDt=null, atrzRtrvlDt=null, atrzSttusCode=null, 
-		 eltsgnImage=null, docFormNo=2, atrzDeleteYn=null, schdulRegYn=null, docFormNm=S, emplNoArr=null, 
-		 fileAttachFileVOList=null, emplNo=20250004, emplNm=길준희, clsfCode=01, clsfCodeNm=null, deptCode=91,
-		 deptCodeNm=null, authorize=null, uploadFile=[org.springframework.web.multipart.support.StandardMultipartHttpServletRequest$StandardMultipartFile@35e09034], 
-		 atrzLineVOList=null, holidayVO=null, spendingVO=null, salaryVO=null, bankAccountVO=null, draftVO=null, emplDetailList=null, authorStatus=null, sanctnProgrsSttusCode=null)
-		 */
-		log.info("insertSpendingForm-> atrzVO(사원추가후) : " + atrzVO);
+//		atrzVO.setDrafterClsf(emplDetail.get);
 
-		// 전자결재 테이블 등록
-		int atrzResult = atrzService.insertAtrz(atrzVO);
-
-		// 전자결재 문서번호등록
-		String atrzDocNo = atrzVO.getAtrzDocNo();
-		log.info("insertSpendingForm-> atrzDocNo :  문서번호 등록 : " + atrzDocNo);
-		// 변수에 있는 문서번호를 넣어주기 atrzLineVO에 넣어주기
-		for (AtrzLineVO atrzLineVO : atrzLineList) {
-			atrzLineVO.setAtrzDocNo(atrzDocNo);
-			log.info("atrzLineVO :  문서번호 등록후 : " + atrzLineVO);
-			atrzService.insertAtrzLine(atrzLineVO);
-		}
+		log.info("insertAppLineList-> atrzVO(사원추가후) : " + atrzVO);
 
 		// 문서번호등록
-		spendingVO.setAtrzDocNo(atrzDocNo);
+		spendingVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
 		log.info("spendingVO :  문서번호 등록후 : " + spendingVO);
-		// 지출결의서 등록
-		int documSpendingResult = atrzService.insertSpending(spendingVO);
+
+		log.info("insertSpendingForm->documHolidayVO :  문서번호 등록후 : " + spendingVO);
+
+		// 1) atrz 테이블 update
+
+		// 2) 결재선지정 후에 제목, 내용, 등록일자, 상태 update
+		int result = atrzService.insertUpdateAtrz(atrzVO);
+		log.info("insertSpendingForm->result : " + result);
+
+		// 3) 연차신청서 등록
+		int documHolidayResult = atrzService.insertSpending(spendingVO);
+		log.info("insertSpendingForm->documHolidayResult : " + documHolidayResult);
 
 		return "쭈니성공";
 	}
 
-	// 급여명세서 등록
-	@ResponseBody
-	@PostMapping(value = "atrzSalaryInsert")
-	public String insertSalaryForm(AtrzVO atrzVO, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList,
-			SalaryVO salaryVO) {
-
-		atrzVO.setDrafterEmpno(atrzVO.getEmplNo());
-
-		log.info("insertSalaryForm-> atrz : " + atrzVO);
-		log.info("insertSalaryForm-> atrzLineList : " + atrzLineList);
-		log.info("insertSalaryForm-> spendingVO : " + salaryVO);
-
-		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
-		log.info("insertSalaryForm->emplDetail : " + emplDetail);
-		// 여기서 VO를 하나 씩 담아야 하는건가...싶다.
-		String clsfCode = emplDetail.getClsfCode();
-		String deptCode = emplDetail.getDeptCode();
-		atrzVO.setClsfCode(clsfCode);
-		atrzVO.setDeptCode(deptCode);
-
-		log.info("insertSalaryForm-> atrzVO(사원추가후) : " + atrzVO);
-
-		// 전자결재 테이블 등록
-		int atrzResult = atrzService.insertAtrz(atrzVO);
-
-		// 전자결재 문서번호등록
-		String atrzDocNo = atrzVO.getAtrzDocNo();
-		log.info("insertSpendingForm-> atrzDocNo :  문서번호 등록 : " + atrzDocNo);
-		// 변수에 있는 문서번호를 넣어주기 atrzLineVO에 넣어주기
-		for (AtrzLineVO atrzLineVO : atrzLineList) {
-			atrzLineVO.setAtrzDocNo(atrzDocNo);
-			log.info("atrzLineVO :  문서번호 등록후 : " + atrzLineVO);
-			atrzService.insertAtrzLine(atrzLineVO);
-		}
-
-		// 문서번호등록
-		salaryVO.setAtrzDocNo(atrzDocNo);
-		log.info("salaryVO :  문서번호 등록후 : " + salaryVO);
-		// 지출결의서 등록
-		int documSalaryResult = atrzService.insertSalary(salaryVO);
-
-		return "쭈니성공";
-	}
-
-	// 급여계좌변경신청서 등록
-	@ResponseBody
-	@PostMapping(value = "atrzBankAccountInsert")
-	public String insertBankAccountForm(AtrzVO atrzVO, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList,
-			BankAccountVO bankAccountVO) {
-
-		atrzVO.setDrafterEmpno(atrzVO.getEmplNo());
-
-		log.info("insertBankAccountForm-> atrz : " + atrzVO);
-		log.info("insertBankAccountForm-> atrzLineList : " + atrzLineList);
-		log.info("insertBankAccountForm-> bankAccountVO : " + bankAccountVO);
-
-		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
-		log.info("insertBankAccountForm->emplDetail : " + emplDetail);
-		// 여기서 VO를 하나 씩 담아야 하는건가...싶다.
-		String clsfCode = emplDetail.getClsfCode();
-		String deptCode = emplDetail.getDeptCode();
-		atrzVO.setClsfCode(clsfCode);
-		atrzVO.setDeptCode(deptCode);
-
-		log.info("insertBankAccountForm-> atrzVO(사원추가후) : " + atrzVO);
-
-		// 전자결재 테이블 등록
-		int atrzResult = atrzService.insertAtrz(atrzVO);
-
-		// 전자결재 문서번호등록
-		String atrzDocNo = atrzVO.getAtrzDocNo();
-		log.info("insertBankAccountForm-> atrzDocNo :  문서번호 등록 : " + atrzDocNo);
-		// 변수에 있는 문서번호를 넣어주기 atrzLineVO에 넣어주기
-		for (AtrzLineVO atrzLineVO : atrzLineList) {
-			atrzLineVO.setAtrzDocNo(atrzDocNo);
-			log.info("atrzLineVO :  문서번호 등록후 : " + atrzLineVO);
-			atrzService.insertAtrzLine(atrzLineVO);
-		}
-
-		// 문서번호등록
-		bankAccountVO.setAtrzDocNo(atrzDocNo);
-		log.info("spendingVO :  문서번호 등록후 : " + bankAccountVO);
-		// 급여계좌변경신청서 등록
-		int documBankAccountResult = atrzService.insertBankAccount(bankAccountVO);
-
-		return "쭈니성공";
-	}
-
-	// 기안서 등록
-	@ResponseBody
-	@PostMapping(value = "atrzDraftInsert")
-	public String insertDraftForm(AtrzVO atrzVO, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList,
-			DraftVO draftVO) {
-
-		atrzVO.setDrafterEmpno(atrzVO.getEmplNo());
-
-		log.info("insertDraftForm-> atrz : " + atrzVO);
-		log.info("insertDraftForm-> atrzLineList : " + atrzLineList);
-		log.info("insertDraftForm-> draftVO : " + draftVO);
-
-		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
-		log.info("insertDraftForm->emplDetail : " + emplDetail);
-		// 여기서 VO를 하나 씩 담아야 하는건가...싶다.
-		String clsfCode = emplDetail.getClsfCode();
-		String deptCode = emplDetail.getDeptCode();
-		atrzVO.setClsfCode(clsfCode);
-		atrzVO.setDeptCode(deptCode);
-
-		log.info("insertDraftForm-> atrzVO(사원추가후) : " + atrzVO);
-
-		// 전자결재 테이블 등록
-		int atrzResult = atrzService.insertAtrz(atrzVO);
-
-		// 전자결재 문서번호등록
-		String atrzDocNo = atrzVO.getAtrzDocNo();
-		log.info("insertDraftForm-> atrzDocNo :  문서번호 등록 : " + atrzDocNo);
-		// 변수에 있는 문서번호를 넣어주기 atrzLineVO에 넣어주기
-		for (AtrzLineVO atrzLineVO : atrzLineList) {
-			atrzLineVO.setAtrzDocNo(atrzDocNo);
-			log.info("atrzLineVO :  문서번호 등록후 : " + atrzLineVO);
-			atrzService.insertAtrzLine(atrzLineVO);
-		}
-
-		// 문서번호등록
-		draftVO.setAtrzDocNo(atrzDocNo);
-		log.info("insertDraftForm->draftVO :  문서번호 등록후 : " + draftVO);
-		// 급여계좌변경신청서 등록
-		int documDraftResult = atrzService.insertDraft(draftVO);
-
-		return "쭈니성공";
-	}
-	
-	
 	// 지출결의서 양식조회
 	@GetMapping("/selectForm/spendingForm")
 	public String selectSpendingForm() {
