@@ -105,8 +105,8 @@ function inputPassword(){
 	let newPassword = $('#newPassword').val();
 	// 새 비밀번호 확인
 	let confirmPassword = $('#confirmPassword').val();
-	console.log('바꿀 비번 : ' , newPassword);
-	console.log('입력중인 : ' , confirmPassword);
+	//console.log('바꿀 비번 : ' , newPassword);
+	//console.log('입력중인 : ' , confirmPassword);
 
 	if(confirmPassword === ''){
 		$('#pwMsg').text('');
