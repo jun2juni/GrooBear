@@ -48,9 +48,10 @@
 	  <delete id="deleteAnswer">
 	    DELETE FROM BBS_ANSWER
 	    WHERE ANSWER_NO = #{answerNo}
+	    OR PARENT_ANSWER_NO = #{answerNo}
 	  </delete>
 	  
-	    <!-- 댓글 번호로 단일 댓글 조회 (답글 알림용) -->
+	  <!-- 댓글 번호로 단일 댓글 조회 (답글 알림용) -->
 	  <select id="findById" parameterType="int" resultType="AnswerVO">
 	    SELECT 
 	      A.*,
