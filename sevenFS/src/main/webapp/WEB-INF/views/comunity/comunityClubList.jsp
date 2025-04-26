@@ -96,12 +96,17 @@
 				                        <td style="text-align: left;">
 				                          <div class="employee-image">
 				                            <img
-				                            	 src="/upload/${club.profileImg}" 
-				                            	 alt="     "
-				                            	 style="cursor: pointer"
-				                            	 onerror="this.src='/assets/images/profileDefaultImage.jpg';"
-				                            	 onclick="document.getElementById('hiddenProfileInput').click();"
-				                            	 >
+											  src="/upload/${club.profileImg}" 
+											  alt="프로필"
+											  onerror="this.src='/assets/images/profileDefaultImage.jpg';"
+											  style="<c:choose>
+											           <c:when test='${club.emplNo == loginEmplNo}'>cursor: pointer;</c:when>
+											           <c:otherwise>cursor: default;</c:otherwise>
+											         </c:choose>"
+											  <c:if test="${club.emplNo == loginEmplNo}">
+											    onclick="document.getElementById('hiddenProfileInput').click();"
+											  </c:if>
+											>
 				                          </div>
 				                        </td>
 				                        <!--프로필 사진 끝  -->
@@ -203,12 +208,17 @@
 				                        <td style="text-align: left;">
 				                          <div class="employee-image">
 				                            <img
-				                            	 src="/upload/${club.profileImg}" 
-				                            	 alt="     "
-				                            	 style="cursor: pointer"
-				                            	 onerror="this.src='/assets/images/profileDefaultImage.jpg';"
-				                            	 onclick="document.getElementById('hiddenProfileInput').click();"
-				                            	 >
+											  src="/upload/${club.profileImg}" 
+											  alt="프로필"
+											  onerror="this.src='/assets/images/profileDefaultImage.jpg';"
+											  style="<c:choose>
+											           <c:when test='${club.emplNo == loginEmplNo}'>cursor: pointer;</c:when>
+											           <c:otherwise>cursor: default;</c:otherwise>
+											         </c:choose>"
+											  <c:if test="${club.emplNo == loginEmplNo}">
+											    onclick="document.getElementById('hiddenProfileInput').click();"
+											  </c:if>
+											>
 				                          </div>
 				                        </td>
 				                        <!-- 사원이름+이모지  -->
@@ -297,6 +307,12 @@
 										  </c:choose>
 										</td>
 				                      </tr>
+				                      <tr class="club-row" 
+								    data-profileimg="${club.profileImg}" 
+								    data-emoji="${club.emoji}" 
+								    data-ttmi="${fn:escapeXml(club.ttmiContent)}" 
+								    data-today="${fn:escapeXml(club.todayContent)}"
+								    data-emplnm="${club.emplNm}"></tr>
 				                     </c:if>
   								  </c:forEach>
 			                      <!-- end table row -->
@@ -425,7 +441,34 @@
 				  </div> 
 				</div>     
 			</form>
-       		 <!-- 오늘의 이모지 모달 끝  -->
+				<!--상세보기 디테일  -->
+				<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">	
+				        <h1 class="modal-title fs-5" id="exampleModalLabel">프로필파일 선택</h1>
+				      </div>
+				      <div class="modal-body">
+				      	<div class="emojiDetail">
+				        
+		                </div>
+						<div class="profileImgDetail">
+						
+						</div>				      
+				        <div class="T.TmiDetail">
+				        
+		                </div>
+				        <div class="TodayDetail">
+				        
+		                </div>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+				      </div>	
+				    </div>
+				  </div> 
+				</div> 
+       		  <!--상세보기 디테일  -->  
 		</section>
 		<%@ include file="../layout/footer.jsp"%>
 	</main>
@@ -541,10 +584,25 @@ td, th {
 /* 파일이 존재 할 때. 프로필이미지 변경  */
 const fileInput = document.getElementById('hiddenProfileInput');
 fileInput.addEventListener('change', function () {
+  const loginEmplNo = '${loginEmplNo}'; // 서버에서 넘겨준 본인 사번
+  const currentEmplNo = loginEmplNo;    // 여기는 고정 (지금은 내 것만 가능)
+
   if (this.files.length > 0) {
+    if (currentEmplNo !== loginEmplNo) {
+    	
+    	 swal({
+             title: "!!!!!!!",
+             text: "타인의 사진은 변경 할 수 없습니다.",
+             icon: "danger",
+             button: "확인"
+           });
+    	
+      return;
+    }
     document.getElementById('profileImgForm').submit();
   }
 });
+
 
 
 
