@@ -145,16 +145,17 @@ function renderCommentCard(answer) {
                         </button>` : ''}
                     </div>
                     <div class="dropdown">
+					${answer.answerWritngEmpno === loginUserEmplNo ? `
                         <button class="btn btn-sm btn-outline-light text-dark" type="button"
                                 id="dropdownMenu-${answer.taskAnswerSn}" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-three-dots-vertical"></i>
                         </button>
+                        
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu-${answer.taskAnswerSn}">
-                            ${answer.answerWritngEmpno === loginUserEmplNo ? `
                                 <li><a class="dropdown-item" href="#" onclick="editTaskAnswer(${answer.taskAnswerSn})"><i class="bi bi-pencil-square me-2"></i> 수정</a></li>
                                 <li><a class="dropdown-item text-danger" href="#" onclick="deleteTaskAnswer(${answer.taskAnswerSn})"><i class="bi bi-trash me-2"></i> 삭제</a></li>
-                            ` : ''}
                         </ul>
+                    ` : ''}
                     </div>
                 </div>
 

@@ -296,12 +296,13 @@
 	                          <!-- 드롭다운 (수정/삭제) -->
 	                          <div>
 	                            <div class="dropdown">
+	                          	\${answer.emplNo === loginUserEmplNo ? `
 	                              <button class="btn btn-sm btn-outline-light text-dark" type="button"
 	                                      id="dropdownMenu-\${answer.answerNo}" data-bs-toggle="dropdown" aria-expanded="false">
 	                                <i class="bi bi-three-dots-vertical"></i>
 	                              </button>
 	                              <ul class="dropdown-menu" aria-labelledby="dropdownMenu-\${answer.answerNo}">
-	                                \${answer.emplNo === loginUserEmplNo ? `
+	                                
 	                                  <li><a class="dropdown-item" href="#" onclick="editAnswer(\${answer.answerNo})">
 	                                    <i class="bi bi-pencil-square me-2"></i> 수정</a></li>
 	                                  <li><a class="dropdown-item text-danger" href="#" onclick="deleteAnswer(\${answer.answerNo})">
@@ -309,8 +310,8 @@
 	                                ` : loginUserEmplNo === '20250000' ? `
 	                                  <li><a class="dropdown-item text-danger" href="#" onclick="deleteAnswer(\${answer.answerNo})">
 	                                    <i class="bi bi-trash me-2"></i> 삭제</a></li>
-	                                ` : ''}
 	                              </ul>
+	                                ` : ''}
 	                            </div>
 	                          </div>
 
