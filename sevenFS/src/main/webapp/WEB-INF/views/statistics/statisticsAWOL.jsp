@@ -59,16 +59,6 @@
 											data-bs-target="#content2" type="button" role="tab"
 											aria-controls="content2" aria-selected="false">직원관리</button>
 									</li>
-									<li class="nav-item" role="presentation">
-										<button class="nav-link" id="tab3" data-bs-toggle="tab"
-											data-bs-target="#content3" type="button" role="tab"
-											aria-controls="content3" aria-selected="false">재무</button>
-									</li>
-									<li class="nav-item" role="presentation">
-										<button class="nav-link" id="tab4" data-bs-toggle="tab"
-											data-bs-target="#content4" type="button" role="tab"
-											aria-controls="content4" aria-selected="false">프로젝트관리</button>
-									</li>
 								</ul>
 							</div>
 							<!-- 상위탭 시작  -->
@@ -103,31 +93,6 @@
 										<li class="nav-item"><a class="nav-link" href="#">예상
 												실 수익율 대비 수익율</a></li>
 								</div>
-								<div class="tab-pane fade" id="content4" role="tabpanel"
-									aria-labelledby="tab3">
-									<!-- keyPerformanceIndicator-->
-									<ul class="nav nav-pills">
-										<li class="nav-item"><a class="nav-link " href="#">직급
-												별 업무기여도 달성율</a></li>
-										<!--Hire And Leaving (입,퇴사자) 통계  -->
-										<li class="nav-item"><a class="nav-link" href="#">입,퇴사자</a>
-										</li>
-								</div>
-								<div class="tab-pane fade" id="content5" role="tabpanel"
-									aria-labelledby="tab4">
-									<ul class="nav nav-pills">
-										<li class="nav-item"><a class="nav-link " href="#">프로젝트별
-												업무 기여도</a></li>
-										<!--Project Acheviement Rate  -->
-										<li class="nav-item"><a class="nav-link" href="#">프로젝트
-												별 달성율</a></li>
-								</div>
-								<div class="tab-pane fade" id="content6" role="tabpanel"
-									aria-labelledby="tab5">
-									<ul class="nav nav-pills">
-										<li class="nav-item"><a class="nav-link "
-											href="http://localhost/1demo/table">표</a></li>
-								</div>
 							</div>
 							<!-- 하위탭 끝  -->
 							<!-- 그래프 내부카드  -->
@@ -159,101 +124,128 @@
 											<!-- 동적으로 변경될 입력 필드 -->
 											<!-- 기본적으로 숨겨둠 -->
 											<div id="dynamicInputYears" style="display: none;">
-													<div class="card-header">
-														<legend>연간 선택</legend>
-													</div>
-													<div class="card-body">
-														<div class="select-style-1 form-group w-fit"">
-															<label for="startYears" class="form-label"> 시작년도</label> 
-															<select name="startYearsY" class="form-select" id="startYearsY" required>
-																<option selected="" disabled="" readonly="" value="startYearsY">조회를 시작 할 년도를 선택해주세요</option>
-																<option value="202101">2021</option>
-																<option value="202201">2022</option>
-																<option value="202301">2023</option>
-																<option value="202401">2024</option>
-																<option value="202501">2025</option>
-															</select>
-														</div>
-														<div class="select-style-1 form-group w-fit">
-															<label for="endYearsY" class="form-label"> 종료년도 </label>
-															<select name="endYearsY" class="form-select" id="endYearsY" required>
-																<option selected="" disabled="" readonly="" value="endYearsY">조회를 종료 할 년도를 선택해주세요</option>
-																<option value="202112">2021</option>
-																<option value="202212">2022</option>
-																<option value="202312">2023</option>
-																<option value="202412">2024</option>
-																<option value="202512">2025</option>
-															</select>
-														</div>
-														<!--셀렉트 끝  -->
-													</div>
+											    <div class="card-header mt-3">
+											     <h3>연간선택</h5>
+											    </div>
+											    <div class="card-body">
+											        <!-- flex로 가로정렬 + 너비조정 + 텍스트 깨짐 방지 -->
+											        <div style="display: flex; gap: 20px; align-items: flex-end;">
+											            <!-- 시작년도 -->
+											            <div class="select-style-1 form-group mt-2" style="min-width: 200px;">
+											                <label for="startYearsY" class="form-label" style="white-space: nowrap;">시작년도</label>
+											                <select name="startYearsY" class="form-select" id="startYearsY" required>
+											                    <option selected disabled readonly value="startYearsY">조회를 시작 할 년도를 선택해주세요</option>
+											                    <option value="202101">2021</option>
+											                    <option value="202201">2022</option>
+											                    <option value="202301">2023</option>
+											                    <option value="202401">2024</option>
+											                    <option value="202501">2025</option>
+											                </select>
+											            </div>
+											
+											            <!-- 종료년도 -->
+											            <div class="select-style-1 form-group" style="min-width: 200px;">
+											                <label for="endYearsY" class="form-label" style="white-space: nowrap;">종료년도</label>
+											                <select name="endYearsY" class="form-select" id="endYearsY" required>
+											                    <option selected disabled readonly value="endYearsY">조회를 종료 할 년도를 선택해주세요</option>
+											                    <option value="202112">2021</option>
+											                    <option value="202212">2022</option>
+											                    <option value="202312">2023</option>
+											                    <option value="202412">2024</option>
+											                    <option value="202512">2025</option>
+											                </select>
+											            </div>
+											        </div>
+											    </div>
 											</div>
+
 											<!--dynamicInputYears 끝  -->
 
 											<div id="dynamicInputMonths" style="display: none;">
-													<div class="card-header">
-														<legend>월 선택</legend>
-													</div>
-													<div class="card-body">
-														<div class="select-style-1 form-group w-fit">
-															<label for="startYearsM" class="form-label"> 시작년도</label> 
-															<select name="startYearsM" class="form-select mb-2" id="startYearsM">
-																<option selected="" readonly="" value="">조회 년도를 선택 해주세요</option>
-																<option value="2021">2021</option>
-																<option value="2022">2022</option>
-																<option value="2023">2023</option>
-																<option value="2024">2024</option>
-																<option value="2025">2025</option>
-															</select>
-															<label for="startYearsM" class="form-label"> 시작월</label>
-															<select name="startMonths" class="form-select mb-2" id="startMonths">
-																<option selected="" disabled="" readonly="" value="">조회를 종료 할 월을 선택해주세요</option>
-																<option value="01">1월</option>
-																<option value="02">2월</option>
-																<option value="03">3월</option>
-																<option value="04">4월</option>
-																<option value="05">5월</option>
-																<option value="06">6월</option>
-																<option value="07">7월</option>
-																<option value="08">8월</option>
-																<option value="09">9월</option>
-																<option value="10">10월</option>
-																<option value="11">11월</option>
-																<option value="12">12월</option>
-															</select> 
-															<label for="startMonths" class="form-label"> 종료월</label>
-															<select name="endMonths" class="form-select mb-2" id="endMonths">
-																<option selected="" disabled="" readonly="" value="">조회를 종료 할 월을 선택해주세요</option>
-																<option value="01">1월</option>
-																<option value="02">2월</option>
-																<option value="03">3월</option>
-																<option value="04">4월</option>
-																<option value="05">5월</option>
-																<option value="06">6월</option>
-																<option value="07">7월</option>
-																<option value="08">8월</option>
-																<option value="09">9월</option>
-																<option value="10">10월</option>
-																<option value="11">11월</option>
-																<option value="12">12월</option>
-															</select>
-														</div>
-													</div>
+											    <div class="card-header">
+											        <h3 style="margin-bottom: 1rem;">월 선택</h3>
+											    </div>
+											    <div class="card-body">
+											        <!-- 첫 줄: 시작년도 단독 -->
+											        <div style="margin-bottom: 1rem;">
+											            <div class="select-style-1 form-group" style="min-width: 200px;">
+											                <label for="startYearsM" class="form-label" style="white-space: nowrap;">시작년도</label>
+											                <select name="startYearsM" class="form-select" id="startYearsM">
+											                    <option selected readonly value="">조회 년도를 선택 해주세요</option>
+											                    <option value="2021">2021</option>
+											                    <option value="2022">2022</option>
+											                    <option value="2023">2023</option>
+											                    <option value="2024">2024</option>
+											                    <option value="2025">2025</option>
+											                </select>
+											            </div>
+											        </div>
+											
+											        <!-- 두 번째 줄: 시작월 + 종료월 -->
+											        <div style="display: flex; gap: 20px;">
+											            <div class="select-style-1 form-group" style="min-width: 200px;">
+											                <label for="startMonths" class="form-label" style="white-space: nowrap;">시작월</label>
+											                <select name="startMonths" class="form-select" id="startMonths">
+											                    <option selected disabled readonly value="">조회를 시작 할 월을 선택해주세요</option>
+											                    <option value="01">1월</option>
+											                    <option value="02">2월</option>
+											                    <option value="03">3월</option>
+											                    <option value="04">4월</option>
+											                    <option value="05">5월</option>
+											                    <option value="06">6월</option>
+											                    <option value="07">7월</option>
+											                    <option value="08">8월</option>
+											                    <option value="09">9월</option>
+											                    <option value="10">10월</option>
+											                    <option value="11">11월</option>
+											                    <option value="12">12월</option>
+											                </select>
+											            </div>
+											
+											            <div class="select-style-1 form-group" style="min-width: 200px;">
+											                <label for="endMonths" class="form-label" style="white-space: nowrap;">종료월</label>
+											                <select name="endMonths" class="form-select" id="endMonths">
+											                    <option selected disabled readonly value="">조회를 종료 할 월을 선택해주세요</option>
+											                    <option value="01">1월</option>
+											                    <option value="02">2월</option>
+											                    <option value="03">3월</option>
+											                    <option value="04">4월</option>
+											                    <option value="05">5월</option>
+											                    <option value="06">6월</option>
+											                    <option value="07">7월</option>
+											                    <option value="08">8월</option>
+											                    <option value="09">9월</option>
+											                    <option value="10">10월</option>
+											                    <option value="11">11월</option>
+											                    <option value="12">12월</option>
+											                </select>
+											            </div>
+											        </div>
+											    </div>
 											</div>
+
 
 											<div id="dynamicInputDays" style="display: none;">
 											    <div class="card-header">
-											        <legend>특정 기간 선택</legend>
-												    <div class="input-container">
-												        <div class="input-style-1">
-												            <label>시작일</label>
-												            <input id="startDays" name="startDays" type="date" data-listener-added_846ff8c4="true">
-												             <label>종료일</label>
-												            <input id="endDays" name="endDays" type="date" data-listener-added_846ff8c4="true">
-												        </div>
-												    </div>
+											        <h3 style="margin-bottom: 1rem;">특정 기간 선택</h3>
+											    </div>
+											    <div class="card-body">
+											        <div style="display: flex; gap: 20px; align-items: flex-end;">
+											            <!-- 시작일 -->
+											            <div class="input-style-1" style="min-width: 200px;">
+											                <label for="startDays" style="white-space: nowrap;">시작일</label>
+											                <input id="startDays" name="startDays" type="date" class="form-control">
+											            </div>
+											
+											            <!-- 종료일 -->
+											            <div class="input-style-1" style="min-width: 200px;">
+											                <label for="endDays" style="white-space: nowrap;">종료일</label>
+											                <input id="endDays" name="endDays" type="date" class="form-control">
+											            </div>
+											        </div>
 											    </div>
 											</div>
+
 
 											<div class="select-style-1 form-group">
 												<label>조회 할 부서를 선택 해 주세요 <span class="text-danger">*</span></label>
