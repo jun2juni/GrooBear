@@ -69,7 +69,8 @@
                                     </div>
                                 </c:if>
 
-                                <button id="changePwButton" type="button" class="btn submit btn-success col-12">비밀번호 변경</button>
+                                <button id="changePwButton" type="button" class="btn submit btn-success col-12 mb-2">비밀번호 변경</button>
+                                <a href="/emplDetailHeader?emplNo=${emp.emplNo}" id="changePwCancle" type="button" class="btn submit btn-dark col-12">비밀번호 변경 취소</a>
                         </div>
                     </div>
                 </div>
