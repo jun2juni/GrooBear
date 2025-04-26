@@ -441,43 +441,56 @@
 				  </div> 
 				</div>     
 			</form>
-				<!--상세보기 디테일  -->
-				<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				  <div class="modal-dialog">
-				    <div class="modal-content">
-				      <div class="modal-header">	
-				        <h1 class="modal-title fs-5" id="exampleModalLabel">프로필파일 선택</h1>
-				      </div>
-				      <div class="modal-body">
-				      	<div class="emojiDetail">
-				        
-		                </div>
-						<div class="profileImgDetail">
-						
-						</div>				      
-				        <div class="T.TmiDetail">
-				        
-		                </div>
-				        <div class="TodayDetail">
-				        
-		                </div>
-				      </div>
-				      <div class="modal-footer">
-				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-				      </div>	
-				    </div>
-				  </div> 
-				</div> 
-       		  <!--상세보기 디테일  -->  
 		</section>
 		<%@ include file="../layout/footer.jsp"%>
+		<!-- ✅ 가이드 모달 시작 -->
+<div class="modal fade" id="guideModal" tabindex="-1" aria-labelledby="guideModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- 진행률 -->
+      <div class="progress" style="height: 6px;">
+        <div class="progress-bar" id="guideProgressBar" style="width: 25%;"></div>
+      </div>
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="guideModalLabel">
+          Welcome! 🥳 <small id="progressText" style="font-size: 0.8rem; color: gray;">(1/4)</small>
+        </h5>
+      </div>
+
+      <div class="modal-body">
+        <div id="guideStep1" class="guide-step" style="display: block;">
+          <h4>1. 프로필 사진 변경</h4>
+          <p>프로필 사진을 클릭해서 변경할 수 있어요!</p>
+        </div>
+        <div id="guideStep2" class="guide-step" style="display: none;">
+          <h4>2. 이모지 등록</h4>
+          <p>오늘 기분을 이모지로 표현해보세요!</p>
+        </div>
+        <div id="guideStep3" class="guide-step" style="display: none;">
+          <h4>3. T.T-MI 작성</h4>
+          <p>좋아하는 과일이나 이야기를 적어주세요!</p>
+        </div>
+        <div id="guideStep4" class="guide-step" style="display: none;">
+          <h4>4. 오늘의 한 줄</h4>
+          <p>오늘 하루를 마무리하는 한 마디를 남겨주세요!</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="closeGuide">닫기</button>
+        <button type="button" class="btn btn-primary" id="nextGuide">다음</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ✅ 가이드 모달 끝 -->
+		
 	</main>
 	<%@ include file="../layout/prescript.jsp"%>
-	<script type="text/javascript">
-	function emptyFile(){
-		console.log("emptyFile----",this);
-	}
-	</script>
 </body>
 <style>
 /* 테이블 헤더 스타일 */
@@ -577,10 +590,75 @@ td, th {
   text-overflow: ellipsis;
 }
 
+.guide-step {
+  text-align: center;
+}
+.d-none {
+  display: none !important;
+}
+
+
 
 </style>
 
 <script type="text/javascript">
+function emptyFile(){
+	console.log("emptyFile----",this);
+}
+
+let currentStep = 1;
+
+document.addEventListener('DOMContentLoaded', function () {
+  const guideModal = new bootstrap.Modal(document.getElementById('guideModal'));
+  guideModal.show();
+
+  const nextGuideBtn = document.getElementById('nextGuide');
+  const closeGuideBtn = document.getElementById('closeGuide');
+
+  	nextGuideBtn.addEventListener('click', function () {
+	  console.log('👉 next 클릭했다! currentStep:', currentStep);
+
+	  // 현재 step 숨기기 (완전 확실히)
+	  const currentDiv = document.getElementById(`guideStep${currentStep}`);
+	  if (currentDiv) {
+	    console.log('👉 현재 step 숨긴다:', currentDiv.id);
+	    currentDiv.style.display = "none";
+	  }
+
+	  // 다음 step 이동
+	  currentStep++;
+	  console.log('👉 증가 후 currentStep:', currentStep);
+
+	  // 다음 step 보여주기
+	  const nextDiv = document.getElementById(`guideStep${currentStep}`);
+	  console.log('👉 nextDiv:', nextDiv);
+
+	  if (nextDiv) {
+	    nextDiv.style.display = "block";  
+	    updateProgress();
+	  } else {
+	    guideModal.hide();  // 더 이상 step 없으면 모달 닫기
+	  }
+	});
+
+
+  closeGuideBtn.addEventListener('click', function () {
+    guideModal.hide();
+  });
+
+  function updateProgress() {
+    const progressBar = document.getElementById('guideProgressBar');
+    const progressText = document.getElementById('progressText');
+    const percent = (currentStep / 4) * 100;
+
+    progressBar.style.width = `${percent}%`;
+    progressText.textContent = `(${currentStep}/4)`;
+  }
+});
+
+
+
+
 /* 파일이 존재 할 때. 프로필이미지 변경  */
 const fileInput = document.getElementById('hiddenProfileInput');
 fileInput.addEventListener('change', function () {
@@ -606,77 +684,6 @@ fileInput.addEventListener('change', function () {
 
 
 
-let offset = 0;
-const limit = 10;
-let loading = false;
-
-// 로딩 스피너 표시
-function showLoader(show) {
-  const loader = document.getElementById("loader");
-  if (loader) loader.style.display = show ? "block" : "none";
-}
-
-function loadMoreClubs() {
-  if (loading) return;
-  loading = true;
-  showLoader(true);
-
-  fetch(`/comunity/clubListMore?offset=${offset}&limit=${limit}`)
-    .then(response => response.json())
-    .then(data => {
-      const tbody = document.getElementById("clubListBody");
-
-      data.forEach(club => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><div class="employee-image"><img src="assets/images/lead/lead-1.png" alt=""></div></td>
-          <td style="white-space: nowrap;">
-            <span style="font-weight: bold; font-size: 1.05rem; color: #2C3E50;">${club.emplNm}</span>
-            <span style="margin-left: 6px;">${club.emoji || '😆'}</span>
-          </td>
-          <td class="ttmi-col" title="${club.ttmiContent}">
-            ${club.ttmiContent || '🙈 아직 업데이트 하지 않았어요 ㅠ.ㅠ'}
-          </td>
-          <td class="today-col" title="${club.todayContent}">
-            ${club.todayContent || '🙊 한 줄을 써주세요!!'}
-          </td>`;
-        tbody.appendChild(tr);
-      });
-
-      offset += limit;
-      loading = false;
-      showLoader(false);
-
-      if (data.length < limit) {
-        document.getElementById("loader").innerHTML = "✅ 더 이상 불러올 데이터가 없습니다.";
-      }
-    })
-    .catch(err => {
-      console.error("데이터 로딩 오류:", err);
-      loading = false;
-      showLoader(false);
-    });
-}
-
-// ✅ DOM 완전히 로드된 후 스크롤 대상 확인
-document.addEventListener("DOMContentLoaded", () => {
-	
-  offset = 0; // ✅ 초기화
-  loadMoreClubs();
-	
-  const scrollContainer = document.querySelector(".table-wrapper");
-  if (!scrollContainer) return;
-
-  // 무한 스크롤 이벤트 등록
-  scrollContainer.addEventListener("scroll", () => {
-    const nearBottom = scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - 100;
-    if (nearBottom) {
-      loadMoreClubs();
-    }
-  });
-
-  loadMoreClubs(); // 초기 로딩
-});
 
 
 
