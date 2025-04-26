@@ -47,9 +47,12 @@
 
                                 <div class="input-style-1 form-group">
                                     <label for="newPassword" class="form-label">새 비밀번호</label>
-                                    <input type="password"  class="form-control" id="newPassword"
-                                           placeholder="새 비밀번호를 입력해주세요" required maxlength="30">
+                                    <input type="password"  class="form-control" id="newPassword" 
+                                    		 pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$"
+                                    		 oninput="inputNewPassword()"
+                                           placeholder="새 비밀번호를 입력해주세요" required maxlength="16">
                                     <div class="invalid-feedback">새 비밀번호를 입력해주세요.</div>
+                                    <p id="newPasswordMsg" style="color: red; font-weight: bold;"></p>
                                 </div>
 
                                 <div class="input-style-1 form-group">
@@ -78,17 +81,32 @@
 <%@ include file="../layout/prescript.jsp" %>
 <script type="text/javascript">
 	
+function inputNewPassword(){
+	// 비밀번호 형식에 맞는지 확인하기
+	let newPassword = $('#newPassword').val();
+	const patternStr = $('#newPassword').attr('pattern');
+	const pattern = new RegExp(patternStr);
+	//console.log('newPassword : ' , newPassword);
+	//console.log('pattern : ' , pattern);
+	if(!pattern.test(newPassword)){
+		$('#newPasswordMsg').text('8~16자의 영문 대소문자, 숫자 및 특수문자 사용').css('color', 'tomato');
+		$('#changePwButton').prop('disabled', true);
+	}else{
+		$('#newPasswordMsg').text('사용 가능한 비밀번호 입니다.').css('color', 'green');
+		$('#changePwButton').prop('disabled', false);
+	}
+	
+}
 
 function inputPassword(){
-	
 	// 현재 비밀번호
 	let currentPassword = $('#currentPassword').val();
 	// 새 비밀번호
 	let newPassword = $('#newPassword').val();
 	// 새 비밀번호 확인
 	let confirmPassword = $('#confirmPassword').val();
-	//console.log('바꿀 비번 : ' , newPassword);
-	//console.log('입력중인 : ' , confirmPassword);
+	console.log('바꿀 비번 : ' , newPassword);
+	console.log('입력중인 : ' , confirmPassword);
 
 	if(confirmPassword === ''){
 		$('#pwMsg').text('');
@@ -102,28 +120,33 @@ function inputPassword(){
 }	
 
 $(function(){
-	
 	// 현재 비밀번호
 	let currentPassword = $('#currentPassword').val();
-	// 새 비밀번호
-	let newPassword = $('#newPassword').val();
-	// 새 비밀번호 확인
-	let confirmPassword = $('#confirmPassword').val();
-	//console.log('바꿀 비번 : ' , newPassword);
 	
 	//----- 비동기로 비밀번호 보내기
 	$('#changePwButton').on('click', function(){
+		// 현재 비밀번호
+		let currentPassword = $('#currentPassword').val();
+		// 새 비밀번호
+		let newPassword = $('#newPassword').val();
+		// 새 비밀번호 확인
+		let confirmPassword = $('#confirmPassword').val();
+		//console.log('바꿀 비번 : ' , newPassword);
+		
+		// 비밀번호 형식에 맞는지 확인하기
+		const patternStr = $('#newPassword').attr('pattern');
+		const pattern = new RegExp(patternStr);
+		
 		// 로그인된 사원번호
 		const emplNo = $('#hiddenEmplNo').val();
 		//console.log('입력중인 : ' , $('#confirmPassword').val());
-		
-		if(newPassword !== confirmPassword){
+	 	if(newPassword !== confirmPassword){
 			swal({
 				icon : 'error',
 				text : '새 비밀번호가 일치하지 않습니다.'
 			})
 			return;
-		}
+		} 
 		const formData = new FormData();
 		formData.append('currentPassword', $('#currentPassword').val());
 		formData.append('confirmPassword', $('#confirmPassword').val());
@@ -156,7 +179,7 @@ $(function(){
 					$('#pwMsg').text('');
 				})
 			}
-		})
+		}) 
 	})
 })
 	

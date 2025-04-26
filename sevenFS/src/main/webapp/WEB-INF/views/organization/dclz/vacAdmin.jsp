@@ -235,8 +235,10 @@
                       <form action="/dclz/addVacInsert" method="get" id="addVacationForm${status.count}">
                         <td>
 	                         <div class="d-flex flex-column gap-1">
-				                <button type="button" id="sendVacBtn${status.count}" class="main-btn primary-btn-light square-btn btn-hover btn-sm" style="width: 80px; height: 40px;">지급하기</button>
-				                <button type="button" id="resetBtn${status.count}" class="main-btn danger-btn-light square-btn btn-hover btn-sm" style="width: 80px; height: 40px;">초기화</button>
+				                <button type="button" id="sendVacBtn${status.count}" class="main-btn primary-btn-light square-btn btn-hover btn-sm" 
+				                		style="width: 80px; height: 40px; border-radius: 8px;">지급하기</button>
+				                <button type="button" id="resetBtn${status.count}" class="main-btn danger-btn-light square-btn btn-hover btn-sm" 
+				                		style="width: 80px; height: 40px; border-radius: 8px;">초기화</button>
                         	</div>
                         </td>
                       </tr>
@@ -392,6 +394,7 @@ $(function(){
 			const urlParams = new URLSearchParams(queryString);
 			const keywordName = urlParams.get('keywordName');
 			const keywordDept = urlParams.get('keywordDept');
+			const currentPage = urlParams.get('currentPage');
 			
 			let sumTotal = 0;
 			let sumRemain = 0;
@@ -432,7 +435,12 @@ $(function(){
 						text : '해당 사원의 성과 보상 일수가 0개 입니다.'
 					})
 					.then(() =>{
-						location.href = '/dclz/vacAdmin?keywordName='+keywordName + "&keywordDept="+keywordDept;
+						if(keywordName != null && keywordName != '' || keywordDept != null && keywordDept != ''){
+							location.href = '/dclz/vacAdmin?keywordName='+keywordName + "&keywordDept="+keywordDept;
+						}
+						else{
+							location.href = '/dclz/vacAdmin?currentPage='+currentPage;
+						}
 					})
 					return true;
 				}
@@ -488,6 +496,7 @@ $(function(){
 				const urlParams = new URLSearchParams(queryString);
 				const keywordName = urlParams.get('keywordName');
 				const keywordDept = urlParams.get('keywordDept');
+				const currentPage = urlParams.get('currentPage');
 				// 성과보상만큼 총 연차일수도 계산해주기
 				if (diffVal === 0.5) {
 					let totalId = $('#inputTotalCnt'+index);
@@ -521,7 +530,12 @@ $(function(){
 							text : '해당 사원의 근무 보상 일수가 0개 입니다.'
 						})
 						.then(() =>{
-							location.href = '/dclz/vacAdmin?keywordName='+keywordName+"&keywordDept="+keywordDept;
+							if(keywordName != null && keywordName != '' || keywordDept != null && keywordDept != ''){
+								location.href = '/dclz/vacAdmin?keywordName='+keywordName + "&keywordDept="+keywordDept;
+							}
+							else{
+								location.href = '/dclz/vacAdmin';
+							}
 						})
 						return true;
 					}
