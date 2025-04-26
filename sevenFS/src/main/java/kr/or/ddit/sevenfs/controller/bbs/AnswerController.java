@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.HtmlUtils;
 
 import kr.or.ddit.sevenfs.service.bbs.AnswerService;
 import kr.or.ddit.sevenfs.service.bbs.Impl.BbsServiceImpl;
@@ -50,7 +51,10 @@ public class AnswerController {
 	    AnswerVO vo = new AnswerVO();
 	    vo.setBbsSn(bbsSn);
 	    vo.setBbsCtgryNo(bbsCtgryNo);
-	    vo.setAnswerCn(answerCn);
+	    
+	    String sanitizedAnswerCn = HtmlUtils.htmlEscape(answerCn);
+	    vo.setAnswerCn(sanitizedAnswerCn);
+	    
 	    vo.setEmplNo(emplNo); // 댓글 단 사람
 	    vo.setParentAnswerNo(parentAnswerNo); 
 	    vo.setAnswerDepth(answerDepth);       

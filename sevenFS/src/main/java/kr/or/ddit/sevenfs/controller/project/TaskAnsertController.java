@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 
 import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
@@ -46,7 +47,8 @@ public class TaskAnsertController {
 
         TaskAnsertVO vo = new TaskAnsertVO();
         vo.setTaskNo(taskNo);
-        vo.setAnswerCn(answerCn);
+        String sanitizedAnswerCn = HtmlUtils.htmlEscape(answerCn);
+        vo.setAnswerCn(sanitizedAnswerCn);
         vo.setAnswerWritngEmpno(emplNo);
         vo.setParentAnswerNo(parentAnswerNo != null ? parentAnswerNo : 0);
         vo.setAnswerDepth(parentAnswerNo != null ? answerDepth : 0);
