@@ -502,16 +502,16 @@
 <c:import url="./newAtrzDocModal.jsp" />
 <!--기간입력 선택시 활성화 시키는 스크립트-->
 <script>
-  document.getElementById("duration").addEventListener("change", function() {
-    var durationPeriod = document.getElementById("durationPeriod");
-    if(this.value == "period") {
-      durationPeriod.classList.remove("d-none");
-      durationPeriod.classList.add("d-flex");
-    } else {
-      durationPeriod.classList.remove("d-flex");
-      durationPeriod.classList.add("d-none");
-    }
-  })
+//   document.getElementById("duration").addEventListener("change", function() {
+//     var durationPeriod = document.getElementById("durationPeriod");
+//     if(this.value == "period") {
+//       durationPeriod.classList.remove("d-none");
+//       durationPeriod.classList.add("d-flex");
+//     } else {
+//       durationPeriod.classList.remove("d-flex");
+//       durationPeriod.classList.add("d-none");
+//     }
+//   })
 </script>
 </body>
 </html>

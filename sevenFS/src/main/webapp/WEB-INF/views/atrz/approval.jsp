@@ -54,6 +54,14 @@
 	margin-right: 10px;
 	margin-bottom: 10px;
 }
+.listCont {
+        width: 400px;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+    }
 
 #contact1-tab-pane {
 	padding-bottom: 10px;;
@@ -131,8 +139,7 @@
 									<option value="12" <c:if test="${param.duration == '12'}">selected</c:if>>1년</option>
 									<option value="period" <c:if test="${param.duration == 'period'}">selected</c:if>>기간입력</option>
 								</select>
-								<div id="durationPeriod" 
-									class="search_option d-none align-items-center">
+								<div id="durationPeriod" class="search_option d-none align-items-center">
 									<input id="fromDate" name="fromDate" value="${param.fromDate}" class="form-control" type="text" style="width: 150px;"> ~ 
 									<input id="toDate" name="toDate" value="${param.toDate}"  class="form-control" type="text" style="width: 150px;">
 								</div>

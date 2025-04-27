@@ -6,6 +6,8 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzVO;
@@ -82,6 +84,9 @@ public interface AtrzMapper {
 	public List<AtrzLineVO> selectAtrzLineList(String atrzDocNo);
 	//2) 결재선지정 후에 제목, 내용, 등록일자, 상태 update
 	public int insertUpdateAtrz(AtrzVO atrzVO);
+	
+	//급여명세서 결재선 지정후 제목 내용 일자 상태 업데이트
+	public int insertUpdateMyAtrz(AtrzVO atrzVO);
 	
 	//연차신청서 상세보기
 	public HolidayVO holidayDetail(String atrzDocNo);
@@ -168,9 +173,14 @@ public interface AtrzMapper {
 
 	//지출결의서 임시저장 지출결의서 테이블 
 	public void insertOrUpdateSpending(SpendingVO spendingVO);
-
 	//지출결의서 상세보기
 	public SpendingVO spendingDetail(String atrzDocNo);
-	
-	
+
+	//급여명세서 전자결재 인서트
+	public int insertAtrzMy(AtrzVO atrzVO);
+	//급여명세서 결재선 등록
+	public void insertMyAtrzLine(AtrzLineVO atrzLineVO);
+	//급여명세서 상세보기
+	public SalaryVO salaryDetail(String atrzDocNo);
+
 }

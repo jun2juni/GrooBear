@@ -415,9 +415,10 @@ public class AtrzController {
 		model.addAttribute("curAtrzLnSn", curAtrzLnSn);
 		model.addAttribute("lastAtrzLnSn", lastAtrzLnSn);
 
-		// 연차상세정보 셋팅
+		// 기안별 상세정보 셋팅  !! 하나씩 추가하기
 		atrzVO.setHolidayVO(atrzService.holidayDetail(atrzDocNo));
 		atrzVO.setSpendingVO(atrzService.spendingDetail(atrzDocNo));
+		atrzVO.setSalaryVO(atrzService.salaryDetail(atrzDocNo));
 
 		// 권한 여부는 model로 넘겨서 화면에서 결재버튼 노출여부 조절
 		model.addAttribute("isAuthorize", isAuthorize);
@@ -447,7 +448,7 @@ public class AtrzController {
 		case 'H' -> "documentForm/holidayDetail"; // 연차신청서
 		case 'S' -> "documentForm/spendingDetail"; // 지출결의서
 		case 'D' -> "documentForm/draftDetail"; // 기안서
-		case 'A' -> "documentForm/salarySlipDetail"; // 급여명세서
+		case 'A' -> "documentForm/salaryDetail"; // 급여명세서
 		case 'B' -> "documentForm/accountChangeDetail"; // 급여계좌변경신청서
 		case 'C' -> "documentForm/employmentCertDetail"; // 재직증명서
 		case 'R' -> "documentForm/resignDetail"; // 퇴직신청서
@@ -458,7 +459,13 @@ public class AtrzController {
 	}
 
 	// 전자결재 승인시 상세보기 get
-	// 전자결재 승인시
+	/**
+	 *  전자결재 승인시
+	 * @param atrzVO
+	 * @param model
+	 * @param customUser
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("selectForm/atrzDetailAppUpdate")
 	public String atrzDetailAppUpdate(AtrzVO atrzVO, Model model, @AuthenticationPrincipal CustomUser customUser) {
@@ -473,7 +480,13 @@ public class AtrzController {
 		return "success";
 	}
 
-	// 전자결재 반려시
+	/**
+	 *  전자결재 반려시
+	 * @param atrzVO
+	 * @param model
+	 * @param customUser
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("selectForm/atrzDetilCompUpdate")
 	public String atrzDetilCompUpdate(AtrzVO atrzVO, Model model, @AuthenticationPrincipal CustomUser customUser) {
@@ -489,7 +502,13 @@ public class AtrzController {
 		return "success";
 	}
 
-	// 전자결재 기안취소
+	/**
+	 *  전자결재 기안취소
+	 * @param atrzVO
+	 * @param model
+	 * @param customUser
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("selectForm/atrzCancelUpdate")
 	public String atrzCancelUpdate(AtrzVO atrzVO, Model model, @AuthenticationPrincipal CustomUser customUser) {
@@ -1105,9 +1124,10 @@ public class AtrzController {
 	// 지출결의서 등록
 	@ResponseBody
 	@PostMapping(value = "atrzSpendingInsert")
-	public String insertSpendingForm(AtrzVO atrzVO, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList,
-			@RequestPart("docSpending") SpendingVO spendingVO, int[] removeFileId,
-			@RequestParam(value = "uploadFile", required = false) MultipartFile[] uploadFile) {
+	public String insertSpendingForm(AtrzVO atrzVO
+			,@RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList
+			,@RequestPart("docSpending") SpendingVO spendingVO, int[] removeFileId
+			,@RequestParam(value = "uploadFile", required = false) MultipartFile[] uploadFile) {
 
 		log.info("insertSpendingForm->atrzVO(최초) : " + atrzVO);
 		log.info("insertSpendingForm->atrzLineList(최초) : " + atrzLineList);
@@ -1191,13 +1211,29 @@ public class AtrzController {
 		int result = atrzService.insertUpdateAtrz(atrzVO);
 		log.info("insertSpendingForm->result : " + result);
 
-		// 3) 연차신청서 등록
+		// 3) 지출결의서 등록
 		int documHolidayResult = atrzService.insertSpending(spendingVO);
 		log.info("insertSpendingForm->documHolidayResult : " + documHolidayResult);
 
 		return "쭈니성공";
 	}
+	
+	// 급여명세서 등록
+	@ResponseBody
+	@PostMapping(value = "atrzSalaryInsert")
+	public String insertSalaryForm(AtrzVO atrzVO
+			,@RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList
+			,@RequestPart("docSalary") SalaryVO salaryVO) {
 
+		log.info("insertSalaryForm->atrzVO(최초) : " + atrzVO);
+		log.info("insertSalaryForm->atrzLineList(최초) : " + atrzLineList);
+		log.info("insertSalaryForm->salaryVO(최초) : " + salaryVO);
+
+		atrzService.insertSalaryForm(atrzVO, atrzLineList, salaryVO);
+		return "쭈니성공";
+	}
+		
+		
 	// 지출결의서 양식조회
 	@GetMapping("/selectForm/spendingForm")
 	public String selectSpendingForm() {

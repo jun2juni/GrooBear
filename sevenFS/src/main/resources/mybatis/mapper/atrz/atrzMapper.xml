@@ -633,6 +633,36 @@
 			, #{docFormNo}
 		)
 	</insert>
+	<insert id="insertAtrzMy" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+		<selectKey resultType="string" order="BEFORE" keyProperty="atrzDocNo">
+			SELECT CREATE_DOC_NO(#{docFormNm}) FROM DUAL
+		</selectKey>
+	
+		INSERT INTO     /* AtrzMapper.insertAtrzMy */
+	<!-- 	전자결재번호, 기안자사번, 직급코드, 이름, 부서코드,  -->
+			 ATRZ
+		(
+			  atrz_doc_no
+			, drafter_empno
+			, drafter_clsf
+			, drafter_empnm
+			, drafter_dept
+			, bkmk_yn
+			, atch_file_no
+			, doc_form_no
+		)
+		VALUES
+		(
+			#{atrzDocNo}
+			,#{emplNo}
+			,#{clsfCode}
+			,#{emplNm}
+			,#{deptCode}
+			,'N'
+			, #{atchFileNo}
+			, #{docFormNo}
+		)
+	</insert>
 	
 	<!-- 전자결재테이블 등록(이미 전자결재 문서 번호가 존재함) 
 	atrzSj, atrzCn, atrzDrftDt, atrzSttusCode
@@ -655,6 +685,17 @@
         WHERE atrz_doc_no = #{atrzDocNo}		
 	</update>
 	
+	<update id="insertUpdateMyAtrz" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+		UPDATE atrz     /* AtrzMapper.insertUpdateMyAtrz */
+	<!-- 	첨부파일번호, 제목, 내용, 기안일시, 진행상태, 양식문서번호  -->
+		SET   atrz_sttus_code = '10'
+			, atrz_sj = #{atrzSj}
+			, atrz_cn = #{atrzCn}
+			, atrz_drft_dt = SYSDATE
+			, atrz_compt_dt = SYSDATE
+        WHERE atrz_doc_no = #{atrzDocNo}		
+	</update>
+	
 	<!-- 전자결재결재선 등록 -->
 	<insert id="insertAtrzLine" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
 		INSERT INTO  /* AtrzMapper.insertAtrzLine */
@@ -670,13 +711,41 @@
 			)
 		VALUES
 			(
-			#{atrzDocNo}
+			  #{atrzDocNo}
 			, #{atrzLnSn}
 			, #{sanctnerEmpno}
 			, #{sanctnerClsfCode}
 			, #{atrzTy}
-			, '00'
+			, #{sanctnProgrsSttusCode}
 			, #{dcrbAuthorYn}
+			)	
+	</insert>
+	
+	<insert id="insertMyAtrzLine" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
+		INSERT INTO  /* AtrzMapper.insertMyAtrzLine */
+			atrz_line 
+			(
+			  atrz_doc_no
+			, atrz_ln_sn
+			, sanctner_empno
+			, sanctner_clsf_code
+			, atrz_ty
+			, sanctn_progrs_sttus_code
+			, dcrb_author_yn
+			, sanctn_confm_dt
+			, sanctn_opinion
+			)
+		VALUES
+			(
+			  #{atrzDocNo}
+			, #{atrzLnSn}
+			, #{sanctnerEmpno}
+			, #{sanctnerClsfCode}
+			, #{atrzTy}
+			, #{sanctnProgrsSttusCode}
+			, #{dcrbAuthorYn}
+			, SYSDATE
+			, '급여명세서'
 			)	
 	</insert>
 	
@@ -1088,7 +1157,7 @@
 	
 	
 	
-	<!-- 지출결의서 인서트  -->
+	<!-- 지출결의서 등록  -->
 	<insert id="insertSpending" parameterType="kr.or.ddit.sevenfs.vo.atrz.SpendingVO">
 		<selectKey resultType="int" order="BEFORE" keyProperty="spendingReportNo">
 			SELECT NVL(MAX(spending_report_no),0)+1 FROM docum_spending
@@ -1134,7 +1203,11 @@
 			, pension
 			, employment_ins
 			, health_ins
-			, care_ins, pay_date
+			, care_ins
+			, pay_date
+			, total_ded
+			, total_pay
+			, net_pay
 			)
 		VALUES
 			(
@@ -1149,8 +1222,12 @@
 			, #{healthIns}
 			, #{careIns}
 			, #{payDate}
+			, #{totalPay}
+			, #{totalDed}
+			, #{netPay}
 			)
 	</insert>
+	
 	
 	<insert id="insertBankAccount" parameterType="kr.or.ddit.sevenfs.vo.atrz.BankAccountVO">
 		<selectKey resultType="int" order="BEFORE" keyProperty="bankAccNo">
@@ -1240,6 +1317,9 @@
             ,SL.HEALTH_INS
             ,SL.CARE_INS
             ,SL.PAY_DATE
+            ,SL.TOTAL_PAY
+            ,SL.TOTAL_DED
+            ,SL.NET_PAY
             ,B.BANK_ACC_NO
             ,B.OLD_BANK
             ,B.OLD_ACC_NO
@@ -1317,6 +1397,31 @@
 			            , PAYMENT_METHOD
 			            ,ROW_NUMBER() OVER (ORDER BY SPENDING_REPORT_NO DESC) AS RN
 			        FROM DOCUM_SPENDING
+			        WHERE ATRZ_DOC_NO = #{atrzDocNo}
+			    )
+			    WHERE RN = 1
+	</select>
+	<!-- 급여명세서 상세보기 -->
+	<select id="salaryDetail" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.SalaryVO">
+		    SELECT *		/* AtrzMapper.salaryDetail */
+			    FROM (
+			        SELECT 
+			              SALARY_NO
+			            , ATRZ_DOC_NO
+			            , BASE_SALARY
+			            , MEAL_ALLOWANCE
+			            , INCOME_TAX
+			            , LOCAL_TAX
+			            , PENSION
+			            , EMPLOYMENT_INS
+			            , HEALTH_INS
+			            , CARE_INS
+			            , PAY_DATE
+			            , TOTAL_PAY
+			            , TOTAL_DED
+			            , NET_PAY
+			            ,ROW_NUMBER() OVER (ORDER BY SALARY_NO DESC) AS RN
+			        FROM DOCUM_SALARY
 			        WHERE ATRZ_DOC_NO = #{atrzDocNo}
 			    )
 			    WHERE RN = 1
@@ -1618,6 +1723,10 @@
 		<result property="employmentIns" column="EMPLOYMENT_INS"/>
 		<result property="healthIns" column="HEALTH_INS"/>
 		<result property="careIns" column="CARE_INS"/>
+		<result property="payDate" column="PAY_DATE"/>
+		<result property="totalPay" column="TOTAL_PAY"/>
+		<result property="totalDed" column="TOTAL_DED"/>
+		<result property="netPay" column="NET_PAY"/>
 		<association property="atrzVO" resultMap="atrzMap"></association>
 	</resultMap>
 	

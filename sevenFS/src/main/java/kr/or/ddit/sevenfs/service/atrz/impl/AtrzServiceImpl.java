@@ -1,16 +1,19 @@
 package kr.or.ddit.sevenfs.service.atrz.impl;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
@@ -141,7 +144,9 @@ public class AtrzServiceImpl implements AtrzService {
 	}
 	
 	
-	//전자결재테이블 등록
+	/**
+	 * 전자결재테이블 등록
+	 */
 	@Override
 	public int insertAtrz(AtrzVO atrzVO) {
 		int result = this.atrzMapper.insertAtrz(atrzVO);
@@ -160,13 +165,18 @@ public class AtrzServiceImpl implements AtrzService {
 		
 		return result;
 	}
-	//전자결재선 등록
+	
+	/**
+	 * 전자결재선 등록
+	 */
 	@Override
 	public int insertAtrzLine(AtrzLineVO atrzLineVO) {
 		return this.atrzMapper.insertAtrzLine(atrzLineVO);
 	}
 	
-	
+	/**
+	 * 기안취소시 삭제처리하는 로직
+	 */
 	@Transactional
 	@Override
 	public void deleteAtrzWriting(String atrzDocNo) {
@@ -387,14 +397,52 @@ public class AtrzServiceImpl implements AtrzService {
 		    return 1;  //성공여부 반환
 		}
 	
-	
-	
-	
 	//급여명세서 등록
+	@Transactional
 	@Override
-	public int insertSalary(SalaryVO salaryVO) {
-		return this.atrzMapper.insertSalary(salaryVO);
+	public void insertSalaryForm(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, SalaryVO salaryVO) {
+		
+		 // 1. 사원정보 조회
+	    EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
+	    if (emplDetail != null) {
+	        atrzVO.setClsfCode(emplDetail.getClsfCode());
+	        atrzVO.setDeptCode(emplDetail.getDeptCode());
+	    }
+	    
+	    // 2. ATRZ 테이블 insert (atrzDocNo 생성)
+	    int atrzInsertResult = atrzMapper.insertAtrzMy(atrzVO); // <-- 여기서 atrzDocNo 생성됨
+	    log.info("insertSalaryForm -> ATRZ 테이블 insert 결과 : {}", atrzInsertResult);
+	    
+	    if (atrzInsertResult < 1) {
+	        throw new RuntimeException("전자결재 문서 등록 실패");
+	    }
+	    
+	    // 3. 문서번호 급여명세서에 세팅
+	    salaryVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
+
+	    // 4. ATRZ 테이블 업데이트
+	    int atrzResult = atrzMapper.insertUpdateMyAtrz(atrzVO);
+	    log.info("insertSalaryDocument -> ATRZ 테이블 업데이트 결과 : {}", atrzResult);
+
+	    // 4. 결재선 저장 (추가 예정 - 필요 시)
+	    // 예를 들면 atrzLineList를 반복 돌면서 insert 하는 로직
+	    for (AtrzLineVO atrzLineVO : atrzLineList) {
+	    	atrzLineVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
+	        atrzMapper.insertMyAtrzLine(atrzLineVO); // insert 로직
+	    }
+
+	    // 5. 급여명세서 저장
+	    int salaryResult = atrzMapper.insertSalary(salaryVO);
+	    log.info("insertSalaryDocument -> 급여명세서 저장 결과 : {}", salaryResult);
+
+	    // 6. 실패 처리 (선택사항)
+	    if (atrzResult < 1 || salaryResult < 1) {
+	        throw new RuntimeException("급여명세서 등록 실패");
+	    }
 	}
+	
+	
+	
 	//급여계좌변경신청서 등록
 	@Override
 	public int insertBankAccount(BankAccountVO bankAccountVO) {
@@ -422,6 +470,13 @@ public class AtrzServiceImpl implements AtrzService {
 	public int insertUpdateAtrz(AtrzVO atrzVO) {
 		return this.atrzMapper.insertUpdateAtrz(atrzVO);
 	}
+	
+	//급여명세서 결재선 지정후 제목 내용 일자 상태 업데이트
+	@Override
+	public int insertUpdateMyAtrz(AtrzVO atrzVO) {
+		return this.atrzMapper.insertUpdateMyAtrz(atrzVO);
+	}
+	
 	//연차신청서 상세보기
 	@Override
 	public HolidayVO holidayDetail(String atrzDocNo) {
@@ -932,13 +987,16 @@ public class AtrzServiceImpl implements AtrzService {
 	}
 
 	//지출결의서 상세보기
-	//길쥰후ㅢㅏ 다시 4/125
 	@Override
 	public SpendingVO spendingDetail(String atrzDocNo) {
 		return atrzMapper.spendingDetail(atrzDocNo);
 	}
+	//급여명세서 상세보기
+	@Override
+	public SalaryVO salaryDetail(String atrzDocNo) {
+		return atrzMapper.salaryDetail(atrzDocNo);
+	}
 
-	
 	//기안서 상세
 	@Override
 	public DraftVO draftDetail(String draftNo) {
@@ -947,11 +1005,6 @@ public class AtrzServiceImpl implements AtrzService {
 	}
 
 
-
-
-	
-	
-	
 
 	
 	

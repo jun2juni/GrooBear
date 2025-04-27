@@ -1248,7 +1248,8 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 				"auth":$(this).val(),
 				"flex":dcrbAuthorYn,
 				"atrzLnSn":(idx+1),
-				"atrzDocNo": $("#s_dfNo").text()
+				"atrzDocNo": $("#s_dfNo").text(),
+				"sanctnProgrsSttusCode":'00'
 			};
 			
 			//결재선 목록
@@ -1258,7 +1259,8 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 			formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",data.clsfCode);
 			formData.append("atrzLineVOList["+idx+"].atrzTy",data.auth);//Y / N 결재자 / 참조자
 			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.flex);//  1 / 0 전결여부
-			formData.append("atrzLineVOList["+idx+"].atrzLnSn",data.atrzLnSn);
+			formData.append("atrzLineVOList["+idx+"].atrzLnSn",data.atrzLnSn); //결재진행순서
+			formData.append("atrzLineVOList["+idx+"].sanctnProgrsSttusCode",data.sanctnProgrsSttusCode); //결재진행상태코드
 		});	
 		
 		console.log("순번권한전결여부authList : ", authList);

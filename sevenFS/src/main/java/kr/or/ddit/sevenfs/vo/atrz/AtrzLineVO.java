@@ -1,5 +1,6 @@
 package kr.or.ddit.sevenfs.vo.atrz;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 

@@ -105,44 +105,5 @@
 			
 		</div>
 	</div>
-    <script>
-    	function addTr() {
-    		$(".s_default_tbody_cl").prepend(
-					'<tr>'
-				      + '<th scope="row"><input type="date" class="form-control" name="sp_date"></th>'
-				      + '<td><input type="text" class="form-control" name="sp_detail"></td>'
-				      + '<td><input type="number" id="sp_count" class="form-control sp_count" name="sp_count"></td>'
-				      + '<td><input type="text" class="form-control sp_amount" id="sp_amount" name="sp_amount" onkeyup="commas(this)" onblur="total()"></td>'
-				      + '<td>'
-				      + '<select class="form-select" aria-label="Default select example">'
-				      		+ '<option value="c">신용카드</option>'
-				      		+ '<option value="a">가상계좌</option>'
-			      	  + '</select>'
-				      + '</td>'
-				    + '</tr>'	
-				);
-    	}
-	</script>
-	
-	<script>
-	function commas(t) {
-
-		// 콤마 빼고 
-		var x = t.value;			
-		x = x.replace(/,/gi, '');
-
-	    // 숫자 정규식 확인
-		var regexp = /^[0-9]*$/;
-		if(!regexp.test(x)){ 
-			$(t).val(""); 
-			alert("숫자만 입력 가능합니다.");
-		} else {
-			x = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");			
-			$(t).val(x);			
-		}
-	}
-	</script>
-	
-
 </body>
 </html>

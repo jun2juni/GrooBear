@@ -89,6 +89,10 @@
 .swal-text {
 	color: black;
 }
+.salary-header {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
 
 
 
@@ -105,10 +109,6 @@
 		<form id="atrz_ho_form" action="/atrz/appLineList" method="post" enctype="multipart/form-data">
 			<div class="container-fluid">
 				<!-- 여기서 작업 시작 -->
-				<!-- <p>${atrzVO}</p> -->
-				<!-- <p>${attachFileVOList}</p> -->
-				<!-- <p>${attachFileVOList[0].fileStrePath}</p> -->
-				<!-- <p>${sanEmplVOList}</p> -->
 				<div class="row">
 					<div class="col-sm-12 mb-3 mb-sm-0">
 						<!-- 결재요청 | 임시저장 | 결재선지정 | 취소  -->

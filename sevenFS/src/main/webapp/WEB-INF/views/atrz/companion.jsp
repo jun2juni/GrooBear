@@ -54,6 +54,13 @@
 	margin-right: 10px;
 	margin-bottom: 10px;
 }
+.listCont {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+    }
 
 #contact1-tab-pane {
 	padding-bottom: 10px;;
