@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.mail.internet.MimeMessage;
 import kr.or.ddit.sevenfs.mapper.mail.MailMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.mail.MailService;
@@ -22,6 +25,7 @@ import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.mail.MailVO;
 import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
+import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -39,6 +43,16 @@ public class MailServiceImpl implements MailService{
 	
 	@Autowired
 	NotificationService notificationService;
+	
+	// smtp 설정
+	@Autowired
+	private JavaMailSender mailSender;
+	
+	@Value("${spring.mail.username}")
+	private String fromMail;
+	@Value("${spring.mail.password}")
+	private String password;
+	
 	
 	@Override
 	public int sendMail(MailVO mailVO, MultipartFile[] uploadFile) {
@@ -94,6 +108,7 @@ public class MailServiceImpl implements MailService{
 				log.info("emplNoEmail"+emplNoEmail);
 				log.info("emplNoEmail[1] : "+emplNoEmail[1]);
 				log.info("emplNoEmail[0] : "+emplNoEmail[0]);
+				
 				vo.setEmailTrnsmisTy("1");
 				vo.setEmailClTy("1");
 				vo.setRecptnEmail(emplNoEmail[1]);
@@ -103,6 +118,14 @@ public class MailServiceImpl implements MailService{
 				vo.setReadngAt("N");
 				mailVOList.add(vo);
 				
+				if(emplNoEmail[0] != null && emplNoEmail[0].equals("")) {
+					log.info("smtp 실행");
+					vo.setEmplNo("");
+					sendSimpleMessage(vo);
+					continue;
+				}
+				
+				// 알림 추가
 				EmployeeVO employeeVO = new EmployeeVO();
 				employeeVO.setEmail(emplNoEmail[1]);
 				employeeVO.setEmplNo(emplNoEmail[0]);
@@ -154,19 +177,43 @@ public class MailServiceImpl implements MailService{
 			}
 		}
 		
-		NotificationVO notificationVO = new NotificationVO();
-		notificationVO.setNtcnSj("[메일 알림]");
-        notificationVO.setNtcnCn(trnsmtEmplNm+"님이 메일을 송신하였습니다.");
-        // 클릭시 어디로 보내줄 것인지
-        notificationVO.setOriginPath("/mail?emailClTy=1");
-        notificationVO.setSkillCode("05");
-        
-        notificationService.insertNotification(notificationVO, notificationEmail);
-        log.info("notificationService -> insertNotification -> notificationVO : "+notificationVO);
-        log.info("notificationService -> insertNotification -> notificationEmail : "+notificationEmail);
+		if(notificationEmail.size() != 0) {
+			NotificationVO notificationVO = new NotificationVO();
+			notificationVO.setNtcnSj("[메일 알림]");
+			notificationVO.setNtcnCn(trnsmtEmplNm+"님이 메일을 송신하였습니다.");
+			// 클릭시 어디로 보내줄 것인지
+			notificationVO.setOriginPath("/mail?emailClTy=1");
+			notificationVO.setSkillCode("05");
+			
+			notificationService.insertNotification(notificationVO, notificationEmail);
+			log.info("notificationService -> insertNotification -> notificationVO : "+notificationVO);
+			log.info("notificationService -> insertNotification -> notificationEmail : "+notificationEmail);
+		}
 		log.info("MailServiceImpl -> sendMail -> mailVOList : "+mailVOList);
 		int result = mailMapper.sendMail(mailVOList);
 		return result;
+	}
+	
+	public int sendSimpleMessage(MailVO mailVO) {
+		log.info("{}.doSendMail start!", this, getClass().getName());
+		int res = 1;
+		
+		MimeMessage message = mailSender.createMimeMessage();
+		try {
+			MimeMessageHelper messageHelper = new MimeMessageHelper(message,false, "UTF-8");
+
+			messageHelper.setFrom(fromMail);
+			messageHelper.setTo(mailVO.getRecptnEmail());
+			messageHelper.setSubject(mailVO.getEmailSj());
+			messageHelper.setText(mailVO.getEmailCn(),true);
+			log.info(mailVO.getEmailCn());
+			mailSender.send(message);
+		} catch (Exception e) {
+			res = 0;
+			log.info("[error] doSendMail : {}", e);
+		}
+		log.info("{}.doSendMail end !", this.getClass().getName());
+		return res;
 	}
 	
 	@Override
@@ -418,7 +465,6 @@ public class MailServiceImpl implements MailService{
 	public MailVO mailTrnsms(MailVO mailVO) {
 		mailVO = mailMapper.mailRepl(mailVO);
 		log.info("mailTrnsms 확인"+mailVO);
-//		mailVO.set
 		return mailVO;
 	}
 

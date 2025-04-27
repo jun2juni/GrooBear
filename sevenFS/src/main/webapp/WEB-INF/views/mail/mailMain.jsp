@@ -53,6 +53,7 @@
         let lblNo = $(this).data('lblno');
         console.log('.label-select 클릭 이벤트 lblNo : ',lblNo);
         window.location.href="/mail/labeling?lblNo="+lblNo;
+        // window.location.href="/mail?lblNo="+lblNo;
       })
       // 사이드바 아이템 클릭 이벤트 끝 //
 
@@ -145,6 +146,7 @@
             console.log(resp);
             // $('#labeling option:eq(0)').prop('selected',true);
             $('.email-checkbox').prop("checked",false);
+            window.location.href="/mail?emailClTy=4"
           },
           error:function(err){
             console.log(err);
@@ -537,25 +539,25 @@
             <!-- 이메일 툴바 -->
             <div class="email-toolbar">
               <div class="checkbox-container">
-          <input type="checkbox" id="select-all">
+                <input type="checkbox" id="select-all">
               </div>
-              <div class="email-tabs">
-          <button class="tab" id="tab-del">삭제</button>
-          <button class="tab" id="tab-repl">답장</button>
-          <button class="tab" id="tab-trnsms">전달</button>
-          <c:if test="${mailVO.emailClTy == '4'}">
-            <button class="tab" id="tab-restoration">복구</button>
-          </c:if>
-          <c:if test="${mailVO.emailClTy == '0'||mailVO.emailClTy == '1'}">
-            <select class="tab" name="mailLbl" id="labeling">
-              <option id="defaultOption" value="" disabled selected>라벨 선택</option>
-              <c:forEach items="${mailLabelList}" var="mailLabel">
-                <option value="${mailLabel.lblNo}">${mailLabel.lblNm}</option>
-              </c:forEach>
-              <option id="detLabel" value="0">라벨 해제</option>
-            </select>
-          </c:if>
-          </div>
+            <div class="email-tabs">
+              <button class="tab" id="tab-del">삭제</button>
+              <button class="tab" id="tab-repl">답장</button>
+              <button class="tab" id="tab-trnsms">전달</button>
+              <c:if test="${mailVO.emailClTy == '4'}">
+                <button class="tab" id="tab-restoration">복구</button>
+              </c:if>
+              <c:if test="${mailVO.emailClTy == '0'||mailVO.emailClTy == '1'}">
+                <select class="tab" name="mailLbl" id="labeling">
+                  <option id="defaultOption" value="" disabled selected>라벨 선택</option>
+                  <c:forEach items="${mailLabelList}" var="mailLabel">
+                    <option value="${mailLabel.lblNo}">${mailLabel.lblNm}</option>
+                  </c:forEach>
+                  <option id="detLabel" value="0">라벨 해제</option>
+                </select>
+              </c:if>
+            </div>
           <div class="d-flex justify-content-end align-items-center" style="margin-left: auto; gap: 10px;">
           <c:set var="searchOption" value="${param.searchOption}"/>
           <form action="/mail" class="d-flex align-items-center" style="gap: 10px;">
@@ -614,12 +616,24 @@
           </div>
           <!-- 페이지네이션 -->
           <div style="margin-top: 20px;">
-            <page-navi
+           
+            <c:if test="${labelingPage != 'true'}">
+              <!-- ${labelingPage} -->
+              <page-navi
               url="/mail?${articlePage.getSearchVo()}"
               current="${articlePage.getCurrentPage()}"
               show-max="5"
               total="${articlePage.getTotalPages()}"
-            ></page-navi>
+              ></page-navi>
+            </c:if>
+            <c:if test="${labelingPage == 'true'}">
+              <page-navi
+              url="/mail/labeling?${articlePage.getSearchVo()}"
+              current="${articlePage.getCurrentPage()}"
+              show-max="5"
+              total="${articlePage.getTotalPages()}"
+              ></page-navi>
+            </c:if>
           </div>
         </div>
         <!-- 이메일 listSection 끝 -->

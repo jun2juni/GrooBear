@@ -388,6 +388,7 @@
                     <input type="hidden" id="modelEmplNm" value="${emplNm}">
                     <input type="hidden" id="modelEmail" value="${email}">
                     <input type="hidden" id="emailNo" value="${mailVO.emailNo}">
+                    <input type="hidden" id="myEmplNo" name="myEmplNo" value="${myEmplNo}">
                     <div class="row">
                         <div class="col-12" style="margin-top: 20px;">
                             <div id="emailInpSection">
@@ -487,7 +488,7 @@
                                 <input type="text" id="emailSj" name="emailSj" class="form-control" placeholder="제목을 입력해 주세요." required value="${mailVO.emailSj}" style="flex: 1;">
                             </div>
                             <!-- 작성자 번호 -->
-                            <input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
+                            <!-- <input type="hidden" name="emplNo" value="${myEmplNo}"> -->
                             <!-- 게시글 내용 (CKEditor) -->
                             <div class="col-sm-12">
                                 <label class="form-label">내용</label>
@@ -497,9 +498,9 @@
                                 <textarea id="emailCn" name="emailCn" rows="3" cols="30" class="form-control" hidden>${mailVO.emailCn}</textarea>
                             </div><br>
                             <!-- 작성자 이름 -->
-                            <div class="mb-3">
+                            <!-- <div class="mb-3">
                                 <input type="hidden" name="emplNo" class="form-control" value="${myEmpInfo.emplNo}" readonly>
-                            </div>
+                            </div> -->
                             <!-- 파일 업로드 -->
                             <c:choose>
                                 <c:when test="${not empty fileList}">
@@ -670,7 +671,8 @@
 
             let trnsmitEmail = $('#trnsmitEmail').val();
             mailForm.append('trnsmitEmail', trnsmitEmail);
-            let emplNo = $('input[name="emplNo"]').val();
+            let emplNo = $('input[name="myEmplNo"]').val();
+            console.log('emplNo 이거 꼭 확인',emplNo);
             mailForm.append('emplNo', emplNo);
 
             // 여러 이메일을 처리하는 방법 수정
@@ -723,7 +725,6 @@
             })
 
             console.log("mailForm : ", mailForm);
-            
             $.ajax({
                 url: url,
                 type: 'post',
@@ -1154,6 +1155,7 @@
         let lblNo = $(this).data('lblno');
         console.log('.label-select 클릭 이벤트 lblNo : ',lblNo);
         window.location.href="/mail/labeling?lblNo="+lblNo;
+        // window.location.href="/mail?lblNo="+lblNo;
       })
       // 사이드바 아이템 클릭 이벤트 끝 //
       let selectedColor = "#000000"; // Default color

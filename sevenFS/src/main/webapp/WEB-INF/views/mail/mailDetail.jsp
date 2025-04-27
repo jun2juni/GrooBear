@@ -733,6 +733,7 @@
         let lblNo = $(this).data('lblno');
         console.log('.label-select 클릭 이벤트 lblNo : ',lblNo);
         window.location.href="/mail/labeling?lblNo="+lblNo;
+        // window.location.href="/mail?lblNo="+lblNo;
       })
       // 사이드바 아이템 클릭 이벤트 끝 //
       let selectedColor = "#000000"; // Default color

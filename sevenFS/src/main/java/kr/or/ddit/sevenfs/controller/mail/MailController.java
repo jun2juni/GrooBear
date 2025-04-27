@@ -42,7 +42,6 @@ public class MailController {
 	/** 
 	 * 
 	 * <pre>
-	 * 	 bum bum be-dum bum bum be-dum bum
 	 * </pre>
 	 * 
 	 * */
@@ -64,7 +63,8 @@ public class MailController {
 	@GetMapping("")
 	public String mailHome(Model model,@ModelAttribute MailVO mailVO, @AuthenticationPrincipal CustomUser customUser,
 			@RequestParam(defaultValue = "1", required = false) int currentPage,
-			@RequestParam(defaultValue = "1", required = false) String emailClTy) {
+			@RequestParam(defaultValue = "1", required = false) String emailClTy
+			) {
 		EmployeeVO employeeVO = customUser.getEmpVO();
 		log.info("CustomUser -> employeeVO" + employeeVO);
 		log.info("mailHome -> MailVO -> 검색을 위함 : " + mailVO);
@@ -74,23 +74,31 @@ public class MailController {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		if(emailClTy.equals("5")) {
-			mailVO.setEmailClTy(emailClTy);
-			mailVO.setEmplNo(employeeVO.getEmplNo());
-			
-			map.put("emplNo", employeeVO.getEmplNo());
-			map.put("mailVO", mailVO);
-			map.put("currentPage", currentPage);
-			map.put("size", 10);
-		}else {
-			mailVO.setEmailClTy(emailClTy);
-			mailVO.setEmplNo(employeeVO.getEmplNo());
-			
-			map.put("emplNo", employeeVO.getEmplNo());
-			map.put("mailVO", mailVO);
-			map.put("currentPage", currentPage);
-			map.put("size", 10);
-		}
+//		if(emailClTy.equals("5")) {
+//			mailVO.setEmailClTy(emailClTy);
+//			mailVO.setEmplNo(employeeVO.getEmplNo());
+//			
+//			map.put("emplNo", employeeVO.getEmplNo());
+//			map.put("mailVO", mailVO);
+//			map.put("currentPage", currentPage);
+//			map.put("size", 10);
+//		}else {
+//			mailVO.setEmailClTy(emailClTy);
+//			mailVO.setEmplNo(employeeVO.getEmplNo());
+//			
+//			map.put("emplNo", employeeVO.getEmplNo());
+//			map.put("mailVO", mailVO);
+//			map.put("currentPage", currentPage);
+//			map.put("size", 10);
+//		}
+		
+		mailVO.setEmailClTy(emailClTy);
+		mailVO.setEmplNo(employeeVO.getEmplNo());
+		
+		map.put("emplNo", employeeVO.getEmplNo());
+		map.put("mailVO", mailVO);
+		map.put("currentPage", currentPage);
+		map.put("size", 10);
 		
 		int total = mailService.getTotal(map);
 		log.info("mailService.getTotal(map) -> total : "+total);
@@ -115,13 +123,37 @@ public class MailController {
 	@GetMapping("/labeling")
 	public String mailLabeling(Model model,
 								@RequestParam(value = "lblNo")int lblNo,
-								@AuthenticationPrincipal CustomUser customUser){
+								@RequestParam(defaultValue = "1", required = false) int currentPage,
+								@AuthenticationPrincipal CustomUser customUser,
+								@ModelAttribute MailVO mailVO){
 		log.info("mailLabeling -> lblNo : "+lblNo);
+		log.info("mailLabeling -> mailVO : "+mailVO);
 		EmployeeVO employeeVO = customUser.getEmpVO();
-		List<MailVO> list = mailService.mailLabeling(lblNo);
-		log.info("mailLabeling -> mailService : "+list);
+		mailVO.setEmplNo(employeeVO.getEmplNo());
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("emplNo", employeeVO.getEmplNo());
+		map.put("mailVO", mailVO);
+		map.put("currentPage", currentPage);
+		map.put("size", 10);
+		
+		int total = mailService.getTotal(map);
+		log.info("mailService.getTotal(map) -> total : "+total);
+		
+		ArticlePage<MailVO> articlePage = new ArticlePage<MailVO>(total, currentPage, 10);
+		articlePage.setSearchVo(mailVO);
+		List<MailVO> mailVOList = mailService.getList(articlePage);
+		log.info("mailHome -> getList() -> mailVOList : "+mailVOList);
+		
+//		List<MailVO> list = mailService.mailLabeling(lblNo);
+//		log.info("mailLabeling -> mailService : "+list);
+		
 		List<MailLabelVO> mailLabelList = mailLabelService.getLabelList(employeeVO);
-		model.addAttribute("mailVOList", list);
+		model.addAttribute("mailVOList", mailVOList);
+		model.addAttribute("articlePage", articlePage);
+		model.addAttribute("searchVO", mailVO);
+		model.addAttribute("emplNo", employeeVO.getEmplNo());
+		model.addAttribute("labelingPage","true");
 		model.addAttribute("mailLabelList", mailLabelList);
 		return "mail/mailHome";
 	}
