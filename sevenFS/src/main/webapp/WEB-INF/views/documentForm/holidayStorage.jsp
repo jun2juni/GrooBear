@@ -973,6 +973,10 @@ $(document).ready(function() {
 		formData.append("emplNo",secEmplNo);
 		formData.append("emplNm",secEmplNm);
 		formData.append("atrzDocNo",$("#s_dfNo").text());
+  
+		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
+			formData.append("removeFileId", element.value);
+		});
 		
 		const junyError = (request, status, error) => {
 					console.log("code: " + request.status)

@@ -832,7 +832,11 @@ $(document).ready(function() {
 		formData.append("atrzCn",jnForm.atrzCn.value);
 		
 	
-		formData.append("holiUseDays", $('#s_date_cal').text());  //연차사용일수 
+		formData.append("holiUseDays", $('#s_date_cal').text());  //연차사용일수
+		
+		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
+			formData.append("removeFileId", element.value);
+		});
 
 		if(jnForm.uploadFile.files.length){
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
@@ -974,7 +978,10 @@ $(document).ready(function() {
 		formData.append("atrzSj",jnForm.atrzSj.value);
 		formData.append("atrzCn",jnForm.atrzCn.value);
 		
-	
+		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
+			formData.append("removeFileId", element.value);
+		});
+  
 		formData.append("holiUseDays", $('#s_date_cal').text());  //연차사용일수 
 
 		if(jnForm.uploadFile.files.length){
