@@ -61,6 +61,8 @@ public interface OrganizationMapper {
 		//해당 직원의 상세정보 목록을 select
 		public List<EmployeeVO> emplDetailList(List<String> list);
 
+		public List<EmployeeVO> empListWithDeptAndPos();
+
 		
 	
 }

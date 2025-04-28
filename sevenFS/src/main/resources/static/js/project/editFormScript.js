@@ -109,49 +109,6 @@ function removeMember(button) {
   updateProjectEmpIndexes();
 }
 
-function updateProjectEmpIndexes() {
-  const table = document.getElementById("selectedMembersTable");
-  const rows = Array.from(table.querySelectorAll("tbody tr:not(.empty-row)"));
-
-  let idx = { 
-    responsibleManager: 0,
-    participants: 0,
-    observers: 0
-  };
-
-  rows.forEach(row => {
-    const role = row.getAttribute("data-role"); // 'responsibleManager', 'participants', 'observers'
-    const empno = row.getAttribute("data-empno");
-
-    // 기존 hidden input 삭제
-    row.querySelectorAll('input[type="hidden"]').forEach(el => el.remove());
-
-    const input = document.createElement("input");
-    input.type = "hidden";
-
-    if (role === "responsibleManager") input.name = `responsibleManager[${idx[role]}]`;
-    else if (role === "participants") input.name = `participants[${idx[role]}]`;
-    else if (role === "observers") input.name = `observers[${idx[role]}]`;
-    
-    input.value = empno;
-    row.appendChild(input);
-
-    idx[role]++;
-  });
-
-  // 만약 행이 아예 없으면 "선택된 인원 없습니다" 메시지 출력
-  if (rows.length === 0) {
-    const tbody = table.querySelector("tbody");
-    const tr = document.createElement("tr");
-    tr.className = "empty-row";
-    tr.innerHTML = `<td colspan="7" class="text-center text-muted py-4">
-      <i class="fas fa-info-circle me-1"></i> 선택된 인원이 없습니다. 조직도에서 프로젝트 참여자를 선택해주세요.
-    </td>`;
-    tbody.appendChild(tr);
-  }
-}
-
-
 function setupOrgChartModalButtonHandler() {
   document.querySelectorAll(".open-org-chart").forEach(button => {
     button.addEventListener('click', function() {
@@ -260,13 +217,8 @@ function addSelectedMembers(members) {
   updateProjectEmpIndexes();
 }
 
-
-
-
-
-
-// ===================== 조직도 로딩 (수정 버전) =====================
-// ✅ 조직도 트리 로딩 함수
+// ✅ 조직도 로딩 함수
+// 조직도 로딩 (수정 버전)
 function loadOrgTree() {
   const treeContainer = document.getElementById('jstree');
   if (!treeContainer) {
@@ -276,29 +228,67 @@ function loadOrgTree() {
 
   console.log("🚀 editForm 조직도 로딩 시작");
 
-  fetch("/organization/detail")
+  // 기존 부서 정보 가져오기
+  fetch("/organization")
     .then(resp => {
       if (!resp.ok) throw new Error(`조직도 데이터 로딩 실패: ${resp.status}`);
       return resp.json();
     })
-    .then(empList => {
+    .then(res => {
+      console.log("부서 데이터 수신 성공");
+      
+      // 상세 사원 정보 가져오기
+      return fetch("/organization/detail")
+        .then(resp => {
+          if (!resp.ok) throw new Error(`사원 상세 데이터 로딩 실패: ${resp.status}`);
+          return resp.json();
+        })
+        .then(empDetailList => {
+          console.log("사원 상세 데이터 수신 성공");
+          return { orgData: res, empDetailList: empDetailList };
+        });
+    })
+    .then(data => {
+      const { orgData, empDetailList } = data;
       const json = [];
-
-      empList.forEach(emp => {
+      const deptMap = {};
+      
+      // 부서명 매핑
+      orgData.deptList.forEach(dept => {
+        deptMap[dept.cmmnCode] = dept.cmmnCodeNm;
         json.push({
-          id: emp.emplNo,
-          parent: emp.deptCode || "#",
-          text: emp.emplNm,
-          icon: "/assets/images/organization/employeeImg.svg",
-          deptYn: false,
-          dept: emp.deptNm || '-',      // ✅ 이름 통일 (dept)
-          position: emp.posNm || '-',   // ✅ 이름 통일 (position)
-          phone: emp.telno || '-',       // ✅ 전화번호
-          email: emp.email || '-'        // ✅ 이메일
+          id: dept.cmmnCode,
+          parent: dept.upperCmmnCode || '#',
+          text: dept.cmmnCodeNm,
+          icon: "/assets/images/organization/depIcon.svg",
+          deptYn: true
         });
       });
 
-      // 트리 초기화 후 생성
+      // 사원별 상세 정보 매핑을 위한 맵 생성
+      const empDetailMap = {};
+      empDetailList.forEach(emp => {
+        empDetailMap[emp.emplNo] = emp;
+      });
+
+      // 사원 정보 추가
+      orgData.empList.forEach(emp => {
+        // 상세 정보 가져오기
+        const empDetail = empDetailMap[emp.emplNo] || {};
+        
+        json.push({
+          id: emp.emplNo,
+          parent: emp.deptCode,
+          text: emp.emplNm,
+          icon: "/assets/images/organization/employeeImg.svg",
+          deptYn: false,
+          dept: empDetail.deptNm || deptMap[emp.deptCode] || '-',
+          position: empDetail.posNm || '-',
+          phone: empDetail.telno || emp.telno || '-',
+          email: empDetail.email || emp.email || '-'
+        });
+      });
+
       $('#jstree').jstree('destroy');
       $('#jstree').jstree({
         core: {
@@ -309,36 +299,56 @@ function loadOrgTree() {
         plugins: ["search"]
       });
 
+      // 트리 로딩 후 클릭 이벤트 연결
+      $('#jstree').off('select_node.jstree').on('select_node.jstree', function (e, data) {
+        if (!data.node.original) return;
+        
+        if (data.node.original.deptYn) {
+          console.log("부서를 클릭했습니다. 무시합니다.");
+          return;
+        }
+        
+        clickEmp(data);
+      });
     })
     .catch(error => {
-      console.error("🚨 조직도 로딩 오류:", error);
+      console.error("조직도 로딩 오류:", error);
     });
 }
 
-// ✅ 사원 클릭 시 테이블에 추가 함수
+
+// ✅ 사원 클릭 시
 function clickEmp(data) {
   console.log("사원 클릭됨:", data);
-
-  const node = data.node;
-  if (!node || node.original.deptYn === true) return;
 
   if (!currentTarget) {
     swal("선택 오류", "먼저 책임자/참여자/참조자 중 선택해주세요.", "warning");
     return;
   }
 
+  const node = data.node;
+  if (!node || node.original.deptYn === true) return; // 부서 클릭 무시
+
   const emp = {
     id: node.id,
     name: node.text,
-    dept: node.original.dept || '-',        // ✅ 여기!!
-    position: node.original.position || '-', // ✅ 여기!!
-    phone: node.original.phone || '-',
+    dept: node.original.deptNm || '-',
+    position: node.original.posNm || '-',
+    phone: formatPhone(node.original.telno || '-'),
     email: node.original.email || '-'
   };
 
-  let roleLabel = "";
-  let badgeClass = "";
-  let roleIcon = "";
+  const tbody = document.querySelector("#selectedMembersTable tbody");
+  const emptyRow = tbody.querySelector(".empty-row");
+  if (emptyRow) emptyRow.remove();
+
+  const tr = document.createElement("tr");
+  tr.setAttribute("data-empno", emp.id);
+  tr.setAttribute("data-role", currentTarget);
+
+  let roleLabel = '';
+  let badgeClass = '';
+  let roleIcon = '';
 
   if (currentTarget === "responsibleManager") {
     roleLabel = "책임자";
@@ -354,41 +364,6 @@ function clickEmp(data) {
     roleIcon = "fas fa-user-clock";
   }
 
-  const tbody = document.querySelector("#selectedMembersTable tbody");
-  if (!tbody) return;
-
-  // 이미 추가된 사원은 중복 방지
-  if (tbody.querySelector(`tr[data-empno="${emp.id}"]`)) {
-    console.log("이미 선택된 사원입니다:", emp.id);
-    return;
-  }
-
-  const emptyRow = tbody.querySelector(".empty-row");
-  if (emptyRow) emptyRow.remove();
-
-  // 전화번호 포맷팅
-  let formattedPhone = emp.phone;
-  if (formattedPhone && formattedPhone !== '-') {
-    const onlyNums = formattedPhone.replace(/[^0-9]/g, '');
-    if (onlyNums.length === 11) {
-      formattedPhone = onlyNums.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-    } else if (onlyNums.length === 10) {
-      if (onlyNums.startsWith('02')) {
-        formattedPhone = onlyNums.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
-      } else {
-        formattedPhone = onlyNums.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-      }
-    }
-  }
-
-  const tr = document.createElement("tr");
-  tr.setAttribute("data-empno", emp.id);
-  tr.setAttribute("data-role", currentTarget);
-
-  // 역할에 따른 행 스타일 지정
-  tr.className = (currentTarget === 'responsibleManager') ? 'table-danger' :
-                 (currentTarget === 'participants') ? 'table-primary' : 'table-secondary';
-
   tr.innerHTML = `
     <td class="text-center">
       <span class="badge ${badgeClass} p-2">
@@ -396,10 +371,10 @@ function clickEmp(data) {
       </span>
     </td>
     <td class="text-center"><strong>${emp.name}</strong></td>
-    <td class="text-center">${emp.dept}</td>
+    <td class="text-start ps-2">${emp.dept}</td>
     <td class="text-center">${emp.position}</td>
-    <td class="text-center"><i class="fas fa-phone-alt me-1 text-muted"></i>${formattedPhone}</td>
-    <td class="text-start ps-3"><i class="fas fa-envelope me-1 text-muted"></i>${emp.email}</td>
+    <td class="text-center"><i class="fas fa-phone-alt me-1 text-muted"></i>${emp.phone}</td>
+    <td class="text-start ps-2"><i class="fas fa-envelope me-1 text-muted"></i>${emp.email}</td>
     <td class="text-center">
       <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeParticipant(this)">
         <i class="fas fa-times"></i>
@@ -416,15 +391,29 @@ function clickEmp(data) {
 
   tbody.appendChild(tr);
 
-  // 인덱스 업데이트
   updateProjectEmpIndexes();
 }
 
-// ✅ 테이블에서 인원 삭제 함수
+
+// ✅ 전화번호 포맷 함수
+function formatPhone(phone) {
+  if (!phone) return '-';
+  const onlyNums = phone.replace(/[^0-9]/g, '');
+  if (onlyNums.length === 11) {
+    return onlyNums.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+  } else if (onlyNums.length === 10) {
+    if (onlyNums.startsWith('02')) {
+      return onlyNums.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+    } else {
+      return onlyNums.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+    }
+  }
+  return phone;
+}
+
+// ✅ 참여자 삭제 버튼 클릭 시
 function removeParticipant(button) {
   const row = button.closest('tr');
-  const empno = row.getAttribute('data-empno');
-  console.log("사원을 테이블에서 제거합니다:", empno);
   row.remove();
 
   const tbody = document.querySelector("#selectedMembersTable tbody");
@@ -433,8 +422,7 @@ function removeParticipant(button) {
     emptyRow.className = 'empty-row';
     emptyRow.innerHTML = `
       <td colspan="7" class="text-center text-muted py-4">
-        <i class="fas fa-info-circle me-1"></i> 선택된 인원이 없습니다. 
-        조직도에서 프로젝트 참여자를 선택해주세요.
+        <i class="fas fa-info-circle me-1"></i> 선택된 인원이 없습니다. 조직도에서 프로젝트 참여자를 선택해주세요.
       </td>
     `;
     tbody.appendChild(emptyRow);
@@ -443,7 +431,7 @@ function removeParticipant(button) {
   updateProjectEmpIndexes();
 }
 
-// ✅ 참여자 인덱스 재정렬 함수
+// ✅ 인덱스 재조정
 function updateProjectEmpIndexes() {
   const participants = document.querySelectorAll('#selectedMembersTable tbody tr:not(.empty-row)');
   participants.forEach((row, index) => {

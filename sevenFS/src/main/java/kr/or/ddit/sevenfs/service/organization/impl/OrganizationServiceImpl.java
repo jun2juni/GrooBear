@@ -265,6 +265,12 @@ public class OrganizationServiceImpl implements OrganizationService {
 		return this.organizationMapper.emplDetailList(list);
 	}
 
+	@Override
+	public List<EmployeeVO> selectEmpListWithDeptAndPos() {
+	    return organizationMapper.empListWithDeptAndPos();
+	}
+
+
 
 
 

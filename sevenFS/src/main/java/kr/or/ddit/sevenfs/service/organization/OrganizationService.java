@@ -65,4 +65,6 @@ public interface OrganizationService {
 
 		// 사용자 알림정보 불러오기
 		public Map<String, Object> getEmpNotification(EmployeeVO emplDetail);
+
+		public List<EmployeeVO> selectEmpListWithDeptAndPos();
 }

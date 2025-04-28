@@ -83,6 +83,27 @@
 	    WHERE ENABLED='1'
 	</select>
 	
+	<!-- 부서명, 직급명까지 포함된 전체 사원 조회  - 채성실 추가-->
+	<select id="empListWithDeptAndPos" resultType="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
+		SELECT 
+		    emp.EMPL_NO,
+		    emp.EMPL_NM,
+		    emp.TELNO,
+		    emp.EMAIL,
+		    emp.DEPT_CODE,
+		    emp.CLSF_CODE,
+		    dept.CMMN_CODE_NM AS DEPT_NM,
+		    pos.CMMN_CODE_NM AS POS_NM
+		FROM EMPLOYEE emp
+		LEFT JOIN COMMON_CODE dept ON emp.DEPT_CODE = dept.CMMN_CODE
+		    AND dept.CMMN_CODE_GROUP = 'DEPARTMENT'
+		LEFT JOIN COMMON_CODE pos ON emp.CLSF_CODE = pos.CMMN_CODE
+		    AND pos.CMMN_CODE_GROUP = 'POSITION'
+		WHERE emp.ENABLED = '1'
+	</select>
+
+	
+	
 	<!-- 사원 상세보기 -->
 	<select id="emplDetail" parameterType="String" resultMap="employeeMap">
       SELECT e.EMPL_NO, PASSWORD, ENABLED, EMPL_NM, BRTHDY, TELNO, ACNUTNO, BANK_NM, EMAIL, POST_NO,
