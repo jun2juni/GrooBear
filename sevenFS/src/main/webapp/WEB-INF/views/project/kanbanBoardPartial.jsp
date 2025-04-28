@@ -1,3 +1,4 @@
+
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -11,23 +12,22 @@
   <c:set var="columns">
     <c:out value="00:대기,01:진행중,02:완료" />
   </c:set>
-
-  <!-- 3개 상태 컬럼 반복 -->
   <c:forEach var="col" items="${fn:split(columns, ',')}">
     <c:set var="statusCode" value="${fn:split(col, ':')[0]}" />
     <c:set var="statusName" value="${fn:split(col, ':')[1]}" />
     <div class="kanban-col">
-      <div class="kanban-header bg-light-${statusName eq '대기' ? 'gray' :
-        statusName eq '진행중' ? 'yellow' :
-        statusName eq '완료' ? 'green' : 'blue'}">
+      <div class="kanban-header bg-light-${statusName eq '대기' ? 'gray' : statusName eq '진행중' ? 'yellow' : 'green'}">
         <h6 class="status-title">${statusName}</h6>
       </div>
       <div class="kanban-column" id="status-${statusCode}" ondragover="allowDrop(event)" ondrop="drop(event)">
-        <c:forEach var="task" items="${statusCode eq '00' ? queuedCards :
-          statusCode eq '01' ? servingCards :
-          completedCards}">
-          <div class="kanban-card" data-id="${task.taskNo}" data-status="${task.taskSttus}" draggable="true"
-              ondragstart="drag(event)" onclick="viewCardDetails(${task.taskNo})">
+        <c:forEach var="task" items="${statusCode eq '00' ? queuedCards : statusCode eq '01' ? servingCards : completedCards}">
+          <div class="kanban-card"
+               data-id="${task.taskNo}"
+               data-status="${task.taskSttus}"
+               data-end-date="${task.taskEndDt}"
+               draggable="true"
+               ondragstart="drag(event)"
+               onclick="viewCardDetails(${task.taskNo})">
             ${task.taskNm}
           </div>
         </c:forEach>
@@ -35,6 +35,7 @@
     </div>
   </c:forEach>
 </div>
+
 <!-- 업무 상세 정보 모달 -->
 <div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -43,12 +44,11 @@
         <h5 class="modal-title" id="taskDetailModalLabel">업무 상세 정보</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" id="taskDetailModalContent">
-        <!-- 업무 상세 정보가 AJAX로 로드됨 -->
-      </div>
+      <div class="modal-body" id="taskDetailModalContent"></div>
     </div>
   </div>
 </div>
+
 
 
 <!-- 스타일 -->
@@ -346,6 +346,23 @@
 .kanban-col:last-child {
   margin-right: 0;
 }
+
+
+.kanban-card.has-comment {
+  position: relative;
+}
+.kanban-card .comment-indicator {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+}
+.kanban-card.deadline-soon {
+  border-left-color: red !important;
+}
 </style>
 
 <!-- 칸반 드래그 앤 드롭 스크립트 -->
@@ -464,7 +481,6 @@ function drop(event) {
 }
 
 // 업무 상세 정보 보기
-// 업무 상세 정보 보기
 function viewCardDetails(taskId) {
 	openTaskModal(taskId);
   // 서버에서 업무 상세 정보를 가져와서 모달로 표시
@@ -555,8 +571,11 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 
+if (typeof originalLoadKanbanBoard === 'undefined') {
+	  var originalLoadKanbanBoard = window.loadKanbanBoard;
+	}
+	
 // 기존 loadKanbanBoard 함수 이후에도 실행
-const originalLoadKanbanBoard = window.loadKanbanBoard;
 if (originalLoadKanbanBoard) {
   window.loadKanbanBoard = function(prjctNo) {
     originalLoadKanbanBoard(prjctNo);
@@ -564,29 +583,7 @@ if (originalLoadKanbanBoard) {
   };
 }
 
-// 칸반 탭이 표시될 때마다 프로젝트 목록을 강화
-document.querySelector('[data-bs-target="#taskKanban"]')?.addEventListener("shown.bs.tab", function() {
-  console.log("칸반 탭 활성화됨");
-  setTimeout(enhanceProjectList, 100); // 약간 지연시켜 실행
-});
 
-// 페이지 로드 시 실행
-document.addEventListener("DOMContentLoaded", function() {
-  console.log("페이지 로드됨");
-  if (document.querySelector('#taskKanban.active')) {
-    console.log("칸반 탭이 활성화된 상태로 페이지 로드됨");
-    setTimeout(enhanceProjectList, 100);
-  }
-  
-  // 칸반보드 로드 후에도 실행
-  const originalLoadKanbanBoard = window.loadKanbanBoard;
-  if (originalLoadKanbanBoard) {
-    window.loadKanbanBoard = function(prjctNo) {
-      originalLoadKanbanBoard(prjctNo);
-      setTimeout(enhanceProjectList, 300); // 칸반보드 로드 후 실행
-    };
-  }
-});
 	
 
 
@@ -629,6 +626,48 @@ function openTaskDetailModal(taskNo) {
   });
 }
 	
+	
+	
+function highlightDeadlineSoon() {
+	  const cards = document.querySelectorAll('.kanban-card');
+	  const today = new Date();
+	  cards.forEach(card => {
+	    const endDateStr = card.dataset.endDate;
+	    if (!endDateStr) return;
+	    const endDate = new Date(endDateStr);
+	    if (isNaN(endDate)) return;
+	    const diffTime = endDate - today;
+	    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+	    if (diffDays <= 3) {
+	      card.classList.add('deadline-soon');
+	    }
+	  });
+	}
+
+	function viewCardDetails(taskId) {
+	  $.ajax({
+	    url: '/projectTask/detail',
+	    type: 'GET',
+	    data: { taskNo: taskId },
+	    success: function(response) {
+	      $('#taskDetailModalContent').html(response);
+	      $('#taskDetailModal').modal('show');
+	      const card = document.querySelector(`.kanban-card[data-id='${taskId}']`);
+	      if (card) {
+	        card.classList.remove('has-comment');
+	        const dot = card.querySelector('.comment-indicator');
+	        if (dot) dot.remove();
+	      }
+	    },
+	    error: function(xhr, status, error) {
+	      alert('업무 상세 정보를 불러오는 데 실패했습니다.');
+	    }
+	  });
+	}
+
+	document.addEventListener('DOMContentLoaded', function() {
+	  highlightDeadlineSoon();
+	});
 </script>
 
 
