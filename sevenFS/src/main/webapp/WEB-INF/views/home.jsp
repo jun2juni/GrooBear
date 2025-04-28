@@ -212,33 +212,30 @@ String serverDate = dateFormat.format(now);
 						<!-- 알림 -->
 						<div
 							style="box-shadow: 1px 1px 20px 1px rgba(0, 0, 2, 0.1); backdrop-filter: blur(15px);">
+							<!--커뮤니티 인서트   -->
 							<div class="card-style mb-3	">
 								<div class="row mb-4">
 									<div class="text-bold">
-										💌 <span class="text-dark text-bold ml-3">최근 알림</span>
+										<a href="/comunity/comunityClubList">👨‍👦‍👦 <span class="text-dark text-bold ml-3">커뮤니티</span></a>
 									</div>
 								</div>
-								<div class=" ">
+								<div class="">
 									<div class="mb-4">
-										<a href="#0" class="d-flex flex-column"> <span
-											class="text-black text-sm"> 게시판 알림 </span> <span
-											class="text-sm text-gray"> 2025.04.15. 01:33 </span>
-										</a>
+										<button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#emojiModal">
+										  이모지 등록하기
+										</button>
 									</div>
 									<hr />
 									<div class="mb-4">
-										<a href="#0" class="d-flex flex-column"> <span
-											class="text-black text-sm"> 공지 알림 </span> <span
-											class="text-sm text-gray"> 2025.04.15. 01:33 </span>
-										</a>
+										<button type="button" class="btn btn-secondary w-100" data-bs-toggle="modal" data-bs-target="#100Modal">
+										  T.T-MI 등록하기
+										</button>
 									</div>
 									<hr />
 									<div class="mb-4">
-										<a href="#0" class="d-flex flex-column"> <span
-											class="text-black text-sm"> '모바일 쿠폰 서비스 임직원을 위한 맞춤형 쿠폰
-												발송, ONE-STOP으로 해결! </span> <span class="text-sm text-gray">2025.04.15.
-												01:33</span>
-										</a>
+										<button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#todayModal">
+										  오늘의 한 줄 등록하기
+										</button>
 									</div>
 								</div>
 							</div>
@@ -490,22 +487,88 @@ String serverDate = dateFormat.format(now);
 								<!-- 캘린더 -->
 							</div>
 
-							<!-- 통계 -->
-							<!--  <div class="col-lg-12">
-              <div class="card-style mb-30">
-              	통계
-               </div>
-             </div> -->
-							<!-- 통계 -->
 						</div>
 					</div>
-
-
+					<form action="/comunity/insertTTMI" method="post">
+				<div class="modal fade" id="100Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h1 class="modal-title fs-5" id="exampleModalLabel">T.T-MI 입력</h1>
+				        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				      </div>
+				      <div class="modal-body">
+				        <div class="input-style-1">
+		                  <label><h4>가장 좋아하는 과일을 말해주세요!</h4></label> <!--백문백답 들어가는 곳   -->
+		                  <textarea placeholder="답변을 입력해주세요" name="ttmiContent" rows="5" data-listener-added_0bb1bb59="true"></textarea>
+		                </div>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+				        <button type="submit" class="btn btn-primary">답변 저장하기</button>
+				      </div>	
+				    </div>
+				  </div>
 				</div>
+			</form>
+       		 <!-- 백문백답모달 끝  -->
+			 <!-- 오늘의 한 줄 모달 시작  -->
+			 <form id="todayForm" action="/comunity/insertToday" method="post">
+				<div class="modal fade" id="todayModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h1 class="modal-title fs-5" id="exampleModalLabel">T.T-MI 입력</h1>
+				        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				      </div>
+				      <div class="modal-body">
+				        <div class="input-style-1">
+		                  <label><h4>😼오늘의 기분을 말해주세요!😻</h4></label> 
+		                  <textarea name="bbscttCn" placeholder="답변을 입력해주세요" rows="5" data-listener-added_0bb1bb5="true"></textarea>
+		                </div>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+				        <button type="submit" class="btn btn-primary">답변 저장하기</button>
+				      </div>	
+				    </div>
+				  </div>
+				</div>     
+			</form>
+       		 <!-- 오늘의 한 줄 모달 끝  -->
+			 <!-- 오늘의 이모지 모달 시작  -->
+			 <form action="/comunity/insertEmoji" method="post">
+				<div class="modal fade" id="emojiModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h1 class="modal-title fs-5" id="exampleModalLabel">이모지 선택</h1>
+				        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				      </div>
+				      <div class="modal-body">
+						<div class="emoji-picker my-3">
+						  <!-- 이모지 버튼이 여기에 동적으로 들어갈 예정 -->
+						</div>				      
+				        <div class="input-style-1">
+		                  <label><h4>👍오늘의 기분을 이모지로 말해주세요!👎(최대 3개)</h4></label> <!--이모지 들어가는 곳   -->
+		                  <textarea readonly="readonly"  id="emojiTextArea" name="emoji" placeholder="이모지를 입력해주세요" rows="5" data-listener-added_0bb1bb5="true"></textarea>
+		                </div>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" id="emojiResetBtn" class="btn btn-outline-danger btn-sm mt-2">선택 초기화</button>
+				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+				        <button type="submit" class="btn btn-primary">오늘의 이모지 저장하기</button>
+				      </div>	
+				    </div>
+				  </div> 
+				</div>     
+			</form>
+				</div> <!-- containerflud 끝 -->
 		</section>
 		<%@ include file="./layout/footer.jsp"%>
 	</main>
 	<%@ include file="./layout/prescript.jsp"%>
+	
 
 <script type="text/javascript">
 //디지털시계
