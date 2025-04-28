@@ -101,8 +101,16 @@
 		    AND pos.CMMN_CODE_GROUP = 'POSITION'
 		WHERE emp.ENABLED = '1'
 	</select>
+		<!-- 부서조회쿼리 -채성실 -->
+  <select id="selectDeptList" resultType="kr.or.ddit.sevenfs.vo.organization.DepartmentVO">
+    SELECT
+      CMMN_CODE AS cmmnCode,
+      UPPER_CMMN_CODE AS upperCmmnCode,
+      CMMN_CODE_NM AS cmmnCodeNm
+    FROM COMMON_CODE
+    WHERE CMMN_CODE_GROUP = 'DEPARTMENT'
+  </select>
 
-	
 	
 	<!-- 사원 상세보기 -->
 	<select id="emplDetail" parameterType="String" resultMap="employeeMap">

@@ -20,6 +20,7 @@ import kr.or.ddit.sevenfs.mapper.organization.DclztypeMapper;
 import kr.or.ddit.sevenfs.mapper.organization.OrganizationMapper;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
+import kr.or.ddit.sevenfs.vo.organization.DepartmentVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.organization.OrganizationVO;
 import kr.or.ddit.sevenfs.vo.organization.VacationVO;
@@ -271,7 +272,10 @@ public class OrganizationServiceImpl implements OrganizationService {
 	}
 
 
-
+    @Override
+    public List<DepartmentVO> selectDeptList() {
+        return organizationMapper.selectDeptList();
+    }
 
 
 

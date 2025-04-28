@@ -117,15 +117,19 @@ function setupOrgChartModalButtonHandler() {
 
       currentTarget = this.dataset.target; // 누를 때 기억
       console.log("선택한 역할:", currentTarget);
-      
+
       const modalEl = document.getElementById("orgChartModal");
       const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
 
       modalEl.removeAttribute("aria-hidden");
       bsModal.show();
+
+      // 모달 열 때 loadOrgTree() 호출
+      loadOrgTree(); 
     });
   });
 }
+
 
 
 
@@ -162,6 +166,14 @@ function addSelectedMembers(members) {
     const row = document.createElement("tr");
     row.dataset.empId = emp.emplNo;
     row.dataset.role = emp.role;
+	
+	if (emp.role === 'responsibleManager') {
+	  row.classList.add('bg-light-danger');
+	} else if (emp.role === 'participants') {
+	  row.classList.add('bg-light-primary');
+	} else {
+	  row.classList.add('bg-light-secondary');
+	}
 
     let roleName = '';
     let badgeClass = '';
@@ -181,6 +193,14 @@ function addSelectedMembers(members) {
       iconClass = 'fas fa-user-clock';
     }
 
+	if (emp.role === 'responsibleManager') {
+	  row.classList.add('bg-light-danger');  // 책임자: 연한 빨강
+	} else if (emp.role === 'participants') {
+	  row.classList.add('bg-light-primary'); // 참여자: 연한 파랑
+	} else {
+	  row.classList.add('bg-light-secondary'); // 참조자: 연한 회색
+	}
+	
     // 전화번호 포맷
     const formattedPhone = formatPhone(emp.telno);
 
@@ -218,74 +238,62 @@ function addSelectedMembers(members) {
 }
 
 // ✅ 조직도 로딩 함수
-// 조직도 로딩 (수정 버전)
 function loadOrgTree() {
   const treeContainer = document.getElementById('jstree');
   if (!treeContainer) {
-    console.warn("jstree 요소가 존재하지 않습니다.");
+    console.warn("jstree 요소가 없습니다.");
     return;
   }
 
-  console.log("🚀 editForm 조직도 로딩 시작");
+  console.log("🚀 조직도 데이터 로딩 시작");
 
-  // 기존 부서 정보 가져오기
-  fetch("/organization")
+  fetch("/organization/detail")
     .then(resp => {
       if (!resp.ok) throw new Error(`조직도 데이터 로딩 실패: ${resp.status}`);
       return resp.json();
     })
     .then(res => {
-      console.log("부서 데이터 수신 성공");
-      
-      // 상세 사원 정보 가져오기
-      return fetch("/organization/detail")
-        .then(resp => {
-          if (!resp.ok) throw new Error(`사원 상세 데이터 로딩 실패: ${resp.status}`);
-          return resp.json();
-        })
-        .then(empDetailList => {
-          console.log("사원 상세 데이터 수신 성공");
-          return { orgData: res, empDetailList: empDetailList };
-        });
-    })
-    .then(data => {
-      const { orgData, empDetailList } = data;
+      const deptList = res.deptList; // 부서
+      const empList = res.empList;   // 사원
+
+      console.log("✅ 부서 리스트:", deptList);
+      console.log("✅ 사원 리스트:", empList);
+
       const json = [];
-      const deptMap = {};
-      
-      // 부서명 매핑
-      orgData.deptList.forEach(dept => {
-        deptMap[dept.cmmnCode] = dept.cmmnCodeNm;
+
+      deptList.forEach(dept => {
         json.push({
           id: dept.cmmnCode,
-          parent: dept.upperCmmnCode || '#',
+          parent: dept.upperCmmnCode || "#",
           text: dept.cmmnCodeNm,
-          icon: "/assets/images/organization/depIcon.svg",
-          deptYn: true
+          icon: "/assets/images/organization/department.svg",
+          deptYn: true,
+          original: {
+            id: dept.cmmnCode,
+            parent: dept.upperCmmnCode || "#",
+            text: dept.cmmnCodeNm,
+            deptYn: true
+          }
         });
       });
 
-      // 사원별 상세 정보 매핑을 위한 맵 생성
-      const empDetailMap = {};
-      empDetailList.forEach(emp => {
-        empDetailMap[emp.emplNo] = emp;
-      });
-
-      // 사원 정보 추가
-      orgData.empList.forEach(emp => {
-        // 상세 정보 가져오기
-        const empDetail = empDetailMap[emp.emplNo] || {};
-        
+      empList.forEach(emp => {
         json.push({
           id: emp.emplNo,
-          parent: emp.deptCode,
+          parent: emp.deptCode || "#",
           text: emp.emplNm,
           icon: "/assets/images/organization/employeeImg.svg",
           deptYn: false,
-          dept: empDetail.deptNm || deptMap[emp.deptCode] || '-',
-          position: empDetail.posNm || '-',
-          phone: empDetail.telno || emp.telno || '-',
-          email: empDetail.email || emp.email || '-'
+          original: {
+            id: emp.emplNo,
+            parent: emp.deptCode || "#",
+            text: emp.emplNm,
+            deptYn: false,
+            deptNm: emp.deptNm || '-',
+            posNm: emp.posNm || '-',
+            telno: emp.telno || '-',
+            email: emp.email || '-'
+          }
         });
       });
 
@@ -299,100 +307,50 @@ function loadOrgTree() {
         plugins: ["search"]
       });
 
-      // 트리 로딩 후 클릭 이벤트 연결
-      $('#jstree').off('select_node.jstree').on('select_node.jstree', function (e, data) {
-        if (!data.node.original) return;
-        
-        if (data.node.original.deptYn) {
-          console.log("부서를 클릭했습니다. 무시합니다.");
-          return;
+      $('#jstree').on('select_node.jstree', function (e, data) {
+        const node = data.node;
+        if (!node || node.original?.deptYn) return;
+        if (typeof clickEmp === 'function') {
+          clickEmp(node.original);
         }
-        
-        clickEmp(data);
       });
+
     })
     .catch(error => {
-      console.error("조직도 로딩 오류:", error);
+      console.error("❌ 조직도 로딩 실패:", error);
     });
 }
 
 
-// ✅ 사원 클릭 시
-function clickEmp(data) {
-  console.log("사원 클릭됨:", data);
+
+
+// 사원 클릭 시
+function clickEmp(node) {
+  if (!node || node.deptYn === true) return;
+
+  console.log("💬 선택된 사원:", node);
 
   if (!currentTarget) {
-    swal("선택 오류", "먼저 책임자/참여자/참조자 중 선택해주세요.", "warning");
+    swal("선택 오류", "먼저 책임자/참여자/참조자 버튼을 눌러주세요.", "warning");
     return;
   }
 
-  const node = data.node;
-  if (!node || node.original.deptYn === true) return; // 부서 클릭 무시
+  const emp = node.original; // 🔥 핵심: node.original에서 데이터 가져오기
 
-  const emp = {
-    id: node.id,
-    name: node.text,
-    dept: node.original.deptNm || '-',
-    position: node.original.posNm || '-',
-    phone: formatPhone(node.original.telno || '-'),
-    email: node.original.email || '-'
+  const newEmp = {
+    emplNo: emp.id,        // 사번
+    emplNm: emp.text,      // 이름
+    deptNm: emp.deptNm || '-', // 부서명
+    posNm: emp.posNm || '-',   // 직급
+    telno: emp.telno || '-',   // 전화번호
+    email: emp.email || '-',   // 이메일
+    role: currentTarget
   };
 
-  const tbody = document.querySelector("#selectedMembersTable tbody");
-  const emptyRow = tbody.querySelector(".empty-row");
-  if (emptyRow) emptyRow.remove();
-
-  const tr = document.createElement("tr");
-  tr.setAttribute("data-empno", emp.id);
-  tr.setAttribute("data-role", currentTarget);
-
-  let roleLabel = '';
-  let badgeClass = '';
-  let roleIcon = '';
-
-  if (currentTarget === "responsibleManager") {
-    roleLabel = "책임자";
-    badgeClass = "bg-danger";
-    roleIcon = "fas fa-user-tie";
-  } else if (currentTarget === "participants") {
-    roleLabel = "참여자";
-    badgeClass = "bg-primary";
-    roleIcon = "fas fa-user-check";
-  } else {
-    roleLabel = "참조자";
-    badgeClass = "bg-secondary";
-    roleIcon = "fas fa-user-clock";
-  }
-
-  tr.innerHTML = `
-    <td class="text-center">
-      <span class="badge ${badgeClass} p-2">
-        <i class="${roleIcon} me-1"></i> ${roleLabel}
-      </span>
-    </td>
-    <td class="text-center"><strong>${emp.name}</strong></td>
-    <td class="text-start ps-2">${emp.dept}</td>
-    <td class="text-center">${emp.position}</td>
-    <td class="text-center"><i class="fas fa-phone-alt me-1 text-muted"></i>${emp.phone}</td>
-    <td class="text-start ps-2"><i class="fas fa-envelope me-1 text-muted"></i>${emp.email}</td>
-    <td class="text-center">
-      <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeParticipant(this)">
-        <i class="fas fa-times"></i>
-      </button>
-    </td>
-    <input type="hidden" name="projectEmpVOList[0].prtcpntEmpno" value="${emp.id}">
-    <input type="hidden" name="projectEmpVOList[0].prtcpntRole" value="${currentTarget}">
-    <input type="hidden" name="projectEmpVOList[0].prjctAuthor" value="0000">
-    <input type="hidden" name="projectEmpVOList[0].evlManEmpno" value="${emp.id}">
-    <input type="hidden" name="projectEmpVOList[0].evlCn" value="프로젝트 참여">
-    <input type="hidden" name="projectEmpVOList[0].evlGrad" value="1">
-    <input type="hidden" name="projectEmpVOList[0].secsnYn" value="N">
-  `;
-
-  tbody.appendChild(tr);
-
-  updateProjectEmpIndexes();
+  addSelectedMembers([newEmp]);
 }
+
+
 
 
 // ✅ 전화번호 포맷 함수

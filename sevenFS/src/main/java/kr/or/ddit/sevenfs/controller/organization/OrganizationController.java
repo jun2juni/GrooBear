@@ -503,9 +503,13 @@ public class OrganizationController {
 	//추가  - 채성실
 	@GetMapping("/organization/detail")
 	@ResponseBody
-	public List<EmployeeVO> organizationDetail() {
-	    return organizationService.selectEmpListWithDeptAndPos();
+	public Map<String, Object> organizationDetail() {
+	    Map<String, Object> result = new HashMap<>();
+	    result.put("deptList", organizationService.selectDeptList());
+	    result.put("empList", organizationService.selectEmpListWithDeptAndPos());
+	    return result;
 	}
+
 
 
 	

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
+import kr.or.ddit.sevenfs.vo.organization.DepartmentVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.organization.OrganizationVO;
 
@@ -67,4 +68,6 @@ public interface OrganizationService {
 		public Map<String, Object> getEmpNotification(EmployeeVO emplDetail);
 
 		public List<EmployeeVO> selectEmpListWithDeptAndPos();
+
+		public List<DepartmentVO> selectDeptList();
 }

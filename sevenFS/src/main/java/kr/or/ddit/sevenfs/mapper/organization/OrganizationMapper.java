@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import kr.or.ddit.sevenfs.vo.CommonCodeVO;
+import kr.or.ddit.sevenfs.vo.organization.DepartmentVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 
 @Mapper
@@ -63,6 +64,6 @@ public interface OrganizationMapper {
 
 		public List<EmployeeVO> empListWithDeptAndPos();
 
-		
+		public List<DepartmentVO> selectDeptList();
 	
 }
