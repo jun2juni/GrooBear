@@ -24,8 +24,6 @@ public interface AtrzMapper {
 	
 	//home결재 대기문서
 	public List<AtrzVO> homeAtrzApprovalList(String emplNo);
-	
-	
 	//기안진행문서 최신순 5개
 	public List<AtrzVO> atrzMinSubmitList(String emplNo);
 	//기안완료문서 최신순 5개
@@ -33,25 +31,37 @@ public interface AtrzMapper {
 	
 	//결재대기문서
 	public List<AtrzVO> atrzApprovalList(Map<String, Object> map);
+	//결재대기문서목록 행의 수
+	public int approvalTotal(Map<String, Object> map);
+	//참조대기문서
+	public List<AtrzVO> atrzReferList(Map<String, Object> map);
+	//참조대기문서목록 행의수
+	public int referTotal(Map<String, Object> map);
+	//결재예정문서
+	public List<AtrzVO> atrzExpectedList(Map<String, Object> map);
+	//결재예정문서 행의수
+	public int expectedTotal(Map<String, Object> map);
+	
 	//기안진행문서
 	public List<AtrzVO> atrzSubmitList(String emplNo);
-	//결재완료문서
-	public List<AtrzVO> atrzCompletedList(String emplNo);
-	
-	//참조대기문서
-	public List<AtrzVO> atrzReferList(String emplNo);
-	//결재예정문서
-	public List<AtrzVO> atrzExpectedList(String emplNo);
 	
 	//기안문서함
-	public List<AtrzVO> atrzAllSubmitList(String emplNo);
-	//임시저장함
-	public List<AtrzVO> atrzStorageList(String emplNo);
+	public List<AtrzVO> atrzAllSubmitList(Map<String, Object> map);
+	//기안문서함 행의수
+	public int allSubmitTotal(Map<String, Object> map);
 	//결재문서함
-	public List<AtrzVO> atrzAllApprovalList(String emplNo);
+	public List<AtrzVO> atrzAllApprovalList(Map<String, Object> map);
+	//결재문서함 행의수
+	public int allApprovalTotal(Map<String, Object> map);
+	//임시저장함
+	public List<AtrzVO> atrzStorageList(Map<String, Object> map);
+	//임시저장함 행의수
+	public int storageTotal(Map<String, Object> map);
 
 	//반려문서함
 	public List<AtrzVO> atrzCompanionList(String emplNo);
+	//반려문서함 행의수
+	public int companionTotal(Map<String, Object> map);
 	
 	//기안문서 detail
 	public DraftVO draftDetail(String draftNo);
@@ -155,15 +165,11 @@ public interface AtrzMapper {
 	//임시저장 전자결재 삭제
 	public void deleteStorageAtrz(@Param("atrzDocNos")List<String> atrzDocNos);
 	
-	//결재완료 문서리스트
-	public List<AtrzVO> atrzCompleteList(String emplNo);
+
 	//기안작성중 취소시 전자결재 삭제
 	public void deleteAtrzWriting(String atrzDocNo);
 	//기안작성중 취소시 결재선 삭제
 	public void deleteAtrzLineWriting(String atrzDocNo);
-
-	// 결재대기문서목록 행의 수
-	public int approvalTotal(Map<String, Object> map);
 
 	//첨부파일 상세보기를 위한것
 	public List<AttachFileVO> getAtchFile(long atchFileNo);
@@ -182,5 +188,9 @@ public interface AtrzMapper {
 	public void insertMyAtrzLine(AtrzLineVO atrzLineVO);
 	//급여명세서 상세보기
 	public SalaryVO salaryDetail(String atrzDocNo);
+
+
+
+	
 
 }

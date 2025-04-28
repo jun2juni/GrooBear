@@ -1,9 +1,7 @@
 package kr.or.ddit.sevenfs.service.atrz.impl;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,8 +10,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.core.type.TypeReference;
 
 import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
@@ -41,7 +37,6 @@ public class AtrzServiceImpl implements AtrzService {
 	
 	@Autowired
 	AtrzMapper atrzMapper;
-	
 	// 사원 정보를 위해 가져온것
 	@Autowired
 	private OrganizationService organizationService;
@@ -59,21 +54,12 @@ public class AtrzServiceImpl implements AtrzService {
 		List<AtrzVO> homeAtrzApprovalList = atrzMapper.homeAtrzApprovalList(emplNo);
 		return homeAtrzApprovalList;
 	}
-	
-	
-	//결재 대기중인 문서리스트
-	@Override
-	public List<AtrzVO> atrzApprovalList(Map<String,Object> map) {
-		List<AtrzVO> atrzApprovalList = atrzMapper.atrzApprovalList(map);
-		return atrzApprovalList;
-	}
 	//기안진행문서 최신순 5개
 	@Override
 	public List<AtrzVO> atrzMinSubmitList(String emplNo) {
 		List<AtrzVO> atrzMinSubmitList = atrzMapper.atrzMinSubmitList(emplNo);
 		return atrzMinSubmitList;
 	}
-	
 	//기안완료문서 최신순 5개
 	@Override
 	public List<AtrzVO> atrzMinCompltedList(String emplNo) {
@@ -81,59 +67,73 @@ public class AtrzServiceImpl implements AtrzService {
 		return atrzMinCompltedList;
 	}
 	
-	//기안중인 문서리스트
+	//결재대기문서목록
 	@Override
-	public List<AtrzVO> atrzSubmitList(String emplNo) {
-		List<AtrzVO> atrzSubmitList = atrzMapper.atrzSubmitList(emplNo);
-		return atrzSubmitList;
+	public List<AtrzVO> atrzApprovalList(Map<String,Object> map) {
+		List<AtrzVO> atrzApprovalList = atrzMapper.atrzApprovalList(map);
+		return atrzApprovalList;
 	}
-	//기안완료된 문서리스트
+	// 결재대기문서목록 행의 수
 	@Override
-	public List<AtrzVO> atrzCompletedList(String emplNo) {
-		List<AtrzVO> atrzCompletedList = atrzMapper.atrzCompletedList(emplNo);
-		return atrzCompletedList;
+	public int approvalTotal(Map<String,Object> map) {
+		return atrzMapper.approvalTotal(map);
 	}
-	
 	//참조대기문서
 	@Override
-	public List<AtrzVO> atrzReferList(String emplNo) {
-		List<AtrzVO> atrzReferList = atrzMapper.atrzReferList(emplNo);
+	public List<AtrzVO> atrzReferList(Map<String,Object> map) {
+		List<AtrzVO> atrzReferList = atrzMapper.atrzReferList(map);
 		return atrzReferList;
+	}
+	//참조대기문서 행의수
+	@Override
+	public int referTotal(Map<String, Object> map) {
+		return atrzMapper.referTotal(map);
 	}
 	//결재예정문서
 	@Override
-	public List<AtrzVO> atrzExpectedList(String emplNo) {
-		List<AtrzVO> atrzExpectedList = atrzMapper.atrzExpectedList(emplNo);
+	public List<AtrzVO> atrzExpectedList(Map<String, Object> map) {
+		List<AtrzVO> atrzExpectedList = atrzMapper.atrzExpectedList(map);
 		return atrzExpectedList;
 	}
-	
-	//결재완료 문서함
+	//결재예정문서 행의수
 	@Override
-	public List<AtrzVO> atrzCompleteList(String emplNo) {
-		List<AtrzVO> atrzCompleteList = atrzMapper.atrzCompleteList(emplNo);
-		return atrzCompleteList;
+	public int expectedTotal(Map<String, Object> map) {
+		return atrzMapper.expectedTotal(map);
 	}
 	
 	//기안문서함
 	@Override
-	public List<AtrzVO> atrzAllSubmitList(String emplNo) {
-		List<AtrzVO> atrzAllSubmitList = atrzMapper.atrzAllSubmitList(emplNo);
+	public List<AtrzVO> atrzAllSubmitList(Map<String, Object> map) {
+		List<AtrzVO> atrzAllSubmitList = atrzMapper.atrzAllSubmitList(map);
 		return atrzAllSubmitList;
 	}
-	
+	//기안문서함 행의수
+	@Override
+	public int allSubmitTotal(Map<String, Object> map) {
+		return atrzMapper.allSubmitTotal(map);
+	}
 	//임시저장 문서리스트
 	@Override
-	public List<AtrzVO> atrzStorageList(String emplNo) {
-		List<AtrzVO> atrzStorageList = atrzMapper.atrzStorageList(emplNo);
+	public List<AtrzVO> atrzStorageList(Map<String, Object> map) {
+		List<AtrzVO> atrzStorageList = atrzMapper.atrzStorageList(map);
 		return atrzStorageList;
 	}
-	
+	//임시저장함 행의수
+	@Override
+	public int storageTotal(Map<String, Object> map) {
+		return atrzMapper.storageTotal(map);
+	}
 	//결재문서함
 	@Override
-	public List<AtrzVO> atrzAllApprovalList(String emplNo) {
-		List<AtrzVO> atrzAllApprovalList = atrzMapper.atrzAllApprovalList(emplNo);
+	public List<AtrzVO> atrzAllApprovalList(Map<String, Object> map) {
+		List<AtrzVO> atrzAllApprovalList = atrzMapper.atrzAllApprovalList(map);
 		return atrzAllApprovalList;
 		
+	}
+	//결재문서함 행의수
+	@Override
+	public int allApprovalTotal(Map<String, Object> map) {
+		return atrzMapper.allApprovalTotal(map);
 	}
 	
 	//반려문서함
@@ -142,7 +142,18 @@ public class AtrzServiceImpl implements AtrzService {
 		List<AtrzVO> atrzCompanionList = atrzMapper.atrzCompanionList(emplNo);
 		return atrzCompanionList;
 	}
+	//반려문서함 행의수
+	@Override
+	public int companionTotal(Map<String, Object> map) {
+		return atrzMapper.companionTotal(map);
+	}
 	
+	//기안중인 문서리스트
+	@Override
+	public List<AtrzVO> atrzSubmitList(String emplNo) {
+		List<AtrzVO> atrzSubmitList = atrzMapper.atrzSubmitList(emplNo);
+		return atrzSubmitList;
+	}
 	
 	/**
 	 * 전자결재테이블 등록
@@ -968,12 +979,7 @@ public class AtrzServiceImpl implements AtrzService {
 		atrzMapper.deleteStorageAtrz(atrzDocNos);
 	}
 	
-	// 결재대기문서목록 행의 수
-	@Override
-	public int approvalTotal(Map<String,Object> map) {
-		return atrzMapper.approvalTotal(map);
-	}
-
+	
 	//임시저장후 결재선 재등록시 결재선 삭제처리
 	@Override
 	public void deleteAtrzLineByDocNo(String atrzDocNo) {
@@ -1003,9 +1009,6 @@ public class AtrzServiceImpl implements AtrzService {
 		return this.atrzMapper.draftDetail(draftNo);
 		
 	}
-
-
-
 	
 	
 }

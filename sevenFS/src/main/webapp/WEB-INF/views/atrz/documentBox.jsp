@@ -124,7 +124,7 @@
 								<button id="s_eap_btn" class="main-btn active-btn rounded-full btn-hover newAtrzDocBtn"
 									data-bs-toggle="modal" data-bs-target="#newAtrzDocModal">
 									새 결재 진행</button>
-								<form id="searchForm" method="get" action="/atrz/approval" class="d-flex gap-2">
+								<form id="searchForm" method="get" action="/atrz/document" class="d-flex gap-2">
 									<input type="hidden" name="currentPage" id="currentPage" value="${param.currentPage}" />
 									<input type="hidden" name="tab" id="tab" value="${param.tab}" />
 									<input type="hidden" name="duration" value="${param.duration}" />
@@ -162,16 +162,19 @@
 					<!-- 메뉴바 끝 -->
 					<!-- 컨텐츠1 시작 -->
 					<div class="tab-content" id="myTabContent">
-						<div class="tab-pane fade show active" id="contact1-tab-pane"
+						<div class="tab-pane fade ${param.tab == null || param.tab == '1' ? 'show active' : ''}" id="contact1-tab-pane"
 							role="tabpanel" aria-labelledby="contact1-tab" tabindex="0">
 							<div class="atrzTabCont">
 								<div class="row">
 									<div class="col-lg-12">
 										<div class="card-style">
+											<div class="d-flex justify-content-between align-items-center mb-3">
 											<h6 class="mb-10">기안문서함</h6>
+											<p class="mb-0 text-sm text-muted">총 ${allSubmitTotal}건</p>
+										</div>
 											<div class="table-wrapper table-responsive">
 												<c:choose>
-													<c:when test="${empty atrzAllSubmitList}">
+													<c:when test="${empty allSubmitArticlePage.content}">
 														<div class="text-center emptyList" >
 															기안 문서함에 문서가 없습니다.
 														</div>
@@ -200,7 +203,7 @@
 														</tr>
 													</thead>
 													<tbody>
-														<c:forEach var="atrzVO" items="${atrzAllSubmitList}">
+														<c:forEach var="atrzVO" items="${allSubmitArticlePage.content}">
 															<tr>
 																<td class="text-center">
 																	<p class="text-sm fw-bolder">
@@ -272,6 +275,12 @@
 														</c:forEach>
 													</tbody>
 												</table>
+												<div style="margin-top: 20px;">
+													<!-- 페이지네이션 시작 -->
+													<c:if test="${allSubmitArticlePage.totalPages > 1}">
+														${allSubmitArticlePage.pagingArea}
+													</c:if>
+												</div>
 											</c:otherwise>
 										</c:choose>
 											</div>
@@ -286,7 +295,7 @@
 
 					<!-- 컨텐츠2 시작 -->
 					<div class="tab-content" id="myTabContent">
-						<div class="tab-pane fade" id="contact2-tab-pane" role="tabpanel"
+						<div class="tab-pane fade ${param.tab == '2' ? 'show active' : ''}" id="contact2-tab-pane" role="tabpanel"
 							aria-labelledby="contact2-tab" tabindex="0">
 							<div id="critical">
 								<a class="btn" data-bs-toggle="modal"
@@ -300,10 +309,13 @@
 								<div class="row">
 									<div class="col-lg-12">
 										<div class="card-style">
-											<h6 class="mb-10">임시저장함</h6>
+											<div class="d-flex justify-content-between align-items-center mb-3">
+												<h6 class="mb-10">임시저장함</h6>
+												<p class="mb-0 text-sm text-muted">총 ${storageTotal}건</p>
+											</div>
 											<div class="table-wrapper table-responsive">
 												<c:choose>
-													<c:when test="${empty atrzStorageList}">
+													<c:when test="${empty storageArticlePage.content}">
 														<div class="text-center emptyList" >
 															임시저장한 문서가 없습니다.
 														</div>
@@ -332,7 +344,7 @@
 																</tr>
 															</thead>
 															<tbody>
-																<c:forEach var="atrzVO" items="${atrzStorageList}">
+																<c:forEach var="atrzVO" items="${storageArticlePage.content}">
 																	<tr>
 																		<td class="text-center">
 																			<div class="check-input-primary">
@@ -423,16 +435,19 @@
 					<!-- 컨텐츠2 끝 -->
 					<!-- 컨텐츠3 시작 -->
 					<div class="tab-content" id="myTabContent">
-						<div class="tab-pane fade" id="contact3-tab-pane" role="tabpanel"
+						<div class="tab-pane fade ${param.tab == '3' ? 'show active' : ''}" id="contact3-tab-pane" role="tabpanel"
 							aria-labelledby="contact3-tab" tabindex="0">
 							<div class="atrzTabCont">
 								<div class="row">
 									<div class="col-lg-12">
 										<div class="card-style">
-											<h6 class="mb-10">결재문서함</h6>
+											<div class="d-flex justify-content-between align-items-center mb-3">
+												<h6 class="mb-10">결재문서함</h6>
+												<p class="mb-0 text-sm text-muted">총 ${allApprovalTotal}건</p>
+											</div>
 											<div class="table-wrapper table-responsive">
 												<c:choose>
-													<c:when test="${empty atrzAllApprovalList}">
+													<c:when test="${empty allApprovalArticlePage.content}">
 														<div class="text-center emptyList" >
 															결재 문서함에 문서가 없습니다.
 														</div>
@@ -468,7 +483,7 @@
 																</tr>
 															</thead>
 															<tbody>
-																<c:forEach var="atrzVO" items="${atrzAllApprovalList}">
+																<c:forEach var="atrzVO" items="${allApprovalArticlePage.content}">
 																	<tr>
 																		<td>
 																			<p>
@@ -551,6 +566,12 @@
 																</c:forEach>
 															</tbody>
 														</table>
+														<div style="margin-top: 20px;">
+															<!-- 페이지네이션 시작 -->
+															<c:if test="${allApprovalArticlePage.totalPages > 1}">
+																${allApprovalArticlePage.pagingArea}
+															</c:if>
+														</div>
 													</c:otherwise>
 												</c:choose>
 											</div>
@@ -597,6 +618,32 @@ aria-labelledby="approvalSaveModalLabel" aria-hidden="true">
 
 </body>
 <script>
+function moveTab(tabNo) {
+		const form = document.createElement('form');
+		form.method = 'get';
+		form.action = '/atrz/document'; // 당신 검색 요청 URL
+
+		const tabInput = document.createElement('input');
+		tabInput.type = 'hidden';
+		tabInput.name = 'tab';
+		tabInput.value = tabNo;
+		form.appendChild(tabInput);
+
+		// 검색조건 초기화
+		const searchInputs = ['searchType', 'keyword', 'duration', 'fromDate', 'toDate'];
+		searchInputs.forEach(name => {
+			const input = document.createElement('input');
+			input.type = 'hidden';
+			input.name = name;
+			input.value = ''; // 초기화
+			form.appendChild(input);
+		});
+
+		document.body.appendChild(form);
+		form.submit();
+	}
+
+
 $(document).ready(function() {
 	// 체크박스 전체 선택
 	$("#checkbox-all").click(function() {

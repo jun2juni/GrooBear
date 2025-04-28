@@ -106,35 +106,37 @@
 							</div>
 							<!-- 오른쪽: 검색창 -->
 							<div class="table_search d-flex align-items-center gap-2">
-								<select id="duration" class="form-select w-auto">
-									<option value="all">전체기간</option>
-									<option value="1">1개월</option>
-									<option value="6">6개월</option>
-									<option value="12">1년</option>
-									<option value="period">기간입력</option>
+								<form id="searchForm" method="get" action="/atrz/companion" class="d-flex gap-2">
+										<input type="hidden" name="currentPage" id="currentPage" value="${param.currentPage}" />
+										<input type="hidden" name="tab" id="tab" value="1" />
+										<input type="hidden" name="duration" value="${param.duration}" />
+									<select id="duration" class="form-select w-auto">
+									<option value="all" <c:if test="${param.duration == 'all'}">selected</c:if>>전체기간</option>
+									<option value="1" <c:if test="${param.duration == '1'}">selected</c:if>>1개월</option>
+									<option value="6" <c:if test="${param.duration == '6'}">selected</c:if>>6개월</option>
+									<option value="12" <c:if test="${param.duration == '12'}">selected</c:if>>1년</option>
+									<option value="period" <c:if test="${param.duration == 'period'}">selected</c:if>>기간입력</option>
 								</select>
-								<div id="durationPeriod"
-									class="search_option d-none align-items-center">
-									<input id="fromDate" class="form-control" type="text"
-										style="width: 100px;"> ~ <input id="toDate"
-										class="form-control" type="text" style="width: 100px;">
+								<div id="durationPeriod" class="search_option d-none align-items-center">
+									<input id="fromDate" name="fromDate" value="${param.fromDate}" class="form-control" type="text" style="width: 150px;"> ~ 
+									<input id="toDate" name="toDate" value="${param.toDate}"  class="form-control" type="text" style="width: 150px;">
 								</div>
 								<!-- 검색 유형 선택 -->
-								<select id="searchType" class="form-select w-auto">
-									<option value="title">제목</option>
-									<option value="drafterName">기안자</option>
-									<option value="drafterDeptName">기안부서</option>
-									<option value="formName">결재양식</option>
-									<option value="activityUserName">결재선</option>
+								<select id="searchType" name="searchType" class="form-select w-auto">
+									<option value="title" ${param.searchType == 'title' ? 'selected' : ''}>제목</option>
+									<option value="drafterName" ${param.searchType == 'drafterName' ? 'selected' : ''}>기안자</option>
+									<option value="drafterDeptName" ${param.searchType == 'drafterDeptName' ? 'selected' : ''}>기안부서</option>
+									<option value="formName" ${param.searchType == 'formName' ? 'selected' : ''}>결재양식</option>
 								</select>
 								<section class="search2">
-									<div
-										class="search_wrap d-flex align-items-center border rounded px-2">
+									<div class="search_wrap d-flex align-items-center border rounded px-2">
 										<!--focus되면 "search_focus" multi class로 추가해주세요.-->
-										<input id="keyword" class="form-control border-0" type="text"
-											placeholder="검색"> <span
-											class="material-symbols-outlined">search</span>
+										<input id="keyword" class="form-control border-0" type="text" name="keyword" value="${param.keyword}" placeholder="검색"> 
+										<button type="button" id="searchBtn" class="border-0 bg-transparent">
+											<span class="material-symbols-outlined">search</span>
+										</button>
 									</div>
+					</form>
 								</section>
 							</div>
 						</div>
@@ -175,10 +177,13 @@
 							<div class="row">
 								<div class="col-lg-12">
 									<div class="card-style">
-										<h6 class="mb-10">반려문서함</h6>
+										<div class="d-flex justify-content-between align-items-center mb-3">
+											<h6 class="mb-10">반려문서함</h6>
+											<p class="mb-0 text-sm text-muted">총 ${companionTotal}건</p>
+										</div>
 										<div class="table-wrapper table-responsive">
 											<c:choose>
-												<c:when test="${empty atrzCompanionList}">
+												<c:when test="${empty companionArticlePage.content}">
 													<div class="text-center emptyList" >
 														결재 대기중인 문서가 없습니다.
 													</div>
@@ -203,7 +208,7 @@
 																</th>
 															</tr>
 													</thead>
-													<c:forEach var="atrzVO" items="${atrzCompanionList}">
+													<c:forEach var="atrzVO" items="${companionArticlePage.content}">
 														<tbody>
 															<tr>
 																<td class="text-center">
@@ -263,6 +268,12 @@
 														</tbody>
 													</c:forEach>
 												</table>
+												<div style="margin-top: 20px;">
+													<!-- 페이지네이션 시작 -->
+													<c:if test="${companionArticlePage.totalPages > 1}">
+														${companionArticlePage.pagingArea}
+													</c:if>
+												</div>
 											</c:otherwise>
 										</c:choose>
 									</div>
@@ -285,6 +296,7 @@
 <!-- 새결재 진행 모달import -->
 <c:import url="newAtrzDocModal.jsp" />
 <script>
+
 //기간입력 선택시 활성화 시키는 스크립트
 document.getElementById("duration").addEventListener("change",function() {
 	var durationPeriod = document.getElementById("durationPeriod");

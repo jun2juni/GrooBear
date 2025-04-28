@@ -106,10 +106,6 @@ public class AtrzController {
 		List<AtrzVO> atrzMinCompltedList = atrzService.atrzMinCompltedList(emplNo);
 		model.addAttribute("atrzMinCompltedList", atrzMinCompltedList);
 
-		// 기안완료된 문서에 해당 완료일시 최신순으로 10개만 출력
-		List<AtrzVO> atrzCompletedList = atrzService.atrzCompletedList(emplNo);
-		model.addAttribute("atrzCompletedList", atrzCompletedList);
-
 		model.addAttribute("title", "전자결재");
 		return "atrz/home";
 	}
@@ -130,12 +126,14 @@ public class AtrzController {
 	 */
 	@GetMapping("/approval")
 	public String approvalList(Model model, @AuthenticationPrincipal CustomUser customUser,
-			@RequestParam(defaultValue = "1") int currentPage, @RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "1") int currentPage, 
+			@RequestParam(defaultValue = "10") int size,
 			@RequestParam(defaultValue = "", required = false) String keyword,
 			@RequestParam(defaultValue = "title", required = false) String searchType,
 			@RequestParam(defaultValue = "tab", required = true) String tab,
 			@RequestParam(defaultValue = "all", required = false) String duration,
-			@RequestParam(required = false) String fromDate, @RequestParam(required = false) String toDate) {
+			@RequestParam(required = false) String fromDate, 
+			@RequestParam(required = false) String toDate) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
@@ -145,7 +143,6 @@ public class AtrzController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("currentPage", currentPage);
 		map.put("size", size);
-
 		map.put("emplNo", emplNo);
 		map.put("keyword", keyword);
 		map.put("searchType", searchType);
@@ -168,74 +165,124 @@ public class AtrzController {
 
 		model.addAttribute("approvalTotal", approvalTotal);
 		// I-3) 결재대기문서목록 페이징
-		ArticlePage<AtrzVO> approvalArticlePage = new ArticlePage<AtrzVO>(approvalTotal, currentPage, size,
+		ArticlePage<AtrzVO> approvalArticlePage = new ArticlePage<AtrzVO>("/atrz/approval",approvalTotal, currentPage, size,
 				atrzApprovalList, map);
 		model.addAttribute("atrzApprovalList", atrzApprovalList);
 		model.addAttribute("approvalArticlePage", approvalArticlePage);
 
+		
+		
 		// 참조대기문서
-		List<AtrzVO> atrzReferList = atrzService.atrzReferList(emplNo);
+		List<AtrzVO> atrzReferList = atrzService.atrzReferList(map);
+		int referTotal = atrzService.referTotal(map);
+		ArticlePage<AtrzVO> referArticlePage = new ArticlePage<AtrzVO>("/atrz/approval",referTotal, currentPage, size,atrzReferList, map);
+		model.addAttribute("referTotal",referTotal);
+		model.addAttribute("referArticlePage",referArticlePage);
 		model.addAttribute("atrzReferList", atrzReferList);
-		// 참조대기의 경우에는 권한을 확인해서 버튼이 보이지 않게 만들어야한다.
 
 		// 결재예정문서
-		List<AtrzVO> atrzExpectedList = atrzService.atrzExpectedList(emplNo);
+		List<AtrzVO> atrzExpectedList = atrzService.atrzExpectedList(map);
+		int expectedTotal = atrzService.expectedTotal(map);
+		ArticlePage<AtrzVO> expectedArticlePage = new ArticlePage<AtrzVO>("/atrz/approval",expectedTotal, currentPage, size,atrzExpectedList, map);
+		model.addAttribute("expectedTotal",expectedTotal);
+		model.addAttribute("expectedArticlePage",expectedArticlePage);
 		model.addAttribute("atrzExpectedList", atrzExpectedList);
 
+		model.addAttribute("title", "수신문서함");
 		return "atrz/approval";
-
-	}
-	/**
-	 * 수신문서함
-	 */
-	@GetMapping("/complete")
-	public String completeList(Model model, @AuthenticationPrincipal CustomUser customUser) {
-		// 로그인한 사람정보 가져오기(사번 이름)
-		EmployeeVO empVO = customUser.getEmpVO();
-		String emplNo = empVO.getEmplNo();
-		log.info("documentList-> emplNo : " + emplNo);
-
-		List<AtrzVO> atrzCompleteList = atrzService.atrzCompleteList(emplNo);
-		model.addAttribute("atrzCompleteList", atrzCompleteList);
-
-		model.addAttribute("title", "결재 완료 문서");
-		return "atrz/complete";
 
 	}
 	
 	@GetMapping("/document")
-	public String documentList(Model model, @AuthenticationPrincipal CustomUser customUser) {
+	public String documentList(Model model, @AuthenticationPrincipal CustomUser customUser,
+			@RequestParam(defaultValue = "1") int currentPage, 
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "", required = false) String keyword,
+			@RequestParam(defaultValue = "title", required = false) String searchType,
+			@RequestParam(defaultValue = "tab", required = true) String tab,
+			@RequestParam(defaultValue = "all", required = false) String duration,
+			@RequestParam(required = false) String fromDate, 
+			@RequestParam(required = false) String toDate) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
 		log.info("documentList-> emplNo : " + emplNo);
-
-		// 여기에 표시될것
+		
+		//검색조건
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("currentPage", currentPage);
+		map.put("size", size);
+		map.put("emplNo", emplNo);
+		map.put("keyword", keyword);
+		map.put("searchType", searchType);
+		map.put("tab", tab);
+		map.put("duration", duration);
+		map.put("fromDate", fromDate);
+		map.put("toDate", toDate);
+			
 		// 기안문서함
-		// 기안문서함의 경우에는 내가 기안 한 목록이 표시된다.
-		List<AtrzVO> atrzAllSubmitList = atrzService.atrzAllSubmitList(emplNo);
+		List<AtrzVO> atrzAllSubmitList = atrzService.atrzAllSubmitList(map);
+		int allSubmitTotal = atrzService.allSubmitTotal(map);
+		ArticlePage<AtrzVO> allSubmitArticlePage = new ArticlePage<AtrzVO>("/atrz/document",allSubmitTotal, currentPage, size,atrzAllSubmitList, map);
+		model.addAttribute("allSubmitTotal", allSubmitTotal);
+		model.addAttribute("allSubmitArticlePage", allSubmitArticlePage);
 		model.addAttribute("atrzAllSubmitList", atrzAllSubmitList);
-
+		
 		// 임시저장함(로그인한 사람의 아이디를 받아서 select한다.)
-		List<AtrzVO> atrzStorageList = this.atrzService.atrzStorageList(emplNo);
+		List<AtrzVO> atrzStorageList = this.atrzService.atrzStorageList(map);
+		int storageTotal = atrzService.storageTotal(map);
+		ArticlePage<AtrzVO> storageArticlePage = new ArticlePage<AtrzVO>("/atrz/document",storageTotal, currentPage, size,atrzStorageList, map);
+		model.addAttribute("storageTotal", storageTotal);
+		model.addAttribute("storageArticlePage", storageArticlePage);
 		model.addAttribute("atrzStorageList", atrzStorageList);
+		
 		// 결재문서함
-		// 결재문서함의 경우에는 결재선에 내가 포함되어있는 문서만 확인된다.
-		List<AtrzVO> atrzAllApprovalList = atrzService.atrzAllApprovalList(emplNo);
+		List<AtrzVO> atrzAllApprovalList = atrzService.atrzAllApprovalList(map);
+		int allApprovalTotal = atrzService.allApprovalTotal(map);
+		ArticlePage<AtrzVO> allApprovalArticlePage = new ArticlePage<AtrzVO>("/atrz/document",allApprovalTotal, currentPage, size,atrzAllApprovalList, map);
+		model.addAttribute("allApprovalTotal", allApprovalTotal);
+		model.addAttribute("allApprovalArticlePage", allApprovalArticlePage);
 		model.addAttribute("atrzAllApprovalList", atrzAllApprovalList);
 
-		model.addAttribute("title", "전자결재문서함");
+		model.addAttribute("title", "개인문서함");
 		return "atrz/documentBox";
 	}
 
 	@GetMapping("/companion")
-	public String companionList(Model model, @AuthenticationPrincipal CustomUser customUser) {
+	public String companionList(Model model, @AuthenticationPrincipal CustomUser customUser,
+			@RequestParam(defaultValue = "1") int currentPage, 
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "", required = false) String keyword,
+			@RequestParam(defaultValue = "title", required = false) String searchType,
+			@RequestParam(defaultValue = "tab", required = true) String tab,
+			@RequestParam(defaultValue = "all", required = false) String duration,
+			@RequestParam(required = false) String fromDate, 
+			@RequestParam(required = false) String toDate
+			) {
 		// 로그인한 사람정보 가져오기(사번 이름)
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
 		log.info("documentList-> emplNo : " + emplNo);
 
+		//검색조건
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("currentPage", currentPage);
+		map.put("size", size);
+		map.put("emplNo", emplNo);
+		map.put("keyword", keyword);
+		map.put("searchType", searchType);
+		map.put("tab", tab);
+		map.put("duration", duration);
+		map.put("fromDate", fromDate);
+		map.put("toDate", toDate);
+		
+		//반려문서함
 		List<AtrzVO> atrzCompanionList = atrzService.atrzCompanionList(emplNo);
+		int companionTotal = atrzService.companionTotal(map);
+		ArticlePage<AtrzVO> companionArticlePage = new ArticlePage<AtrzVO>("/atrz/companion",companionTotal, currentPage, size,atrzCompanionList, map);
+		model.addAttribute("companionTotal", companionTotal);
+		model.addAttribute("companionArticlePage", companionArticlePage);
+		log.info("documentList-> companionArticlePage : " + companionArticlePage);
 		model.addAttribute("atrzCompanionList", atrzCompanionList);
 
 		model.addAttribute("title", "반려문서함");

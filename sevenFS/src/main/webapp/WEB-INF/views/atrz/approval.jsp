@@ -154,11 +154,11 @@
 									<div class="search_wrap d-flex align-items-center border rounded px-2">
 										<!--focus되면 "search_focus" multi class로 추가해주세요.-->
 										<input id="keyword" class="form-control border-0" type="text" name="keyword" value="${param.keyword}" placeholder="검색"> 
-											<button type="button" id="searchBtn" class="border-0 bg-transparent">
-												<span class="material-symbols-outlined">search</span>
-											</button>
+										<button type="button" id="searchBtn" class="border-0 bg-transparent">
+											<span class="material-symbols-outlined">search</span>
+										</button>
 									</div>
-									</form>
+					</form>
 								</section>
 							</div>
 						</div>
@@ -324,10 +324,13 @@
 							<div class="row">
 								<div class="col-lg-12">
 									<div class="card-style">
-										<h6 class="mb-10">참조대기문서</h6>
+										<div class="d-flex justify-content-between align-items-center mb-3">
+											<h6 class="mb-10">참조대기문서</h6>
+											<p class="mb-0 text-sm text-muted">총 ${referTotal}건</p>
+										</div>
 										<div class="table-wrapper table-responsive">
 											<c:choose>
-												<c:when test="${empty atrzReferList}">
+												<c:when test="${empty referArticlePage.content}">
 													<div class="text-center py-5">
 														<div class="text-center emptyList">
 															참조 대기중인 문서가 없습니다.
@@ -363,7 +366,7 @@
 															</tr>
 														</thead>
 														<tbody>
-															<c:forEach var="atrzVO" items="${atrzReferList}">
+															<c:forEach var="atrzVO" items="${referArticlePage.content}">
 																<tr>
 																	<td class="text-center">
 																		<p class="text-sm fw-bolder">
@@ -443,6 +446,12 @@
 															</c:forEach>
 														</tbody>
 													</table>
+													<div style="margin-top: 20px;">
+														<!-- 페이지네이션 시작 -->
+														<c:if test="${referArticlePage.totalPages > 1}">
+															${referArticlePage.pagingArea}
+														</c:if>
+													</div>
 												</c:otherwise>
 											</c:choose>
 										</div>
@@ -463,10 +472,13 @@
 							<div class="row">
 								<div class="col-lg-12">
 									<div class="card-style">
-										<h6 class="mb-10">결재예정문서</h6>
+										<div class="d-flex justify-content-between align-items-center mb-3">
+											<h6 class="mb-10">결재예정문서</h6>
+											<p class="mb-0 text-sm text-muted">총 ${expectedTotal}건</p>
+										</div>
 										<div class="table-wrapper table-responsive">
 											<c:choose>
-												<c:when test="${empty atrzExpectedList}">
+												<c:when test="${empty expectedArticlePage.content}">
 													<div class="text-center py-5">
 														<div class="text-center emptyList">
 															결재 예정인 문서가 없습니다.
@@ -496,7 +508,7 @@
 															</tr>
 														</thead>
 														<tbody>
-															<c:forEach var="atrzVO" items="${atrzExpectedList}">
+															<c:forEach var="atrzVO" items="${expectedArticlePage.content}">
 																<tr>
 																	<td class="text-center">
 																		<p class="text-sm fw-bolder">
@@ -569,6 +581,12 @@
 															</c:forEach>
 														</tbody>
 													</table>
+													<div style="margin-top: 20px;">
+														<!-- 페이지네이션 시작 -->
+														<c:if test="${expectedArticlePage.totalPages > 1}">
+															${expectedArticlePage.pagingArea}
+														</c:if>
+													</div>
 												</c:otherwise>
 											</c:choose>
 										</div>

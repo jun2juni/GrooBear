@@ -74,7 +74,7 @@ public class ArticlePage<T> {
 	
 	//오버로딩
 	//전자결재 동기 전용
-	public ArticlePage(int total, int currentPage, int size, List<T> content, Map<String,Object> map) {
+	public ArticlePage(String basePath,int total, int currentPage, int size, List<T> content, Map<String,Object> map) {
 		// size : 한 화면에 보여질 목록의 행 수
 		this.total = total;
 		this.currentPage = currentPage;
@@ -140,12 +140,13 @@ public class ArticlePage<T> {
 			}
 			
 			
-			String baseUrl = "/atrz/approval?tab=" + tab 
-		               + "&keyword=" + keyword 
-		               + "&searchType=" + searchType 
-		               + "&duration=" + duration
-		               + "&fromDate=" + fromDate
-		               + "&toDate=" + toDate;
+	        String baseUrl = basePath 
+                    + "?tab=" + tab 
+                    + "&keyword=" + keyword 
+                    + "&searchType=" + searchType 
+                    + "&duration=" + duration
+                    + "&fromDate=" + fromDate
+                    + "&toDate=" + toDate;
 			
 			
 			

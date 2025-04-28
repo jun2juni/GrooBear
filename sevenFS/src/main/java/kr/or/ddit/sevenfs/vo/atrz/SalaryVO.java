@@ -1,6 +1,5 @@
 package kr.or.ddit.sevenfs.vo.atrz;
 
-import java.util.Date;
 import java.util.List;
 
 import lombok.Data;
