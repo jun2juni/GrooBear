@@ -595,7 +595,8 @@
                   </c:if>
                 </div>
                 <div class="email-sender" style="flex: 1;">${mailVO.trnsmitEmail}</div>
-                <div class="email-content" style="flex: 2;">
+
+                <div class="email-content" style="flex: 2; display: flex; align-items: center;">
                   <c:if test="${(mailVO.lblCol != null and mailVO.lblCol != '')&&(mailVO.emailClTy=='0' || mailVO.emailClTy=='1')}">
                     <i class="fas fa-tag" data-col="${mailVO.lblCol}" data-lblNo="${mailVO.lblNo}" style="color: ${mailVO.lblCol};"></i>
                   </c:if>
@@ -605,9 +606,10 @@
                   <c:if test="${mailVO.emailSj == null}">
                     <span class="email-subject">(제목 없음)</span>
                   </c:if>
-                    <c:if test="${mailVO.emailCn != null}">
+                  <c:if test="${mailVO.emailCn != null}">
                   </c:if>
                 </div>
+
                 <div class="email-date" style="flex: 1; text-align: center;">${mailVO.trnsmitDt}</div>
                 </div>
               </c:forEach>

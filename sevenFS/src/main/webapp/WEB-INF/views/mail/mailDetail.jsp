@@ -529,9 +529,9 @@
                   <div>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                       <h2 class="email-detail-subject">${mailVO.emailSj}</h2>
-                      <button class="toolbar-button">
-                      <i class="fas fa-ellipsis-v"></i>
-                      </button>
+                      <!-- <button class="toolbar-button">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </button> -->
                     </div>
                   </div>
                   <div class="email-detail-info">
@@ -559,7 +559,9 @@
                           <c:forEach items="${mailVO.recptnMapList}" var="recp">
                             <div class="participant-item participant-recptn">
                               <div class="participant-avatar">
-                                ${fn:substring(recp.emplNm, 0, 1)}
+                                <!-- <c:if test="${recp.emplNm != null and recp.emplNm != ''}"> -->
+                                  ${fn:substring(recp.emplNm, 0, 1)}
+                                <!-- </c:if> -->
                               </div>
                               <div class="participant-info">
                                 <div class="participant-name">${recp.emplNm}</div>

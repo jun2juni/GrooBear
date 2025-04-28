@@ -26,11 +26,13 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.mail.MailLabelService;
 import kr.or.ddit.sevenfs.service.mail.MailService;
+import kr.or.ddit.sevenfs.service.mail.MailTemplateService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.mail.MailLabelVO;
+import kr.or.ddit.sevenfs.vo.mail.MailTemplateVO;
 import kr.or.ddit.sevenfs.vo.mail.MailVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +55,9 @@ public class MailController {
 	
 	@Autowired
 	MailLabelService mailLabelService;
+	
+	@Autowired
+	MailTemplateService mailTemplateService;
 	
 	@Autowired
 	OrganizationService organizationService;
@@ -168,7 +173,10 @@ public class MailController {
 										@AuthenticationPrincipal CustomUser customUser) {
 		EmployeeVO employeeVO = customUser.getEmpVO();
 		List<MailLabelVO> mailLabelList = mailLabelService.getLabelList(employeeVO);
+		List<MailTemplateVO> mailTemplateVOList = mailTemplateService.getTemplateList(employeeVO);
+		log.info("getMapping mailSend -> mailTemplateVOList : "+mailTemplateVOList);
 		model.addAttribute("mailLabelList",mailLabelList);
+		model.addAttribute("mailTemplateVOList",mailTemplateVOList);
 		model.addAttribute("title","메일함");
 		model.addAttribute("myEmplNo",employeeVO.getEmplNo());
 		model.addAttribute("emplNo",emplNo);
@@ -371,6 +379,47 @@ public class MailController {
 		}
 		return col;
 	}
+	
+	@PostMapping("/templateAdd")
+	@ResponseBody
+	public MailTemplateVO templateAdd(@RequestParam(value = "formSj") String formSj,
+							  @RequestParam(value = "formCn") String formCn,
+							  @AuthenticationPrincipal CustomUser customUser) {
+		
+		EmployeeVO employeeVO = customUser.getEmpVO();
+		MailTemplateVO templateVO = new MailTemplateVO();
+		templateVO.setEmplNo(employeeVO.getEmplNo());
+		templateVO.setFormSj(formSj);
+		templateVO.setFormCn(formCn);
+		int result = mailTemplateService.insertMailTemplate(templateVO);
+		
+		
+		log.info("templateAdd -> templateVO : "+templateVO);
+		return templateVO;
+	}
+	
+	@PostMapping("/selectTemplate")
+	@ResponseBody
+	public String selectTemplate(@RequestParam(value = "templateNo") int emailAtmcCmpltNo) {
+		log.info("selectTemplate -> emailAtmcCmpltNo : "+emailAtmcCmpltNo);
+		MailTemplateVO mailTemplateVO = mailTemplateService.selectTemplate(emailAtmcCmpltNo);
+		log.info("selectTemplate -> mailTemplateVO",mailTemplateVO);
+		return mailTemplateVO.getFormCn();
+	}
+	
+	@PostMapping("/templateDel")
+	@ResponseBody
+	public String templateDel(@RequestParam(value = "templateNo") int emailAtmcCmpltNo) {
+		log.info("templateDel -> emailAtmcCmpltNo : "+emailAtmcCmpltNo);
+		int result = mailTemplateService.deleteTemplate(emailAtmcCmpltNo);
+		log.info("templateDel -> result : "+result);
+		String returnResult = "scucess";
+		if(result == 0) {
+			returnResult = "fail";
+		}
+		return returnResult;
+	}
+	
 	
 	@ResponseBody
 	@PostMapping("/upload")

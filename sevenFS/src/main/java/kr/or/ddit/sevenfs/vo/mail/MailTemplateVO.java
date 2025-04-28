@@ -14,6 +14,9 @@ public class MailTemplateVO {
 	
 	// 사원번호
 	private String emplNo;
+
+	// 템플릿 제목
+	private String formSj;
 	
 	// 템플릿 내용
 	private String formCn;

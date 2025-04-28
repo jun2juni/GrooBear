@@ -204,33 +204,6 @@ public class MailServiceImpl implements MailService{
 		return result;
 	}
 	
-//	@Async
-//	public void sendMailAsync(MailVO mailVO) {
-//		sendSimpleMessage(mailVO);
-//	}
-//	
-//	public int sendSimpleMessage(MailVO mailVO) {
-//		log.info("{}.doSendMail start!", this, getClass().getName());
-//		int res = 1;
-//		
-//		MimeMessage message = mailSender.createMimeMessage();
-//		try {
-//			MimeMessageHelper messageHelper = new MimeMessageHelper(message,false, "UTF-8");
-//
-//			messageHelper.setFrom(fromMail);
-//			messageHelper.setTo(mailVO.getRecptnEmail());
-//			messageHelper.setSubject(mailVO.getEmailSj());
-//			messageHelper.setText(mailVO.getEmailCn(),true);
-//			log.info(mailVO.getEmailCn());
-//			mailSender.send(message);
-//		} catch (Exception e) {
-//			res = 0;
-//			log.info("[error] doSendMail : {}", e);
-//		}
-//		log.info("{}.doSendMail end !", this.getClass().getName());
-//		return res;
-//	}
-	
 	@Override
 	public int tempStoreEmail(MailVO mailVO, MultipartFile[] uploadFile) {
 		/*

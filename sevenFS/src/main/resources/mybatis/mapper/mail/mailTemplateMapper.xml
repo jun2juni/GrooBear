@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.sevenfs.mapper.mail.MailTemplateMapper">
+	<insert id="insertMailTemplate" parameterType="kr.or.ddit.sevenfs.vo.mail.MailTemplateVO">
+		<selectKey resultType="int" order="BEFORE" keyProperty="emailAtmcCmpltNo">
+			select SEQ_MAIL_TEMPLATE.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO mail_template (
+		    email_atmc_cmplt_no
+		    ,empl_no
+		    ,form_sj
+		    ,form_cn
+		    ,raisng_use_co
+		 )values(
+			#{emailAtmcCmpltNo}
+			,#{emplNo}
+			,#{formSj}
+			,#{formCn}
+			,0
+		)
+	</insert>
+	<select id="getTemplateList" parameterType="kr.or.ddit.sevenfs.vo.organization.EmployeeVO"
+									resultType="kr.or.ddit.sevenfs.vo.mail.MailTemplateVO">
+		SELECT
+		    email_atmc_cmplt_no,
+		    empl_no,
+		    form_cn,
+		    raisng_use_co,
+		    form_sj
+		FROM
+		    mail_template
+		WHERE
+			empl_no = #{emplNo}
+	</select>
+	
+	<select id="selectTemplate" parameterType="int" resultType="kr.or.ddit.sevenfs.vo.mail.MailTemplateVO">
+		SELECT	
+			email_atmc_cmplt_no
+		    ,empl_no
+		    ,form_cn
+		    ,raisng_use_co
+		    ,form_sj
+		FROM
+			mail_template
+		WHERE
+			email_atmc_cmplt_no = #{emailAtmcCmpltNo}
+	</select>
+	
+	<delete id="deleteTemplate" parameterType="int">
+		delete from mail_template
+		where
+			email_atmc_cmplt_no = #{emailAtmcCmpltNo}
+	</delete>
+</mapper>

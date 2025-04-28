@@ -16,6 +16,7 @@
 	<title>${title}</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<c:import url="../layout/prestyle.jsp" />
 </head>
 <style>
@@ -492,6 +493,21 @@
                             <!-- 게시글 내용 (CKEditor) -->
                             <div class="col-sm-12">
                                 <label class="form-label">내용</label>
+                                <button class="toolbar-button dropdown-toggle" style="border: none; background: none; cursor: pointer; position: relative;">
+                                </button>
+                                <div class="dropdown-menu" style="display: none; position: absolute; background: white; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;">
+                                    <c:if test="${mailTemplateVOList != null}">
+                                        <c:forEach items="${mailTemplateVOList}" var="mailTemplate" >
+                                            <button class="dropdown-item dropdown-template" data-templateNo="${mailTemplate.emailAtmcCmpltNo}" type="button" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center;">
+                                                <span>${mailTemplate.formSj}</span>
+                                                <i class="material-icons dropdown-templateDel" style="font-family: 'Material Icons'; font-size: 16px; margin-left: auto;">close</i>
+                                            </button>
+                                        </c:forEach>
+                                    </c:if>
+                                    <button class="dropdown-item " type="button" id="addTemplate" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left;">
+                                        <i class="fas fa-plus" style="margin-right: 8px;"></i> 추가하기
+                                    </button>
+                                </div>
                                 <div id="descriptionTemp">
                                     ${mailVO.emailCn}
                                 </div>
@@ -609,6 +625,135 @@
 
     $(document).ready(function(){
         // console.log("${myEmpInfo}")
+
+        $('#addTemplate').on('click', function() {
+            console.log('템플릿 추가');
+            
+            // 팝업 생성
+            const popupHtml = `
+            <div id="template-popup" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; width: 400px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px;">
+                    <h3 style="margin: 0; font-size: 16px; font-weight: 500;">템플릿 저장</h3>
+                    <button id="close-template" type="button" style="background: none; border: none; cursor: pointer; font-size: 18px;">&times;</button>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <p style="margin-bottom: 8px; font-size: 14px;">제목</p>
+                    <input type="text" id="template-title" placeholder="템플릿 제목을 입력하세요" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;">
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button id="cancel-template" type="button" style="padding: 8px 16px; border: 1px solid #d1d5db; background-color: white; border-radius: 4px; cursor: pointer; font-size: 14px;">취소</button>
+                    <button id="save-template" type="button" style="padding: 8px 16px; border: none; background-color: #5cb85c; color: white; border-radius: 4px; cursor: pointer; font-size: 14px;">저장</button>
+                </div>
+            </div>
+            <div id="popup-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); z-index: 999;"></div>
+            `;
+            
+            // 팝업 추가
+            $('body').append(popupHtml);
+            
+            // 닫기 버튼 클릭 이벤트
+            $('#close-template, #cancel-template, #popup-overlay').on('click', function() {
+                $('#template-popup').remove();
+                $('#popup-overlay').remove();
+            });
+            
+            // 저장 버튼 클릭 이벤트
+            $('#save-template').on('click', function() {
+                const templateTitle = $('#template-title').val().trim();
+                if (templateTitle === '') {
+                    // 알림창 표시
+                    alert('템플릿 제목을 입력해주세요.');
+                    return;
+                }
+                
+                console.log('템플릿 제목 저장: ', templateTitle);
+                let emailCn = $('#emailCn').val();
+                console.log('emailCn : ',emailCn);
+                // return;
+                // AJAX 요청으로 템플릿 저장
+                $.ajax({
+                    url: '/mail/templateAdd',
+                    type: 'post',
+                    data: { formSj: templateTitle,formCn:emailCn },
+                    success: function(resp) {
+                        console.log('템플릿 추가 성공: ', resp);
+                        console.log('템플릿 추가 성공: ', resp.emailAtmcCmpltNo);
+                        // 팝업 닫기
+                        // $('#template-popup').remove();
+                        // $('#popup-overlay').remove();
+                        
+                        // 새 템플릿 추가
+                        const newTemplate = `
+                            <button class="dropdown-item dropdown-template" data-templateNo="\${resp.emailAtmcCmpltNo}" type="button" style="background: none; border: none; cursor: pointer; padding: 8px 16px; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center;">
+                                \${resp.formSj}
+                                <i class="material-icons dropdown-templateDel" style="font-family: 'Material Icons'; font-size: 16px;">close</i>
+                            </button>
+                        `;
+                        $('#addTemplate').before(newTemplate);
+                    },
+                    error: function(err) {
+                        console.log('템플릿 추가 실패: ', err);
+                        alert('템플릿 저장에 실패했습니다.');
+                        // $('#template-popup').remove();
+                        // $('#popup-overlay').remove();
+                    }
+                });
+                $('#template-popup').remove();
+                $('#popup-overlay').remove();
+            });
+            
+            // 엔터키로 저장
+            $('#template-title').on('keypress', function(e) {
+                if (e.which === 13) {
+                    $('#save-template').click();
+                }
+            });
+            
+            // 초기 포커스
+            $('#template-title').focus();
+        });
+
+        $('.dropdown-template').on('click',function(){
+            let templateNo = $(this).attr('data-templateNo');
+            console.log('템플릿 선택',templateNo);
+            $.ajax({
+                url:'/mail/selectTemplate',
+                type:'post',
+                data:{templateNo:templateNo},
+                success:function(resp){
+                    console.log(resp);
+                    $('#emailCn').val(resp);
+                    // var editorInstance = Object.values(CKEDITOR.instances)[0];
+                    editor.setData(resp);
+                },
+                error:function(err){
+                    console.log(err);
+                }
+            })
+        })
+
+        $('.dropdown-templateDel').on('click',function(){
+            console.log('템플릿 삭제 버튼 ',this);
+            let templateNo = $(this).closest('button').attr('data-templateNo');
+            console.log('templateNo : ',templateNo);
+            
+            $.ajax({
+                url:"/mail/templateDel",
+                type:"post",
+                data:{templateNo:templateNo},
+                success:function(resp){
+                    console.log(resp);
+                    let str = `.dropdown-template[date-templateNo=\${templateNo}]`;
+                    console.log($(str));
+                    $(str).remove();
+                },
+                error:function(err){
+                    console.log(err);
+                }
+            })
+        })
 
         $('#hiddenRefInp').hide();
         $('#emailTree').hide();
