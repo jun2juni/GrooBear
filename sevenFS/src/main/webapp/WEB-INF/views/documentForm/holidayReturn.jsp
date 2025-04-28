@@ -861,7 +861,7 @@ $(document).ready(function() {
 				closeOnEsc: false,
 				button: "확인"
 			});
-			return;
+			return;s_date_cal
 		}
 		swal({
 				title: "사용 가능한 휴가일수보다 신청한 휴가일수가 더 많습니다.",
@@ -886,6 +886,10 @@ $(document).ready(function() {
 		
 	
 		formData.append("holiUseDays", $('#s_date_cal').text());  //연차사용일수 
+
+		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
+			formData.append("removeFileId", element.value);
+		});
 
 		if(jnForm.uploadFile.files.length){
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
@@ -1011,7 +1015,10 @@ $(document).ready(function() {
 		formData.append("atrzSj",jnForm.atrzSj.value);
 		formData.append("atrzCn",jnForm.atrzCn.value);
 		
-	
+		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
+			formData.append("removeFileId", element.value);
+		});
+		
 		formData.append("holiUseDays", $('#s_date_cal').text());  //연차사용일수 
 
 		if(jnForm.uploadFile.files.length){
