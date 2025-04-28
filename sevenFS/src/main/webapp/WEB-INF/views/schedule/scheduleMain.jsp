@@ -331,10 +331,10 @@
 				$("#schStartTime").val(selectStartTime);
 				$("#schEndTime").val(selectEndTime);
 				$('#date').val(selectStartDay);
-				// dateValidate($('#schStart'));
-				// dateValidate($('#schStartTime'));
-				// dateValidate($('#schEnd'));
-				// dateValidate($('#schEndTime'));
+				dateValidate($('#schStart'));
+				dateValidate($('#schStartTime'));
+				dateValidate($('#schEnd'));
+				dateValidate($('#schEndTime'));
 			}else if(info.view.type=='timeGridWeek'){
 
 			}else{
@@ -356,10 +356,10 @@
 				$("#schEndTime").val("00:00");
 				console.log("$('#date').val(startDate);",$('#date').val())
 				// console.log('start : ',$('#calAddFrm').find('[name="start"]').val());
-				// dateValidate($('#schStart'));
-				// dateValidate($('#schStartTime'));
-				// dateValidate($('#schEnd'));
-				// dateValidate($('#schEndTime'));
+				dateValidate($('#schStart'));
+				dateValidate($('#schStartTime'));
+				dateValidate($('#schEnd'));
+				dateValidate($('#schEndTime'));
 			}
 		}
 
@@ -485,6 +485,7 @@
 			$('#schEnd').attr('min', schStart);
     		$('#schStart').attr('max', schEnd);
 			
+			/*
 			if($('#schEndTime').val()||$('#schStartTime').val()){
 				// 시작 시간이 변경될 때 종료 시간 최소값 업데이트
 				console.log('이거 실행 되나?? inpName === startTime')
@@ -501,8 +502,10 @@
 						swal({title:errStr,icon:"error"});
 					}
 			}
+			*/
 
 			// 같은 날짜일 경우 시간 제약 조건 처리
+			/*
 			if (schStart === schEnd) {
 				if (inpName === 'start' || inpName === 'end') {
 					// 날짜가 같을 때 시간 제약 조건 적용
@@ -527,6 +530,8 @@
 				$('#schEndTime').removeAttr('min');
 				$('#schStartTime').removeAttr('max');
 			}
+			*/
+
 			/*
 				const overChk = function(date1,date2,time,num){
 					let differenceInDays
@@ -571,7 +576,7 @@
 		}
 		$('.dateInp').on('change',function(){
 			console.log(this);
-			// dateValidate($(this));
+			dateValidate($(this));
 		})
 
 		// 일자 선택 이벤트
@@ -650,10 +655,10 @@
 			$('#schdulTy').val(info.event._def.extendedProps.schdulTy);
 			$('#date').val(date2Str(start))
 			console.log($('#scheduleLabel').val(info.event._def.extendedProps.lblNo));
-			// dateValidate($('#schStart'));
-			// dateValidate($('#schStartTime'));
-			// dateValidate($('#schEnd'));
-			// dateValidate($('#schEndTime'));
+			dateValidate($('#schStart'));
+			dateValidate($('#schStartTime'));
+			dateValidate($('#schEnd'));
+			dateValidate($('#schEndTime'));
 		})	
 		
 		// allDay 관련 함수들 시작
@@ -901,9 +906,6 @@
 			$('.timeInput-toggle.time').css('display','none');
 			insModal.hide();
 		};
-		// let btnclass = $('.fc-button').attr('class');
-		// $('.fc-button').attr('class',btnclass+' btn-primary');
-		// $('.fc-button').prop('class','btn btn-primary');
 		$('.fc-button').css('background-color','#0d6efd');
 
 		$('.fc-dayGridMonth-button.fc-button.fc-button-primary').css('background-color','#88A1F8');
@@ -912,16 +914,15 @@
 		$('.fc-listWeek-button.fc-button.fc-button-primary').css('background-color','#88A1F8');
 
 		$('.fc-button-active').css('background-color','#0d6efd');
+
 		$('.fc-button').on('click',function(){
 			$('.fc-button-active').css('background-color','#0d6efd');
-
 			$('.fc-dayGridMonth-button.fc-button.fc-button-primary').not('.fc-button-active').css('background-color','#88A1F8');
 			$('.fc-timeGridWeek-button.fc-button.fc-button-primary').not('.fc-button-active').css('background-color','#88A1F8');
 			$('.fc-timeGridDay-button.fc-button.fc-button-primary').not('.fc-button-active').css('background-color','#88A1F8');
 			$('.fc-listWeek-button.fc-button.fc-button-primary').not('.fc-button-active').css('background-color','#88A1F8');
 		})
-		// $('.fc-button').css('margin','0.5px');
-		// $('.fc-button').css('border','0px');
+
 		$('.fc-daygrid-day-number').css('text-decoration','none');
 		$('.fc-col-header-cell-cushion').css('text-decoration','none');
 
@@ -930,35 +931,10 @@
 			let code = `<div class="fc-daygrid-bg-harness" style="left: 0px; right: 0px;"><div class="fc-highlight"></div></div>`;
 			$(this).find('.fc-daygrid-day-bg').append(code);
 		});
-		// fc-listWeek-view fc-view fc-list fc-list-sticky
 		$(document).on('mouseleave', '.fc-daygrid-day-frame', function() {
 			$(this).find('.fc-daygrid-bg-harness').remove();
 		});
 
-		// 휠 이벤트
-		// function throttle(callback,limit){
-		// 	let waiting = false;
-		// 	return function(...arguments){
-		// 		if(!waiting){
-		// 			callback.apply(this,arguments);
-		// 			waiting = true;
-		// 			setTimeout(function(){
-		// 				waiting = false;
-		// 			},limit)
-		// 		}
-		// 	};
-		// }
-		// $(document).on('wheel',"#myCalendar .fc-dayGridMonth-view,#myCalendar .fc-listWeek-view", throttle(function(event){
-		// 	console.log(event);
-		// 	if(event.originalEvent.deltaY<0){
-		// 		console.log('위로');
-		// 		$('.fc-prev-button').trigger('click');
-		// 	}else{
-		// 		console.log('아래로');
-		// 		$('.fc-next-button').trigger('click');
-
-		// 	}
-		// }),500)
 		$(document).on('wheel',"#myCalendar .fc-dayGridMonth-view,#myCalendar .fc-listWeek-view", function(event){
 			console.log(event);
 			if(event.originalEvent.deltaY<0){
@@ -993,12 +969,16 @@
 		display: grid;
 		align-items: center;
 	} */
+	.fc-button.fc-button-primary {
+		border: none !important;
+	}
 	.fc-event-title-container{
 		cursor: pointer;
 		
 	}
 	.fc-button{
 		background-color: #88A1F8;
+		border: none;
 	}
 	.fc-button-active {
 		/* background-color: rgb(13, 110, 253); */
