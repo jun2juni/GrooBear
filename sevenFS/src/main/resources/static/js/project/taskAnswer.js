@@ -1,25 +1,34 @@
 // ====================== 유틸 ======================
 function openTaskModal(taskNo) {
-  const modal = new bootstrap.Modal(document.getElementById('taskDetailModal'), {
-	focus: false
+  const modalElement = document.getElementById('taskDetailModal');
+  const modal = new bootstrap.Modal(modalElement, {
+    focus: false
   });
-  const contentEl = document.getElementById('taskDetailContent');
+  const contentEl = document.getElementById('taskDetailContent') || document.getElementById('taskDetailModalContent');
+  
   contentEl.innerHTML = '로딩 중...';
 
   fetch(`/projectTask/detail?taskNo=${taskNo}`)
     .then(res => res.text())
     .then(html => {
       contentEl.innerHTML = html;
-	  
       modal.show();
-	    
-	    
+
+      modalElement.addEventListener('shown.bs.modal', function handler() {
+        // 한번만 실행되게 리스너 등록 후 제거
+        modalElement.removeEventListener('shown.bs.modal', handler);
+
         const taskNoInput = document.getElementById("taskNo")?.value;
+        console.log("🔵 모달 열린 후 taskNoInput =", taskNoInput);
         if (taskNoInput) {
           window.loadTaskAnswer();
+        } else {
+          console.error("❌ taskNo가 없음!! (모달 열린 후에도)");
         }
+      });
     });
 }
+
 
 // 공통: taskNo 가져오기
 function getTaskNo() {

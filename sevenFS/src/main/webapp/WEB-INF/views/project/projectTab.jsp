@@ -6,6 +6,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <title>${title}</title>
   <%@ include file="../layout/prestyle.jsp" %>
   <style>
@@ -168,6 +170,7 @@
 
 <script>
 //projectTab.jsp의 script 부분 수정 (첫 번째 파일)
+
 
 document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
@@ -901,6 +904,7 @@ window.loadGanttChart = function(prjctNo) {
 };
 
 </script>
+<script src="/js/project/taskAnswer.js"></script>
 
 </body>
 </html>

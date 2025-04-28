@@ -135,6 +135,5 @@
 	function goToTaskEdit(taskNo) {
 		location.href = `/projectTask/editForm?taskNo=\${taskNo}`;
 	}
-
 </script>
 <!-- 현준이 댓글 스크립트 -->
