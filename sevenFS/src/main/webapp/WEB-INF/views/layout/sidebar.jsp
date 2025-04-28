@@ -24,25 +24,21 @@
   display: none !important;
 }
 /* logoTitle스타일 */
-@keyframes logoTitle {
-  0% { 
-    transform: scale(1.0); 
-  }
-  50% { 
-    transform: scale(1.3); 
-  }
-  100% {
-    ttransform: scale(1.0); 
-    }
+@keyframes logoPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
-#logoTitle:hover{
-  animation: logoTitle 0.5s ease-in-out;
-  transform: scale(1); /* 마우스 오버 시 크기 조정 */
-  transition: transform 30s ease-in-out; /* 부드러운 전환 효과 */
-  cursor: pointer; /* 마우스 포인터 변경 */
-  /* 조금더 천천히*/
-  animation-duration: 1s; /* 애니메이션 지속 시간 */
-  animation-timing-function: ease-in-out; /* 애니메이션 타이밍 함수 */
+
+#logoTitle {
+  width: 150px;
+  height: auto;
+  transition: transform 0.4s ease; /* 기본 상태 전환 */
+  cursor: pointer;
+}
+
+#logoTitle:hover {
+  transform: scale(1.1);
 }
 </style>
 

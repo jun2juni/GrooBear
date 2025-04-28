@@ -592,23 +592,27 @@
 <c:import url="newAtrzDocModal.jsp" />
 <!--임시저장목록 삭제-->
 <!-- Modal -->
-<div class="modal fade" id="approvalSaveModal" tabindex="-1"
-aria-labelledby="approvalSaveModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-	<div class="modal-content border-0">
+<div class="modal fade" id="approvalSaveModal" tabindex="-1" aria-labelledby="approvalSaveModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+	  <div class="modal-content border-0 rounded-4 shadow-lg p-3">
+		
 		<div class="modal-header border-0">
-			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		</div>
-		<div class="modal-body border-0">
-			<h4 class="form-label" style="margin-left: 10px;">임시 저장 문서를 삭제하시겠습니까?</h4>
+  
+		<div class="modal-body text-center py-4">
+		  <h5 class="fw-bold mb-3">임시 저장 문서를 삭제하시겠습니까?</h5>
+		  <p class="text-muted small">삭제하면 복구할 수 없습니다.</p>
 		</div>
-			<div class="modal-footer border-0">
-				<button type="button" class="main-btn primary-btn rounded-full btn-hover modalBtn" id="storageDeleteBtn">확인</button>
-				<button type="button" class="main-btn light-btn rounded-full btn-hover modalBtn" data-bs-dismiss="modal">취소</button>
-			</div>
+  
+		<div class="modal-footer border-0 d-flex justify-content-center gap-3">
+		  <button type="button" class="btn btn-danger rounded-pill px-4" id="storageDeleteBtn">확인</button>
+		  <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">취소</button>
+		</div>
+  
+	  </div>
 	</div>
-</div>
-</div>
+  </div>
 <!--일괄결재모달 끝-->
 <!--임시저장목록 삭제-->
 
