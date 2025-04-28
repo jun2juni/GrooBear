@@ -236,7 +236,6 @@
 																		</div>
 																	</td> -->
 																	<td class="text-center">
-																		<!--글씨체 두껍게 b태그 사용하기-->
 																		<p class="text-sm fw-bolder">
 																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
 																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />

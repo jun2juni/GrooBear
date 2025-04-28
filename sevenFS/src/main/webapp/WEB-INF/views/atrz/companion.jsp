@@ -108,7 +108,6 @@
 							<div class="table_search d-flex align-items-center gap-2">
 								<form id="searchForm" method="get" action="/atrz/companion" class="d-flex gap-2">
 										<input type="hidden" name="currentPage" id="currentPage" value="${param.currentPage}" />
-										<input type="hidden" name="tab" id="tab" value="1" />
 										<input type="hidden" name="duration" value="${param.duration}" />
 									<select id="duration" class="form-select w-auto">
 									<option value="all" <c:if test="${param.duration == 'all'}">selected</c:if>>전체기간</option>
@@ -308,6 +307,36 @@ document.getElementById("duration").addEventListener("change",function() {
 		durationPeriod.classList.add("d-none");
 	}
 })
+
+//검색버튼 클릭시 컨트롤러로 파라이터 넘겨주기
+$('#searchBtn').on("click",function(event){
+	event.preventDefault(); // 기본 동작 방지
+
+	const keyword = $('#keyword').val();
+	const searchType = $('#searchType').val();
+	const duration = $('#duration').val();
+	const fromDate = $('#fromDate').val();
+	const toDate = $('#toDate').val();
+	let tab = "${param.tab}";
+
+	if(tab == null || tab == ""){
+		tab = "1";
+	}
+
+	console.log("keyword : ", keyword);//계란
+	console.log("searchType : ", searchType);//title
+	console.log("duration : ", duration);//period
+	console.log("fromDate : ", fromDate);//2025-04-22
+	console.log("toDate : ", toDate);//2025-04-22
+
+	let url = `/atrz/companion?tab=\${tab}&keyword=\${encodeURIComponent(keyword)}&searchType=\${searchType}&duration=\${duration}`;
+    if (duration === "period") {
+        url += `&fromDate=\${fromDate}&toDate=\${toDate}`;
+    }
+	console.log("url : ", url);
+
+	location.href = url;
+});
 </script>
 </body>
 </html>

@@ -93,9 +93,6 @@
 			<div class="col-sm-13" id="divCard">
 				<div class="card">
 					<div class="card-body">
-						<!-- <p>결재하기</p> -->
-						<!-- <p>${atrzVOList}</p> -->
-						<!-- 메뉴바 시작 -->
 						<div class="d-flex justify-content-between align-items-center">
 							<div id="atrNavBar">
 								<ul class="nav nav-pills" id="myTab" role="tablist">
@@ -106,7 +103,7 @@
 											aria-selected="true" onclick="moveTab(1)">기안문서함</button>
 									</li>
 									<li class="nav-item" role="presentation">
-										<button class="nav-link  ${param.tab == '2' ? 'active' : ''}" id="contact2-tab"
+										<button class="nav-link ${param.tab == '2' ? 'active' : ''}" id="contact2-tab"
 											data-bs-toggle="tab" data-bs-target="#contact2-tab-pane"
 											type="button" role="tab" aria-controls="contact2-tab-pane"
 											aria-selected="false" onclick="moveTab(2)">임시저장함</button>
@@ -140,7 +137,7 @@
 									<input id="toDate" name="toDate" value="${param.toDate}"  class="form-control" type="text" style="width: 150px;">
 								</div>
 								<!-- 검색 유형 선택 -->
-								<select id="searchType" class="form-select w-auto">
+								<select id="searchType" name="searchType" class="form-select w-auto">
 									<option value="title" ${param.searchType == 'title' ? 'selected' : ''}>제목</option>
 									<option value="drafterName" ${param.searchType == 'drafterName' ? 'selected' : ''}>기안자</option>
 									<option value="drafterDeptName" ${param.searchType == 'drafterDeptName' ? 'selected' : ''}>기안부서</option>
@@ -154,7 +151,6 @@
 											<span class="material-symbols-outlined">search</span>
 										</button>
 									</div>
-								</section>
 								</form>
 							</div>
 						</div>
@@ -209,7 +205,7 @@
 																	<p class="text-sm fw-bolder">
 																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
 																		<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
-																		${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp;
+																		${onlyDate}
 																	</p>
 																</td>
 																<td class="text-center">
@@ -643,7 +639,7 @@ function moveTab(tabNo) {
 		form.submit();
 	}
 
-
+//임시저장 삭제처리할때
 $(document).ready(function() {
 	// 체크박스 전체 선택
 	$("#checkbox-all").click(function() {
@@ -666,6 +662,36 @@ document.getElementById("duration").addEventListener("change",function() {
 		durationPeriod.classList.add("d-none");
 	}
 })
+
+//검색버튼 클릭시 컨트롤러로 파라이터 넘겨주기
+$('#searchBtn').on("click",function(event){
+	event.preventDefault(); // 기본 동작 방지
+
+	const keyword = $('#keyword').val();
+	const searchType = $('#searchType').val();
+	const duration = $('#duration').val();
+	const fromDate = $('#fromDate').val();
+	const toDate = $('#toDate').val();
+	let tab = "${param.tab}";
+
+	if(tab == null || tab == ""){
+		tab = "1";
+	}
+
+	console.log("keyword : ", keyword);//계란
+	console.log("searchType : ", searchType);//title
+	console.log("duration : ", duration);//period
+	console.log("fromDate : ", fromDate);//2025-04-22
+	console.log("toDate : ", toDate);//2025-04-22
+
+	let url = `/atrz/document?tab=\${tab}&keyword=\${encodeURIComponent(keyword)}&searchType=\${searchType}&duration=\${duration}`;
+    if (duration === "period") {
+        url += `&fromDate=\${fromDate}&toDate=\${toDate}`;
+    }
+	console.log("url : ", url);
+
+	location.href = url;
+});
 document.getElementById("storageDeleteBtn").addEventListener("click",function(){
 	//체크 박스로 선택되 문서번호들 수집
 	const checked = document.querySelectorAll(".doc-check:checked");

@@ -207,6 +207,16 @@ public class AtrzController {
 		EmployeeVO empVO = customUser.getEmpVO();
 		String emplNo = empVO.getEmplNo();
 		log.info("documentList-> emplNo : " + emplNo);
+		log.info("documentList-> currentPage : " + currentPage);
+		log.info("documentList-> size : " + size);
+		log.info("documentList-> keyword : " + keyword);
+		log.info("documentList-> searchType : " + searchType);
+		log.info("documentList-> tab : " + tab);
+		log.info("documentList-> duration : " + duration);
+		
+		
+		
+		
 		
 		//검색조건
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -226,6 +236,7 @@ public class AtrzController {
 		ArticlePage<AtrzVO> allSubmitArticlePage = new ArticlePage<AtrzVO>("/atrz/document",allSubmitTotal, currentPage, size,atrzAllSubmitList, map);
 		model.addAttribute("allSubmitTotal", allSubmitTotal);
 		model.addAttribute("allSubmitArticlePage", allSubmitArticlePage);
+		log.info("documentList-> allSubmitArticlePage : " + allSubmitArticlePage.getContent());
 		model.addAttribute("atrzAllSubmitList", atrzAllSubmitList);
 		
 		// 임시저장함(로그인한 사람의 아이디를 받아서 select한다.)
@@ -277,7 +288,7 @@ public class AtrzController {
 		map.put("toDate", toDate);
 		
 		//반려문서함
-		List<AtrzVO> atrzCompanionList = atrzService.atrzCompanionList(emplNo);
+		List<AtrzVO> atrzCompanionList = atrzService.atrzCompanionList(map);
 		int companionTotal = atrzService.companionTotal(map);
 		ArticlePage<AtrzVO> companionArticlePage = new ArticlePage<AtrzVO>("/atrz/companion",companionTotal, currentPage, size,atrzCompanionList, map);
 		model.addAttribute("companionTotal", companionTotal);

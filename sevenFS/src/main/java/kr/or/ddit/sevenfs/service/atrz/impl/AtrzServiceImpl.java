@@ -138,8 +138,8 @@ public class AtrzServiceImpl implements AtrzService {
 	
 	//반려문서함
 	@Override
-	public List<AtrzVO> atrzCompanionList(String emplNo) {
-		List<AtrzVO> atrzCompanionList = atrzMapper.atrzCompanionList(emplNo);
+	public List<AtrzVO> atrzCompanionList(Map<String, Object> map) {
+		List<AtrzVO> atrzCompanionList = atrzMapper.atrzCompanionList(map);
 		return atrzCompanionList;
 	}
 	//반려문서함 행의수

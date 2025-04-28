@@ -49,7 +49,7 @@ public interface AtrzService {
 	public int allApprovalTotal(Map<String, Object> map);
 	
 	//반려문서함
-	public List<AtrzVO> atrzCompanionList(String emplNo);
+	public List<AtrzVO> atrzCompanionList(Map<String, Object> map);
 	//반려문서함 행의수
 	public int companionTotal(Map<String, Object> map);
 	
