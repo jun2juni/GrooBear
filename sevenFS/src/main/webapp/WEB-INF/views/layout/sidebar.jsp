@@ -121,7 +121,7 @@
                       <a href="/atrz/document?tab=1" class="${fn:contains(currentURL, '/atrz/document') ? 'active' : ''}"> 개인문서함 </a>
                     </li>
                     <li>
-                      <a href="/atrz/companion" class="${fn:contains(currentURL, '/atrz/companion') ? 'active' : ''}"> 반려문서함 </a>
+                      <a href="/atrz/companion?tab=1" class="${fn:contains(currentURL, '/atrz/companion') ? 'active' : ''}"> 반려문서함 </a>
                     </li>
                   </ul>
                 </li>
