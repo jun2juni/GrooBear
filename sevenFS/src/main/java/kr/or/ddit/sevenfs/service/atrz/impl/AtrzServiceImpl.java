@@ -699,6 +699,22 @@ public class AtrzServiceImpl implements AtrzService {
 			}
 			//일정등록 
 			ScheduleVO scheduleVO = new ScheduleVO();
+			String holiCode = atrzVO.getHolidayVO().getHoliCode();
+			String holiName = "";
+
+			if ("22".equals(holiCode)) {
+			    holiName = "연차";
+			} else if ("23".equals(holiCode)) {
+			    holiName = "공가";
+			} else if ("24".equals(holiCode)) {
+			    holiName = "병가";
+			} else if ("25".equals(holiCode)) {
+			    holiName = "오전반차";
+			} else if ("26".equals(holiCode)) {
+			    holiName = "오후반차";
+			} else {
+			    holiName = "휴가"; // 예외처리
+			}
 			//일정등록에 갈값 넣어주기
 			AtrzVO atrzVOSchedule = atrzMapper.selectAtrzDetail(atrzDocNo);
 			
@@ -706,7 +722,7 @@ public class AtrzServiceImpl implements AtrzService {
 			
 			scheduleVO.setEmplNo(atrzVO.getDrafterEmpno());	//일정 작성한 사원번호
 			scheduleVO.setSchdulTy("1");  	//0개인 1부서 2전체
-			scheduleVO.setSchdulSj(atrzVOSchedule.getDrafterEmpnm()+"님 연차" );	//일정제목
+			scheduleVO.setSchdulSj(atrzVOSchedule.getDrafterEmpnm()+"님 "+holiName);	//일정제목
 			scheduleVO.setSchdulCn(atrzVOSchedule.getAtrzSj());	//일정내용
 			log.info("scheduleVO준희 일정등록 : "+scheduleVO);
 			scheduleVO.setSchdulBeginDt(atrzVOSchedule.getHolidayVO().getHoliStart());	//일정시작일시

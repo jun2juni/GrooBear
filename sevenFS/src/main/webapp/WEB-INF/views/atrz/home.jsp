@@ -134,6 +134,7 @@
 		  <!-- 컨텐츠1 시작 -->
 		  <div class="tab-content" id="myTabContent">
 			<div style="margin-left: 30px;margin-top: 25px;margin-right: 30px;margin-bottom: 5px;"
+			
 					class="tab-pane fade show active" id="contact1-tab-pane"
 				 role="tabpanel" aria-labelledby="contact1-tab" tabindex="0">
 			  <!-- <p>${myEmpInfo}</p> -->
@@ -145,7 +146,7 @@
 			  </div>
 			  <div class="atrzTabCont">
 				<div class="" style="margin-top: 0px; overflow-x: auto;">
-				  <div class="container mt-2 homeContainer" style="padding-left: 30px; padding-right: 30px;">
+				  <div class="container mt-2 homeContainer" style="padding-left: 20px; padding-top: 10px; padding-bottom: 10px;">
 					<c:choose>
 					  <c:when test="${empty homeAtrzApprovalList}">
 						<div class="text-center emptyList">
@@ -157,7 +158,7 @@
 						  <input type="hidden" name="emplNo" value="${myEmpInfo.emplNo}">
 						  <c:forEach var="atrzVO" items="${homeAtrzApprovalList}">
 							<div class="">
-							  <div class="card" style="height: 250px; width: 300px;">
+							  <div class="card" style="height: 250px; width: 300px; margin-right: 10px;">
 								<div class="card-header pt-3" style="height: 50px;">
 								  <div class="row g-0 text-center">
 									<c:choose>
