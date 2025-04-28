@@ -482,7 +482,7 @@ function drop(event) {
 
 // 업무 상세 정보 보기
 function viewCardDetails(taskId) {
-	openTaskModal(taskId);
+	
   // 서버에서 업무 상세 정보를 가져와서 모달로 표시
   $.ajax({
     url: '/projectTask/detail',  // 기존 업무 상세 정보를 가져오는 엔드포인트
@@ -645,6 +645,7 @@ function highlightDeadlineSoon() {
 	}
 
 	function viewCardDetails(taskId) {
+		openTaskModal(taskId);
 	  $.ajax({
 	    url: '/projectTask/detail',
 	    type: 'GET',
