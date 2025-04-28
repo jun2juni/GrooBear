@@ -342,6 +342,9 @@
             $('#addUpt').val('add');
             $('.modal-title').text("일정 등록");
 			$("#modalSubmit").text("등록");
+            $('.timeInput-toggle.date').css('display','block');
+			$('.timeInput-toggle.time').css('display','none');
+			$("#allDay").prop("checked",false);
 //             console.log('$("#deleteBtn")',$("#deleteBtn"))
             let today = new Date().toISOString().split('T')[0];
             $('#schStart').val(today);

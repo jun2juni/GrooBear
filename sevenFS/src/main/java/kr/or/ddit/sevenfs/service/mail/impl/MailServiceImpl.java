@@ -11,12 +11,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.mail.internet.MimeMessage;
 import kr.or.ddit.sevenfs.mapper.mail.MailMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
+import kr.or.ddit.sevenfs.service.mail.MailAsyncService;
 import kr.or.ddit.sevenfs.service.mail.MailService;
 import kr.or.ddit.sevenfs.service.notification.NotificationService;
 import kr.or.ddit.sevenfs.service.schedule.ScheduleLabelService;
@@ -37,21 +39,24 @@ public class MailServiceImpl implements MailService{
 	
 	@Autowired
 	MailMapper mailMapper;
-
+	
 	@Autowired
 	AttachFileService attachFileService;
 	
 	@Autowired
+	MailAsyncService asyncService;
+	
+	@Autowired
 	NotificationService notificationService;
 	
-	// smtp 설정
-	@Autowired
-	private JavaMailSender mailSender;
+//	// smtp 설정
+//	@Autowired
+//	private JavaMailSender mailSender;
 	
-	@Value("${spring.mail.username}")
-	private String fromMail;
-	@Value("${spring.mail.password}")
-	private String password;
+//	@Value("${spring.mail.username}")
+//	private String fromMail;
+//	@Value("${spring.mail.password}")
+//	private String password;
 	
 	
 	@Override
@@ -68,6 +73,7 @@ public class MailServiceImpl implements MailService{
 		List<String> hiddenRefEmailList = mailVO.getHiddenRefEmailList();
 		List<MailVO> mailVOList = new ArrayList<MailVO>();
 		List<EmployeeVO> notificationEmail = new ArrayList<EmployeeVO>();
+		MailVO sendVO = null;
 		
 		int totalMailNoCnt = 1;
 		if(recptnEmailList!=null) {
@@ -119,9 +125,9 @@ public class MailServiceImpl implements MailService{
 				mailVOList.add(vo);
 				
 				if(emplNoEmail[0] != null && emplNoEmail[0].equals("")) {
-					log.info("smtp 실행");
-					vo.setEmplNo("");
-					sendSimpleMessage(vo);
+					// smtp전송을 위한 vo세팅
+					sendVO = new MailVO(vo);
+					sendVO.setEmplNo("");
 					continue;
 				}
 				
@@ -191,30 +197,39 @@ public class MailServiceImpl implements MailService{
 		}
 		log.info("MailServiceImpl -> sendMail -> mailVOList : "+mailVOList);
 		int result = mailMapper.sendMail(mailVOList);
+		if(sendVO!=null) {
+			// 프록시를 통해 호출해야 하기때문에 이렇게 하라고 함
+			asyncService.sendMailAsync(sendVO);
+		}
 		return result;
 	}
 	
-	public int sendSimpleMessage(MailVO mailVO) {
-		log.info("{}.doSendMail start!", this, getClass().getName());
-		int res = 1;
-		
-		MimeMessage message = mailSender.createMimeMessage();
-		try {
-			MimeMessageHelper messageHelper = new MimeMessageHelper(message,false, "UTF-8");
-
-			messageHelper.setFrom(fromMail);
-			messageHelper.setTo(mailVO.getRecptnEmail());
-			messageHelper.setSubject(mailVO.getEmailSj());
-			messageHelper.setText(mailVO.getEmailCn(),true);
-			log.info(mailVO.getEmailCn());
-			mailSender.send(message);
-		} catch (Exception e) {
-			res = 0;
-			log.info("[error] doSendMail : {}", e);
-		}
-		log.info("{}.doSendMail end !", this.getClass().getName());
-		return res;
-	}
+//	@Async
+//	public void sendMailAsync(MailVO mailVO) {
+//		sendSimpleMessage(mailVO);
+//	}
+//	
+//	public int sendSimpleMessage(MailVO mailVO) {
+//		log.info("{}.doSendMail start!", this, getClass().getName());
+//		int res = 1;
+//		
+//		MimeMessage message = mailSender.createMimeMessage();
+//		try {
+//			MimeMessageHelper messageHelper = new MimeMessageHelper(message,false, "UTF-8");
+//
+//			messageHelper.setFrom(fromMail);
+//			messageHelper.setTo(mailVO.getRecptnEmail());
+//			messageHelper.setSubject(mailVO.getEmailSj());
+//			messageHelper.setText(mailVO.getEmailCn(),true);
+//			log.info(mailVO.getEmailCn());
+//			mailSender.send(message);
+//		} catch (Exception e) {
+//			res = 0;
+//			log.info("[error] doSendMail : {}", e);
+//		}
+//		log.info("{}.doSendMail end !", this.getClass().getName());
+//		return res;
+//	}
 	
 	@Override
 	public int tempStoreEmail(MailVO mailVO, MultipartFile[] uploadFile) {

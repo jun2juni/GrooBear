@@ -732,8 +732,8 @@
                 processData: false,  // FormData 처리 시 필요
                 contentType: false,  // FormData 처리 시 필요
                 success: function(resp) {
-                    console.log(resp);
-                    window.location.href=resp;
+                    console.log('이메일 전송 결과 : ',resp);
+                    window.location.href='/mail?emailClTy=0';
                 },
                 error: function(err) {
                     console.log(err);

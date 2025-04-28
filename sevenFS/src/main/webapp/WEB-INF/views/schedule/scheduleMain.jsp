@@ -264,7 +264,7 @@
 		})
 
 		const selectEvent = function(info){
-			
+			console.log('selectEvent -> info',info);
 			// 모달 표시
 			insModal.show();
 			$('#schTitle').val('');
@@ -273,24 +273,40 @@
 			$('#schdulNo').val("");
 			$('.modal-title').text("일정 등록");
 			$("#modalSubmit").text("추가");
+			$('#allDay').prop('checked',false);
 			// if($("#deleteBtn").length){
 			$("#deleteBtn").hide();
 			// }
 			// console.log("Selected date" + info.startStr + " to " + info.endStr);
-			console.log("select -> info : ", info);
 			let startDate;
 			let endDate;
 			if(info.date){
+				// 하루만 선택
 				// console.log("aaaaa",typeof(info.date));
 				startDate = info.date;
 				endDate = new Date(info.date);
     			endDate.setDate(endDate.getDate() + 1); // 날짜를 1일 증가시킴
-				console.log('startDate',startDate);
-				console.log('endDate',endDate);
+    			// endDate.setDate(endDate.getDate());
+				console.log('하루만 선택 startDate',startDate);
+				console.log('하루만 선택 endDate',endDate);
 				
 			}else{
-				startDate = info.start;
-				endDate = info.end;
+				// 여러날 선택
+				// 시간 필요 없음
+				if(info.view.type=='timeGridDay'||info.view.type=='timeGridWeek'){
+					startDate = info.start;
+					endDate = new Date(info.end)
+					console.log('복수일 선택 startDate',startDate);
+					console.log('복수일 선택 endDate',endDate);
+					// $('.timeInput-toggle.date').css('display','none');
+					// $('.timeInput-toggle.time').css('display','block');
+					// $("#allDay").prop("checked",true);
+				}else{
+					startDate = info.start;
+					endDate = new Date(info.end-1)
+					console.log('복수일 선택 startDate',startDate);
+					console.log('복수일 선택 endDate',endDate);
+				}
 			}
 
 			// console.log('startDate : ',startDate,'  endDate : ',endDate);
@@ -299,7 +315,11 @@
 			$('.timeInput-toggle.time').css('display','none');
 			$("#allDay").prop("checked",false);
 
+			// 시간 차이 하루 이상을 조건으로 분기하자 /////////////////////////////////////////////////////
 			if(info.view.type=='timeGridDay'||info.view.type=='timeGridWeek'){
+				$('.timeInput-toggle.date').css('display','none');
+				$('.timeInput-toggle.time').css('display','block');
+				$("#allDay").prop("checked",true);
 				let selectStartDay = date2Str(startDate);
 				let selectEndDay = date2Str(endDate);
 				let selectStartTime = time2Str(startDate);
@@ -310,10 +330,11 @@
 				$("#schEnd").val(selectEndDay);
 				$("#schStartTime").val(selectStartTime);
 				$("#schEndTime").val(selectEndTime);
-				dateValidate($('#schStart'));
-				dateValidate($('#schStartTime'));
-				dateValidate($('#schEnd'));
-				dateValidate($('#schEndTime'));
+				$('#date').val(selectStartDay);
+				// dateValidate($('#schStart'));
+				// dateValidate($('#schStartTime'));
+				// dateValidate($('#schEnd'));
+				// dateValidate($('#schEndTime'));
 			}else if(info.view.type=='timeGridWeek'){
 
 			}else{
@@ -325,18 +346,20 @@
 				// console.log("info.start",info.start);
 				let startStr = date2Str(startDate);
 				let endStr = date2Str(endDate);
-				console.log("startStr",startDate);
-				console.log("endStr",endDate);
+				console.log("캘린더 startStr",startDate);
+				console.log("캘린더 endStr",endDate);
 
+				$('#date').val(startStr);
 				$("#schStart").val(startStr);
 				$("#schEnd").val(endStr);
 				$("#schStartTime").val(currentTime);
 				$("#schEndTime").val("00:00");
+				console.log("$('#date').val(startDate);",$('#date').val())
 				// console.log('start : ',$('#calAddFrm').find('[name="start"]').val());
-				dateValidate($('#schStart'));
-				dateValidate($('#schStartTime'));
-				dateValidate($('#schEnd'));
-				dateValidate($('#schEndTime'));
+				// dateValidate($('#schStart'));
+				// dateValidate($('#schStartTime'));
+				// dateValidate($('#schEnd'));
+				// dateValidate($('#schEndTime'));
 			}
 		}
 
@@ -412,7 +435,7 @@
 			let chk = checkDblClk();
 			// $('#schdulTy').prop('disabeld',false);
 			// $('#scheduleLabel').prop('disabeld',false);
-			if(chk&&(info.view.type!='timeGridDay'&&info.view.type!='timeGridWeek')){
+			if(chk && (info.view.type!='timeGridDay' && info.view.type!='timeGridWeek')){
 				console.log('날짜 더블클릭:', info);
 				// insModal.show();
 				selectEvent(info);
@@ -422,7 +445,7 @@
 				$("#deleteBtn").hide();
 				// }
 			}else{
-				// console.log('날짜 싱글클릭:', info.dateStr);
+				console.log('날짜 더블클릭:', info);
 			}
 		})
 		$('#schdulTy').on('change',function(){
@@ -500,7 +523,7 @@
 				} 
 			} else {
 				// 다른 날짜일 경우 - 시간 제약 조건 제거
-				console.log('다른 날짜일 경우 - 시간 제약 조건 제거')
+				// console.log('다른 날짜일 경우 - 시간 제약 조건 제거')
 				$('#schEndTime').removeAttr('min');
 				$('#schStartTime').removeAttr('max');
 			}
@@ -547,7 +570,8 @@
 			*/
 		}
 		$('.dateInp').on('change',function(){
-			dateValidate($(this));
+			console.log(this);
+			// dateValidate($(this));
 		})
 
 		// 일자 선택 이벤트
@@ -555,7 +579,6 @@
 			let chk = checkDblClkSel();
 			let startDate = new Date(info.start);
 			let endDate = new Date(info.end);
-
 			// $('#schdulTy').prop('disabeld',false);
 			// $('#scheduleLabel').prop('disabeld',false);
 			// console.log($('sssssssssssssssssssssss','#scheduleLabel').prop());
@@ -589,6 +612,11 @@
 			console.log("eventClick -> info : ", info);
 			let popover = document.querySelector(".fc-popover");
 			$('#schdulTy').prop('disabled',true);
+
+			$('#allDay').prop('checked',false);
+			$('.timeInput-toggle.time').css('display','none');
+			$('.timeInput-toggle.date').css('display','block');
+
 			if(info.event._def.extendedProps.schdulTy!=0){
 				$('#scheduleLabel').prop('disabled',true);
 			}else{
@@ -620,11 +648,12 @@
 			$('#schTitle').val(title);
 			$('#schContent').val(info.event._def.extendedProps.schdulCn);
 			$('#schdulTy').val(info.event._def.extendedProps.schdulTy);
+			$('#date').val(date2Str(start))
 			console.log($('#scheduleLabel').val(info.event._def.extendedProps.lblNo));
-			dateValidate($('#schStart'));
-			dateValidate($('#schStartTime'));
-			dateValidate($('#schEnd'));
-			dateValidate($('#schEndTime'));
+			// dateValidate($('#schStart'));
+			// dateValidate($('#schStartTime'));
+			// dateValidate($('#schEnd'));
+			// dateValidate($('#schEndTime'));
 		})	
 		
 		// allDay 관련 함수들 시작
@@ -695,7 +724,9 @@
 		const clickEvent2Date = function(e){
 			// 시작 날짜와 종료 날짜를 Date타입으로 리턴한다.
 			// 이 함수는 추후에 필요없는거같으면 지울 예정이다.
+			// chk는 두 시간의 차이가 1이상이면 true 아니면 false
 			let chk = e.target.form.allDay.checked;
+			console.log(chk?true:false);
 			// console.log('clickEvent2Date -> : ',chk)
 			let startStr;
 			let startTimeStr;
@@ -718,13 +749,15 @@
 				
 				startDate = new Date(startStr.split("-")[0],parseInt(startStr.split("-")[1])-1+"",startStr.split("-")[2]);
 				endDate = new Date(endStr.split("-")[0],parseInt(endStr.split("-")[1])-1+"",endStr.split("-")[2]);
+				endDate.setDate(endDate.getDate() + 1);
+				// console.log('endDateendDateendDateendDateendDate : ',endDate)
 			}
-			// console.log('clickEvent2Date -> startStr: ',startStr);
-			// console.log('clickEvent2Date -> startTimeStr: ',startTimeStr);
-			// console.log('clickEvent2Date -> endStr: ',endStr);
-			// console.log('clickEvent2Date -> endTimeStr: ',endTimeStr);
+			console.log('clickEvent2Date -> startStr: ',startStr);
+			console.log('clickEvent2Date -> startTimeStr: ',startTimeStr);
+			console.log('clickEvent2Date -> endStr: ',endStr);
+			console.log('clickEvent2Date -> endTimeStr: ',endTimeStr);
 
-			// console.log('clickEvent2Date -> : ',{startDate,endDate});
+			console.log('clickEvent2Date -> : ',{startDate,endDate});
 			return {startDate,endDate}
 		}
 
@@ -754,7 +787,9 @@
 			let {startDate,endDate} = clickEvent2Date(e);
 			console.log("fCalAdd -> startDate : ",startDate);
 			console.log("fCalAdd -> endDate : ",endDate);
+			
 			// return
+
 			let frmData = new FormData();
 			frmData.append("emplNo",emplNo);
 			frmData.append("deptCode",deptCode);
@@ -857,6 +892,7 @@
 			$('#calAddFrm input').val('');
 			$('#schdulTy').val(0);
 			$('#scheduleLabel').val(0);
+			$('#allDay').prop('checked',false);
 			$('')
 			// console.log("calAddFrm",calAddFrm);
 			$('#schdulTy').prop('disabled',false);
@@ -953,8 +989,13 @@
 	
 </body>
 <style>
+	/* .fc-event-title-container{
+		display: grid;
+		align-items: center;
+	} */
 	.fc-event-title-container{
 		cursor: pointer;
+		
 	}
 	.fc-button{
 		background-color: #88A1F8;

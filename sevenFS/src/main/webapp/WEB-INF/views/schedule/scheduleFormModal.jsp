@@ -253,7 +253,7 @@ textarea {
 					<div class="col-md-6">
 						<label class="form-label fw-semibold text-dark">날짜 선택</label>
 						<div class="d-flex gap-2">
-							<input type="date" id="schStart" name="date" class="form-control dateInp" />
+							<input type="date" id="date" name="date" class="form-control dateInp" />
 						</div>
 					</div>
 					<div class="col-md-6">

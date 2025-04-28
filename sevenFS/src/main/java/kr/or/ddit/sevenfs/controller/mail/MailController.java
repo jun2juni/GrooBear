@@ -74,24 +74,6 @@ public class MailController {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-//		if(emailClTy.equals("5")) {
-//			mailVO.setEmailClTy(emailClTy);
-//			mailVO.setEmplNo(employeeVO.getEmplNo());
-//			
-//			map.put("emplNo", employeeVO.getEmplNo());
-//			map.put("mailVO", mailVO);
-//			map.put("currentPage", currentPage);
-//			map.put("size", 10);
-//		}else {
-//			mailVO.setEmailClTy(emailClTy);
-//			mailVO.setEmplNo(employeeVO.getEmplNo());
-//			
-//			map.put("emplNo", employeeVO.getEmplNo());
-//			map.put("mailVO", mailVO);
-//			map.put("currentPage", currentPage);
-//			map.put("size", 10);
-//		}
-		
 		mailVO.setEmailClTy(emailClTy);
 		mailVO.setEmplNo(employeeVO.getEmplNo());
 		
@@ -254,7 +236,7 @@ public class MailController {
 	
 	@PostMapping("/sendMail")
 	@ResponseBody
-	public String sendEmail(@ModelAttribute MailVO mailVO,
+	public Map<String, Object> sendEmail(@ModelAttribute MailVO mailVO,
 							@RequestParam(value = "uploadFile",required = false) MultipartFile[] uploadFile,
 							@AuthenticationPrincipal CustomUser customUser ) {
 		log.info("sendEmail");
@@ -271,8 +253,10 @@ public class MailController {
 			}
 		}
 		int result = mailService.sendMail(mailVO,uploadFile);
-		
-		return "/mail";
+		Map<String, Object> response = new HashMap<>();
+	    response.put("status", "success");
+	    response.put("message", "메일이 발송되었습니다");
+		return response;
 	}
 	
 	@PostMapping("/tempStore")
