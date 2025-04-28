@@ -100,11 +100,18 @@
 				                        <!-- 사원이름+이모지  -->
 				                        <td style="text-align: left; white-space: nowrap;">
 										  <!-- 이름은 무조건 출력 -->
-											<span style="display: inline-block; font-weight: bold; font-size: 1.05rem; color: #2C3E50;">
-												<a>
-											  		${club.emplNm}
-											 	 </a>
-											</span>
+											<span 
+											    style="display: inline-block; font-weight: bold; font-size: 1.05rem; color: #2C3E50; cursor: pointer;"
+											    data-bs-toggle="modal"
+											    data-bs-target="#detailModal"
+											    data-name="${club.emplNm}"
+											    data-ttmi="${fn:escapeXml(club.ttmiContent)}"
+											    data-today="${fn:escapeXml(club.todayContent)}"
+											    data-profileimg="${club.profileImg}"
+											    data-emoji="${club.emoji}"
+											  >
+											    ${club.emplNm}
+											  </span>
 										<!-- 이모지는 사원 본인만 클릭 가능 -->
 										  <c:choose>
 								          <c:when test="${club.emplNo == loginEmplNo}">
@@ -211,9 +218,19 @@
 				                        <!-- 사원이름+이모지  -->
 				                        <td style="text-align: left; white-space: nowrap;">
 										  <!-- 이름은 무조건 출력 -->
-											<span style="display: inline-block; font-weight: bold; font-size: 1.05rem; color: #2C3E50;">
-											  ${club.emplNm}
-											</span>
+											<span 
+											    style="display: inline-block; font-weight: bold; font-size: 1.05rem; color: #2C3E50; cursor: pointer;"
+											    data-bs-toggle="modal"
+											    data-bs-target="#detailModal"
+											    data-name="${club.emplNm}"
+											    data-ttmi="${fn:escapeXml(club.ttmiContent)}"
+											    data-today="${fn:escapeXml(club.todayContent)}"
+											    data-profileimg="${club.profileImg}"
+											    data-emoji="${club.emoji}"
+											  >
+											    ${club.emplNm}
+											  </span>
+
 										<!-- 이모지는 사원 본인만 클릭 가능 -->
 										  <c:choose>
 								          <c:when test="${club.emplNo == loginEmplNo}">
@@ -307,9 +324,6 @@
 			                  </table>
 			                  <!-- end table -->
 			                  <!-- table 아래에 이거 추가 -->
-								<div id="loader" style="text-align:center; display:none; padding: 1rem;">
-								  <span>⏳ 불러오는 중...</span>
-								</div>
 			                </div>
 			              </div>
 	            <!-- end col -->
@@ -330,7 +344,7 @@
 				      </div>
 				      <div class="modal-body">
 				        <div class="input-style-1">
-		                  <label><h4>가장 좋아하는 과일을 말해주세요!</h4></label> <!--백문백답 들어가는 곳   -->
+		                  <!-- <label><h4>가장 좋아하는 과일을 말해주세요!</h4></label> 백문백답 들어가는 곳   -->
 		                  <textarea placeholder="답변을 입력해주세요" name="ttmiContent" rows="5" data-listener-added_0bb1bb59="true"></textarea>
 		                </div>
 				      </div>
@@ -446,51 +460,122 @@
 			      </div>
 			
 			      <div class="modal-footer">
-			        <button type="button" class="btn btn-secondary" id="closeGuide">닫기</button>
-			        <button type="button" class="btn btn-primary" id="nextGuide">다음</button>
+					  <button type="button" class="btn btn-outline-secondary" id="closeGuide">닫기</button>
+					  <button type="button" class="btn btn-outline-warning" id="closeTodayBtn">오늘 하루 보지 않기</button>
+					  <button type="button" class="btn btn-primary" id="nextGuide">다음</button>
+				 </div>
+
+			
+			    </div>
+			  </div>
+			</div>
+			<!-- 가이드모달  -->
+			<!-- detail 디테일 상세보기 모달  -->
+			<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+			  <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
+			    <div class="modal-content" style="border-radius: 15px; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+			
+			      <div class="modal-header border-0">
+			        <h5 class="modal-title w-100 text-center fw-bold" id="detailModalLabel">✨ 상세 정보</h5>
+			      </div>
+			
+			      <div class="modal-body text-center">
+			        <div style="margin-bottom: 20px;">
+			          <img id="detailProfileImg" src="" alt="Who am I?" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid #ccc;">
+			        </div>
+			
+			        <div class="mb-3">
+			          <h5>🧑‍💼 이름</h5>
+			          <p id="detailName" class="mb-2"></p>
+			        </div>
+			        <div class="">
+					  <span id="detailEmoji" class="emoji-floating">
+					  </span>  <!-- 둥실둥실 -->
+					</div>
+			
+			        <div class="mb-3">
+			          <h5>🎯 T.T-MI</h5>
+			          <p id="detailTTMI" class="mb-2"></p>
+			        </div>
+			
+			        <div class="mb-3">
+			          <h5>💬 오늘의 한 줄</h5>
+			          <p id="detailToday" class="mb-0"></p>
+			        </div>
+			      </div>
+			
+			      <div class="modal-footer border-0">
+			        <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">닫기</button>
 			      </div>
 			
 			    </div>
 			  </div>
 			</div>
-
-
-			<!-- 가이드모달  -->
+			<!-- detail 디테일 상세보기 모달  -->
 		</section>
 		<%@ include file="../layout/footer.jsp"%>
 	</main>
 	<%@ include file="../layout/prescript.jsp"%>
+<!-- 상세보기 modal  -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+	  const detailModal = document.getElementById('detailModal');
+
+	  detailModal.addEventListener('show.bs.modal', function (event) {
+	    const trigger = event.relatedTarget;
+
+	    const name = trigger.getAttribute('data-name');
+	    const ttmi = trigger.getAttribute('data-ttmi');
+	    const today = trigger.getAttribute('data-today');
+	    const profileImg = trigger.getAttribute('data-profileimg');
+	    const emoji = trigger.getAttribute('data-emoji'); // ✅ 이모지 읽기
+
+	    document.getElementById('detailName').innerText = name || '정보 없음';
+	    document.getElementById('detailTTMI').innerText = ttmi || '등록된 T.T-MI가 없습니다.';
+	    document.getElementById('detailToday').innerText = today || '등록된 오늘의 한 줄이 없습니다.';
+	    
+	    // 이모지 표시
+	    const emojiTag = document.getElementById('detailEmoji');
+	    emojiTag.innerText = emoji || '😆'; // 없으면 기본 이모지
+	    emojiTag.classList.add('emoji-bounce'); // 애니메이션 클래스 추가
+
+	    const imgTag = document.getElementById('detailProfileImg');
+	    if (profileImg) {
+	      imgTag.src = '/upload/' + profileImg;
+	    } else {
+	      imgTag.src = '/assets/images/profileDefaultImage.jpg';
+	    }
+	  });
+	});
+	document.addEventListener('DOMContentLoaded', function () {
+		  const emojis = document.querySelectorAll('.emoji-floating');
+		  emojis.forEach(emoji => {
+		    const randomDelay = Math.random() * 3; 
+		    emoji.style.animationDelay = `${randomDelay}s`;
+		  });
+		});
+
+</script>
+
+<!-- 팝업 스크립트  -->
 <script type="text/javascript">
 document.addEventListener('DOMContentLoaded', function () {
-	  const guideModal = new bootstrap.Modal(document.getElementById('guideModal'));
+	  const guideModalElement = document.getElementById('guideModal');
+	  const guideModal = new bootstrap.Modal(guideModalElement);
+	  
 	  const nextGuideBtn = document.getElementById('nextGuide');
 	  const closeGuideBtn = document.getElementById('closeGuide');
-	  const progressBar = document.getElementById('guideProgressBar');
-	  const progressText = document.getElementById('progressText');
+	  const closeTodayBtn = document.getElementById('closeTodayBtn');
+
 	  const stepTitle = document.getElementById('guideStepTitle');
 	  const stepDesc = document.getElementById('guideStepDesc');
 
 	  const steps = [
-	    {
-	      title: "1. Who am I? 변경",
-	      desc: "Who am I? 사진을 클릭해서 변경할 수 있어요!"
-	    },
-	    {
-	      title: "2. 이모지 등록",
-	      desc: "오늘 기분을 이름 옆 이모지를 클릭해서 변경 할 수 있어요!"
-	    },
-	    {
-	      title: "3. T.T-MI 작성",
-	      desc: "200문 200답! 하루에 랜덤으로 올라오는\n 당신만의 이야기를 적어주세요!"
-	    },
-	    {
-	      title: "4. 오늘의 한 줄",
-	      desc: "오늘 하루를 시작하거나 마무리하 는 한 마디를 남겨주세요!"
-	    },
-	    {
-	      title: "5. 모든 기능 사용법",
-	      desc: "모든 기능은 상단 고정되어있는 자신의 게시글을\n 클릭하여 수정 할 수 있어요."
-	    }
+	    { title: "1. Who am I? 변경", desc: "Who am I? 사진을 클릭해서 변경할 수 있어요!" },
+	    { title: "2. 이모지 등록", desc: "오늘 기분을 이모지로 표현해보세요!" },
+	    { title: "3. T.T-MI 작성", desc: "200문 200답! 하루 랜덤 질문에 답해주세요!" },
+	    { title: "4. 오늘의 한 줄", desc: "오늘을 마무리하는 한마디를 남겨주세요!" },
+	    { title: "5. 모든 기능 사용법", desc: "상단 고정된 내 글을 클릭하면 수정할 수 있어요." }
 	  ];
 
 	  let currentStep = 0;
@@ -498,10 +583,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	  function showStep() {
 	    stepTitle.innerText = steps[currentStep].title;
 	    stepDesc.innerText = steps[currentStep].desc;
-
-	    const percent = ((currentStep + 1) / steps.length) * 100;
-	    progressBar.style.width = `${percent}%`;
-	    progressText.textContent = `(${currentStep + 1}/${steps.length})`;
 	  }
 
 	  nextGuideBtn.addEventListener('click', function () {
@@ -517,10 +598,21 @@ document.addEventListener('DOMContentLoaded', function () {
 	    guideModal.hide();
 	  });
 
-	  // 처음 모달 띄우고 1번 스텝 보여주기
-	  guideModal.show();
-	  showStep();
+	  closeTodayBtn.addEventListener('click', function () {
+	    const expire = new Date();
+	    expire.setHours(23, 59, 59, 999);
+	    document.cookie = "hideGuide=true; path=/; expires=" + expire.toUTCString();
+	    guideModal.hide();
+	  });
+
+	  // ✅ 여기 수정! - hideGuide가 없을 때만 모달 show
+	  if (!document.cookie.includes('hideGuide=true')) {
+	    guideModal.show();
+	    showStep();
+	  }
 	});
+
+	
 
 
 </script>
@@ -629,6 +721,25 @@ td, th {
 .d-none {
   display: none !important;
 }
+
+@keyframes floatUpDown {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px); /* 위로 살짝 */
+  }
+  100% {
+    transform: translateY(0); /* 다시 내려옴 */
+  }
+}
+
+.emoji-floating {
+  display: inline-block;
+  animation: floatUpDown 2.5s ease-in-out infinite;
+}
+
+
 </style>
 
 <!--파일 및 이모지  -->
