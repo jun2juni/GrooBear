@@ -1,5 +1,6 @@
 package kr.or.ddit.sevenfs.controller.schedule;
 
+import java.beans.Customizer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import kr.or.ddit.sevenfs.service.schedule.ScheduleLabelService;
 import kr.or.ddit.sevenfs.service.schedule.ScheduleService;
+import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.schedule.ScheduleLabelVO;
 import kr.or.ddit.sevenfs.vo.schedule.ScheduleVO;
@@ -79,10 +82,11 @@ public class ScheduleController {
 	
 	@RequestMapping("/calendarList")
 	@ResponseBody
-	public Map<String,Object> calendarList(HttpServletRequest request,@RequestBody ScheduleVO scheduleVO){
-		HttpSession session = request.getSession(false);
-		EmployeeVO empVO = (EmployeeVO)session.getAttribute("empVO");
-		log.info("empVO : " + empVO);
+	public Map<String,Object> calendarList(@RequestBody ScheduleVO scheduleVO
+			,@AuthenticationPrincipal CustomUser customUser ){
+		EmployeeVO employeeVO = customUser.getEmpVO();
+		scheduleVO.setEmplNo(employeeVO.getEmplNo());
+		log.info("employeeVO : " + employeeVO);
 		log.info("calendarList 실행");
 		log.info("calendarList -> scheduleVO : "+scheduleVO);
 		log.info("calendarList -> emplNO : "+scheduleVO.getEmplNo());
@@ -226,6 +230,29 @@ public class ScheduleController {
 		int result = labelService.delLabel(scheduleVO);
 		Map<String,Object> myCalendar = scheduleService.scheduleList(scheduleVO);
 		log.info("delLabel -> myCalendar : "+myCalendar);
+		return myCalendar;
+	}
+	
+	@GetMapping("/calendarMainHome")
+	@ResponseBody
+	public Map<String,Object> calendarMainHome(@AuthenticationPrincipal CustomUser customUser) {
+		EmployeeVO employeeVO = customUser.getEmpVO();
+		ScheduleVO scheduleVO = new ScheduleVO();
+		scheduleVO.setEmplNo(employeeVO.getEmplNo());
+		scheduleVO.setDeptCode(employeeVO.getDeptCode());
+		log.info("employeeVO : " + employeeVO);
+		log.info("calendarList 실행");
+		log.info("calendarList -> scheduleVO : "+scheduleVO);
+		log.info("calendarList -> emplNO : "+scheduleVO.getEmplNo());
+		int size = uptMap.size();
+		if(size>0) {
+	    	uptMapUpdate(size);
+	    }
+		Map<String,Object> myCalendar = scheduleService.scheduleList(scheduleVO);
+		log.info("calendarList -> scheduleList : "+myCalendar.get("scheduleList"));
+		List<ScheduleVO> list = (List<ScheduleVO>)myCalendar.get("scheduleList");
+		log.info("calendarList -> labelList : "+myCalendar.get("labelList"));
+		log.info("calendarList -> scheduleList 개수 : "+list.size() );
 		return myCalendar;
 	}
 }
