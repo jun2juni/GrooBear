@@ -64,7 +64,7 @@
               <thead class="bg-light text-center">
                 <tr>
                   <th>순번</th>
-                  <th class="text-center">프로젝트명</th>
+                  <th class="text-start ps-4">프로젝트명</th>
                   <th class="text-center">카테고리</th>
                   <th class="text-center">책임자</th>
                   <th class="text-center">상태</th>

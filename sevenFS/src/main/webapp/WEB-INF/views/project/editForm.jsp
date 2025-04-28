@@ -105,15 +105,19 @@
             </div>
           </div>
 
-          <!-- 주소 -->
-          <div class="mb-4">
-            <label class="form-label">프로젝트 주소</label>
-            <div class="d-flex flex-column gap-2">
-              <input type="text" class="form-control" id="restaurantAdd1" placeholder="주소" value="${fn:contains(project.prjctAdres, ',') ? fn:substringBefore(project.prjctAdres, ',') : project.prjctAdres}" readonly>
-              <input type="text" class="form-control" id="addressDetail" placeholder="상세주소" value="${fn:contains(project.prjctAdres, ',') ? fn:substringAfter(project.prjctAdres, ', ') : ''}" />
-              <input type="hidden" name="prjctAdres" id="prjctAdres" value="${project.prjctAdres}" />
-            </div>
-          </div>
+			<!-- 주소 -->
+			<div class="mb-4">
+			  <label class="form-label">프로젝트 주소</label>
+			  <div class="d-flex flex-column gap-2">
+			    <div class="input-group">
+			      <input type="text" class="form-control" id="restaurantAdd1" placeholder="주소" value="${fn:contains(project.prjctAdres, ',') ? fn:substringBefore(project.prjctAdres, ',') : project.prjctAdres}" readonly>
+			      <button type="button" class="btn btn-outline-secondary" onclick="openAddressSearch()">주소 검색</button>
+			    </div>
+			    <input type="text" class="form-control" id="addressDetail" placeholder="상세주소" value="${fn:contains(project.prjctAdres, ',') ? fn:substringAfter(project.prjctAdres, ', ') : ''}" />
+			    <input type="hidden" name="prjctAdres" id="prjctAdres" value="${project.prjctAdres}" />
+			  </div>
+			</div>
+
 
           <!-- 참여자 테이블 include -->
           <jsp:include page="editFormMembers.jsp" />

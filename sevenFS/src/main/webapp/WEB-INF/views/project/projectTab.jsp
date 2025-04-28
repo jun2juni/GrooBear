@@ -166,11 +166,10 @@
 <%@ include file="../layout/footer.jsp" %>
 </main>
 <%@ include file="../layout/prescript.jsp" %>
-
+<script src="/resources/js/project/taskDetailModal.js"></script>
 
 <script>
 //projectTab.jsp의 script 부분 수정 (첫 번째 파일)
-
 
 document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
@@ -624,6 +623,7 @@ function loadKanbanBoard(prjctNo) {
     .then(function(html) {
       boardContainer.innerHTML = html;
       safeExecuteInlineScripts("kanbanBoardContainer");
+      highlightDeadlineSoon();
     })
     .catch(function(err) {
       console.error("❌ 업무보드 로딩 실패:", err);
@@ -905,6 +905,5 @@ window.loadGanttChart = function(prjctNo) {
 
 </script>
 <script src="/js/project/taskAnswer.js"></script>
-
 </body>
 </html>

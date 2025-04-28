@@ -499,4 +499,43 @@ public class OrganizationController {
 		return empNotification;
 	}
 	
+	
+	//추가: 부서명, 직급명까지 포함해서 상세한 조직도 내려주는 API  - 채성실
+	@GetMapping("/organization/detail")
+	@ResponseBody
+	public List<Map<String, Object>> organizationDetail() {
+	    OrganizationVO orgData = organizationService.organization();
+	    List<EmployeeVO> empList = orgData.getEmpList();
+	    List<CommonCodeVO> deptList = orgData.getDeptList();
+	    List<CommonCodeVO> posList = orgData.getPosList();
+
+	    Map<String, String> deptMap = new HashMap<>();
+	    Map<String, String> posMap = new HashMap<>();
+
+	    for (CommonCodeVO dept : deptList) {
+	        deptMap.put(dept.getCmmnCode(), dept.getCmmnCodeNm());
+	    }
+	    for (CommonCodeVO pos : posList) {
+	        posMap.put(pos.getCmmnCode(), pos.getCmmnCodeNm());
+	    }
+
+	    List<Map<String, Object>> result = new ArrayList<>();
+	    for (EmployeeVO emp : empList) {
+	        Map<String, Object> empData = new HashMap<>();
+	        empData.put("emplNo", emp.getEmplNo());
+	        empData.put("emplNm", emp.getEmplNm());
+	        empData.put("deptCode", emp.getDeptCode());
+	        empData.put("clsfCode", emp.getClsfCode());
+	        empData.put("deptNm", deptMap.getOrDefault(emp.getDeptCode(), "-"));
+	        empData.put("posNm", posMap.getOrDefault(emp.getClsfCode(), "-"));
+	        empData.put("telno", emp.getTelno() != null && !emp.getTelno().isEmpty() ? emp.getTelno() : "-");
+	        empData.put("email", emp.getEmail() != null && !emp.getEmail().isEmpty() ? emp.getEmail() : "-");
+	        result.add(empData);
+	    }
+
+	    return result;
+	}
+
+
+	
 }

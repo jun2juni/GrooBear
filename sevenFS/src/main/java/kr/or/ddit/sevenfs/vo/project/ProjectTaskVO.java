@@ -133,6 +133,8 @@ public class ProjectTaskVO {
         vo.setTaskGrad(this.taskGrad);
         vo.setPriort(this.priort);
         vo.setProgrsrt(this.progrsrt);
+        vo.setTaskEndDt(this.taskEndDt); // 마감일 정보 추가
+        // 댓글 정보는 서비스나 컨트롤러에서 별도로 설정해야 함
         return vo;
     }
 }
