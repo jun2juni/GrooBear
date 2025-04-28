@@ -28,19 +28,6 @@
 				<div class="row mt-5" name="row">
 					<div class="col-12">
 						<div class="card-style">
-							<!-- 상위탭 시작  기능 일시정지 -->
-							<!-- <div class="mb-20">
-								<ul class="nav nav-tabs" id="myTab" role="tablist">
-									<li class="nav-item" role="presentation">
-										<button class="nav-link" id="tab2" data-bs-toggle="tab"
-											data-bs-target="#content2" type="button" role="tab"
-											onClick="location.href='comunityClubList'"
-											aria-controls="content2" aria-controls="content2"
-											aria-selected="false">스느스</button>
-									</li>
-								</ul>
-							</div>  -->
-							<!--상위 탭 끝 기능 일시정지  -->
 							<div class="row-5">
 			              <div class=" mb-30">		
 			                <div class="table-wrapper table-responsive">
@@ -52,8 +39,8 @@
 									      data-bs-toggle="tooltip"
 									      data-bs-html="true"
 									      data-bs-placement="top"
-									      title="이곳은 여러분의 <br>프로필 사진이 나오는 곳입니다!<br>프로필 사진을 변경해주세요">
-									      프로필
+									      title="이곳은 여러분의 <br>Who am I? 사진이 나오는 곳입니다!<br>Who am I? 사진을 변경해주세요">
+									      Who am I?
 									    </span>
 									  </th>
 									
@@ -92,12 +79,12 @@
 			                    <c:forEach var="club" items="${clubList}">
 			                     	<c:if test="${club.emplNo == loginEmplNo}">
 				                      <tr>
-				                      	<!-- 프로필사진  -->
+				                      	<!-- Who am I?사진  -->
 				                        <td style="text-align: left;">
 				                          <div class="employee-image">
 				                            <img
 											  src="/upload/${club.profileImg}" 
-											  alt="프로필"
+											  alt="Who am I?"
 											  onerror="this.src='/assets/images/profileDefaultImage.jpg';"
 											  style="<c:choose>
 											           <c:when test='${club.emplNo == loginEmplNo}'>cursor: pointer;</c:when>
@@ -106,10 +93,10 @@
 											  <c:if test="${club.emplNo == loginEmplNo}">
 											    onclick="document.getElementById('hiddenProfileInput').click();"
 											  </c:if>
-											>
+											/>
 				                          </div>
 				                        </td>
-				                        <!--프로필 사진 끝  -->
+				                        <!--Who am I? 사진 끝  -->
 				                        <!-- 사원이름+이모지  -->
 				                        <td style="text-align: left; white-space: nowrap;">
 										  <!-- 이름은 무조건 출력 -->
@@ -204,12 +191,12 @@
 			                       <c:forEach var="club" items="${clubList}">
 				                     <c:if test="${club.emplNo != loginEmplNo}">
 				                     	<tr>
-				                      	<!-- 프로필사진  -->
+				                      	<!-- Who am I?사진  -->
 				                        <td style="text-align: left;">
 				                          <div class="employee-image">
 				                            <img
 											  src="/upload/${club.profileImg}" 
-											  alt="프로필"
+											  alt="Who am I?"
 											  onerror="this.src='/assets/images/profileDefaultImage.jpg';"
 											  style="<c:choose>
 											           <c:when test='${club.emplNo == loginEmplNo}'>cursor: pointer;</c:when>
@@ -218,7 +205,7 @@
 											  <c:if test="${club.emplNo == loginEmplNo}">
 											    onclick="document.getElementById('hiddenProfileInput').click();"
 											  </c:if>
-											>
+											/>
 				                          </div>
 				                        </td>
 				                        <!-- 사원이름+이모지  -->
@@ -414,7 +401,7 @@
 				  <div class="modal-dialog">
 				    <div class="modal-content">
 				      <div class="modal-header">
-				        <h1 class="modal-title fs-5" id="exampleModalLabel">프로필파일 선택</h1>
+				        <h1 class="modal-title fs-5" id="exampleModalLabel">Who am I?파일 선택</h1>
 				        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				      </div>
 				      <div class="modal-body">
@@ -435,62 +422,108 @@
 				      <div class="modal-footer">
 				        <button type="button" id="profileResetBtn" class="btn btn-outline-danger btn-sm mt-2">선택 초기화</button>
 				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-				        <button type="submit" class="btn btn-primary">프로필 사진 저장하기</button>
+				        <button type="submit" class="btn btn-primary">Who am I? 사진 저장하기</button>
 				      </div>	
 				    </div>
 				  </div> 
 				</div>     
 			</form>
+			<!-- 가이드모달  -->
+			<div class="modal fade" id="guideModal" tabindex="-1" aria-labelledby="guideModalLabel" aria-hidden="true">
+			  <div class="modal-dialog modal-dialog-centered">
+			    <div class="modal-content">
+			
+			
+			      <div class="modal-header">
+			        <h5 class="modal-title" id="guideModalLabel">
+			          Welcome! 🥳 
+			        </h5>
+			      </div>
+			
+			      <div class="modal-body text-center">
+			        <h4 id="guideStepTitle">1. Who am I? 사진 변경</h4>
+			        <p id="guideStepDesc">Who am I? 사진을 클릭해서 변경할 수 있어요!</p>
+			      </div>
+			
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" id="closeGuide">닫기</button>
+			        <button type="button" class="btn btn-primary" id="nextGuide">다음</button>
+			      </div>
+			
+			    </div>
+			  </div>
+			</div>
+
+
+			<!-- 가이드모달  -->
 		</section>
 		<%@ include file="../layout/footer.jsp"%>
-		<!-- ✅ 가이드 모달 시작 -->
-<div class="modal fade" id="guideModal" tabindex="-1" aria-labelledby="guideModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-
-      <!-- 진행률 -->
-      <div class="progress" style="height: 6px;">
-        <div class="progress-bar" id="guideProgressBar" style="width: 25%;"></div>
-      </div>
-
-      <div class="modal-header">
-        <h5 class="modal-title" id="guideModalLabel">
-          Welcome! 🥳 <small id="progressText" style="font-size: 0.8rem; color: gray;">(1/4)</small>
-        </h5>
-      </div>
-
-      <div class="modal-body">
-        <div id="guideStep1" class="guide-step" style="display: block;">
-          <h4>1. 프로필 사진 변경</h4>
-          <p>프로필 사진을 클릭해서 변경할 수 있어요!</p>
-        </div>
-        <div id="guideStep2" class="guide-step" style="display: none;">
-          <h4>2. 이모지 등록</h4>
-          <p>오늘 기분을 이모지로 표현해보세요!</p>
-        </div>
-        <div id="guideStep3" class="guide-step" style="display: none;">
-          <h4>3. T.T-MI 작성</h4>
-          <p>좋아하는 과일이나 이야기를 적어주세요!</p>
-        </div>
-        <div id="guideStep4" class="guide-step" style="display: none;">
-          <h4>4. 오늘의 한 줄</h4>
-          <p>오늘 하루를 마무리하는 한 마디를 남겨주세요!</p>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="closeGuide">닫기</button>
-        <button type="button" class="btn btn-primary" id="nextGuide">다음</button>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- ✅ 가이드 모달 끝 -->
-		
 	</main>
 	<%@ include file="../layout/prescript.jsp"%>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function () {
+	  const guideModal = new bootstrap.Modal(document.getElementById('guideModal'));
+	  const nextGuideBtn = document.getElementById('nextGuide');
+	  const closeGuideBtn = document.getElementById('closeGuide');
+	  const progressBar = document.getElementById('guideProgressBar');
+	  const progressText = document.getElementById('progressText');
+	  const stepTitle = document.getElementById('guideStepTitle');
+	  const stepDesc = document.getElementById('guideStepDesc');
+
+	  const steps = [
+	    {
+	      title: "1. Who am I? 변경",
+	      desc: "Who am I? 사진을 클릭해서 변경할 수 있어요!"
+	    },
+	    {
+	      title: "2. 이모지 등록",
+	      desc: "오늘 기분을 이름 옆 이모지를 클릭해서 변경 할 수 있어요!"
+	    },
+	    {
+	      title: "3. T.T-MI 작성",
+	      desc: "200문 200답! 하루에 랜덤으로 올라오는\n 당신만의 이야기를 적어주세요!"
+	    },
+	    {
+	      title: "4. 오늘의 한 줄",
+	      desc: "오늘 하루를 시작하거나 마무리하 는 한 마디를 남겨주세요!"
+	    },
+	    {
+	      title: "5. 모든 기능 사용법",
+	      desc: "모든 기능은 상단 고정되어있는 자신의 게시글을\n 클릭하여 수정 할 수 있어요."
+	    }
+	  ];
+
+	  let currentStep = 0;
+
+	  function showStep() {
+	    stepTitle.innerText = steps[currentStep].title;
+	    stepDesc.innerText = steps[currentStep].desc;
+
+	    const percent = ((currentStep + 1) / steps.length) * 100;
+	    progressBar.style.width = `${percent}%`;
+	    progressText.textContent = `(${currentStep + 1}/${steps.length})`;
+	  }
+
+	  nextGuideBtn.addEventListener('click', function () {
+	    currentStep++;
+	    if (currentStep < steps.length) {
+	      showStep();
+	    } else {
+	      guideModal.hide();
+	    }
+	  });
+
+	  closeGuideBtn.addEventListener('click', function () {
+	    guideModal.hide();
+	  });
+
+	  // 처음 모달 띄우고 1번 스텝 보여주기
+	  guideModal.show();
+	  showStep();
+	});
+
+
+</script>
 </body>
 <style>
 /* 테이블 헤더 스타일 */
@@ -596,70 +629,17 @@ td, th {
 .d-none {
   display: none !important;
 }
-
-
-
 </style>
 
+<!--파일 및 이모지  -->
 <script type="text/javascript">
-function emptyFile(){
-	console.log("emptyFile----",this);
-}
+	function emptyFile(){
+		console.log("emptyFile----",this);
+	}
 
-let currentStep = 1;
+	
 
-document.addEventListener('DOMContentLoaded', function () {
-  const guideModal = new bootstrap.Modal(document.getElementById('guideModal'));
-  guideModal.show();
-
-  const nextGuideBtn = document.getElementById('nextGuide');
-  const closeGuideBtn = document.getElementById('closeGuide');
-
-  	nextGuideBtn.addEventListener('click', function () {
-	  console.log('👉 next 클릭했다! currentStep:', currentStep);
-
-	  // 현재 step 숨기기 (완전 확실히)
-	  const currentDiv = document.getElementById(`guideStep${currentStep}`);
-	  if (currentDiv) {
-	    console.log('👉 현재 step 숨긴다:', currentDiv.id);
-	    currentDiv.style.display = "none";
-	  }
-
-	  // 다음 step 이동
-	  currentStep++;
-	  console.log('👉 증가 후 currentStep:', currentStep);
-
-	  // 다음 step 보여주기
-	  const nextDiv = document.getElementById(`guideStep${currentStep}`);
-	  console.log('👉 nextDiv:', nextDiv);
-
-	  if (nextDiv) {
-	    nextDiv.style.display = "block";  
-	    updateProgress();
-	  } else {
-	    guideModal.hide();  // 더 이상 step 없으면 모달 닫기
-	  }
-	});
-
-
-  closeGuideBtn.addEventListener('click', function () {
-    guideModal.hide();
-  });
-
-  function updateProgress() {
-    const progressBar = document.getElementById('guideProgressBar');
-    const progressText = document.getElementById('progressText');
-    const percent = (currentStep / 4) * 100;
-
-    progressBar.style.width = `${percent}%`;
-    progressText.textContent = `(${currentStep}/4)`;
-  }
-});
-
-
-
-
-/* 파일이 존재 할 때. 프로필이미지 변경  */
+/* 파일이 존재 할 때. Who am I?이미지 변경  */
 const fileInput = document.getElementById('hiddenProfileInput');
 fileInput.addEventListener('change', function () {
   const loginEmplNo = '${loginEmplNo}'; // 서버에서 넘겨준 본인 사번
@@ -680,13 +660,6 @@ fileInput.addEventListener('change', function () {
     document.getElementById('profileImgForm').submit();
   }
 });
-
-
-
-
-
-
-
 
 // ✅ 1. 이모지 배열은 최상단에 선언!
 const Emojis = [
