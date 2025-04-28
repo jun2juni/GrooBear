@@ -232,7 +232,7 @@ textarea {
 			  
 				<div class="timeInput-toggle date" style="display: block;">
 				  <!-- 시작/종료 일시 -->
-				  <div class="col-md-6">
+				  <div class="col-md-6 mb-3">
 					  <label class="form-label fw-semibold text-dark">시작일</label>
 					  <div class="d-flex gap-2">
 						  <input type="date" id="schStart" name="start" class="form-control dateInp" />
