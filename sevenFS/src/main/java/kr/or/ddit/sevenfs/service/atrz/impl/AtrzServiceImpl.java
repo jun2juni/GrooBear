@@ -12,10 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
+import kr.or.ddit.sevenfs.mapper.schedule.ScheduleMapper;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
 import kr.or.ddit.sevenfs.service.notification.NotificationService;
 import kr.or.ddit.sevenfs.service.organization.DclztypeService;
 import kr.or.ddit.sevenfs.service.organization.OrganizationService;
+import kr.or.ddit.sevenfs.service.schedule.ScheduleService;
 import kr.or.ddit.sevenfs.utils.CommonCode;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
 import kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO;
@@ -29,6 +31,7 @@ import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
 import kr.or.ddit.sevenfs.vo.organization.DclzTypeVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.organization.VacationVO;
+import kr.or.ddit.sevenfs.vo.schedule.ScheduleVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -47,6 +50,10 @@ public class AtrzServiceImpl implements AtrzService {
 	//알림을 위한
 	@Autowired
 	private NotificationService notificationService;
+	
+	//일정등록을 위한것
+	@Autowired
+	private ScheduleService scheduleService;
 	
 	// home 결재대기문서목록
 	@Override
@@ -581,7 +588,8 @@ public class AtrzServiceImpl implements AtrzService {
 			result += atrzMapper.atrzStatusFinalUpdate(atrzVO);
 			//길주늬 여기서 시작해라
 			 // 💡 결재 완료 → 근태 등록
-	        HolidayVO holidayVO =  atrzMapper.selectHolidayByDocNo(atrzVOApp.getAtrzDocNo());
+			HolidayVO holidayVO =  atrzMapper.selectHolidayByDocNo(atrzVOApp.getAtrzDocNo());
+			atrzVO.setHolidayVO(holidayVO);
 	        log.info("atrzDetailAppUpdate->holidayVO : "+holidayVO);
 	        
 			if(holidayVO!=null &&holidayVO.getAtrzVO() !=null) {
@@ -689,10 +697,27 @@ public class AtrzServiceImpl implements AtrzService {
 					}
 				}
 			}
+			//일정등록 
+			ScheduleVO scheduleVO = new ScheduleVO();
+			//일정등록에 갈값 넣어주기
+			AtrzVO atrzVOSchedule = atrzMapper.selectAtrzDetail(atrzDocNo);
 			
-		}
-		
-		//여기서도 알림추가
+			atrzVOSchedule.setHolidayVO(holidayVO);
+			
+			scheduleVO.setEmplNo(atrzVO.getDrafterEmpno());	//일정 작성한 사원번호
+			scheduleVO.setSchdulTy("1");  	//0개인 1부서 2전체
+			scheduleVO.setSchdulSj(atrzVOSchedule.getDrafterEmpnm()+"님 연차" );	//일정제목
+			scheduleVO.setSchdulCn(atrzVOSchedule.getAtrzSj());	//일정내용
+			log.info("scheduleVO준희 일정등록 : "+scheduleVO);
+			scheduleVO.setSchdulBeginDt(atrzVOSchedule.getHolidayVO().getHoliStart());	//일정시작일시
+			scheduleVO.setSchdulEndDt(atrzVOSchedule.getHolidayVO().getHoliEnd());		//일정종료일시
+			scheduleVO.setDeptCode(atrzVOSchedule.getDrafterDept());		//부서no
+
+			int scheduleResult = scheduleService.scheduleInsert(scheduleVO);
+			
+			
+		}//최종결재자인경우
+	
 		return result;
 		
 	}
