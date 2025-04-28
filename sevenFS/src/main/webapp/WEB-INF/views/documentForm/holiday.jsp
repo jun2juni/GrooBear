@@ -1290,7 +1290,8 @@ $(document).ready(function() {
 				"clsfCode": $(this).parent().parent().find(".clsfCode").val(),
 				"auth":$(this).val(),
 				"flex":dcrbAuthorYn,
-				"atrzLnSn":(idx+1)
+				"atrzLnSn":(idx+1),
+				"sanctnProgrsSttusCode":'00'
 			};
 			//결재선 목록
 			authList.push(data);			
@@ -1300,6 +1301,7 @@ $(document).ready(function() {
 			formData.append("atrzLineVOList["+idx+"].atrzTy",data.auth);//Y / N 결재자 / 참조자
 			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.flex);//  1 / 0 전결여부
 			formData.append("atrzLineVOList["+idx+"].atrzLnSn",data.atrzLnSn);
+			formData.append("atrzLineVOList["+idx+"].sanctnProgrsSttusCode",data.sanctnProgrsSttusCode); //결재진행상태코드
 		});	
 		
 		//authList의 clsfCode를 가져와서 DB에 담기
