@@ -28,7 +28,7 @@
     margin-bottom: 10px;
 }
 
-.fixed-header-table {
+/* .fixed-header-table {
   max-height: 400px;
   overflow-y: auto;
   position: relative;
@@ -45,7 +45,7 @@ thead th {
   padding: 10px 12px;
   background-color: white;
   z-index: 10;
-}
+} */
 </style>   
   
 </head>
@@ -688,10 +688,10 @@ $(function(){
 		$('#pageNaviDiv').css('display', 'none'); 
 		$('#pageNaviDiv').hide(); 
 		/* $('#searchAddClass').addClass('fixed-header-table'); */
-		$('#searchAddClass').css({
+	/* 	$('#searchAddClass').css({
 			"max-height": "600px",
 	        "overflow-y": "auto"
-			})
+			}) */
 		$('#emplTotalCnt').text('');
 	}
 	if(!queryString){
@@ -699,7 +699,6 @@ $(function(){
 		 $('#searchDeptNm').val('');
 		 sessionStorage.removeItem('keywordName');
 		 sessionStorage.removeItem('keywordDept');
-		 $('#searchAddClass').removeClass('fixed-header-table');
 	}
 	
 	// 검색 내용 유지시키기
