@@ -4,8 +4,9 @@
     <div id="calendarSidebar" class="sidebar">
         <h3>📅 캘린더 메뉴</h3>
         <!-- 일정 추가 버튼 -->
-        <div class="add-event" style="margin-bottom: 10px;">
+        <div class="add-event d-flex justify-content-between mt-2" style="margin-bottom: 10px;">
             <button id="openModalBtn" class="btn btn-primary">일정 추가</button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#calendarGuideModal">가이드</button>
         </div>
         
         <div class="input-style-1 form-group col-12">
@@ -75,6 +76,30 @@
         <div id='myCalendar'></div>
     </div>
 </div>
+
+<div class="modal fade" id="calendarGuideModal" tabindex="-1" aria-labelledby="calendarGuideLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="calendarGuideLabel">캘린더 메뉴 가이드</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul>
+          <li><b>일정 추가:</b> 일정을 새로 등록할 수 있습니다.</li>
+          <li><b>전체 일정:</b> 모든 부서와 개인 일정을 한 번에 봅니다.</li>
+          <li><b>부서 일정:</b> 내 부서의 일정을 따로 확인할 수 있습니다.</li>
+          <li><b>개인 일정:</b> 나만의 개인 일정을 관리할 수 있습니다.</li>
+          <li><b>필터 사용:</b> 원하는 일정만 골라서 볼 수 있습니다.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <!-- 스타일 -->
 <style>
