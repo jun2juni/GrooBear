@@ -23,6 +23,15 @@ WHERE
     atch_file_no = #{atchFileNo}
 </select>
 
+<select id="getAtchFileStreList" parameterType="long" resultType="String">
+SELECT
+    file_stre_path
+FROM
+    attatch_file
+WHERE
+	atch_file_no = #{atchFileNo}
+</select>
+
 <select id="getList" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO" parameterType="kr.or.ddit.sevenfs.utils.ArticlePage">
 SELECT E.EMPL_NM
     ,M.email_no

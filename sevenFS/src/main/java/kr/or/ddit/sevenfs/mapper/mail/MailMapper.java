@@ -32,5 +32,5 @@ public interface MailMapper {
 	int readingAt(int emailNo);
 	int delLblFromMail(int lblNo);
 	int mailRealDelete(List<String> emailNoList);
-
+	List<String> getAtchFileStreList(long atchFileNo);
 }
