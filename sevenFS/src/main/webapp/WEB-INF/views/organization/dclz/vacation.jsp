@@ -57,10 +57,10 @@
 		<c:set var="edYear" value="${endDt.substring(0,4)}" />
 		<c:set var="edMonth" value="${endDt.substring(4,6)}" />
 		<c:set var="edDay" value="${endDt.substring(6,8)}" />
-		<%-- <div class="text-center mb-20">
-			  <h4><p class="status-btn" style="color:thistle; font-size:20px; font-weight:bold; background-color: white;">
-			  ${bgYear}.${bgMonth}.${bgDay} ~ ${edYear}.${edMonth}.${edDay} </p></h4>
-	  </div> --%>
+		<div class="text-center mb-20">
+			  <h4><p class="status-btn" style="color:gray; font-size:15px; font-weight:bold; background-color: white;">
+			연차 사용기간 : ${bgYear}.${bgMonth}.${bgDay} ~ ${edYear}.${edMonth}.${edDay} </p></h4>
+	  </div>
 	  </div>
 	  <div class="row mb-4">
 		<c:set var="vacationItems" value="${[
@@ -115,7 +115,7 @@
 					  <input type="hidden" value="${paramKeyword.substring(0,4)}-${paramKeyword.substring(5,7)}"
 							 id="submitKeyword" name="keyword" />
 					  <input type="hidden" value="${emplVacation.emplNo}" id="submitTargetEmplNo" name="targetEmplNo" />
-					  <h4 class="ml-10 mr-10"
+					  <h4 class="ml-10"
 						  id="dateDisplay">${paramKeyword.substring(0,4)}-${paramKeyword.substring(5,7)}</h4>
 				  </c:if>
 				  	<h4 class="mr-5 ml-5" id="searchVacationType">  </h4>

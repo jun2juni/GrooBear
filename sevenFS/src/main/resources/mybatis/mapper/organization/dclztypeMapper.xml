@@ -43,7 +43,7 @@
 </select> -->
 
 <!-- 사원의 근태현황 대분류로 조회  -->
-<select id="dclzCnt" parameterType="String" resultMap="dclztypeMap">
+<select id="dclzCnt" parameterType="hashMap" resultMap="dclztypeMap">
 	SELECT 
 	    DT.EMPL_NO,
 	    SUM(CASE WHEN CC.UPPER_CMMN_CODE = '00' THEN 1 ELSE 0 END) AS bad,
@@ -53,7 +53,7 @@
 	FROM  DCLZ_TYPE DT
 	    LEFT JOIN COMMON_CODE CC ON DT.DCLZ_CODE = CC.CMMN_CODE AND  cc.cmmn_code_group='ATTEND'
 	    WHERE DT.EMPL_NO = #{emplNo}
-        AND SUBSTR(DT.dclz_no, 0, 4) = TO_CHAR(SYSDATE,'YYYY')
+        AND (SUBSTR(dt.dclz_no, 1, 4) || '-' || SUBSTR(dt.dclz_no, 5, 2)) = #{keyword}
 	    GROUP BY DT.EMPL_NO
 </select>
 
@@ -148,7 +148,7 @@
 </select>
 
 <!-- 대분류에 따른 사원 상세 근태현황 목록 -->
-<select id="empDetailDclzTypeCnt" parameterType="String" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeDetailVO">
+<select id="empDetailDclzTypeCnt" parameterType="hashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeDetailVO">
 	SELECT  cc.cmmn_code,
 	        dt.empl_no,
 	        cc.cmmn_code_nm,
@@ -157,7 +157,7 @@
 	FROM common_code cc
 	LEFT JOIN DCLZ_TYPE dt ON(cc.cmmn_code = dt.dclz_code AND dt.empl_no = #{emplNo})
 	WHERE cmmn_code_group='ATTEND'
-	AND SUBSTR(dt.dclz_no, 0, 4) = TO_CHAR(SYSDATE,'YYYY') 
+	AND (SUBSTR(dt.dclz_no, 1, 4) || '-' || SUBSTR(dt.dclz_no, 5, 2)) = #{keyword}
 	GROUP BY cc.cmmn_code_nm, dt.empl_no, cc.upper_cmmn_code, cc.cmmn_code
 	ORDER BY cc.cmmn_code	
 </select>

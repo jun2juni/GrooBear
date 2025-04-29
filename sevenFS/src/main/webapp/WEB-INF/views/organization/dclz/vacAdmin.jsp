@@ -28,7 +28,6 @@
     margin-bottom: 10px;
 }
 
-<style type="text/css">
 .fixed-header-table {
   max-height: 400px;
   overflow-y: auto;
@@ -41,7 +40,12 @@
   background-color: white;
   z-index: 10;
 }
-</style>  
+
+thead th {
+  padding: 10px 12px;
+  background-color: white;
+  z-index: 10;
+}
 </style>   
   
 </head>
@@ -52,10 +56,9 @@
 	<section class="section">
 		<div class="container-fluid">
        		<!-- Button trigger modal -->
-       		<form action="/dclz/vacAdmin" method="get" id="vacAdminSearchForm">
+       		<form action="/dclz/vacAdmin" method="get" id="vacAdminSearchForm" style="position:sticky; top:90px; z-index:10;  background-color: white;">
        		<div class="col-lg-12 mb-10">
-              <div class="card-style d-flex gap-3 justify-content-between"  
-              		style="position:sticky; top:0px; z-index:1;  background-color: white;">
+              <div class="card-style d-flex gap-3 justify-content-between">
                 <div class="">
                   <h6>**<span class="mt-3" style="color:lightcoral">사원 이름을 클릭하시면 해당 사원의 연차 개수 현황을 조회할 수 있습니다.</span></h6>
                   <h6>**<span class="mt-3" style="color:lightcoral">추가로 지급할 성과보상 또는 근무보상 일수를 지급해주세요.</span></h6>
@@ -91,57 +94,12 @@
 			<div class="row">
             <div class="col-lg-12">
               <div class="card-style">
-                <div id="searchAddClass" class="table-wrapper table-responsive">
-                  <table class="table">
-                  <div class="d-flex justify-content-between mb-10">
+                <div id="searchAddClass" class="table-wrapper table-responsive fixed-header-table" style="overflow: auto;">
+               <table class="table" >
+                  <div class="d-flex justify-content-between mb-40">
 	                  <h6>전체사원 연차 관리</h6>
 	                  <p id="emplTotalCnt" class="mb-0 text-sm text-muted">총 ${total}명</p>
                   </div>
-                  <div class="mb-10 d-flex justify-content-end col-12">
-                  
-                  <%--  <form action="/dclz/vacAdmin" method="get" id="selTypeForm">
-                  	<c:set var="duplTypes" value="" />
-	                <div class="input-style-1 form-group mr-10">
-		     	     <select id="vacType" class="form-select w-auto" required="required">
-						<option>유형 선택</option>
-						<c:forEach var="vacDatas" items="${allEmplVacList}">
-						<c:set var="vacType" value="${vacDatas.cmmnCodeNm}" />
-							<c:if test="${not fn:contains(duplTypes, vacType)}">
-								<option value="${vacType}">${vacType}</option>
-								<c:set var="duplTypes" value="${duplTypes},${vacType}" />
-							</c:if>	
-						</c:forEach>
-					 </select> 
-					 <input type="hidden" id="typeKeyword" name="keyword">
-				  	</div> 
-		            </form> --%>
-		           <%--  <form action="/dclz/vacAdmin" method="get" id="selYearForm">
-                  	<c:set var="duplYears" value="" />
-	                <div class="input-style-1 form-group">
-		     	     <select id="vacYear" class="form-select w-auto" required="required">
-						<option>년도 선택</option>
-						<c:forEach var="vacDatas" items="${allEmplVacList}">
-						<fmt:formatDate value="${vacDatas.dclzBeginDt}" pattern="yyyy" var="vacYear" />
-							<c:if test="${not fn:contains(duplYears, vacYear)}">
-								<option value="${vacYear}">${vacYear}</option>
-								<c:set var="duplYears" value="${duplYears},${vacYear}" />
-							</c:if>	
-						</c:forEach>
-					 </select> 
-					 <input type="hidden" id="yearKeyword" name="keyword">
-				  	</div>
-				  	</form> --%>
-				  	<!-- <form action="/dclz/vacAdmin" method="get" id="selSearchNm">
-				  	<div class="ml-10 d-flex">
-				  	    <div class="rounded mb-3" style="width : 150px;">
-				            <input type="search" class="form-control rounded" placeholder="이름 입력" aria-label="Search" name="keyword" aria-describedby="search-addon" id="shName" onkeydown="scEnter(event)">
-				        </div>
-				        <span class="input-group-text border-0" id="search-addon" style="height:40px">
-				            <i class="fas fa-search" aria-hidden="true"></i>
-				        </span>
-			        </div>
-		            </form> -->
-		            </div>
                     <thead>
 		            <%-- ${allEmplVacList} --%>
                       <tr>
@@ -729,7 +687,7 @@ $(function(){
 	if(keywordName || keywordDept){
 		$('#pageNaviDiv').css('display', 'none'); 
 		$('#pageNaviDiv').hide(); 
-		$('#searchAddClass').addClass('fixed-header-table');
+		/* $('#searchAddClass').addClass('fixed-header-table'); */
 		$('#searchAddClass').css({
 			"max-height": "600px",
 	        "overflow-y": "auto"

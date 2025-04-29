@@ -26,8 +26,8 @@ public class DclztypeServiceImpl implements DclztypeService {
 	
 	// 사원의 근태현황 총 갯수
 	@Override
-	public DclzTypeVO dclzCnt(String emplNo) {
-		return dclztypeMapper.dclzCnt(emplNo);
+	public DclzTypeVO dclzCnt(Map<String, Object> map) {
+		return dclztypeMapper.dclzCnt(map);
 	}
 	
 	// 사원의 연차사용내역 총 갯수
@@ -56,8 +56,8 @@ public class DclztypeServiceImpl implements DclztypeService {
 	
 	// 대분류에 따른 사원 근태 갯수
 	@Override
-	public List<DclzTypeDetailVO> empDetailDclzTypeCnt (String emplNo) {
-		return dclztypeMapper.empDetailDclzTypeCnt(emplNo);
+	public List<DclzTypeDetailVO> empDetailDclzTypeCnt (Map<String, Object> map) {
+		return dclztypeMapper.empDetailDclzTypeCnt(map);
 	}
 
 	// 출근시간 등록
