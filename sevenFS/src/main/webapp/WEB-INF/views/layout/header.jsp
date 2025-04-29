@@ -127,12 +127,12 @@
                 </a>
               </li>
               <li>
-                <a href="notification/list">
+                <a href="/notification/list">
                   <i class="lni lni-alarm"></i> 알림
                 </a>
               </li>
               <li>
-                <a href="chat/list"> <i class="lni lni-inbox"></i> 채팅 </a>
+                <a href="/chat/list"> <i class="lni lni-wechat"></i> 채팅 </a>
               </li>
               <li class="divider"></li>
               <li>
