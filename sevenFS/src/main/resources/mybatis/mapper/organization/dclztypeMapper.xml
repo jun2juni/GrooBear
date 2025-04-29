@@ -70,13 +70,13 @@
 
 <!-- 사원 한명의 전체 근태현황 조회 -->
 <select id="emplDclzTypeList" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
-	WITH U AS(
 	    SELECT ROW_NUMBER() OVER(ORDER BY D.dclz_no DESC) RNUM
 	         , D.EMPL_NO
 	         , D.DCLZ_NO
 	         , D.DCLZ_CODE
 	         , D.DCLZ_BEGIN_DT
 	         , D.DCLZ_END_DT
+	         , D.empl_nm
 	         , D.cmmn_code_nm
    		     ,TO_CHAR(D.dclz_begin_dt, 'HH24:MI:SS') as work_begin_time
 		     ,TO_CHAR(D.dclz_end_dt, 'HH24:MI:SS') as work_end_time
@@ -86,22 +86,18 @@
               ROUND(MOD((D.dclz_end_dt - D.dclz_begin_dt) * 24 * 60, 60)) AS work_minutes
 	    FROM
 	    (
-	        SELECT dt.EMPL_NO, dt.DCLZ_NO, dt.DCLZ_CODE, dt.DCLZ_BEGIN_DT, dt.DCLZ_END_DT, cc.cmmn_code_nm
+	        SELECT dt.EMPL_NO, dt.DCLZ_NO, dt.DCLZ_CODE, dt.DCLZ_BEGIN_DT, dt.DCLZ_END_DT, emp.empl_nm, cc.cmmn_code_nm
 	        FROM   dclz_type dt
+	        INNER JOIN employee emp ON emp.empl_no = dt.empl_no
 	        RIGHT OUTER JOIN common_code cc ON dt.dclz_code = cc.cmmn_code
 	        WHERE cmmn_code_group='ATTEND'
 	        AND dt.dclz_code NOT IN ('22', '23', '24')
-	        AND EMPL_NO=#{emplNo}
+	        AND dt.EMPL_NO=#{emplNo}
             AND (
              (TO_CHAR(dt.dclz_begin_dt, 'YYYY-mm')) LIKE '%' || #{keyword} || '%'
-             AND((TO_CHAR(dt.dclz_begin_dt, 'YYYY')) LIKE '%' || #{keywordSearch} || '%'
-             OR cc.cmmn_code_nm  LIKE '%' || #{keywordSearch} || '%' )
+             AND (cc.cmmn_code_nm  LIKE '%' || #{keywordSearch} || '%' )
             )
 	    )D  
-	)
-	SELECT U.*
-	FROM U
-	WHERE U.RNUM BETWEEN (#{currentPage} * #{size})-(10-1) AND (#{currentPage}* #{size})
 </select>
 
 <!-- 사원 한명의 전체 근태현황 조회 -->
@@ -311,7 +307,6 @@ WITH U AS(
 
 <!-- 공통코드가 연차에 해당하는 사원 한명의 모든 년도 데이터 가져오기 -->
 <select id="emplVacationDataList" parameterType="HashMap" resultType="kr.or.ddit.sevenfs.vo.organization.DclzTypeVO">
-	WITH U AS(
     SELECT ROW_NUMBER() OVER(ORDER BY D.dclz_end_dt DESC) RNUM
        , D.cmmn_code_nm
        , D.dclz_begin_dt
@@ -328,17 +323,11 @@ WITH U AS(
     WHERE dt.empl_no=#{emplNo}
     AND cc.upper_cmmn_code='20'
     AND cc.cmmn_code_group='ATTEND'
-       AND (
-         (TO_CHAR(dt.dclz_begin_dt, 'YYYY-mm')) LIKE '%' || #{keyword} || '%'
-             AND((TO_CHAR(dt.dclz_begin_dt, 'YYYY')) LIKE '%' || #{keywordSearch} || '%')
-             AND (cc.cmmn_code_nm  LIKE '%' || #{keywordSearch} || '%' )
+     AND (
+	       (TO_CHAR(dt.dclz_begin_dt, 'YYYY-mm')) LIKE '%' || #{keyword} || '%'
+           AND(cc.cmmn_code_nm  LIKE '%' || #{keywordSearch} || '%' )
 		)
-    )
-    D
-    )
-    SELECT U.*
-        FROM U
-        WHERE U.RNUM BETWEEN (#{currentPage} * 10)-(10-1) AND (#{currentPage}* 10)
+    )D
 </select>
 
 <!-- 기본연차 지급 -->

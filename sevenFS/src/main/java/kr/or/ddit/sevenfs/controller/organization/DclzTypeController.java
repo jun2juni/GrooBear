@@ -55,14 +55,20 @@ public class DclzTypeController {
 		Date beginDt = dclzSelList.get(0).getDclzBeginDt();
 		
 		String paramKeyword = "";
-		// 키워드 없을때
-		if(keyword == null || keyword.trim().isEmpty()) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			sdf.applyPattern("yyyy-MM");
-			String simepleFormatted = sdf.format(beginDt);
-			//log.info("simepleFormatted : " + simepleFormatted);
-			keyword = simepleFormatted;
+		
+		if(keywordSearch != null && !keywordSearch.trim().isEmpty()) {
+			keyword = "";
+		} else {
+			// 키워드 없을때
+			if(keyword == null || keyword.trim().isEmpty()) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				sdf.applyPattern("yyyy-MM");
+				String simepleFormatted = sdf.format(beginDt);
+				//log.info("simepleFormatted : " + simepleFormatted);
+				keyword = simepleFormatted;
+			}
 		}
+		
 		model.addAttribute("paramKeyword" , keyword);
 		
 		log.info("dclz keyword : " + keyword);
@@ -77,7 +83,6 @@ public class DclzTypeController {
 		map.put("keyword", keyword);
 		map.put("keywordSearch", keywordSearch);
 		
-		
 		// 게시글의 총 갯수
 		int total = dclztypeService.getTotal(map);
 		log.info("total : " + total);
@@ -88,6 +93,7 @@ public class DclzTypeController {
 		DclzTypeVO dclzCnt = dclztypeService.dclzCnt(emplNo);
 		log.info("dclzCnt : " + dclzCnt);
 		model.addAttribute("dclzCnt" , dclzCnt);
+		
 		// 대분류에 따른 사원 상세 근태현황 목록
 		List<DclzTypeDetailVO> empDetailDclzTypeCnt = dclztypeService.empDetailDclzTypeCnt(emplNo);
 		log.info("empDetailDclzTypeCnt" + empDetailDclzTypeCnt);
@@ -184,6 +190,7 @@ public class DclzTypeController {
 			@RequestParam(defaultValue = "10") int size,
 			@RequestParam(defaultValue = "") String keyword,
 			@RequestParam(defaultValue = "") String keywordSearch,
+			@RequestParam(defaultValue = "") String vacationType,
 			@RequestParam(required = false) String targetEmplNo
 			) {
 		
@@ -193,24 +200,36 @@ public class DclzTypeController {
 						? targetEmplNo : principal.getName();
 		log.info("targetEmplNo : " + targetEmplNo);
 		
-		log.info("keyword" + keyword);
-		log.info("keywordSearch" + keywordSearch);
-		
 		String paramKeyword = "";
-		// 키워드 없을때
-		if(keyword == null || keyword.trim().isEmpty()) {
-			Date date = new Date();
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			dateFormat.applyPattern("yyyy-MM");
-			String currentDate = dateFormat.format(date);
-			keyword = currentDate;
-		}
-		model.addAttribute("paramKeyword" , keyword);
+		
 		Map<String, Object> map = new HashMap<>();
+		
+//		if(keywordSearch != null && !keywordSearch.trim().isEmpty()) {
+//			keyword = "";
+//			map.put("keywordSearch", keywordSearch);
+//			log.info("keywordSearch : " + keywordSearch);
+//		}
+		
+		// 검색한거 있을때 날짜 비워주기
+		if(keywordSearch != null && !keywordSearch.trim().isEmpty()) {
+			keyword = "";
+		} else {
+			// 키워드 없을때
+			if(keyword == null || keyword.trim().isEmpty()) {
+				Date date = new Date();
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				dateFormat.applyPattern("yyyy-MM");
+				String currentDate = dateFormat.format(date);
+				keyword = currentDate;
+			}
+		}
+		
+		model.addAttribute("paramKeyword" , keyword);
+		map.put("keywordSearch", keywordSearch);
+		map.put("keyword", keyword);
 		map.put("emplNo", emplNo);
 		map.put("currentPage", currentPage);
-		map.put("keyword", keyword);
-		map.put("keywordSearch", keywordSearch);
+		log.info("keyword ?? : " + keyword);
 		
 		// 연차사용내역 전체 행 수
 		int total = dclztypeService.getVacTotal(map);
@@ -218,7 +237,6 @@ public class DclzTypeController {
 		// 페이지 정보
 		ArticlePage<VacationVO> articlePage = new ArticlePage<>(total, currentPage, size);
 		log.info("articlePage : " + articlePage);
-		log.info("keyword : " + keyword);
 		// 페이지정보 넘겨주기
 		model.addAttribute("articlePage" , articlePage);
 		

@@ -19,6 +19,23 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>${title}</title>
   <c:import url="../../layout/prestyle.jsp" />
+  
+<style type="text/css">
+.fixed-header-table {
+  max-height: 400px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.fixed-header-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+</style>  
+  
+  
 </head>
 <body>
 <c:import url="../../layout/sidebar.jsp" />
@@ -147,8 +164,7 @@
 			<div class="card-style mb-30" id="divPage">
 			  <div class="title d-flex flex-wrap">
 				<div class=" justify-content-first" style="width: 40%">
-				  <h6 class="text-medium mb-30">이번달 근무현황</h6>
-				  <!-- 출퇴근만 출력? -->
+				  <h6 class="text-medium mb-30">👨‍💼${empDclzList[0].emplNm}님의 이번달 근무현황</h6>
 				</div>
 				<div class="justify-content-center">
 				  <!-- 달력 페이지네이션 -->
@@ -160,11 +176,14 @@
 							<span aria-hidden="true"><</span>
 						  </button>
 						</li>
-						<input type="hidden" value="${paramKeyword.substring(0,4)}" id="hiddenKeyYear" />
-						<input type="hidden" value="${paramKeyword.substring(5,7)}" id="hiddenKeyword" />
-						<input type="hidden" value="" id="submitKeyword" name="keyword" />
-						<h4 class="ml-10 mr-10"
-							id="monthDisplay">${paramKeyword.substring(0,4)}-${paramKeyword.substring(5,7)}</h4>
+						<c:if test="${not empty paramKeyword and fn:length(paramKeyword) >= 7}">
+							<input type="hidden" value="${paramKeyword.substring(0,4)}" id="hiddenKeyYear" />
+							<input type="hidden" value="${paramKeyword.substring(5,7)}" id="hiddenKeyword" />
+							<input type="hidden" value="" id="submitKeyword" name="keyword" />
+							<h4 class="ml-10 mr-10"
+								id="monthDisplay">${paramKeyword.substring(0,4)}-${paramKeyword.substring(5,7)}</h4>
+						</c:if>
+						<h4 class="mr-5 ml-5" id="searchVacationType">  </h4>
 						<li class="page-item">
 						  <button type="button" class="page-link nextPage">
 							<span aria-hidden="true">></span>
@@ -178,7 +197,7 @@
 				<div class="input-group mb-3 ms-auto justify-content-end w-20">
 				  <a href="/dclz/dclzType" class="btn-xs main-btn light-btn-light btn-hover mr-10 rounded">전체 목록 보기</a>
 				  <form action="/dclz/dclzType" method="get" id="keywordSearchFome">
-					<input type="search" class="form-control rounded" placeholder="년도, 근태유형 입력" aria-label="Search"
+					<input type="search" class="form-control rounded" placeholder="지각, 출장, 외근 검색" aria-label="Search"
 						   aria-describedby="search-addon" id="schName" name="keywordSearch"
 						   onkeydown="fSchEnder(event)" />
 				  </form>
@@ -189,7 +208,7 @@
 			  </div>
 			  <!-- End Title -->
 			  <%-- ${empDclzList} --%>
-			  <div class="table-responsive">
+			  <div class="table-responsive fixed-header-table" style="max-height: 400px; overflow-y: auto;">
 				<table class="table top-selling-table">
 				  <thead>
 				  <tr>
@@ -282,7 +301,7 @@
 								<p class="text-sm">0시간 0분</p>
 							  </c:when>
 							  <c:when test="${dclzWork.workEndTime == null}">
-								<p class="text-sm">0시간 0분</p>
+								<p class="text-sm"></p>
 							  </c:when>
 							  <c:otherwise>
 								<p class="text-sm">${dclzWork.workHour}시간 ${dclzWork.workMinutes}분</p>
@@ -323,7 +342,13 @@
   }
 
   $(function() {
-
+	  
+	 const queryString = window.location.search;
+	 const urlParams = new URLSearchParams(queryString); 
+	 const keywordSearch = urlParams.get('keywordSearch');
+	 $('#searchVacationType').text(keywordSearch);
+	 
+	 $('#schName').val(keywordSearch);
 
     // 버튼 클릭 이벤트
     function updateDateDisplay() {

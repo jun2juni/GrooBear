@@ -18,13 +18,28 @@
   <title>${title}</title>
   <%@ include file="../../layout/prestyle.jsp" %>
   
-  <style>
-      .s_ho_cnt {
-          border-right: 1px solid;
-          height: 90px;
-          float: left;
-          margin: 0px;
-      }
+<style>
+ .s_ho_cnt {
+     border-right: 1px solid;
+     height: 90px;
+     float: left;
+     margin: 0px;
+ }
+      
+      <style type="text/css">
+.fixed-header-table {
+  max-height: 400px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.fixed-header-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+</style>
   </style>
 </head>
 <body>
@@ -33,7 +48,6 @@
   <%@ include file="../../layout/header.jsp" %>
   <section class="section">
 	<div class="container-fluid">
-	  <%-- ${emplVacation} --%>
 	  <div>
 		<c:set var="beginDt" value="${emplVacation.yrycUseBeginDate}" />
 		<c:set var="bgYear" value="${beginDt.substring(0,4)}" />
@@ -48,7 +62,6 @@
 			  ${bgYear}.${bgMonth}.${bgDay} ~ ${edYear}.${edMonth}.${edDay} </p></h4>
 	  </div> --%>
 	  </div>
-	 
 	  <div class="row mb-4">
 		<c:set var="vacationItems" value="${[
 		  {'label':'성과 보상','value':emplVacation.cmpnstnYryc,'type':'success', 'col': 'col-2'},
@@ -78,7 +91,6 @@
 		  </div>
 		</c:forEach>
 	  </div>
-
 	  <div class="card-style mb-30 col-12">
 		<div class="title d-flex flex-wrap">
 		  <div class=" justify-content-first" style="width: 40%">
@@ -95,13 +107,18 @@
 					  <span aria-hidden="true"><</span>
 					</button>
 				  </li>
-				  <input type="hidden" value="${paramKeyword.substring(0,4)}" id="hiddenKeyYear" />
-				  <input type="hidden" value="${paramKeyword.substring(5,7)}" id="hiddenKeyword" />
-				  <input type="hidden" value="${paramKeyword.substring(0,4)}-${paramKeyword.substring(5,7)}"
-						 id="submitKeyword" name="keyword" />
-				  <input type="hidden" value="${emplVacation.emplNo}" id="submitTargetEmplNo" name="targetEmplNo" />
-				  <h4 class="ml-10 mr-10"
-					  id="dateDisplay">${paramKeyword.substring(0,4)}-${paramKeyword.substring(5,7)}</h4>
+				 
+				  <input type="hidden" value="${paramKeyword}" id="hiddemParamKeyword" />
+				  <c:if test="${not empty paramKeyword and fn:length(paramKeyword) >= 7}">
+					  <input type="hidden" value="${paramKeyword.substring(0,4)}" id="hiddenKeyYear" />
+					  <input type="hidden" value="${paramKeyword.substring(5,7)}" id="hiddenKeyword" />
+					  <input type="hidden" value="${paramKeyword.substring(0,4)}-${paramKeyword.substring(5,7)}"
+							 id="submitKeyword" name="keyword" />
+					  <input type="hidden" value="${emplVacation.emplNo}" id="submitTargetEmplNo" name="targetEmplNo" />
+					  <h4 class="ml-10 mr-10"
+						  id="dateDisplay">${paramKeyword.substring(0,4)}-${paramKeyword.substring(5,7)}</h4>
+				  </c:if>
+				  	<h4 class="mr-5 ml-5" id="searchVacationType">  </h4>
 				  <li class="page-item">
 					<button type="button" class="page-link nextPage">
 					  <span aria-hidden="true">></span>
@@ -112,10 +129,20 @@
 			</form>
 			<!-- 달력 페이지네이션 -->
 		  </div>
-		  <div class="input-group mb-3 ms-auto justify-content-end w-20">
-			<a href="/dclz/vacation" class="btn-xs main-btn light-btn-light btn-hover mr-10 rounded">전체 목록 보기</a>
-			<form action="/dclz/vacation" method="get" id="keywordSearchFome">
-			  <input type="search" class="form-control rounded" placeholder="년도, 연차유형 입력" aria-label="Search"
+		  <div class="input-group mb-3 ms-auto justify-content-end w-10 d-flex">
+			<a href="/dclz/vacation" class="btn-xs main-btn light-btn-light btn-hover mr-5 rounded">전체 목록 보기</a>
+			<%--  <form>
+			  <div class="col-2 mr-5">
+				  <select class="form-select w-auto">
+				    <c:forEach var="selYear" items="${emplCmmnVacationList}">
+				    <fmt:formatDate value="${selYear.dclzEndDt}" pattern="yyyy" var="select"/>
+					  	<option>${select}</option>
+				    </c:forEach>
+				  </select>
+			  </div>
+			  </form> --%>
+			<form action="/dclz/vacation" method="get" id="keywordSearchFome" class="col-2">
+			  <input type="search" class="form-control rounded" placeholder="연차, 반차, 공가, 병가 검색" aria-label="Search"
 					 aria-describedby="search-addon" id="schName" name="keywordSearch"
 					 onkeydown="fSchEnder(event)"
 			  />
@@ -126,7 +153,7 @@
 					   </span>
 		  </div>
 		</div>
-		<div class="table-wrapper table-responsive">
+		<div class="table-wrapper table-responsive fixed-header-table" style="max-height: 400px; overflow-y: auto;">
 		  <table class="table clients-table" id="vacTable">
 			<thead>
 			<tr>
@@ -142,6 +169,7 @@
 			</tr>
 			<!-- end table row-->
 			</thead>
+			<%-- ${emplCmmnVacationList} --%>
 			<tbody id="vacBody">
 			<c:forEach var="emplVacationData" items="${emplCmmnVacationList}">
 			  <tr>
@@ -205,26 +233,40 @@
 
   function fSchEnder(e) {
     if(e.code === "Enter") {
-      const keywordSearch = $('#keywordSearch').val();
+      const keywordVal = $('#submitKeyword').val();
       console.log('dkdkdk : ', keywordSearch);
+      $('#keywordSearchFome').submit();
     }
   }
 
-  $(function() {
-
+$(function() {
+     const queryString = window.location.search;
+	 const urlParams = new URLSearchParams(queryString); 
+	 const keywordSearch = urlParams.get('keywordSearch');
+	 $('#searchVacationType').text(keywordSearch);
+	 
+	 $('#schName').val(keywordSearch);
+	
     function updateDateDisplay() {
+    
+   	  const keywordSearch = $('#keywordSearch').val();
       const year = $('#hiddenKeyYear').val();
       const month = $('#hiddenKeyword').val();
       const formattedMonth = String(month).padStart(2, '0');
-      document.getElementById('dateDisplay').textContent = year + '-' + formattedMonth;
-
-      const newDate = $('#dateDisplay').text();
-      console.log(" ddddddd ", newDate);
-
-      $('#submitKeyword').val(newDate);
-      console.log('보낼키워드 : ', $('#submitKeyword').val());
+      
+      
+      if(keywordSearch == null || keywordSearch == ''){
+	      document.getElementById('dateDisplay').textContent = year + '-' + formattedMonth;
+	      const newDate = $('#dateDisplay').text();
+	      console.log(" ddddddd ", newDate);
+	
+	      $('#submitKeyword').val(newDate) 
+	      console.log('보낼키워드 : ', $('#submitKeyword').val());
+      }else{
+	      $('#submitKeyword').val('');
+      }
       $('#keywordForm').submit();
-    }
+  }
 
     // --- 이전버튼
     document.querySelector('.prevBtn').addEventListener('click', () => {
@@ -238,7 +280,6 @@
       }
       $('#hiddenKeyword').val(hiddenKeyword);
       updateDateDisplay();
-
     });
 
     // --- 다음버튼
