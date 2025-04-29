@@ -14,10 +14,14 @@
         </div>
         
         <!-- 일정 필터 -->
-        <div class="filter-section">
-            <h3>일정 필터</h3>
-            <!-- <button type="button" id="filterAll" class="btn btn-primary">전체 보기</button> -->
-            <button id="addLabelBtn" type="button" class="btn btn-primary">추가</button>
+        <div class="filter-section border-bottom pb-2 mb-2">
+		  <div class="d-flex justify-content-between align-items-center">
+		    <h3 class="mb-0 d-flex w-100 justify-content-between align-items-center">
+		      <span>일정 필터</span>
+		      <button id="addLabelBtn" type="button" class="btn btn-primary btn-sm">추가</button>
+		    </h3>
+		  </div>
+			<br>
             <!-- 라벨 추가 팝업 -->
             <div id="labelPopup" class="label-popup input-style-1" style="display: none;">
                 <!-- 팝업 내용 -->
