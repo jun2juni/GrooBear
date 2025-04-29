@@ -11,7 +11,17 @@ SELECT
 FROM
     mail_label
 where empl_no = #{emplNo}
-    
+</select>
+
+<select id="getLabel" parameterType="kr.or.ddit.sevenfs.vo.mail.MailVO" resultType="kr.or.ddit.sevenfs.vo.mail.MailLabelVO">
+	SELECT
+    lbl_no,
+    empl_no,
+    lbl_nm,
+    lbl_col
+FROM
+    mail_label
+where lbl_no = #{lblNo}
 </select>
 
 <select id="getCol" parameterType="int" resultType="String">

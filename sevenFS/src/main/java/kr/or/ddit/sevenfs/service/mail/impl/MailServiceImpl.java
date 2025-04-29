@@ -19,6 +19,7 @@ import jakarta.mail.internet.MimeMessage;
 import kr.or.ddit.sevenfs.mapper.mail.MailMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.mail.MailAsyncService;
+import kr.or.ddit.sevenfs.service.mail.MailLabelService;
 import kr.or.ddit.sevenfs.service.mail.MailService;
 import kr.or.ddit.sevenfs.service.notification.NotificationService;
 import kr.or.ddit.sevenfs.service.schedule.ScheduleLabelService;
@@ -39,6 +40,9 @@ public class MailServiceImpl implements MailService{
 	
 	@Autowired
 	MailMapper mailMapper;
+	
+	@Autowired
+	MailLabelService labelService;
 	
 	@Autowired
 	AttachFileService attachFileService;
@@ -363,6 +367,9 @@ public class MailServiceImpl implements MailService{
 				hiddenRefEmailList.add(map);
 			}
 		}
+		String lblCol = labelService.getCol(mailVO.getLblNo());
+		
+		mailVO.setLblCol(lblCol);
 		mailVO.setRecptnMapList(recptnList);
 		mailVO.setRefMapList(refEmailList);
 		mailVO.setHiddenRefMapList(hiddenRefEmailList);

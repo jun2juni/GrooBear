@@ -132,7 +132,7 @@ SELECT
     m.readng_at,
     m.email_group_no,
     m.starred
-FROM mail m
+FROM mail m , mail_label ml
 WHERE m.email_group_no = (
     SELECT email_group_no
     FROM mail

@@ -15,6 +15,6 @@ public interface MailLabelService {
 	int deleteLbl(int lblNo);
 
 	String getCol(int lblNo);
-
+	
 
 }

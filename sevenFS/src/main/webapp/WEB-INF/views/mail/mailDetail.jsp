@@ -4,6 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style type="text/css">
     * {
       margin: 0;
@@ -401,6 +402,25 @@
     .email-sidebar .dropdown .dropdown-toggle::after {
       display: none !important;
     }
+
+    
+    .star-button>i {
+      color: #FFD700; /* 밝은 금색으로 변경 */
+      font-size: 18px; /* 아이콘 크기 증가 */
+    }
+    .star-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: #9ca3af;
+      transition: all 0.2s;
+      border-radius: 50%;
+    }
+    .star-button:hover {
+      background-color: #f3f4f6;
+      color: #f59e0b;
+    }
     </style>
     <!-- </head> -->
     <!-- <body> -->
@@ -526,12 +546,23 @@
             <div class="email-section-detail">
               <div class="email-detail-content">
                 <div class="email-detail-header">
-                  <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                      <h2 class="email-detail-subject">${mailVO.emailSj}</h2>
-                      <!-- <button class="toolbar-button">
+                  <div style="margin-bottom:20px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <c:if test="${mailVO.emailClTy == '0' || mailVO.emailClTy == '1'}">
+                        <button class="star-button ${mailVO.starred}" data-emailNo="${mailVO.emailNo}">
+                          <i class="${mailVO.starred=='Y'?'fas':'far'} fa-star"></i>
+                        </button>
+                      </c:if>
+                      <h4 class="email-detail-subject" style="margin: 0;">
+                        <c:if test="${mailVO.emailSj != null && mailVO.emailSj != ''}">${mailVO.emailSj}</c:if>
+                        <c:if test="${mailVO.emailSj == null || mailVO.emailSj == ''}">(제목 없음)</c:if>
+                      </h4>
+                        <c:if test="${(mailVO.lblCol != null and mailVO.lblCol != '')&&(mailVO.emailClTy=='0' || mailVO.emailClTy=='1')}">
+                          <i class="fas fa-tag" data-col="${mailVO.lblCol}" data-lblNo="${mailVO.lblNo}" style="color: ${mailVO.lblCol}; font-size: 16px;"></i>
+                        </c:if>
+                      <button class="toolbar-button" style="margin-left: auto;">
                         <i class="fas fa-ellipsis-v"></i>
-                      </button> -->
+                      </button>
                     </div>
                   </div>
                   <div class="email-detail-info">
@@ -601,14 +632,18 @@
                   </div>
                     <c:if test="${mailVO.emailTrnsmisTy != '2' && mailVO.emailTrnsmisTy != '3'}">
                       <div class="email-detail-actions">
-                        <button class="reply-button" id="replyBtn">
-                          <i class="fas fa-reply"></i>
-                          <span>답장</span>
-                        </button>
-                        <button class="forward-button" id="mailTrnsms">
-                          <i class="fas fa-share"></i>
-                          <span>전달</span>
-                        </button>
+                        <c:if test="${mailVO.emailClTy != '0' && mailVO.emailClTy != '2' && mailVO.emailClTy != '4'}">
+                          <button class="reply-button" id="replyBtn">
+                            <i class="fas fa-reply"></i>
+                            <span>답장</span>
+                          </button>
+                        </c:if>
+                        <c:if test="${mailVO.emailClTy != '2' && mailVO.emailClTy != '4'}">
+                          <button class="forward-button" id="mailTrnsms">
+                            <i class="fas fa-share"></i>
+                            <span>전달</span>
+                          </button>
+                        </c:if>
                       </div>
                     </c:if>
                   </div>
@@ -633,16 +668,19 @@
                     </c:forEach>
                   </div>
                 </div>
-    
                 <div class="email-detail-actions-bottom">
-                    <button class="reply-button" id="replyBtn" ${mailVO.emailClTy == '0' ? 'hidden' : ''}>
-                    <i class="fas fa-reply"></i>
-                    <span>답장</span>
-                  </button>
-                  <button class="forward-button">
-                    <i class="fas fa-share"></i>
-                    <span>전달</span>
-                  </button>
+                  <c:if test="${mailVO.emailClTy != '0' && mailVO.emailClTy != '2' && mailVO.emailClTy != '4'}">
+                    <button class="reply-button" id="replyBtn">
+                      <i class="fas fa-reply"></i>
+                      <span>답장</span>
+                    </button>
+                  </c:if>
+                  <c:if test="${mailVO.emailClTy != '2' && mailVO.emailClTy != '4'}">
+                    <button class="forward-button">
+                      <i class="fas fa-share"></i>
+                      <span>전달</span>
+                    </button>
+                  </c:if>
                   <button class="forward-button" id="toList">
                     <!-- <i class="fas fa-share"></i> -->
                     <span>목록</span>
@@ -666,6 +704,36 @@
         //const senderName = document.querySelector('.sender-name').textContent;
         //const initials = senderName.split(' ').map(name => name.charAt(0)).join('');
         
+        // 별표 클릭
+        $('.fa-star').on('click',function(e){
+          e.stopPropagation();
+          let starredYN = '';
+          $(this).toggleClass('fas');
+          $(this).toggleClass('far');
+          let className = $(this).prop('className')
+          let emailNo = $(this).closest('button').data('emailno');
+          console.log('별표 이벤트 -> emailNo : ',emailNo);
+          console.log('별표 이벤트 -> className : ',className);
+          if(className.indexOf('far') != -1){
+            starredYN = 'N';
+          }else if(className.indexOf('fas') != -1){
+            starredYN = 'Y';
+          }
+          console.log('별표 이벤트 -> starredYN : ',starredYN);
+          $.ajax({
+            url:'/mail/starred',
+            data:{emailNo:emailNo,starred:starredYN},
+            method:'post',
+            success:function(resp){
+              console.log('ajax 요청 결과 : ',resp);
+            },
+            error:function(err){
+              console.log('에러 발생 : ',err)
+            }
+          })
+        })
+
+
         $('#toList').on('click',function(){
           window.location.href="/mail"
         })

@@ -98,6 +98,7 @@ public class MailController {
 		log.info("mailHome -> getLabelList(employeeVO) -> mailLabelList" + mailLabelList);
 		log.info("mailHome -> 응답전 mailVO : "+mailVO);
 		
+//		model.addAttribute("emailClTy",emailClTy);
 		model.addAttribute("mailVOList",mailVOList);
 		model.addAttribute("articlePage", articlePage);
 		model.addAttribute("searchVO", mailVO);
@@ -159,6 +160,7 @@ public class MailController {
 		log.info("emailDetail -> mailService.emailDetail -> mailVO : "+mailVO);
 		List<AttachFileVO> attachFileVOList = mailService.getAtchFile(mailVO.getAtchFileNo());
 		attachFileService.downloadFile(fileName);
+		
 		model.addAttribute("mailVO",mailVO);
 		model.addAttribute("attachFileVOList",attachFileVOList);
 		model.addAttribute("mailLabelList", mailLabelList);

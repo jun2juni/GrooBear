@@ -193,10 +193,11 @@
               console.log('이미 라벨 존재',$(`.email-item[data-emailno=\${mailiNo}]`).find(`.fas.fa-tag[data-lblno=\${lblNo}]`));
             }else{
               console.log('라벨 추가 혹은 변경')
-              $(`.email-item[data-emailno=\${mailiNo}]`).find('.email-subject').before(`<i class="fas fa-tag" data-col="\${color}" data-lblno="\${lblNo}" style="color: \${color}; margin-right: 2px;"></i>`);
+              $(`.email-item[data-emailno=\${mailiNo}]`).find('.tag-box').html(`<i class="fas fa-tag" data-col="\${color}" data-lblno="\${lblNo}" style="color: \${color}; margin-right: 2px;"></i>`);
             }
           }
         })
+        $('#select-all').prop('checked',false)
       }
 
       // 리스트 클릭 이벤트
@@ -542,7 +543,14 @@
                 <input type="checkbox" id="select-all">
               </div>
             <div class="email-tabs">
-              <button class="tab" id="tab-del">삭제</button>
+              <button class="tab" id="tab-del">
+                <c:if test="${articlePage.searchVo.emailClTy == '4'}">
+                  삭제
+                </c:if>
+                <c:if test="${articlePage.searchVo.emailClTy != '4'}">
+                  휴지통
+                </c:if>
+              </button>
               <button class="tab" id="tab-repl">답장</button>
               <button class="tab" id="tab-trnsms">전달</button>
               <c:if test="${mailVO.emailClTy == '4'}">
@@ -596,17 +604,17 @@
                 </div>
                 <div class="email-sender" style="flex: 1;">${mailVO.trnsmitEmail}</div>
 
-                <div class="email-content" style="flex: 2; display: flex; align-items: center;">
-                  <c:if test="${(mailVO.lblCol != null and mailVO.lblCol != '')&&(mailVO.emailClTy=='0' || mailVO.emailClTy=='1')}">
-                    <i class="fas fa-tag" data-col="${mailVO.lblCol}" data-lblNo="${mailVO.lblNo}" style="color: ${mailVO.lblCol};"></i>
-                  </c:if>
+                <div class="email-content" style="flex: 2; display: flex; align-items: center; position: relative;">
+                  <div class="tag-box" style="width: 20px; display: inline-block;">
+                    <c:if test="${(mailVO.lblCol != null and mailVO.lblCol != '')&&(mailVO.emailClTy=='0' || mailVO.emailClTy=='1')}">
+                      <i class="fas fa-tag" data-col="${mailVO.lblCol}" data-lblNo="${mailVO.lblNo}" style="color: ${mailVO.lblCol};"></i>
+                    </c:if>
+                  </div>
                   <c:if test="${mailVO.emailSj != null}">
                     <span class="email-subject">${mailVO.emailSj}</span>
                   </c:if>
                   <c:if test="${mailVO.emailSj == null}">
                     <span class="email-subject">(제목 없음)</span>
-                  </c:if>
-                  <c:if test="${mailVO.emailCn != null}">
                   </c:if>
                 </div>
 
@@ -624,7 +632,7 @@
               <page-navi
               url="/mail?${articlePage.getSearchVo()}"
               current="${articlePage.getCurrentPage()}"
-              show-max="5"
+              show-max="10"
               total="${articlePage.getTotalPages()}"
               ></page-navi>
             </c:if>
@@ -632,7 +640,7 @@
               <page-navi
               url="/mail/labeling?${articlePage.getSearchVo()}"
               current="${articlePage.getCurrentPage()}"
-              show-max="5"
+              show-max="10"
               total="${articlePage.getTotalPages()}"
               ></page-navi>
             </c:if>
