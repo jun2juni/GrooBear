@@ -471,7 +471,7 @@ String serverDate = dateFormat.format(now);
 
 								<!-- 캘린더 -->
 								<div id="mainCal" class="col-lg-6" >
-									<div class="card-style mb-30" style="padding-top: 0px; height: 100%;">
+									<div class="card-style mb-30" style="padding-top: 20px; height: 100%;">
 										<jsp:include page="schedule/scheduleMainHome.jsp"></jsp:include>
 									</div>
 								</div>

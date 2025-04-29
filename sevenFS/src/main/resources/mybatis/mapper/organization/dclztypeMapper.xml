@@ -423,7 +423,7 @@ WITH U AS(
     )
     SELECT U.*
         FROM U
-        WHERE U.RNUM BETWEEN (#{currentPage} * 10)-(10-1) AND (#{currentPage} * 10)
+        WHERE U.RNUM BETWEEN (#{currentPage} * #{size})-(#{size}-1) AND (#{currentPage} * #{size})
 </select>
 
 <!-- 전사 연차 갯수 현황 -->

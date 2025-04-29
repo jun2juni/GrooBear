@@ -104,8 +104,6 @@ public class DclzTypeController {
 		log.info("controller -> empDclzList : " + empDclzList);
 		model.addAttribute("empDclzList",empDclzList);
 		model.addAttribute("articlePage" , articlePage);
-		
-		
      	
 		return "organization/dclz/dclzType";
 	}
@@ -354,6 +352,7 @@ public class DclzTypeController {
 		ArticlePage<VacationVO> articlePage = new ArticlePage<>(total, currentPage, size);
 		log.info("articlePage : " + articlePage);
 		model.addAttribute("articlePage", articlePage);
+		model.addAttribute("total", total);
 		//map.put("size", size);
 		
 		// 모든 사원의 연차 현황

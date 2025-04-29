@@ -129,7 +129,13 @@
 			</form>
 			<!-- 달력 페이지네이션 -->
 		  </div>
-		  <div class="input-group mb-3 ms-auto justify-content-end w-10 d-flex">
+		   <c:if test="${not empty emplCmmnVacationList}">
+                 <p class="mb-0 text-sm text-muted ms-auto">총 ${fn:length(emplCmmnVacationList)}건</p>
+		  </c:if>
+		   <c:if test="${empty emplCmmnVacationList}">
+                 <p class="mb-0 text-sm text-muted ms-auto">총 0건</p>
+		  </c:if>
+		  <div class="input-group mb-3 ms-auto justify-content-end w-10 d-flex mt-20">
 			<a href="/dclz/vacation" class="btn-xs main-btn light-btn-light btn-hover mr-5 rounded">전체 목록 보기</a>
 			<%--  <form>
 			  <div class="col-2 mr-5">
@@ -157,9 +163,11 @@
 		  <table class="table clients-table" id="vacTable">
 			<thead>
 			<tr>
-			  <th style="width: 60px; white-space: nowrap;">
-				<h6>연차 유형</h6>
+			  <th>
+			  	<h6 class="text-sm text-center text-medium" style="text-center;">번호</h6>
 			  </th>
+			  <th>
+				<h6 class="text-sm text-center text-medium" style="text-center;">연차유형</th>
 			  <th>
 				<h6 class="text-center">사용 기간</h6>
 			  </th>
@@ -173,7 +181,10 @@
 			<tbody id="vacBody">
 			<c:forEach var="emplVacationData" items="${emplCmmnVacationList}">
 			  <tr>
-				<td class="min-width" style="width: 60px; white-space: nowrap;">
+			    <td>
+			    	<p class="text-center">${emplVacationData.rnum}</p>
+			    </td>
+				<td class="text-center">
 				  <c:if test="${emplVacationData.cmmnCodeNm == '연차'}">
 					<h4><span class="badge rounded-pill text-white" style="background-color:pink" id="vacData">
 						${emplVacationData.cmmnCodeNm}

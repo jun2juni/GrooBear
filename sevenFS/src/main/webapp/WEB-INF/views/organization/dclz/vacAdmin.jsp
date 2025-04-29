@@ -27,6 +27,21 @@
     display: block;
     margin-bottom: 10px;
 }
+
+<style type="text/css">
+.fixed-header-table {
+  max-height: 400px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.fixed-header-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+</style>  
 </style>   
   
 </head>
@@ -46,6 +61,9 @@
                   <h6>**<span class="mt-3" style="color:lightcoral">추가로 지급할 성과보상 또는 근무보상 일수를 지급해주세요.</span></h6>
               	</div>
 	           	<div class="d-flex gap-3 justify-content-end">
+           		  <div class="mt-30">
+                   	 <a id="allListBtn" href="/dclz/vacAdmin" class="btn-sm light-btn-light btn-hover rounded-md">전체 목록 보기</a>
+                   </div>
 	              <div>
 	              	<span class="form-label">사원이름</span>
 	              	<input class="form-control" type="text" value="${param.keywordName}" name="keywordName" id="searchEmplNm" onkeydown="fnSearch(event)">
@@ -73,13 +91,14 @@
 			<div class="row">
             <div class="col-lg-12">
               <div class="card-style">
-                <div class="table-wrapper table-responsive">
+                <div id="searchAddClass" class="table-wrapper table-responsive">
                   <table class="table">
-                  <h6>전체사원 연차 관리</h6>
+                  <div class="d-flex justify-content-between mb-10">
+	                  <h6>전체사원 연차 관리</h6>
+	                  <p id="emplTotalCnt" class="mb-0 text-sm text-muted">총 ${total}명</p>
+                  </div>
                   <div class="mb-10 d-flex justify-content-end col-12">
-                   <div>
-                   	 <a id="allListBtn" href="/dclz/vacAdmin" class="btn-sm light-btn-light btn-hover mr-10 rounded-md">전체 목록 보기</a>
-                   </div>
+                  
                   <%--  <form action="/dclz/vacAdmin" method="get" id="selTypeForm">
                   	<c:set var="duplTypes" value="" />
 	                <div class="input-style-1 form-group mr-10">
@@ -607,6 +626,13 @@ $(function(){
 		$('#resetBtn'+idx).on('click', function(){
 			const queryString = window.location.search;
 			const urlParams = new URLSearchParams(queryString);
+			const currentPage = urlParams.get('currentPage');
+			let currentParamPage = 0;
+			if(!currentPage){
+				currentParamPage = 1;
+			}else{
+				currentParamPage = currentPage;
+			}
 			const keywordName = urlParams.get('keywordName');
 			const keywordDept = urlParams.get('keywordDept');
 			swal({
@@ -627,7 +653,11 @@ $(function(){
 	          })
 			.then((wilDelete) => {
 				if(wilDelete){
-					location.href = '/dclz/vacAdmin?keywordName='+keywordName+"&keywordDept="+keywordDept;
+					if(keywordName || keywordDept){
+						location.href = '/dclz/vacAdmin?keywordName='+keywordName+"&keywordDept="+keywordDept;
+					}else{
+						location.href = '/dclz/vacAdmin?currentPage='+currentParamPage;
+					}
 				}
 			})
 		})
@@ -698,14 +728,20 @@ $(function(){
 	
 	if(keywordName || keywordDept){
 		$('#pageNaviDiv').css('display', 'none'); 
-		$('#pageNaviDiv').hide();
+		$('#pageNaviDiv').hide(); 
+		$('#searchAddClass').addClass('fixed-header-table');
+		$('#searchAddClass').css({
+			"max-height": "600px",
+	        "overflow-y": "auto"
+			})
+		$('#emplTotalCnt').text('');
 	}
-	// 검색 안했을때 input 비우기
 	if(!queryString){
 		 $('#searchEmplNm').val('');
 		 $('#searchDeptNm').val('');
 		 sessionStorage.removeItem('keywordName');
 		 sessionStorage.removeItem('keywordDept');
+		 $('#searchAddClass').removeClass('fixed-header-table');
 	}
 	
 	// 검색 내용 유지시키기

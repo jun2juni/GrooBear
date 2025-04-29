@@ -163,8 +163,8 @@
 		  <div class="">
 			<div class="card-style mb-30" id="divPage">
 			  <div class="title d-flex flex-wrap">
-				<div class=" justify-content-first" style="width: 40%">
-				  <h6 class="text-medium mb-30">👨‍💼${empDclzList[0].emplNm}님의 이번달 근무현황</h6>
+			   <div class="d-flex justify mb-10" style="width: 40%">
+				  <h6 class="text-medium mb-20">👨‍💼${empDclzList[0].emplNm}님의 이번달 근무현황</h6>
 				</div>
 				<div class="justify-content-center">
 				  <!-- 달력 페이지네이션 -->
@@ -194,6 +194,9 @@
 				  </form>
 				  <!-- 달력 페이지네이션 -->
 				</div>
+				 <c:if test="${not empty empDclzList}">
+	                  <p id="emplTotalCnt" class="text-sm text-muted ms-auto">총 ${fn:length(empDclzList)}건</p>
+				  </c:if>
 				<div class="input-group mb-3 ms-auto justify-content-end w-20">
 				  <a href="/dclz/dclzType" class="btn-xs main-btn light-btn-light btn-hover mr-10 rounded">전체 목록 보기</a>
 				  <form action="/dclz/dclzType" method="get" id="keywordSearchFome">
@@ -212,6 +215,9 @@
 				<table class="table top-selling-table">
 				  <thead>
 				  <tr>
+					<th>
+					  <h6 class="text-sm text-center text-medium" style="text-center;">번호</h6>
+					</th>
 					<th>
 					  <h6 class="text-sm text-center text-medium" style="text-center;">근무일자</h6>
 					</th>
@@ -241,10 +247,13 @@
 					</c:when>
 					<c:otherwise>
 					  <c:forEach var="dclzWork" items="${empDclzList}">
+						<tr>
+						<td>
+						<p class="text-sm text-center">${dclzWork.rnum}</p>
+						</td>					  	
 						<c:set var="year" value="${dclzWork.dclzNo.substring(0,4)}"></c:set>
 						<c:set var="month" value="${dclzWork.dclzNo.substring(4,6)}"></c:set>
 						<c:set var="day" value="${dclzWork.dclzNo.substring(6,8)}"></c:set>
-						<tr>
 						  <td>
 							<div>
 							  <p class="text-sm text-center">${year}-${month}-${day}</p>
@@ -266,11 +275,11 @@
 							  </c:if>
 							  <c:if test="${dclzWork.cmmnCodeNm == '출장'}">
 								<h4><span class="badge rounded-pill text-white"
-										  style="background-color:lightBlue">${dclzWork.cmmnCodeNm}</span></h4>
+										  style="background-color:deepskyblue">${dclzWork.cmmnCodeNm}</span></h4>
 							  </c:if>
 							  <c:if test="${dclzWork.cmmnCodeNm == '외근'}">
 								<h4><span class="badge rounded-pill text-white"
-										  style="background-color:lightBlue">${dclzWork.cmmnCodeNm}</span></h4>
+										  style="background-color:deepskyblue">${dclzWork.cmmnCodeNm}</span></h4>
 							  </c:if>
 							  <c:if test="${dclzWork.cmmnCodeNm == '조퇴'}">
 								<h4><span class="badge rounded-pill text-white"

@@ -27,6 +27,8 @@ public class DclzTypeVO {
 	private String vacation; // 휴가
 	private String businessTrip; // 출장
 	
+	// 게시글 번호
+	private int rnum;
 	// 근태 현황 이름
 	private String cmmnCodeNm;
 	// 공통코드
