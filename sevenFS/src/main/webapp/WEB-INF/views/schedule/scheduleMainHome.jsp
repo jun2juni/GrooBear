@@ -168,7 +168,7 @@
         // 전역변수로 캘린더 저장 (다른 함수에서 접근 가능하도록)
         window.globalCalendar = null;
         
-        var calendar = new FullCalendar.Calendar(calendarEl, {
+        const calendarOption = {
             initialView: 'dayGridMonth',
             locale: 'ko',
             headerToolbar: {
@@ -202,7 +202,7 @@
             eventDisplay: 'none',
             showNonCurrentDates:true,
             fixedWeekCount:true,
-            events: [], // 일단 비워놓음
+            // events: [], // 일단 비워놓음
             // rerenderDelay: 100, // 이벤트 변경 시 리렌더링 지연시간 설정
             eventContent: function() { return null; }, // 이벤트 자체는 표시하지 않음
             dayCellDidMount: function(info) {
@@ -255,6 +255,9 @@
                         }
                     }
                 });
+                $('.fc-button').css('background-color','#0d6efd');
+                $('.fc-button').css('border','none');
+                $('.fc-today-button').prop('disabled',false);
                 
                 // 이벤트가 존재하는 경우에만 점 표시
                 if (eventTypes.personal || eventTypes.department || eventTypes.public) {
@@ -298,39 +301,31 @@
                     }
                 }
             }
-        });
+        };
 
+        var calendar = new FullCalendar.Calendar(calendarEl, calendarOption);
         // 전역 변수에 캘린더 객체 저장
         window.globalCalendar = calendar;
-
+        calendar.render();
         
-
-        refresh = function(){
-            return $.ajax({
+        $.ajax({
             url: "/myCalendar/calendarMainHome",
             method: 'get',
             success: function(data) {
                     console.log("refresh -> data : ",data);
                     let clndr = chngData(data);
                     console.log("refresh -> data-> chngData : ",clndr);
-                    
-                    // 기존 이벤트 모두 제거
-                    let oldEvents = window.globalCalendar.getEvents();
-                    oldEvents.forEach(event => event.remove());
-                    
-                    // 새 이벤트 추가
-                    clndr.forEach(eventData => {
-                        window.globalCalendar.addEvent(eventData);
-                    });
-                    
-                    console.log('추가 후 이벤트 수:', window.globalCalendar.getEvents().length);
-                    
-                    // 모든 날짜 셀을 재구성하도록 강제 리렌더링
-                    window.globalCalendar.render();
-                }
-		    });
-        }
 
+                    window.globalCalendar.removeAllEvents(); // 기존 이벤트 제거
+                    window.globalCalendar.addEventSource(clndr); // 새 이벤트 추가
+
+                    let currentView = window.globalCalendar.view.type;
+                    window.globalCalendar.changeView('listDay'); // 임시로 다른 뷰로 변경
+                    window.globalCalendar.changeView(currentView); // 원래 뷰로 복귀
+
+                    // window.globalCalendar.setOption('events', clndr);
+            }
+		});
         const chngData = function(dataMap) {
             let returnData = [];
             if (!dataMap || !dataMap.scheduleList) {
@@ -421,8 +416,6 @@
             console.log('생성한 이벤트 데이터:', returnData);
             return returnData;
         }
-        calendar.render();
-        refresh();
         // 버튼 설정
         $('.fc-button').css('background-color','#0d6efd');
         $('.fc-button').css('border','none');
