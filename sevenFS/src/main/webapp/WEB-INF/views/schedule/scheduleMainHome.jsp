@@ -4,6 +4,7 @@
 <html>
 <head>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 <style>
     /* 캘린더 컨테이너 스타일 */
     #calendarContainer {
@@ -37,6 +38,8 @@
     /* 날짜 상단 영역 */
     .fc-daygrid-day-top {
         display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
         padding: 2px 4px !important;
         height: auto !important;
     }
@@ -150,6 +153,56 @@
 	.fc-day-sat .fc-daygrid-day-number {
 		color : blue;
 	}
+
+    .fc-moreBtn-button {
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        color: #4a6cf7 !important;
+        font-size: 1em !important;         /* 기존: 0.85em → 더 크게 */
+        font-weight: bold !important;
+        padding: 6px 12px !important;      /* 여백 확대 */
+        display: flex !important;
+        align-items: center !important;
+        margin-left: auto !important;
+    }
+
+    .fc-moreBtn-button:hover {
+        background: none !important;
+        color: #3255d4 !important;
+    }
+
+    /* 화살표 아이콘 스타일 */
+    .fc-moreBtn-button .more-icon {
+        margin-left: 6px;
+        font-family: 'Material Symbols Outlined', sans-serif;
+        font-size: 1.3em; 
+    }
+    /* 더보기 버튼에 대한 기본 FC 스타일 재정의 */
+    .fc-moreBtn-button.fc-button-primary {
+        color: #4a6cf7 !important;
+        background-color: transparent !important;
+        border-color: transparent !important;
+    }
+
+    .fc-moreBtn-button.fc-button-primary:hover {
+        background-color: transparent !important;
+        border-color: transparent !important;
+    }
+
+    .fc-moreBtn-button.fc-button-primary:active,
+    .fc-moreBtn-button.fc-button-primary:focus {
+        box-shadow: none !important;
+    }
+    .fc-moreBtn-button.fc-button.fc-button-primary {
+        font-size: 1.25em !important;
+        padding: 6px 12px !important;
+        font-weight: bold !important;
+        background-color: #ffffff !important;
+        color: #4a6cf7 !important;
+        border-radius: 6px !important;
+    }
+
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -174,11 +227,19 @@
             headerToolbar: {
                 left: 'prev,today,next',
                 center: 'title',
-                right: ''
+                right: 'moreBtn'
             },
             buttonText: {
                 prev: '<',
                 next: '>'
+            },
+            customButtons: {
+                moreBtn: {
+                    text: '', // 미리 아이콘 포함
+                    click: function() {
+                        window.location.href = '/myCalendar'; // 더보기 링크의 동작
+                    }
+                }
             },
             nowIndicator: true,
             eventOverlap: false,
@@ -230,7 +291,6 @@
                 
                 // 모든 이벤트를 가져와서 각 타입별로 처리
                 const allEvents = calendar.getEvents();
-                // console.log('날짜:', info.date, '이벤트 수:', allEvents.length);
                 
                 // 현재 날짜에 해당하는 이벤트 확인
                 allEvents.forEach(event => {
@@ -255,9 +315,6 @@
                         }
                     }
                 });
-                $('.fc-button').css('background-color','#0d6efd');
-                $('.fc-button').css('border','none');
-                $('.fc-today-button').prop('disabled',false);
                 
                 // 이벤트가 존재하는 경우에만 점 표시
                 if (eventTypes.personal || eventTypes.department || eventTypes.public) {
@@ -307,33 +364,54 @@
         // 전역 변수에 캘린더 객체 저장
         window.globalCalendar = calendar;
         calendar.render();
+        initializeMoreButton(); // ← 이 줄을 추가하세요
+
+        // 중복 생성 방지 코드
+        function initializeMoreButton() {
+            const moreBtn = document.querySelector('.fc-moreBtn-button');
+            console.log(moreBtn.innerHTML)
+            console.log('이거 true여야 함',moreBtn.innerHTML.trim() === '더보기')
+            if (moreBtn) {
+                // 기존 아이콘이 있는지 확인
+                if (moreBtn.innerHTML.trim() != '더보기') {
+                    moreBtn.innerHTML = '더보기 <span class="material-symbols-outlined more-icon">chevron_right</span>';
+                }
+            }
+        }
+
+        // 버튼 스타일 바로 적용
+        $('.fc-button').css('background-color','#4a6cf7');
+        $('.fc-button').css('border','none');
+        $('.fc-today-button').prop('disabled',false);
+        
+        // 월 변경 버튼 이벤트 처리
+        $('.fc-prev-button,.fc-next-button,.fc-today-button').on('click', function(){
+            $('.fc-today-button').prop('disabled',false);
+        });
         
         $.ajax({
             url: "/myCalendar/calendarMainHome",
             method: 'get',
             success: function(data) {
-                    console.log("refresh -> data : ",data);
-                    let clndr = chngData(data);
-                    console.log("refresh -> data-> chngData : ",clndr);
+                console.log("refresh -> data : ", data);
+                let clndr = chngData(data);
+                console.log("refresh -> data-> chngData : ", clndr);
 
-                    window.globalCalendar.removeAllEvents(); // 기존 이벤트 제거
-                    window.globalCalendar.addEventSource(clndr); // 새 이벤트 추가
+                window.globalCalendar.removeAllEvents(); // 기존 이벤트 제거
+                window.globalCalendar.addEventSource(clndr); // 새 이벤트 추가
 
-                    let currentView = window.globalCalendar.view.type;
-                    window.globalCalendar.changeView('listDay'); // 임시로 다른 뷰로 변경
-                    window.globalCalendar.changeView(currentView); // 원래 뷰로 복귀
-
-                    // window.globalCalendar.setOption('events', clndr);
+                let currentView = window.globalCalendar.view.type;
+                window.globalCalendar.changeView('listDay'); // 임시로 다른 뷰로 변경
+                window.globalCalendar.changeView(currentView); // 원래 뷰로 복귀
             }
 		});
+
         const chngData = function(dataMap) {
             let returnData = [];
             if (!dataMap || !dataMap.scheduleList) {
                 console.error('일정 데이터가 없거나 형식이 맞지 않습니다:', dataMap);
                 return returnData;
             }
-            
-            // console.log('일정 데이터 개수:', dataMap.scheduleList.length);
             
             dataMap.scheduleList.forEach(data => {
                 // 날짜 문자열인 경우 타임존 이슈를 방지하기 위해 직접 파싱
@@ -342,7 +420,6 @@
                 if (typeof data.schdulBeginDt === 'string') {
                     // 문자열 형식이 "YYYY-MM-DD" 또는 "YYYY-MM-DD HH:MM:SS" 형태라고 가정
                     if (data.schdulBeginDt.includes('T') || data.schdulBeginDt.includes(' ')) {
-                        // ISO 형식이나 공백으로 구분된 날짜 시간
                         startDate = new Date(data.schdulBeginDt);
                     } else {
                         // 날짜만 있는 경우 (YYYY-MM-DD)
@@ -385,8 +462,6 @@
                     endDate = new Date(data.schdulEndDt);
                 }
                 
-                // console.log('시작일:', startDate, '종료일:', endDate);
-                
                 // 종료일이 시작일보다 빠르거나 같은 경우, 종료일을 시작일의 23:59:59로 설정
                 if (endDate <= startDate) {
                     endDate = new Date(startDate);
@@ -412,30 +487,27 @@
                 });
             });
             
-            // 생성된 이벤트 데이터 확인
-            console.log('생성한 이벤트 데이터:', returnData);
             return returnData;
         }
-        // 버튼 설정
-        $('.fc-button').css('background-color','#0d6efd');
-        $('.fc-button').css('border','none');
-        $('.fc-today-button').prop('disabled',false);
-        $('.fc-prev-button,.fc-next-button,.fc-today-button').on('click',function(){
-            $('.fc-today-button').prop('disabled',false);
-        })
     })
 </script>
 </head>
 <body>
-     <!-- 타이틀과 캘린더를 함께 표시 -->
-     <div id="calendarContainer">
-        <div class="calendar-header">
-            <a href="/myCalendar" class="text-sm fw-bolder" style="margin-left: auto; display: flex; align-items: center;">
-                더보기 
-                <span class="material-symbols-outlined" style="margin-left: 4px;">chevron_right</span>
-            </a>
+    <!-- 타이틀과 캘린더를 함께 표시 -->
+    <div id="calendarContainer">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 0.85em;">
+            <span style="display: flex; align-items: center; gap: 4px;">
+                <span class="event-dot event-dot-public"></span> 전체일정
+            </span>
+            <span style="display: flex; align-items: center; gap: 4px;">
+                <span class="event-dot event-dot-department"></span> 부서일정
+            </span>
+            <span style="display: flex; align-items: center; gap: 4px;">
+                <span class="event-dot event-dot-personal"></span> 개인일정
+            </span>
         </div>
-        <div id="myCalendar"></div>
-    </div>
+
+       <div id="myCalendar"></div>
+   </div>
 </body>
 </html>
