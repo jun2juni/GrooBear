@@ -123,7 +123,7 @@
 								                    ${club.emoji}
 								                  </span>
 								                </c:when>
-								                <c:otherwise><p>😆</p></c:otherwise>
+								                <c:otherwise><p>😆이모지를 골라주세요</p></c:otherwise>
 								              </c:choose>
 								            </a>
 								          </c:when>
@@ -131,7 +131,7 @@
 								            <span style="margin-left: 6px;">
 								              <c:choose>
 								                <c:when test="${not empty club.emoji}">${club.emoji}</c:when>
-								                <c:otherwise><p>😆</p></c:otherwise>
+								                <c:otherwise><p>😆이모지를 골라주세요</p></c:otherwise>
 								              </c:choose>
 								            </span>
 								          </c:otherwise>
@@ -242,7 +242,7 @@
 								                    ${club.emoji}
 								                  </span>
 								                </c:when>
-								                <c:otherwise><p>😆</p></c:otherwise>
+								                <c:otherwise><p>😆이모지를 골라주세요</p></c:otherwise>
 								              </c:choose>
 								            </a>
 								          </c:when>
@@ -250,7 +250,7 @@
 								            <span style="margin-left: 6px;">
 								              <c:choose>
 								                <c:when test="${not empty club.emoji}">${club.emoji}</c:when>
-								                <c:otherwise><p>😆</p></c:otherwise>
+								                <c:otherwise><p>😆이모지를 골라주세요</p></c:otherwise>
 								              </c:choose>
 								            </span>
 								          </c:otherwise>
@@ -536,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	    
 	    // 이모지 표시
 	    const emojiTag = document.getElementById('detailEmoji');
-	    emojiTag.innerText = emoji || '😆'; // 없으면 기본 이모지
+	    emojiTag.innerText = emoji || '😆이모지를 골라주세요'; // 없으면 기본 이모지
 	    emojiTag.classList.add('emoji-bounce'); // 애니메이션 클래스 추가
 
 	    const imgTag = document.getElementById('detailProfileImg');
@@ -736,7 +736,7 @@ td, th {
 
 .emoji-floating {
   display: inline-block;
-  animation: floatUpDown 2.5s ease-in-out infinite;
+  animation: floatUpDown 2.5s ease-in-out infinite;x		
 }
 
 
