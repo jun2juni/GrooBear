@@ -128,4 +128,21 @@ public interface ProjectMapper {
      * @return 업데이트된 행 수
      */
     public int updateProjectStatus(@Param("projectNo") String projectNo, @Param("status") String status);
+
+	public void deleteProjectParticipants(int prjctNo);
+
+	public void insertProjectParticipant(ProjectEmpVO emp);
+	
+	// 프로젝트 참여자 전체 조회
+	List<ProjectEmpVO> selectProjectParticipants(int prjctNo);
+
+	// 특정 참여자 한명 삭제
+	int deleteProjectParticipant(@Param("prjctNo") int prjctNo, @Param("prtcpntEmpno") String prtcpntEmpno);
+
+	public boolean existsProjectParticipant(int prjctNo, String empNo);
+	
+	public int deleteProjectEmpsByProject(@Param("prjctNo") int prjctNo);
+
+	int nullifyUpperTaskReferences(@Param("prjctNo") long prjctNo);
+
 }

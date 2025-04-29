@@ -12,7 +12,30 @@ document.addEventListener('DOMContentLoaded', function () {
   setupAmountInputFormat();
   setupFormSubmitWithValidation();
   setupOrgChartModalButtonHandler();
-});
+  
+   const rows = document.querySelectorAll('#selectedMembersTable tbody tr.server-member');
+
+    rows.forEach(row => {
+      const member = {
+        emplNo: row.dataset.empId,
+        role: convertRoleKey(row.dataset.role),
+        emplNm: row.dataset.name,
+        deptNm: row.dataset.dept,
+        posNm: row.dataset.pos,
+        telno: row.dataset.telno,
+        email: row.dataset.email
+      };
+      addSelectedMembers([member]);
+      row.remove(); // 기존 tr 삭제
+    });
+  });
+  
+  // 역할코드 ➔ 역할명 변환
+  function convertRoleKey(roleCode) {
+    if (roleCode === '00') return 'responsibleManager';
+    if (roleCode === '01') return 'participants';
+    return 'observers';
+  }  
 
 function initAddressFields() {
   const fullAddr = document.getElementById('prjctAdres')?.value || '';
@@ -53,8 +76,18 @@ function setupAmountInputFormat() {
 
 function setupFormSubmitWithValidation() {
   const form = document.getElementById('projectForm');
+  
   form.addEventListener('submit', function (e) {
     e.preventDefault();
+	
+	console.log(" 폼 안에 emp_no들:", 
+	  [...form.querySelectorAll('input[name="emp_no[]"]')].map(input => ({ name: input.name, value: input.value }))
+	);
+
+	console.log(" 폼 안에 emp_role들:", 
+	  [...form.querySelectorAll('input[name="emp_role[]"]')].map(input => ({ name: input.name, value: input.value }))
+	);
+
 
     const requiredFields = ['prjctNo', 'ctgryNo', 'prjctNm', 'prjctCn', 'prjctSttus', 'prjctGrad', 'prjctBeginDate', 'prjctEndDate'];
     const missing = [];
@@ -144,6 +177,29 @@ function openAddressSearch() {
 }
 
 
+function sortMembersByRole() {
+  const tableBody = document.querySelector("#selectedMembersTable tbody");
+  if (!tableBody) return;
+
+  const rows = Array.from(tableBody.children);
+
+  rows.sort((a, b) => {
+    const roleOrder = {
+      responsibleManager: 0,
+      participants: 1,
+      observers: 2
+    };
+
+    const roleA = a.dataset.role;
+    const roleB = b.dataset.role;
+
+    return (roleOrder[roleA] ?? 99) - (roleOrder[roleB] ?? 99);
+  });
+
+  // 정렬된 순서대로 다시 붙이기
+  rows.forEach(row => tableBody.appendChild(row));
+}
+
 
 
 // 선택된 인원 추가 함수
@@ -156,56 +212,48 @@ function addSelectedMembers(members) {
   if (emptyRow) emptyRow.remove();
 
   members.forEach(emp => {
-    // 중복 체크 (같은 직원+같은 역할은 추가 금지)
-    const exists = Array.from(tableBody.children).some(row =>
-      row.dataset.empId === emp.emplNo && row.dataset.role === emp.role
-    );
-    if (exists) return; // 이미 추가된 경우 무시
+    const empId = emp.emplNo;
+    const role = emp.role;
 
-    // 새 행 추가
-    const row = document.createElement("tr");
-    row.dataset.empId = emp.emplNo;
-    row.dataset.role = emp.role;
-	
-	if (emp.role === 'responsibleManager') {
-	  row.classList.add('bg-light-danger');
-	} else if (emp.role === 'participants') {
-	  row.classList.add('bg-light-primary');
-	} else {
-	  row.classList.add('bg-light-secondary');
+	if (isAlreadyRegistered(empId, role)) {
+	  setTimeout(() => {
+	    swal("등록된 인원입니다", "이미 해당 역할로 등록된 사원입니다.", "warning");
+	  }, 0);
+	  return;
 	}
+
+
+    const row = document.createElement('tr');
+    row.dataset.empId = empId;
+    row.dataset.role = role;
 
     let roleName = '';
     let badgeClass = '';
     let iconClass = '';
 
-    if (emp.role === 'responsibleManager') {
+    if (role === 'responsibleManager') {
       roleName = '책임자';
       badgeClass = 'bg-danger';
       iconClass = 'fas fa-user-tie';
-    } else if (emp.role === 'participants') {
+      row.classList.add('table-danger');
+    } else if (role === 'participants') {
       roleName = '참여자';
       badgeClass = 'bg-primary';
       iconClass = 'fas fa-user-check';
+      row.classList.add('table-primary');
     } else {
       roleName = '참조자';
       badgeClass = 'bg-secondary';
       iconClass = 'fas fa-user-clock';
+      row.classList.add('table-secondary');
     }
 
-	if (emp.role === 'responsibleManager') {
-	  row.classList.add('bg-light-danger');  // 책임자: 연한 빨강
-	} else if (emp.role === 'participants') {
-	  row.classList.add('bg-light-primary'); // 참여자: 연한 파랑
-	} else {
-	  row.classList.add('bg-light-secondary'); // 참조자: 연한 회색
-	}
-	
-    // 전화번호 포맷
     const formattedPhone = formatPhone(emp.telno);
 
     row.innerHTML = `
       <td class="text-center">
+        <input type="hidden" name="emp_no[]" value="${empId}">
+        <input type="hidden" name="emp_role[]" value="${role}">
         <span class="badge ${badgeClass} p-2">
           <i class="${iconClass} me-1"></i> ${roleName}
         </span>
@@ -219,25 +267,31 @@ function addSelectedMembers(members) {
       <td class="text-start ps-2">
         <i class="fas fa-envelope me-1 text-muted"></i>${emp.email || '-'}</td>
       <td class="text-center">
-        <button type="button" class="btn btn-sm btn-outline-danger remove-member">
+        <button type="button" class="btn btn-sm btn-outline-danger remove-member" onclick="removeParticipant(this, event)">
           <i class="fas fa-times"></i>
         </button>
       </td>
     `;
 
-    // 삭제 버튼 이벤트
-    row.querySelector(".remove-member").addEventListener("click", function () {
-      row.remove();
-      updateProjectEmpIndexes();
-    });
-
     tableBody.appendChild(row);
   });
 
   updateProjectEmpIndexes();
+  sortMembersByRole();
 }
 
-// ✅ 조직도 로딩 함수
+function isAlreadyRegistered(empId, role) {
+  const tableBody = document.querySelector("#selectedMembersTable tbody");
+  if (!tableBody) return false;
+
+  return Array.from(tableBody.children).some(row =>
+    row.dataset.empId === empId && row.dataset.role === role
+  );
+}
+
+
+
+//  조직도 로딩 함수
 function loadOrgTree() {
   const treeContainer = document.getElementById('jstree');
   if (!treeContainer) {
@@ -245,7 +299,7 @@ function loadOrgTree() {
     return;
   }
 
-  console.log("🚀 조직도 데이터 로딩 시작");
+  console.log(" 조직도 데이터 로딩 시작");
 
   fetch("/organization/detail")
     .then(resp => {
@@ -256,8 +310,8 @@ function loadOrgTree() {
       const deptList = res.deptList; // 부서
       const empList = res.empList;   // 사원
 
-      console.log("✅ 부서 리스트:", deptList);
-      console.log("✅ 사원 리스트:", empList);
+      console.log("부서 리스트:", deptList);
+      console.log("사원 리스트:", empList);
 
       const json = [];
 
@@ -317,7 +371,7 @@ function loadOrgTree() {
 
     })
     .catch(error => {
-      console.error("❌ 조직도 로딩 실패:", error);
+      console.error(" 조직도 로딩 실패:", error);
     });
 }
 
@@ -328,7 +382,7 @@ function loadOrgTree() {
 function clickEmp(node) {
   if (!node || node.deptYn === true) return;
 
-  console.log("💬 선택된 사원:", node);
+  console.log(" 선택된 사원:", node);
 
   if (!currentTarget) {
     swal("선택 오류", "먼저 책임자/참여자/참조자 버튼을 눌러주세요.", "warning");
@@ -353,7 +407,7 @@ function clickEmp(node) {
 
 
 
-// ✅ 전화번호 포맷 함수
+//  전화번호 포맷 함수
 function formatPhone(phone) {
   if (!phone) return '-';
   const onlyNums = phone.replace(/[^0-9]/g, '');
@@ -369,35 +423,29 @@ function formatPhone(phone) {
   return phone;
 }
 
-// ✅ 참여자 삭제 버튼 클릭 시
-function removeParticipant(button) {
+// 참여자 삭제 버튼 클릭 시
+function removeParticipant(button, event) {
+  event.preventDefault();
   const row = button.closest('tr');
-  row.remove();
-
-  const tbody = document.querySelector("#selectedMembersTable tbody");
-  if (tbody.children.length === 0) {
-    const emptyRow = document.createElement('tr');
-    emptyRow.className = 'empty-row';
-    emptyRow.innerHTML = `
-      <td colspan="7" class="text-center text-muted py-4">
-        <i class="fas fa-info-circle me-1"></i> 선택된 인원이 없습니다. 조직도에서 프로젝트 참여자를 선택해주세요.
-      </td>
-    `;
-    tbody.appendChild(emptyRow);
+  if (row) {
+    row.remove();
+    updateProjectEmpIndexes();
+	
   }
-
-  updateProjectEmpIndexes();
 }
 
-// ✅ 인덱스 재조정
+
+
+
+
+//  인덱스 재조정
 function updateProjectEmpIndexes() {
   const participants = document.querySelectorAll('#selectedMembersTable tbody tr:not(.empty-row)');
   participants.forEach((row, index) => {
-    const hiddenInputs = row.querySelectorAll('input[type="hidden"]');
-    hiddenInputs.forEach(input => {
-      if (input.name.includes('projectEmpVOList')) {
-        input.name = input.name.replace(/projectEmpVOList\[\d+\]/, `projectEmpVOList[${index}]`);
-      }
-    });
+    const empNoInput = row.querySelector('input.emp-no');
+    const roleInput = row.querySelector('input.emp-role');
+    if (empNoInput) empNoInput.name = `projectEmpVOList[${index}].emplNo`;
+    if (roleInput) roleInput.name = `projectEmpVOList[${index}].role`;
   });
 }
+

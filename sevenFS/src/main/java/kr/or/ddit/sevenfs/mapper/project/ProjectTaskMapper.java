@@ -42,6 +42,11 @@ public interface ProjectTaskMapper {
 	public GanttTaskVO selectCardById(Long taskNo);
 	
 	public int updateTaskSchedule(ProjectTaskVO task);
+
+	public int countTasksByAssignee(int prjctNo, String empNo);
+
+	public void nullifyUpperTaskReferences(Long prjctNo);
     
+	int nullifyUpperTaskReferences(@Param("prjctNo") long prjctNo);
 
 }

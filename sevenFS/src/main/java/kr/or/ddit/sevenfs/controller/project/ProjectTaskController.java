@@ -260,5 +260,14 @@ public class ProjectTaskController {
 	    response.put("hasChildren", projectTaskService.hasChildTasks(taskNo));
 	    return response;
 	}
+	
+    @GetMapping("/checkAssignee")
+    @ResponseBody
+    public Map<String, Object> checkAssignee(@RequestParam int prjctNo, @RequestParam String empNo) {
+        boolean hasTask = projectTaskService.hasTaskAssigned(prjctNo, empNo);
+        Map<String, Object> result = new HashMap<>();
+        result.put("hasTask", hasTask);
+        return result;
+    }
 
 }

@@ -252,6 +252,13 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
             throw new RuntimeException("업무 일정 업데이트 실패: taskNo=" + task.getTaskNo());
         }
     }
+
+
+    @Override
+    public boolean hasTaskAssigned(int prjctNo, String empNo) {
+        return projectTaskMapper.countTasksByAssignee(prjctNo, empNo) > 0;
+    }
+
     
 
 }
