@@ -905,7 +905,7 @@ $(document).ready(function() {
 						closeOnEsc: false,
 						button: "확인"
 					}).then(() => {
-						location.replace("/atrz/home")
+						location.replace("/atrz/document?tab=1")
 					});
 				}
 			},

@@ -326,7 +326,7 @@ padding: 10px !important;
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button" id="cancelButton"
+									<a type="button" id="cancelButtonTo"
 										class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
@@ -499,9 +499,9 @@ padding: 10px !important;
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button" href="/atrz/home"
+									<a type="button" id="cancelButtonBo"
 										class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
-										style="padding: 0.4rem 1rem; font-size: 0.95rem;" > 
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
@@ -785,7 +785,7 @@ $(document).ready(function() {
 						closeOnEsc: false,
 						button: "확인"
 					}).then(() => {
-						location.replace("/atrz/home")
+						location.replace("/atrz/document?tab=1")
 					});
 				}
 			},
@@ -938,7 +938,7 @@ $(document).ready(function() {
 					}).then(() => {
 						// location.replace("/atrz/document");
 					});
-					alert("왔다");
+					// alert("왔다");
 				}
 			},
 			error: junyError

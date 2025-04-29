@@ -331,7 +331,7 @@ select.ui-datepicker-year {
 									
 									<div id="s_eap_content_box_left" class="s_scroll">
 										<div class="s_div_container s_scroll">
-											<div style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">급여통장변경 신청서</div>
+											<div style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">급여계좌변경 신청서</div>
 												<div style="float: left; width: 230px; margin: 0 30px;">
 													<table border="1" id="s_eap_draft_info" class="text-center">
 														<tr>

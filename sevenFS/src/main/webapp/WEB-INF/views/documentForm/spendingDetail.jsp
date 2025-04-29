@@ -171,7 +171,7 @@ padding: 10px !important;
 										<a type="button" 
 										class="btn btn-outline-secondary d-flex align-items-center gap-1"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"
-										href="/atrz/document"> 
+										href="/atrz/approval?tab=1"> 
 										<span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록
 									</a>
 								</div>
@@ -349,7 +349,60 @@ padding: 10px !important;
 														style="resize: none; height: 150px;" id="s_sp_co" name="atrzCn" disabled
 														required="required" rows="2" cols="20" wrap="hard">${atrzVO.atrzCn}</textarea>
 												</div>
-												SANCTN_PROGRS_STTUS_CODE
+												<div style="padding: 10px 0;">
+													<div class="s_frm_title"><b>지출 내역</b></div>
+													<table class="table" style="text-align: center;">
+														<thead>
+															<tr>
+																<th scope="col" style="width: 130px;">날짜</th>
+																<th scope="col" style="width: 300px;">내역</th>
+																<th scope="col" style="width: 70px;">수량</th>
+																<th scope="col" style="width: 150px;">금액</th>
+																<th scope="col" style="width: 130px;">결제수단</th>
+															</tr>
+														</thead>
+														<tbody id="s_default_tbody" class="s_default_tbody_cl">
+															<tr>
+																<th scope="row">
+																	<input type="text" class="form-control s_sp_date " id="s_sp_date" onkeyup="checkDateFormat(this)"
+																	name="expenseDate" value="${atrzVO.spendingVO.expenseDate}" disabled
+																	style="cursor: context-menu;" >
+																</th>
+																<td>
+																	<input type="text" placeholder="지출내역을 작성해주세요" value="${atrzVO.spendingVO.itemDescription}"
+																	class="form-control s_sp_detail" name="itemDescription" disabled >
+																</td>
+																<td>
+																	<input type="text" id="sp_count" value="${atrzVO.spendingVO.itemQuantity}"
+																	class="form-control s_sp_count" name="itemQuantity" disabled
+																	onblur="total()" placeholder="수량입력" onkeyup="commas(this)">
+																</td>
+																	<!-- oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" -->
+																<td>
+																	<input type="text" placeholder="금액입력" value="${atrzVO.spendingVO.itemAmount}"
+																	class="form-control s_sp_amount" id="sp_amount" disabled
+																	name="itemAmount" onkeyup="commas(this)" onblur="total()">
+																</td>
+																<td>
+																	<select class="form-select s_select" aria-label="Default select example" disabled>
+																		<option value="C" <c:if test="${atrzVO.spendingVO.paymentMethod eq 'C'}">checked</c:if>>신용카드</option>
+																		<option value="A" <c:if test="${atrzVO.spendingVO.paymentMethod eq 'A'}">checked</c:if>>가상계좌</option>
+																</select></td>
+															</tr>
+
+														</tbody>
+														<tfoot>
+															<tr>
+																<th colspan="3">합계</th>
+																<td colspan="2"> 
+																	\<span id="s_total_price"></span>
+																	(VAT포함)
+																</td>
+															</tr>
+														</tfoot>
+													</table>
+													<!-- <button type="button" id="s_add_sp_detail" class="btn btn-success" onclick="addTr()">내역 추가</button> -->
+												</div>
 												<%--첨부파일 구성하기--%>
 												<div class="mb-3">
 													<div class="s_frm_title mb-2"> 미리보기</div>
@@ -462,7 +515,7 @@ padding: 10px !important;
 									<a type="button" 
 										class="btn btn-outline-secondary d-flex align-items-center gap-1"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"
-										href="/atrz/document"> 
+										href="/atrz/approval?tab=1"> 
 										<span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록
 									</a>
 								</div>

@@ -119,8 +119,12 @@
 				</div>
 				<div style="padding: 10px 0;">
 					<div class="s_frm_title">파일첨부</div>
-					<div id="s_file_upload">
-						<input type="file" name="uploadFile" id="eap_file_path" multiple disabled/>
+					<div class="input-group mb-3">
+						<div class="file-container text-truncate">
+						
+						<label class="d-flex text-start input-group-text file-label">파일을 선택해주세요</label><input disabled="" type="file" class="form-control file-input">
+						</div>
+						<button type="button" class="btn btn-danger removeFileBtn">삭제</button>
 					</div>
 					<input type="hidden" name="fileUrl" id="fileUrl">
 				</div>

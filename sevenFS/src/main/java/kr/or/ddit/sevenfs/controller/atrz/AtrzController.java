@@ -1290,7 +1290,121 @@ public class AtrzController {
 		atrzService.insertSalaryForm(atrzVO, atrzLineList, salaryVO);
 		return "쭈니성공";
 	}
-		
+	
+	
+	// 기안서 등록
+	@ResponseBody
+	@PostMapping(value = "atrzDraftInsert")
+	public String insertDraftForm(AtrzVO atrzVO
+			,@RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList
+			,int[] removeFileId
+			,DraftVO draftVO
+			,@RequestParam(value = "uploadFile", required = false) MultipartFile[] uploadFile) {
+
+		log.info("insertDraftForm->atrzVO(최초) : " + atrzVO);
+		log.info("insertDraftForm->atrzLineList(최초) : " + atrzLineList);
+		log.info("insertDraftForm->spendingVO(최초) : " + draftVO);
+
+		AtrzVO atrzImsiVO = atrzService.getAtrzDetail(atrzVO.getAtrzDocNo());
+		log.info("insertDraftForm->draftVO :" + draftVO);
+
+		// 파일 업로드 처리 (있는 경우만)
+		if (uploadFile != null && uploadFile.length > 0 && uploadFile[0].getOriginalFilename().length() > 0) {
+			// 파일 이름이 같고 사이즈도 같으면 같은 파일로 간주 (중복 저장 방지)
+			boolean isSameFile = false;
+
+			if (atrzImsiVO.getAtchFileNo() != 0L) {
+				List<AttachFileVO> existingFiles = attachFileService.getFileAttachList(atrzImsiVO.getAtchFileNo());
+
+				if (!existingFiles.isEmpty()) {
+					String existingFileName = existingFiles.get(0).getFileNm();
+					long existingFileSize = existingFiles.get(0).getFileSize();
+
+					String newFileName = uploadFile[0].getOriginalFilename();
+					long newFileSize = uploadFile[0].getSize();
+
+					isSameFile = existingFileName.equals(newFileName) && existingFileSize == newFileSize;
+				}
+			}
+
+			if (!isSameFile) {
+				// 새로운 파일이라면 insert/update 수행
+				if (atrzImsiVO.getAtchFileNo() == 0L) {
+					long attachFileNo = attachFileService.insertFileList("atrzUploadFile", uploadFile);
+					atrzVO.setAtchFileNo(attachFileNo);
+					log.info("신규 업로드된 파일 번호: " + attachFileNo);
+				} else {
+					AttachFileVO attachFileVO = new AttachFileVO();
+					attachFileVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
+
+					// 실제 삭제할 파일이 있는 경우에만 설정
+					if (removeFileId != null && removeFileId.length > 0) {
+						attachFileVO.setRemoveFileId(removeFileId);
+					}
+
+					attachFileService.updateFileList("atrzUploadFile", uploadFile, attachFileVO);
+					atrzVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
+					log.info("기존 파일 번호 " + atrzImsiVO.getAtchFileNo() + "에 파일 업데이트 완료");
+				}
+			} else {
+				// 동일한 파일이므로 처리 생략
+				atrzVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
+				log.info("동일 파일 재업로드 방지 → 기존 파일 유지");
+			}
+
+		} else {
+			// 업로드 파일 없음 → 기존 파일 유지
+			atrzVO.setAtchFileNo(atrzImsiVO.getAtchFileNo());
+		}
+		// 파일 확인 로그
+		log.info("업로드된 파일 배열: " + Arrays.toString(uploadFile));
+
+		// 여기서 담기지 않았음.. 사원정보가 오지 않음
+
+		EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
+		// 여기서 VO를 하나 씩 담아야 하는건가...싶다.
+		String clsfCode = emplDetail.getClsfCode();
+		String deptCode = emplDetail.getDeptCode();
+		atrzVO.setClsfCode(clsfCode);
+		atrzVO.setDeptCode(deptCode);
+//			atrzVO.setDrafterClsf(emplDetail.get);
+
+		log.info("insertDraftForm-> atrzVO(사원추가후) : " + atrzVO);
+
+		// 문서번호등록
+		draftVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
+		log.info("spendingVO :  문서번호 등록후 : " + draftVO);
+
+		log.info("insertDraftForm->documHolidayVO :  문서번호 등록후 : " + draftVO);
+
+		// 1) atrz 테이블 update
+
+		// 2) 결재선지정 후에 제목, 내용, 등록일자, 상태 update
+		int result = atrzService.insertUpdateAtrz(atrzVO);
+		log.info("insertDraftForm->result : " + result);
+
+		// 3) 지출결의서 등록
+		int documDraftResult = atrzService.insertDraft(draftVO);
+		log.info("insertDraftForm->documDraftResult : " + documDraftResult);
+
+		return "쭈니성공";
+	}
+	//기안서 임시저장
+	@ResponseBody
+	@PostMapping("atrzDraftStorage")
+	public String updateHolidayForm(AtrzVO atrzVO, @RequestPart("atrzLineList") List<AtrzLineVO> atrzLineList,
+			 DraftVO draftVO) {
+
+		// 서비스 호출로 로직 위임
+		try {
+			atrzService.updateDraft(atrzVO, atrzLineList, draftVO);
+			return "성공적으로 등록되었습니다.";
+		} catch (Exception e) {
+			log.error("연차 기안 중 오류 발생", e);
+			return "등록 중 오류가 발생했습니다.";
+		}
+
+	}	
 		
 	// 지출결의서 양식조회
 	@GetMapping("/selectForm/spendingForm")

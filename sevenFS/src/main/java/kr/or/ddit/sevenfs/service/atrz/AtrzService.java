@@ -100,6 +100,10 @@ public interface AtrzService {
 	//연차신청서에서 남은 연차 갯수 가져오기
 	public Double readHoCnt(String empNo);
 	
+	//기안서 임시저장
+	public void updateDraft(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, DraftVO draftVO)throws Exception;
+	
+	
 	//반려 문서 재기안 get
 	public AtrzVO selectDocumentReturn(String atrzDocNo);
 	
@@ -126,6 +130,8 @@ public interface AtrzService {
 	public void insertSalaryForm(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, SalaryVO salaryVO);
 	//급여명세서 상세보기
 	public SalaryVO salaryDetail(String atrzDocNo);
+	
+
 
 
 

@@ -42,7 +42,6 @@
 }
 
 
-
 /* 제목, 내용 글씨 크기 */
 .s_frm_title {
 	font-size: 1em;
@@ -60,6 +59,58 @@
 #approvalBtn {
 	margin: 10px;
 }
+/* sweetalert스타일 */
+/*모달창  */
+.swal-modal {
+	background-color: white;
+	border: 3px solid white;
+}
+/*ok버튼  */
+.swal-button--danger {
+	background-color: #0583F2;
+	color: white;
+}
+/*cancel버튼  */
+.swal-button--cancel {
+	background-color: red;
+	color: white;
+}
+/*ok버튼  */
+.swal-button--confirm {
+	background-color: #0583F2;
+	color: white;
+}
+/*아이콘 테두리  */
+.swal-icon--info {
+	border-color: #0583F2;
+}
+/*아이콘 i 윗부분  */
+.swal-icon--info:after {
+	background-color: #0583F2;
+}
+/*아이콘 i 아랫부분  */
+.swal-icon--info:before {
+	background-color: #0583F2;
+}
+/*타이틀  */
+.swal-title {
+	font-size: 20px;
+	color: black;
+}
+/*텍스트  */
+.swal-text {
+	color: black;
+}
+
+
+/* 셀 내부 여백 주기 */
+.s_default_tbody_cl td,
+.s_default_tbody_cl th {
+padding: 10px !important;
+}
+.s_sp_date {
+	text-align: center;
+}
 </style>
 
 <title>${title}</title>
@@ -71,40 +122,41 @@
 <main class="main-wrapper">
 <%@ include file="../layout/header.jsp" %>
 	<section class="section">
+		<form id="atrz_dr_form" action="/atrz/insertAtrzLine" method="post" enctype="multipart/form-data">
 		<div class="container-fluid">
 			<!-- 여기서 작업 시작 -->
 			<div class="row">
 				<div class="col-sm-12 mb-3 mb-sm-0">
 					<!-- 결재요청 | 임시저장 | 결재선지정 | 취소  -->
 					<div class="col card-body" id="approvalBtn">
-					<!-- 새로운 버튼 -->
-						<div class="tool_bar">
-							<div class="critical d-flex gap-2 mb-3">
-								<!--성진스 버튼-->
-								<button id="s_eap_app_top" type="button" 
-									class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app">
-									<span class="material-symbols-outlined fs-5">cancel</span> 결재요청
-								</button>
-								<a id="s_eap_stor" type="button"
-									class="btn btn-outline-success d-flex align-items-center gap-1"
-									data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
-									class="material-symbols-outlined fs-5">error</span> 임시저장
-								</a> <a id="s_appLine_btn" type="button"
-									class="btn btn-outline-info d-flex align-items-center gap-1"
-									data-bs-toggle="modal" data-bs-target="#atrzLineModal"> <span
-									class="material-symbols-outlined fs-5">error</span> 결재선 지정
-								</a> <a type="button"
-									class="btn btn-outline-danger d-flex align-items-center gap-1"
-									href="/atrz/home"> <span
-									class="material-symbols-outlined fs-5">cancel</span> 취소
-								</a>
-							</div>
+					<div class="tool_bar">
+						<div class="critical d-flex gap-2 mb-3">
+							<button id="s_eap_app_top" type="button" 
+								class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
+								style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+								<span class="material-symbols-outlined fs-5">upload</span> 결재요청
+							</button>
+							<a id="s_eap_storTo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
+								style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+								<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
+							</a> 
+							<a id="s_appLine_btn" type="button"
+								class="btn btn-outline-info d-flex align-items-center gap-1"
+								data-bs-toggle="modal" data-bs-target="#atrzLineModal"
+								style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+								<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
+							</a> 
+							<a type="button" id="cancelButtonTo"
+							class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
+							style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+							<span class="material-symbols-outlined fs-5">cancel</span> 취소
+							</a>
 						</div>
+					</div>
 					<!-- 새로운 버튼 -->
 					</div>
-<!-- 모달창 인포트 -->
-<c:import url="../documentForm/approvalLineModal.jsp" />
-				<form action="/atrz/draft/insert" method="post" id="draftInsert">
+			<!-- 모달창 인포트 -->
+			<c:import url="../documentForm/approvalLineModal.jsp" />
 					<div class="card">
 						<div class="card-body">
 							<div class="s_div_container s_scroll">
@@ -150,12 +202,14 @@
 								</div>
 
 
-								<div id="s_eap_draft_app" style="float: right; margin-right: 10px;" >
+								<div id="s_eap_draft_app" style="float: right; margin-right: 10px;">
 								</div>
 								<div id="s_eap_final">
 									<div>
 										<div style="padding: 50px 10px 20px; clear: both;">
-											<div style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목 :</div>
+											<div
+												style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목
+												:</div>
 											<input type="text" class="form-control" value="" placeholder="제목을 입력해주세요"
 												style="display: inline-block; width: 90%; margin-left: 5px;"
 												id="s_sp_tt" name="atrzSj">
@@ -163,19 +217,20 @@
 										<div style="border: 1px solid lightgray; margin: 10px;"></div>
 										<div style="margin: 0 10px;">
 											<div style="padding: 10px 0;">
-												<div class="s_frm_title"><b>상세 내용</b></div>
+												<div class="s_frm_title mb-2"><b>상세 내용</b></div>
 												<textarea class="form-control"
-													style="resize: none; height: 150px;" id="s_sp_co" name="atrzCn" placeholder="상세내용을 입력해주세요"
-													required="required" rows="2" cols="20" wrap="hard"></textarea>
+													style="resize: none; height: 150px;" id="s_sp_co" name="atrzCn"
+													required="required" rows="2" cols="20" wrap="hard" placeholder="상세내용을 입력해주세요"></textarea>
 											</div>
-											<div style="padding: 10px 0;">
-												<div class="s_frm_title">파일첨부</div>
-												<!-- <input type="file" class="form-control"> -->
-												<div id="s_file_upload">
-													<input type="file" id="eap_file_path" name="uploadFile" />
-												</div>
-												<input type="hidden" name="fileUrl" id="fileUrl">
-											</div>
+
+											<form action="/fileUpload" method="post" enctype="multipart/form-data">
+												<file-upload
+														label="첨부파일"
+														name="uploadFile"
+														max-files="1"
+														contextPath="${pageContext.request.contextPath }"
+												></file-upload>
+											</form>
 										</div>
 									</div>
 								</div>
@@ -183,37 +238,65 @@
 						</div>
 					</div>
 </div>
-			</form>
 		</div>
 	</div>
-			<!-- 여기서 작업 끝 -->
 			<!-- 상하 버튼 추가 -->
 			<div class="tool_bar">
-					<div class="critical d-flex gap-2 mt-3" style="padding-left: 50px;">
-						<!--성진스 버튼-->
-						<a id="s_eap_app" type="button" class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app">
-							<span class="material-symbols-outlined fs-5">cancel</span> 
-							결재요청</a>
-						<a id="s_eap_stor" type="button" class="btn btn-outline-success d-flex align-items-center gap-1"
-						data-bs-toggle="modal" data-bs-target="#atrzLineModal">
-							<span class="material-symbols-outlined fs-5">error</span> 
-								임시저장</a>
-						<a id="s_appLine_btn" type="button" class="btn btn-outline-info d-flex align-items-center gap-1"
-						data-bs-toggle="modal" data-bs-target="#atrzLineModal">
-							<span class="material-symbols-outlined fs-5">error</span> 
-								결재선 지정</a>
-						<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1" href="/atrz/home">
-							<span class="material-symbols-outlined fs-5">cancel</span> 
-							취소</a>
-					</div>
+				<div class="critical d-flex gap-2 mt-3">
+					<!--성진스 버튼-->
+					<button id="s_eap_app_bottom" type="button" 
+						class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
+						style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+						<span class="material-symbols-outlined fs-5">upload</span> 결재요청
+					</button>
+					<a id="s_eap_storBo" type="button" 
+						class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
+						style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+						<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
+					</a> 
+					<a id="s_appLine_btn" type="button" class="btn btn-outline-info d-flex align-items-center gap-1"
+						data-bs-toggle="modal" data-bs-target="#atrzLineModal"
+						style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+						<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
+					</a> 
+					<a type="button" id="cancelButtonBo"
+					class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
+					style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+					<span class="material-symbols-outlined fs-5">cancel</span> 취소
+					</a>
 				</div>
-				<!-- 상하 버튼 추가 -->
+			</div>
+			<!-- 상하 버튼 추가 -->
+			</form>
 		</div>
 	</section>
 <%@ include file="../layout/footer.jsp" %>
 </main>
 <%@ include file="../layout/prescript.jsp" %>
 <script>
+//제목 너무 길게 입력하면 입력초과 스왈
+document.getElementById('s_sp_tt').addEventListener('input', function (event) {
+        const maxLength = 60; // 최대 길이 설정
+        const inputField = this;
+        const inputValue = inputField.value;
+
+        // 입력값이 최대 길이를 초과할 경우
+        if (inputValue.length > maxLength) {
+            swal({
+                title: "입력 초과",
+                text: "제목은 최대 60자까지 입력 가능합니다.",
+                icon: "warning",
+                button: "확인"
+            }).then(() => {
+                // 초과된 부분을 잘라내기
+                inputField.value = inputValue.substring(0, maxLength);
+            });
+
+            // 입력 처리를 중단
+            event.preventDefault();
+            return;
+        }
+    });
 
 
 //JSON Object List
@@ -222,13 +305,7 @@ $(document).ready(function() {
 	//******* 폼 전송 *******
 	$(".s_eap_app").on("click",function(){
 		event.preventDefault();
-		//보고 가져온것 시작
-		var sp_date = "";
-		var sp_detail = "";
-		var sp_count = 0;
-		var sp_amount = 0;
-		var sp_pay_code = "";
-		
+
 		// 제목, 내용이 비어있을 때
 		if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
 			swal({
@@ -251,58 +328,54 @@ $(document).ready(function() {
 		
 		//보고 가져온것 끝
 		
-		let jnForm = document.querySelector("#draftInsert");
+		let jnForm = document.querySelector("#atrz_dr_form");
 		// console.log("${empVO}" + empVO);
 		let formData = new FormData();
-		
-		
+		formData.append("docFormNm","D");
+		formData.append("docFormNo",3);
+		formData.append("atrzSj",jnForm.atrzSj.value);
+		formData.append("atrzCn",jnForm.atrzCn.value);
+
+		if(jnForm.uploadFile.files.length){
+			for(let i=0; i< jnForm.uploadFile.files.length; i++)
+			formData.append("uploadFile",jnForm.uploadFile.files[i]);
+		}
+  
+  
+		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
+			formData.append("removeFileId", element.value);
+		});
+
 		let atrzLineList = [];
 		for(let i=0; i< authList.length; i++){
 			let auth = authList[i];
 			let atrzLine = {
 				atrzLnSn: auth.atrzLnSn ,
 				sanctnerEmpno: auth.emplNo,
-				atrzTy: auth.flex,
-				dcrbAuthorYn: auth.auth
+				atrzTy: auth.auth,
+				dcrbAuthorYn: auth.flex,
+				sanctnerClsfCode: auth.clsfCode,
 			}
 			atrzLineList.push(atrzLine);			
 		}
 		console.log("atrzLineList",atrzLineList);
 
 
-		formData.append("emplNo","${empVO.emplNo}");//EL 변수 ->  J/S에서 사용(큰따옴표로 묶어준다.)
-		formData.append("drafterEmpno","${empVO.emplNo}");
-		formData.append("emplNm","${empVO.emplNm}");
-		formData.append("drafterEmpnm","${empVO.emplNm}");
-		formData.append("clsfCode","${empVO.clsfCode}");
-		formData.append("clsfCodeNm","${empVO.clsfCodeNm}");
-		formData.append("deptCode","${empVO.deptCode}");
-		formData.append("deptCodeNm","${empVO.deptNm}");
-
-		formData.append("docFormNm","D");
-		formData.append("docFormNo",3);
-		formData.append("atrzSj",jnForm.atrzSj.value);
-		formData.append("atrzCn",jnForm.atrzCn.value);
-		
-		if(jnForm.uploadFile.files.length){
-			for(let i=0; i< jnForm.uploadFile.files.length; i++)
-			formData.append("uploadFile",jnForm.uploadFile.files[i]);
-		}
-
-
 		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
 
+		formData.append("emplNo",secEmplNo);
+		formData.append("emplNm",secEmplNm);
+		formData.append("atrzDocNo",$("#s_dfNo").text());
 
 		console.log("전송하기 체킁 확인");
 		console.log("s_eap_app_bottom->formData : ", formData);
 	
 		const junyError = (request, status, error) => {
-					console.log("code(ajaxError): " + request.status)
-					console.log("message(ajaxError): " + request.responseText)
-					console.log("error(ajaxError): " + error);
-        }
-		console.log("길준희 여기 들어가나요?");
-		
+					console.log("code: " + request.status)
+					console.log("message: " + request.responseText)
+					console.log("error: " + error);
+            }
+
 		$.ajax({
 			url:"/atrz/atrzDraftInsert",
 			processData:false,
@@ -314,25 +387,145 @@ $(document).ready(function() {
 				console.log("체킁:",result);
 				if(result=="쭈니성공"){
 					//location.href = "컨트롤러주소";  //  .href 브라우져 성능 향상을 위해서 캐쉬가 적용 될 수도 있고, 안 될 수도 있어
-					location.replace("/atrz/home")
+					swal({
+						title: "결재요청이 완료되었습니다.",
+						text: "",
+						icon: "success",
+						closeOnClickOutside: false,
+						closeOnEsc: false,
+						button: "확인"
+					}).then(() => {
+						location.replace("/atrz/document?tab=1")
+					});
 				}
 			},
 			error: junyError
 		})
 	});
+
+
+	
+
+	//임시저장 클릭시 
+	$(".s_eap_stor").on("click",function(){
+		event.preventDefault();
+		// alert("체킁");
+		console.log("전송하기 체킁 확인");
+		console.log("s_eap_app_bottom->authList : ", authList);
+		
+
+		if ($(".s_appLine_tbody_new .clsTr").length === 0) {
+		swal({
+			title: "결재선이 지정되지 않았습니다.",
+			text: "결재선을 지정해주세요.",
+			icon: "error",
+			closeOnClickOutside: false,
+			closeOnEsc: false,
+			button: "확인"
+		});
+		return;
+		}
+
+		// 제목, 내용이 비어있을 때
+		if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
+			swal({
+					title: "제목 또는 내용이 비어있습니다.",
+					text: "다시 확인해주세요.",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
+			return;
+		}
+		
+		
+		var eap_content = $('#s_sp_co').val();
+
+		
+		// textarea에 \r \n같은 문자를 <br>로 바꿔주기
+		eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
+
+		//formData로 담아주기 위한것
+		let jnForm = document.querySelector("#atrz_dr_form");
+
+		let formData = new FormData();
+		formData.append("docFormNm","D");
+		formData.append("docFormNo",3);
+		formData.append("atrzSj",jnForm.atrzSj.value);
+		formData.append("atrzCn",jnForm.atrzCn.value);
+  
+		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
+			formData.append("removeFileId", element.value);
+		});
+  
+		if(jnForm.uploadFile.files.length){
+			for(let i=0; i< jnForm.uploadFile.files.length; i++)
+			formData.append("uploadFile",jnForm.uploadFile.files[i]);
+		}
+
+
+		let atrzLineList = [];
+		for(let i=0; i< authList.length; i++){
+			let auth = authList[i];
+			let atrzLine = {
+				atrzLnSn: auth.atrzLnSn ,
+				sanctnerEmpno: auth.emplNo,
+				atrzTy: auth.auth,
+				dcrbAuthorYn: auth.flex,
+				sanctnerClsfCode: auth.clsfCode,
+			}
+			atrzLineList.push(atrzLine);			
+		}
+		console.log("atrzLineList",atrzLineList);
+
+		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
+
+		formData.append("emplNo",secEmplNo);
+		formData.append("emplNm",secEmplNm);
+		formData.append("atrzDocNo",$("#s_dfNo").text());
+
+		console.log("전송하기 체킁 확인");
+		console.log("s_eap_app_bottom->formData : ", formData);
+	
+		const junyError = (request, status, error) => {
+					console.log("code(ajaxError): " + request.status)
+					console.log("message(ajaxError): " + request.responseText)
+					console.log("error(ajaxError): " + error);
+        }
+
+		//지출결의서 임시저장 시작
+		$.ajax({
+			url:"/atrz/atrzDraftStorage",
+			processData:false,
+			contentType:false,
+			type:"post",
+			data: formData,
+			dataType:"text",
+			success : function(result){
+				console.log("체킁:",result);
+				if(result=="임시저장성공"){
+					swal({
+						title: "임시저장이 완료되었습니다.",
+						text: "",
+						icon: "success",
+						closeOnClickOutside: false,
+						closeOnEsc: false,
+						button: "확인"
+					}).then(() => {
+						// location.replace("/atrz/document");
+					});
+				}
+			},
+			error: junyError
+		})
+		//지출결의서 임시저장 끝
+	})
+
+
+
 	
 	//버튼눌렀을때 작동되게 하기 위해서 변수에 담아준다.
 	let emplNo = null;  //선택된 사원 번호 저장
-	//숫자만 있는경우에는 
-	//jsp안에서 자바언어 model에 담아서 보내는것은 그냥 이엘태그로 사용해도 가능하지만
-	//jsp에서 선언한 변수와 jsp에서 사용했던것은 자바에서 사용하지 못하도록 역슬래시(이스케이프문자)를 사용해서 달러중괄호 를 모두 그대로담아가게 한다.
-	//그리고 순서는 자바언어 -> jsp 이렇게 순서로 진행된다. 
-	//숫자만 있는경우에는 작은따옴표 사이에 넣지 않아도되지만, 만약의 사태를 대비해서 그냥 작은 따옴표로 묶어서 사용하도록!!
-	/*
-	jsp주석은 이것이다.	
-	아니면 역슬레시를 사용해서 jsp언어라는것을 말해줘야한다.
-	*/
-	
 // 	let secEMPL = '\${customUser.userName}';
 
 	let secEmplNo = '${empVO.emplNo}';
@@ -367,33 +560,33 @@ $(document).ready(function() {
 		console.log("appAppLine->emplNo : ", emplNo);
 
 		if(!emplNo){
-			swal({ text: "선택한 사원이 없습니다.", icon: "error" });
-			return;
+			swal({ text: "선택한 사원이 없습니다.", icon: "error",	button: "확인" });
+		return;
 		}
 		if(secEmplNo == emplNo){
-			swal({ text: "본인은 결재선 리스트에 추가할 수 없습니다.", icon: "error" });
-			return;
+			swal({ text: "본인은 결재선 리스트에 추가할 수 없습니다.", icon: "error",button: "확인" });
+		return;
 		}
 		for(let i = 0; i< $('.s_td_no').length; i++){
 			if($('.s_td_no').eq(i).text() == emplNo){
-				swal({ text: "이미 추가된 사원입니다.", icon: "error" });
+				swal({ text: "이미 추가된 사원입니다.", icon: "error", button: "확인" });
 				return;
 			}
 		}
 
-	
+		//기안자 정보담기
 		$.ajax({
 			url:"/atrz/insertAtrzEmp",
 			data:{"emplNo":emplNo},
 			type:"post",
 			dataType:"json",
 			success:function(result){
-				let noLen = $(".clsTr").length;
+				let noLen = $(".clsPo").length;
 
 				let selectHtml = `
 					<select class="form-select selAuth" aria-label="Default select example">
-						<option value="0" \${selectedType == "sign" ? "selected" : ""}>결재</option>
-						<option value="1" \${selectedType == "ref" ? "selected" : ""}>참조</option>
+						<option value="1" \${selectedType == "sign" ? "selected" : ""}>결재</option>
+						<option value="0" \${selectedType == "ref" ? "selected" : ""}>참조</option>
 					</select>
 				`;
 
@@ -405,55 +598,158 @@ $(document).ready(function() {
 					`;
 				}
 
+				let strA = `
+					<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
+						<th>\${noLen+1}</th>
+						<th style="display: none;" hidden class="s_td_no">\${result.emplNo}</th>
+						<th class="s_td_name">\${result.emplNm}</th>
+						<th>\${result.deptNm}</th>
+						<th class="clsPo">\${result.posNm}</th>
+						<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
+						<input type="hidden" name="clsfCode" class="clsfCode" value="\${result.clsfCode}"/>
+						log.info("결재선지정->result : ",result);
+						<th hidden>\${selectHtml}</th>
+						<th>\${checkboxHtml}</th>
+					</tr>
+				`;
 
-
-				let str = `
-						<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
-							<th>\${noLen+1}</th>
-							<th style="display: none;" class="s_td_no">\${result.emplNo}</th>
-							<th class="s_td_name">\${result.emplNm}</th>
-							<th>\${result.deptNm}</th>
-							<th>\${result.posNm}</th>
-							<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
-							<th hidden>\${selectHtml}</th>
-							<th>\${checkboxHtml}</th>
-						</tr>
-					`;
+				let strB = `
+					<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
+						<th></th>
+						<th style="display: none;" hidden class="s_td_no">\${result.emplNo}</th>
+						<th class="s_td_name">\${result.emplNm}</th>
+						<th>\${result.deptNm}</th>
+						<th>\${result.posNm}</th>
+						<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
+						<input type="hidden" name="clsfCode" class="clsfCode" value="\${result.clsfCode}"/>
+						log.info("결재선지정->result : ",result);
+						<th hidden>\${selectHtml}</th>
+						<th>\${checkboxHtml}</th>
+					</tr>
+				`;
 
 				// ✅ 타입에 따라 위치 다르게 append
 				if(selectedType === "sign"){
-					$(".s_appLine_tbody_new").append(str);  // 위쪽 결재선
+					$(".s_appLine_tbody_new").append(strA);  // 위쪽 결재선
 				}else{
-					$(".s_appLine_tbody_ref").append(str);  // 아래쪽 참조자
+					$(".s_appLine_tbody_ref").append(strB);  // 아래쪽 참조자
 				}
 			}
 		});
 	
 	}//end addAppLine()
 	
-	//왼쪽버튼의 경우에는 결재선선택과는 거리가 멀기 때문에 필요없음
-	//왼쪽 버튼을 눌렀을때 삭제처리되어야함
 	//결재자 리스트 삭제
 	$(document).on("click", "#remo_appLine",function(){
 		let lastRow = $(".s_appLine_tbody_new .clsTr");   //가장마지막에 추가된 tr
 		//삭제대상확인 
-		// console.log("삭제대상 :", lastRow.prop("outerHTML"));
 		
 		if(lastRow.length > 0){
 			lastRow.last().remove(); 
 			reindexApprovalLines();
-
+				// lastRow.remove();
+				// console.log("삭제후 남은 행의갯수 : ",$(".s_appLine_tbody_new .clsTr").length);
+				// lastRow.children().last().remove();
 			}else{
 				swal({
 					title: "",
-					text: "삭제할 사원이 없습니다.",
+					text: "삭제할 결재자가 없습니다.",
 					icon: "error",
 					closeOnClickOutside: false,
-					closeOnEsc: false
+					closeOnEsc: false,
+					button: "확인"
 				});
 					return;
 			}
 		});
+
+		// 우선 버튼을 누르면 정말로 기안을 취소하시겠습니까라고 알려준다.
+
+$(".atrzLineCancelBtn").on("click", function(event) {
+	event.preventDefault();
+	swal({
+		title: "작성중인 기안을 취소하시겠습니까?",
+		text: "취소 후에는 기안이 삭제됩니다.",
+		icon: "warning",
+		buttons: {
+			cancel: "아니요",
+			confirm: {
+				text: "예",
+				value: true,
+				className: "atrzLineCancelBtn"
+			}
+		},
+		dangerMode: true,
+	}).then((willDelete) => {
+		if (willDelete) {
+			// 취소 요청을 처리하는 fetch 호출
+			fetch('/atrz/deleteAtrzWriting', 
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ atrzDocNo: $("#s_dfNo").text() }) // 문서 번호를 전송
+			})
+			.then(res => res.text())  // 👈 여기!
+			.then(result => {
+			if(result === "success") {
+				swal("취소 완료!", "", "success");
+					location.replace("/atrz/home")
+			} else {
+				swal("삭제 실패", "관리자에게 문의하세요", "error");
+			}
+			});
+					}
+				});
+			});
+			//뒤로가기 진행시 기안취소되게 만들기
+			let hasDoc = !!$("#s_dfNo").text(); // 문서번호 존재 시만 동작
+			let isCanceled = false;
+
+			// history state push (현재 상태 저장)
+			if (hasDoc) {
+				history.pushState(null, document.title, location.href);
+			}
+
+			window.addEventListener('popstate', function (event) {
+				if (hasDoc && !isCanceled) {
+				event.preventDefault(); // 뒤로가기 중지
+				swal({
+					title: "기안을 취소하시겠습니까?",
+					text: "지정된 결재선이 삭제됩니다.",
+					icon: "warning",
+					buttons: ["취소", "확인"],
+					dangerMode: true
+				}).then((willDelete) => {
+					if (willDelete) {
+					fetch('/atrz/deleteAtrzWriting', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ atrzDocNo: $("#s_dfNo").text() })
+					})
+					.then(res => res.text())
+					.then(result => {
+						if (result === "success") {
+						isCanceled = true;
+						swal("기안이 취소되었습니다!", "", "success")
+							.then(() => {
+							history.back(); // 진짜 뒤로가기
+							});
+						} else {
+						swal("기안 취소 실패", "다시 시도해주세요", "error");
+						history.pushState(null, document.title, location.href); // 다시 뒤로 못 가게 복원
+						}
+					});
+					} else {
+					// 뒤로가기 막기 위해 다시 앞으로 push
+					history.pushState(null, document.title, location.href);
+					}
+				});
+				}
+			});
+
+
 	//전체테이블 순번 다시 매기기
 	function reindexApprovalLines() {
 		$(".clsTr").each(function(index) {
@@ -481,7 +777,6 @@ $(document).ready(function() {
     }
 });
 
-	
 	//결재선지정에서 확인버튼 눌렀을때
 	$("#s_add_appLine_list").click(function(){
 		if($(".s_appLine_tbody_new .clsTr").length==0){
@@ -490,7 +785,8 @@ $(document).ready(function() {
 				text: "결재할 사원을 추가해주세요!",
 				icon: "error",
 				closeOnClickOutside: false,
-				closeOnEsc: false
+				closeOnEsc: false,
+				button: "확인"
 			});
 			return;
 		}
@@ -532,39 +828,31 @@ $(document).ready(function() {
 			
 			data = {
 				"emplNo":$(this).parent().parent().children("th").eq(1).html(),
+				"clsfCode": $(this).parent().parent().find(".clsfCode").val(),
 				"auth":$(this).val(),
 				"flex":dcrbAuthorYn,
-				"atrzLnSn":(idx+1)
+				"atrzLnSn":(idx+1),
+				"atrzDocNo": $("#s_dfNo").text(),
+				"sanctnProgrsSttusCode":'00'
 			};
 			
-			authList.push(data);
+			//결재선 목록
+			authList.push(data);			
+			formData.append("atrzLineVOList["+idx+"].atrzDocNo",data.atrzDocNo); //결재문서번호 입력
+			formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",data.emplNo);
+			formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",data.clsfCode);
+			formData.append("atrzLineVOList["+idx+"].atrzTy",data.auth);//Y / N 결재자 / 참조자
+			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.flex);//  1 / 0 전결여부
+			formData.append("atrzLineVOList["+idx+"].atrzLnSn",data.atrzLnSn); //결재진행순서
+			formData.append("atrzLineVOList["+idx+"].sanctnProgrsSttusCode",data.sanctnProgrsSttusCode); //결재진행상태코드
 		});	
 		
 		console.log("순번권한전결여부authList : ", authList);
-		
-// 		let flexList = [];
-		
-		//III. 전결여부(.flexCheckDefault)
-// 		$(".flexCheckDefault").each(function(idx,flex){
-// 			console.log("flex : ", $(this).is(":checked"));
-			
-// 			if($(this).is(":checked")){
-// 				flexList.push("Y");
-// 			}else{
-// 				flexList.push("N");
-// 			}
-			
-// 		});
-		
+		formData.append("docFormNm","D");
+		formData.append("docFormNo",3);
 
-		/*
-		["20250008","20250010"]
-		*/
 		console.log("obj.emplNo : ",obj.emplNo);
-		//이게 굳이 필요있나 싶음
-		//결재선 리스트에 있는 사원번호를 가져와 결재선 jsp에 이름 부서 직책 찍기
-
-//asnyc를 써서 
+		//asnyc를 써서 
 		$.ajax({
 			url:"/atrz/insertAtrzLine",
 			processData:false,
@@ -572,129 +860,84 @@ $(document).ready(function() {
 			type:"post",
 			data: formData,
 			dataType:"json",
-			success : function(result){
-		$(".btn-close").trigger('click');
-		console.log("result : ", result);
+			success : function(atrzVO){
+				swal({
+					title: "결재선 지정이 완료되었습니다.",
+					text: "",
+					icon: "success",
+					closeOnClickOutside: false,
+					closeOnEsc: false,
+					button: "확인"
+				});
+				$(".btn-close").trigger('click');
+				console.log("atrzVO : ", atrzVO);
 
-		let tableHtml = `<table border="1" class="s_eap_draft_app"><tbody>`;
+				//문서번호 채우기
+				$("#s_dfNo").html(atrzVO.atrzDocNo);
 
-		// authList를 기반으로 분리
-		const approvalList = [];
-		const referenceList = [];
+				let result = atrzVO.emplDetailList;
 
-		$.each(authList, function(i, authItem) {
-			const matched = result.find(emp => emp.emplNo === authItem.emplNo);
-			if (matched) {
-				matched.flex = authItem.flex; // flex 정보도 보존
-				if (authItem.auth === "0") {
-					approvalList.push(matched);
-				} else if (authItem.auth === "1") {
-					referenceList.push(matched);
+				//result : List<EmployeeVO>
+				console.log("result : ", result);
+
+				let tableHtml = `<table border="1" class="s_eap_draft_app"><tbody>`;
+
+				// authList를 기반으로 분리
+				const approvalList = [];
+				const referenceList = [];
+
+				$.each(authList, function(i, authItem) {
+					const matched = result.find(emp => emp.emplNo === authItem.emplNo);
+					if (matched) {
+						matched.flex = authItem.flex; // flex 정보도 보존
+						if (authItem.auth === "1") {
+							approvalList.push(matched);
+						} else if (authItem.auth === "0") {
+							referenceList.push(matched);
+						}
+					}
+				});
+				//길준희 여기부터 시작
+				// 가. 결재파트 시작
+				if (approvalList.length > 0) {
+					tableHtml += `<tr><th rowspan="2">결재</th>`;
+					$.each(approvalList, function(i, employeeVO){
+						$("#atrz_ho_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
+						tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
+					});
+					tableHtml += `</tr><tr>`;
+					$.each(approvalList, function(i, employeeVO){
+						tableHtml += `<td><img src="/assets/images/atrz/before.png"
+							style="width: 50px;">
+							<span style="display: block; margin-top: 5px; name="sanctnerEmpno">\${employeeVO.emplNm}</span></td>`;				
+						});
+					tableHtml += `</tr>`;
 				}
-			}
-		});
 
-		// 가. 결재파트 시작
-		if (approvalList.length > 0) {
-			tableHtml += `<tr><th rowspan="3">결재</th>`;
-			$.each(approvalList, function(i, employeeVO){
-				$("#atrz_ho_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
-				tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
-			});
+				// 나. 참조파트 시작
+				if (referenceList.length > 0) {
+					tableHtml += `<tr><th rowspan="2">참조</th>`;
+					$.each(referenceList, function(i, employeeVO){
+						$("#atrz_ho_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
+						tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
+					});
 
-			tableHtml += `</tr><tr>`;
-			$.each(approvalList, function(i, employeeVO){
-				tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
-			});
+					tableHtml += `</tr><tr>`;
+					$.each(referenceList, function(i, employeeVO){
+						tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
+					});
 
-			tableHtml += `</tr><tr>`;
-			$.each(approvalList, function(i, employeeVO){
-				tableHtml += `<td><img
-					src="/assets/images/atrz/before.png"
-					style="width: 50px;"></td>`;
-			});
+					tableHtml += `</tr>`;
+				}
+				tableHtml += `</tbody></table>`;
 
-			tableHtml += `</tr>`;
-		}
-
-		// 나. 참조파트 시작
-		if (referenceList.length > 0) {
-			tableHtml += `<tr><th rowspan="2">참조</th>`;
-			$.each(referenceList, function(i, employeeVO){
-				$("#atrz_ho_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
-				tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
-			});
-
-			tableHtml += `</tr><tr>`;
-			$.each(referenceList, function(i, employeeVO){
-				tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
-			});
-
-			tableHtml += `</tr>`;
-		}
-
-		tableHtml += `</tbody></table>`;
-
-		$("#s_eap_draft_app").html(tableHtml);
-		}
+				$("#s_eap_draft_app").html(tableHtml);
+			}//end success
 	});//ajax
 	//여기서 결재선에 담긴 애들을 다 하나씩 담아서 post로
 })
 
-
-
-
-	// 합계 구하기
-	function total() {
-		var spCnt = 0;
-		var spAmount = 0;
-		var total = 0;
-		var sum = 0;
-		// const number;
-		for(var i = 0; i < $('.s_sp_count').length; i++) {
-			spCnt = $(".s_sp_count").eq(i).val();
-			spAmount = $(".s_sp_amount").eq(i).val();
-			
-			spAmount = spAmount.replace(/,/g, "");
-			total = Number(spCnt * spAmount);
-			
-			sum += total;
-		}
-		
-		$("#s_total_price").text(sum);
-		
-		var total1 = $("#s_total_price").text();
-		var total2 = total1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-		$('#s_total_price').text(total2);
-	};
-
-
-
-
-	// datepicker위젯
-	$("#s_sp_date").datepicker({
-		timepicker: true,
-		changeMonth: true,
-		changeYear: true,
-		controlType: 'select',
-		timeFormat: 'HH:mm',
-		dateFormat: 'yy-mm-dd',
-		yearRange: '1930:2025',
-		dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
-		dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
-		monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-		monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-		beforeShow: function() {
-			setTimeout(function(){
-				$('.ui-datepicker').css('z-index', 99999999999999);
-			}, 0);
-		}
-	});
-
-
-
-
-
+	
 });
 </script>
 </body>

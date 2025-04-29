@@ -38,15 +38,6 @@
 	width: 100px;
 	text-align: center;
 }
-.atrzDetailBtn{
-	padding: 0.5rem 1rem; 
-	font-size: 0.875rem;
-}
-.btnFontSt{
-	padding: 0.4rem 1rem; 
-	font-size: 0.95rem;
-}
-
 /* sweetalert스타일 */
 /*모달창  */
 .swal-modal {
@@ -89,9 +80,213 @@
 .swal-text {
 	color: black;
 }
-.salary-header {
-    background-color: #f8f9fa;
-    font-weight: bold;
+/* datepicker css */
+.ui-widget-header {
+	border: 0px solid #dddddd;
+	background: #fff;
+}
+
+.ui-datepicker-calendar>thead>tr>th {
+	font-size: 14px !important;
+}
+
+.ui-datepicker .ui-datepicker-header {
+	position: relative;
+	padding: 10px 0;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover,
+	html .ui-button.ui-state-disabled:active {
+	border: 0px solid #c5c5c5;
+	background-color: transparent;
+	font-weight: normal;
+	color: #454545;
+	text-align: center;
+}
+
+.ui-datepicker .ui-datepicker-title {
+	margin: 0 0em;
+	line-height: 16px;
+	text-align: center;
+	font-size: 14px;
+	padding: 0px;
+	font-weight: bold;
+}
+
+.ui-datepicker {
+	display: none;
+	background-color: #fff;
+	border-radius: 4px;
+	margin-top: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding: 20px;
+	padding-bottom: 10px;
+	width: 300px;
+	box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.1);
+	padding-top: 10px;
+	
+}
+
+.ui-widget.ui-widget-content {
+	border: 1px solid #eee;
+}
+
+#datepicker:focus>.ui-datepicker {
+	display: block;
+}
+
+.ui-datepicker-prev, .ui-datepicker-next {
+	cursor: pointer;
+}
+
+.ui-datepicker-next {
+	float: right;
+}
+
+.ui-state-disabled {
+	cursor: auto;
+	color: hsla(0, 0%, 80%, 1);
+}
+
+.ui-datepicker-title {
+	text-align: center;
+	padding: 10px;
+	font-weight: 100;
+	font-size: 20px;
+}
+
+.ui-datepicker-calendar {
+	width: 100%;
+}
+
+.ui-datepicker-calendar>thead>tr>th {
+	padding: 5px;
+	font-size: 20px;
+	font-weight: 400;
+}
+
+.ui-datepicker-calendar>tbody>tr>td>a {
+	color: #000;
+	font-size: 12px !important;
+	font-weight: bold !important;
+	text-decoration: none;
+}
+
+.ui-datepicker-calendar>tbody>tr>.ui-state-disabled:hover {
+	cursor: auto;
+	background-color: #fff;
+}
+
+.ui-datepicker-calendar>tbody>tr>td {
+	border-radius: 100%;
+	width: 44px;
+	height: 30px;
+	cursor: pointer;
+	padding: 5px;
+	font-weight: 100;
+	text-align: center;
+	font-size: 12px;
+}
+
+.ui-datepicker-calendar>tbody>tr>td:hover {
+	background-color: transparent;
+	opacity: 0.6;
+}
+
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover,
+	.ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus,
+	.ui-button:hover, .ui-button:focus {
+	border: 0px solid #cccccc;
+	background-color: transparent;
+	font-weight: normal;
+	color: #2b2b2b;
+}
+
+.ui-widget-header .ui-icon {
+	background-image: url('https://media.discordapp.net/attachments/692994434526085184/995979886768439306/btns.png');
+}
+
+.ui-icon-circle-triangle-e {
+	background-position: -20px 0px;
+	background-size: 36px;
+}
+
+.ui-icon-circle-triangle-w {
+	background-position: -0px -0px;
+	background-size: 36px;
+}
+
+.ui-datepicker-calendar>tbody>tr>td:first-child a {
+	color: red !important;
+}
+
+.ui-datepicker-calendar>tbody>tr>td:last-child a {
+	color: #0099ff !important;
+}
+
+.ui-datepicker-calendar>thead>tr>th:first-child {
+	color: red !important;
+}
+
+.ui-datepicker-calendar>thead>tr>th:last-child {
+	color: #0099ff !important;
+}
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight,
+.ui-widget-header .ui-state-highlight {
+	border: 0px;
+	background: rgb(255, 192, 203);
+	border-radius: 50%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	width: 30px;
+}
+
+.inp {
+	padding: 10px 10px;
+	background-color: #f1f1f1;
+	border-radius: 4px;
+	border: 0px;
+}
+
+.inp:focus {
+	outline: none;
+	background-color: #eee;
+}
+
+select.ui-datepicker-month {
+	border-radius: 5px;
+	padding: 5px;
+	width: 80px !important;
+}
+
+select.ui-datepicker-year {
+	border-radius: 5px;
+	padding: 5px;
+	margin-left: 10px !important;
+	width: 80px !important;
+}
+
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+	top: 9px !important;
+}
+/* 달력이전다음버튼 변경하는 클래스 */
+/* input, select에 여백 주기 */
+.s_default_tbody_cl td > .form-control,
+.s_default_tbody_cl th > .form-control,
+.s_default_tbody_cl td > .form-select {
+margin-bottom: 8px !important;
+}
+
+/* 셀 내부 여백 주기 */
+.s_default_tbody_cl td,
+.s_default_tbody_cl th {
+padding: 10px !important;
+}
+.s_sp_date {
+	text-align: center;
 }
 
 
@@ -106,15 +301,15 @@
 	<main class="main-wrapper">
 		<%@ include file="../layout/header.jsp"%>
 		<section class="section">
-		<form id="atrz_ho_form" action="/atrz/appLineList" method="post" enctype="multipart/form-data">
+		<form id="atrz_dr_form" action="/atrz/insertAtrzLine" method="post" enctype="multipart/form-data">
 			<div class="container-fluid">
 				<!-- 여기서 작업 시작 -->
+				<!-- <p>${attachFileVOList}</p> -->
 				<div class="row">
 					<div class="col-sm-12 mb-3 mb-sm-0">
 						<!-- 결재요청 | 임시저장 | 결재선지정 | 취소  -->
 						<div class="col card-body" id="approvalBtn">
 							<!-- 새로운 버튼 -->
-							<!--choose-->
 							<div class="tool_bar">
 								
 								<sec:authentication property="principal.empVO" var="emp" />
@@ -187,12 +382,9 @@
 									<!-- 기능 시작 -->
 									<!-- 전자결재 양식 수정도 가능 시작 -->
 									<!-- <p>${atrzVO}</p> -->
-									<!-- <p>${atrzVO.atrzLineVOList}</p> -->
 									<div id="s_eap_content_box_left" class="s_scroll">
 										<div class="s_div_container s_scroll">
-											<div
-												style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">연차신청서</div>
-
+											<div style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">기안서</div>
 											<div style="float: left; width: 230px; margin: 0 30px;">
 												<table border="1" id="s_eap_draft_info" class="text-center">
 													<tr>
@@ -330,83 +522,25 @@
 													</tbody>
 												</table>
 											</div>
-												<!--여기에 결재선이 보여야하는데-->
 
 											<div style="padding: 50px 10px 20px; clear: both;">
-												<div
-													style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목
+												<div style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목
 													:</div>
 												<input type="text" class="form-control" value="${atrzVO.atrzSj}" 
-													style="display: inline-block; width: 90%; margin-left: 5px;"
-													id="s_ho_tt" name="atrzSj" disabled>
+													style="display: inline-block; width: 90%; margin-left: 5px;" disabled
+													id="s_sp_tt" name="atrzSj">
 											</div>
 
 											<div style="border: 1px solid lightgray; margin: 10px;"></div>
 											<div style="margin: 0 10px;">
-												
-												<div class="row align-items-start" style="padding: 10px 0;">
-													<div class="col-auto">
-														<div class="s_frm_title mb-2"><b>유형</b></div>
-														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" disabled id="flexRadioDefault2"  value="20" <c:if test="${atrzVO.holidayVO.holiCode eq '20'}">checked</c:if>>
-															<label class="form-check-label" for="flexRadioDefault2">오전반차</label>
-														</div>
-														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" disabled id="flexRadioDefault2"  value="21" <c:if test="${atrzVO.holidayVO.holiCode eq '21'}">checked</c:if>>
-															<label class="form-check-label" for="flexRadioDefault2">오후반차</label>
-														</div>
-														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" id="flexRadioDefault1" disabled value="22" <c:if test="${atrzVO.holidayVO.holiCode eq '22'}">checked</c:if>> 
-																<label class="form-check-label"	for="flexRadioDefault1">연차</label>
-														</div>
-														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" disabled id="flexRadioDefault4" value="23" <c:if test="${atrzVO.holidayVO.holiCode eq '23'}">checked</c:if>>
-															<label class="form-check-label" for="flexRadioDefault4">공가</label>
-														</div>
-														<div class="form-check mr-5" style="display: inline-block;">
-															<input class="form-check-input" type="radio" name="holiCode" disabled id="flexRadioDefault3" value="24" <c:if test="${atrzVO.holidayVO.holiCode eq '24'}">checked</c:if>>
-															<label class="form-check-label" for="flexRadioDefault3">병가</label>
-														</div>
-													</div>
-													
-													<!--연차기간 선택 시작-->
-													<div class="col ms-4">
-														<div class="s_frm_title mb-2"><b>신청기간</b></div>
-														<!-- <div style="margin: 5px 0;">
-															사용 가능한 휴가일수는 <span id="s_ho_use">${checkHo }</span>일 입니다.
-														</div> -->
-														<div>
-															<!-- <p>${atrzVO.holidayVO}</p> -->
-															<fmt:formatDate value="${atrzVO.holidayVO.holiStart}" pattern="yyyy-MM-dd" var="onlyStDate" />
-															<fmt:formatDate value="${atrzVO.holidayVO.holiStart}" pattern="HH:mm:ss" var="onlyStTime" />
-															<input type="text" placeholder="신청 시작 기간을 선택해주세요"
-
-																class="form-control s_ho_start d-inline-block"
-																style="width: 250px; cursor: context-menu;" value="${onlyStDate}" disabled
-																id="s_ho_start" >
-															~
-															<fmt:formatDate value="${atrzVO.holidayVO.holiEnd}" pattern="yyyy-MM-dd" var="onlyEnDate" />
-															<fmt:formatDate value="${atrzVO.holidayVO.holiEnd}" pattern="HH:mm:ss" var="onlyEnTime" />
-															<input type="text" placeholder="신청 종료 기간을 선택해주세요"
-																class="form-control s_ho_end d-inline-block mt-2"
-																style="width: 250px; cursor: context-menu;" value="${onlyEnDate}" disabled
-																id="s_ho_end" />
-															
-															<!-- <div class="d-inline-block" >
-																(총 <span id="s_date_cal">0</span>일)
-															</div> -->
-														</div>
-													</div>	
-													<!--연차기간 선택 끝-->
-
-												</div>
 
 												<div style="padding: 10px 0;">
-													<div class="s_frm_title mb-2"> 내용</div>
-													<textarea class="form-control s_scroll"
-														style="resize: none; height: 200px;" id="s_ho_co" name="atrzCn" 
-														disabled rows="2" cols="20" wrap="hard">${atrzVO.atrzCn}</textarea>
+													<div class="s_frm_title mb-2"><b>상세 내용</b></div>
+													<textarea class="form-control" disabled
+														style="resize: none; height: 150px;" id="s_sp_co" name="atrzCn" 
+														required="required" rows="2" cols="20" wrap="hard">${atrzVO.atrzCn}</textarea>
 												</div>
+
 												<%--첨부파일 구성하기--%>
 												<div class="mb-3">
 													<div class="s_frm_title mb-2"> 미리보기</div>
@@ -446,24 +580,7 @@
 														<p class="text-muted">첨부파일이 없습니다.</p>
 													</c:if>
 												</div>
-
-													<!-- 대현님 첨부파일다운로드-->
-													<div class="email-detail-attachments">
-														<div class="attachment-title">첨부파일 (${attachFileVOList.size()})</div>
-														<div class="attachment-list">
-															<c:forEach items="${attachFileVOList}" var="attachFileVO">
-															<a class="attachment-item" href="/download?fileName=${attachFileVO.fileStrePath}">
-																<i class="far fa-file-pdf attachment-icon"></i>
-																<span class="attachment-name">${attachFileVO.fileNm} (${attachFileVO.fileViewSize})</span>
-															</a>
-															<!-- <div class="attachment-item">
-																<i class="far fa-file-pdf attachment-icon"></i>
-																<span class="attachment-name">${attachFileVO.fileNm} (${attachFileVO.fileViewSize})</span>
-															</div> -->
-															</c:forEach>
-														</div>
-														</div>
-													<!-- 대현님 첨부파일다운로드-->
+											</div>
 											</div>
 										</div>
 									</div>
@@ -524,7 +641,7 @@
 									</a>
 								</div>
 							</div>
-						<!-- 상하 버튼 추가 -->
+							<!-- 상하 버튼 추가 -->
 						</form>
 					</div>
 				</div>
@@ -723,8 +840,6 @@ $("#atrzDetailComBtn").on("click", function () {
 	});
 
 });//end DOMContentLoaded
-
-
 </script>
 </body>
 

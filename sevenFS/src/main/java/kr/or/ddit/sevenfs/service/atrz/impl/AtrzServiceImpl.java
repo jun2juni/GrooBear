@@ -459,6 +459,68 @@ public class AtrzServiceImpl implements AtrzService {
 	    }
 	}
 	
+	//기안서 등록 
+	@Override
+	public int insertDraft(DraftVO draftVO) {
+		//알림 vo생성
+		//알림에 넣을 정보를 셋팅해주기 위한 공간을 만든다.
+		NotificationVO notificationVO = new NotificationVO();
+		//여기서 제목 내용을 셋팅해줘야하는데 
+		String atrzDocNo = draftVO.getAtrzDocNo();
+		log.info("insertDraft->atrzDocNo :"+atrzDocNo);
+		 
+		//사번 리스트를 만들기 위한 List
+		List<String> sanctnerEmpNoList = new ArrayList<>();
+		String sanctnerEmpNo= "";
+		// Step 1: 결재자들 중에서 가장 작은 순번 찾기
+		int firstSanctnerSn = Integer.MAX_VALUE;
+		
+		AtrzVO atrzVO = atrzMapper.getAtrzStorage(atrzDocNo);
+		List<AtrzLineVO> atrzLineVoList = atrzVO.getAtrzLineVOList();
+
+		// Step 1: 결재자 중 가장 작은 순번 찾기
+		for (AtrzLineVO atrzLineVO : atrzLineVoList) {
+		    if ("1".equals(atrzLineVO.getAtrzTy()) && atrzLineVO.getAtrzLnSn() < firstSanctnerSn) {
+		        firstSanctnerSn = atrzLineVO.getAtrzLnSn();
+		    }
+		}
+		// Step 2: 그 순번을 가진 결재자만 추가
+		for (AtrzLineVO atrzLineVO : atrzLineVoList) {
+		    if ("1".equals(atrzLineVO.getAtrzTy()) && atrzLineVO.getAtrzLnSn() == firstSanctnerSn) {
+		        sanctnerEmpNoList.add(atrzLineVO.getSanctnerEmpno());
+		    }
+		}
+		
+		//배열로 변환
+		String[] sanctnerEmpNoArr =sanctnerEmpNoList.toArray(new String[0]);
+		log.info("insertDraft->sanctnerEmpNoArr :"+ Arrays.toString(sanctnerEmpNoArr));
+		log.info("insertDraft->atrzVO :"+atrzVO);
+		
+		
+		//originPath 기능별 NO =? /board/detail?boardNo=1
+		//skillCode  전자결재 코드 넘버
+		//알림 받아야할 사원의 정보를 리스트로 받아서 넘겨준다.
+		
+		//넘버를 vo에 담아서 넣어준다.
+		List<EmployeeVO> employeeVOList = new ArrayList<>();
+		for(String empNo : sanctnerEmpNoArr) {
+			EmployeeVO employeeVO = new EmployeeVO();
+			employeeVO.setEmplNo(empNo);
+			employeeVOList.add(employeeVO);
+		}
+		
+		//알림 제목을 셋팅해준다 ntcnSj 제목
+		//허성진씨 줄바꿈이 안먹히자나~~~~~
+		notificationVO.setNtcnSj("[전자결재 알림]");
+		//알림 내용을 셋팅해준다 ntcnCn	내용
+		notificationVO.setNtcnCn(atrzVO.getDrafterEmpnm() +" 님이 결재기안을 요청하였습니다.");
+		notificationVO.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo="+atrzVO.getAtrzDocNo());
+		notificationVO.setSkillCode("02");
+		
+		// 알림을 보낼 사번을 배열로 담아준다.
+		notificationService.insertNotification(notificationVO, employeeVOList);
+		return this.atrzMapper.insertDraft(draftVO);
+	}
 	
 	
 	//급여계좌변경신청서 등록
@@ -467,11 +529,7 @@ public class AtrzServiceImpl implements AtrzService {
 		return this.atrzMapper.insertBankAccount(bankAccountVO);
 	}
 	
-	//기안서 등록 
-	@Override
-	public int insertDraft(DraftVO draftVO) {
-		return this.atrzMapper.insertDraft(draftVO);
-	}
+	
 	
 	//전자결재 상세보기
 	@Override
@@ -1048,6 +1106,35 @@ public class AtrzServiceImpl implements AtrzService {
 	@Override
 	public DraftVO draftDetail(String draftNo) {
 		return this.atrzMapper.draftDetail(draftNo);
+		
+	}
+	//기안서 임시저장
+	@Override
+	public void updateDraft(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, DraftVO draftVO) throws Exception {
+		// 1. 사원 정보 보완
+	    if (atrzVO != null && atrzVO.getEmplNo() != null) {
+	        EmployeeVO emplDetail = organizationService.emplDetail(atrzVO.getEmplNo());
+	        if (emplDetail != null) {
+	            atrzVO.setClsfCode(emplDetail.getClsfCode());
+	            atrzVO.setDeptCode(emplDetail.getDeptCode());
+	        }
+	    }
+
+	    // 3. 전자결재 테이블 업데이트 (null 아닐 때만)
+	    if (atrzVO != null) {
+	        atrzMapper.updateHolidayAtrz(atrzVO);
+	    }
+
+	    // 5. 결재선 목록 등록 (null 체크 + 비어있는 리스트 여부 확인)
+	    if (atrzLineList != null && !atrzLineList.isEmpty()) {
+	        atrzMapper.deleteAtrzLineByDocNo(atrzVO.getAtrzDocNo()); // 기존 데이터 제거
+	        for (AtrzLineVO atrzLineVO : atrzLineList) {
+	            if (atrzLineVO != null) {
+	                atrzLineVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
+	                atrzMapper.updateAtrzLine(atrzLineVO);
+	            }
+	        }
+	    }
 		
 	}
 	

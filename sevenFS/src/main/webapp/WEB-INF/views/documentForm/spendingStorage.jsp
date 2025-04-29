@@ -345,7 +345,7 @@ padding: 10px !important;
 									<!-- 여기다가 작성해주세요(준희) -->
 									<!-- 기능 시작 -->
 									<!-- 전자결재 양식 수정도 가능 시작 -->
-									<p>${atrzVO}</p>
+									<!-- <p>${atrzVO}</p> -->
 									<div id="s_eap_content_box_left" class="s_scroll">
 										<div class="s_div_container s_scroll">
 											<div style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">지출결의서</div>
@@ -627,52 +627,850 @@ padding: 10px !important;
 
 
 <script>
-	//제목 너무 길게 입력하면 입력초과 스왈
-	document.getElementById('s_sp_tt').addEventListener('input', function (event) {
-			const maxLength = 60; // 최대 길이 설정
-			const inputField = this;
-			const inputValue = inputField.value;
-	
-			// 입력값이 최대 길이를 초과할 경우
-			if (inputValue.length > maxLength) {
-				swal({
-					title: "입력 초과",
-					text: "제목은 최대 60자까지 입력 가능합니다.",
-					icon: "warning",
-					button: "확인"
-				}).then(() => {
-					// 초과된 부분을 잘라내기
-					inputField.value = inputValue.substring(0, maxLength);
-				});
-	
-				// 입력 처리를 중단
-				event.preventDefault();
-				return;
-			}
-		});
-	//내역추가
-	function addTr() {
-		$(".s_default_tbody_cl").append(
-			'<tr>'
-				+ '<th scope="row"><input type="date" class="form-control s_sp_date" id="s_sp_date" name="sp_date"></th>'
-				+ '<td><input type="text" class="form-control s_sp_detail" name="sp_detail"></td>'
-				+ '<td><input type="number" id="sp_count" class="form-control s_sp_count" name="sp_count" onblur="total()"></td>'
-				+ '<td><input type="text" class="form-control s_sp_amount" id="sp_amount" name="sp_amount" onkeyup="commas(this)" onblur="total()"></td>'
-				+ '<td>'
-				+ '<select class="form-select s_select" aria-label="Default select example">'
-					+ '<option value="C">신용카드</option>'
-					+ '<option value="A">가상계좌</option>'
-				+ '</select>'
-				+ '</td>'
-			+ '</tr>'	
-		);
+//페이지 로딩시 합계계산
+document.addEventListener("DOMContentLoaded",function(){
+	total();
+})
+//제목 너무 길게 입력하면 입력초과 스왈
+document.getElementById('s_sp_tt').addEventListener('input', function (event) {
+		const maxLength = 60; // 최대 길이 설정
+		const inputField = this;
+		const inputValue = inputField.value;
+
+		// 입력값이 최대 길이를 초과할 경우
+		if (inputValue.length > maxLength) {
+			swal({
+				title: "입력 초과",
+				text: "제목은 최대 60자까지 입력 가능합니다.",
+				icon: "warning",
+				button: "확인"
+			}).then(() => {
+				// 초과된 부분을 잘라내기
+				inputField.value = inputValue.substring(0, maxLength);
+			});
+
+			// 입력 처리를 중단
+			event.preventDefault();
+			return;
+		}
+	});
+//내역추가
+function addTr() {
+	$(".s_default_tbody_cl").append(
+		'<tr>'
+			+ '<th scope="row"><input type="date" class="form-control s_sp_date" id="s_sp_date" name="sp_date"></th>'
+			+ '<td><input type="text" class="form-control s_sp_detail" name="sp_detail"></td>'
+			+ '<td><input type="number" id="sp_count" class="form-control s_sp_count" name="sp_count" onblur="total()"></td>'
+			+ '<td><input type="text" class="form-control s_sp_amount" id="sp_amount" name="sp_amount" onkeyup="commas(this)" onblur="total()"></td>'
+			+ '<td>'
+			+ '<select class="form-select s_select" aria-label="Default select example">'
+				+ '<option value="C">신용카드</option>'
+				+ '<option value="A">가상계좌</option>'
+			+ '</select>'
+			+ '</td>'
+		+ '</tr>'	
+	);
+}
+
+
+
+
+
+
+// 합계 구하기
+function total() {
+	var spCnt = 0;
+	var spAmount = 0;
+	var total = 0;
+	var sum = 0;
+	// const number;
+	for(var i = 0; i < $('.s_sp_count').length; i++) {
+		spCnt = $(".s_sp_count").eq(i).val();
+		spAmount = $(".s_sp_amount").eq(i).val();
+		
+		spAmount = spAmount.replace(/,/g, "");
+		total = Number(spCnt * spAmount);
+		
+		sum += total;
 	}
 	
+	$("#s_total_price").text(sum);
 	
+	var total1 = $("#s_total_price").text();
+	var total2 = total1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	$('#s_total_price').text(total2);
+};
+
+function commas(t) {
+
+// 콤마 빼고 
+var x = t.value;			
+x = x.replace(/,/gi, '');
+
+// 숫자 정규식 확인
+var regexp = /^[0-9]*$/;
+if(!regexp.test(x)){ 
+	$(t).val(""); 
+	swal({
+			title: "숫자만 입력 가능합니다.",
+			text: "",
+			icon: "error",
+			closeOnClickOutside: false,
+			closeOnEsc: false
+		});
+} else {
+	x = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");			
+	$(t).val(x);			
+}
+}
+
+//날짜 정규식 확인
+	function checkDateFormat(t) {
+	var x = t.value.trim();
+
+	// 날짜 정규식 (YYYY-MM-DD)
+	var regexp = /^[0-9\-]*$/;
+
+	if (!regexp.test(x)) {
+		$(t).val(""); // 잘못된 입력 제거
+
+		swal({
+		title: "숫자와 '-'만 입력 가능합니다.",
+		text: "날짜는 YYYY-MM-DD 형식으로 입력해주세요.",
+		icon: "error",
+		closeOnClickOutside: false,
+		closeOnEsc: false
+		});
+		return;
+	}
+
+	// 입력이 10자리 되었을 때 형식까지 검사
+	if (x.length === 10 && !/^\d{4}-\d{2}-\d{2}$/.test(x)) {
+		$(t).val("");
+
+		swal({
+		title: "날짜 형식 오류",
+		text: "날짜는 YYYY-MM-DD 형식으로 입력해주세요.",
+		icon: "error",
+		closeOnClickOutside: false,
+		closeOnEsc: false
+		});
+	}
+	}
+</script>
+<script>
+
+//JSON Object List
+let authList = [];
+$(document).ready(function() {
+	//******* 폼 전송 *******
+	$(".s_eap_app").on("click",function(){
+		event.preventDefault();
+		//보고 가져온것 시작
+		var sp_date = "";
+		var sp_detail = "";
+		var sp_count = 0;
+		var sp_amount = 0;
+		var sp_pay_code = "";
+		
+		// 제목, 내용이 비어있을 때
+		if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
+			swal({
+					title: "제목 또는 내용이 비어있습니다.",
+					text: "다시 확인해주세요.",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
+			return;
+		}
+		
+		// 지출 내역이 비어있을 때
+		if($('.s_sp_date').val() == "" || $('.s_sp_detail').val() == "" || $('.s_sp_count').val() == "" || $('.s_sp_amount').val() == "") {
+			swal({
+					title: "지출 내역을 다시 확인하여 입력해주세요.",
+					text: "",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
+			return;
+		}
+		
+		// 지출 날짜가 'YYYY-MM-DD'형태로 입력이 되지 않았을 때
+		if($('.s_sp_date').val().length != 10) {
+			swal({
+					title: "날짜를 'YYYY-MM-DD'형태로 입력해주세요.",
+					text: "",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
+			return;
+		}
+		
+		var eap_content = $('#s_sp_co').val();
+
+		
+		// textarea에 \r \n같은 문자를 <br>로 바꿔주기
+		eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
+		
+		
+		//보고 가져온것 끝
+		
+		let jnForm = document.querySelector("#atrz_sp_form");
+		// console.log("${empVO}" + empVO);
+		let formData = new FormData();
+		formData.append("docFormNm","S");
+		formData.append("docFormNo",2);
+		formData.append("atrzSj",jnForm.atrzSj.value);
+		formData.append("atrzCn",jnForm.atrzCn.value);
 	
+		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
+			formData.append("removeFileId", element.value);
+		});
+
+		if(jnForm.uploadFile.files.length){
+			for(let i=0; i< jnForm.uploadFile.files.length; i++)
+			formData.append("uploadFile",jnForm.uploadFile.files[i]);
+		}
+
+		let atrzLineList = [];
+		for(let i=0; i< authList.length; i++){
+			let auth = authList[i];
+			let atrzLine = {
+				atrzLnSn: auth.atrzLnSn ,
+				sanctnerEmpno: auth.emplNo,
+				atrzTy: auth.auth,
+				dcrbAuthorYn: auth.flex,
+				sanctnerClsfCode: auth.clsfCode,
+			}
+			atrzLineList.push(atrzLine);			
+		}
+		console.log("atrzLineList",atrzLineList);
+
+		let docSpending = {
+				expenseDate: $('.s_sp_date').val(),
+				itemDescription: $('.s_sp_detail').val(),
+				itemQuantity: $('.s_sp_count').val(),
+				itemAmount: $('.s_sp_amount').val(),
+				paymentMethod: $('.s_select').val()
+			};
+
+		formData.append("docSpending",new Blob([JSON.stringify(docSpending)],{type:"application/json"}));
+
+
+		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
+
+		formData.append("emplNo",secEmplNo);
+		formData.append("emplNm",secEmplNm);
+		formData.append("atrzDocNo",$("#s_dfNo").text());
+
+		console.log("전송하기 체킁 확인");
+		console.log("s_eap_app_bottom->formData : ", formData);
 	
+		const junyError = (request, status, error) => {
+					console.log("code: " + request.status)
+					console.log("message: " + request.responseText)
+					console.log("error: " + error);
+			}
+
+		$.ajax({
+			url:"/atrz/atrzSpendingInsert",
+			processData:false,
+			contentType:false,
+			type:"post",
+			data: formData,
+			dataType:"text",
+			success : function(result){
+				console.log("체킁:",result);
+				if(result=="쭈니성공"){
+					//location.href = "컨트롤러주소";  //  .href 브라우져 성능 향상을 위해서 캐쉬가 적용 될 수도 있고, 안 될 수도 있어
+					swal({
+						title: "결재요청이 완료되었습니다.",
+						text: "",
+						icon: "success",
+						closeOnClickOutside: false,
+						closeOnEsc: false,
+						button: "확인"
+					}).then(() => {
+						location.replace("/atrz/home")
+					});
+				}
+			},
+			error: junyError
+		})
+	});
+
+
+
+
 	
+
+	//임시저장 클릭시 
+	$(".s_eap_stor").on("click",function(){
+		event.preventDefault();
+		// alert("체킁");
+		console.log("전송하기 체킁 확인");
+		console.log("s_eap_app_bottom->authList : ", authList);
+		
+		// 제목, 내용이 비어있을 때
+		if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
+			swal({
+					title: "제목 또는 내용이 비어있습니다.",
+					text: "다시 확인해주세요.",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
+			return;
+		}
+		
+		// 지출 내역이 비어있을 때
+		if($('.s_sp_date').val() == "" || $('.s_sp_detail').val() == "" || $('.s_sp_count').val() == "" || $('.s_sp_amount').val() == "") {
+			swal({
+					title: "지출 내역을 다시 확인하여 입력해주세요.",
+					text: "",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
+			return;
+		}
+		
+		// 지출 날짜가 'YYYY-MM-DD'형태로 입력이 되지 않았을 때
+		if($('.s_sp_date').val().length != 10) {
+			swal({
+					title: "날짜를 'YYYY-MM-DD'형태로 입력해주세요.",
+					text: "",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false
+				});
+			return;
+		}
+		
+		var eap_content = $('#s_sp_co').val();
+
+		
+		// textarea에 \r \n같은 문자를 <br>로 바꿔주기
+		eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
+
+		//formData로 담아주기 위한것
+		let jnForm = document.querySelector("#atrz_sp_form");
+
+		let formData = new FormData();
+		formData.append("docFormNm","S");
+		formData.append("docFormNo",2);
+		formData.append("atrzSj",jnForm.atrzSj.value);
+		formData.append("atrzCn",jnForm.atrzCn.value);
+
+		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
+			formData.append("removeFileId", element.value);
+		});
+
+
+		if(jnForm.uploadFile.files.length){
+			for(let i=0; i< jnForm.uploadFile.files.length; i++)
+			formData.append("uploadFile",jnForm.uploadFile.files[i]);
+		}
+
+
+		let atrzLineList = [];
+			$(".trAtrzLine").children("td").each(function(idx, atrzLine){
+			let atrzLine2 = {
+				atrzLnSn: $(this).data("atrzLnSn"),
+				sanctnerEmpno: $(this).data("sanctnerEmpno"),
+				atrzTy: $(this).data("atrzTy"),
+				dcrbAuthorYn: $(this).data("dcrbAuthorYn"),
+				sanctnerClsfCode:$(this).data("sanctnerClsfCode")
+			}
+			atrzLineList.push(atrzLine2);	
+
+			formData.append("atrzLineVOList["+idx+"].atrzLnSn",atrzLine2.atrzLnSn);
+			formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",atrzLine2.sanctnerEmpno);
+			formData.append("atrzLineVOList["+idx+"].atrzTy",atrzLine2.atrzTy);
+			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",atrzLine2.dcrbAuthorYn);
+			formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",atrzLine2.sanctnerClsfCode);
+		});
+
+	document.querySelectorAll("input[name='removeFileId']").forEach(element => {
+		formData.append("removeFileId", element.value);
+	});
+
+		console.log("atrzLineList",atrzLineList);
+
+		let docSpending = {
+				expenseDate: $('.s_sp_date').val(),
+				itemDescription: $('.s_sp_detail').val(),
+				itemQuantity: $('.s_sp_count').val(),
+				itemAmount: $('.s_sp_amount').val(),
+				paymentMethod: $('.s_select').val()
+			};
+
+		console.log("docSpending",docSpending);
+		
+		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
+		formData.append("docSpending",new Blob([JSON.stringify(docSpending)],{type:"application/json"}));
+
+		formData.append("emplNo",secEmplNo);
+		formData.append("emplNm",secEmplNm);
+		formData.append("atrzDocNo",$("#s_dfNo").text());
+
+		console.log("전송하기 체킁 확인");
+		console.log("s_eap_app_bottom->formData : ", formData);
 	
+		const junyError = (request, status, error) => {
+					console.log("code(ajaxError): " + request.status)
+					console.log("message(ajaxError): " + request.responseText)
+					console.log("error(ajaxError): " + error);
+		}
+
+		//지출결의서 임시저장 시작
+		$.ajax({
+			url:"/atrz/atrzSpendingStorage",
+			processData:false,
+			contentType:false,
+			type:"post",
+			data: formData,
+			dataType:"text",
+			success : function(result){
+				console.log("체킁:",result);
+				if(result=="임시저장성공"){
+					swal({
+						title: "임시저장이 완료되었습니다.",
+						text: "",
+						icon: "success",
+						closeOnClickOutside: false,
+						closeOnEsc: false,
+						button: "확인"
+					}).then(() => {
+						// location.replace("/atrz/document");
+					});
+					// alert("왔다");
+				}
+			},
+			error: junyError
+		})
+		//지출결의서 임시저장 끝
+	})
+
+
+
+	
+	//버튼눌렀을때 작동되게 하기 위해서 변수에 담아준다.
+	let emplNo = null;  //선택된 사원 번호 저장
+// 	let secEMPL = '\${customUser.userName}';
+
+	let secEmplNo = '${empVO.emplNo}';
+	let secEmplNm = '${empVO.emplNm}';
+
+	console.log("secEmplNo번호 : ",secEmplNo);
+	console.log("secEmplNm이름 : ",secEmplNm);
+	
+// 	여기 중호쌤이랑 같이했던거 해보기
+	$(document).on("click",".jstree-anchor",function(){
+		let idStr = $(this).prop("id");//20250008_anchor
+// 		console.log("개똥이->idStr : ",idStr);
+		emplNo = idStr.split("_")[0];//20250008
+		console.log("결재선지정->emplNo : ",emplNo);
+		
+	});//end jstree-anchor
+	
+	let selectedType = "sign";  // 기본은 결재
+
+	$(document).on("click", "#add_appLine", function(){
+		selectedType = "sign";  // 결재선
+		addAppLine();
+	});
+
+	$(document).on("click", "#add_attLine", function(){
+		selectedType = "ref";  // 참조자
+		addAppLine();
+	});
+
+
+	function addAppLine() {
+		console.log("appAppLine->emplNo : ", emplNo);
+
+		if(!emplNo){
+			swal({ text: "선택한 사원이 없습니다.", icon: "error",	button: "확인" });
+		return;
+		}
+		if(secEmplNo == emplNo){
+			swal({ text: "본인은 결재선 리스트에 추가할 수 없습니다.", icon: "error",button: "확인" });
+		return;
+		}
+		for(let i = 0; i< $('.s_td_no').length; i++){
+			if($('.s_td_no').eq(i).text() == emplNo){
+				swal({ text: "이미 추가된 사원입니다.", icon: "error", button: "확인" });
+				return;
+			}
+		}
+
+		//기안자 정보담기
+		$.ajax({
+			url:"/atrz/insertAtrzEmp",
+			data:{"emplNo":emplNo},
+			type:"post",
+			dataType:"json",
+			success:function(result){
+				let noLen = $(".clsPo").length;
+
+				let selectHtml = `
+					<select class="form-select selAuth" aria-label="Default select example">
+						<option value="1" \${selectedType == "sign" ? "selected" : ""}>결재</option>
+						<option value="0" \${selectedType == "ref" ? "selected" : ""}>참조</option>
+					</select>
+				`;
+
+				// 참조일 때는 checkbox 없이 처리
+				let checkboxHtml = "";
+				if (selectedType == "sign") {
+					checkboxHtml = `
+						<input class="form-check-input flexCheckDefault" type="checkbox" value="Y" />
+					`;
+				}
+
+				let strA = `
+					<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
+						<th>\${noLen+1}</th>
+						<th style="display: none;" hidden class="s_td_no">\${result.emplNo}</th>
+						<th class="s_td_name">\${result.emplNm}</th>
+						<th>\${result.deptNm}</th>
+						<th class="clsPo">\${result.posNm}</th>
+						<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
+						<input type="hidden" name="clsfCode" class="clsfCode" value="\${result.clsfCode}"/>
+						log.info("결재선지정->result : ",result);
+						<th hidden>\${selectHtml}</th>
+						<th>\${checkboxHtml}</th>
+					</tr>
+				`;
+
+				let strB = `
+					<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
+						<th></th>
+						<th style="display: none;" hidden class="s_td_no">\${result.emplNo}</th>
+						<th class="s_td_name">\${result.emplNm}</th>
+						<th>\${result.deptNm}</th>
+						<th>\${result.posNm}</th>
+						<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
+						<input type="hidden" name="clsfCode" class="clsfCode" value="\${result.clsfCode}"/>
+						log.info("결재선지정->result : ",result);
+						<th hidden>\${selectHtml}</th>
+						<th>\${checkboxHtml}</th>
+					</tr>
+				`;
+
+				// ✅ 타입에 따라 위치 다르게 append
+				if(selectedType === "sign"){
+					$(".s_appLine_tbody_new").append(strA);  // 위쪽 결재선
+				}else{
+					$(".s_appLine_tbody_ref").append(strB);  // 아래쪽 참조자
+				}
+			}
+		});
+	
+	}//end addAppLine()
+	
+	//결재자 리스트 삭제
+	$(document).on("click", "#remo_appLine",function(){
+		let lastRow = $(".s_appLine_tbody_new .clsTr");   //가장마지막에 추가된 tr
+		//삭제대상확인 
+		
+		if(lastRow.length > 0){
+			lastRow.last().remove(); 
+			reindexApprovalLines();
+				// lastRow.remove();
+				// console.log("삭제후 남은 행의갯수 : ",$(".s_appLine_tbody_new .clsTr").length);
+				// lastRow.children().last().remove();
+			}else{
+				swal({
+					title: "",
+					text: "삭제할 결재자가 없습니다.",
+					icon: "error",
+					closeOnClickOutside: false,
+					closeOnEsc: false,
+					button: "확인"
+				});
+					return;
+			}
+		});
+
+		// 우선 버튼을 누르면 정말로 기안을 취소하시겠습니까라고 알려준다.
+		
+$(".atrzLineCancelBtn").on("click", function(event) {
+	event.preventDefault();
+	swal({
+		title: "작성중인 기안을 취소하시겠습니까?",
+		text: "취소 후에는 기안이 삭제됩니다.",
+		icon: "warning",
+		buttons: {
+			cancel: "아니요",
+			confirm: {
+				text: "예",
+				value: true,
+				className: "atrzLineCancelBtn"
+			}
+		},
+		dangerMode: true,
+	}).then((willDelete) => {
+		if (willDelete) {
+			// 취소 요청을 처리하는 fetch 호출
+			fetch('/atrz/deleteAtrzWriting', 
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ atrzDocNo: $("#s_dfNo").text() }) // 문서 번호를 전송
+			})
+			.then(res => res.text())  // 👈 여기!
+			.then(result => {
+			if(result === "success") {
+				swal("취소 완료!", "", "success");
+					location.replace("/atrz/home")
+			} else {
+				swal("삭제 실패", "관리자에게 문의하세요", "error");
+			}
+			});
+					}
+				});
+			});
+			//뒤로가기 진행시 기안취소되게 만들기
+			let hasDoc = !!$("#s_dfNo").text(); // 문서번호 존재 시만 동작
+			let isCanceled = false;
+
+			// history state push (현재 상태 저장)
+			if (hasDoc) {
+				history.pushState(null, document.title, location.href);
+			}
+
+			window.addEventListener('popstate', function (event) {
+				if (hasDoc && !isCanceled) {
+				event.preventDefault(); // 뒤로가기 중지
+				swal({
+					title: "기안을 취소하시겠습니까?",
+					text: "지정된 결재선이 삭제됩니다.",
+					icon: "warning",
+					buttons: ["취소", "확인"],
+					dangerMode: true
+				}).then((willDelete) => {
+					if (willDelete) {
+					fetch('/atrz/deleteAtrzWriting', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ atrzDocNo: $("#s_dfNo").text() })
+					})
+					.then(res => res.text())
+					.then(result => {
+						if (result === "success") {
+						isCanceled = true;
+						swal("기안이 취소되었습니다!", "", "success")
+							.then(() => {
+							history.back(); // 진짜 뒤로가기
+							});
+						} else {
+						swal("기안 취소 실패", "다시 시도해주세요", "error");
+						history.pushState(null, document.title, location.href); // 다시 뒤로 못 가게 복원
+						}
+					});
+					} else {
+					// 뒤로가기 막기 위해 다시 앞으로 push
+					history.pushState(null, document.title, location.href);
+					}
+				});
+				}
+			});
+
+
+	//전체테이블 순번 다시 매기기
+	function reindexApprovalLines() {
+		$(".clsTr").each(function(index) {
+			$(this).find("th").first().text(index + 1);
+		});
+	}
+
+	//참조자 리스트 삭제
+	$(document).on("click", "#remo_attLine", function() {
+	let refRows = $(".s_appLine_tbody_ref .clsTr");
+
+	if (refRows.length > 0) {
+		// 마지막 참조자 삭제
+		refRows.last().remove();
+		// 순번 다시 매기기
+		reindexApprovalLines();
+	} else {
+		swal({
+			title: "",
+			text: "삭제할 참조자가 없습니다.",
+			icon: "error",
+			closeOnClickOutside: false,
+			closeOnEsc: false
+		});
+	}
+});
+
+	//결재선지정에서 확인버튼 눌렀을때
+	$("#s_add_appLine_list").click(function(){
+		if($(".s_appLine_tbody_new .clsTr").length==0){
+			swal({
+				title: "결재선이 지정되어있지 않습니다.",
+				text: "결재할 사원을 추가해주세요!",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+			return;
+		}
+		var appLineArr = [];
+		
+		//1)
+		let formData = new FormData();
+		
+		//I. 결재자 정보
+		for(let i= 0; i<$(".s_td_no").length; i++){
+			let sTdNo = $(".s_td_no").eq(i).text();
+			console.log("sTdNo : ",sTdNo);
+			
+			appLineArr.push($(".s_td_no").eq(i).text());
+			console.log("appLineArr : ",appLineArr);
+			//위의 코드까지는 찍힘
+			
+			//2) 결재자 번호 입력
+			formData.append("emplNoArr",sTdNo);
+		}
+		var obj = {"emplNo" : appLineArr};
+		
+		
+		//JSON Object
+		let data = {};
+		//여기서 배열을 초기화준다면 결재선을 다시 들어가게 한다.
+		//결재선이 중복으로 들어가게 안되도록 만들어준다.
+		authList = [];
+		//II. 권한 정보(.selAuth)
+		$(".selAuth").each(function(idx,auth){
+			//전결여부 기본 N
+			let dcrbAuthorYn = "N";
+			
+			if($(this).parent().next().children().eq(0).is(":checked")){//true
+				dcrbAuthorYn = "Y";
+			}else{
+				dcrbAuthorYn = "N";
+			}
+			
+			data = {
+				"emplNo":$(this).parent().parent().children("th").eq(1).html(),
+				"clsfCode": $(this).parent().parent().find(".clsfCode").val(),
+				"auth":$(this).val(),
+				"flex":dcrbAuthorYn,
+				"atrzLnSn":(idx+1),
+				"atrzDocNo": $("#s_dfNo").text()
+			};
+			
+			//결재선 목록
+			authList.push(data);			
+			formData.append("atrzLineVOList["+idx+"].atrzDocNo",data.atrzDocNo); //결재문서번호 입력
+			formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",data.emplNo);
+			formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",data.clsfCode);
+			formData.append("atrzLineVOList["+idx+"].atrzTy",data.auth);//Y / N 결재자 / 참조자
+			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.flex);//  1 / 0 전결여부
+			formData.append("atrzLineVOList["+idx+"].atrzLnSn",data.atrzLnSn);
+		});	
+		
+		console.log("순번권한전결여부authList : ", authList);
+		formData.append("docFormNm","S");
+		formData.append("docFormNo",2);
+
+		console.log("obj.emplNo : ",obj.emplNo);
+		//asnyc를 써서 
+		$.ajax({
+			url:"/atrz/insertAtrzLine",
+			processData:false,
+			contentType:false,
+			type:"post",
+			data: formData,
+			dataType:"json",
+			success : function(atrzVO){
+				swal({
+					title: "결재선 지정이 완료되었습니다.",
+					text: "",
+					icon: "success",
+					closeOnClickOutside: false,
+					closeOnEsc: false,
+					button: "확인"
+				});
+				$(".btn-close").trigger('click');
+				console.log("atrzVO : ", atrzVO);
+
+				//문서번호 채우기
+				$("#s_dfNo").html(atrzVO.atrzDocNo);
+
+				let result = atrzVO.emplDetailList;
+
+				//result : List<EmployeeVO>
+				console.log("result : ", result);
+
+				let tableHtml = `<table border="1" class="s_eap_draft_app"><tbody>`;
+
+				// authList를 기반으로 분리
+				const approvalList = [];
+				const referenceList = [];
+
+				$.each(authList, function(i, authItem) {
+					const matched = result.find(emp => emp.emplNo === authItem.emplNo);
+					if (matched) {
+						matched.flex = authItem.flex; // flex 정보도 보존
+						if (authItem.auth === "1") {
+							approvalList.push(matched);
+						} else if (authItem.auth === "0") {
+							referenceList.push(matched);
+						}
+					}
+				});
+				//길준희 여기부터 시작
+				// 가. 결재파트 시작
+				if (approvalList.length > 0) {
+					tableHtml += `<tr><th rowspan="2">결재</th>`;
+					$.each(approvalList, function(i, employeeVO){
+						$("#atrz_sp_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
+						tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
+					});
+					tableHtml += `</tr><tr>`;
+					$.each(approvalList, function(i, employeeVO){
+						tableHtml += `<td><img src="/assets/images/atrz/before.png"
+							style="width: 50px;">
+							<span style="display: block; margin-top: 5px; name="sanctnerEmpno">\${employeeVO.emplNm}</span></td>`;				
+						});
+					tableHtml += `</tr>`;
+				}
+
+				// 나. 참조파트 시작
+				if (referenceList.length > 0) {
+					tableHtml += `<tr><th rowspan="2">참조</th>`;
+					$.each(referenceList, function(i, employeeVO){
+						$("#atrz_sp_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
+						tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
+					});
+
+					tableHtml += `</tr><tr>`;
+					$.each(referenceList, function(i, employeeVO){
+						tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
+					});
+
+					tableHtml += `</tr>`;
+				}
+
+				tableHtml += `</tbody></table>`;
+
+				$("#s_eap_draft_app").html(tableHtml);
+			}//end success
+	});//ajax
+	//여기서 결재선에 담긴 애들을 다 하나씩 담아서 post로
+})
+
+
 	// 합계 구하기
 	function total() {
 		var spCnt = 0;
@@ -696,825 +1494,31 @@ padding: 10px !important;
 		var total2 = total1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		$('#s_total_price').text(total2);
 	};
-	
-	function commas(t) {
-	
-	// 콤마 빼고 
-	var x = t.value;			
-	x = x.replace(/,/gi, '');
-	
-	// 숫자 정규식 확인
-	var regexp = /^[0-9]*$/;
-	if(!regexp.test(x)){ 
-		$(t).val(""); 
-		swal({
-				title: "숫자만 입력 가능합니다.",
-				text: "",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false
-			});
-	} else {
-		x = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");			
-		$(t).val(x);			
-	}
-	}
-	
-	//날짜 정규식 확인
-		function checkDateFormat(t) {
-		var x = t.value.trim();
-	
-		// 날짜 정규식 (YYYY-MM-DD)
-		var regexp = /^[0-9\-]*$/;
-	
-		if (!regexp.test(x)) {
-			$(t).val(""); // 잘못된 입력 제거
-	
-			swal({
-			title: "숫자와 '-'만 입력 가능합니다.",
-			text: "날짜는 YYYY-MM-DD 형식으로 입력해주세요.",
-			icon: "error",
-			closeOnClickOutside: false,
-			closeOnEsc: false
-			});
-			return;
-		}
-	
-		// 입력이 10자리 되었을 때 형식까지 검사
-		if (x.length === 10 && !/^\d{4}-\d{2}-\d{2}$/.test(x)) {
-			$(t).val("");
-	
-			swal({
-			title: "날짜 형식 오류",
-			text: "날짜는 YYYY-MM-DD 형식으로 입력해주세요.",
-			icon: "error",
-			closeOnClickOutside: false,
-			closeOnEsc: false
-			});
-		}
-		}
-	</script>
-	<script>
-	
-	//JSON Object List
-	let authList = [];
-	$(document).ready(function() {
-		//******* 폼 전송 *******
-		$(".s_eap_app").on("click",function(){
-			event.preventDefault();
-			//보고 가져온것 시작
-			var sp_date = "";
-			var sp_detail = "";
-			var sp_count = 0;
-			var sp_amount = 0;
-			var sp_pay_code = "";
-			
-			// 제목, 내용이 비어있을 때
-			if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
-				swal({
-						title: "제목 또는 내용이 비어있습니다.",
-						text: "다시 확인해주세요.",
-						icon: "error",
-						closeOnClickOutside: false,
-						closeOnEsc: false
-					});
-				return;
-			}
-			
-			// 지출 내역이 비어있을 때
-			if($('.s_sp_date').val() == "" || $('.s_sp_detail').val() == "" || $('.s_sp_count').val() == "" || $('.s_sp_amount').val() == "") {
-				swal({
-						title: "지출 내역을 다시 확인하여 입력해주세요.",
-						text: "",
-						icon: "error",
-						closeOnClickOutside: false,
-						closeOnEsc: false
-					});
-				return;
-			}
-			
-			// 지출 날짜가 'YYYY-MM-DD'형태로 입력이 되지 않았을 때
-			if($('.s_sp_date').val().length != 10) {
-				swal({
-						title: "날짜를 'YYYY-MM-DD'형태로 입력해주세요.",
-						text: "",
-						icon: "error",
-						closeOnClickOutside: false,
-						closeOnEsc: false
-					});
-				return;
-			}
-			
-			var eap_content = $('#s_sp_co').val();
-	
-			
-			// textarea에 \r \n같은 문자를 <br>로 바꿔주기
-			eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
-			
-			
-			//보고 가져온것 끝
-			
-			let jnForm = document.querySelector("#atrz_sp_form");
-			// console.log("${empVO}" + empVO);
-			let formData = new FormData();
-			formData.append("docFormNm","S");
-			formData.append("docFormNo",2);
-			formData.append("atrzSj",jnForm.atrzSj.value);
-			formData.append("atrzCn",jnForm.atrzCn.value);
-      
-      		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
-				formData.append("removeFileId", element.value);
-			});
-   
-			if(jnForm.uploadFile.files.length){
-				for(let i=0; i< jnForm.uploadFile.files.length; i++)
-				formData.append("uploadFile",jnForm.uploadFile.files[i]);
-			}
-	
-			let atrzLineList = [];
-			for(let i=0; i< authList.length; i++){
-				let auth = authList[i];
-				let atrzLine = {
-					atrzLnSn: auth.atrzLnSn ,
-					sanctnerEmpno: auth.emplNo,
-					atrzTy: auth.auth,
-					dcrbAuthorYn: auth.flex,
-					sanctnerClsfCode: auth.clsfCode,
-				}
-				atrzLineList.push(atrzLine);			
-			}
-			console.log("atrzLineList",atrzLineList);
-	
-			let docSpending = {
-					expenseDate: $('.s_sp_date').val(),
-					itemDescription: $('.s_sp_detail').val(),
-					itemQuantity: $('.s_sp_count').val(),
-					itemAmount: $('.s_sp_amount').val(),
-					paymentMethod: $('.s_select').val()
-				};
-	
-			formData.append("docSpending",new Blob([JSON.stringify(docSpending)],{type:"application/json"}));
-	
-	
-			formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
-	
-			formData.append("emplNo",secEmplNo);
-			formData.append("emplNm",secEmplNm);
-			formData.append("atrzDocNo",$("#s_dfNo").text());
-	
-			console.log("전송하기 체킁 확인");
-			console.log("s_eap_app_bottom->formData : ", formData);
-		
-			const junyError = (request, status, error) => {
-						console.log("code: " + request.status)
-						console.log("message: " + request.responseText)
-						console.log("error: " + error);
-				}
-	
-			$.ajax({
-				url:"/atrz/atrzSpendingInsert",
-				processData:false,
-				contentType:false,
-				type:"post",
-				data: formData,
-				dataType:"text",
-				success : function(result){
-					console.log("체킁:",result);
-					if(result=="쭈니성공"){
-						//location.href = "컨트롤러주소";  //  .href 브라우져 성능 향상을 위해서 캐쉬가 적용 될 수도 있고, 안 될 수도 있어
-						swal({
-							title: "결재요청이 완료되었습니다.",
-							text: "",
-							icon: "success",
-							closeOnClickOutside: false,
-							closeOnEsc: false,
-							button: "확인"
-						}).then(() => {
-							location.replace("/atrz/home")
-						});
-					}
-				},
-				error: junyError
-			})
-		});
-	
-	
-	
-	
-		
-	
-		//임시저장 클릭시 
-		$(".s_eap_stor").on("click",function(){
-			event.preventDefault();
-			// alert("체킁");
-			console.log("전송하기 체킁 확인");
-			console.log("s_eap_app_bottom->authList : ", authList);
-			
-			// 제목, 내용이 비어있을 때
-			if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
-				swal({
-						title: "제목 또는 내용이 비어있습니다.",
-						text: "다시 확인해주세요.",
-						icon: "error",
-						closeOnClickOutside: false,
-						closeOnEsc: false
-					});
-				return;
-			}
-			
-			// 지출 내역이 비어있을 때
-			if($('.s_sp_date').val() == "" || $('.s_sp_detail').val() == "" || $('.s_sp_count').val() == "" || $('.s_sp_amount').val() == "") {
-				swal({
-						title: "지출 내역을 다시 확인하여 입력해주세요.",
-						text: "",
-						icon: "error",
-						closeOnClickOutside: false,
-						closeOnEsc: false
-					});
-				return;
-			}
-			
-			// 지출 날짜가 'YYYY-MM-DD'형태로 입력이 되지 않았을 때
-			if($('.s_sp_date').val().length != 10) {
-				swal({
-						title: "날짜를 'YYYY-MM-DD'형태로 입력해주세요.",
-						text: "",
-						icon: "error",
-						closeOnClickOutside: false,
-						closeOnEsc: false
-					});
-				return;
-			}
-			
-			var eap_content = $('#s_sp_co').val();
-	
-			
-			// textarea에 \r \n같은 문자를 <br>로 바꿔주기
-			eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
-	
-			//formData로 담아주기 위한것
-			let jnForm = document.querySelector("#atrz_sp_form");
-	
-			let formData = new FormData();
-			formData.append("docFormNm","S");
-			formData.append("docFormNo",2);
-			formData.append("atrzSj",jnForm.atrzSj.value);
-			formData.append("atrzCn",jnForm.atrzCn.value);
-   
-			document.querySelectorAll("input[name='removeFileId']").forEach(element => {
-				formData.append("removeFileId", element.value);
-			});
-   
-   
-			if(jnForm.uploadFile.files.length){
-				for(let i=0; i< jnForm.uploadFile.files.length; i++)
-				formData.append("uploadFile",jnForm.uploadFile.files[i]);
-			}
-	
-	
-			let atrzLineList = [];
-				$(".trAtrzLine").children("td").each(function(idx, atrzLine){
-				let atrzLine2 = {
-					atrzLnSn: $(this).data("atrzLnSn"),
-					sanctnerEmpno: $(this).data("sanctnerEmpno"),
-					atrzTy: $(this).data("atrzTy"),
-					dcrbAuthorYn: $(this).data("dcrbAuthorYn"),
-					sanctnerClsfCode:$(this).data("sanctnerClsfCode")
-				}
-				atrzLineList.push(atrzLine2);	
 
-				formData.append("atrzLineVOList["+idx+"].atrzLnSn",atrzLine2.atrzLnSn);
-				formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",atrzLine2.sanctnerEmpno);
-				formData.append("atrzLineVOList["+idx+"].atrzTy",atrzLine2.atrzTy);
-				formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",atrzLine2.dcrbAuthorYn);
-				formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",atrzLine2.sanctnerClsfCode);
-			});
 
-		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
-			formData.append("removeFileId", element.value);
-		});
 
-			console.log("atrzLineList",atrzLineList);
-	
-			let docSpending = {
-					expenseDate: $('.s_sp_date').val(),
-					itemDescription: $('.s_sp_detail').val(),
-					itemQuantity: $('.s_sp_count').val(),
-					itemAmount: $('.s_sp_amount').val(),
-					paymentMethod: $('.s_select').val()
-				};
 
-			console.log("docSpending",docSpending);
-			
-			formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
-			formData.append("docSpending",new Blob([JSON.stringify(docSpending)],{type:"application/json"}));
-	
-			formData.append("emplNo",secEmplNo);
-			formData.append("emplNm",secEmplNm);
-			formData.append("atrzDocNo",$("#s_dfNo").text());
-	
-			console.log("전송하기 체킁 확인");
-			console.log("s_eap_app_bottom->formData : ", formData);
-		
-			const junyError = (request, status, error) => {
-						console.log("code(ajaxError): " + request.status)
-						console.log("message(ajaxError): " + request.responseText)
-						console.log("error(ajaxError): " + error);
-			}
-	
-			//지출결의서 임시저장 시작
-			$.ajax({
-				url:"/atrz/atrzSpendingStorage",
-				processData:false,
-				contentType:false,
-				type:"post",
-				data: formData,
-				dataType:"text",
-				success : function(result){
-					console.log("체킁:",result);
-					if(result=="임시저장성공"){
-						swal({
-							title: "임시저장이 완료되었습니다.",
-							text: "",
-							icon: "success",
-							closeOnClickOutside: false,
-							closeOnEsc: false,
-							button: "확인"
-						}).then(() => {
-							// location.replace("/atrz/document");
-						});
-						// alert("왔다");
-					}
-				},
-				error: junyError
-			})
-			//지출결의서 임시저장 끝
-		})
-	
-	
-	
-		
-		//버튼눌렀을때 작동되게 하기 위해서 변수에 담아준다.
-		let emplNo = null;  //선택된 사원 번호 저장
-	// 	let secEMPL = '\${customUser.userName}';
-	
-		let secEmplNo = '${empVO.emplNo}';
-		let secEmplNm = '${empVO.emplNm}';
-	
-		console.log("secEmplNo번호 : ",secEmplNo);
-		console.log("secEmplNm이름 : ",secEmplNm);
-		
-	// 	여기 중호쌤이랑 같이했던거 해보기
-		$(document).on("click",".jstree-anchor",function(){
-			let idStr = $(this).prop("id");//20250008_anchor
-	// 		console.log("개똥이->idStr : ",idStr);
-			emplNo = idStr.split("_")[0];//20250008
-			console.log("결재선지정->emplNo : ",emplNo);
-			
-		});//end jstree-anchor
-		
-		let selectedType = "sign";  // 기본은 결재
-	
-		$(document).on("click", "#add_appLine", function(){
-			selectedType = "sign";  // 결재선
-			addAppLine();
-		});
-	
-		$(document).on("click", "#add_attLine", function(){
-			selectedType = "ref";  // 참조자
-			addAppLine();
-		});
-	
-	
-		function addAppLine() {
-			console.log("appAppLine->emplNo : ", emplNo);
-	
-			if(!emplNo){
-				swal({ text: "선택한 사원이 없습니다.", icon: "error",	button: "확인" });
-			return;
-			}
-			if(secEmplNo == emplNo){
-				swal({ text: "본인은 결재선 리스트에 추가할 수 없습니다.", icon: "error",button: "확인" });
-			return;
-			}
-			for(let i = 0; i< $('.s_td_no').length; i++){
-				if($('.s_td_no').eq(i).text() == emplNo){
-					swal({ text: "이미 추가된 사원입니다.", icon: "error", button: "확인" });
-					return;
-				}
-			}
-	
-			//기안자 정보담기
-			$.ajax({
-				url:"/atrz/insertAtrzEmp",
-				data:{"emplNo":emplNo},
-				type:"post",
-				dataType:"json",
-				success:function(result){
-					let noLen = $(".clsPo").length;
-	
-					let selectHtml = `
-						<select class="form-select selAuth" aria-label="Default select example">
-							<option value="1" \${selectedType == "sign" ? "selected" : ""}>결재</option>
-							<option value="0" \${selectedType == "ref" ? "selected" : ""}>참조</option>
-						</select>
-					`;
-	
-					// 참조일 때는 checkbox 없이 처리
-					let checkboxHtml = "";
-					if (selectedType == "sign") {
-						checkboxHtml = `
-							<input class="form-check-input flexCheckDefault" type="checkbox" value="Y" />
-						`;
-					}
-	
-					let strA = `
-						<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
-							<th>\${noLen+1}</th>
-							<th style="display: none;" hidden class="s_td_no">\${result.emplNo}</th>
-							<th class="s_td_name">\${result.emplNm}</th>
-							<th>\${result.deptNm}</th>
-							<th class="clsPo">\${result.posNm}</th>
-							<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
-							<input type="hidden" name="clsfCode" class="clsfCode" value="\${result.clsfCode}"/>
-							log.info("결재선지정->result : ",result);
-							<th hidden>\${selectHtml}</th>
-							<th>\${checkboxHtml}</th>
-						</tr>
-					`;
-	
-					let strB = `
-						<tr class="clsTr" id="row_\${emplNo}" name="emplNm">
-							<th></th>
-							<th style="display: none;" hidden class="s_td_no">\${result.emplNo}</th>
-							<th class="s_td_name">\${result.emplNm}</th>
-							<th>\${result.deptNm}</th>
-							<th>\${result.posNm}</th>
-							<input type="hidden" name="emplNo" class="emplNo" value="\${result.emplNo}"/>
-							<input type="hidden" name="clsfCode" class="clsfCode" value="\${result.clsfCode}"/>
-							log.info("결재선지정->result : ",result);
-							<th hidden>\${selectHtml}</th>
-							<th>\${checkboxHtml}</th>
-						</tr>
-					`;
-	
-					// ✅ 타입에 따라 위치 다르게 append
-					if(selectedType === "sign"){
-						$(".s_appLine_tbody_new").append(strA);  // 위쪽 결재선
-					}else{
-						$(".s_appLine_tbody_ref").append(strB);  // 아래쪽 참조자
-					}
-				}
-			});
-		
-		}//end addAppLine()
-		
-		//결재자 리스트 삭제
-		$(document).on("click", "#remo_appLine",function(){
-			let lastRow = $(".s_appLine_tbody_new .clsTr");   //가장마지막에 추가된 tr
-			//삭제대상확인 
-			
-			if(lastRow.length > 0){
-				lastRow.last().remove(); 
-				reindexApprovalLines();
-					// lastRow.remove();
-					// console.log("삭제후 남은 행의갯수 : ",$(".s_appLine_tbody_new .clsTr").length);
-					// lastRow.children().last().remove();
-				}else{
-					swal({
-						title: "",
-						text: "삭제할 결재자가 없습니다.",
-						icon: "error",
-						closeOnClickOutside: false,
-						closeOnEsc: false,
-						button: "확인"
-					});
-						return;
-				}
-			});
-	
-			// 우선 버튼을 누르면 정말로 기안을 취소하시겠습니까라고 알려준다.
-			
-	$(".atrzLineCancelBtn").on("click", function(event) {
-		event.preventDefault();
-		swal({
-			title: "작성중인 기안을 취소하시겠습니까?",
-			text: "취소 후에는 기안이 삭제됩니다.",
-			icon: "warning",
-			buttons: {
-				cancel: "아니요",
-				confirm: {
-					text: "예",
-					value: true,
-					className: "atrzLineCancelBtn"
-				}
-			},
-			dangerMode: true,
-		}).then((willDelete) => {
-			if (willDelete) {
-				// 취소 요청을 처리하는 fetch 호출
-				fetch('/atrz/deleteAtrzWriting', 
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ atrzDocNo: $("#s_dfNo").text() }) // 문서 번호를 전송
-				})
-				.then(res => res.text())  // 👈 여기!
-				.then(result => {
-				if(result === "success") {
-					swal("취소 완료!", "", "success");
-						location.replace("/atrz/home")
-				} else {
-					swal("삭제 실패", "관리자에게 문의하세요", "error");
-				}
-				});
-						}
-					});
-				});
-				//뒤로가기 진행시 기안취소되게 만들기
-				let hasDoc = !!$("#s_dfNo").text(); // 문서번호 존재 시만 동작
-				let isCanceled = false;
-	
-				// history state push (현재 상태 저장)
-				if (hasDoc) {
-					history.pushState(null, document.title, location.href);
-				}
-	
-				window.addEventListener('popstate', function (event) {
-					if (hasDoc && !isCanceled) {
-					event.preventDefault(); // 뒤로가기 중지
-					swal({
-						title: "기안을 취소하시겠습니까?",
-						text: "지정된 결재선이 삭제됩니다.",
-						icon: "warning",
-						buttons: ["취소", "확인"],
-						dangerMode: true
-					}).then((willDelete) => {
-						if (willDelete) {
-						fetch('/atrz/deleteAtrzWriting', {
-							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							body: JSON.stringify({ atrzDocNo: $("#s_dfNo").text() })
-						})
-						.then(res => res.text())
-						.then(result => {
-							if (result === "success") {
-							isCanceled = true;
-							swal("기안이 취소되었습니다!", "", "success")
-								.then(() => {
-								history.back(); // 진짜 뒤로가기
-								});
-							} else {
-							swal("기안 취소 실패", "다시 시도해주세요", "error");
-							history.pushState(null, document.title, location.href); // 다시 뒤로 못 가게 복원
-							}
-						});
-						} else {
-						// 뒤로가기 막기 위해 다시 앞으로 push
-						history.pushState(null, document.title, location.href);
-						}
-					});
-					}
-				});
-	
-	
-		//전체테이블 순번 다시 매기기
-		function reindexApprovalLines() {
-			$(".clsTr").each(function(index) {
-				$(this).find("th").first().text(index + 1);
-			});
-		}
-	
-		//참조자 리스트 삭제
-		$(document).on("click", "#remo_attLine", function() {
-		let refRows = $(".s_appLine_tbody_ref .clsTr");
-	
-		if (refRows.length > 0) {
-			// 마지막 참조자 삭제
-			refRows.last().remove();
-			// 순번 다시 매기기
-			reindexApprovalLines();
-		} else {
-			swal({
-				title: "",
-				text: "삭제할 참조자가 없습니다.",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false
-			});
+	// datepicker위젯
+	$("#s_sp_date").datepicker({
+		timepicker: true,
+		changeMonth: true,
+		changeYear: true,
+		controlType: 'select',
+		timeFormat: 'HH:mm',
+		dateFormat: 'yy-mm-dd',
+		yearRange: '1930:2025',
+		dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
+		dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+		monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+		monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+		beforeShow: function() {
+			setTimeout(function(){
+				$('.ui-datepicker').css('z-index', 99999999999999);
+			}, 0);
 		}
 	});
-	
-		//결재선지정에서 확인버튼 눌렀을때
-		$("#s_add_appLine_list").click(function(){
-			if($(".s_appLine_tbody_new .clsTr").length==0){
-				swal({
-					title: "결재선이 지정되어있지 않습니다.",
-					text: "결재할 사원을 추가해주세요!",
-					icon: "error",
-					closeOnClickOutside: false,
-					closeOnEsc: false,
-					button: "확인"
-				});
-				return;
-			}
-			var appLineArr = [];
-			
-			//1)
-			let formData = new FormData();
-			
-			//I. 결재자 정보
-			for(let i= 0; i<$(".s_td_no").length; i++){
-				let sTdNo = $(".s_td_no").eq(i).text();
-				console.log("sTdNo : ",sTdNo);
-				
-				appLineArr.push($(".s_td_no").eq(i).text());
-				console.log("appLineArr : ",appLineArr);
-				//위의 코드까지는 찍힘
-				
-				//2) 결재자 번호 입력
-				formData.append("emplNoArr",sTdNo);
-			}
-			var obj = {"emplNo" : appLineArr};
-			
-			
-			//JSON Object
-			let data = {};
-			//여기서 배열을 초기화준다면 결재선을 다시 들어가게 한다.
-			//결재선이 중복으로 들어가게 안되도록 만들어준다.
-			authList = [];
-			//II. 권한 정보(.selAuth)
-			$(".selAuth").each(function(idx,auth){
-				//전결여부 기본 N
-				let dcrbAuthorYn = "N";
-				
-				if($(this).parent().next().children().eq(0).is(":checked")){//true
-					dcrbAuthorYn = "Y";
-				}else{
-					dcrbAuthorYn = "N";
-				}
-				
-				data = {
-					"emplNo":$(this).parent().parent().children("th").eq(1).html(),
-					"clsfCode": $(this).parent().parent().find(".clsfCode").val(),
-					"auth":$(this).val(),
-					"flex":dcrbAuthorYn,
-					"atrzLnSn":(idx+1),
-					"atrzDocNo": $("#s_dfNo").text()
-				};
-				
-				//결재선 목록
-				authList.push(data);			
-				formData.append("atrzLineVOList["+idx+"].atrzDocNo",data.atrzDocNo); //결재문서번호 입력
-				formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",data.emplNo);
-				formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",data.clsfCode);
-				formData.append("atrzLineVOList["+idx+"].atrzTy",data.auth);//Y / N 결재자 / 참조자
-				formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.flex);//  1 / 0 전결여부
-				formData.append("atrzLineVOList["+idx+"].atrzLnSn",data.atrzLnSn);
-			});	
-			
-			console.log("순번권한전결여부authList : ", authList);
-			formData.append("docFormNm","S");
-			formData.append("docFormNo",2);
-	
-			console.log("obj.emplNo : ",obj.emplNo);
-			//asnyc를 써서 
-			$.ajax({
-				url:"/atrz/insertAtrzLine",
-				processData:false,
-				contentType:false,
-				type:"post",
-				data: formData,
-				dataType:"json",
-				success : function(atrzVO){
-					swal({
-						title: "결재선 지정이 완료되었습니다.",
-						text: "",
-						icon: "success",
-						closeOnClickOutside: false,
-						closeOnEsc: false,
-						button: "확인"
-					});
-					$(".btn-close").trigger('click');
-					console.log("atrzVO : ", atrzVO);
-	
-					//문서번호 채우기
-					$("#s_dfNo").html(atrzVO.atrzDocNo);
-	
-					let result = atrzVO.emplDetailList;
-	
-					//result : List<EmployeeVO>
-					console.log("result : ", result);
-	
-					let tableHtml = `<table border="1" class="s_eap_draft_app"><tbody>`;
-	
-					// authList를 기반으로 분리
-					const approvalList = [];
-					const referenceList = [];
-	
-					$.each(authList, function(i, authItem) {
-						const matched = result.find(emp => emp.emplNo === authItem.emplNo);
-						if (matched) {
-							matched.flex = authItem.flex; // flex 정보도 보존
-							if (authItem.auth === "1") {
-								approvalList.push(matched);
-							} else if (authItem.auth === "0") {
-								referenceList.push(matched);
-							}
-						}
-					});
-					//길준희 여기부터 시작
-					// 가. 결재파트 시작
-					if (approvalList.length > 0) {
-						tableHtml += `<tr><th rowspan="2">결재</th>`;
-						$.each(approvalList, function(i, employeeVO){
-							$("#atrz_sp_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
-							tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
-						});
-						tableHtml += `</tr><tr>`;
-						$.each(approvalList, function(i, employeeVO){
-							tableHtml += `<td><img src="/assets/images/atrz/before.png"
-								style="width: 50px;">
-								<span style="display: block; margin-top: 5px; name="sanctnerEmpno">\${employeeVO.emplNm}</span></td>`;				
-							});
-						tableHtml += `</tr>`;
-					}
-	
-					// 나. 참조파트 시작
-					if (referenceList.length > 0) {
-						tableHtml += `<tr><th rowspan="2">참조</th>`;
-						$.each(referenceList, function(i, employeeVO){
-							$("#atrz_sp_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
-							tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
-						});
-	
-						tableHtml += `</tr><tr>`;
-						$.each(referenceList, function(i, employeeVO){
-							tableHtml += `<td name="sanctnerEmpno">\${employeeVO.emplNm}</td>`;
-						});
-	
-						tableHtml += `</tr>`;
-					}
-	
-					tableHtml += `</tbody></table>`;
-	
-					$("#s_eap_draft_app").html(tableHtml);
-				}//end success
-		});//ajax
-		//여기서 결재선에 담긴 애들을 다 하나씩 담아서 post로
-	})
-	
-	
-		// 합계 구하기
-		function total() {
-			var spCnt = 0;
-			var spAmount = 0;
-			var total = 0;
-			var sum = 0;
-			// const number;
-			for(var i = 0; i < $('.s_sp_count').length; i++) {
-				spCnt = $(".s_sp_count").eq(i).val();
-				spAmount = $(".s_sp_amount").eq(i).val();
-				
-				spAmount = spAmount.replace(/,/g, "");
-				total = Number(spCnt * spAmount);
-				
-				sum += total;
-			}
-			
-			$("#s_total_price").text(sum);
-			
-			var total1 = $("#s_total_price").text();
-			var total2 = total1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-			$('#s_total_price').text(total2);
-		};
-	
-	
-	
-	
-		// datepicker위젯
-		$("#s_sp_date").datepicker({
-			timepicker: true,
-			changeMonth: true,
-			changeYear: true,
-			controlType: 'select',
-			timeFormat: 'HH:mm',
-			dateFormat: 'yy-mm-dd',
-			yearRange: '1930:2025',
-			dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
-			dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
-			monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-			monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-			beforeShow: function() {
-				setTimeout(function(){
-					$('.ui-datepicker').css('z-index', 99999999999999);
-				}, 0);
-			}
-		});
-	});
-	</script>
+});
+</script>
 </body>
 
 </html>

@@ -29,7 +29,7 @@
 </style>
 </head>
 <body>
-<div class="s_div_container" style="height: 800px;">
+<div class="s_div_container" style="height: 650px;">
 	<div style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">급여명세서</div>
 	<div id="salaryDetail">
 		<div style="padding: 50px 10px 20px; clear: both;">

@@ -119,7 +119,7 @@ text-align: center;
 									</button>
 									</a> 
                                     <a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1"
-										href="/atrz/home"> 
+										href="/atrz/document?tab=1"> 
                                     <span class="material-symbols-outlined fs-5">format_list_bulleted</span>목록으로
 									</a>
 								</div>
@@ -177,7 +177,7 @@ text-align: center;
 
 
 											<div style="float: right; margin-right: 20px;" id="s_eap_draft_app">
-												<table border="1" class="s_eap_draft_app">
+												<table border="1" class="s_eap_draft_app" hidden>
 													<tbody>
 														<tr>
 															<th rowspan="3">결재</th>
@@ -297,7 +297,7 @@ text-align: center;
 										<span class="material-symbols-outlined fs-5">bookmark</span>저장(확인)
 									</button>
 									</a> 
-                                    <a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="/atrz/home"> 
+                                    <a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="/atrz/document?tab=1"> 
                                     <span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록으로
 									</a>
 								</div>
@@ -463,7 +463,7 @@ $(".s_eap_app").on("click",function(){
 	});//ajax
 
 
-	//지출결의서 등록
+	//급여명세서 등록
 	$.ajax({
 	url:"/atrz/atrzSalaryInsert",
 	processData:false,
@@ -483,7 +483,7 @@ $(".s_eap_app").on("click",function(){
 				closeOnEsc: false,
 				button: "확인"
 			}).then(() => {
-				location.replace("/atrz/home")
+				location.replace("/atrz/document?tab=1")
 			});
 		}
 	},

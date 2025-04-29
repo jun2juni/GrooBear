@@ -365,10 +365,14 @@
 															</tr>
 														</thead>
 														<tbody>
+															<!-- <p>${referArticlePage.content}</p> -->
 															<c:forEach var="atrzVO" items="${referArticlePage.content}">
 																<tr>
 																	<td class="text-center">
 																		<p class="text-sm fw-bolder">
+																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																			
 																			${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp;</p></p>
 																	</td>
 																	<td class="text-center">
