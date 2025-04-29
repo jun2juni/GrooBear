@@ -131,15 +131,6 @@ public interface AtrzService {
 	//급여명세서 상세보기
 	public SalaryVO salaryDetail(String atrzDocNo);
 	
-
-
-
-
-	
-
-	
-
-	
 	
 	
 }
