@@ -127,11 +127,13 @@
           <div class="card-style mt-5">
             <h5 class="text-primary mb-3">💬 댓글</h5>
             <div>
-              <textarea id="answerCn" rows="3" class="form-control" placeholder="댓글을 입력하세요."></textarea>
-              <div class="d-flex justify-content-end mt-2">
-                <button type="button" class="btn btn-primary btn-sm" onclick="submitComment()">댓글 등록</button>
-              </div>
-            </div>
+			  <textarea id="answerCn" rows="3" class="form-control" placeholder="댓글을 입력하세요."
+			    onkeydown="if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); submitComment(); }"></textarea>
+			  <div class="d-flex justify-content-end mt-2">
+			    <button type="button" class="btn btn-primary btn-sm" onclick="submitComment()">댓글 등록</button>
+			  </div>
+			</div>
+
 
             <div id="answerContent" class="mt-4">
               <%-- AJAX로 댓글 목록 들어올 영역 --%>
@@ -219,10 +221,17 @@
 	    const answerCn = $("#answerCn").val().trim();  // 앞뒤 공백 제거
 	
 	    if (!answerCn) {
-	        alert("댓글 내용을 입력해주세요.");
-	        $("#answerCn").focus();
+	        Swal.fire({
+	            icon: 'warning',
+	            title: '댓글 내용이 없습니다',
+	            text: '댓글 내용을 입력해주세요.',
+	            confirmButtonText: '확인'
+	        }).then(() => {
+	            $("#answerCn").focus();
+	        });
 	        return;
 	    }
+
 	
 	    $.ajax({
 	        type: "POST",
