@@ -189,6 +189,12 @@ public interface AtrzMapper {
 	//급여명세서 상세보기
 	public SalaryVO salaryDetail(String atrzDocNo);
 	
+	//지출결의서 기안완료시
+	public SpendingVO selectSpendingByDocNo(String docNo);
+	
+	//기안서 기안완료시
+	public DraftVO selectDraftByDocNo(String docNo);
+	
 
 	
 

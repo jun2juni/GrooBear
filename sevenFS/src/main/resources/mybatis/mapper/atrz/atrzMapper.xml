@@ -2094,7 +2094,19 @@ SELECT U.*
 			    )
 			    WHERE RN = 1
 	</select>
-	
+		<!-- 지출결의서 상세보기 -->
+	<select id="draftDetail" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.DraftVO">
+    SELECT *		/* AtrzMapper.draftDetail */
+	    FROM (
+	        SELECT 
+	             DRAFT_NO
+				,ATRZ_DOC_NO
+	            ,ROW_NUMBER() OVER (ORDER BY DRAFT_NO DESC) AS RN
+	        FROM DOCUM_DRAFT
+	        WHERE ATRZ_DOC_NO = #{atrzDocNo}
+	    )
+	    WHERE RN = 1
+	</select>
 	
 	<!-- 나의 전자결재선 상황(1행)
 	public AtrzLineVO getAtrzLineInfo(AtrzVO atrzVO) 
@@ -2261,6 +2273,70 @@ SELECT U.*
 	    FROM DOCUM_HOLIDAY H
 	    LEFT JOIN ATRZ A ON H.ATRZ_DOC_NO = A.ATRZ_DOC_NO
 	    WHERE H.ATRZ_DOC_NO = #{atrzDocNo}
+	</select>
+	
+	<!-- 지출결의서 최종 결재 완료시 -->
+	<select id="selectSpendingByDocNo" resultMap="spendingDetailMap">
+	    SELECT 				/* AtrzMapper.selectSpendingByDocNo */
+	          S.SPENDING_REPORT_NO
+	        , S.ATRZ_DOC_NO
+	        , S.EXPENSE_ORDER
+	        , S.EXPENSE_DATE
+	        , S.ITEM_DESCRIPTION
+	        , S.ITEM_QUANTITY
+	        , S.ITEM_AMOUNT
+	        , S.PAYMENT_METHOD
+	        /* AtrzVO에 필요한 컬럼들 (resultMap에서 참조하는 것들) */
+	        ,A.ATCH_FILE_NO
+	        ,A.ATRZ_CN
+	        ,A.ATRZ_COMPT_DT
+	        ,A.ATRZ_DELETE_YN
+	        ,A.ATRZ_DRFT_DT
+	        ,A.ATRZ_OPINION
+	        ,A.ATRZ_RTRVL_DT
+	        ,A.ATRZ_SJ
+	        ,A.ATRZ_STTUS_CODE
+	        ,A.ATRZ_TMPR_STRE_DT
+	        ,A.BKMK_YN
+	        ,A.DOC_FORM_NO
+	        ,A.DRAFTER_CLSF
+	        ,A.DRAFTER_DEPT
+	        ,A.DRAFTER_EMPNM
+	        ,A.DRAFTER_EMPNO
+	        ,A.ELTSGN_IMAGE
+	        ,A.SCHDUL_REG_YN
+	    FROM DOCUM_SPENDING S
+	    LEFT JOIN ATRZ A ON S.ATRZ_DOC_NO = A.ATRZ_DOC_NO
+	    WHERE S.ATRZ_DOC_NO = #{atrzDocNo}
+	</select>
+	
+	<!-- 기안서 최종 결재 완료시 -->
+	<select id="selectDraftByDocNo" resultMap="draftDetailMap">
+	    SELECT 				/* AtrzMapper.selectDraftByDocNo */
+	          D.DRAFT_NO
+	        , D.ATRZ_DOC_NO
+	        /* AtrzVO에 필요한 컬럼들 (resultMap에서 참조하는 것들) */
+	        ,A.ATCH_FILE_NO
+	        ,A.ATRZ_CN
+	        ,A.ATRZ_COMPT_DT
+	        ,A.ATRZ_DELETE_YN
+	        ,A.ATRZ_DRFT_DT
+	        ,A.ATRZ_OPINION
+	        ,A.ATRZ_RTRVL_DT
+	        ,A.ATRZ_SJ
+	        ,A.ATRZ_STTUS_CODE
+	        ,A.ATRZ_TMPR_STRE_DT
+	        ,A.BKMK_YN
+	        ,A.DOC_FORM_NO
+	        ,A.DRAFTER_CLSF
+	        ,A.DRAFTER_DEPT
+	        ,A.DRAFTER_EMPNM
+	        ,A.DRAFTER_EMPNO
+	        ,A.ELTSGN_IMAGE
+	        ,A.SCHDUL_REG_YN
+	    FROM DOCUM_DRAFT D
+	    LEFT JOIN ATRZ A ON D.ATRZ_DOC_NO = A.ATRZ_DOC_NO
+	    WHERE D.ATRZ_DOC_NO = #{atrzDocNo}
 	</select>
 
 

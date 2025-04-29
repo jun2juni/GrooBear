@@ -101,7 +101,7 @@ public interface AtrzService {
 	public Double readHoCnt(String empNo);
 	
 	//기안서 임시저장
-	public void updateDraft(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, DraftVO draftVO)throws Exception;
+	public void updateDraft(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, DraftVO draftVO) throws Exception;
 	
 	
 	//반려 문서 재기안 get
@@ -130,6 +130,9 @@ public interface AtrzService {
 	public void insertSalaryForm(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, SalaryVO salaryVO);
 	//급여명세서 상세보기
 	public SalaryVO salaryDetail(String atrzDocNo);
+	
+	//기안서 임시저장
+	public int atrzDraftStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, DraftVO draftVO);
 	
 	
 	

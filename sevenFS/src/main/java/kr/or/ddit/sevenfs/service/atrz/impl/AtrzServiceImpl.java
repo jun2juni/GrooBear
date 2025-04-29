@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
-import kr.or.ddit.sevenfs.mapper.schedule.ScheduleMapper;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
 import kr.or.ddit.sevenfs.service.notification.NotificationService;
 import kr.or.ddit.sevenfs.service.organization.DclztypeService;
@@ -638,159 +638,159 @@ public class AtrzServiceImpl implements AtrzService {
 	    List<EmployeeVO> finalApprovalList = new ArrayList<>();
 	    EmployeeVO drafterVO = new EmployeeVO();
 	    
-		//최종결재자인경우
-		if(myStep==maxStep){
-			//III. ATRZ의 완료 및 일시 처리
-			log.info("최종결재자 인경우");
-			atrzVO.setAtrzSttusCode("10");
-			result += atrzMapper.atrzStatusFinalUpdate(atrzVO);
-			//길주늬 여기서 시작해라
-			 // 💡 결재 완료 → 근태 등록
-			HolidayVO holidayVO =  atrzMapper.selectHolidayByDocNo(atrzVOApp.getAtrzDocNo());
-			atrzVO.setHolidayVO(holidayVO);
-	        log.info("atrzDetailAppUpdate->holidayVO : "+holidayVO);
-	        
-			if(holidayVO!=null &&holidayVO.getAtrzVO() !=null) {
-				String DrafterEmpNo = holidayVO.getAtrzVO().getDrafterEmpno(); //사원번호추출
-				// 날짜 포맷 정의
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-				// 날짜를 원하는 포맷의 문자열로 변환
-				String dateStr = sdf.format(holidayVO.getHoliStart());
-				
-				DclzTypeVO dclzTypeVO = new DclzTypeVO();
-				dclzTypeVO.setEmplNo(DrafterEmpNo);
-				dclzTypeVO.setDclzNo(dateStr);   //여기에서 날짜만 20250416형태로 추출해서 넣어야 한다.
-				dclzTypeVO.setDclzCode(holidayVO.getHoliCode());
-				dclzTypeVO.setDclzBeginDt(holidayVO.getHoliStart());
-				dclzTypeVO.setDclzEndDt(holidayVO.getHoliEnd());
-				dclzTypeVO.setDclzReason(holidayVO.getAtrzVO().getAtrzCn());
-				
-				atrzMapper.holidayDclzUpdate(dclzTypeVO);
-				log.info("atrzDetailAppUpdate->dclzTypeVO : "+dclzTypeVO);
-				//연차신청서에서 연차 사용갯수를 가져온다.
-				Double useDays = Double.parseDouble(holidayVO.getHoliUseDays());
-				
-				VacationVO vacationVO = new VacationVO();
-				
-				String draftEmpNo = holidayVO.getAtrzVO().getDrafterEmpno();
-				log.info("draftEmpNo(기안자사원번호) :  "+draftEmpNo);
-				vacationVO.setEmplNo(draftEmpNo);   //사원번호 추출 
-				
-				Double holiUseDays = Double.parseDouble(holidayVO.getHoliUseDays());
-				log.info("holiUseDays(연차사용갯수) :  "+holiUseDays);
-				vacationVO = atrzMapper.emplVacationCnt(draftEmpNo);
-				log.info("vacationVO :  "+vacationVO);
-				//사용가능 연차일수가져오기
-				Double yrycUseDaycnt = vacationVO.getYrycUseDaycnt();
-				log.info("holiUseDays(사용연차갯수) :  "+yrycUseDaycnt);
-				//잔여갯수 가져오기
-				Double yrycRemndrDaycnt = vacationVO.getYrycRemndrDaycnt();
-				log.info("holiUseDays(잔여연차갯수) :  "+yrycRemndrDaycnt);
-				vacationVO.setYrycUseDaycnt(yrycUseDaycnt+holiUseDays);   		//사용일수
-				vacationVO.setYrycRemndrDaycnt(yrycRemndrDaycnt-holiUseDays);    //잔여일수
-				log.info("vacationVO(셋팅후) :  "+vacationVO);
-				
-				// 연차 업데이트 처리
-				atrzMapper.updateVacationUseDays(vacationVO);
-				
-				//최종결재자인경우 기안자에게 결재완료 알림전송
-				//여기서 알림 전송이 안되는
-				drafterVO.setEmplNo(atrzVO.getDrafterEmpno());
-				finalApprovalList.add(drafterVO);
-				//전자결재 유형별로 문구 변경하기 위한것
-				String docNo = atrzVO.getAtrzDocNo();
-				String docTypeNm = ""; // 문서 유형 이름
-				
-				if (docNo != null && !docNo.isEmpty()) {
-				    char firstChar = docNo.charAt(0);
+	    if (myStep == maxStep) {
+	        log.info("최종결재자인경우");
+	        atrzVO.setAtrzSttusCode("10");
+	        result += atrzMapper.atrzStatusFinalUpdate(atrzVO);
 
-				    switch (firstChar) {
-				        case 'H':
-				            docTypeNm = "연차신청서";
-				            break;
-				        case 'S':
-				            docTypeNm = "지출결의서";
-				            break;
-				        case 'D':
-				            docTypeNm = "기안서";
-				            break;
-				        default:
-				            docTypeNm = "전자결재 문서";
-				            break;
-				    }
-				}
+	        String docNo = atrzVO.getAtrzDocNo();
+	        char firstChar = docNo.charAt(0);
 
-				// 알림 내용설정 
-				NotificationVO notificationVOFinish = new NotificationVO();
-				notificationVOFinish.setNtcnSj("[전자결재 알림]");
-				notificationVOFinish.setNtcnCn(atrzVOApp.getDrafterEmpnm() +" 님 기안하신 " + docTypeNm +  " 가 최종 완료되었습니다.");
-				notificationVOFinish.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo=" + atrzVO.getAtrzDocNo());
-				notificationVOFinish.setSkillCode("02");
+	        String docTypeNm = "";
+	        switch (firstChar) {
+	            case 'H':
+	                docTypeNm = "연차신청서";
+	                HolidayVO holidayVO = atrzMapper.selectHolidayByDocNo(docNo);
+	                log.info("atrzDetailAppUpdate->holidayVO : " + holidayVO);
 
-				// 알림 전송
-				notificationService.insertNotification(notificationVOFinish, finalApprovalList);
-			}
-			
-			//참조자의 경우에도 결재기안이 도착했다고 알림 표시해야한다.
-			List<AtrzLineVO> atrzLineList =atrzMapper.selectAtrzLineList(atrzDocNo);
-			log.info("atrzDetailAppUpdate->atrzLineList : "+atrzLineList);
-			if(atrzLineList !=null && !atrzLineList.isEmpty()) {
-				for(AtrzLineVO atrzLineVO : atrzLineList) {
-					if(atrzLineVO.getBefSanctnerEmpno() !=null && "0".equals(atrzLineVO.getAtrzTy())) {
-						//참조자인경우
-						 EmployeeVO atrzTyEmp = new EmployeeVO();
-						 atrzTyEmp.setEmplNo(atrzLineVO.getSanctnerEmpno());
-						 
-						 NotificationVO refNotification = new NotificationVO();
-						 refNotification.setNtcnSj("[전자결재 알림]");
-						 refNotification.setNtcnCn(atrzVOApp.getDrafterEmpnm() + " 님의 결재완료된 문서가 참조되었습니다.");
-						 refNotification.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo=" + atrzVO.getAtrzDocNo());
-						 refNotification.setSkillCode("02");
-						 
-						 List<EmployeeVO> singleRefList = new ArrayList<>();
-						 singleRefList.add(atrzTyEmp);
-						 
-						// 알림 전송
-						notificationService.insertNotification(refNotification, employeeVOList);
-					}
-				}
-			}
-			//일정등록 
-			ScheduleVO scheduleVO = new ScheduleVO();
-			String holiCode = atrzVO.getHolidayVO().getHoliCode();
-			String holiName = "";
+	                if (holidayVO != null && holidayVO.getAtrzVO() != null) {
+	                    atrzVO.setHolidayVO(holidayVO);
 
-			if ("22".equals(holiCode)) {
-			    holiName = "연차";
-			} else if ("23".equals(holiCode)) {
-			    holiName = "공가";
-			} else if ("24".equals(holiCode)) {
-			    holiName = "병가";
-			} else if ("25".equals(holiCode)) {
-			    holiName = "오전반차";
-			} else if ("26".equals(holiCode)) {
-			    holiName = "오후반차";
-			} else {
-			    holiName = "휴가"; // 예외처리
-			}
-			//일정등록에 갈값 넣어주기
-			AtrzVO atrzVOSchedule = atrzMapper.selectAtrzDetail(atrzDocNo);
-			
-			atrzVOSchedule.setHolidayVO(holidayVO);
-			
-			scheduleVO.setEmplNo(atrzVO.getDrafterEmpno());	//일정 작성한 사원번호
-			scheduleVO.setSchdulTy("1");  	//0개인 1부서 2전체
-			scheduleVO.setSchdulSj(atrzVOSchedule.getDrafterEmpnm()+"님 "+holiName);	//일정제목
-			scheduleVO.setSchdulCn(atrzVOSchedule.getAtrzSj());	//일정내용
-			log.info("scheduleVO준희 일정등록 : "+scheduleVO);
-			scheduleVO.setSchdulBeginDt(atrzVOSchedule.getHolidayVO().getHoliStart());	//일정시작일시
-			scheduleVO.setSchdulEndDt(atrzVOSchedule.getHolidayVO().getHoliEnd());		//일정종료일시
-			scheduleVO.setDeptCode(atrzVOSchedule.getDrafterDept());		//부서no
+	                    // 📌 근태 등록
+	                    String DrafterEmpNo = holidayVO.getAtrzVO().getDrafterEmpno();
+	                    String dateStr = new SimpleDateFormat("yyyyMMdd").format(holidayVO.getHoliStart());
 
-			int scheduleResult = scheduleService.scheduleInsert(scheduleVO);
-			
-			
-		}//최종결재자인경우
+	                    DclzTypeVO dclzTypeVO = new DclzTypeVO();
+	                    dclzTypeVO.setEmplNo(DrafterEmpNo);
+	                    dclzTypeVO.setDclzNo(dateStr);
+	                    dclzTypeVO.setDclzCode(holidayVO.getHoliCode());
+	                    dclzTypeVO.setDclzBeginDt(holidayVO.getHoliStart());
+	                    dclzTypeVO.setDclzEndDt(holidayVO.getHoliEnd());
+	                    dclzTypeVO.setDclzReason(holidayVO.getAtrzVO().getAtrzCn());
+
+	                    atrzMapper.holidayDclzUpdate(dclzTypeVO);
+
+	                    // 📌 연차 사용 처리
+	                    Double holiUseDays = Double.parseDouble(holidayVO.getHoliUseDays());
+	                    VacationVO vacationVO = atrzMapper.emplVacationCnt(DrafterEmpNo);
+	                    vacationVO.setYrycUseDaycnt(vacationVO.getYrycUseDaycnt() + holiUseDays);
+	                    vacationVO.setYrycRemndrDaycnt(vacationVO.getYrycRemndrDaycnt() - holiUseDays);
+
+	                    atrzMapper.updateVacationUseDays(vacationVO);
+
+	                  //일정등록 
+	        			ScheduleVO scheduleVO = new ScheduleVO();
+	        			String holiCode = atrzVO.getHolidayVO().getHoliCode();
+	        			String holiName = "";
+
+	        			if ("22".equals(holiCode)) {
+	        			    holiName = "연차";
+	        			} else if ("23".equals(holiCode)) {
+	        			    holiName = "공가";
+	        			} else if ("24".equals(holiCode)) {
+	        			    holiName = "병가";
+	        			} else if ("25".equals(holiCode)) {
+	        			    holiName = "오전반차";
+	        			} else if ("26".equals(holiCode)) {
+	        			    holiName = "오후반차";
+	        			} else {
+	        			    holiName = "휴가"; // 예외처리
+	        			}
+	        			//일정등록에 갈값 넣어주기
+	        			AtrzVO atrzVOSchedule = atrzMapper.selectAtrzDetail(atrzDocNo);
+	        			
+	        			atrzVOSchedule.setHolidayVO(holidayVO);
+	        			
+	        			scheduleVO.setEmplNo(atrzVO.getDrafterEmpno());	//일정 작성한 사원번호
+	        			scheduleVO.setSchdulTy("1");  	//0개인 1부서 2전체
+	        			scheduleVO.setSchdulSj(atrzVOSchedule.getDrafterEmpnm()+"님 "+holiName);	//일정제목
+	        			scheduleVO.setSchdulCn(atrzVOSchedule.getAtrzSj());	//일정내용
+	        			log.info("scheduleVO준희 일정등록 : "+scheduleVO);
+	        			scheduleVO.setSchdulBeginDt(atrzVOSchedule.getHolidayVO().getHoliStart());	//일정시작일시
+	        			scheduleVO.setSchdulEndDt(atrzVOSchedule.getHolidayVO().getHoliEnd());		//일정종료일시
+	        			scheduleVO.setDeptCode(atrzVOSchedule.getDrafterDept());		//부서no
+
+	        			int scheduleResult = scheduleService.scheduleInsert(scheduleVO);
+	                }
+	                break;
+
+	            case 'S':
+	                docTypeNm = "지출결의서";
+	                SpendingVO spendingVO = atrzMapper.selectSpendingByDocNo(docNo);
+	                log.info("지출결의서 처리 로직 추가 필요 : " + spendingVO);
+	                break;
+
+	            case 'D':
+	                docTypeNm = "기안서";
+	                DraftVO draftVO = atrzMapper.selectDraftByDocNo(docNo);
+	                log.info("기안서 처리 로직 추가 필요 : " + draftVO);
+	                break;
+
+	            default:
+	                docTypeNm = "전자결재 문서";
+	                break;
+	        }
+			 // 📌 참조자 알림 전송
+	        log.info("atrzDetailAppUpdate->atrzDocNo:"+atrzDocNo);
+	        List<AtrzLineVO> atrzLineList = atrzMapper.selectAtrzLineList(atrzDocNo);
+	        /*
+	         atrzDetailAppUpdate->atrzLineList:[AtrzLineVO(atrzDocNo=D_20250429_00026, atrzLnSn=1, sanctnerEmpno=20250000, sanctnerClsfCode=09, 
+	         contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=1, sanctnProgrsSttusCode=10, dcrbAuthorYn=N, 
+	         contdAuthorYn=null, sanctnOpinion=승인합니다., eltsgnImage=null, sanctnConfmDt=Tue Apr 29 16:43:37 KST 2025, atrzLastLnSn=0, 
+	         atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, 
+	         aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0), AtrzLineVO(atrzDocNo=D_20250429_00026, atrzLnSn=2,
+	          sanctnerEmpno=20250001, sanctnerClsfCode=00, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, 
+	          atrzTy=0, sanctnProgrsSttusCode=00, dcrbAuthorYn=N, contdAuthorYn=null, sanctnOpinion=null, eltsgnImage=null, 
+	          sanctnConfmDt=null, atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null, befSanctnerEmpno=null, 
+	          befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0), 
+	          AtrzLineVO(atrzDocNo=D_20250429_00026, atrzLnSn=3, sanctnerEmpno=20250007, sanctnerClsfCode=02, contdEmpno=null, 
+	          contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=0, sanctnProgrsSttusCode=00, dcrbAuthorYn=N, 
+	          contdAuthorYn=null, sanctnOpinion=null, eltsgnImage=null, sanctnConfmDt=null, atrzLastLnSn=0, atrzLineList=null, 
+	          sanctnerClsfNm=null, sanctnerEmpNm=null, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null,
+	           aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0), AtrzLineVO(atrzDocNo=D_20250429_00026, atrzLnSn=4, sanctnerEmpno=20250006, 
+	           sanctnerClsfCode=02, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=0, 
+	           sanctnProgrsSttusCode=00, dcrbAuthorYn=N, contdAuthorYn=null, sanctnOpinion=null, eltsgnImage=null, sanctnConfmDt=null, 
+	           atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, 
+	           aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0), AtrzLineVO(atrzDocNo=D_20250429_00026, atrzLnSn=5, sanctnerEmpno=20250005, 
+	           sanctnerClsfCode=01, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=0, sanctnProgrsSttusCode=00, dcrbAuthorYn=N, 
+	           contdAuthorYn=null, sanctnOpinion=null, eltsgnImage=null, sanctnConfmDt=null, atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null,
+	            befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0), 
+	            AtrzLineVO(atrzDocNo=D_20250429_00026, atrzLnSn=6, sanctnerEmpno=20250003, sanctnerClsfCode=00, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, 
+	            dcrbManClsfCode=null, atrzTy=0, sanctnProgrsSttusCode=00, dcrbAuthorYn=N, contdAuthorYn=null, sanctnOpinion=null, eltsgnImage=null, sanctnConfmDt=null, 
+	            atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null, 
+	            aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0)] 
+	         */
+	        log.info("atrzDetailAppUpdate->atrzLineList:"+atrzLineList);
+	        if (atrzLineList != null && !atrzLineList.isEmpty()) {
+	            for (AtrzLineVO atrzLineVO : atrzLineList) {
+	                if (atrzLineVO.getBefSanctnerEmpno() != null && "0".equals(atrzLineVO.getAtrzTy())) {
+	                    EmployeeVO atrzTyEmp = new EmployeeVO();
+	                    atrzTyEmp.setEmplNo(atrzLineVO.getSanctnerEmpno());
+
+	                    NotificationVO refNotification = new NotificationVO();
+	                    refNotification.setNtcnSj("[전자결재 알림]");
+	                    refNotification.setNtcnCn(atrzVOApp.getDrafterEmpnm() + " 님의 결재완료된 문서가 참조되었습니다.");
+	                    refNotification.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo=" + atrzVO.getAtrzDocNo());
+	                    refNotification.setSkillCode("02");
+
+	                    List<EmployeeVO> singleRefList = Collections.singletonList(atrzTyEmp);
+	                    notificationService.insertNotification(refNotification, singleRefList);
+	                }
+	            }
+	        }
+	        // 📌 결재완료 알림 전송
+	        drafterVO.setEmplNo(atrzVO.getDrafterEmpno());
+	        finalApprovalList.add(drafterVO);
+
+	        NotificationVO notificationVOFinish = new NotificationVO();
+	        notificationVOFinish.setNtcnSj("[전자결재 알림]");
+	        notificationVOFinish.setNtcnCn(atrzVOApp.getDrafterEmpnm() + " 님 기안하신 " + docTypeNm + " 가 최종 완료되었습니다.");
+	        notificationVOFinish.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo=" + atrzVO.getAtrzDocNo());
+	        notificationVOFinish.setSkillCode("02");
+
+	        notificationService.insertNotification(notificationVOFinish, finalApprovalList);
+
+	    }
 	
 		return result;
 		
@@ -1136,6 +1136,34 @@ public class AtrzServiceImpl implements AtrzService {
 	        }
 	    }
 		
+	}
+	@Override
+	public int atrzDraftStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, DraftVO draftVO) {
+		log.info("atrzSpendingStorage->임시저장 : "+atrzVO);
+		
+	    // 2. ATRZ 테이블 임시저장 상태로 업데이트 (예: sanctnProgrsSttusCode = '00')
+	    atrzVO.setSanctnProgrsSttusCode("99"); // 임시저장 상태
+	    int updateCount=  atrzMapper.storageDocUpdate(atrzVO);
+	    
+	    // 3.ATRZ테이블에 insert처리
+	    if(updateCount==0) {
+	    	atrzMapper.atrzDocStorage(atrzVO);
+	    }
+	    
+	    //결재선은 기본의 것을 삭제후 새로 저장하는 방식 권장(중복방지)
+	    //여기서 새로 결재선 선택시 다시 업데이트 해줘야함
+	    atrzMapper.deleteAtrzLineByDocNo(atrzVO.getAtrzDocNo()); // 새로 추가할 것
+	    // 4. 결재선 정보도 같이 저장
+	    for (AtrzLineVO atrzLineVO : atrzLineList) {
+	    	atrzLineVO.setAtrzDocNo(atrzVO.getAtrzDocNo());
+	    	atrzLineVO.setSanctnProgrsSttusCode("00"); // 대기중
+	        atrzMapper.insertAtrzLine(atrzLineVO); // insert 로직
+	    }
+	    
+	    // 연차정보 등록
+	    log.info("atrzDocStorage->임시저장 완료 문서번호 : "+atrzVO.getAtrzDocNo());
+		
+	    return 1;  //성공여부 반환
 	}
 	
 	

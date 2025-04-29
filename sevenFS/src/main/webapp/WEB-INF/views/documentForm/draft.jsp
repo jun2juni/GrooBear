@@ -237,39 +237,37 @@ padding: 10px !important;
 							</div>
 						</div>
 					</div>
-</div>
-		</div>
-	</div>
-			<!-- 상하 버튼 추가 -->
-			<div class="tool_bar">
-				<div class="critical d-flex gap-2 mt-3">
-					<!--성진스 버튼-->
-					<button id="s_eap_app_bottom" type="button" 
-						class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
-						style="padding: 0.4rem 1rem; font-size: 0.95rem;">
-						<span class="material-symbols-outlined fs-5">upload</span> 결재요청
-					</button>
-					<a id="s_eap_storBo" type="button" 
-						class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
-						style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
-						<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
-					</a> 
-					<a id="s_appLine_btn" type="button" class="btn btn-outline-info d-flex align-items-center gap-1"
-						data-bs-toggle="modal" data-bs-target="#atrzLineModal"
-						style="padding: 0.4rem 1rem; font-size: 0.95rem;">
-						<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
-					</a> 
-					<a type="button" id="cancelButtonBo"
-					class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
-					style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
-					<span class="material-symbols-outlined fs-5">cancel</span> 취소
-					</a>
+					<div class="tool_bar">
+						<div class="critical d-flex gap-2 mt-3">
+							<!--성진스 버튼-->
+							<button id="s_eap_app_bottom" type="button" 
+								class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
+								style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+								<span class="material-symbols-outlined fs-5">upload</span> 결재요청
+							</button>
+							<a id="s_eap_storBo" type="button" 
+								class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
+								style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+								<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
+							</a> 
+							<a id="s_appLine_btn" type="button" class="btn btn-outline-info d-flex align-items-center gap-1"
+								data-bs-toggle="modal" data-bs-target="#atrzLineModal"
+								style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+								<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
+							</a> 
+							<a type="button" id="cancelButtonBo"
+							class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
+							style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+							<span class="material-symbols-outlined fs-5">cancel</span> 취소
+							</a>
+						</div>
+					</div>
 				</div>
 			</div>
-			<!-- 상하 버튼 추가 -->
-			</form>
 		</div>
-	</section>
+		</form>
+	</div>
+</section>
 <%@ include file="../layout/footer.jsp" %>
 </main>
 <%@ include file="../layout/prescript.jsp" %>
@@ -493,7 +491,7 @@ $(document).ready(function() {
 					console.log("error(ajaxError): " + error);
         }
 
-		//지출결의서 임시저장 시작
+		//기안서 임시저장 시작
 		$.ajax({
 			url:"/atrz/atrzDraftStorage",
 			processData:false,

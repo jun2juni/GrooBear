@@ -1003,7 +1003,7 @@ $(document).ready(function() {
 						closeOnEsc: false,
 						button: "확인"
 					}).then(() => {
-						location.replace("/atrz/home")
+						location.replace("/atrz/document?tab=1")
 					});
 				}
 			},
@@ -1026,8 +1026,6 @@ $(document).ready(function() {
 		formData.append("docFormNo",1);
 		formData.append("atrzSj",jnForm.atrzSj.value);
 		formData.append("atrzCn",jnForm.atrzCn.value);
-		
-	
 		formData.append("holiUseDays", $('#s_date_cal').text());  //연차사용일수 
 
 		if(jnForm.uploadFile.files?.length){
@@ -1098,9 +1096,9 @@ $(document).ready(function() {
 					console.log("error: " + error);
             }
 
-		for(const [key,value] of formData.entries()){
-			console.log(key + " => " + value);
-		}
+		// for(const [key,value] of formData.entries()){
+		// 	console.log(key + " => " + value);
+		// }
 
 			
 		$.ajax({
@@ -1113,6 +1111,7 @@ $(document).ready(function() {
 			success : function(result){
 				console.log("체킁:",result);
 				if(result=="임시저장성공"){
+					
 					swal({
 						title: "임시저장이 완료되었습니다.",
 						text: "",
