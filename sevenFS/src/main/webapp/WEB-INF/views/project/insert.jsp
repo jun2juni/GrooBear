@@ -207,14 +207,15 @@ document.getElementById('addTaskBtn').addEventListener('click', function () {
   console.log("선택된 파일 수:", taskFiles.length);
   
   if (!taskNmValue) {
-    alert('업무명을 입력해주세요.');
-    return;
-  }
-  
-  if (!chargerEmpNmValue) {
-    alert('담당자를 선택해주세요.');
-    return;
-  }
+	  swal("입력 오류", "업무명을 입력해주세요.", "warning");
+	  return;
+	}
+
+	if (!chargerEmpNmValue) {
+	  swal("입력 오류", "담당자를 선택해주세요.", "warning");
+	  return;
+	}
+
   
   // parentTaskNm이 있으면 해당 부모 업무의 인덱스 찾기
   let parentIndex = null;
@@ -332,19 +333,21 @@ if (projectForm) {
       body: formData
     })
     .then(res => {
-      if (res.ok) {
-        alert('등록 성공');
-        location.href = "/project/tab";
-      } else {
-        return res.text().then(text => {
-          console.error('등록 실패 응답:', text);
-          alert('등록 실패');
-        });
-      }
+    	if (res.ok) {
+    		  swal("등록 완료!", "프로젝트가 성공적으로 등록되었습니다.", "success")
+    		    .then(() => {
+    		      location.href = "/project/tab?tab=list";  
+    		    });
+    		} else {
+    		  return res.text().then(text => {
+    		    console.error('등록 실패 응답:', text);
+    		    swal("등록 실패", text || "등록에 실패했습니다.", "error");
+    		  });
+    		}
     })
     .catch(err => {
       console.error("에러 발생:", err);
-      alert("에러 발생: " + err.message);
+      swal("에러 발생", err.message || "서버와 통신 중 오류가 발생했습니다.", "error");
     });
   });
 }
@@ -1396,7 +1399,7 @@ function validateDates(startDateSelector, endDateSelector, customMessage) {
   endDateInput.addEventListener('change', function() {
     if(startDateInput.value && endDateInput.value) {
       if(new Date(endDateInput.value) < new Date(startDateInput.value)) {
-        alert(errorMessage);
+    	  swal("날짜 오류", errorMessage || "종료일은 시작일 이후여야 합니다.", "warning");
         endDateInput.value = '';
       }
     }
@@ -1406,7 +1409,7 @@ function validateDates(startDateSelector, endDateSelector, customMessage) {
   startDateInput.addEventListener('change', function() {
     if(startDateInput.value && endDateInput.value) {
       if(new Date(endDateInput.value) < new Date(startDateInput.value)) {
-        alert('시작일은 종료일 이전으로 설정해야 합니다.');
+    	  swal("날짜 오류", "시작일은 종료일 이전으로 설정해야 합니다.", "warning");
         startDateInput.value = '';
       }
     }

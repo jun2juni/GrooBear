@@ -11,6 +11,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <title>${title}</title>
   <%@ include file="../layout/prestyle.jsp" %>
 <script>
@@ -221,7 +222,7 @@
                 <i class="fas fa-trash-alt"></i> 삭제
               </button>
               <a href="/project/editForm?prjctNo=${project.prjctNo}" class="btn btn-warning me-2">수정</a>
-              <a href="/project/tab" class="btn btn-secondary">목록</a>
+               <a href="/project/tab?tab=list" class="btn btn-secondary">목록</a>
             </div>
         </div>
       </div>
@@ -286,21 +287,36 @@ document.addEventListener("DOMContentLoaded", function () {
 	}
 	
 	function deleteCurrentProject(prjctNo) {
-		  if (!confirm("정말 삭제하시겠습니까?")) return;
-
-		  fetch(`/project/delete/\${prjctNo}`, {
-		    method: 'DELETE'
+		  swal({
+		    title: "정말 삭제하시겠습니까?",
+		    text: "삭제하면 복구할 수 없습니다!",
+		    icon: "warning",
+		    buttons: ["취소", "삭제"],
+		    dangerMode: true,
 		  })
-		  .then(res => {
-		    if (!res.ok) throw new Error("삭제 실패");
-		    alert("삭제 완료!");
-		    location.href = "/project/tab?tab=list";
-		  })
-		  .catch(err => {
-		    alert("삭제 실패!");
-		    console.error(err);
+		  .then((willDelete) => {
+		    if (willDelete) {
+		      fetch(`/project/delete/\${prjctNo}`, {
+		        method: 'DELETE',
+		        headers: {
+		          'Accept': 'application/json'
+		        }
+		      })
+		      .then(res => {
+		        if (!res.ok) throw new Error("삭제 실패: 상태코드 " + res.status);
+		        swal("삭제 완료!", "프로젝트가 성공적으로 삭제되었습니다.", "success")
+		          .then(() => {
+		            location.href = "/project/tab?tab=list";
+		          });
+		      })
+		      .catch(err => {
+		        console.error("삭제 실패 에러:", err);
+		        swal("삭제 실패!", "프로젝트 삭제 중 오류가 발생했습니다.", "error");
+		      });
+		    }
 		  });
 		}
+
 	
 	
 	function deleteTask() {

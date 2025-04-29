@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import kr.or.ddit.sevenfs.vo.project.TaskAnsertVO;
 
@@ -17,5 +18,8 @@ public interface TaskAnsertMapper {
 	public void updateTaskAnswer(int taskAnswerSn, String answerCn);
 	
 	public void deleteTaskAnswer(int taskAnswerSn);
+	
+	public int deleteTaskAnswersByProject(@Param("prjctNo") long prjctNo);
+
 
 }

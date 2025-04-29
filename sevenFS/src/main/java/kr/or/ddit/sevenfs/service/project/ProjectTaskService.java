@@ -40,4 +40,6 @@ public interface ProjectTaskService {
 
     // 업무 일정(Gantt에서 이동/수정) 업데이트
     public void updateSchedule(ProjectTaskVO task);
+
+	public boolean hasTaskAssigned(int prjctNo, String empNo);
 }

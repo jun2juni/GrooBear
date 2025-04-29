@@ -317,32 +317,46 @@ public class ProjectController {
 
 	@PostMapping("/update")
 	public String updateProject(ProjectVO projectVO, Model model,
-	                            @RequestParam(value ="emp_no", required = false) String[] empNos,
-	                            @RequestParam(value ="emp_role", required = false) String[] empRoles,
-	                            @RequestParam(value = "emp_auth", required = false) String[] empAuths) {
-		model.addAttribute("categoryList", projectService.getProjectCategoryList());
-		model.addAttribute("projectStatusList", projectService.getProjectStatusList());
-		model.addAttribute("projectGradeList", projectService.getProjectGradeList());
+	                             @RequestParam(value ="emp_no", required = false) String[] empNos,
+	                             @RequestParam(value ="emp_role", required = false) String[] empRoles,
+	                             @RequestParam(value = "emp_auth", required = false) String[] empAuths) {
 
-	    // 참여자 리스트 재구성
+	    log.debug("📦 updateProject 컨트롤러 호출: projectNo={}", projectVO.getPrjctNo());
+
 	    List<ProjectEmpVO> empList = new ArrayList<>();
-	    if(empNos != null && empNos.length > 0) {
-		    for (int i = 0; i < empNos.length; i++) {
-		        ProjectEmpVO empVO = new ProjectEmpVO();
-		        empVO.setPrtcpntEmpno(empNos[i]);
-		        empVO.setPrtcpntRole(empRoles[i]);
-		        empVO.setPrjctAuthor("0000");
-		        empVO.setEvlManEmpno(empNos[i]);
-		        empVO.setEvlCn("수정됨");
-		        empVO.setEvlGrad("1");
-		        empVO.setPrjctNo(projectVO.getPrjctNo());
-		        empList.add(empVO);
-		    }
+	    if (empNos != null && empNos.length > 0) {
+	        for (int i = 0; i < empNos.length; i++) {
+	            ProjectEmpVO empVO = new ProjectEmpVO();
+	            empVO.setPrtcpntEmpno(empNos[i]);
+
+	            //  role 변환
+	            String roleCode = "";
+	            switch (empRoles[i]) {
+	                case "responsibleManager":
+	                    roleCode = "00";
+	                    break;
+	                case "participants":
+	                    roleCode = "01";
+	                    break;
+	                case "observers":
+	                    roleCode = "02";
+	                    break;
+	                default:
+	                    roleCode = "99"; // 알 수 없는 역할은 임시로 99 처리
+	            }
+
+	            empVO.setPrtcpntRole(roleCode);
+	            empVO.setPrjctNo(projectVO.getPrjctNo());
+	            empList.add(empVO);
+	        }
 	    }
 	    projectVO.setProjectEmpVOList(empList);
+
 	    boolean result = projectService.updateProject(projectVO);
+
 	    return "redirect:/project/projectDetail?prjctNo=" + projectVO.getPrjctNo();
 	}
+
 
 	
 	

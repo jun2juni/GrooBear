@@ -25,6 +25,9 @@
     .table td, .table th {
       vertical-align: middle;
     }
+      .bg-light-danger { background-color: #f8d7da !important; }
+  .bg-light-primary { background-color: #cfe2ff !important; }
+  .bg-light-secondary { background-color: #e2e3e5 !important; }
   </style>
 </head>
 <body>

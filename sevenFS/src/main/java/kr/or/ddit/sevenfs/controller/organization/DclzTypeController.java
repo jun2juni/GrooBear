@@ -90,12 +90,12 @@ public class DclzTypeController {
 		log.info("articlePage : " + articlePage);
 		
 		// 근태현황 대분류 개수
-		DclzTypeVO dclzCnt = dclztypeService.dclzCnt(emplNo);
+		DclzTypeVO dclzCnt = dclztypeService.dclzCnt(map);
 		log.info("dclzCnt : " + dclzCnt);
 		model.addAttribute("dclzCnt" , dclzCnt);
 		
 		// 대분류에 따른 사원 상세 근태현황 목록
-		List<DclzTypeDetailVO> empDetailDclzTypeCnt = dclztypeService.empDetailDclzTypeCnt(emplNo);
+		List<DclzTypeDetailVO> empDetailDclzTypeCnt = dclztypeService.empDetailDclzTypeCnt(map);
 		log.info("empDetailDclzTypeCnt" + empDetailDclzTypeCnt);
 		model.addAttribute("empDetailDclzTypeCnt", empDetailDclzTypeCnt);		
 		

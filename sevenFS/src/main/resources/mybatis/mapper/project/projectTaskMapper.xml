@@ -21,6 +21,11 @@
 	</resultMap>
 
 	
+	<update id="nullifyUpperTaskReferences" parameterType="long">
+  UPDATE PROJECT_TASK
+  SET UPPER_TASK_NO = NULL
+  WHERE PRJCT_NO = #{prjctNo}
+</update>
 	
 	
 	
@@ -201,6 +206,12 @@
 	  DELETE FROM PROJECT_TASK WHERE PRJCT_NO = #{prjctNo}
 	</delete>
 	
+	<delete id="deleteProjectParticipants" parameterType="int">
+    DELETE FROM PROJECT_EMP
+    WHERE PRJCT_NO = #{prjctNo}
+	</delete>
+	
+	
 	 <!-- 하위 업무 개수 조회 -->
 	<select id="countChildTasks" resultType="int" parameterType="long">
 	    SELECT COUNT(*)
@@ -290,6 +301,13 @@
 	  WHERE TASK_NO = #{taskNo}
 	</update>
 
+		 <!-- 업무 담당자인지 확인 -->
+	<select id="countTasksByAssignee" resultType="int">
+    SELECT COUNT(*)
+    FROM PROJECT_TASK
+    WHERE PRJCT_NO = #{prjctNo}
+      AND CHARGER_EMPNO = #{empNo}
+</select>
 	
    
 </mapper>

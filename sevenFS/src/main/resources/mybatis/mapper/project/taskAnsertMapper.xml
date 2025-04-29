@@ -60,5 +60,15 @@
     DELETE FROM TASK_ANSERT
     WHERE TASK_ANSWER_SN = #{taskAnswerSn}
   </delete>
+  
+  <delete id="deleteTaskAnswersByProject" parameterType="long">
+  DELETE FROM TASK_ANSERT
+  WHERE TASK_NO IN (
+    SELECT TASK_NO
+    FROM PROJECT_TASK
+    WHERE PRJCT_NO = #{prjctNo}
+  )
+</delete>
+  
 		
 </mapper>

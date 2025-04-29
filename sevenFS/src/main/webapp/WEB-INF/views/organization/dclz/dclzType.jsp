@@ -180,7 +180,7 @@
 							<input type="hidden" value="${paramKeyword.substring(0,4)}" id="hiddenKeyYear" />
 							<input type="hidden" value="${paramKeyword.substring(5,7)}" id="hiddenKeyword" />
 							<input type="hidden" value="" id="submitKeyword" name="keyword" />
-							<h4 class="ml-10 mr-10"
+							<h4 class="ml-10"
 								id="monthDisplay">${paramKeyword.substring(0,4)}-${paramKeyword.substring(5,7)}</h4>
 						</c:if>
 						<h4 class="mr-5 ml-5" id="searchVacationType">  </h4>
@@ -386,7 +386,6 @@
       }
       $('#hiddenKeyword').val(hiddenKeyword);
       updateDateDisplay();
-
     });
 
     // --- 다음버튼

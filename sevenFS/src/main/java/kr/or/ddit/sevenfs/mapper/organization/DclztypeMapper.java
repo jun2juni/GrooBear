@@ -24,7 +24,7 @@ public interface DclztypeMapper {
 	public int getEmplAllVacTotal();
 
 	// 사원 근태현황 대분류로 조회
-	public DclzTypeVO dclzCnt(String emplNo);
+	public DclzTypeVO dclzCnt(Map<String, Object> map);
 	
 	// 근태 selectBox를 위한 근태현황 조회
 	public List<DclzTypeVO> dclzSelList(String emplNo);
@@ -33,7 +33,7 @@ public interface DclztypeMapper {
 	public List<DclzTypeVO> emplDclzTypeList(Map<String, Object> map);
 	
 	// 대분류에 따른 사원 근태 갯수
-	public List<DclzTypeDetailVO> empDetailDclzTypeCnt(String emplNo);
+	public List<DclzTypeDetailVO> empDetailDclzTypeCnt(Map<String, Object> map);
 	
 	// 출근시간 등록
 	public int workBeginInsert(DclzTypeVO dclzTypeVO);

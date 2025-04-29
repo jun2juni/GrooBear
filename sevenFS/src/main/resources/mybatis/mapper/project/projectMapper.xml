@@ -267,6 +267,11 @@
 		</foreach>
 	</insert>
 	
+	<update id="nullifyUpperTaskReferences" parameterType="long">
+	  UPDATE PROJECT_TASK
+	  SET UPPER_TASK_NO = NULL
+	  WHERE PRJCT_NO = #{prjctNo}
+	</update>
 	
 
 	
@@ -276,15 +281,15 @@
 	</delete>
 	
 	<!-- 프로젝트 참여자 삭제 -->
-	<delete id="deleteProjectEmpsByProjectNo" parameterType="long">
-	  DELETE FROM PROJECT_EMP WHERE PRJCT_NO = #{prjctNo}
-	</delete>
+<delete id="deleteProjectEmpsByProject" parameterType="long">
+  DELETE FROM PROJECT_EMP
+  WHERE PRJCT_NO = #{prjctNo}
+</delete>
 
-	<!-- 프로젝트 수정 -->
+	<!-- 프로젝트 기본 정보 수정 -->
 	<update id="updateProject" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectVO">
 	    UPDATE PROJECT
-	    SET CTGRY_NO = #{ctgryNo},
-	        PRJCT_NM = #{prjctNm},
+	    SET PRJCT_NM = #{prjctNm},
 	        PRJCT_CN = #{prjctCn},
 	        PRJCT_STTUS = #{prjctSttus},
 	        PRJCT_GRAD = #{prjctGrad},
@@ -296,9 +301,53 @@
 	    WHERE PRJCT_NO = #{prjctNo}
 	</update>
 	
-	<delete id="deleteProjectEmpsByProject" parameterType="long">
-	  DELETE FROM PROJECT_EMP WHERE PRJCT_NO = #{prjctNo}
-	</delete>
+	
+	<!-- 새 프로젝트 참여자 추가 -->
+	<insert id="insertProjectParticipant" parameterType="kr.or.ddit.sevenfs.vo.project.ProjectEmpVO">
+	    INSERT INTO PROJECT_EMP (
+	        PRJCT_NO,
+	        PRTCPNT_EMPNO,
+	        PRTCPNT_ROLE,
+	        PRJCT_AUTHOR,
+	        EVL_MAN_EMPNO,
+	        EVL_CN,
+	        EVL_GRAD,
+	        EVL_WRITNG_DT,  
+	        SECSN_YN
+	    ) VALUES (
+	        #{prjctNo},
+	        #{prtcpntEmpno},
+	        #{prtcpntRole},
+	        '0000',
+	        #{prtcpntEmpno},
+	        '수정',
+	        '1',
+	        SYSDATE,       
+	        'N'
+	    )
+	</insert>
+
+<select id="selectProjectParticipants" resultType="kr.or.ddit.sevenfs.vo.project.ProjectEmpVO">
+    SELECT PRTCPNT_EMPNO
+    FROM PROJECT_EMP
+    WHERE PRJCT_NO = #{prjctNo}
+</select>
+
+	<delete id="deleteProjectParticipant">
+    DELETE FROM PROJECT_EMP
+    WHERE PRJCT_NO = #{prjctNo}
+      AND PRTCPNT_EMPNO = #{prtcpntEmpno}
+</delete>
+	
+	<!-- 특정 프로젝트에 특정 사원이 이미 참여자로 등록되어 있는지 확인 -->
+<select id="existsProjectParticipant" resultType="boolean">
+  SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+  FROM PROJECT_EMP
+  WHERE PRJCT_NO = #{prjctNo}
+    AND PRTCPNT_EMPNO = #{empNo}
+</select>
+
+
 	
 	
 	

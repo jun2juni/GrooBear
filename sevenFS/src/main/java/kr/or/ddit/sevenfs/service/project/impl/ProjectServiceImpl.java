@@ -2,8 +2,10 @@ package kr.or.ddit.sevenfs.service.project.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.or.ddit.sevenfs.mapper.project.ProjectMapper;
 import kr.or.ddit.sevenfs.mapper.project.ProjectTaskMapper;
+import kr.or.ddit.sevenfs.mapper.project.TaskAnsertMapper;
 import kr.or.ddit.sevenfs.service.project.ProjectService;
+import kr.or.ddit.sevenfs.service.project.ProjectTaskService;
 import kr.or.ddit.sevenfs.vo.project.ProjectEmpVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
@@ -29,6 +33,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private ProjectTaskMapper projectTaskMapper;
+    
+    @Autowired
+    ProjectTaskService projectTaskService;
+    
+    @Autowired
+    TaskAnsertMapper taskAnsertMapper;
 
     @Override
     public List<ProjectVO> projectList(Map<String, Object> map) {
@@ -190,15 +200,19 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public boolean deleteProject(Long prjctNo) {
         try {
-            projectTaskMapper.deleteProjectTasksByProject(prjctNo);
-            projectMapper.deleteProjectEmpsByProject(prjctNo);
-            int result = projectMapper.deleteProject(prjctNo); // 성공 여부 체크
+            taskAnsertMapper.deleteTaskAnswersByProject(prjctNo);          // 1. 업무 답변 먼저 삭제
+            projectTaskMapper.nullifyUpperTaskReferences(prjctNo);         // 2. 상하위 관계 끊기
+            projectTaskMapper.deleteProjectTasksByProject(prjctNo);        // 3. 업무 삭제
+            projectMapper.deleteProjectEmpsByProject(prjctNo);             // 4. 참여자 삭제
+            int result = projectMapper.deleteProject(prjctNo);             // 5. 프로젝트 삭제
             return result > 0;
         } catch (Exception e) {
             log.error("프로젝트 삭제 중 오류", e);
             return false;
         }
     }
+
+
 
     @Override
     public List<Map<String, Object>> getProjectCategoryList() {
@@ -271,18 +285,63 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 
-    @Override
     @Transactional
+    @Override
     public boolean updateProject(ProjectVO project) {
         log.debug("updateProject 서비스 호출: projectNo={}", project.getPrjctNo());
         try {
+            // 1. 프로젝트 기본 정보 업데이트
             int result = projectMapper.updateProject(project);
+
+            // 2. 기존 참여자 조회
+            List<ProjectEmpVO> currentEmpList = projectMapper.selectProjectParticipants(project.getPrjctNo());
+
+            // 3. 새로 제출된 참여자 목록 (emplNo만 Set으로 뽑기)
+            Set<String> submittedEmpNos = new HashSet<>();
+            if (project.getProjectEmpVOList() != null) {
+                for (ProjectEmpVO emp : project.getProjectEmpVOList()) {
+                    submittedEmpNos.add(emp.getPrtcpntEmpno());
+                }
+            }
+
+            // 4. 기존 참여자 중 새로 제출된 인원이 아닌 사람을 삭제
+            for (ProjectEmpVO oldEmp : currentEmpList) {
+                if (!submittedEmpNos.contains(oldEmp.getPrtcpntEmpno())) {
+                    boolean hasTask = projectTaskService.hasTaskAssigned(project.getPrjctNo(), oldEmp.getPrtcpntEmpno());
+                    if (hasTask) {
+                        log.warn("⚠️ 삭제 불가 - 업무 담당자: {}", oldEmp.getPrtcpntEmpno());
+                        continue; // 담당자는 삭제 안 함
+                    }
+                    projectMapper.deleteProjectParticipant(project.getPrjctNo(), oldEmp.getPrtcpntEmpno());
+                }
+            }
+
+            // 5. 새로 추가된 참여자 등록 (insert)
+            if (project.getProjectEmpVOList() != null) {
+                for (ProjectEmpVO emp : project.getProjectEmpVOList()) {
+                    int prjctNo = project.getPrjctNo();
+                    String empNo = emp.getPrtcpntEmpno();
+
+                    boolean exists = projectMapper.existsProjectParticipant(prjctNo, empNo);
+                    if (!exists) {
+                        projectMapper.insertProjectParticipant(emp);
+                    } else {
+                        log.warn("이미 등록된 참여자입니다. PRJCT_NO: {}, EMPNO: {}", prjctNo, empNo);
+                    }
+                }
+            }
+
             return result > 0;
         } catch (Exception e) {
             log.error("프로젝트 수정 중 오류 발생", e);
             throw e;
         }
     }
+
+
+
+
+
     
     @Override
     public boolean updateTaskParent(Long taskNo, Long parentTaskNo) {
