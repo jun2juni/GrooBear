@@ -378,7 +378,7 @@ String serverDate = dateFormat.format(now);
 							<div class="row" style="max-height: 100%;">
 								<!-- 게시판 시작 -->
 								<div id="mainBbs" class="col-lg-6">
-									<div class="card-style mb-30">
+									<div class="card-style mb-30" style="height: 100%;">
 									
 										<div class="d-flex justify-content-between">
 											<h6 class="mb-30">전사게시판 최근글</h6>
@@ -436,15 +436,6 @@ String serverDate = dateFormat.format(now);
 															</div>
 														</div>
 														<hr />
-
-														<%-- <div class="text-dark text-bold mb-3">
-								  <c:if test="${bbsNoticeList.upendFixingYn == 'Y'}">
-									  <span style="color: red; font-weight: bold;">[고정]</span>
-								  </c:if>
-								   <a href="/bbs/bbsDetail?bbsSn=${bbsNoticeList.bbsSn}" class="text-dark">
-									  ${bbsNoticeList.bbscttSj}</a>
-								  <p class="text-sm">${bbsNoticeList.bbscttUpdtDt} ${bbsNoticeList.emplNm}</p>
-							   </div> --%>
 													</c:forEach>
 												</div>
 											</div>
