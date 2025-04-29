@@ -181,8 +181,8 @@ String serverDate = dateFormat.format(now);
 									</a>
 									<div class="rounded-4 mt-2" style="background-color: rgb(230, 230, 250, 0.5); display: inline-block;">
 										<a href="/mail/mailSend" class="btn-sm main-btn square-btn btn-hover text-dark"
-											style="padding: 10px;"> <i class="lni lni-envelope"></i>
-											메일쓰기
+											style="padding: 10px;">
+											<i class="lni lni-envelope"></i>메일쓰기
 										</a>
 									</div>
 									<!-- <div class="d-flex flex-column text-center"> -->
@@ -479,8 +479,8 @@ String serverDate = dateFormat.format(now);
 								<!-- 게시판 끝 -->
 
 								<!-- 캘린더 -->
-								<div id="mainCal" class="col-lg-6">
-									<div class="card-style mb-30">
+								<div id="mainCal" class="col-lg-6" >
+									<div class="card-style mb-30" style="padding-top: 0px; height: 100%;">
 										<jsp:include page="schedule/scheduleMainHome.jsp"></jsp:include>
 									</div>
 								</div>
