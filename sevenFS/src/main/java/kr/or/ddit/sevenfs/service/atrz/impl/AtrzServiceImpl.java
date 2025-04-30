@@ -430,7 +430,15 @@ public class AtrzServiceImpl implements AtrzService {
 			
 		    return 1;  //성공여부 반환
 		}
-	
+		
+	/**
+	현재월 기준으로 급여명세서가 있는지
+	 */
+	@Override
+	public AtrzVO getMonthlyPayDoc(String empNo) {
+		return atrzMapper.getMonthlyPayDoc(empNo);
+	}
+		
 	//급여명세서 등록
 	@Transactional
 	@Override
@@ -1181,6 +1189,7 @@ public class AtrzServiceImpl implements AtrzService {
 		
 	    return 1;  //성공여부 반환
 	}
+
 
 
 	

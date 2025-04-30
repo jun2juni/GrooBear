@@ -90,7 +90,10 @@ text-align: center;
 .salEnd{
     padding-right: 60px;
 }
-
+/* 기본급 스타일 수정 */
+.salInputNone{
+	pointer-events: none;
+}
 </style>
 <title>${title}</title>
 <%@ include file="../layout/prestyle.jsp"%>
@@ -222,16 +225,25 @@ text-align: center;
 														<tbody>
 															<tr>
 															<th scope="row" class="text-center align-middle" style="width: 40%;">기본급</th>
-															<td class="text-end">
-																<fmt:formatNumber value="${empVO.anslry}" pattern="#,###" var="baseSalary" />
-																<input type="text" class="form-control text-end" id="baseSalary" name="baseSalary" value="${baseSalary}" readonly>
+															<td class="text-end salEnd">
+																<fmt:formatNumber value="${empVO.anslry}" pattern="#,###원" var="baseSalary" />
+																<input type="text" class="form-control text-end border-0 bg-transparent salInputNone" id="baseSalary"
+																name="baseSalary"value="${baseSalary}" readonly tabindex="-1">
 															</td>
 															</tr>
 															<tr>
-															<th scope="row" class="text-center align-middle">식대</th>
+																<th scope="row" class="text-center align-middle">식대</th>
+																<td class="text-end">
+																	<fmt:formatNumber value="100000" pattern="#,###원" var="mealAllowance" />
+																	<input type="text" class="form-control text-end border-0 bg-transparent salInputNone" id="mealAllowance"
+																	name="mealAllowance" value="${mealAllowance}" readonly tabindex="-1">
+																</td>
+															</tr>
+															<tr>
+															<th scope="row" class="text-center align-middle">보너스</th>
 															<td class="text-end">
-																<fmt:formatNumber value="100000" pattern="#,###" var="mealAllowance" />
-																<input type="text" class="form-control text-end" id="mealAllowance" name="mealAllowance" value="${mealAllowance}" readonly>
+																<fmt:formatNumber value="0" pattern="#,###" var="bonus" />
+																<input type="text" class="form-control text-end" id="bonus" name="bonus" value="${bonus}" onkeyup="commas(this)">
 															</td>
 															</tr>
 															<tr>
@@ -315,6 +327,37 @@ text-align: center;
 	<%@ include file="../layout/prescript.jsp"%>
 	<!-- 제이쿼리사용시 여기다 인포트 -->
 <script>
+//보너스 동적으로 콤마 적용
+document.getElementById("bonus").addEventListener("input", function (e) {
+	const value = e.target.value.replace(/,/g, ''); // 콤마 제거
+	if (!isNaN(value) && value !== "") {
+		e.target.value = Number(value).toLocaleString(); // 숫자로 변환 후 콤마 적용
+	}
+});	
+//보너스 입력 숫자만 가능 벨리데이션체크
+function commas(t) {
+
+// 콤마 빼고 
+var x = t.value;			
+x = x.replace(/,/gi, '');
+
+// 숫자 정규식 확인
+var regexp = /^[0-9]*$/;
+if(!regexp.test(x)){ 
+	$(t).val(""); 
+	swal({
+			title: "숫자만 입력 가능합니다.",
+			text: "",
+			icon: "error",
+			closeOnClickOutside: false,
+			closeOnEsc: false
+		});
+} else {
+	x = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");			
+	$(t).val(x);			
+}
+}
+
 function parseNumber(str) {
   return Number(str.replace(/[^0-9]/g, '')) || 0;
 }
@@ -325,11 +368,13 @@ function numberWithCommas(num) {
 
 document.getElementById("baseSalary").addEventListener("input", calculate);
 document.getElementById("mealAllowance").addEventListener("input", calculate);
+document.getElementById("bonus").addEventListener("input", calculate);
 
 function calculate() {
     const baseSalary = parseNumber(document.getElementById("baseSalary").value);
     const mealAllowance = parseNumber(document.getElementById("mealAllowance").value);
-    const totalPay = baseSalary + mealAllowance;
+    const bonus = parseNumber(document.getElementById("bonus").value);
+    const totalPay = baseSalary + mealAllowance + bonus;
 	
 
     // 4대 보험 계산
@@ -409,6 +454,7 @@ $(".s_eap_app").on("click",function(){
 	let docSalary = {
 		"baseSalary" : $('#baseSalary').val().replace(/[^0-9]/g, ''), 			//기본급
 		"mealAllowance": $('#mealAllowance').val().replace(/[^0-9]/g, ''),  	//식대
+		"bonus": $('#bonus').val().replace(/[^0-9]/g, ''),  					//보너스
 		"incomeTax": $('#incomeTax').text().replace(/[^0-9]/g, ''),				//소득세 
 		"localTax": $('#localTax').text().replace(/[^0-9]/g, ''),				//지방소득세
 		"pension": $('#pension').text().replace(/[^0-9]/g, ''),					//국민연금

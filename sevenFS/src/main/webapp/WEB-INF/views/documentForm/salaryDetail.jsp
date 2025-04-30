@@ -257,6 +257,12 @@ text-align: center;
 																	<td class="text-end salEnd" id="mealAllowance" style="padding-right: 20px;" >${mealAllowance}</td>
 																</tr>
 																<tr>
+																	<th scope="row" class="text-center align-middle" style="width: 40%;">보너스</th>
+																	<fmt:formatNumber value="${atrzVO.salaryVO.bonus}" pattern="#,###원" var="bonus" />
+																	<td class="text-end salEnd" id="bonus" style="padding-right: 20px;" >${bonus}</td>
+																</tr>
+																
+																<tr>
 																	<th scope="row" class="bg-light text-center align-middle">총 지급액</th>
 																	<fmt:formatNumber value="${atrzVO.salaryVO.totalDed}" pattern="#,###원" var="totalDed" />
 																	<td class="bg-light text-end fw-bold" id="totalDed" style="padding-right: 20px;">${totalDed}</td>

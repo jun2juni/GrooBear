@@ -20,6 +20,8 @@ public class SalaryVO {
 	private int totalPay;     //합계금액
 	private int totalDed;     //공제금액
 	private int netPay;		//실지급액
+	private int bonus; 		//보너스
+	
 	
 	//테이블을 3가지를 조인하는경우 이것이 필요함
 	//DOCUM_HOLIDAY : ATRZ_LINE = 1 : N

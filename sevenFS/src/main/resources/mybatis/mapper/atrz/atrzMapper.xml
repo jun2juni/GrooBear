@@ -2063,6 +2063,7 @@
 			, total_ded
 			, total_pay
 			, net_pay
+			, bonus
 			)
 		VALUES
 			(
@@ -2080,6 +2081,7 @@
 			, #{totalPay}
 			, #{totalDed}
 			, #{netPay}
+			, #{bonus}
 			)
 	</insert>
 	
@@ -2275,6 +2277,7 @@
 			            , TOTAL_PAY
 			            , TOTAL_DED
 			            , NET_PAY
+			            , BONUS
 			            ,ROW_NUMBER() OVER (ORDER BY SALARY_NO DESC) AS RN
 			        FROM DOCUM_SALARY
 			        WHERE ATRZ_DOC_NO = #{atrzDocNo}
@@ -2658,6 +2661,7 @@
 		<result property="totalPay" column="TOTAL_PAY"/>
 		<result property="totalDed" column="TOTAL_DED"/>
 		<result property="netPay" column="NET_PAY"/>
+		<result property="bonus" column="BONUS"/>
 		<association property="atrzVO" resultMap="atrzMap"></association>
 	</resultMap>
 	

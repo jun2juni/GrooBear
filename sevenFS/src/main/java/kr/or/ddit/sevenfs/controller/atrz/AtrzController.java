@@ -314,7 +314,6 @@ public class AtrzController {
 	// 문서양식번호 생성
 	// 양식선택후 확인 클릭시 입력폼 뿌려지고, DB의 데이터를 가져오는 작업
 	@ResponseBody
-	// 여기선 modelAnd
 	@PostMapping(value = "/insertDoc", produces = "text/plain;charset=UTF-8")
 	public String insertDoc(@RequestParam(name = "form", required = false) String form, ModelAndView mav, Model model,
 			@AuthenticationPrincipal CustomUser customUser) {
@@ -350,8 +349,20 @@ public class AtrzController {
 			return "기안서";
 
 		} else if ("급여명세서".equals(form)) {
-			df_code = "D";
-			return "급여명세서";
+			 // 현재 로그인한 사용자 ID 또는 사번
+		    String empNo = customUser.getEmpVO().getEmplNo();
+
+		    // 이번 달 급여명세서가 있는지 확인
+		    AtrzVO existingPayDoc = atrzService.getMonthlyPayDoc(empNo); // 구현 필요
+
+		    if (existingPayDoc != null) {
+		        // 이미 존재하면 상세 페이지로 리다이렉트
+		        return "redirect:/payDetail?docId=" + existingPayDoc.getAtrzDocNo();
+		    } else {
+		        // 없으면 문서 작성 진입
+		    	df_code = "A";
+		        return "급여명세서";
+		    }
 
 		} else if ("급여계좌변경신청서".equals(form)) {
 			df_code = "E";
