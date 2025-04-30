@@ -132,7 +132,7 @@
 	
 	<!-- 기안완료문서 최신순5개 -->
 	<select id="atrzMinCompltedList" resultMap="atrzMap" parameterType="string">
-		SELECT *   /* AtrzMapper.atrzMinCompltedList 쿼리수정완료 */
+		SELECT *   				/* AtrzMapper.atrzMinCompltedList  */
 			FROM (
 			  SELECT 	
 			        A.atrz_doc_no
@@ -157,106 +157,106 @@
 	</select>
 	
 	<!--approval 수신문서함전자결재 -->
-	<!-- 결재 대기중인 문서리스트 (결재대기문서)-->
+	<!-- 결재 대기중인 문서리스트 (결재대기문서) -->
 	<select id="atrzApprovalList" parameterType="hashMap" resultMap="atrzMap">
-		SELECT U.*
-		FROM
-		(
-			WITH my_turn_lines AS (					/* AtrzMapper.atrzApprovalList */
-			    SELECT L.*
-			    FROM atrz_line L
-			    WHERE L.sanctner_empno = #{emplNo}
-			      AND L.sanctn_progrs_sttus_code = '00'
-			      AND L.atrz_ty = '1'
-			      AND NOT EXISTS (
-			          SELECT 1
-			          FROM atrz_line L2
-			          WHERE L2.atrz_doc_no = L.atrz_doc_no
-			            AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
-			            AND L2.atrz_ty = '1'
-			            AND L2.sanctn_progrs_sttus_code NOT IN ('10', '60')
-			      )
-			)
-			SELECT  ROW_NUMBER() OVER(ORDER BY A.atrz_drft_dt DESC) RNUM
-			      ,A.atrz_doc_no
-			      ,A.drafter_empno
-			      ,A.drafter_clsf
-			      ,A.drafter_empnm
-			      ,A.drafter_dept
-			      ,A.bkmk_yn
-			      ,A.atch_file_no
-			      ,A.atrz_sj
-			      ,A.atrz_cn
-			      ,A.atrz_opinion
-			      ,A.atrz_tmpr_stre_dt
-			      ,A.atrz_drft_dt
-			      ,A.atrz_compt_dt
-			      ,A.atrz_rtrvl_dt
-			      ,A.atrz_sttus_code
-			      ,A.eltsgn_image
-			      ,A.doc_form_no
-			      ,A.atrz_delete_yn
-			      ,A.schdul_reg_yn
-			      ,L.atrz_ln_sn
-			      ,L.sanctner_empno
-			      ,L.sanctn_progrs_sttus_code
-			      ,L.atrz_ty
-			      ,L.dcrb_author_yn
-			      ,DF.DOC_FORM_NM
-			      ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
-	          	  ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
-			FROM ATRZ A
-			JOIN my_turn_lines L ON A.atrz_doc_no = L.atrz_doc_no
-			LEFT JOIN DOC_FORM DF ON A.doc_form_no = DF.DOC_FORM_NO
-			WHERE A.atrz_compt_dt IS NULL
-				AND A.atrz_sttus_code IS NOT NULL
-				AND A.atrz_sttus_code = '00'
-			<!-- 검색조건 -->
-			<if test="keyword != null and keyword != ''">
-			    <choose>
-			        <when test="searchType == 'title'">
-			            AND A.atrz_sj LIKE '%' || #{keyword} || '%'
-			        </when>
-			        <when test="searchType == 'drafterName'">
-			            AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
-			        </when>
-			        <when test="searchType == 'drafterDeptName'">
-			           AND (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = A.drafter_dept)
-        				LIKE '%' || #{keyword} || '%'
-			        </when>
-			        <when test="searchType == 'formName'">
-			            AND DF.DOC_FORM_NM LIKE '%' || #{keyword} || '%'
-			            <!-- 또는 결재양식명이 다른 테이블에서 조인된다면 거기서 가져오도록 처리 -->
-			        </when>
-			    </choose>
-			</if>
-			
-			<!-- 날짜 필터
-			{duration=all, fromDate=2025-04-22, size=10, searchType=title, toDate=2025-04-22, emplNo=20250004, currentPage=1, keyword=계란}
-			 -->
-			<if test="duration != null and duration != 'all'">
-			    <choose>
-			        <when test="duration == 'period'">
-					    <if test="fromDate != null and fromDate != ''">
-					        AND A.atrz_drft_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
-					    </if>
-					    <if test="toDate != null and toDate != ''">
-					        AND A.atrz_drft_dt <![CDATA[ <= ]]>TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
-					    </if>
-			        </when>
-			        <when test="duration == '1'">
-			            AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -1)
-			        </when>
-			        <when test="duration == '6'">
-			            AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -6)
-			        </when>
-			        <when test="duration == '12'">
-			            AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -12)
-			        </when>
-			    </choose>
-			</if>	
-		) U
-		WHERE U.RNUM BETWEEN (#{currentPage}*10) - (10-1) AND (#{currentPage}*10)
+	    SELECT U.*					/* AtrzMapper.atrzApprovalList */
+	    FROM (
+	        WITH my_turn_lines AS (
+	            SELECT L.*
+	            FROM atrz_line L
+	            WHERE L.sanctner_empno = #{emplNo}
+	              AND L.sanctn_progrs_sttus_code = '00'
+	              AND L.atrz_ty = '1'
+	              AND NOT EXISTS (
+	                  SELECT 1
+	                  FROM atrz_line L2
+	                  WHERE L2.atrz_doc_no = L.atrz_doc_no
+	                    AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
+	                    AND L2.atrz_ty = '1'
+	                    AND L2.sanctn_progrs_sttus_code NOT IN ('10', '60')
+	              )
+	        )
+	        SELECT 
+	            ROW_NUMBER() OVER (ORDER BY A.atrz_drft_dt DESC) AS RNUM,
+	            A.atrz_doc_no,
+	            A.drafter_empno,
+	            A.drafter_clsf,
+	            A.drafter_empnm,
+	            A.drafter_dept,
+	            A.bkmk_yn,
+	            A.atch_file_no,
+	            A.atrz_sj,
+	            A.atrz_cn,
+	            A.atrz_opinion,
+	            A.atrz_tmpr_stre_dt,
+	            A.atrz_drft_dt,
+	            A.atrz_compt_dt,
+	            A.atrz_rtrvl_dt,
+	            A.atrz_sttus_code,
+	            A.eltsgn_image,
+	            A.doc_form_no,
+	            A.atrz_delete_yn,
+	            A.schdul_reg_yn,
+	            L.atrz_ln_sn,
+	            L.sanctner_empno,
+	            L.sanctn_progrs_sttus_code,
+	            L.atrz_ty,
+	            L.dcrb_author_yn,
+	            DF.DOC_FORM_NM,
+	            (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = A.drafter_dept) AS DEPT_CODE_NM,
+	            (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = A.drafter_clsf) AS CLSF_CODE_NM
+	        FROM ATRZ A
+	        JOIN my_turn_lines L ON A.atrz_doc_no = L.atrz_doc_no
+	        LEFT JOIN DOC_FORM DF ON A.doc_form_no = DF.DOC_FORM_NO
+	        WHERE A.atrz_compt_dt IS NULL
+	          AND A.atrz_sttus_code = '00'
+	        
+	        <!-- 검색 조건 -->
+	        <if test="keyword != null and keyword != ''">
+	            <choose>
+	                <when test="searchType == 'title'">
+	                    AND A.atrz_sj LIKE '%' || #{keyword} || '%'
+	                </when>
+	                <when test="searchType == 'drafterName'">
+	                    AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
+	                </when>
+	                <when test="searchType == 'drafterDeptName'">
+	                    AND (SELECT CMMN_CODE_NM 
+	                         FROM COMMON_CODE 
+	                         WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
+	                           AND CMMN_CODE = A.drafter_dept) 
+	                        LIKE '%' || #{keyword} || '%'
+	                </when>
+	                <when test="searchType == 'formName'">
+	                    AND DF.DOC_FORM_NM LIKE '%' || #{keyword} || '%'
+	                </when>
+	            </choose>
+	        </if>
+	
+	        <!-- 날짜 필터 -->
+	        <if test="duration != null and duration != 'all'">
+	            <choose>
+	                <when test="duration == 'period'">
+	                    <if test="fromDate != null and fromDate != ''">
+	                        AND A.atrz_drft_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
+	                    </if>
+	                    <if test="toDate != null and toDate != ''">
+	                        AND A.atrz_drft_dt <![CDATA[ <= ]]> TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
+	                    </if>
+	                </when>
+	                <when test="duration == '1'">
+	                    AND A.atrz_drft_dt >= ADD_MONTHS(SYSDATE, -1)
+	                </when>
+	                <when test="duration == '6'">
+	                    AND A.atrz_drft_dt >= ADD_MONTHS(SYSDATE, -6)
+	                </when>
+	                <when test="duration == '12'">
+	                    AND A.atrz_drft_dt >= ADD_MONTHS(SYSDATE, -12)
+	                </when>
+	            </choose>
+	        </if>
+	    ) U
+	    WHERE U.RNUM BETWEEN (#{currentPage} * 10) - (10 - 1) AND (#{currentPage} * 10)
 	</select>
 	
 	<!-- 
@@ -264,76 +264,85 @@
 	public int approvalTotal(String emplNo)
 	 -->
 	<select id="approvalTotal" parameterType="hashMap" resultType="int">
-		WITH my_turn_lines AS (					/* AtrzMapper.approvalTotal */
-		    SELECT L.*
-		    FROM atrz_line L
-		    WHERE L.sanctner_empno = #{emplNo}
-		      AND L.sanctn_progrs_sttus_code = '00'
-		      AND L.atrz_ty = '1'
-		      AND NOT EXISTS (
-		          SELECT 1
-		          FROM atrz_line L2
-		          WHERE L2.atrz_doc_no = L.atrz_doc_no
-		            AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
-		            AND L2.atrz_ty = '1'
-		            AND L2.sanctn_progrs_sttus_code NOT IN ('10', '60')
-		      )
-		)
-		SELECT  count(*)
-		FROM ATRZ A
-		JOIN my_turn_lines L
-		  ON A.atrz_doc_no = L.atrz_doc_no
-		WHERE A.atrz_compt_dt IS NULL
-			AND A.atrz_sttus_code IS NOT NULL
-			<!-- 검색조건 -->
-			<if test="keyword != null and keyword != ''">
-			    <choose>
-			        <when test="searchType == 'title'">
-			            AND A.atrz_sj LIKE '%' || #{keyword} || '%'
-			        </when>
-			        <when test="searchType == 'drafterName'">
-			            AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
-			        </when>
-			        <when test="searchType == 'drafterDeptName'">
-			           AND (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = A.drafter_dept)
-        				LIKE '%' || #{keyword} || '%'
-			        </when>
-			        <when test="searchType == 'formName'">
-			            AND DF.DOC_FORM_NM LIKE '%' || #{keyword} || '%'
-			            <!-- 또는 결재양식명이 다른 테이블에서 조인된다면 거기서 가져오도록 처리 -->
-			        </when>
-			    </choose>
-			</if>
-			<!-- 날짜 필터 -->
-			<if test="duration != null and duration != 'all'">
-			    <choose>
-			        <when test="duration == 'period'">
-					    <if test="fromDate != null and fromDate != ''">
-					        AND A.atrz_drft_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
-					    </if>
-					    <if test="toDate != null and toDate != ''">
-					        AND A.atrz_drft_dt <![CDATA[ <= ]]>TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
-					    </if>
-			        </when>
-			        <when test="duration == '1'">
-			            AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -1)
-			        </when>
-			        <when test="duration == '6'">
-			            AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -6)
-			        </when>
-			        <when test="duration == '12'">
-			            AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -12)
-			        </when>
-			    </choose>
-			</if>	
+		  WITH my_turn_lines AS (			/* AtrzMapper.approvalTotal */
+	        SELECT L.*
+	        FROM atrz_line L
+	        WHERE L.sanctner_empno = #{emplNo}
+	          AND L.sanctn_progrs_sttus_code = '00'
+	          AND L.atrz_ty = '1'
+	          AND NOT EXISTS (
+	              SELECT 1
+	              FROM atrz_line L2
+	              WHERE L2.atrz_doc_no = L.atrz_doc_no
+	                AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
+	                AND L2.atrz_ty = '1'
+	                AND L2.sanctn_progrs_sttus_code NOT IN ('10', '60')
+	          )
+	    ),
+	    waiting_docs AS (
+	        SELECT A.*, DF.DOC_FORM_NM
+	        FROM ATRZ A
+	        JOIN my_turn_lines L ON A.atrz_doc_no = L.atrz_doc_no
+	        LEFT JOIN DOC_FORM DF ON A.doc_form_no = DF.DOC_FORM_NO
+	        WHERE A.atrz_compt_dt IS NULL
+	          AND A.atrz_sttus_code IS NOT NULL
+	    )
+	    SELECT COUNT(*)
+	    FROM waiting_docs A
+	    WHERE 1=1
+	
+	    <!-- 검색 조건 -->
+	    <if test="keyword != null and keyword != ''">
+	        <choose>
+	            <when test="searchType == 'title'">
+	                AND A.atrz_sj LIKE '%' || #{keyword} || '%'
+	            </when>
+	            <when test="searchType == 'drafterName'">
+	                AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
+	            </when>
+	            <when test="searchType == 'drafterDeptName'">
+	                AND (SELECT CMMN_CODE_NM 
+	                     FROM COMMON_CODE 
+	                     WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
+	                       AND CMMN_CODE = A.drafter_dept) 
+	                    LIKE '%' || #{keyword} || '%'
+	            </when>
+	            <when test="searchType == 'formName'">
+	                AND A.DOC_FORM_NM LIKE '%' || #{keyword} || '%'
+	            </when>
+	        </choose>
+	    </if>
+	
+	    <!-- 날짜 필터 -->
+	    <if test="duration != null and duration != 'all'">
+	        <choose>
+	            <when test="duration == 'period'">
+	                <if test="fromDate != null and fromDate != ''">
+	                    AND A.atrz_drft_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
+	                </if>
+	                <if test="toDate != null and toDate != ''">
+	                    AND A.atrz_drft_dt <![CDATA[ <= ]]> TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
+	                </if>
+	            </when>
+	            <when test="duration == '1'">
+	                AND A.atrz_drft_dt >= ADD_MONTHS(SYSDATE, -1)
+	            </when>
+	            <when test="duration == '6'">
+	                AND A.atrz_drft_dt >= ADD_MONTHS(SYSDATE, -6)
+	            </when>
+	            <when test="duration == '12'">
+	                AND A.atrz_drft_dt >= ADD_MONTHS(SYSDATE, -12)
+	            </when>
+	        </choose>
+	    </if>
 	</select>
 		
 	<!-- 참조대기문서 -->
 	<select id="atrzReferList" resultMap="atrzMap" parameterType="hashMap">
-			SELECT U.*
+			SELECT U.*			/* AtrzMapper.atrzReferList */
 	FROM
 	(
-		WITH my_turn_lines AS (  <!-- AtrzMapper.atrzReferList -->
+		WITH my_turn_lines AS (  
 			SELECT L.*
 			FROM atrz_line L
 			WHERE L.sanctner_empno = #{emplNo}
@@ -423,68 +432,69 @@
 	public int approvalTotal(String emplNo)
 	 -->
 	<select id="referTotal" parameterType="hashMap" resultType="int">
-		WITH refer_lines AS (  <!-- AtrzMapper.referTotal -->
-        SELECT L.atrz_doc_no
-        FROM atrz_line L
-        JOIN atrz A
-          ON A.atrz_doc_no = L.atrz_doc_no
-        WHERE A.atrz_delete_yn = 'N'
-          AND A.atrz_sttus_code = '00'
-          AND L.sanctner_empno = #{emplNo}
-          AND L.atrz_ty = '0'
-    )
-    SELECT COUNT(*)
-    FROM atrz A
-    JOIN refer_lines L
-      ON A.atrz_doc_no = L.atrz_doc_no
-    WHERE 1=1
-    <!-- 검색조건 -->
-    <if test="keyword != null and keyword != ''">
-        <choose>
-            <when test="searchType == 'title'">
-                AND A.atrz_sj LIKE '%' || #{keyword} || '%'
-            </when>
-            <when test="searchType == 'drafterName'">
-                AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
-            </when>
-            <when test="searchType == 'drafterDeptName'">
-                AND (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = A.drafter_dept)
-                LIKE '%' || #{keyword} || '%'
-            </when>
-            <when test="searchType == 'formName'">
-                AND DF.DOC_FORM_NM LIKE '%' || #{keyword} || '%'
-                <!-- DOC_FORM 테이블이 조인되어야 함 -->
-            </when>
-        </choose>
-    </if>
-
-    <!-- 날짜 필터 -->
-    <if test="duration != null and duration != 'all'">
-        <choose>
-            <when test="duration == 'period'">
-                <if test="fromDate != null and fromDate != ''">
-                    AND A.atrz_drft_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
-                </if>
-                <if test="toDate != null and toDate != ''">
-                    AND A.atrz_drft_dt <![CDATA[ <= ]]> TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
-                </if>
-            </when>
-            <when test="duration == '1'">
-                AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -1)
-            </when>
-            <when test="duration == '6'">
-                AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -6)
-            </when>
-            <when test="duration == '12'">
-                AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -12)
-            </when>
-        </choose>
-    </if>
+		 WITH refer_docs AS (  				/* AtrzMapper.referTotal */
+		        SELECT A.*, DF.DOC_FORM_NM
+		        FROM atrz_line L
+		        JOIN atrz A ON A.atrz_doc_no = L.atrz_doc_no
+		        LEFT JOIN DOC_FORM DF ON A.doc_form_no = DF.DOC_FORM_NO
+		        WHERE A.atrz_delete_yn = 'N'
+		          AND A.atrz_sttus_code = '00'
+		          AND L.sanctner_empno = #{emplNo}
+		          AND L.atrz_ty = '0'
+		    )
+		    SELECT COUNT(*)
+		    FROM refer_docs A
+		    WHERE 1=1
+		
+		    <!-- 검색조건 -->
+		    <if test="keyword != null and keyword != ''">
+		        <choose>
+		            <when test="searchType == 'title'">
+		                AND A.atrz_sj LIKE '%' || #{keyword} || '%'
+		            </when>
+		            <when test="searchType == 'drafterName'">
+		                AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
+		            </when>
+		            <when test="searchType == 'drafterDeptName'">
+		                AND (SELECT CMMN_CODE_NM 
+		                     FROM COMMON_CODE 
+		                     WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
+		                       AND CMMN_CODE = A.drafter_dept)
+		                    LIKE '%' || #{keyword} || '%'
+		            </when>
+		            <when test="searchType == 'formName'">
+		                AND A.DOC_FORM_NM LIKE '%' || #{keyword} || '%'
+		            </when>
+		        </choose>
+		    </if>
+		
+		    <!-- 날짜 필터 -->
+		    <if test="duration != null and duration != 'all'">
+		        <choose>
+		            <when test="duration == 'period'">
+		                <if test="fromDate != null and fromDate != ''">
+		                    AND A.atrz_drft_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
+		                </if>
+		                <if test="toDate != null and toDate != ''">
+		                    AND A.atrz_drft_dt <![CDATA[ <= ]]> TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
+		                </if>
+		            </when>
+		            <when test="duration == '1'">
+		                AND A.atrz_drft_dt >= ADD_MONTHS(SYSDATE, -1)
+		            </when>
+		            <when test="duration == '6'">
+		                AND A.atrz_drft_dt >= ADD_MONTHS(SYSDATE, -6)
+		            </when>
+		            <when test="duration == '12'">
+		                AND A.atrz_drft_dt >= ADD_MONTHS(SYSDATE, -12)
+		            </when>
+		        </choose>
+		    </if>
 	</select>	
 	
 	<!-- 결재예정문서 -->
 	<select id="atrzExpectedList" parameterType="hashMap" resultMap="atrzMap" >
-		 SELECT U.*
+		 SELECT U.*						/* AtrzMapper.atrzExpectedList */
     FROM (
         WITH waiting_for_my_turn AS (
             SELECT L.*
@@ -586,153 +596,159 @@
 	public int approvalTotal(String emplNo)
 	 -->
 	<select id="expectedTotal" parameterType="hashMap" resultType="int">
-		 SELECT COUNT(*)				/* AtrzMapper.expectedTotal */
-		    FROM (
-		        SELECT 1
-		        FROM ATRZ A
-		             LEFT JOIN atrz_line L ON A.atrz_doc_no = L.atrz_doc_no
-		        WHERE 1 = 1
-		          AND A.atrz_compt_dt IS NULL
-		          AND A.atrz_sttus_code = '00'
-		          AND L.sanctner_empno = #{emplNo}
-		          AND L.atrz_ty = '1'
-		          AND EXISTS (
-		              SELECT 1
-		              FROM atrz_line L2
-		              WHERE L2.atrz_doc_no = A.atrz_doc_no
-		                AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
-		                AND L2.atrz_ty = '1'
-		                AND L2.sanctn_progrs_sttus_code = '00'
-		          )
-			<!-- 검색조건 -->
-			<if test="keyword != null and keyword != ''">
-			    <choose>
-			        <when test="searchType == 'title'">
-			            AND A.atrz_sj LIKE '%' || #{keyword} || '%'
-			        </when>
-			        <when test="searchType == 'drafterName'">
-			            AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
-			        </when>
-			        <when test="searchType == 'drafterDeptName'">
-			           AND (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = A.drafter_dept)
-        				LIKE '%' || #{keyword} || '%'
-			        </when>
-			        <when test="searchType == 'formName'">
-			            AND DF.DOC_FORM_NM LIKE '%' || #{keyword} || '%'
-			            <!-- 또는 결재양식명이 다른 테이블에서 조인된다면 거기서 가져오도록 처리 -->
-			        </when>
-			    </choose>
-			</if>
-			<!-- 날짜 필터 -->
-			<if test="duration != null and duration != 'all'">
-			    <choose>
-			        <when test="duration == 'period'">
-					    <if test="fromDate != null and fromDate != ''">
-					        AND A.atrz_drft_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
-					    </if>
-					    <if test="toDate != null and toDate != ''">
-					        AND A.atrz_drft_dt <![CDATA[ <= ]]>TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
-					    </if>
-			        </when>
-			        <when test="duration == '1'">
-			            AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -1)
-			        </when>
-			        <when test="duration == '6'">
-			            AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -6)
-			        </when>
-			        <when test="duration == '12'">
-			            AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -12)
-			        </when>
-			    </choose>
-			</if>	
-			)
+   WITH expected_docs AS (  /* AtrzMapper.expectedTotal */
+        SELECT A.*, DF.DOC_FORM_NM
+        FROM ATRZ A
+        LEFT JOIN atrz_line L ON A.atrz_doc_no = L.atrz_doc_no
+        LEFT JOIN DOC_FORM DF ON A.doc_form_no = DF.DOC_FORM_NO
+        WHERE A.atrz_compt_dt IS NULL
+          AND A.atrz_sttus_code = '00'
+          AND L.sanctner_empno = #{emplNo}
+          AND L.atrz_ty = '1'
+          AND EXISTS (
+              SELECT 1
+              FROM atrz_line L2
+              WHERE L2.atrz_doc_no = A.atrz_doc_no
+                AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
+                AND L2.atrz_ty = '1'
+                AND L2.sanctn_progrs_sttus_code = '00'
+          )
+    )
+    SELECT COUNT(*)
+    FROM expected_docs A
+    WHERE 1 = 1
+
+    <!-- 검색 조건 -->
+    <if test="keyword != null and keyword != ''">
+        <choose>
+            <when test="searchType == 'title'">
+                AND A.atrz_sj LIKE '%' || #{keyword} || '%'
+            </when>
+            <when test="searchType == 'drafterName'">
+                AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
+            </when>
+            <when test="searchType == 'drafterDeptName'">
+                AND (SELECT CMMN_CODE_NM 
+                     FROM COMMON_CODE 
+                     WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
+                       AND CMMN_CODE = A.drafter_dept)
+                    LIKE '%' || #{keyword} || '%'
+            </when>
+            <when test="searchType == 'formName'">
+                AND A.DOC_FORM_NM LIKE '%' || #{keyword} || '%'
+            </when>
+        </choose>
+    </if>
+
+    <!-- 날짜 필터 -->
+    <if test="duration != null and duration != 'all'">
+        <choose>
+            <when test="duration == 'period'">
+                <if test="fromDate != null and fromDate != ''">
+                    AND A.atrz_drft_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
+                </if>
+                <if test="toDate != null and toDate != ''">
+                    AND A.atrz_drft_dt <![CDATA[ <= ]]> TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
+                </if>
+            </when>
+            <when test="duration == '1'">
+                AND A.atrz_drft_dt >= ADD_MONTHS(SYSDATE, -1)
+            </when>
+            <when test="duration == '6'">
+                AND A.atrz_drft_dt >= ADD_MONTHS(SYSDATE, -6)
+            </when>
+            <when test="duration == '12'">
+                AND A.atrz_drft_dt >= ADD_MONTHS(SYSDATE, -12)
+            </when>
+        </choose>
+    </if>
 	</select>	
 	
 	<!-- document 개인문서함 -->
 	<!-- 기안문서함 -->	
 	<select id="atrzAllSubmitList" parameterType="hashMap" resultMap="atrzMap">
-SELECT U.*
-    FROM (
-        WITH my_submissions AS (
-            SELECT A.*
-            FROM ATRZ A
-            WHERE A.drafter_empno = #{emplNo}  <!-- 기안자 사번 -->
-              AND A.atrz_delete_yn = 'N'  <!-- 삭제되지 않은 문서 -->
-              AND A.atrz_sttus_code IN ('00', '10', '20', '30', '40')  <!-- 결재 진행 중인 상태 -->
-        )
-        SELECT 
-            ROW_NUMBER() OVER (ORDER BY A.atrz_drft_dt DESC) AS RNUM,  <!-- 날짜 내림차순으로 정렬 -->
-            A.atrz_doc_no,
-            A.drafter_empno,
-            A.drafter_clsf,
-            A.drafter_empnm,
-            A.drafter_dept,
-            A.bkmk_yn,
-            A.atch_file_no,
-            A.atrz_sj,
-            A.atrz_cn,
-            A.atrz_opinion,
-            A.atrz_tmpr_stre_dt,
-            A.atrz_drft_dt,
-            A.atrz_compt_dt,
-            A.atrz_rtrvl_dt,
-            A.atrz_sttus_code,
-            A.eltsgn_image,
-            A.doc_form_no,
-            A.atrz_delete_yn,
-            A.schdul_reg_yn,
-            (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = A.drafter_dept) AS DEPT_CODE_NM,  <!-- 부서명 조회 -->
-            (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = A.drafter_clsf) AS CLSF_CODE_NM,  <!-- 직급명 조회 -->
-            DF.DOC_FORM_NM  <!-- 결재 양식명 -->
-        FROM my_submissions A
-        LEFT JOIN DOC_FORM DF ON A.doc_form_no = DF.DOC_FORM_NO
-        WHERE 1=1
-       <!-- 검색조건 -->
-	    <if test="keyword != null and keyword != ''">
-	        <choose>
-	            <when test="searchType == 'title'">
-	                AND A.atrz_sj LIKE '%' || #{keyword} || '%'
-	            </when>
-	            <when test="searchType == 'drafterName'">
-	                AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
-	            </when>
-	            <when test="searchType == 'drafterDeptName'">
-	                AND (SELECT CMMN_CODE_NM 
-	                     FROM COMMON_CODE 
-	                     WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
-	                       AND CMMN_CODE = A.drafter_dept)
-	                LIKE '%' || #{keyword} || '%'
-	            </when>
-	            <when test="searchType == 'formName'">
-	                AND DF.DOC_FORM_NM LIKE '%' || #{keyword} || '%'
-	            </when>
-	        </choose>
-	    </if>
-	
-	    <!-- 날짜 필터 -->
-	    <if test="duration != null and duration != 'all'">
-	        <choose>
-	            <when test="duration == 'period'">
-	                <if test="fromDate != null and fromDate != ''">
-	                    AND A.atrz_drft_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
-	                </if>
-	                <if test="toDate != null and toDate != ''">
-	                    AND A.atrz_drft_dt <![CDATA[ <= ]]> TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
-	                </if>
-	            </when>
-	            <when test="duration == '1'">
-	                AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -1)
-	            </when>
-	            <when test="duration == '6'">
-	                AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -6)
-	            </when>
-	            <when test="duration == '12'">
-	                AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -12)
-	            </when>
-	        </choose>
-	    </if>
-    ) U
-    WHERE U.RNUM BETWEEN ( (#{currentPage} - 1) * #{size} ) + 1 AND (#{currentPage} * #{size})
+	SELECT U.*
+	    FROM (
+	        WITH my_submissions AS (
+	            SELECT A.*
+	            FROM ATRZ A
+	            WHERE A.drafter_empno = #{emplNo}  <!-- 기안자 사번 -->
+	              AND A.atrz_delete_yn = 'N'  <!-- 삭제되지 않은 문서 -->
+	              AND A.atrz_sttus_code IN ('00', '10', '20', '30', '40')  <!-- 결재 진행 중인 상태 -->
+	        )
+	        SELECT 
+	            ROW_NUMBER() OVER (ORDER BY A.atrz_drft_dt DESC) AS RNUM,  <!-- 날짜 내림차순으로 정렬 -->
+	            A.atrz_doc_no,
+	            A.drafter_empno,
+	            A.drafter_clsf,
+	            A.drafter_empnm,
+	            A.drafter_dept,
+	            A.bkmk_yn,
+	            A.atch_file_no,
+	            A.atrz_sj,
+	            A.atrz_cn,
+	            A.atrz_opinion,
+	            A.atrz_tmpr_stre_dt,
+	            A.atrz_drft_dt,
+	            A.atrz_compt_dt,
+	            A.atrz_rtrvl_dt,
+	            A.atrz_sttus_code,
+	            A.eltsgn_image,
+	            A.doc_form_no,
+	            A.atrz_delete_yn,
+	            A.schdul_reg_yn,
+	            (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = A.drafter_dept) AS DEPT_CODE_NM,  <!-- 부서명 조회 -->
+	            (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = A.drafter_clsf) AS CLSF_CODE_NM,  <!-- 직급명 조회 -->
+	            DF.DOC_FORM_NM  <!-- 결재 양식명 -->
+	        FROM my_submissions A
+	        LEFT JOIN DOC_FORM DF ON A.doc_form_no = DF.DOC_FORM_NO
+	        WHERE 1=1
+	       <!-- 검색조건 -->
+		    <if test="keyword != null and keyword != ''">
+		        <choose>
+		            <when test="searchType == 'title'">
+		                AND A.atrz_sj LIKE '%' || #{keyword} || '%'
+		            </when>
+		            <when test="searchType == 'drafterName'">
+		                AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
+		            </when>
+		            <when test="searchType == 'drafterDeptName'">
+		                AND (SELECT CMMN_CODE_NM 
+		                     FROM COMMON_CODE 
+		                     WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
+		                       AND CMMN_CODE = A.drafter_dept)
+		                LIKE '%' || #{keyword} || '%'
+		            </when>
+		            <when test="searchType == 'formName'">
+		                AND DF.DOC_FORM_NM LIKE '%' || #{keyword} || '%'
+		            </when>
+		        </choose>
+		    </if>
+		
+		    <!-- 날짜 필터 -->
+		    <if test="duration != null and duration != 'all'">
+		        <choose>
+		            <when test="duration == 'period'">
+		                <if test="fromDate != null and fromDate != ''">
+		                    AND A.atrz_drft_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
+		                </if>
+		                <if test="toDate != null and toDate != ''">
+		                    AND A.atrz_drft_dt <![CDATA[ <= ]]> TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
+		                </if>
+		            </when>
+		            <when test="duration == '1'">
+		                AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -1)
+		            </when>
+		            <when test="duration == '6'">
+		                AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -6)
+		            </when>
+		            <when test="duration == '12'">
+		                AND A.atrz_drft_dt <![CDATA[ >= ]]> ADD_MONTHS(SYSDATE, -12)
+		            </when>
+		        </choose>
+		    </if>
+	    ) U
+	    WHERE U.RNUM BETWEEN ( (#{currentPage} - 1) * #{size} ) + 1 AND (#{currentPage} * #{size})
 	</select>
 	
 	
@@ -1172,25 +1188,29 @@ SELECT U.*
 	        SELECT 
 	            ROW_NUMBER() OVER (ORDER BY A.atrz_compt_dt DESC) AS RNUM,
 	            A.atrz_doc_no,
+	            A.drafter_empno,
+	            A.drafter_clsf,
+	            A.drafter_empnm,
+	            A.drafter_dept,
+	            A.bkmk_yn,
+	            A.atch_file_no,
 	            A.atrz_sj,
 	            A.atrz_cn,
+	            A.atrz_opinion,
+	            A.atrz_tmpr_stre_dt,
 	            A.atrz_drft_dt,
 	            A.atrz_compt_dt,
 	            A.atrz_rtrvl_dt,
 	            A.atrz_sttus_code,
-	            A.drafter_empno,
-	            A.drafter_empnm,
-	            A.drafter_clsf,
-	            A.drafter_dept,
-	            (SELECT CMMN_CODE_NM 
-	             FROM COMMON_CODE 
-	             WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
-	               AND CMMN_CODE = A.drafter_dept) AS DEPT_CODE_NM,
-	            (SELECT CMMN_CODE_NM 
-	             FROM COMMON_CODE 
-	             WHERE CMMN_CODE_GROUP = 'POSITION' 
-	               AND CMMN_CODE = A.drafter_clsf) AS CLSF_CODE_NM
+	            A.eltsgn_image,
+	            A.doc_form_no,
+	            A.atrz_delete_yn,
+	            A.schdul_reg_yn,
+	            (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = A.drafter_dept) AS DEPT_CODE_NM,
+	            (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = A.drafter_clsf) AS CLSF_CODE_NM,
+	            DF.DOC_FORM_NM
 	        FROM complete_docs A
+	        LEFT JOIN DOC_FORM DF ON A.doc_form_no = DF.DOC_FORM_NO
 	        WHERE 1=1
 	
 	        <!-- 검색 조건 -->
@@ -1203,11 +1223,10 @@ SELECT U.*
 	                    AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
 	                </when>
 	                <when test="searchType == 'drafterDeptName'">
-	                    AND (SELECT CMMN_CODE_NM 
-	                         FROM COMMON_CODE 
-	                         WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
-	                           AND CMMN_CODE = A.drafter_dept) 
-	                        LIKE '%' || #{keyword} || '%'
+	                    AND (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = A.drafter_dept) LIKE '%' || #{keyword} || '%'
+	                </when>
+	                <when test="searchType == 'formName'">
+	                    AND DF.DOC_FORM_NM LIKE '%' || #{keyword} || '%'
 	                </when>
 	            </choose>
 	        </if>
@@ -1237,58 +1256,65 @@ SELECT U.*
 	    ) U
 	    WHERE U.RNUM BETWEEN (#{currentPage}*10) - (10-1) AND (#{currentPage}*10)
 	</select>
+	
 	<!-- 결재완료문서 목록 총 개수 조회 -->
 	<select id="completedTotal" parameterType="hashMap" resultType="int">
-	    SELECT COUNT(*)
-	    FROM (
-	        SELECT 1
-	        FROM ATRZ A
-	        WHERE A.drafter_empno = #{emplNo}
-	          AND A.atrz_sttus_code = '10'
-	          AND A.atrz_delete_yn = 'N'
-	
-	        <!-- 검색 조건 -->
-	        <if test="keyword != null and keyword != ''">
-	            <choose>
-	                <when test="searchType == 'title'">
-	                    AND A.atrz_sj LIKE '%' || #{keyword} || '%'
-	                </when>
-	                <when test="searchType == 'drafterName'">
-	                    AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
-	                </when>
-	                <when test="searchType == 'drafterDeptName'">
-	                    AND (SELECT CMMN_CODE_NM 
-	                         FROM COMMON_CODE 
-	                         WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
-	                           AND CMMN_CODE = A.drafter_dept) 
-	                        LIKE '%' || #{keyword} || '%'
-	                </when>
-	            </choose>
-	        </if>
-	
-	        <!-- 기간 필터 -->
-	        <if test="duration != null and duration != 'all'">
-	            <choose>
-	                <when test="duration == 'period'">
-	                    <if test="fromDate != null and fromDate != ''">
-	                        AND A.atrz_compt_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
-	                    </if>
-	                    <if test="toDate != null and toDate != ''">
-	                        AND A.atrz_compt_dt <![CDATA[ <= ]]> TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
-	                    </if>
-	                </when>
-	                <when test="duration == '1'">
-	                    AND A.atrz_compt_dt >= ADD_MONTHS(SYSDATE, -1)
-	                </when>
-	                <when test="duration == '6'">
-	                    AND A.atrz_compt_dt >= ADD_MONTHS(SYSDATE, -6)
-	                </when>
-	                <when test="duration == '12'">
-	                    AND A.atrz_compt_dt >= ADD_MONTHS(SYSDATE, -12)
-	                </when>
-	            </choose>
-	        </if>
+	   WITH completed_docs AS (  <!-- AtrzMapper.atrzCompletedCount -->
+        SELECT A.*, DF.DOC_FORM_NM
+        FROM ATRZ A
+        LEFT JOIN DOC_FORM DF ON A.doc_form_no = DF.DOC_FORM_NO
+        WHERE A.drafter_empno = #{emplNo}
+          AND A.atrz_sttus_code = '10'  <!-- 완료된 문서 -->
+          AND A.atrz_delete_yn = 'N'
 	    )
+	    SELECT COUNT(*)
+	    FROM completed_docs A
+	    WHERE 1=1
+	
+	    <!-- 검색 조건 -->
+	    <if test="keyword != null and keyword != ''">
+	        <choose>
+	            <when test="searchType == 'title'">
+	                AND A.atrz_sj LIKE '%' || #{keyword} || '%'
+	            </when>
+	            <when test="searchType == 'drafterName'">
+	                AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
+	            </when>
+	            <when test="searchType == 'drafterDeptName'">
+	                AND (SELECT CMMN_CODE_NM 
+	                     FROM COMMON_CODE 
+	                     WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
+	                       AND CMMN_CODE = A.drafter_dept) 
+	                    LIKE '%' || #{keyword} || '%'
+	            </when>
+	            <when test="searchType == 'formName'">
+	                AND A.DOC_FORM_NM LIKE '%' || #{keyword} || '%'
+	            </when>
+	        </choose>
+	    </if>
+	
+	    <!-- 기간 필터 -->
+	    <if test="duration != null and duration != 'all'">
+	        <choose>
+	            <when test="duration == 'period'">
+	                <if test="fromDate != null and fromDate != ''">
+	                    AND A.atrz_compt_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
+	                </if>
+	                <if test="toDate != null and toDate != ''">
+	                    AND A.atrz_compt_dt <![CDATA[ <= ]]> TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
+	                </if>
+	            </when>
+	            <when test="duration == '1'">
+	                AND A.atrz_compt_dt >= ADD_MONTHS(SYSDATE, -1)
+	            </when>
+	            <when test="duration == '6'">
+	                AND A.atrz_compt_dt >= ADD_MONTHS(SYSDATE, -6)
+	            </when>
+	            <when test="duration == '12'">
+	                AND A.atrz_compt_dt >= ADD_MONTHS(SYSDATE, -12)
+	            </when>
+	        </choose>
+	    </if>
 	</select>
 	
 	<!-- 반려문서함 -->
