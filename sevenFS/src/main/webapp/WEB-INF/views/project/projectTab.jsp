@@ -166,7 +166,6 @@
 <%@ include file="../layout/footer.jsp" %>
 </main>
 <%@ include file="../layout/prescript.jsp" %>
-<script src="/resources/js/project/taskDetailModal.js"></script>
 
 <script>
 //projectTab.jsp의 script 부분 수정 (첫 번째 파일)

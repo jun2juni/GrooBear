@@ -45,6 +45,8 @@ public class ProjectTaskController {
 	public String taskDetail(@RequestParam("taskNo") Long taskNo, Model model) {
 		ProjectTaskVO task = projectTaskService.selectTaskById(taskNo);
 		model.addAttribute("task", task);
+		log.info("task 불러온 결과: {}", task);
+
 		return "project/taskDetailContent";
 	}
 
@@ -64,20 +66,24 @@ public class ProjectTaskController {
 	}
 
 
-	// 간트 차트용 업무 수정 모달 폼 불러오기
+	// 간트,칸반 차트용 업무 수정 모달 폼 불러오기
 	@GetMapping("/taskEditModal")
 	public String taskEditModal(@RequestParam("taskNo") Long taskNo, Model model) {
-	    // 1. 해당 업무(taskNo) 정보 조회
 	    ProjectTaskVO task = projectTaskService.selectTaskById(taskNo);
-	    model.addAttribute("task", task);
+	    
+	    if (task == null) {
+	        throw new IllegalArgumentException("해당 업무를 찾을 수 없습니다: taskNo=" + taskNo);
+	    }
+	    
+	    int prjctNo = (int) task.getPrjctNo();
+	    ProjectVO project = projectService.projectDetail(prjctNo);
 
-	    // 2. 프로젝트 참여자 목록 조회 (참여자 중에서 담당자 선택용)
-	    int prjctNo = (int)task.getPrjctNo(); // 업무에 연결된 프로젝트 번호
-	    ProjectVO project = projectService.projectDetail(prjctNo); // 프로젝트 상세 + 참여자 분리됨
+	    model.addAttribute("task", task);
 	    model.addAttribute("project", project);
 
-	    return "project/taskEditModal"; // 모달용 JSP 경로
+	    return "project/taskEditModal";
 	}
+
 	
 	@GetMapping("/taskAddModal")
 	public String taskAddModal(@RequestParam("prjctNo") int prjctNo,
@@ -141,6 +147,48 @@ public class ProjectTaskController {
 	        return "redirect:/project/tab?tab=gantt&prjctNo=" + taskVO.getPrjctNo();
 	    } else {
 	        return "redirect:/project/projectDetail?prjctNo=" + taskVO.getPrjctNo();
+	    }
+	}
+
+	@PostMapping("/updateAjax")
+	@ResponseBody
+	public ResponseEntity<?> updateTaskAjax(
+	    @ModelAttribute ProjectTaskVO taskVO,
+	    BindingResult bindingResult,
+	    @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
+	    @RequestParam(value = "removeFileId", required = false) int[] removeFileIds,
+	    @RequestParam(value = "source", required = false) String source) {
+
+	    try {
+	        if (bindingResult.hasErrors()) {
+	            return ResponseEntity.badRequest().body("업무 수정 실패: 입력값 오류");
+	        }
+
+	        log.info(" [AJAX] 업무 수정 요청 - taskNo: {}", taskVO.getTaskNo());
+
+	        // 파일 처리
+	        AttachFileVO fileVO = new AttachFileVO();
+	        fileVO.setAtchFileNo(taskVO.getAtchFileNo());
+	        fileVO.setRemoveFileId(removeFileIds);
+
+	        if ((uploadFiles != null && uploadFiles.length > 0) || removeFileIds != null) {
+	            int result = attachFileService.updateFileList("project/task", uploadFiles, fileVO);
+	            if (result > 0) {
+	                taskVO.setAtchFileNo(fileVO.getAtchFileNo());
+	            }
+	        }
+
+	        int updated = projectTaskService.updateTask(taskVO);
+
+	        if (updated > 0) {
+	            return ResponseEntity.ok("업무 수정 성공");
+	        } else {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("업무 수정 실패");
+	        }
+
+	    } catch (Exception e) {
+	        log.error(" [AJAX] 업무 수정 오류", e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류");
 	    }
 	}
 

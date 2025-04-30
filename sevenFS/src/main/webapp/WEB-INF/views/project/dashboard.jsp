@@ -143,7 +143,7 @@
     <div class="col-md-4">
       <div class="card dashboard-card shadow h-100 border-white border-2 d-flex align-items-center justify-content-center bg-success p-2 text-white">
         <div class="card-body d-flex align-items-center justify-content-center">
-<%--          <i class="material-icons text-warning me-3 fs-1">work</i>--%>
+          <i class="material-icons text-warning me-3 fs-1">work</i>
           <h5 id="projectCountText" class="mb-0 fw-bold text-white project-title-big text-center">
             프로젝트 진행중
             <br>

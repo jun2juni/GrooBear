@@ -120,20 +120,98 @@
 						class="list-group-item d-flex justify-content-between align-items-center">
 						<span><i class="fas fa-file-alt me-2 text-primary"></i>${file.fileNm}</span>
 						<a href="/projectTask/download?fileName=${file.fileStrePath}"
-						class="btn btn-sm btn-outline-success"> <i
-							class="fas fa-download"></i>
+						class="btn btn-sm btn-outline-success"> <i class="fas fa-download"></i>
 					</a>
 					</li>
 				</c:forEach>
 			</ul>
 		</c:if>
+		
+<c:if test="${not empty task and not empty task.taskNo and (task.chargerEmpno == myEmpInfo.emplNo || myEmpInfo.posNm == '책임자')}">
+  <div class="d-flex justify-content-end mt-4">
+    <button type="button" class="btn btn-outline-primary" onclick="openTaskEditModal('${task.taskNo}')">
+      <i class="fas fa-edit me-1"></i> 업무 수정
+    </button>
+  </div>
+</c:if>
+
+
+
+
+
+		<div id="taskEditModalContainer"></div>
 	</div>
 </div>
 
 <script>
-	const currentTaskNo = "${task.taskNo}";
-	function goToTaskEdit(taskNo) {
-		location.href = `/projectTask/editForm?taskNo=\${taskNo}`;
-	}
+//기존 상세 모달 닫기
+function openTaskEditModal(taskNo) {
+  console.log(" 수정할 taskNo:", taskNo);
+
+  $('#taskDetailModal').modal('hide');
+  
+  fetch(`/projectTask/taskEditModal?taskNo=\${taskNo}`) 
+  .then(resp => resp.text())
+  .then(html => {
+//     document.getElementById("taskEditModalContainer").innerHTML = html;
+    document.querySelector("body").innerHTML += html;
+    const modalEl = document.getElementById("taskEditModal");
+    if (modalEl) {
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+      
+    } else {
+      console.error(" 수정 모달 요소(taskEditModal)가 존재하지 않음");
+    }
+  })
+  .catch(err => {
+    console.error(" 수정 모달 로딩 실패:", err);
+  });
+  
+  
+  if (!taskNo || taskNo === "undefined") {
+    console.error(" taskNo가 유효하지 않습니다:", taskNo);
+    swal("오류", "업무 번호가 올바르지 않습니다.", "error");
+    return;
+  }
+
+  const detailModal2 = bootstrap.Modal.getInstance(document.getElementById("taskDetailModal"));
+  
+//   console.log(detailModal2);
+  
+//   function cleanUpModal() {
+// 	    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove()); // 오버레이 제거
+// 	    document.body.classList.remove('modal-open'); // 스크롤 잠금 해제
+// 	    document.body.style = ''; // inline style 제거
+// 	}
+  
+  
+//   if (detailModal2) {
+	// 모달 띄우기 (지연 적용)
+	  /*
+	  setTimeout(() => {
+	    fetch(`/projectTask/taskEditModal?taskNo=\${taskNo}`) 
+	      .then(resp => resp.text())
+	      .then(html => {
+	        document.getElementById("taskEditModalContainer").innerHTML = html;
+	        const modalEl = document.getElementById("taskEditModal");
+	        if (modalEl) {
+	          const modal = new bootstrap.Modal(modalEl);
+	          modal.show();
+	          
+	        } else {
+	          console.error(" 수정 모달 요소(taskEditModal)가 존재하지 않음");
+	        }
+	      })
+	      .catch(err => {
+	        console.error(" 수정 모달 로딩 실패:", err);
+	      });
+	  }, 300);
+	*/
+//   }
+  
+  
+  
+  
+}
 </script>
-<!-- 현준이 댓글 스크립트 -->

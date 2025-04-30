@@ -44,7 +44,9 @@
         <h5 class="modal-title" id="taskDetailModalLabel">업무 상세 정보</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" id="taskDetailModalContent"></div>
+      <div class="modal-body" id="taskDetailModalContent">
+      
+      </div>
     </div>
   </div>
 </div>

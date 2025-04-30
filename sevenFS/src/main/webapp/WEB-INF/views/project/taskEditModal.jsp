@@ -106,7 +106,7 @@
 
           <div class="mb-3">
             <label class="form-label fw-semibold">첨부파일</label>
-            <input type="file" name="uploadFiles" class="form-control" multiple />
+            <input type="file" name="uploadFiles[]" class="form-control" multiple />
           </div>
 
           <c:if test="${not empty task.attachFileList}">
@@ -134,60 +134,49 @@
 </div>
 
 <script>
-// IIFE 패턴에서 즉시 실행 함수로 변경하여 중복 바인딩 방지
-document.addEventListener("DOMContentLoaded", function() {
-  setupModalHandler();
-});
-
-// 모달 핸들러 설정 함수 - 중복 바인딩 방지
 let isHandlerAttached = false;
+
 function setupModalHandler() {
   if (isHandlerAttached) return;
-  
+
   const submitBtn = document.getElementById("submitEditTaskBtn");
   if (!submitBtn) {
-    console.error("❌ 수정 버튼이 존재하지 않음");
+    console.error(" 수정 버튼 없음");
     return;
   }
 
   submitBtn.addEventListener("click", function () {
+    console.log(" 수정 완료 버튼 클릭됨");
+
     const form = document.getElementById("taskEditForm");
-    if (!form) {
-      console.error("❌ 폼이 존재하지 않음");
-      return;
-    }
-
     const formData = new FormData(form);
-    
-    // 이미 source 필드가 있는지 확인
-    if (!formData.has("source")) {
-      formData.append("source", "gantt");
-    }
 
-    fetch("/projectTask/update", {
+    fetch("/projectTask/updateAjax", {
       method: "POST",
       body: formData
     })
-      .then(res => {
-        if (!res.ok) {
-          throw new Error("서버 응답 오류: " + res.status);
-        }
-        return res.text();
-      })
-      .then(() => {
-        const modal = bootstrap.Modal.getInstance(document.getElementById("taskEditModal"));
-        if (modal) modal.hide();
-        if (typeof loadGanttData === "function") loadGanttData();
+    .then(res => {
+      if (!res.ok) throw new Error("서버 오류: " + res.status);
+      return res.text();
+    })
+    .then(() => {
+      const modal = bootstrap.Modal.getInstance(document.getElementById("taskEditModal"));
+      if (modal) modal.hide();
+      if (typeof loadGanttData === "function") loadGanttData();
 
-        swal("수정 완료!", "업무가 성공적으로 수정되었습니다.", "success");
-      })
-      .catch(err => {
-        console.error("❌ 업무 수정 실패:", err);
-        swal("수정 실패", "오류가 발생했습니다.\n" + err.message, "error");
-      });
+      swal("수정 완료!", "업무가 성공적으로 수정되었습니다.", "success");
+    })
+    .catch(err => {
+      console.error(" 업무 수정 실패:", err);
+      swal("수정 실패", "오류가 발생했습니다.\n" + err.message, "error");
+    });
+
   });
-  
+
   isHandlerAttached = true;
-  console.log("✅ 모달 핸들러 설정 완료");
+  console.log(" 수정 핸들러 연결 완료");
 }
+
+// 모달이 로드되면 자동 실행
+setupModalHandler();
 </script>
