@@ -197,8 +197,16 @@
 				 <c:if test="${not empty empDclzList}">
 	                  <p id="emplTotalCnt" class="text-sm text-muted ms-auto">총 ${fn:length(empDclzList)}건</p>
 				  </c:if>
+				  <c:if test="${empty empDclzList}">
+				  		<p id="emplTotalCnt" class="text-sm text-muted ms-auto">총 0건</p>
+				  </c:if>
 				<div class="input-group mb-3 ms-auto justify-content-end w-20">
-				  <a href="/dclz/dclzType" class="btn-xs main-btn light-btn-light btn-hover mr-10 rounded">전체 목록 보기</a>
+				<form action="/dclz/dclzExcelDownload" method="get" id="excelForm">
+				  <button id="excelDownBtn" type="submit" class="btn-xs main-btn success-btn btn-hover mr-10 rounded">엑셀 다운로드</button>
+				  <input type="hidden" name="keyword" id="excelKeyword">
+				  <input type="hidden" name="keywordSearch" id="excelKeywordSearch">
+				 </form> 
+				  <a href="/dclz/dclzType" class="btn-xs main-btn light-btn btn-hover mr-10 rounded">전체 목록 보기</a>
 				  <form action="/dclz/dclzType" method="get" id="keywordSearchFome">
 					<input type="search" class="form-control rounded" placeholder="지각, 출장, 외근 검색" aria-label="Search"
 						   aria-describedby="search-addon" id="schName" name="keywordSearch"
@@ -271,7 +279,7 @@
 							  </c:if>
 							  <c:if test="${dclzWork.cmmnCodeNm == '출/퇴근'}">
 								<h4><span class="badge rounded-pill text-white"
-										  style="background-color:mediumSeaGreen">${dclzWork.cmmnCodeNm}</span></h4>
+										  style="background-color:darkSeaGreen">${dclzWork.cmmnCodeNm}</span></h4>
 							  </c:if>
 							  <c:if test="${dclzWork.cmmnCodeNm == '출장'}">
 								<h4><span class="badge rounded-pill text-white"
@@ -343,6 +351,19 @@
 
 <script type="text/javascript">
 
+//엑셀 다운로드 함수
+window.downloadExcel = function() {
+var keyword = document.getElementById("excelKeywordSearch") ? document.getElementById("excelKeywordSearch").value : '';
+var encodedKeyword = encodeURIComponent(keyword);
+
+// 현재 사용자의 검색 키워드를 포함한 URL 생성
+var url = "/dclz/dclzExcelDownload?keyword=" + encodedKeyword;
+
+// 다운로드 요청
+window.location.href = url;
+};
+
+
   function fSchEnder(e) {
     if(e.code === "Enter") {
       const keywordSearch = $('#keywordSearch').val();
@@ -351,13 +372,27 @@
   }
 
   $(function() {
-	  
 	 const queryString = window.location.search;
 	 const urlParams = new URLSearchParams(queryString); 
 	 const keywordSearch = urlParams.get('keywordSearch');
-	 $('#searchVacationType').text(keywordSearch);
+	 const keyword = urlParams.get('keyword');
 	 
+	 // 오늘 년도와 월 가져오기
+	 const year = $('#hiddenKeyYear').val();
+     const month = $('#hiddenKeyword').val();
+     const formattedMonth = String(month).padStart(2, '0');
+	 const yearMonth = year + '-' + formattedMonth;
+	
+	if(keyword == null || keyword == ''){
+		$('#excelKeyword').val(yearMonth);
+	}else{
+		$('#excelKeyword').val(keyword);
+	}
+	
+	 $('#searchVacationType').text(keywordSearch);
 	 $('#schName').val(keywordSearch);
+     
+	 $('#excelKeywordSearch').val(keywordSearch);
 
     // 버튼 클릭 이벤트
     function updateDateDisplay() {
@@ -371,6 +406,7 @@
 
       $('#submitKeyword').val(newDate);
       console.log('보낼키워드 : ', $('#submitKeyword').val());
+
       $('#keywordForm').submit();
     }
 

@@ -136,7 +136,7 @@
                  <p class="mb-0 text-sm text-muted ms-auto">총 0건</p>
 		  </c:if>
 		  <div class="input-group mb-3 ms-auto justify-content-end w-10 d-flex mt-20">
-			<a href="/dclz/vacation" class="btn-xs main-btn light-btn-light btn-hover mr-5 rounded">전체 목록 보기</a>
+			<a href="/dclz/vacation" class="btn-xs main-btn light-btn btn-hover mr-5 rounded">전체 목록 보기</a>
 			<%--  <form>
 			  <div class="col-2 mr-5">
 				  <select class="form-select w-auto">
@@ -264,7 +264,6 @@ $(function() {
       const year = $('#hiddenKeyYear').val();
       const month = $('#hiddenKeyword').val();
       const formattedMonth = String(month).padStart(2, '0');
-      
       
       if(keywordSearch == null || keywordSearch == ''){
 	      document.getElementById('dateDisplay').textContent = year + '-' + formattedMonth;

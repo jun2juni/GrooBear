@@ -1,14 +1,23 @@
 package kr.or.ddit.sevenfs.controller.organization;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kr.or.ddit.sevenfs.service.organization.DclztypeService;
 import kr.or.ddit.sevenfs.utils.ArticlePage;
 import kr.or.ddit.sevenfs.utils.CommonCode;
@@ -46,9 +58,9 @@ public class DclzTypeController {
 		model.addAttribute("title" , "나의 근태 현황");
 		
 		// 페이징처리
-				String emplNo = principal.getName();
-				//log.info("username : " + emplNo);
-				dclzTypeVO.setEmplNo(emplNo);
+		String emplNo = principal.getName();
+		//log.info("username : " + emplNo);
+		dclzTypeVO.setEmplNo(emplNo);
 		
 		// 근태 selectBox를 위한 근태현황 조회
 		List<DclzTypeVO> dclzSelList = dclztypeService.dclzSelList(emplNo);
@@ -107,6 +119,84 @@ public class DclzTypeController {
      	
 		return "organization/dclz/dclzType";
 	}
+	
+	//엑셀 다운로드
+    @GetMapping("/dclzExcelDownload")
+    public void downloadExcel(
+            HttpServletResponse response,
+            Principal principal,
+            @RequestParam(defaultValue = "") String keyword,
+    		@RequestParam(defaultValue = "") String keywordSearch) throws IOException {
+        
+    	
+    	log.info("왔니 ?? ");
+    	String emplNo = principal.getName();
+    	
+        Map<String, Object> map = new HashMap<>();
+        map.put("emplNo", emplNo);
+        map.put("keyword", keyword);
+        map.put("keywordSearch", keywordSearch);
+        
+        log.info("엑셀 keyword : " + keyword);
+        
+        List<DclzTypeVO> empDclzList = dclztypeService.emplDclzTypeList(map);
+        
+        // Excel 파일 생성
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("근태현황 목록");
+        
+        // 헤더 스타일
+        CellStyle headerStyle = workbook.createCellStyle();
+        XSSFFont headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerStyle.setFont(headerFont);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+        
+        // 헤더 행 생성
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"번호", "근무일자", "근태유형", "업무시작", "업무종료", "총 근무시간"};
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+            sheet.setColumnWidth(i, 4000); // 칼럼 너비 설정
+        }
+        
+        // 데이터 행 생성
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        
+        int rowNum = 1;
+        for (DclzTypeVO dclz : empDclzList) {
+        	// 총 근무시간
+        	String workHour = dclz.getWorkHour();
+        	String workMinutes = dclz.getWorkMinutes();
+        	
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(rowNum - 1);
+            row.createCell(1).setCellValue(dclz.getDclzNo().substring(0, 4)+"-"+dclz.getDclzNo().substring(4, 6)+"-"+dclz.getDclzNo().substring(6, 8));
+            row.createCell(2).setCellValue(dclz.getCmmnCodeNm());
+            row.createCell(3).setCellValue(dclz.getDclzBeginDt() != null ? sdf.format(dclz.getDclzBeginDt()) : "");
+            row.createCell(4).setCellValue(dclz.getDclzEndDt() != null ? sdf.format(dclz.getDclzEndDt()) : "");
+            if(workHour == null || workMinutes == null) {
+            	row.createCell(5).setCellValue("미등록");
+            }else {
+            	row.createCell(5).setCellValue(workHour+"시간 "+workMinutes+"분");
+            }
+        }
+        
+        // 파일 다운로드 설정
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        String fileName = URLEncoder.encode(keyword + "월" + "_근태현황_목록" + ".xlsx", "UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+        
+        // 파일 출력
+        ServletOutputStream outputStream = response.getOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+        outputStream.close();
+    }
+	
 	
 	// 년도 , 달 선택했을때
 	@ResponseBody
