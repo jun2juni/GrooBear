@@ -341,7 +341,7 @@
           <div class="sidebar-item type-select ${mailVO.emailClTy eq '4' ? 'active' : ''}" data-emailClTy="4">
             <i class="far fa-trash-alt"></i>
             <!-- <i class="fas fa-trash"></i> -->
-            <span class="sidebar-label">휴지통</span>
+              <span class="sidebar-label">휴지통</span>
             <!-- <span class="sidebar-count">11</span> -->
           </div>
         </div>
@@ -588,7 +588,7 @@
               <div class="email-list-header" style="display: flex; padding: 10px; border-bottom: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: bold;">
                 <div id="balnk" style="width: 68px;"></div>
                 <div class="email-header-sender" style="flex: 1; text-align: left; padding-right: 12px ;">이메일</div>
-                <div class="email-header-subject" style="flex: 2; text-align: left;">제목</div>
+                <div class="email-header-subject" style="flex: 2; text-align: left; padding-left: 20px;">제목</div>
                 <div class="email-header-date" style="flex: 1; text-align: center;">날짜</div>
               </div>
               <!-- forEach 시작 -->

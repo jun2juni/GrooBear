@@ -153,9 +153,11 @@ public class MailController {
 		EmployeeVO employeeVO = customUser.getEmpVO();
 		int result = mailService.readingAt(emailNo);
 		List<MailLabelVO> mailLabelList = mailLabelService.getLabelList(employeeVO);
+		
 		MailVO mailVO = new MailVO(emailNo);
 		log.info("emailDetail -> mailVO : "+mailVO);
 		mailVO = mailService.emailDetail(mailVO);
+		
 		mailVO.setHiddenRefMapList(null);
 		log.info("emailDetail -> mailService.emailDetail -> mailVO : "+mailVO);
 		List<AttachFileVO> attachFileVOList = mailService.getAtchFile(mailVO.getAtchFileNo());
@@ -368,7 +370,7 @@ public class MailController {
 	@PostMapping("/labelingUpt")
 	@ResponseBody
 	public String labelingUpt(@RequestParam(value = "lblNo")int lblNo,
-							  @RequestParam(value = "checkedList")List<String>checkedList) {
+							  @RequestParam(value = "checkedList", required=false)List<String>checkedList) {
 		log.info("labelingUpt -> lblNo : "+lblNo);
 		log.info("labelingUpt -> checkedList : "+checkedList);
 		Map<String,Object> map = new HashMap<String,Object>();

@@ -116,7 +116,7 @@ ORDER BY M.trnsmit_dt DESC
 </select>
 
 <select id="emailDetail" parameterType="kr.or.ddit.sevenfs.vo.mail.MailVO" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO">
-SELECT
+SELECT 
 	(select empl_nm from EMPLOYEE where empl_no=m.empl_no) empl_nm,
     m.email_no,
     m.empl_no,
@@ -132,12 +132,13 @@ SELECT
     m.readng_at,
     m.email_group_no,
     m.starred
-FROM mail m , mail_label ml
+FROM mail m
 WHERE m.email_group_no = (
     SELECT email_group_no
     FROM mail
     WHERE email_no = #{emailNo}
 )
+
 </select>
 
 <update id="readingAt" parameterType="int">

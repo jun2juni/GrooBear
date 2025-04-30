@@ -557,12 +557,12 @@
                         <c:if test="${mailVO.emailSj != null && mailVO.emailSj != ''}">${mailVO.emailSj}</c:if>
                         <c:if test="${mailVO.emailSj == null || mailVO.emailSj == ''}">(제목 없음)</c:if>
                       </h4>
-                        <c:if test="${(mailVO.lblCol != null and mailVO.lblCol != '')&&(mailVO.emailClTy=='0' || mailVO.emailClTy=='1')}">
-                          <i class="fas fa-tag" data-col="${mailVO.lblCol}" data-lblNo="${mailVO.lblNo}" style="color: ${mailVO.lblCol}; font-size: 16px;"></i>
-                        </c:if>
-                      <button class="toolbar-button" style="margin-left: auto;">
+                      <c:if test="${(mailVO.lblCol != null and mailVO.lblCol != '')&&(mailVO.emailClTy=='0' || mailVO.emailClTy=='1')}">
+                        <i class="fas fa-tag" id="labelTag" data-col="${mailVO.lblCol}" data-lblNo="${mailVO.lblNo}" style="color: ${mailVO.lblCol}; font-size: 16px;"></i>
+                      </c:if>
+                      <!-- <button class="toolbar-button" style="margin-left: auto;">
                         <i class="fas fa-ellipsis-v"></i>
-                      </button>
+                      </button> -->
                     </div>
                   </div>
                   <div class="email-detail-info">
@@ -644,6 +644,23 @@
                             <span>전달</span>
                           </button>
                         </c:if>
+                        <button class="forward-button" id="deleteMail" data-emailClTy="${mailVO.emailClTy}">
+                          <i class="material-icons">delete</i>
+                          <c:if test="${mailVO.emailClTy == '4'}">
+                            <span>삭제</span>
+                          </c:if>
+                          <c:if test="${mailVO.emailClTy != '4'}">
+                            <span>휴지통</span>
+                          </c:if>
+                        </button>
+                        <!-- 라벨 지정 select 추가 -->
+                        <select name="label" id="labeling" class="label-select forward-button" style="margin: 0 10px; padding: 5px;">
+                          <option value="" disabled selected>라벨</option>
+                          <c:forEach items="${mailLabelList}" var="mailLabel">
+                            <option value="${mailLabel.lblNo}">${mailLabel.lblNm}</option>
+                          </c:forEach>
+                          <option id="detLabel" value="0">라벨 해제</option>
+                        </select>
                       </div>
                     </c:if>
                   </div>
@@ -704,6 +721,95 @@
         //const senderName = document.querySelector('.sender-name').textContent;
         //const initials = senderName.split(' ').map(name => name.charAt(0)).join('');
         
+        // 메일 휴지통 / 삭제
+        $('#deleteMail').on('click',function(){
+          const params = new URLSearchParams(window.location.search);
+          const value = params.get('emailNo');
+
+          console.log(this);
+
+          let emailClTy = $(this).attr('data-emailClTy')
+          console.log('emailClTy : ',emailClTy);
+
+          let emailNoList = [];
+          emailNoList.push(value);
+
+          let url="";
+          if(emailClTy == '4'){
+            url = "/mail/realDelete"
+            console.log('realDelete')
+          }else{
+            url="/mail/delete"
+            console.log('delete')
+          }
+          console.log('삭제 할 메일',emailNoList);
+          $.ajax({
+            url:url,
+            method:'post',
+            data:{"emailNoList":emailNoList},
+            success:function(resp){
+              window.location.href = resp+'?emailClTy='+emailClTy;
+            },
+            error:function(err){
+              console.log(err);
+            }
+          })
+        })
+
+        // 라벨 적용
+        $('#labeling').on('change',function(){
+          const params = new URLSearchParams(window.location.search);
+          const value = params.get('emailNo');
+          let lblNo = this.value;
+          let checkedList = []
+          checkedList.push(value)
+          console.log('라벨 no : ',lblNo);
+          console.log('checkedList 메일 선택 : ',checkedList);
+          data = {
+            lblNo:lblNo,
+            checkedList:checkedList
+          }
+          console.log('data : ',data);
+          $.ajax({
+            url:'/mail/labelingUpt',
+            data:data,
+            method:'post',
+            success:function(resp){
+              console.log(resp);
+              labeling(lblNo,resp)
+            },
+            error:function(err){
+              console.log(err);
+            }
+          })
+        })
+        /*<h4 class="email-detail-subject" style="margin: 0;">
+            <c:if test="${mailVO.emailSj != null && mailVO.emailSj != ''}">${mailVO.emailSj}</c:if>
+            <c:if test="${mailVO.emailSj == null || mailVO.emailSj == ''}">(제목 없음)</c:if>
+          </h4>
+          <c:if test="${(mailVO.lblCol != null and mailVO.lblCol != '')&&(mailVO.emailClTy=='0' || mailVO.emailClTy=='1')}">
+            <i class="fas fa-tag" id="labelTag" data-col="${mailVO.lblCol}" data-lblNo="${mailVO.lblNo}" style="color: ${mailVO.lblCol}; font-size: 16px;"></i>
+          </c:if> */
+        function labeling(lblNo,color){
+            console.log('lblNo : ',lblNo);
+            console.log('color : ',color);
+            if(color == null || color == '' ){
+              console.log('라벨 삭제')
+              $('#labelTag').remove();
+            }else{
+              if($('#labelTag').length){
+                // 라벨 존재하는 경우 -> 변경
+                $('#labelTag').remove();
+                $('.email-detail-subject').after(`<i class="fas fa-tag" id="labelTag" data-col="\${color}" data-lblNo="\${lblNo}" style="color: \${color}; font-size: 16px;"></i>`)
+              }else{
+                // 라벨 존재하지 않는 경우 -> 추가
+                console.log('라벨 추가 혹은 변경')
+                $('.email-detail-subject').after(`<i class="fas fa-tag" id="labelTag" data-col="\${color}" data-lblNo="\${lblNo}" style="color: \${color}; font-size: 16px;"></i>`)
+              }
+            }
+        }
+
+
         // 별표 클릭
         $('.fa-star').on('click',function(e){
           e.stopPropagation();
