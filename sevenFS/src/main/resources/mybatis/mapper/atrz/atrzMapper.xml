@@ -4,7 +4,7 @@
 	<!--home 전자결재 -->
 	<!-- 결재 대기중인 문서리스트 (결재대기문서)-->
 	<select id="homeAtrzApprovalList" resultMap="atrzMap">
-		WITH my_turn_lines AS (					/* AtrzMapper.atrzApprovalList */
+		WITH my_turn_lines AS (					/* AtrzMapper.homeAtrzApprovalList */
 		    SELECT L.*
 		    FROM atrz_line L
 		    WHERE L.sanctner_empno = #{emplNo}
@@ -58,7 +58,7 @@
 	
 	<!-- 기안진행문서 최신순5개 -->
 	<select id="atrzMinSubmitList" resultMap="atrzMap" parameterType="string">
-		SELECT 		/* AtrzMapper.atrzMinSubmitList */
+		SELECT 					/* AtrzMapper.atrzMinSubmitList */
 		       A.atrz_doc_no
 		      ,A.drafter_empno
 		      ,A.drafter_clsf
@@ -81,9 +81,27 @@
 		      ,L.atrz_ln_sn
 		      ,L.sanctner_empno
 		      ,L.sanctn_progrs_sttus_code
-		      ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
-		      ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
-		      
+		
+		      /* 🔥 기안자 부서/직급  */
+		      ,(SELECT CMMN_CODE_NM 
+		         FROM COMMON_CODE 
+		         WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
+		           AND CMMN_CODE = DRAFTER_DEPT) AS DEPT_CODE_NM
+		
+		      ,(SELECT CMMN_CODE_NM 
+		         FROM COMMON_CODE 
+		         WHERE CMMN_CODE_GROUP = 'POSITION' 
+		           AND CMMN_CODE = DRAFTER_CLSF) AS CLSF_CODE_NM
+		
+		      /* 🔥 결재자 이름 */
+		      ,EMP.empl_nm AS sanctner_empnm
+		
+		      /* 🔥 결재자 부서명 */
+		      ,(SELECT CMMN_CODE_NM 
+		         FROM COMMON_CODE 
+		         WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
+		           AND CMMN_CODE = EMP.dept_code) AS sanctner_deptnm
+		
 		FROM (
 		    SELECT *
 		    FROM (
@@ -96,8 +114,19 @@
 		    )
 		    WHERE ROWNUM &lt;= 5
 		) A
-		LEFT JOIN atrz_line L
-		  ON A.atrz_doc_no = L.atrz_doc_no
+		LEFT JOIN atrz_line L ON A.atrz_doc_no = L.atrz_doc_no
+		LEFT JOIN EMPLOYEE EMP ON L.sanctner_empno = EMP.empl_no
+		
+		/* 지금 결재 차례인 사람만 남기기 */
+		WHERE L.sanctn_progrs_sttus_code = '00'
+		  AND NOT EXISTS (
+		      SELECT 1
+		      FROM atrz_line L2
+		      WHERE L2.atrz_doc_no = L.atrz_doc_no
+		        AND L2.atrz_ln_sn &lt; L.atrz_ln_sn
+		        AND L2.sanctn_progrs_sttus_code = '00'
+		  )
+		
 		ORDER BY A.atrz_drft_dt DESC
 	</select>
 	
@@ -1129,6 +1158,138 @@ SELECT U.*
 	    )
 	</select>
 	
+	<!-- 결재완료함 -->
+	<select id="atrzCompletedList" parameterType="hashMap" resultMap="atrzMap">
+	    SELECT U.*
+	    FROM (
+	        WITH complete_docs AS (
+	            SELECT A.*
+	            FROM ATRZ A
+	            WHERE A.drafter_empno = #{emplNo}
+	              AND A.atrz_sttus_code = '10'
+	              AND A.atrz_delete_yn = 'N'
+	        )
+	        SELECT 
+	            ROW_NUMBER() OVER (ORDER BY A.atrz_compt_dt DESC) AS RNUM,
+	            A.atrz_doc_no,
+	            A.atrz_sj,
+	            A.atrz_cn,
+	            A.atrz_drft_dt,
+	            A.atrz_compt_dt,
+	            A.atrz_rtrvl_dt,
+	            A.atrz_sttus_code,
+	            A.drafter_empno,
+	            A.drafter_empnm,
+	            A.drafter_clsf,
+	            A.drafter_dept,
+	            (SELECT CMMN_CODE_NM 
+	             FROM COMMON_CODE 
+	             WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
+	               AND CMMN_CODE = A.drafter_dept) AS DEPT_CODE_NM,
+	            (SELECT CMMN_CODE_NM 
+	             FROM COMMON_CODE 
+	             WHERE CMMN_CODE_GROUP = 'POSITION' 
+	               AND CMMN_CODE = A.drafter_clsf) AS CLSF_CODE_NM
+	        FROM complete_docs A
+	        WHERE 1=1
+	
+	        <!-- 검색 조건 -->
+	        <if test="keyword != null and keyword != ''">
+	            <choose>
+	                <when test="searchType == 'title'">
+	                    AND A.atrz_sj LIKE '%' || #{keyword} || '%'
+	                </when>
+	                <when test="searchType == 'drafterName'">
+	                    AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
+	                </when>
+	                <when test="searchType == 'drafterDeptName'">
+	                    AND (SELECT CMMN_CODE_NM 
+	                         FROM COMMON_CODE 
+	                         WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
+	                           AND CMMN_CODE = A.drafter_dept) 
+	                        LIKE '%' || #{keyword} || '%'
+	                </when>
+	            </choose>
+	        </if>
+	
+	        <!-- 기간 필터 -->
+	        <if test="duration != null and duration != 'all'">
+	            <choose>
+	                <when test="duration == 'period'">
+	                    <if test="fromDate != null and fromDate != ''">
+	                        AND A.atrz_compt_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
+	                    </if>
+	                    <if test="toDate != null and toDate != ''">
+	                        AND A.atrz_compt_dt <![CDATA[ <= ]]> TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
+	                    </if>
+	                </when>
+	                <when test="duration == '1'">
+	                    AND A.atrz_compt_dt >= ADD_MONTHS(SYSDATE, -1)
+	                </when>
+	                <when test="duration == '6'">
+	                    AND A.atrz_compt_dt >= ADD_MONTHS(SYSDATE, -6)
+	                </when>
+	                <when test="duration == '12'">
+	                    AND A.atrz_compt_dt >= ADD_MONTHS(SYSDATE, -12)
+	                </when>
+	            </choose>
+	        </if>
+	    ) U
+	    WHERE U.RNUM BETWEEN (#{currentPage}*10) - (10-1) AND (#{currentPage}*10)
+	</select>
+	<!-- 결재완료문서 목록 총 개수 조회 -->
+	<select id="completedTotal" parameterType="hashMap" resultType="int">
+	    SELECT COUNT(*)
+	    FROM (
+	        SELECT 1
+	        FROM ATRZ A
+	        WHERE A.drafter_empno = #{emplNo}
+	          AND A.atrz_sttus_code = '10'
+	          AND A.atrz_delete_yn = 'N'
+	
+	        <!-- 검색 조건 -->
+	        <if test="keyword != null and keyword != ''">
+	            <choose>
+	                <when test="searchType == 'title'">
+	                    AND A.atrz_sj LIKE '%' || #{keyword} || '%'
+	                </when>
+	                <when test="searchType == 'drafterName'">
+	                    AND A.drafter_empnm LIKE '%' || #{keyword} || '%'
+	                </when>
+	                <when test="searchType == 'drafterDeptName'">
+	                    AND (SELECT CMMN_CODE_NM 
+	                         FROM COMMON_CODE 
+	                         WHERE CMMN_CODE_GROUP = 'DEPARTMENT' 
+	                           AND CMMN_CODE = A.drafter_dept) 
+	                        LIKE '%' || #{keyword} || '%'
+	                </when>
+	            </choose>
+	        </if>
+	
+	        <!-- 기간 필터 -->
+	        <if test="duration != null and duration != 'all'">
+	            <choose>
+	                <when test="duration == 'period'">
+	                    <if test="fromDate != null and fromDate != ''">
+	                        AND A.atrz_compt_dt <![CDATA[ >= ]]> TO_DATE(#{fromDate}, 'YYYY-MM-DD')
+	                    </if>
+	                    <if test="toDate != null and toDate != ''">
+	                        AND A.atrz_compt_dt <![CDATA[ <= ]]> TO_DATE(#{toDate}, 'YYYY-MM-DD') + 1
+	                    </if>
+	                </when>
+	                <when test="duration == '1'">
+	                    AND A.atrz_compt_dt >= ADD_MONTHS(SYSDATE, -1)
+	                </when>
+	                <when test="duration == '6'">
+	                    AND A.atrz_compt_dt >= ADD_MONTHS(SYSDATE, -6)
+	                </when>
+	                <when test="duration == '12'">
+	                    AND A.atrz_compt_dt >= ADD_MONTHS(SYSDATE, -12)
+	                </when>
+	            </choose>
+	        </if>
+	    )
+	</select>
 	
 	<!-- 반려문서함 -->
 	<select id="atrzCompanionList" parameterType="hashMap" resultMap="atrzMap">
@@ -1212,6 +1373,7 @@ SELECT U.*
     WHERE U.RNUM BETWEEN (#{currentPage}*10) - (10-1) AND (#{currentPage}*10)
 	</select>
 	
+	<!-- 반려문서함 행의수 -->
 	<select id="companionTotal" parameterType="hashMap" resultType="int">
 		WITH companion_docs AS (  <!-- AtrzMapper.atrzCompanionCount -->
 	        SELECT A.*
@@ -1241,7 +1403,6 @@ SELECT U.*
 	            </when>
 	        </choose>
 	    </if>
-	
 	    <!-- 기간 필터 -->
 	    <if test="duration != null and duration != 'all'">
 	        <choose>
@@ -2536,6 +2697,8 @@ SELECT U.*
 		<result property="sanctnOpinion" column="SANCTN_OPINION"/>
 		<result property="eltsgnImage" column="ELTSGN_IMAGE"/>
 		<result property="sanctnConfmDt" column="SANCTN_CONFM_DT"/>
+		<result property="sanctnerEmpNm" column="sanctner_empnm" />
+		<result property="sanctnerDeptNm" column="sanctner_deptnm"/>
 	</resultMap>
 	
 	<!-- 사원 -->

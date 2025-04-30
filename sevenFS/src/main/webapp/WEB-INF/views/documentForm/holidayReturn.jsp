@@ -328,9 +328,8 @@ select.ui-datepicker-year {
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1"
-										style="padding: 0.4rem 1rem; font-size: 0.95rem;"
-										href="/atrz/home"> 
+									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;" > 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
@@ -593,9 +592,8 @@ select.ui-datepicker-year {
 										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> 
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1"
-										style="padding: 0.4rem 1rem; font-size: 0.95rem;"
-										href="/atrz/home"> 
+									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
@@ -876,7 +874,6 @@ $(document).ready(function() {
 	//유효성검사
 
 		let jnForm = document.querySelector("#atrz_ho_form");
-		// console.log("${empVO}" + empVO);
 		
 		let formData = new FormData();
 		formData.append("docFormNm","H");
@@ -978,7 +975,7 @@ $(document).ready(function() {
 						closeOnEsc: false,
 						button: "확인"
 					}).then(() => {
-						location.replace("/atrz/home")
+						location.replace("/atrz/document?tab=1")
 					});
 				}
 			},
@@ -1001,13 +998,12 @@ $(document).ready(function() {
 				button: "확인"
 			});
 			return;
-		}
+		};
 		// alert("체킁");
 		console.log("전송하기 체킁 확인");
 		console.log("s_eap_app_bottom->authList : ", authList);
 		
 		let jnForm = document.querySelector("#atrz_ho_form");
-		// console.log("${empVO}" + empVO);
 		
 		let formData = new FormData();
 		formData.append("docFormNm","H");
@@ -1024,7 +1020,7 @@ $(document).ready(function() {
 		if(jnForm.uploadFile.files.length){
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
 			formData.append("uploadFile",jnForm.uploadFile.files[i]);
-		}
+		};
 	
 		/* 값 체킁
 		for(let [name,value] of formData.entries()){
@@ -1043,7 +1039,7 @@ $(document).ready(function() {
 				sanctnerClsfCode: auth.clsfCode,
 			}
 			atrzLineList.push(atrzLine);			
-		}
+		};
 		console.log("atrzLineList",atrzLineList);
 
 			
@@ -1052,7 +1048,7 @@ $(document).ready(function() {
 				holiEndArr:[jnForm.holiEndArr[0].value,jnForm.holiEndArr[1].value],
 				holiCode:jnForm.holiCode.value,
 				holiUseDays: (jnForm.holiCode.value === '23' || jnForm.holiCode.value === '24') ? '0' : $('#s_date_cal').text()
-		}
+		};
 		console.log("docHoliday",docHoliday);
 		
 		// 가끔 VO가 depth가 깊어 복잡할 땡!, 파일과 별개로
@@ -1068,10 +1064,10 @@ $(document).ready(function() {
 					console.log("code: " + request.status)
 					console.log("message: " + request.responseText)
 					console.log("error: " + error);
-			}
+			};
 
 		$.ajax({
-			url:"/atrz/atrzDocStorage",
+			url:"/atrz/atrzHolidayStorage",
 			processData:false,
 			contentType:false,
 			type:"post",
@@ -1088,7 +1084,7 @@ $(document).ready(function() {
 						closeOnEsc: false,
 						button: "확인"
 					}).then(() => {
-						location.replace("/atrz/document");
+						// location.replace("/atrz/document");
 					});
 				}
 			},
@@ -1336,7 +1332,8 @@ $(document).ready(function() {
 				"clsfCode": $(this).parent().parent().find(".clsfCode").val(),
 				"auth":$(this).val(),
 				"flex":dcrbAuthorYn,
-				"atrzLnSn":(idx+1)
+				"atrzLnSn":(idx+1),
+				"sanctnProgrsSttusCode":'00'
 			};
 			//결재선 목록
 			authList.push(data);			
@@ -1346,6 +1343,7 @@ $(document).ready(function() {
 			formData.append("atrzLineVOList["+idx+"].atrzTy",data.auth);//Y / N 결재자 / 참조자
 			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.flex);//  1 / 0 전결여부
 			formData.append("atrzLineVOList["+idx+"].atrzLnSn",data.atrzLnSn);
+			formData.append("atrzLineVOList["+idx+"].sanctnProgrsSttusCode",data.sanctnProgrsSttusCode); //결재진행상태코드
 		});	
 		
 		//authList의 clsfCode를 가져와서 DB에 담기
@@ -1446,6 +1444,96 @@ $(document).ready(function() {
 	});//ajax
 	//여기서 결재선에 담긴 애들을 다 하나씩 담아서 post로
 })
+
+// 우선 버튼을 누르면 정말로 기안을 취소하시겠습니까라고 알려준다.
+$(".atrzLineCancelBtn").on("click", function(event) {
+	event.preventDefault();
+	swal({
+		title: "작성중인 기안을 취소하시겠습니까?",
+		text: "취소 후에는 기안이 삭제됩니다.",
+		icon: "warning",
+		buttons: {
+			cancel: "아니요",
+			confirm: {
+				text: "예",
+				value: true,
+				className: "atrzLineCancelBtn"
+			}
+		},
+		dangerMode: true,
+	}).then((willDelete) => {
+		if (willDelete) {
+			// 취소 요청을 처리하는 fetch 호출
+			fetch('/atrz/deleteAtrzWriting', 
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ atrzDocNo: $("#s_dfNo").text() }) // 문서 번호를 전송
+			})
+			.then(res => res.text())  // 👈 여기!
+			.then(result => {
+			if(result === "success") {
+				swal("취소 완료!", "", "success");
+					location.replace("/atrz/home")
+			} else {
+				swal("삭제 실패", "관리자에게 문의하세요", "error");
+			}
+			});
+					}
+				});
+			});
+			//뒤로가기 진행시 기안취소되게 만들기
+			let hasDoc = !!$("#s_dfNo").text(); // 문서번호 존재 시만 동작
+			let isCanceled = false;
+
+			// history state push (현재 상태 저장)
+			if (hasDoc) {
+				history.pushState(null, document.title, location.href);
+			}
+
+			window.addEventListener('popstate', function (event) {
+				if (hasDoc && !isCanceled) {
+				event.preventDefault(); // 뒤로가기 중지
+				swal({
+					title: "기안을 취소하시겠습니까?",
+					text: "지정된 결재선이 삭제됩니다.",
+					icon: "warning",
+					buttons: ["취소", "확인"],
+					dangerMode: true
+				}).then((willDelete) => {
+					if (willDelete) {
+					fetch('/atrz/deleteAtrzWriting', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ atrzDocNo: $("#s_dfNo").text() })
+					})
+					.then(res => res.text())
+					.then(result => {
+						if (result === "success") {
+						isCanceled = true;
+						swal("기안이 취소되었습니다!", "", "success")
+							.then(() => {
+							history.back(); // 진짜 뒤로가기
+							});
+						} else {
+						swal("기안 취소 실패", "다시 시도해주세요", "error");
+						history.pushState(null, document.title, location.href); // 다시 뒤로 못 가게 복원
+						}
+					});
+					} else {
+					// 뒤로가기 막기 위해 다시 앞으로 push
+					history.pushState(null, document.title, location.href);
+					}
+				});
+				}
+			});
+
+
+
+
+
 //결재요청시 재기안시 결재선을 다시 지정해주세요 라는 툴팁이 뜨게 하기 위해서
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

@@ -24,11 +24,11 @@ public class AtrzLineVO {
 	private Date sanctnConfmDt;  //결재완료일시
 	//마지막 결재자 순번을 위해 추가한것
 	private int atrzLastLnSn;//전자결재 선 순번*
-
 	
 	private List<AtrzLineVO> atrzLineList;    //전자결재선 리스트
 	
 	private String sanctnerClsfNm; //결재자 직급명
+	private String sanctnerDeptNm; //결재자 부서명
 	private String sanctnerEmpNm; //결재자 이름
 	
 	private String befSanctnerEmpno;

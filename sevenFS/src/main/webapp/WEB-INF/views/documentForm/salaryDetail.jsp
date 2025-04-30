@@ -113,8 +113,8 @@ text-align: center;
 							<div class="tool_bar">
 								<div class="critical d-flex gap-2 mb-3">
                                     <a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1"
-										href="/atrz/document?tab=1"> 
-                                    <span class="material-symbols-outlined fs-5">format_list_bulleted</span>목록으로
+										href="javascript:window.history.back();"> 
+                                    <span class="material-symbols-outlined fs-5">format_list_bulleted</span>목록
 									</a>
 								</div>
 							</div>
@@ -324,8 +324,8 @@ text-align: center;
 							<div class="tool_bar">
 								<div class="critical d-flex gap-2 mt-3">
 									</a> 
-                                    <a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="/atrz/document?tab=1"> 
-                                    <span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록으로
+                                    <a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="javascript:window.history.back();"> 
+                                    <span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록
 									</a>
 								</div>
 							</div>

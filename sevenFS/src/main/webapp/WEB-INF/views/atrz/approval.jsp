@@ -121,6 +121,12 @@
 											type="button" role="tab" aria-controls="contact3-tab-pane"
 											aria-selected="false" onclick="moveTab(3)">결재예정문서</button>
 									</li>
+									<li class="nav-item" role="presentation">
+										<button class="nav-link ${param.tab == '4' ? 'active' : ''}" id="contact4-tab"
+											data-bs-toggle="tab" data-bs-target="#contact4-tab-pane"
+											type="button" role="tab" aria-controls="contact4-tab-pane"
+											aria-selected="false" onclick="moveTab(4)">결재진행문서</button>
+									</li>
 								</ul>
 							</div>                           
 							<!-- 오른쪽: 검색창 -->
@@ -601,6 +607,156 @@
 					</div>
 				</div>
 				<!-- 컨텐츠3(결재예정문서) 끝 -->
+				<!-- 컨텐츠4 시작 -->
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade ${param.tab == '4' ? 'show active' : ''}" id="contact4-tab-pane" role="tabpanel"
+						aria-labelledby="contact4-tab" tabindex="0">
+						<div class="atrzTabCont">
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="card-style">
+										<div class="d-flex justify-content-between align-items-center mb-3">
+											<h6 class="mb-10">결재진행문서</h6>
+											<p class="mb-0 text-sm text-muted">총 ${allApprovalTotal}건</p>
+										</div>
+										<div class="table-wrapper table-responsive">
+											<c:choose>
+												<c:when test="${empty allApprovalArticlePage.content}">
+													<div class="text-center emptyList" >
+														결재 진행문서에 문서가 없습니다.
+													</div>
+												</c:when>
+												<c:otherwise>
+													<table class="table striped-table">
+														<thead>
+															<tr>
+																<!-- select박스 -->
+																
+																<th>
+																	<h6 class="fw-bolder">결재양식</h6>
+																</th>
+																<th></th>
+																<th>
+																	<h6 class="fw-bolder">제목</h6>
+																</th>
+																<th class="text-center">
+																	<h6 class="fw-bolder">기안자</h6>
+																</th>
+																<th class="text-center">
+																	<h6 class="fw-bolder">문서번호</h6>
+																</th>
+																<th class="text-center">
+																	<h6 class="fw-bolder">기안일</h6>
+																</th>
+																<th class="text-center">
+																	<h6 class="fw-bolder">완료(반려)일</h6>
+																</th>
+																<th class="text-center">
+																	<h6 class="fw-bolder">결재상태</h6>
+																</th>
+															</tr>
+														</thead>
+														<tbody>
+															<c:forEach var="atrzVO" items="${allApprovalArticlePage.content}">
+																<tr>
+																	<td>
+																		<p>
+																			<c:choose>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'H')}">연차신청서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'S')}">지출결의서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'B')}">급여계좌변경신청서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'A')}">급여명세서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'D')}">기안서</c:when>
+																				<c:when test="${fn:startsWith(atrzVO.atrzDocNo, 'C')}">재직증명서</c:when>
+																				<c:otherwise>퇴사신청서</c:otherwise>
+																			</c:choose>
+																		</p>
+																	</td>
+																	<td style="text-align: right;">
+																		<c:choose>
+																			<c:when test="${not empty atrzVO.atchFileNo and atrzVO.atchFileNo != 0}">
+																				<span class="material-symbols-outlined" style="font-size: 14px;">
+																					attach_file
+																				</span>
+																			</c:when>
+																			<c:otherwise>
+																				<span class="material-symbols-outlined" style="font-size: 14px; visibility: hidden;">
+																					attach_file
+																				</span>
+																			</c:otherwise>
+																		</c:choose>
+																	</td>
+																	<td style="text-align:left;">
+																		<a href="/atrz/selectForm/atrzDetail?atrzDocNo=${atrzVO.atrzDocNo}" class="text-sm fw-bolder listCont" style="display: flex; align-items: center;">
+																			${atrzVO.atrzSj}
+																		</a>
+																	</td>
+																	<td class="text-center">
+																		<p>${atrzVO.drafterEmpnm}</p>
+																	</td>
+																	<td class="text-center">
+																		<p>${atrzVO.atrzDocNo}</p>
+																	</td>
+																	<td class="text-center">
+																		<p class="fw-bolder">
+																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																			<fmt:formatDate value="${atrzVO.atrzDrftDt}" pattern="HH:mm:ss" var="onlyTime" />
+																			${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp;
+																		</p>
+																	</td>
+																	<td class="text-center">
+																		<p class="fw-bolder">
+																			<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="yyyy-MM-dd" var="onlyDate" />
+																			<fmt:formatDate value="${atrzVO.atrzComptDt}" pattern="HH:mm:ss" var="onlyTime" />
+																			${onlyDate}&nbsp;&nbsp;&nbsp;&nbsp;
+																		</p>
+																	</td>
+																	<td class="text-center">
+																		<p>
+																			<c:choose>
+																				<c:when test="${atrzVO.atrzSttusCode == '00' }">
+																					<span
+																						class="status-btn close-btn actBtn col-sm-6 col-md-4"
+																						style="background-color: #fbf5b1; color: #dd9e5f;">진행중</span>
+																				</c:when>
+																				<c:when test="${atrzVO.atrzSttusCode == '10' }">
+																					<span class="status-btn active-btn actBtn col-sm-6 col-md-4">완료</span>
+																				</c:when>
+																				<c:when test="${atrzVO.atrzSttusCode == '20' }">
+																					<span class="status-btn close-btn actBtn col-sm-6 col-md-4">반려</span>
+																				</c:when>
+																				<c:when test="${atrzVO.atrzSttusCode == '30' }">
+																					<span class="status-btn success-btn actBtn col-sm-6 col-md-4">회수</span>
+																				</c:when>
+																				<c:otherwise>
+																					<span
+																						class="status-btn info-btn actBtn actBtn col-sm-6 col-md-4"
+																						style="background-color: pink; color: #ed268a;">취소</span>
+																				</c:otherwise>
+																			</c:choose>
+																		</p>
+																	</td>
+																</tr>
+															</c:forEach>
+														</tbody>
+													</table>
+													<div style="margin-top: 20px;">
+														<!-- 페이지네이션 시작 -->
+														<c:if test="${allApprovalArticlePage.totalPages > 1}">
+															${allApprovalArticlePage.pagingArea}
+														</c:if>
+													</div>
+												</c:otherwise>
+											</c:choose>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!--결재문서함 끝-->
+						</div>
+					</div>
+				</div>
+				<!-- 컨텐츠4 끝 -->
 			</div>
 		</div>
 	</div>

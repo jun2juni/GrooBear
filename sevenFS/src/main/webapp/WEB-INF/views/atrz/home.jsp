@@ -140,7 +140,7 @@
 			  <!-- <p>${myEmpInfo}</p> -->
 			  <div class="d-flex justify-content-between ms-2 me-2">
 				<h4 class="mb-10">결재대기문서</h4>
-				<a href="/atrz/document" class="text-sm fw-bolder" style="color: #4a6cf7;">
+				<a href="/atrz/document?tab=1" class="text-sm fw-bolder" style="color: #4a6cf7;">
 				  더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
 				</a>
 			  </div>
@@ -225,10 +225,11 @@
 			  
 			  <div class="d-flex justify-content-between ms-2 me-2">
 				<h4 class="mb-10">기안진행문서</h4>
-				<a href="/atrz/document" class="text-sm fw-bolder" style="color: #4a6cf7;">
+				<a href="/atrz/document?tab=1" class="text-sm fw-bolder" style="color: #4a6cf7;">
 				  더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
 				</a>
 			  </div>
+			  <!-- <p>${atrzMinSubmitList}</p> -->
 			  <div class="atrzTabCont">
 				<div class="col-lg-12">
 				  <div class="card-style mb-30 docList">
@@ -309,13 +310,14 @@
 									  ${atrzVO.atrzSj}
 								  </a>
 								</td>
+								<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 								<td>
-								  <p style="text-align: center;">${atrzVO.deptCodeNm}</p>
+								  <p style="text-align: center;">${atrzLineVO.sanctnerDeptNm}</p>
 								</td>
 								<td>
-								  <p style="text-align: center;">${atrzVO.drafterEmpnm}</p>
+								  <p style="text-align: center;">${atrzLineVO.sanctnerEmpNm}</p>
 								</td>
-								
+								</c:forEach>
 								<td>
 								  <h6 class="text-sm">
 									<p>
@@ -359,7 +361,7 @@
 			  
 			  <div class="d-flex justify-content-between ms-2 me-2">
 				<h4 class="mb-10">결재완료문서</h4>
-				<a href="/atrz/complete" class="text-sm fw-bolder" style="color: #4a6cf7;">
+				<a href="/atrz/document?tab=3" class="text-sm fw-bolder" style="color: #4a6cf7;">
 				  더보기 <span class="material-symbols-outlined" style="vertical-align: middle;">chevron_right</span>
 				</a>
 			  </div>

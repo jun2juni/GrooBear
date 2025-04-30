@@ -65,6 +65,8 @@ public class AtrzServiceImpl implements AtrzService {
 	@Override
 	public List<AtrzVO> atrzMinSubmitList(String emplNo) {
 		List<AtrzVO> atrzMinSubmitList = atrzMapper.atrzMinSubmitList(emplNo);
+		//여기서 결재선에 있는 애들의 사번을 돌려가면서 name을 셋팅해줘야한다.
+		
 		return atrzMinSubmitList;
 	}
 	//기안완료문서 최신순 5개
@@ -143,6 +145,19 @@ public class AtrzServiceImpl implements AtrzService {
 		return atrzMapper.allApprovalTotal(map);
 	}
 	
+	//결재완료함 리스트
+	@Override
+	public List<AtrzVO> atrzCompletedList(Map<String, Object> map) {
+		List<AtrzVO> atrzCompletedList = atrzMapper.atrzCompletedList(map);
+		return atrzCompletedList;
+	}
+	//결재완료함 행의수
+	@Override
+	public int completedTotal(Map<String, Object> map) {
+		return atrzMapper.completedTotal(map);
+	}
+	
+	
 	//반려문서함
 	@Override
 	public List<AtrzVO> atrzCompanionList(Map<String, Object> map) {
@@ -161,6 +176,7 @@ public class AtrzServiceImpl implements AtrzService {
 		List<AtrzVO> atrzSubmitList = atrzMapper.atrzSubmitList(emplNo);
 		return atrzSubmitList;
 	}
+	
 	
 	/**
 	 * 전자결재테이블 등록
@@ -1165,6 +1181,8 @@ public class AtrzServiceImpl implements AtrzService {
 		
 	    return 1;  //성공여부 반환
 	}
+
+
 	
 	
 }

@@ -112,7 +112,7 @@
 										<button class="nav-link ${param.tab == '3' ? 'active' : ''}" id="contact3-tab"
 											data-bs-toggle="tab" data-bs-target="#contact3-tab-pane"
 											type="button" role="tab" aria-controls="contact3-tab-pane"
-											aria-selected="false" onclick="moveTab(3)">결재문서함</button>
+											aria-selected="false" onclick="moveTab(3)">결재완료함</button>
 									</li>
 								</ul>
 							</div>
@@ -439,11 +439,11 @@
 										<div class="card-style">
 											<div class="d-flex justify-content-between align-items-center mb-3">
 												<h6 class="mb-10">결재문서함</h6>
-												<p class="mb-0 text-sm text-muted">총 ${allApprovalTotal}건</p>
+												<p class="mb-0 text-sm text-muted">총 ${completedTotal}건</p>
 											</div>
 											<div class="table-wrapper table-responsive">
 												<c:choose>
-													<c:when test="${empty allApprovalArticlePage.content}">
+													<c:when test="${empty completedArticlePage.content}">
 														<div class="text-center emptyList" >
 															결재 문서함에 문서가 없습니다.
 														</div>
@@ -479,7 +479,7 @@
 																</tr>
 															</thead>
 															<tbody>
-																<c:forEach var="atrzVO" items="${allApprovalArticlePage.content}">
+																<c:forEach var="atrzVO" items="${completedArticlePage.content}">
 																	<tr>
 																		<td>
 																			<p>
@@ -564,8 +564,8 @@
 														</table>
 														<div style="margin-top: 20px;">
 															<!-- 페이지네이션 시작 -->
-															<c:if test="${allApprovalArticlePage.totalPages > 1}">
-																${allApprovalArticlePage.pagingArea}
+															<c:if test="${completedArticlePage.totalPages > 1}">
+																${completedArticlePage.pagingArea}
 															</c:if>
 														</div>
 													</c:otherwise>

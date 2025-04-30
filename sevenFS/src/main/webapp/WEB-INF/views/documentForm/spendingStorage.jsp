@@ -323,14 +323,15 @@ padding: 10px !important;
 										class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
-									</a> <a id="s_appLine_btn" type="button"
+									</a> 
+									<a id="s_appLine_btn" type="button"
 										class="btn btn-outline-info d-flex align-items-center gap-1"
 										data-bs-toggle="modal" data-bs-target="#atrzLineModal"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1"
-										href="/atrz/home" style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
@@ -605,8 +606,8 @@ padding: 10px !important;
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1"
-										href="/atrz/home" style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
@@ -762,6 +763,7 @@ if(!regexp.test(x)){
 
 //JSON Object List
 let authList = [];
+let atrzLineList = [];
 $(document).ready(function() {
 	//******* 폼 전송 *******
 	$(".s_eap_app").on("click",function(){
@@ -819,7 +821,7 @@ $(document).ready(function() {
 		//보고 가져온것 끝
 		
 		let jnForm = document.querySelector("#atrz_sp_form");
-		// console.log("${empVO}" + empVO);
+		
 		let formData = new FormData();
 		formData.append("docFormNm","S");
 		formData.append("docFormNo",2);
@@ -835,7 +837,7 @@ $(document).ready(function() {
 			formData.append("uploadFile",jnForm.uploadFile.files[i]);
 		}
 
-		let atrzLineList = [];
+		
 		for(let i=0; i< authList.length; i++){
 			let auth = authList[i];
 			let atrzLine = {
@@ -894,7 +896,7 @@ $(document).ready(function() {
 						closeOnEsc: false,
 						button: "확인"
 					}).then(() => {
-						location.replace("/atrz/home")
+						location.replace("/atrz/document?tab=1")
 					});
 				}
 			},
@@ -1359,24 +1361,28 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 			}else{
 				dcrbAuthorYn = "N";
 			}
-			
+
+			let atrzDocNo = $("#s_dfNo").text(); // 여기서 가져온다!
 			data = {
 				"emplNo":$(this).parent().parent().children("th").eq(1).html(),
 				"clsfCode": $(this).parent().parent().find(".clsfCode").val(),
 				"auth":$(this).val(),
 				"flex":dcrbAuthorYn,
 				"atrzLnSn":(idx+1),
-				"atrzDocNo": $("#s_dfNo").text()
+				"atrzDocNo":$("#s_dfNo").text(),
+				"docFormNm":"S",
+				"docFormNo":2
 			};
 			
 			//결재선 목록
 			authList.push(data);			
-			formData.append("atrzLineVOList["+idx+"].atrzDocNo",data.atrzDocNo); //결재문서번호 입력
+			formData.append("atrzVO.atrzDocNo", $("#s_dfNo").val());
 			formData.append("atrzLineVOList["+idx+"].sanctnerEmpno",data.emplNo);
 			formData.append("atrzLineVOList["+idx+"].sanctnerClsfCode",data.clsfCode);
 			formData.append("atrzLineVOList["+idx+"].atrzTy",data.auth);//Y / N 결재자 / 참조자
 			formData.append("atrzLineVOList["+idx+"].dcrbAuthorYn",data.flex);//  1 / 0 전결여부
 			formData.append("atrzLineVOList["+idx+"].atrzLnSn",data.atrzLnSn);
+			formData.append("authList", JSON.stringify(authList)); // 배열은 stringify해서 보내도 무방
 		});	
 		
 		console.log("순번권한전결여부authList : ", authList);
@@ -1384,9 +1390,13 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 		formData.append("docFormNo",2);
 
 		console.log("obj.emplNo : ",obj.emplNo);
+		// ❗ 여기 중요: JSON.stringify 후 Blob으로 넣기
+		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)], { type: "application/json" }));
+
+
 		//asnyc를 써서 
 		$.ajax({
-			url:"/atrz/insertAtrzLine",
+			url:"/atrz/updateAtrzLine",
 			processData:false,
 			contentType:false,
 			type:"post",
@@ -1394,7 +1404,7 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 			dataType:"json",
 			success : function(atrzVO){
 				swal({
-					title: "결재선 지정이 완료되었습니다.",
+					title: "결재선 지정이 지정되었습니다.",
 					text: "",
 					icon: "success",
 					closeOnClickOutside: false,
@@ -1405,8 +1415,8 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 				console.log("atrzVO : ", atrzVO);
 
 				//문서번호 채우기
-				$("#s_dfNo").html(atrzVO.atrzDocNo);
-
+				// $("#s_dfNo").html(atrzVO.atrzDocNo);
+				location.href = location.href;
 				let result = atrzVO.emplDetailList;
 
 				//result : List<EmployeeVO>

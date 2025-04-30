@@ -311,17 +311,8 @@ padding: 10px !important;
 						<div class="col card-body" id="approvalBtn">
 							<!-- 새로운 버튼 -->
 							<div class="tool_bar">
-								
 								<sec:authentication property="principal.empVO" var="emp" />
-								<!-- <p>${emp.emplNo}?????</p> -->
 								<div class="critical d-flex gap-2 mb-3">
-									<!--[AtrzLineVO(atrzDocNo=H_20250414_00025, atrzLnSn=1, sanctnerEmpno=20250004, sanctnerClsfCode=02
-										, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=N
-										, sanctnProgrsSttusCode=00, dcrbAuthorYn=0, contdAuthorYn=null, sanctnOpinion=null
-										, eltsgnImage=null, sanctnConfmDt=null, atrzLineList=null, sanctnerClsfNm=대리, sanctnerEmpNm=길준희
-										, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null
-										, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0)]-->
-										<!-- 기안자일때만 보이게 하기 -->
 										<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
 											<!-- <p>curAtrzLnSn : 여기야${curAtrzLnSn} / ${atrzLineVO.atrzLnSn}</p> -->
 											<c:if test="${atrzLineVO.sanctnerEmpno == emp.emplNo
@@ -366,7 +357,7 @@ padding: 10px !important;
 										<a type="button" 
 										class="btn btn-outline-secondary d-flex align-items-center gap-1"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"
-										href="/atrz/approval?tab=1"> 
+										href="javascript:window.history.back();"> 
 										<span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록
 									</a>
 								</div>
@@ -528,7 +519,7 @@ padding: 10px !important;
 													:</div>
 												<input type="text" class="form-control" value="${atrzVO.atrzSj}" 
 													style="display: inline-block; width: 90%; margin-left: 5px;" disabled
-													id="s_sp_tt" name="atrzSj">
+													id="s_dr_tt" name="atrzSj">
 											</div>
 
 											<div style="border: 1px solid lightgray; margin: 10px;"></div>
@@ -589,59 +580,62 @@ padding: 10px !important;
 									<!-- 기능 끝 -->
 									<!-- 여기다가 작성해주세요(준희) -->
 								</div>
-							</div>
-							<!-- 상하 버튼 추가 -->
-							<div class="tool_bar">
-								<div class="critical d-flex gap-2 mb-3 mt-3">
-									<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
-										<c:if test="${atrzLineVO.sanctnerEmpno == emp.emplNo
-														&& atrzLineVO.atrzTy eq '1'
-														&& atrzLineVO.atrzLnSn == curAtrzLnSn && atrzVO.atrzSttusCode eq '00'}">
-											<button id="atrzAppBtnBo" type="button" 
-												class="btn btn-outline-primary d-flex align-items-center gap-1 atrzAppBtn" 
-												data-all-app-check="<c:if test='${lastAtrzLnSn==atrzLineVO.atrzLnSn}'>Y</c:if>"
-												data-bs-toggle="modal" data-bs-target="#atrzApprovalModal"
-												style="padding: 0.4rem 1rem; font-size: 0.95rem;">
-												<span class="material-symbols-outlined fs-5">inventory</span>결재
-											</button>
-											<a id="atrzComBtnBo" type="button"
-												class="btn btn-outline-danger d-flex align-items-center gap-1"
-												data-bs-toggle="modal" data-bs-target="#atrzCompanModal"
+								<!-- 상하 버튼 추가 -->
+								<div class="tool_bar">
+									<sec:authentication property="principal.empVO" var="emp" />
+									<div class="critical d-flex gap-2 pt-3 mb-3">
+											<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+												<!-- <p>curAtrzLnSn : 여기야${curAtrzLnSn} / ${atrzLineVO.atrzLnSn}</p> -->
+												<c:if test="${atrzLineVO.sanctnerEmpno == emp.emplNo
+																&& atrzLineVO.atrzTy eq 1
+																&& atrzLineVO.atrzLnSn == curAtrzLnSn && atrzVO.atrzSttusCode eq '00'}">
+													<button id="atrzAppBtnTo" type="button" 
+														class="btn btn-outline-primary d-flex align-items-center gap-1 atrzAppBtn btnFontSt" 
+														data-all-app-check="<c:if test='${lastAtrzLnSn==atrzLineVO.atrzLnSn}'>Y</c:if>" 
+														data-bs-toggle="modal" data-bs-target="#atrzApprovalModal"
+														style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+														<span class="material-symbols-outlined fs-5">inventory</span> 결재
+													</button>
+													<a id="atrzComBtnTo" type="button"
+														class="btn btn-outline-danger d-flex align-items-center gap-1 btnFontSt"
+														data-bs-toggle="modal" data-bs-target="#atrzCompanModal"
+														style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+														<span class="material-symbols-outlined fs-5 atrzComBtn">undo</span> 반려
+													</a>
+												</c:if>
+											</c:forEach>
+											<c:if test="${emp.emplNo==atrzVO.drafterEmpno && atrzVO.atrzSttusCode eq '20'}">
+												<a id="atrzComOption" type="button"
+													class="btn btn-outline-danger d-flex align-items-center gap-1"
+													style="padding: 0.4rem 1rem; font-size: 0.95rem;"
+													data-bs-toggle="modal" data-bs-target="#atrzComOptionModal"> 
+													<span class="material-symbols-outlined fs-5 atrzComBtn">playlist_remove</span> 반려사유
+												</a>
+												<a id="atrzAppReturnTo" type="button" 
+														class="btn btn-outline-success d-flex align-items-center gap-1 atrzAppReturnBtn" 
+														href="/atrz/selectForm/selectDocumentReturn?atrzDocNo=${atrzVO.atrzDocNo}"
+														style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+													<span class="material-symbols-outlined fs-5">edit_square</span>재기안
+												</a>
+											</c:if>
+											<!-- <p>${atrzVO}</p> -->
+											<c:if test="${atrzVO.drafterEmpno == emp.emplNo  && atrzVO.atrzSttusCode!=10 && atrzVO.atrzSttusCode!=20 && atrzVO.atrzSttusCode!=30}">
+												<a id="atrzCancelBtnTo" type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzCancelBtn"
 												style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
-												<span class="material-symbols-outlined fs-5 atrzComBtn">undo</span> 반려
+												<span class="material-symbols-outlined fs-5 atrzComBtn">keyboard_return</span> 기안취소
 											</a>
-										</c:if>
-									</c:forEach>
-									<c:if test="${emp.emplNo==atrzLineVO.sanctnerEmpno && atrzVO.atrzSttusCode eq '20'}">
-										<a id="atrzComOption" type="button"
-											class="btn btn-outline-danger d-flex align-items-center gap-1 btnFontSt"
+											</c:if>
+											<a type="button" 
+											class="btn btn-outline-secondary d-flex align-items-center gap-1"
 											style="padding: 0.4rem 1rem; font-size: 0.95rem;"
-											data-bs-toggle="modal" data-bs-target="#atrzComOptionModal"> 
-											<span class="material-symbols-outlined fs-5 atrzComBtn">playlist_remove</span> 반려사유
+											href="javascript:window.history.back();"> 
+											<span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록
 										</a>
-										<a id="atrzAppReturnTo" type="button" href="/atrz/selectForm/selectDocumentReturn?atrzDocNo=${atrzVO.atrzDocNo}"
-												class="btn btn-outline-success d-flex align-items-center gap-1 atrzAppReturnBtn" 
-												style="padding: 0.4rem 1rem; font-size: 0.95rem;">
-											<span class="material-symbols-outlined fs-5">edit_square</span>재기안
-										</a>
-									</c:if>
-									<!-- <p>${atrzVO}</p> -->
-									<c:if test="${atrzVO.drafterEmpno == emp.emplNo  && atrzVO.atrzSttusCode!=10 && atrzVO.atrzSttusCode!=20}">
-										<a id="atrzCancelBtnBo" type="button" 
-										class="btn btn-outline-danger d-flex align-items-center gap-1 atrzCancelBtn"
-										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
-										<span class="material-symbols-outlined fs-5 atrzComBtn">keyboard_return</span> 기안취소
-									</a>
-									</c:if>
-									<a type="button" 
-										class="btn btn-outline-secondary d-flex align-items-center gap-1"
-										style="padding: 0.4rem 1rem; font-size: 0.95rem;"
-										href="/atrz/approval?tab=1"> 
-										<span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록
-									</a>
+									</div>
 								</div>
+	
+								<!-- 상하 버튼 추가 -->
 							</div>
-							<!-- 상하 버튼 추가 -->
 						</form>
 					</div>
 				</div>
@@ -661,6 +655,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 //결재하기 버튼을 눌러서 업데이트 진행하기 
 $("#atrzDetailappBtn").on("click", function() {
+	//유효성검사
+	var eap_title = $('#s_ho_tt').val();
+	var eap_content = $('#s_ho_co').val();
+
 	const atrzDocNo = $("#atrzDocNo").val(); // 문서 번호 가져오기
     const approvalMessage = $("#approvalMessage").val(); // 결재 의견 가져오기
     const authorStatus = $("#authorStatus").is(":checked"); // 전결 여부 가져오기
@@ -812,7 +810,7 @@ $("#atrzDetailComBtn").on("click", function () {
 								button: "확인",
 							}).then(() => {
 								// 기안취소 완료 후 페이지를 새로고침하거나 목록 페이지로 이동
-								window.location.href = "/atrz/home";
+								window.location.href = "/atrz/document?tab=1";
 							});
 						}
 					},

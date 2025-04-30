@@ -317,8 +317,8 @@ select.ui-datepicker-year {
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1"
-										href="/atrz/home" style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
@@ -621,8 +621,8 @@ select.ui-datepicker-year {
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1"
-										href="/atrz/home" style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
@@ -643,7 +643,9 @@ select.ui-datepicker-year {
 
 <script>
 //페이지이동시 바로 
-//dateCnt() 실행하기
+document.addEventListener("DOMContentLoaded",function(){
+	dateCnt();
+})
 
 //제목 너무 길게 입력하면 입력초과 스왈
 document.getElementById('s_ho_tt').addEventListener('input', function (event) {
@@ -828,10 +830,9 @@ $(document).ready(function() {
 
 			});
 		$("#s_end_time").val('');
-	}
+	};
 	//select박스가비어있을때 연차유형이 선택되지 않았습니다.라고 알림 띄어줘
-	if (!$("input[name='holiCode']:checked").val()) 
-		{
+	if (!$("input[name='holiCode']:checked").val()) {
 			swal({
 				title: "연차유형이 선택되지 않았습니다.",
 				text: "연차유형을 선택해주세요.",
@@ -841,7 +842,7 @@ $(document).ready(function() {
 				button: "확인"
 			});
 			return;
-		}
+		};
 
 	//신청시간과 종료일자가 비어있을때
 	if(ho_start_D == "" || ho_end_D ==""){
@@ -854,7 +855,7 @@ $(document).ready(function() {
 				button: "확인"
 			});
 		return;
-	}
+	};
 	
 	// 제목, 내용이 비어있을 때
 	if(eap_title == "" || eap_content == "") {
@@ -867,7 +868,7 @@ $(document).ready(function() {
 				button: "확인"
 			});
 		return;
-	}
+	};
 	//라디오 버튼 23 24인경우에는 신청휴가일수가 사용가능한 휴가일수보다 많아도 기안이 작성된다.
 	if(ho_code == '23' || ho_code == '24') {
 		// 아무것도 안함
@@ -883,8 +884,8 @@ $(document).ready(function() {
 					button: "확인"
 				});
 			return;
-		}
-	}
+		};
+	};
 	
 	var s_ho_use = $("#s_ho_use").text();
 	
@@ -914,14 +915,13 @@ $(document).ready(function() {
 				button: "확인"
 			});
 		return;
-	}
+	};
 	//유효성검사
 
 
 
 		
 		let jnForm = document.querySelector("#atrz_ho_form");
-		// console.log("${empVO}" + empVO);
 		
 		let formData = new FormData();
 		formData.append("docFormNm","H");
@@ -935,7 +935,7 @@ $(document).ready(function() {
 		if(jnForm.uploadFile.files?.length){
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
 			formData.append("uploadFile",jnForm.uploadFile.files[i]);
-		}
+		};
 	
 		/* 값 체킁
 		for(let [name,value] of formData.entries()){
@@ -953,7 +953,7 @@ $(document).ready(function() {
 			    dcrbAuthorYn: auth.flex
 			}
 			atrzLineList.push(atrzLine);			
-		}
+		};
 		console.log("atrzLineList",atrzLineList);
 
 			
@@ -962,7 +962,7 @@ $(document).ready(function() {
 				holiEndArr:[jnForm.holiEndArr[0].value,jnForm.holiEndArr[1].value],
 				holiCode:jnForm.holiCode.value,
 				holiUseDays: (jnForm.holiCode.value === '23' || jnForm.holiCode.value === '24') ? '0' : $('#s_date_cal').text()
-		}
+		};
 		console.log("docHoliday",docHoliday);
 		
 		// 가끔 VO가 depth가 깊어 복잡할 땡!, 파일과 별개로
@@ -982,7 +982,7 @@ $(document).ready(function() {
 					console.log("code: " + request.status)
 					console.log("message: " + request.responseText)
 					console.log("error: " + error);
-            }
+            };
 
 		$.ajax({
 			url:"/atrz/atrzHolidayInsert",
@@ -1008,7 +1008,7 @@ $(document).ready(function() {
 				}
 			},
 			error: junyError
-		})
+		});
 	});
 
 	//임시저장 클릭 시
@@ -1019,7 +1019,6 @@ $(document).ready(function() {
 		console.log("s_eap_app_bottom->authList : ", authList);
 		
 		let jnForm = document.querySelector("#atrz_ho_form");
-		// console.log("${empVO}" + empVO);
 		
 		let formData = new FormData();
 		formData.append("docFormNm","H");
@@ -1031,7 +1030,7 @@ $(document).ready(function() {
 		if(jnForm.uploadFile.files?.length){
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
 			formData.append("uploadFile",jnForm.uploadFile.files[i]);
-		}
+		};
 		
 		let atrzLineList = [];
 
@@ -1042,7 +1041,7 @@ $(document).ready(function() {
 			    atrzTy: $(this).data("atrzTy"),
 			    dcrbAuthorYn: $(this).data("dcrbAuthorYn"),
 				sanctnerClsfCode:$(this).data("sanctnerClsfCode")
-			}
+			};
 			atrzLineList.push(atrzLine2);	
 
 			formData.append("atrzLineVOList["+idx+"].atrzLnSn",atrzLine2.atrzLnSn);
@@ -1077,7 +1076,7 @@ $(document).ready(function() {
 				holiEndArr:[jnForm.holiEndArr[0].value,jnForm.holiEndArr[1].value],
 				holiCode:jnForm.holiCode.value,
 				holiUseDays: (jnForm.holiCode.value === '23' || jnForm.holiCode.value === '24') ? '0' : $('#s_date_cal').text()
-		}
+		};
 		console.log("docHoliday",docHoliday);
 		
 		// 가끔 VO가 depth가 깊어 복잡할 땡!, 파일과 별개로
@@ -1094,7 +1093,7 @@ $(document).ready(function() {
 					console.log("code: " + request.status)
 					console.log("message: " + request.responseText)
 					console.log("error: " + error);
-            }
+            };
 
 		// for(const [key,value] of formData.entries()){
 		// 	console.log(key + " => " + value);
@@ -1136,7 +1135,7 @@ $(document).ready(function() {
 				}
 			},
 			error: junyError
-		})
+		});
 			
 	});
 	//임시저장 후 끝
@@ -1417,8 +1416,7 @@ $(document).ready(function() {
 		//결재선 리스트에 있는 사원번호를 가져와 결재선 jsp에 이름 부서 직책 찍기
 
 		// ❗ 여기 중요: JSON.stringify 후 Blob으로 넣기
-		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)], { type: "application/json" })
-		);
+		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)], { type: "application/json" }));
 		//결재선 인서트 하는 부분은 어떻게 해야하리 모르겠다.....
 		//asnyc를 써서 
 		//여기서 부터확인이 안되는듯 
@@ -1644,7 +1642,7 @@ function addDatepickerTitle(title) {
 	$('#ui-datepicker-div').prepend(
 		'<div class="datepicker-title" style="padding:5px 10px; font-weight:bold; border-bottom:1px solid #ccc;">' + title + '</div>'
 	);
-}
+};
 
 function disableAllTheseDays2(date) {
 		var day = date.getDay();

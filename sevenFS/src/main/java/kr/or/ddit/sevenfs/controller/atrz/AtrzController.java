@@ -188,6 +188,15 @@ public class AtrzController {
 		model.addAttribute("expectedArticlePage",expectedArticlePage);
 		model.addAttribute("atrzExpectedList", atrzExpectedList);
 
+		
+		// 결재문서함
+		List<AtrzVO> atrzAllApprovalList = atrzService.atrzAllApprovalList(map);
+		int allApprovalTotal = atrzService.allApprovalTotal(map);
+		ArticlePage<AtrzVO> allApprovalArticlePage = new ArticlePage<AtrzVO>("/atrz/approval",allApprovalTotal, currentPage, size,atrzAllApprovalList, map);
+		model.addAttribute("allApprovalTotal", allApprovalTotal);
+		model.addAttribute("allApprovalArticlePage", allApprovalArticlePage);
+		model.addAttribute("atrzAllApprovalList", atrzAllApprovalList);
+		
 		model.addAttribute("title", "수신문서함");
 		return "atrz/approval";
 
@@ -247,13 +256,14 @@ public class AtrzController {
 		model.addAttribute("storageArticlePage", storageArticlePage);
 		model.addAttribute("atrzStorageList", atrzStorageList);
 		
-		// 결재문서함
-		List<AtrzVO> atrzAllApprovalList = atrzService.atrzAllApprovalList(map);
-		int allApprovalTotal = atrzService.allApprovalTotal(map);
-		ArticlePage<AtrzVO> allApprovalArticlePage = new ArticlePage<AtrzVO>("/atrz/document",allApprovalTotal, currentPage, size,atrzAllApprovalList, map);
-		model.addAttribute("allApprovalTotal", allApprovalTotal);
-		model.addAttribute("allApprovalArticlePage", allApprovalArticlePage);
-		model.addAttribute("atrzAllApprovalList", atrzAllApprovalList);
+
+		//결재완료함()
+		List<AtrzVO> atrzCompletedList = this.atrzService.atrzCompletedList(map);
+		int completedTotal = atrzService.completedTotal(map);
+		ArticlePage<AtrzVO> completedArticlePage = new ArticlePage<AtrzVO>("/atrz/document",completedTotal, currentPage, size,atrzCompletedList, map);
+		model.addAttribute("completedTotal", completedTotal);
+		model.addAttribute("completedArticlePage", completedArticlePage);
+		model.addAttribute("atrzCompletedList", atrzCompletedList);
 
 		model.addAttribute("title", "개인문서함");
 		return "atrz/documentBox";

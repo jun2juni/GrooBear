@@ -462,7 +462,7 @@ select.ui-datepicker-year {
 													<div class="s_frm_title mb-2"><b>지출 내용</b></div>
 													<textarea class="form-control"
 														style="resize: none; height: 150px;" id="s_sp_co" name="atrzCn"
-														required="required" rows="2" cols="20" wrap="hard" placeholder="지출내용을 입력해주세요"></textarea>
+														required="required" rows="2" cols="20" wrap="hard" placeholder="지출내용을 입력해주세요">${atrzVO.atrzCn}</textarea>
 												</div>
 
 
@@ -716,6 +716,9 @@ $(document).ready(function() {
 	//******* 폼 전송 *******
 	$(".s_eap_app").on("click",function(){
 		event.preventDefault();
+		//유효성검사
+		var eap_title = $('#s_ho_tt').val();
+		var eap_content = $('#s_ho_co').val();
 		//보고 가져온것 시작
 		var sp_date = "";
 		var sp_detail = "";
@@ -767,21 +770,22 @@ $(document).ready(function() {
 		//보고 가져온것 끝
 		
 		let jnForm = document.querySelector("#atrz_sp_form");
-		// console.log("${empVO}" + empVO);
+		
 		let formData = new FormData();
 		formData.append("docFormNm","S");
 		formData.append("docFormNo",2);
 		formData.append("atrzSj",jnForm.atrzSj.value);
 		formData.append("atrzCn",jnForm.atrzCn.value);
 
+		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
+			formData.append("removeFileId", element.value);
+		});
+
 		if(jnForm.uploadFile.files.length){
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
 			formData.append("uploadFile",jnForm.uploadFile.files[i]);
 		}
 
-		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
-			formData.append("removeFileId", element.value);
-		});
 
 
 		let atrzLineList = [];
@@ -843,7 +847,7 @@ $(document).ready(function() {
 						closeOnEsc: false,
 						button: "확인"
 					}).then(() => {
-						location.replace("/atrz/home")
+						location.replace("/atrz/document?tab=1")
 					});
 				}
 			},
@@ -874,7 +878,7 @@ $(document).ready(function() {
 			button: "확인"
 		});
 		return;
-		}
+		};
 
 		// 제목, 내용이 비어있을 때
 		if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
@@ -886,7 +890,7 @@ $(document).ready(function() {
 					closeOnEsc: false
 				});
 			return;
-		}
+		};
 		
 		// 지출 내역이 비어있을 때
 		if($('.s_sp_date').val() == "" || $('.s_sp_detail').val() == "" || $('.s_sp_count').val() == "" || $('.s_sp_amount').val() == "") {
@@ -898,7 +902,7 @@ $(document).ready(function() {
 					closeOnEsc: false
 				});
 			return;
-		}
+		};
 		
 		// 지출 날짜가 'YYYY-MM-DD'형태로 입력이 되지 않았을 때
 		if($('.s_sp_date').val().length != 10) {
@@ -910,7 +914,7 @@ $(document).ready(function() {
 					closeOnEsc: false
 				});
 			return;
-		}
+		};
 		
 		var eap_content = $('#s_sp_co').val();
 
@@ -930,7 +934,7 @@ $(document).ready(function() {
 		if(jnForm.uploadFile.files.length){
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
 			formData.append("uploadFile",jnForm.uploadFile.files[i]);
-		}
+		};
 
 
 		let atrzLineList = [];
@@ -992,7 +996,7 @@ $(document).ready(function() {
 					}).then(() => {
 						// location.replace("/atrz/document");
 					});
-					alert("왔다");
+					// alert("왔다");
 				}
 			},
 			error: junyError

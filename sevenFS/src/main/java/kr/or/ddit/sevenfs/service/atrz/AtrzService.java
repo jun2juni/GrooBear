@@ -34,6 +34,10 @@ public interface AtrzService {
 	public List<AtrzVO> atrzExpectedList(Map<String, Object> map);
 	//결재예정문서목록 행의수
 	public int expectedTotal(Map<String, Object> map);
+	//결재진행문서
+	public List<AtrzVO> atrzAllApprovalList(Map<String, Object> map);
+	//결재진행문서 행의수
+	public int allApprovalTotal(Map<String, Object> map);
 	
 	//기안문서함
 	public List<AtrzVO> atrzAllSubmitList(Map<String, Object> map);
@@ -43,10 +47,11 @@ public interface AtrzService {
 	public List<AtrzVO> atrzStorageList(Map<String, Object> map);
 	//임시저장함 행의수
 	public int storageTotal(Map<String, Object> map);
-	//결재문서함
-	public List<AtrzVO> atrzAllApprovalList(Map<String, Object> map);
-	//결재문서함 행의수
-	public int allApprovalTotal(Map<String, Object> map);
+
+	//결재완료함
+	public List<AtrzVO> atrzCompletedList(Map<String, Object> map);
+	//결재완료함 행의수
+	public int completedTotal(Map<String, Object> map);
 	
 	//반려문서함
 	public List<AtrzVO> atrzCompanionList(Map<String, Object> map);
@@ -133,6 +138,7 @@ public interface AtrzService {
 	
 	//기안서 임시저장
 	public int atrzDraftStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, DraftVO draftVO);
+
 	
 	
 	

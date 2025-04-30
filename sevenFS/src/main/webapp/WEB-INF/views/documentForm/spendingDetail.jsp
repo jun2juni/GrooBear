@@ -171,7 +171,7 @@ padding: 10px !important;
 										<a type="button" 
 										class="btn btn-outline-secondary d-flex align-items-center gap-1"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"
-										href="/atrz/approval?tab=1"> 
+										href="javascript:window.history.back();"> 
 										<span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록
 									</a>
 								</div>
@@ -505,17 +505,16 @@ padding: 10px !important;
 										</a>
 									</c:if>
 									<!-- <p>${atrzVO}</p> -->
-									<c:if test="${atrzVO.drafterEmpno == emp.emplNo  && atrzVO.atrzSttusCode!=10 && atrzVO.atrzSttusCode!=20}">
-										<a id="atrzCancelBtnBo" type="button" 
-										class="btn btn-outline-danger d-flex align-items-center gap-1 atrzCancelBtn"
-										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
-										<span class="material-symbols-outlined fs-5 atrzComBtn">keyboard_return</span> 기안취소
-									</a>
+									<c:if test="${atrzVO.drafterEmpno == emp.emplNo  && atrzVO.atrzSttusCode!=10 && atrzVO.atrzSttusCode!=20 && atrzVO.atrzSttusCode!=30}">
+										<a id="atrzCancelBtnBo" type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzCancelBtn"
+											style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+											<span class="material-symbols-outlined fs-5 atrzComBtn">keyboard_return</span> 기안취소
+										</a>
 									</c:if>
 									<a type="button" 
 										class="btn btn-outline-secondary d-flex align-items-center gap-1"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"
-										href="/atrz/approval?tab=1"> 
+										href="javascript:window.history.back();"> 
 										<span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록
 									</a>
 								</div>
@@ -722,7 +721,7 @@ $("#atrzDetailComBtn").on("click", function () {
 								button: "확인",
 							}).then(() => {
 								// 기안취소 완료 후 페이지를 새로고침하거나 목록 페이지로 이동
-								window.location.href = "/atrz/home";
+								window.location.href = "/atrz/document?tab=1";
 							});
 						}
 					},

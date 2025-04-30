@@ -523,7 +523,7 @@ $(document).ready(function() {
 		//보고 가져온것 끝
 		
 		let jnForm = document.querySelector("#atrz_ho_form");
-		// console.log("${empVO}" + empVO);
+		
 		let formData = new FormData();
 		
 		

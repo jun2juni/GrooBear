@@ -13,7 +13,7 @@
 <meta name="viewport"
 	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
 <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-<style type="text/css">
+<style>
 #s_eap_draft_info tr th {
 	width: 100px;
 }
@@ -21,7 +21,7 @@
 #s_eap_draft_info tr th, #s_eap_draft_info tr td,
 #s_eap_draft tr th, #s_eap_draft tr td,
 .s_eap_draft_app tr th, .s_eap_draft_app tr td
- {
+{
 	padding: 5px;
 	border: 1px solid;
 	font-size: .9em;
@@ -37,6 +37,25 @@
 	#s_eap_draft td, .s_eap_draft_app td {
 	width: 100px;
 	text-align: center;
+}
+
+
+/* 제목, 내용 글씨 크기 */
+.s_frm_title {
+	font-size: 1em;
+	font-weight: bold;
+	padding: 5px 0;
+}
+/* 버튼 작게만들기 */
+.approvalBtn {
+	color: white;
+	--bs-btn-padding-y: .25rem;
+	--bs-btn-padding-x: .5rem;
+	--bs-btn-font-size: .75rem;
+}
+/* 버튼 공간 마진 */
+#approvalBtn {
+	margin: 10px;
 }
 /* sweetalert스타일 */
 /*모달창  */
@@ -80,205 +99,6 @@
 .swal-text {
 	color: black;
 }
-/* datepicker css */
-.ui-widget-header {
-	border: 0px solid #dddddd;
-	background: #fff;
-}
-
-.ui-datepicker-calendar>thead>tr>th {
-	font-size: 14px !important;
-}
-
-.ui-datepicker .ui-datepicker-header {
-	position: relative;
-	padding: 10px 0;
-}
-
-.ui-state-default, .ui-widget-content .ui-state-default,
-	.ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover,
-	html .ui-button.ui-state-disabled:active {
-	border: 0px solid #c5c5c5;
-	background-color: transparent;
-	font-weight: normal;
-	color: #454545;
-	text-align: center;
-}
-
-.ui-datepicker .ui-datepicker-title {
-	margin: 0 0em;
-	line-height: 16px;
-	text-align: center;
-	font-size: 14px;
-	padding: 0px;
-	font-weight: bold;
-}
-
-.ui-datepicker {
-	display: none;
-	background-color: #fff;
-	border-radius: 4px;
-	margin-top: 10px;
-	margin-left: 0px;
-	margin-right: 0px;
-	padding: 20px;
-	padding-bottom: 10px;
-	width: 300px;
-	box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.1);
-	padding-top: 10px;
-	
-}
-
-.ui-widget.ui-widget-content {
-	border: 1px solid #eee;
-}
-
-#datepicker:focus>.ui-datepicker {
-	display: block;
-}
-
-.ui-datepicker-prev, .ui-datepicker-next {
-	cursor: pointer;
-}
-
-.ui-datepicker-next {
-	float: right;
-}
-
-.ui-state-disabled {
-	cursor: auto;
-	color: hsla(0, 0%, 80%, 1);
-}
-
-.ui-datepicker-title {
-	text-align: center;
-	padding: 10px;
-	font-weight: 100;
-	font-size: 20px;
-}
-
-.ui-datepicker-calendar {
-	width: 100%;
-}
-
-.ui-datepicker-calendar>thead>tr>th {
-	padding: 5px;
-	font-size: 20px;
-	font-weight: 400;
-}
-
-.ui-datepicker-calendar>tbody>tr>td>a {
-	color: #000;
-	font-size: 12px !important;
-	font-weight: bold !important;
-	text-decoration: none;
-}
-
-.ui-datepicker-calendar>tbody>tr>.ui-state-disabled:hover {
-	cursor: auto;
-	background-color: #fff;
-}
-
-.ui-datepicker-calendar>tbody>tr>td {
-	border-radius: 100%;
-	width: 44px;
-	height: 30px;
-	cursor: pointer;
-	padding: 5px;
-	font-weight: 100;
-	text-align: center;
-	font-size: 12px;
-}
-
-.ui-datepicker-calendar>tbody>tr>td:hover {
-	background-color: transparent;
-	opacity: 0.6;
-}
-
-.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover,
-	.ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus,
-	.ui-button:hover, .ui-button:focus {
-	border: 0px solid #cccccc;
-	background-color: transparent;
-	font-weight: normal;
-	color: #2b2b2b;
-}
-
-.ui-widget-header .ui-icon {
-	background-image: url('https://media.discordapp.net/attachments/692994434526085184/995979886768439306/btns.png');
-}
-
-.ui-icon-circle-triangle-e {
-	background-position: -20px 0px;
-	background-size: 36px;
-}
-
-.ui-icon-circle-triangle-w {
-	background-position: -0px -0px;
-	background-size: 36px;
-}
-
-.ui-datepicker-calendar>tbody>tr>td:first-child a {
-	color: red !important;
-}
-
-.ui-datepicker-calendar>tbody>tr>td:last-child a {
-	color: #0099ff !important;
-}
-
-.ui-datepicker-calendar>thead>tr>th:first-child {
-	color: red !important;
-}
-
-.ui-datepicker-calendar>thead>tr>th:last-child {
-	color: #0099ff !important;
-}
-
-.ui-state-highlight, .ui-widget-content .ui-state-highlight,
-.ui-widget-header .ui-state-highlight {
-	border: 0px;
-	background: rgb(255, 192, 203);
-	border-radius: 50%;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	width: 30px;
-}
-
-.inp {
-	padding: 10px 10px;
-	background-color: #f1f1f1;
-	border-radius: 4px;
-	border: 0px;
-}
-
-.inp:focus {
-	outline: none;
-	background-color: #eee;
-}
-
-select.ui-datepicker-month {
-	border-radius: 5px;
-	padding: 5px;
-	width: 80px !important;
-}
-
-select.ui-datepicker-year {
-	border-radius: 5px;
-	padding: 5px;
-	margin-left: 10px !important;
-	width: 80px !important;
-}
-
-.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
-	top: 9px !important;
-}
-/* 달력이전다음버튼 변경하는 클래스 */
-/* input, select에 여백 주기 */
-.s_default_tbody_cl td > .form-control,
-.s_default_tbody_cl th > .form-control,
-.s_default_tbody_cl td > .form-select {
-margin-bottom: 8px !important;
-}
 
 /* 셀 내부 여백 주기 */
 .s_default_tbody_cl td,
@@ -288,8 +108,17 @@ padding: 10px !important;
 .s_sp_date {
 	text-align: center;
 }
-
+/* 툴팁 커스텀 색상 */
+.custom-tooltip {
+--bs-tooltip-bg:#0583F2  !important;
+--bs-tooltip-color: #fff !important;
+}
+.custom-tooltip-sto {
+--bs-tooltip-bg:rgb(25, 135, 84)  !important;
+--bs-tooltip-color: #fff !important;
+}
 </style>
+
 <title>${title}</title>
 <%@ include file="../layout/prestyle.jsp"%>
 </head>
@@ -300,7 +129,7 @@ padding: 10px !important;
 	<main class="main-wrapper">
 		<%@ include file="../layout/header.jsp"%>
 		<section class="section">
-		<form id="atrz_sp_form" action="/atrz/insertAtrzLine" method="post" enctype="multipart/form-data">
+		<form id="atrz_dr_form" action="/atrz/insertAtrzLine" method="post" enctype="multipart/form-data">
 			<div class="container-fluid">
 				<!-- 여기서 작업 시작 -->
 				<div class="row">
@@ -311,12 +140,15 @@ padding: 10px !important;
 							<div class="tool_bar">
 								<div class="critical d-flex gap-2 mb-3">
 									<!--성진스 버튼-->
-									<button id="s_eap_app_top" type="button" 
+									<button id="s_eap_app_top" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" 
+										data-bs-custom-class="custom-tooltip"title="재기안시 결재선을 지정해야 합니다."
 										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
 										<span class="material-symbols-outlined fs-5">upload</span> 결재요청
 									</button>
-									<a id="s_eap_storTo" type="button" class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
+									<a id="s_eap_storTo" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" 
+										data-bs-custom-class="custom-tooltip-sto"title="재기안시 결재선을 지정해야 합니다."
+										class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
 									</a> 
@@ -346,157 +178,161 @@ padding: 10px !important;
 									
 									<div id="s_eap_content_box_left" class="s_scroll">
 										<div class="s_div_container s_scroll">
-											<div style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">지출결의서</div>
-												<div style="float: left; width: 230px; margin: 0 30px;">
-													<table border="1" id="s_eap_draft_info" class="text-center">
-														<tr>
-															<!-- 기안자 정보가져오기 -->
-	<%-- 													<p>${empVO}</p>  --%>
-															<th>기안자</th>
-															<td>${empVO.emplNm}</td>
-														</tr>
-														<tr>
-															<th>기안부서</th>
-															<td>${empVO.deptNm}</td>
-														</tr>
-														<tr>
-															<!-- 기안일 출력을 위한 것 -->
-															<jsp:useBean id="now" class="java.util.Date" />
-															<fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm:ss" var="today" />
-															<th>기안일</th>
-															<td>
-																<c:out value="${today}"/>
-															</td>
-														</tr>
-														<tr>
-															<th>문서번호</th>
-															<td id="s_dfNo">${resultDoc.df_no}</td>
-														</tr>
-													</table>
-												</div>
+											<div style="text-align: center; font-size: 2em; font-weight: bold; padding: 20px;">기안서</div>
 
-												<div style="float: left; width: 130px; margin-right: 10px;">
-													<table border="1" id="s_eap_draft">
+											<div style="float: left; width: 230px; margin: 0 30px;">
+												<table border="1" id="s_eap_draft_info" class="text-center">
+													<tr>
+														<!-- 기안자 정보가져오기 -->
+<%-- 													<p>${empVO}</p>  --%>
+														<th>기안자</th>
+														<td>${empVO.emplNm}</td>
+													</tr>
+													<tr>
+														<th>기안부서</th>
+														<td>${empVO.deptNm}</td>
+													</tr>
+													<tr>
+														<!-- 기안일 출력을 위한 것 -->
+														<jsp:useBean id="now" class="java.util.Date" />
+														<fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm:ss" var="today" />
+														<th>기안일</th>
+														<td>
+															<c:out value="${today}"/>
+														</td>
+													</tr>
+													<tr>
+														<th>문서번호</th>
+														<td id="s_dfNo">${resultDoc.df_no}</td>
+													</tr>
+												</table>
+											</div>
+
+											<div style="float: right; margin-right: 20px;" id="s_eap_draft_app">
+												<table border="1" class="s_eap_draft_app">
+													<tbody hidden>
+														<!-- 결재자: atrzTy = 'N' -->
 														<tr>
-															<th rowspan="2">신청</th>
-															<td>${empVO.clsfCodeNm}</td>
+															<th rowspan="2">결재</th>
+															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+																<c:if test="${atrzLineVO.atrzTy eq '1'}">
+																	<!-- <p>${atrzLineVO}</p> -->
+																	<td data-atrz-ln-sn="${atrzLineVO.atrzLnSn}" data-sanctner-empno="${atrzLineVO.sanctnerEmpno}"
+																	data-atrz-ty="${atrzLineVO.atrzTy}" data-dcrb-author-yn="${atrzLineVO.dcrbAuthorYn}"
+																	data-sanctner-clsf-code="${atrzLineVO.sanctnerClsfCode}">${atrzLineVO.sanctnerClsfNm}</td>
+																</c:if>
+															</c:forEach>
 														</tr>
 														<tr>
-															<td>${empVO.emplNm}</td>
-														</tr>
-													</table>
-												</div>
-
-												<div style="float: right;  margin-right: 10px;"
-												id=s_eap_draft_app>
-												
-												</div>
-												<div style="padding: 50px 10px 20px; clear: both;">
-													<div
-														style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목
-														:</div>
-													<input type="text" class="form-control" value="" placeholder="제목을 입력해주세요"
-														style="display: inline-block; width: 90%; margin-left: 5px;"
-														id="s_sp_tt" name="atrzSj">
-												</div>
-
-												<div style="border: 1px solid lightgray; margin: 10px;"></div>
-												<div style="margin: 0 10px;">
-
-													<div style="padding: 10px 0;">
-														<div class="s_frm_title mb-2"><b>지출 내용</b></div>
-														<textarea class="form-control"
-															style="resize: none; height: 150px;" id="s_sp_co" name="atrzCn"
-															required="required" rows="2" cols="20" wrap="hard" placeholder="지출내용을 입력해주세요"></textarea>
-													</div>
-													<div style="padding: 10px 0;">
-														<div class="s_frm_title"><b>지출 내역</b></div>
-														<table class="table" style="text-align: center;">
-															<thead>
-																<tr>
-																	<th scope="col" style="width: 130px;">날짜</th>
-																	<th scope="col" style="width: 300px;">내역</th>
-																	<th scope="col" style="width: 70px;">수량</th>
-																	<th scope="col" style="width: 150px;">금액</th>
-																	<th scope="col" style="width: 130px;">결제수단</th>
-																</tr>
-															</thead>
-															<tbody id="s_default_tbody" class="s_default_tbody_cl">
-																<tr>
-																	<th scope="row">
-																		<input type="text" 
-																		class="form-control s_sp_date " id="s_sp_date" onkeyup="checkDateFormat(this)"
-																		name="expenseDate" placeholder="날짜 선택" 
-																		style="cursor: context-menu;"></th>
-																	<td><input type="text" placeholder="지출내역을 작성해주세요"
-																		class="form-control s_sp_detail" name="itemDescription"></td>
-																	<td><input type="text" id="sp_count"
-																		class="form-control s_sp_count" name="itemQuantity" 
-																		onblur="total()" placeholder="수량입력" onkeyup="commas(this)"
-																		></td>
-																		<!-- oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" -->
-																	<td><input type="text" placeholder="금액입력"
-																		class="form-control s_sp_amount" id="sp_amount"
-																		name="itemAmount" onkeyup="commas(this)"
-																		onblur="total()"></td>
-																	<td><select class="form-select s_select"
-																		aria-label="Default select example">
-																			<option value="C" >신용카드</option>
-																			<option value="A">가상계좌</option>
-																	</select></td>
-																</tr>
-
-															</tbody>
-															<tfoot>
-																<tr>
-																	<th colspan="3">합계</th>
-																	<td colspan="2">\ <span id="s_total_price"></span>
-																		(VAT포함)
+															<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+																<c:if test="${atrzLineVO.atrzTy eq '1'}">
+																	<td style="text-align: center; vertical-align: middle; padding: 15px 0;">
+																		<span style="display: block; margin-top: 10px; margin-bottom: 10px;">${atrzLineVO.sanctnerEmpNm}</span>
+																		<input type="hidden" name="atrzLnSn" id="s_dfNo" value="${atrzLineVO.atrzLnSn}" />
+																		<input type="hidden" name="sanctnerEmpno" value="${atrzLineVO.sanctnerEmpno}" />
+																		<input type="hidden" name="atrzDocNo" value="${atrzLineVO.atrzDocNo}" />
 																	</td>
-																</tr>
-															</tfoot>
-														</table>
-														<!-- <button type="button" id="s_add_sp_detail" class="btn btn-success" onclick="addTr()">내역 추가</button> -->
+																</c:if>
+															</c:forEach>
+														</tr>
+														
+
+												
+														<!-- 참조자: atrzTy = 'Y' -->
+														<c:set var="hasReference" value="false" />
+														<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+															<c:if test="${atrzLineVO.atrzTy eq '0'}">
+																<c:set var="hasReference" value="true" />
+															</c:if>
+														</c:forEach>
+												
+														<c:if test="${hasReference eq true}">
+															<tr>
+																<th rowspan="2">참조</th>
+																<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+																	<c:if test="${atrzLineVO.atrzTy eq '0'}">
+																		<td>${atrzLineVO.sanctnerClsfNm}</td>
+																	</c:if>
+																</c:forEach>
+															</tr>
+															<tr>
+																<c:forEach var="atrzLineVO" items="${atrzVO.atrzLineVOList}">
+																	<c:if test="${atrzLineVO.atrzTy eq '0'}">
+																		<td data-atrz-ln-sn="${atrzLineVO.atrzLnSn}" data-sanctner-empno="${atrzLineVO.sanctnerEmpno}"
+																		data-atrz-ty="${atrzLineVO.atrzTy}" data-dcrb-author-yn="${atrzLineVO.dcrbAuthorYn}"
+																		data-sanctner-clsf-code="${atrzLineVO.sanctnerClsfCode}">
+																			${atrzLineVO.sanctnerEmpNm}
+																			<input type="hidden" name="atrzLnSn" value="${atrzLineVO.atrzLnSn}" />
+																			<input type="hidden" name="sanctnerEmpno" value="${atrzLineVO.sanctnerEmpno}" />
+																		</td>
+																	</c:if>
+																</c:forEach>
+															</tr>
+														</c:if>
+													</tbody>
+												</table>
+											</div>
+
+
+											<div style="float: right;  margin-right: 10px;"
+												id=s_eap_draft_app> </div>
+
+											<div id="s_eap_final">
+												<div>
+													<div style="padding: 50px 10px 20px; clear: both;">
+														<div
+															style="display: inline-block; font-size: 1.2em; font-weight: bold;">제목
+															:</div>
+														<input type="text" class="form-control" value="${atrzVO.atrzSj}" placeholder="제목을 입력해주세요"
+															style="display: inline-block; width: 90%; margin-left: 5px;"
+															id="s_dr_tt" name="atrzSj">
 													</div>
-
-													<form action="/fileUpload" method="post" enctype="multipart/form-data">
-													
-														<file-upload
-																label="첨부파일"
-																name="uploadFile"
-																max-files="1"
-																contextPath="${pageContext.request.contextPath }"
-														></file-upload>
-													</form>
+													<div style="border: 1px solid lightgray; margin: 10px;"></div>
+													<div style="margin: 0 10px;">
+														<div style="padding: 10px 0;">
+															<div class="s_frm_title mb-2"><b>상세 내용</b></div>
+															<textarea class="form-control"
+																style="resize: none; height: 150px;" id="s_sp_co" name="atrzCn"
+																required="required" rows="2" cols="20" wrap="hard" placeholder="상세내용을 입력해주세요">${atrzVO.atrzCn}</textarea>
+														</div>
+			
+														<form action="/fileUpload" method="post" enctype="multipart/form-data">
+															<file-upload
+																	label="첨부파일"
+																	name="uploadFile"
+																	max-files="1"
+																	contextPath="${pageContext.request.contextPath }"
+															></file-upload>
+														</form>
+													</div>
 												</div>
-
-
+											</div>
+												<!-- <button type="button" id="s_add_sp_detail" class="btn btn-success" onclick="addTr()">내역 추가</button> -->
 											</div>
 										</div>
 									</div>
-									
-									<!-- 전자결재 양식 수정도 가능 끝 -->
-									<!-- 기능 끝 -->
-									<!-- 여기다가 작성해주세요(준희) -->
 								</div>
 							</div>
 							<!-- 상하 버튼 추가 -->
 							<div class="tool_bar">
 								<div class="critical d-flex gap-2 mt-3">
 									<!--성진스 버튼-->
-									<button id="s_eap_app_bottom" type="button" 
+									<button id="s_eap_app_bottom" data-bs-toggle="tooltip" data-bs-placement="bottom" 
+										data-bs-custom-class="custom-tooltip"title="재기안시 결재선을 지정해야 합니다."
 										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
 										<span class="material-symbols-outlined fs-5">upload</span> 결재요청
 									</button>
-									<a id="s_eap_storBo" type="button" 
+									<a id="s_eap_storBo" type="button"data-bs-toggle="tooltip" data-bs-placement="bottom" 
+										data-bs-custom-class="custom-tooltip-sto"title="재기안시 결재선을 지정해야 합니다."
 										class="btn btn-outline-success d-flex align-items-center gap-1 s_eap_stor"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">downloading</span> 임시저장
 									</a> 
-									<a id="s_appLine_btn" type="button" class="btn btn-outline-info d-flex align-items-center gap-1"
-										data-bs-toggle="modal" data-bs-target="#atrzLineModal"
-										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
+									<a id="s_appLine_btn" type="button"
+										class="btn btn-outline-info d-flex align-items-center gap-1"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"
+										data-bs-toggle="modal" data-bs-target="#atrzLineModal"> 
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
 									<a type="button" id="cancelButtonBo"
@@ -507,8 +343,7 @@ padding: 10px !important;
 								</div>
 							</div>
 						<!-- 상하 버튼 추가 -->
-						
-					</form>
+						</form>
 					</div>
 				</div>
 				<!-- 여기서 작업 끝 -->
@@ -518,11 +353,15 @@ padding: 10px !important;
 		<%@ include file="../layout/footer.jsp"%>
 	</main>
 	<%@ include file="../layout/prescript.jsp"%>
+	<!-- 제이쿼리사용시 여기다 인포트 -->
 
 
 <script>
+//페이지이동시 바로 
+//dateCnt() 실행하기
+
 //제목 너무 길게 입력하면 입력초과 스왈
-document.getElementById('s_sp_tt').addEventListener('input', function (event) {
+document.getElementById('s_dr_tt').addEventListener('input', function (event) {
         const maxLength = 60; // 최대 길이 설정
         const inputField = this;
         const inputValue = inputField.value;
@@ -544,119 +383,21 @@ document.getElementById('s_sp_tt').addEventListener('input', function (event) {
             return;
         }
     });
-//내역추가
-function addTr() {
-	$(".s_default_tbody_cl").append(
-		'<tr>'
-			+ '<th scope="row"><input type="date" class="form-control s_sp_date" id="s_sp_date" name="sp_date"></th>'
-			+ '<td><input type="text" class="form-control s_sp_detail" name="sp_detail"></td>'
-			+ '<td><input type="number" id="sp_count" class="form-control s_sp_count" name="sp_count" onblur="total()"></td>'
-			+ '<td><input type="text" class="form-control s_sp_amount" id="sp_amount" name="sp_amount" onkeyup="commas(this)" onblur="total()"></td>'
-			+ '<td>'
-			+ '<select class="form-select s_select" aria-label="Default select example">'
-				+ '<option value="C">신용카드</option>'
-				+ '<option value="A">가상계좌</option>'
-			+ '</select>'
-			+ '</td>'
-		+ '</tr>'	
-	);
-}
-
-
-
-
-
-
-// 합계 구하기
-function total() {
-	var spCnt = 0;
-	var spAmount = 0;
-	var total = 0;
-	var sum = 0;
-	// const number;
-	for(var i = 0; i < $('.s_sp_count').length; i++) {
-		spCnt = $(".s_sp_count").eq(i).val();
-		spAmount = $(".s_sp_amount").eq(i).val();
-		
-		spAmount = spAmount.replace(/,/g, "");
-		total = Number(spCnt * spAmount);
-		
-		sum += total;
-	}
-	
-	$("#s_total_price").text(sum);
-	
-	var total1 = $("#s_total_price").text();
-	var total2 = total1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	$('#s_total_price').text(total2);
-};
-
-function commas(t) {
-
-// 콤마 빼고 
-var x = t.value;			
-x = x.replace(/,/gi, '');
-
-// 숫자 정규식 확인
-var regexp = /^[0-9]*$/;
-if(!regexp.test(x)){ 
-	$(t).val(""); 
-	swal({
-			title: "숫자만 입력 가능합니다.",
-			text: "",
-			icon: "error",
-			closeOnClickOutside: false,
-			closeOnEsc: false
-		});
-} else {
-	x = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");			
-	$(t).val(x);			
-}
-}
-
-//날짜 정규식 확인
-	function checkDateFormat(t) {
-	var x = t.value.trim();
-
-	// 날짜 정규식 (YYYY-MM-DD)
-	var regexp = /^[0-9\-]*$/;
-
-	if (!regexp.test(x)) {
-		$(t).val(""); // 잘못된 입력 제거
-
-		swal({
-		title: "숫자와 '-'만 입력 가능합니다.",
-		text: "날짜는 YYYY-MM-DD 형식으로 입력해주세요.",
-		icon: "error",
-		closeOnClickOutside: false,
-		closeOnEsc: false
-		});
-		return;
-	}
-
-	// 입력이 10자리 되었을 때 형식까지 검사
-	if (x.length === 10 && !/^\d{4}-\d{2}-\d{2}$/.test(x)) {
-		$(t).val("");
-
-		swal({
-		title: "날짜 형식 오류",
-		text: "날짜는 YYYY-MM-DD 형식으로 입력해주세요.",
-		icon: "error",
-		closeOnClickOutside: false,
-		closeOnEsc: false
-		});
-	}
-	}
 </script>
-<script>
 
+<script>
 //JSON Object List
 let authList = [];
+let atrzLineList = [];
+
 $(document).ready(function() {
 	//******* 폼 전송 *******
 	$(".s_eap_app").on("click",function(){
 		event.preventDefault();
-		//보고 가져온것 시작
+		//유효성검사
+		var eap_title = $('#s_dr_tt').val();
+		var eap_content = $('#s_ho_co').val();
+
 		var sp_date = "";
 		var sp_detail = "";
 		var sp_count = 0;
@@ -664,7 +405,7 @@ $(document).ready(function() {
 		var sp_pay_code = "";
 		
 		// 제목, 내용이 비어있을 때
-		if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
+		if($('#s_dr_tt').val() == "" || $('#s_sp_co').val() == "") {
 			swal({
 					title: "제목 또는 내용이 비어있습니다.",
 					text: "다시 확인해주세요.",
@@ -699,34 +440,25 @@ $(document).ready(function() {
 			return;
 		}
 		
-		var eap_content = $('#s_sp_co').val();
-
 		
-		// textarea에 \r \n같은 문자를 <br>로 바꿔주기
-		eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
-		
-		
-		//보고 가져온것 끝
-		
-		let jnForm = document.querySelector("#atrz_sp_form");
+		let jnForm = document.querySelector("#atrz_dr_form");
 		
 		let formData = new FormData();
-		formData.append("docFormNm","S");
-		formData.append("docFormNo",2);
+		formData.append("docFormNm","D");
+		formData.append("docFormNo",3);
 		formData.append("atrzSj",jnForm.atrzSj.value);
 		formData.append("atrzCn",jnForm.atrzCn.value);
+
+		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
+			formData.append("removeFileId", element.value);
+		});
 
 		if(jnForm.uploadFile.files.length){
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
 			formData.append("uploadFile",jnForm.uploadFile.files[i]);
 		}
-  
-  
-		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
-			formData.append("removeFileId", element.value);
-		});
 
-		let atrzLineList = [];
+		
 		for(let i=0; i< authList.length; i++){
 			let auth = authList[i];
 			let atrzLine = {
@@ -739,16 +471,6 @@ $(document).ready(function() {
 			atrzLineList.push(atrzLine);			
 		}
 		console.log("atrzLineList",atrzLineList);
-
-		let docSpending = {
-				expenseDate: $('.s_sp_date').val(),
-				itemDescription: $('.s_sp_detail').val(),
-				itemQuantity: $('.s_sp_count').val(),
-				itemAmount: $('.s_sp_amount').val(),
-				paymentMethod: $('.s_select').val()
-			};
-
-		formData.append("docSpending",new Blob([JSON.stringify(docSpending)],{type:"application/json"}));
 
 
 		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
@@ -767,7 +489,7 @@ $(document).ready(function() {
             }
 
 		$.ajax({
-			url:"/atrz/atrzSpendingInsert",
+			url:"/atrz/atrzDraftInsert",
 			processData:false,
 			contentType:false,
 			type:"post",
@@ -792,10 +514,6 @@ $(document).ready(function() {
 			error: junyError
 		})
 	});
-
-
-
-
 	
 
 	//임시저장 클릭시 
@@ -816,10 +534,10 @@ $(document).ready(function() {
 			button: "확인"
 		});
 		return;
-		}
+		};
 
 		// 제목, 내용이 비어있을 때
-		if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
+		if($('#s_dr_tt').val() == "" || $('#s_sp_co').val() == "") {
 			swal({
 					title: "제목 또는 내용이 비어있습니다.",
 					text: "다시 확인해주세요.",
@@ -828,58 +546,26 @@ $(document).ready(function() {
 					closeOnEsc: false
 				});
 			return;
-		}
+		};
 		
-		// 지출 내역이 비어있을 때
-		if($('.s_sp_date').val() == "" || $('.s_sp_detail').val() == "" || $('.s_sp_count').val() == "" || $('.s_sp_amount').val() == "") {
-			swal({
-					title: "지출 내역을 다시 확인하여 입력해주세요.",
-					text: "",
-					icon: "error",
-					closeOnClickOutside: false,
-					closeOnEsc: false
-				});
-			return;
-		}
-		
-		// 지출 날짜가 'YYYY-MM-DD'형태로 입력이 되지 않았을 때
-		if($('.s_sp_date').val().length != 10) {
-			swal({
-					title: "날짜를 'YYYY-MM-DD'형태로 입력해주세요.",
-					text: "",
-					icon: "error",
-					closeOnClickOutside: false,
-					closeOnEsc: false
-				});
-			return;
-		}
-		
-		var eap_content = $('#s_sp_co').val();
-
-		
-		// textarea에 \r \n같은 문자를 <br>로 바꿔주기
-		eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
-
 		//formData로 담아주기 위한것
-		let jnForm = document.querySelector("#atrz_sp_form");
+		let jnForm = document.querySelector("#atrz_dr_form");
 
 		let formData = new FormData();
-		formData.append("docFormNm","S");
-		formData.append("docFormNo",2);
+		formData.append("docFormNm","D");
+		formData.append("docFormNo",3);
 		formData.append("atrzSj",jnForm.atrzSj.value);
 		formData.append("atrzCn",jnForm.atrzCn.value);
-  
+
 		document.querySelectorAll("input[name='removeFileId']").forEach(element => {
 			formData.append("removeFileId", element.value);
 		});
-  
+
 		if(jnForm.uploadFile.files.length){
 			for(let i=0; i< jnForm.uploadFile.files.length; i++)
 			formData.append("uploadFile",jnForm.uploadFile.files[i]);
-		}
+		};
 
-
-		let atrzLineList = [];
 		for(let i=0; i< authList.length; i++){
 			let auth = authList[i];
 			let atrzLine = {
@@ -890,19 +576,11 @@ $(document).ready(function() {
 				sanctnerClsfCode: auth.clsfCode,
 			}
 			atrzLineList.push(atrzLine);			
-		}
+		};
 		console.log("atrzLineList",atrzLineList);
 
-		let docSpending = {
-				expenseDate: $('.s_sp_date').val(),
-				itemDescription: $('.s_sp_detail').val(),
-				itemQuantity: $('.s_sp_count').val(),
-				itemAmount: $('.s_sp_amount').val(),
-				paymentMethod: $('.s_select').val()
-			};
-		console.log("docSpending",docSpending);
+		
 		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
-		formData.append("docSpending",new Blob([JSON.stringify(docSpending)],{type:"application/json"}));
 
 		formData.append("emplNo",secEmplNo);
 		formData.append("emplNm",secEmplNm);
@@ -915,11 +593,11 @@ $(document).ready(function() {
 					console.log("code(ajaxError): " + request.status)
 					console.log("message(ajaxError): " + request.responseText)
 					console.log("error(ajaxError): " + error);
-        }
+        };
 
 		//지출결의서 임시저장 시작
 		$.ajax({
-			url:"/atrz/atrzSpendingStorage",
+			url:"/atrz/atrzDraftStorage",
 			processData:false,
 			contentType:false,
 			type:"post",
@@ -942,9 +620,9 @@ $(document).ready(function() {
 				}
 			},
 			error: junyError
-		})
+		});
 		//지출결의서 임시저장 끝
-	})
+	});
 
 
 
@@ -1273,8 +951,8 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 		});	
 		
 		console.log("순번권한전결여부authList : ", authList);
-		formData.append("docFormNm","S");
-		formData.append("docFormNo",2);
+		formData.append("docFormNm","D");
+		formData.append("docFormNo",3);
 
 		console.log("obj.emplNo : ",obj.emplNo);
 		//asnyc를 써서 
@@ -1327,7 +1005,7 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 				if (approvalList.length > 0) {
 					tableHtml += `<tr><th rowspan="2">결재</th>`;
 					$.each(approvalList, function(i, employeeVO){
-						$("#atrz_ho_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
+						$("#atrz_dr_form").append(`<input type="hidden" name="empNoList" value="\${employeeVO.emplNo}"/>`);
 						tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
 					});
 					tableHtml += `</tr><tr>`;
@@ -1343,7 +1021,7 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 				if (referenceList.length > 0) {
 					tableHtml += `<tr><th rowspan="2">참조</th>`;
 					$.each(referenceList, function(i, employeeVO){
-						$("#atrz_ho_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
+						$("#atrz_dr_form").append(`<input type="hidden" name="empAttNoList" value="\${employeeVO.emplNo}"/>`);
 						tableHtml += `<td>\${employeeVO.clsfCodeNm}</td>`;
 					});
 
@@ -1363,33 +1041,11 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 	//여기서 결재선에 담긴 애들을 다 하나씩 담아서 post로
 })
 
-
-	// 합계 구하기
-	function total() {
-		var spCnt = 0;
-		var spAmount = 0;
-		var total = 0;
-		var sum = 0;
-		// const number;
-		for(var i = 0; i < $('.s_sp_count').length; i++) {
-			spCnt = $(".s_sp_count").eq(i).val();
-			spAmount = $(".s_sp_amount").eq(i).val();
-			
-			spAmount = spAmount.replace(/,/g, "");
-			total = Number(spCnt * spAmount);
-			
-			sum += total;
-		}
-		
-		$("#s_total_price").text(sum);
-		
-		var total1 = $("#s_total_price").text();
-		var total2 = total1.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-		$('#s_total_price').text(total2);
-	};
-
-
-
+//결재요청시 재기안시 결재선을 다시 지정해주세요 라는 툴팁이 뜨게 하기 위해서
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+	return new bootstrap.Tooltip(tooltipTriggerEl)
+})
 
 	// datepicker위젯
 	$("#s_sp_date").datepicker({
@@ -1412,11 +1068,6 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 	});
 });
 </script>
-	<!-- 주니가 입력한 스크립트 끝 -->
-	<p hidden>
-		<sec:authentication property="principal.Username" />
-	</p>
-
 </body>
 
 </html>

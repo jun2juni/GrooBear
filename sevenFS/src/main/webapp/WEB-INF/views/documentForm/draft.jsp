@@ -212,7 +212,7 @@ padding: 10px !important;
 												:</div>
 											<input type="text" class="form-control" value="" placeholder="제목을 입력해주세요"
 												style="display: inline-block; width: 90%; margin-left: 5px;"
-												id="s_sp_tt" name="atrzSj">
+												id="s_dr_tt" name="atrzSj">
 										</div>
 										<div style="border: 1px solid lightgray; margin: 10px;"></div>
 										<div style="margin: 0 10px;">
@@ -273,7 +273,7 @@ padding: 10px !important;
 <%@ include file="../layout/prescript.jsp" %>
 <script>
 //제목 너무 길게 입력하면 입력초과 스왈
-document.getElementById('s_sp_tt').addEventListener('input', function (event) {
+document.getElementById('s_dr_tt').addEventListener('input', function (event) {
         const maxLength = 60; // 최대 길이 설정
         const inputField = this;
         const inputValue = inputField.value;
@@ -305,7 +305,7 @@ $(document).ready(function() {
 		event.preventDefault();
 
 		// 제목, 내용이 비어있을 때
-		if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
+		if($('#s_dr_tt').val() == "" || $('#s_sp_co').val() == "") {
 			swal({
 					title: "제목 또는 내용이 비어있습니다.",
 					text: "다시 확인해주세요.",
@@ -327,7 +327,7 @@ $(document).ready(function() {
 		//보고 가져온것 끝
 		
 		let jnForm = document.querySelector("#atrz_dr_form");
-		// console.log("${empVO}" + empVO);
+		
 		let formData = new FormData();
 		formData.append("docFormNm","D");
 		formData.append("docFormNo",3);
@@ -425,7 +425,7 @@ $(document).ready(function() {
 		}
 
 		// 제목, 내용이 비어있을 때
-		if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
+		if($('#s_dr_tt').val() == "" || $('#s_sp_co').val() == "") {
 			swal({
 					title: "제목 또는 내용이 비어있습니다.",
 					text: "다시 확인해주세요.",

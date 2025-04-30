@@ -317,8 +317,8 @@ select.ui-datepicker-year {
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1"
-										href="/atrz/home" style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
@@ -484,7 +484,7 @@ select.ui-datepicker-year {
 														:</div>
 													<input type="text" class="form-control" value="${atrzVO.atrzSj}" 
 														style="display: inline-block; width: 90%; margin-left: 5px;"
-														id="s_sp_tt" name="atrzSj">
+														id="s_dr_tt" name="atrzSj">
 												</div>
 												<div style="border: 1px solid lightgray; margin: 10px;"></div>
 												<div style="margin: 0 10px;">
@@ -536,8 +536,8 @@ select.ui-datepicker-year {
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1"
-										href="/atrz/home" style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
+									<a type="button" class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
+										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
 								</div>
@@ -561,7 +561,7 @@ select.ui-datepicker-year {
 //dateCnt() 실행하기
 
 //제목 너무 길게 입력하면 입력초과 스왈
-document.getElementById('s_ho_tt').addEventListener('input', function (event) {
+document.getElementById('s_dr_tt').addEventListener('input', function (event) {
         const maxLength = 60; // 최대 길이 설정
         const inputField = this;
         const inputValue = inputField.value;
@@ -597,7 +597,7 @@ $(document).ready(function() {
 		event.preventDefault();
 
 		// 제목, 내용이 비어있을 때
-		if($('#s_sp_tt').val() == "" || $('#s_sp_co').val() == "") {
+		if($('#s_dr_tt').val() == "" || $('#s_sp_co').val() == "") {
 			swal({
 					title: "제목 또는 내용이 비어있습니다.",
 					text: "다시 확인해주세요.",
@@ -617,7 +617,7 @@ $(document).ready(function() {
 		
 		
 		let jnForm = document.querySelector("#atrz_dr_form");
-		// console.log("${empVO}" + empVO);
+		
 		let formData = new FormData();
 		formData.append("docFormNm","D");
 		formData.append("docFormNo",3);

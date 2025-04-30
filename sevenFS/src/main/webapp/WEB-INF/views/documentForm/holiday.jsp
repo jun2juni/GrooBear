@@ -316,7 +316,7 @@ select.ui-datepicker-year {
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button" id="cancelButton"
+									<a type="button" id="cancelButtonTo"
 										class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
@@ -512,7 +512,7 @@ select.ui-datepicker-year {
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;">
 										<span class="material-symbols-outlined fs-5">error</span> 결재선 지정
 									</a> 
-									<a type="button" href="/atrz/home"
+									<a type="button" id="cancelButtonBt"
 										class="btn btn-outline-danger d-flex align-items-center gap-1 atrzLineCancelBtn"
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;" > 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
@@ -823,7 +823,7 @@ $(document).ready(function() {
 	//유효성검사
 
 		let jnForm = document.querySelector("#atrz_ho_form");
-		// console.log("${empVO}" + empVO);
+		
 		
 		let formData = new FormData();
 		formData.append("docFormNm","H");
@@ -931,7 +931,7 @@ $(document).ready(function() {
 			button: "확인"
 		});
 		return;
-		}
+		};
 
 		//연차유형이 선택되지 않았을경우
 		if (!$("input[name='holiCode']:checked").val()) {
@@ -944,7 +944,7 @@ $(document).ready(function() {
 				button: "확인"
 			});
 			return;
-		}
+		};
 		if ($("#s_ho_start").val() === "") {
 			swal({
 				title: "시작일자가 비어있습니다.",
@@ -955,7 +955,7 @@ $(document).ready(function() {
 				button: "확인"
 			});
 			return;
-		}
+		};
 		if ($("#s_ho_end").val() === "") {
 			swal({
 				title: "종료일자가 비어있습니다.",
@@ -966,11 +966,11 @@ $(document).ready(function() {
 				button: "확인"
 			});
 			return;
-		}
+		};
 
 
 		let jnForm = document.querySelector("#atrz_ho_form");
-		// console.log("${empVO}" + empVO);
+		
 		
 		let formData = new FormData();
 		formData.append("docFormNm","H");
@@ -1448,6 +1448,9 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 					}
 				});
 			});
+			//뒤로가기 진행시에 기안취소되게 만들기
+			
+
 			//뒤로가기 진행시 기안취소되게 만들기
 			let hasDoc = !!$("#s_dfNo").text(); // 문서번호 존재 시만 동작
 			let isCanceled = false;

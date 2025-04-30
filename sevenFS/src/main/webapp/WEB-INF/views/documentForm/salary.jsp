@@ -115,12 +115,12 @@ text-align: center;
 									<!--성진스 버튼-->
 									<button id="s_eap_app_top" type="button" 
 										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app">
-										<span class="material-symbols-outlined fs-5">bookmark</span> 저장(확인)
+										<span class="material-symbols-outlined fs-5">bookmark</span> 저장
 									</button>
 									</a> 
                                     <a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1"
-										href="/atrz/document?tab=1"> 
-                                    <span class="material-symbols-outlined fs-5">format_list_bulleted</span>목록으로
+										href="javascript:window.history.back();"> 
+                                    <span class="material-symbols-outlined fs-5">format_list_bulleted</span>목록
 									</a>
 								</div>
 							</div>
@@ -294,11 +294,11 @@ text-align: center;
 									<!--성진스 버튼-->
 									<button id="s_eap_app_bottom" type="button" 
 										class="btn btn-outline-primary d-flex align-items-center gap-1 s_eap_app">
-										<span class="material-symbols-outlined fs-5">bookmark</span>저장(확인)
+										<span class="material-symbols-outlined fs-5">bookmark</span>저장
 									</button>
 									</a> 
-                                    <a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="/atrz/document?tab=1"> 
-                                    <span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록으로
+                                    <a type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1" href="javascript:window.history.back();"> 
+                                    <span class="material-symbols-outlined fs-5">format_list_bulleted</span> 목록
 									</a>
 								</div>
 							</div>
