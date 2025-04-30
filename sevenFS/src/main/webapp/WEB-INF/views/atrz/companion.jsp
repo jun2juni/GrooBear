@@ -295,7 +295,19 @@
 <!-- 새결재 진행 모달import -->
 <c:import url="newAtrzDocModal.jsp" />
 <script>
+// 검색어 입력시 엔터키로 검색하기
+// 한 이벤트에 긴코드가 들어갈때 나누서 사용하기 위해서~
+document.addEventListener("DOMContentLoaded", function () {
+	const input = document.getElementById("keyword");
+	const searchBtn = document.getElementById("searchBtn");
 
+	input.addEventListener("keydown", function (event) {
+		if (event.key === "Enter") {
+		event.preventDefault(); // form 제출 방지 (필요한 경우)
+		searchBtn.click(); // 버튼 클릭 트리거
+		}
+	});
+});
 //기간입력 선택시 활성화 시키는 스크립트
 document.getElementById("duration").addEventListener("change",function() {
 	var durationPeriod = document.getElementById("durationPeriod");
@@ -306,7 +318,28 @@ document.getElementById("duration").addEventListener("change",function() {
 		durationPeriod.classList.remove("d-flex");
 		durationPeriod.classList.add("d-none");
 	}
-})
+});
+
+// 검색 후 기간입력이 선택되어 있을 경우 기간입력 div를 보여줌
+$(document).ready(function() {
+	let duration = $("#duration option:selected").val();
+	console.log("duration : ", duration);
+
+	if (duration == "period") {//기간입력 선택 시
+		$("#durationPeriod").removeClass("d-none").addClass("d-flex");
+	} else {
+		$("#durationPeriod").removeClass("d-flex").addClass("d-none");
+	}
+
+	// 체크박스 전체 선택
+	$("#checkbox-all").click(function() {
+		if ($(this).is(":checked")) {
+			$("input[type=checkbox]").prop("checked", true);
+		} else {
+			$("input[type=checkbox]").prop("checked", false);
+		}
+	});
+});
 
 //검색버튼 클릭시 컨트롤러로 파라이터 넘겨주기
 $('#searchBtn').on("click",function(event){

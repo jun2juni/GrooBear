@@ -768,6 +768,22 @@
 <!-- 새결재 진행 모달import -->
 <c:import url="newAtrzDocModal.jsp" />
 <script>
+// 검색어 입력시 엔터키로 검색하기
+// 한 이벤트에 긴코드가 들어갈때 나누서 사용하기 위해서~
+
+document.addEventListener("DOMContentLoaded", function () {
+	const input = document.getElementById("keyword");
+	const searchBtn = document.getElementById("searchBtn");
+
+	input.addEventListener("keydown", function (event) {
+		if (event.key === "Enter") {
+		event.preventDefault(); // form 제출 방지 (필요한 경우)
+		searchBtn.click(); // 버튼 클릭 트리거
+		}
+	});
+});
+
+
 function moveTab(tabNo) {
 		const form = document.createElement('form');
 		form.method = 'get';
@@ -791,11 +807,11 @@ function moveTab(tabNo) {
 
 		document.body.appendChild(form);
 		form.submit();
-	}
+	};
 
 
+// 검색 후 기간입력이 선택되어 있을 경우 기간입력 div를 보여줌
 $(document).ready(function() {
-	// 검색 후 기간입력이 선택되어 있을 경우 기간입력 div를 보여줌
 	let duration = $("#duration option:selected").val();
 	console.log("duration : ", duration);
 
@@ -827,7 +843,7 @@ document.getElementById("duration").addEventListener("change",function() {
 		durationPeriod.classList.remove("d-flex");
 		durationPeriod.classList.add("d-none");
 	}
-})
+});
 //검색버튼 클릭시 컨트롤러로 파라이터 넘겨주기
 $('#searchBtn').on("click",function(event){
 	event.preventDefault(); // 기본 동작 방지
@@ -860,30 +876,29 @@ $('#searchBtn').on("click",function(event){
 
 </script>
 	<!--일괄결재모달 시작-->
-					<!-- Modal -->
-					<div class="modal fade" id="allApproval" tabindex="-1"
-						aria-labelledby="exampleModalLabel" aria-hidden="true">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-body">
-									<form>
-										<div class="mt-1 mb-3">
-											<h4 class="form-label">정말로 일괄 결재하시겠습니까?</h4>
-										</div>
-										<div class="mb-3">
-											<textarea class="form-control" id="message-text"
-												style="height: 200px" placeholder="의견을 작성해주세요"></textarea>
-										</div>
-									</form>
-								</div>
-								<div class="modal-footer border-0">
-									<button type="button" class="main-btn primary-btn rounded-full btn-hover modalBtn">확인</button>
-									<button type="button" class="main-btn light-btn rounded-full btn-hover modalBtn"
-										data-bs-dismiss="modal">취소</button>
-								</div>
-							</div>
+	<div class="modal fade" id="allApproval" tabindex="-1"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<form>
+						<div class="mt-1 mb-3">
+							<h4 class="form-label">정말로 일괄 결재하시겠습니까?</h4>
 						</div>
-					</div>
-					<!--일괄결재모달 끝-->
+						<div class="mb-3">
+							<textarea class="form-control" id="message-text"
+								style="height: 200px" placeholder="의견을 작성해주세요"></textarea>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer border-0">
+					<button type="button" class="main-btn primary-btn rounded-full btn-hover modalBtn">확인</button>
+					<button type="button" class="main-btn light-btn rounded-full btn-hover modalBtn"
+						data-bs-dismiss="modal">취소</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--일괄결재모달 끝-->
 </body>
 </html>
