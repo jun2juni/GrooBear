@@ -120,7 +120,7 @@ public class DclzTypeController {
 		return "organization/dclz/dclzType";
 	}
 	
-	//엑셀 다운로드
+	// 근태현황 엑셀 다운로드
     @GetMapping("/dclzExcelDownload")
     public void downloadExcel(
             HttpServletResponse response,
@@ -129,15 +129,12 @@ public class DclzTypeController {
     		@RequestParam(defaultValue = "") String keywordSearch) throws IOException {
         
     	
-    	log.info("왔니 ?? ");
     	String emplNo = principal.getName();
     	
         Map<String, Object> map = new HashMap<>();
         map.put("emplNo", emplNo);
         map.put("keyword", keyword);
         map.put("keywordSearch", keywordSearch);
-        
-        log.info("엑셀 keyword : " + keyword);
         
         List<DclzTypeVO> empDclzList = dclztypeService.emplDclzTypeList(map);
         
@@ -163,7 +160,6 @@ public class DclzTypeController {
         }
         
         // 데이터 행 생성
-        
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         
         int rowNum = 1;
@@ -452,6 +448,88 @@ public class DclzTypeController {
 		model.addAttribute("allEmplVacList" , allEmplVacList);
 		
 		return "organization/dclz/vacAdmin";
+	}
+	
+	// 연차관리 엑셀 다운로드
+	@GetMapping("/vacationExcelDownload")
+	public void vacationExcelDownload(HttpServletResponse response
+				, @RequestParam(defaultValue = "1") int currentPage
+				, @RequestParam(defaultValue = "") String keywordName
+				, @RequestParam(defaultValue = "") String keywordDept) throws IOException{
+		         
+		
+		  // 모든 프로젝트를 가져오기 위해 페이지 크기를 크게 설정
+        Map<String, Object> map = new HashMap<>();
+        map.put("currentPage", 1);  // 모든 데이터를 가져오기 위해 첫 페이지로 설정
+        map.put("size", 1000);      // 큰 값으로 설정하여 모든 데이터 가져오기
+        map.put("keywordName", keywordName);
+        map.put("keywordDept", keywordDept);
+        
+        log.info("vacation keywordName : " + keywordName);
+        log.info("vacation keywordDept : " + keywordDept);
+        
+        // 모든 사원의 연차 현황
+ 		List<VacationVO> allEmplVacList = this.dclztypeService.allEmplVacationAdmin(map);
+        
+        // Excel 파일 생성
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("사원 연차 현황 목록");
+        
+        // 헤더 스타일
+        CellStyle headerStyle = workbook.createCellStyle();
+        XSSFFont headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerStyle.setFont(headerFont);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+        
+        // 헤더 행 생성
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"번호", "사원이름", "부서명", "입사일자", "성과 보상", "근무 보상", "총 연차일수", "사용 연차일수", "잔여 연차일수"};
+        
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+            sheet.setColumnWidth(i, 4000); // 칼럼 너비 설정
+        }
+        
+        // 데이터 행 생성
+        int rowNum = 1;
+        for (VacationVO vacation : allEmplVacList) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(rowNum - 1);
+            row.createCell(1).setCellValue(vacation.getEmplNm());
+            row.createCell(2).setCellValue(vacation.getCmmnCodeNm());
+            row.createCell(3).setCellValue(vacation.getEcnyDate());
+            row.createCell(4).setCellValue(vacation.getCmpnstnYryc());
+            row.createCell(5).setCellValue(vacation.getExcessWorkYryc());
+            row.createCell(6).setCellValue(vacation.getTotYrycDaycnt());
+            row.createCell(7).setCellValue(vacation.getYrycUseDaycnt());
+            row.createCell(8).setCellValue(vacation.getYrycRemndrDaycnt());
+        }
+        
+        // 파일 다운로드 설정
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        String fileName = "";
+        
+        boolean isNameEmpty = (keywordName == null || keywordName.trim().isEmpty());
+        boolean isDeptEmpty = (keywordDept == null || keywordDept.trim().isEmpty());
+        
+        if(isNameEmpty && isDeptEmpty) {
+        	fileName = URLEncoder.encode("전체사원_연차현황_목록" + LocalDate.now() + ".xlsx", "UTF-8");
+        }else if(!isDeptEmpty && isNameEmpty){
+        	fileName = URLEncoder.encode(keywordDept.replace(" ", "_") + "_연차현황_목록" + LocalDate.now() + ".xlsx", "UTF-8");
+        }else{
+        	fileName = URLEncoder.encode(keywordName.trim() + "_연차현황_" + LocalDate.now() + ".xlsx", "UTF-8");
+        }
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+        
+        // 파일 출력
+        ServletOutputStream outputStream = response.getOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+        outputStream.close();
+
 	}
 	
 	// 연차관리에서 부여된 연차 update

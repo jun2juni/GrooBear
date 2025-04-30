@@ -95,10 +95,18 @@ thead th {
             <div class="col-lg-12">
               <div class="card-style">
                 <div id="searchAddClass" class="table-wrapper table-responsive fixed-header-table" style="overflow: auto;">
-               <table class="table" >
-                  <div class="d-flex justify-content-between mb-40">
-	                  <h6>전체사원 연차 관리</h6>
+               <table class="table">
+                  <div class="d-flex justify-content-between align-items-center mb-40">
+	                  <h6 class="mb-0">전체사원 연차 관리</h6>
+                  <div class="d-flex">
+                  <form action="/dclz/vacationExcelDownload" method="get" id="vacationExcelForm">
+                  	  <input type="hidden" id="vacationKeywordName" name="keywordName">
+                  	  <input type="hidden" id="vacationKeywordDept" name="keywordDept">
+                  	  <input type="hidden" id="vacationCurrentPage" name="currnetPage">
+	              	  <button type="submit" class="btn-xs main-btn success-btn btn-hover mr-20 rounded">엑셀 다운로드</button>
+	              </form>    
 	                  <p id="emplTotalCnt" class="mb-0 text-sm text-muted">총 ${total}명</p>
+                  </div>
                   </div>
                     <thead>
 		            <%-- ${allEmplVacList} --%>
@@ -290,6 +298,20 @@ thead th {
 <%@ include file="../../layout/prescript.jsp" %>
 <script type="text/javascript">
 
+//엑셀 다운로드 함수
+window.downloadExcel = function() {
+var keywordName = $('#vacationKeywordName').val();
+var keywordDept = $('#vacationKeywordDept').val();
+var encodedKeywordName = encodeURIComponent(keywordName);
+var encodedKeywordDept = encodeURIComponent(keywordDept);
+
+// 현재 사용자의 검색 키워드를 포함한 URL 생성
+var url = '/dclz/vacationExcelDownload?keywordName=' + keywordName + '&keywordDept='+keywordDept;
+
+// 다운로드 요청
+window.location.href = url;
+};
+
 // 부서명 클릭했을때 조직도 띄우기
 $('#searchDeptNm').on('click', function () {
   const deptModal = $('#orgListModal');
@@ -346,6 +368,20 @@ $('.vacation-modal-btn').on('click', function(){
 })
 
 $(function(){
+	
+	// 엑셀 관련 값 설정해주기
+	const vacationQueryString = window.location.search;
+    const vacationUrlParams = new URLSearchParams(vacationQueryString);
+    const vacationKeywordName = vacationUrlParams.get('keywordName');
+    const vacationKeywordDept = vacationUrlParams.get('keywordDept');
+    const vacationCurrentPage = vacationUrlParams.get('currentPage');
+
+    $('#vacationKeywordName').val(vacationKeywordName);
+    $('#vacationKeywordDept').val(vacationKeywordDept);
+    if(vacationCurrentPage != null  || vacationCurrentPage != ''){
+   		 $('#vacationCurrentPage').val(vacationCurrentPage);
+    }
+    
 	//------- 성과보상
 	let previousValue = 0;
 	$('.cmpnstnYrycCnt').on('focus', function() {
