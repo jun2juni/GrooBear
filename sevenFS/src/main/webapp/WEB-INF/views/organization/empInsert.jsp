@@ -50,6 +50,7 @@
    			<!-- 기본 정보 입력 안내 -->
 		<div class="card-style chat-about h-100" style="justify-content: center;">
 			<input type="hidden" name="emplNo" value="${emplDetail.emplNo}">
+		    <input type="checkbox" id="empInsertChkBox">
 				<form action="/emplInsertPost" method="post" id="emplInsertForm" class="needs-validation" novalidate>
 				  <div class=" form-group col-12" style="display: flex;">
 				  	<div class="input-style-1 form-group col-2" style="margin-left: 15%">
@@ -206,7 +207,6 @@
 		            <textarea rows="4" name="partclrMatter" id="partclrMatter" placeholder="최대 100글자까지 입력 가능합니다." maxlength="100"></textarea>
 	            </div>
 	            </form>
-	            <input type="checkbox" id="empInsertChkBox">
             	<div class="invalid-feedback"></div>
 			    <div class="content text-center">
 			    <button type="submit" id="emplInsertBtn" class="main-btn primary-btn-light square-btn btn-hover btn-sm mr-5">확인</button>
