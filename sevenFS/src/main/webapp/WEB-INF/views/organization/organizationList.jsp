@@ -20,7 +20,6 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 	<title>${title}</title>
 	<c:import url="../layout/prestyle.jsp" />
-	<c:import url="../layout/prescript.jsp" />
 </head>
 <body>
 <c:import url="../layout/sidebar.jsp" />
@@ -52,7 +51,7 @@
 	
 	
 </main>
-
+<c:import url="../layout/prescript.jsp" />
 <script type="text/javascript">
 $('#jstree').on('ready.jstree', function() {
 	<%
