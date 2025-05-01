@@ -94,23 +94,49 @@
         if(paramValue == '4'){
           url = "/mail/realDelete"
           console.log('realDelete')
+
+          Swal.fire({
+            title: '정말 삭제하시겠습니까?',
+            text: "삭제된 메일은 복구할 수 없습니다.",
+            icon: 'warning',
+            showCancelButton: true,
+            // confirmButtonColor: '#3085d6',
+            // cancelButtonColor: '#d33',
+            confirmButtonText: '확인',
+            cancelButtonText: '취소'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              $.ajax({
+                url: url,
+                method: 'post',
+                data: { "emailNoList": emailNoList },
+                success: function(resp) {
+                  window.location.href = resp + '?emailClTy=' + paramValue;
+                },
+                error: function(err) {
+                  console.log(err);
+                }
+              });
+            }
+          });
         }else{
           url="/mail/delete"
           console.log('delete')
+
+          $.ajax({
+            url:url,
+            method:'post',
+            data:{"emailNoList":emailNoList},
+            success:function(resp){
+              window.location.href = resp+'?emailClTy='+paramValue;
+            },
+            error:function(err){
+              console.log(err);
+            }
+          })
         }
         console.log(paramValue);
         console.log('삭제 할 메일',emailNoList);
-        $.ajax({
-          url:url,
-          method:'post',
-          data:{"emailNoList":emailNoList},
-          success:function(resp){
-            window.location.href = resp+'?emailClTy='+paramValue;
-          },
-          error:function(err){
-            console.log(err);
-          }
-        })
       })
 
       $('#tab-repl').on('click',function(e){
@@ -430,23 +456,37 @@
               e.stopPropagation();
               const lblNo = $(this).data('lblno');
               console.log('삭제 -> lblNo : ',lblNo);
-              $.ajax({
-                url:'mail/deleteLbl',
-                method:'post',
-                data:{lblNo:lblNo},
-                success:function(resp){
-                  if(resp=='success'){
-                    $('.label-select[data-lblno="' + lblNo + '"]').hide();
-                    $('.fas.fa-tag[data-lblno="' + lblNo + '"]').remove();
-                    console.log('dwasdwas');
-                  }else{
-
-                  }
-                },
-                error:function(err){
-                  console.log('ajax요청결과 에러 발생 : ',err);
+              Swal.fire({
+                title: '라벨을 삭제하시겠습니까?',
+                text: "삭제된 라벨은 복구할 수 없습니다.",
+                icon: 'warning',
+                showCancelButton: true,
+                // confirmButtonColor: '#3085d6',
+                // cancelButtonColor: '#d33',
+                confirmButtonText: '확인',
+                cancelButtonText: '취소'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  $.ajax({
+                    url: 'mail/deleteLbl',
+                    method: 'post',
+                    data: { lblNo: lblNo },
+                    success: function(resp) {
+                      if (resp == 'success') {
+                        $('.label-select[data-lblno="' + lblNo + '"]').hide();
+                        $('.fas.fa-tag[data-lblno="' + lblNo + '"]').remove();
+                        Swal.fire('삭제 완료', '라벨이 삭제되었습니다.', 'success');
+                      } else {
+                        Swal.fire('오류', '라벨 삭제에 실패했습니다.', 'error');
+                      }
+                    },
+                    error: function(err) {
+                      console.log('ajax 요청 결과 에러 발생 : ', err);
+                      Swal.fire('오류', '라벨 삭제 중 문제가 발생했습니다.', 'error');
+                    }
+                  });
                 }
-              })
+              });
             });
           });
         </script>

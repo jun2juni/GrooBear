@@ -242,7 +242,11 @@ public class MailServiceImpl implements MailService{
 		// 보낸 메일함
 		mailVO.setEmailTrnsmisTy("0");
 		mailVO.setEmailClTy("2");
-		mailVO.setRecptnEmail(recptnEmailList.get(0).split("_")[1]);
+		if(recptnEmailList!=null) {
+			mailVO.setRecptnEmail(recptnEmailList.get(0).split("_")[1]);
+		}else {
+			mailVO.setRecptnEmail("");
+		}
 		
 		int emailGroupNo = mailMapper.getEmailGroupNo();
 		mailVO.setEmailNo(mailNos[emailNoIndex++]);

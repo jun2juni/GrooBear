@@ -835,6 +835,8 @@
 				title: '삭제하시겠습니까?',
 				icon: 'warning',
 				showCancelButton: true,
+				// confirmButtonColor: '#3085d6',
+                // cancelButtonColor: '#d33',
 				confirmButtonText: '확인',
 				cancelButtonText: '취소'
 			}).then((result) => {
