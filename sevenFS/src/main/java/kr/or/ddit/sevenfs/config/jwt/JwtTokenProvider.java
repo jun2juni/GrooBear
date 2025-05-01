@@ -99,10 +99,10 @@ public class JwtTokenProvider {
     public ResponseCookie createCookie(String key, String value, long maxAge) {
         return ResponseCookie.from(key, value)
                 .httpOnly(true)
-                .secure(true) // HTTPS에서만 전송 (개발 환경에서는 false로 설정 가능)
+                .secure(false)               // 개발환경: HTTP면 false, HTTPS면 true
+                .sameSite("Lax")           // 크로스 오리진 허용
                 .path("/")
                 .maxAge(maxAge)
-                .sameSite("Strict")
                 .build();
     }
 

@@ -126,12 +126,12 @@
         
         <%--문서함 사이드 바 --%>
         <c:if test="${readWebFolder}">
-        <li class="nav-item ${fn:contains(currentURL, '/myCalendar') ? 'active' : ''}">
-          <a href="http://localhost:3000" target="_blank">
+        <%--<li class="nav-item ${fn:contains(currentURL, '/myCalendar') ? 'active' : ''}">
+          <a href="http://192.168.144.50:3000" target="_blank">
             <span class="icon material-symbols-outlined">create_new_folder</span>
             <span class="text">문서함</span>
           </a>
-        </li>
+        </li>--%>
         </c:if>
         <%--문서함 사이드 바 --%>
         
