@@ -120,7 +120,7 @@ table.table-hover.align-middle.text-center tbody tr td {
 				    </th>
                   <th style="width: 8%;">게시글 번호</th>
                   <th style="width: 2%;"></th>
-                  <th style="width: 50%;">제목</th>
+                  <th style="width: 50%; text-align:left;">제목</th>
                   <th style="width: 10%;">작성자</th>
                   <th style="width: 18%;">작성일시</th>
                   <th style="width: 8%;">조회수</th>

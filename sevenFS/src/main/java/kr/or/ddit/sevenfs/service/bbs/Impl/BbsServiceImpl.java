@@ -25,7 +25,7 @@ public class BbsServiceImpl implements BbsService{
 	public String formatImageTags(String html) {
 	    return html.replaceAll(
 	        "<img(?![^>]*style=)([^>]*?)>",
-	        "<img$1 style=\"width:100px;\">"
+	        "<img$1 style=\"width:200px;\">"
 	    );
 	}
 
