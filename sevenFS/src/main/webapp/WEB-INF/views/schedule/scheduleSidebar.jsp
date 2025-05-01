@@ -362,6 +362,9 @@
         })
 
         $('#openModalBtn').on('click',function(){
+            $('.form-control').attr('readonly',false);
+            $('#modalSubmit').attr('disabled',false);
+            $('#deleteBtn').attr('disabled',false);
             $("#schStart").removeAttr('max')
             $("#schEnd").removeAttr('min')
             $("#schStartTime").removeAttr('max')

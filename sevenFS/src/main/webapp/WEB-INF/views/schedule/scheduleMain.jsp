@@ -31,6 +31,9 @@
 		console.log("openModal : ", openModal);
 		if(openModal){
 			insModal.show();
+			$('.form-control').attr('readonly',false);
+			$('#modalSubmit').attr('disabled',false);
+			$('#deleteBtn').attr('disabled',false);
 		}
 		// 박호산나 추가함 **
 
@@ -267,6 +270,9 @@
 			console.log('selectEvent -> info',info);
 			// 모달 표시
 			insModal.show();
+			$('.form-control').attr('readonly',false);
+			$('#modalSubmit').attr('disabled',false);
+			$('#deleteBtn').attr('disabled',false);
 			$('#schTitle').val('');
 			$('#schContent').val('');
 			$('#addUpt').val("add");
@@ -276,13 +282,14 @@
 			$('#allDay').prop('checked',false);
 			// if($("#deleteBtn").length){
 			$("#deleteBtn").hide();
+
 			// }
 			// console.log("Selected date" + info.startStr + " to " + info.endStr);
 			let startDate;
 			let endDate;
 			if(info.date){
 				// 하루만 선택
-				// console.log("aaaaa",typeof(info.date));
+			// console.log("aaaaa",typeof(info.date));
 				startDate = info.date;
 				endDate = new Date(info.date);
     			endDate.setDate(endDate.getDate() + 1); // 날짜를 1일 증가시킴
@@ -331,10 +338,12 @@
 				$("#schStartTime").val(selectStartTime);
 				$("#schEndTime").val(selectEndTime);
 				$('#date').val(selectStartDay);
+				/*
 				dateValidate($('#schStart'));
 				dateValidate($('#schStartTime'));
 				dateValidate($('#schEnd'));
 				dateValidate($('#schEndTime'));
+				*/
 			}else if(info.view.type=='timeGridWeek'){
 
 			}else{
@@ -353,13 +362,15 @@
 				$("#schStart").val(startStr);
 				$("#schEnd").val(endStr);
 				$("#schStartTime").val(currentTime);
-				$("#schEndTime").val("00:00");
+				$("#schEndTime").val("23:59");
 				console.log("$('#date').val(startDate);",$('#date').val())
 				// console.log('start : ',$('#calAddFrm').find('[name="start"]').val());
+				/*
 				dateValidate($('#schStart'));
 				dateValidate($('#schStartTime'));
 				dateValidate($('#schEnd'));
 				dateValidate($('#schEndTime'));
+				*/
 			}
 		}
 
@@ -465,19 +476,24 @@
 		/*
 		*/
 		function dateValidate(e){
+			console.log('validation 감지 : ',this)
+			console.log('validation 감지 : ',e)
 			let inpName = $(e).prop('name');
-			// console.log('validation 감지 : ',this)
-			// console.log('validation 감지 -> inpName : ',inpName)
-
+			console.log('inpName',inpName);
 			// string type
 			let schStart = $('#schStart').val();
-			let schStartTime = $('#schStartTime').val();
 			let schEnd = $('#schEnd').val();
-			let schEndTime = $('#schEndTime').val();
+
+			let date = $('#date').val();
+			let startTime = $('#schStartTime').val();
+			let endTime = $('#schEndTime').val();
+
 			console.log('schStart : ',schStart);
-			console.log('schStartTime : ',schStartTime);
 			console.log('schEnd : ',schEnd);
-			console.log('schEndTime : ',schEndTime);
+
+			console.log('date : ',date);
+			console.log('startTime : ',startTime);
+			console.log('endTime : ',endTime);
 			// console.log('schEndTime : ',typeof(schEndTime));
 			
 			/**/
@@ -485,95 +501,39 @@
 			$('#schEnd').attr('min', schStart);
     		$('#schStart').attr('max', schEnd);
 			
-			/*
-			if($('#schEndTime').val()||$('#schStartTime').val()){
+			// 시간관련 제약조건
+			if(inpName == 'startTime' && inpName == 'endTime'){
 				// 시작 시간이 변경될 때 종료 시간 최소값 업데이트
-				console.log('이거 실행 되나?? inpName === startTime')
-					let startDate = new Date(schStart.split("-")[0],parseInt(schStart.split("-")[1])-1+"",schStart.split("-")[2],
-											schStartTime.split(":")[0],schStartTime.split(":")[1]);
-					let endDate = new Date(schEnd.split("-")[0],parseInt(schEnd.split("-")[1])-1+"",schEnd.split("-")[2],
-											schEndTime.split(":")[0],schEndTime.split(":")[1]);
-					console.log('startTime : ',startDate)
-					console.log('startTendTimeme : ',endDate)
-					let chk = overChk(startDate,endDate,'minute',1);
-					console.log('chk : ',chk)
-					if(!chk){
-						let errStr = '결과 : '+ chk+ ' validation 대상입니다. '
-						swal({title:errStr,icon:"error"});
-					}
+				let startDate = new Date(date.split("-")[0],parseInt(date.split("-")[1])-1+"",date.split("-")[2],
+										startTime.split(":")[0],startTime.split(":")[1]);
+				let endDate = new Date(date.split("-")[0],parseInt(date.split("-")[1])-1+"",date.split("-")[2],
+										endTime.split(":")[0],endTime.split(":")[1]);
+				console.log('startDate')
+				console.log('endDate')
+
+				let chk = overChk(startDate,endDate,'minute',1);
+				console.log('chk : ',chk)
+				if(!chk){
+					let errStr = '잘못된 입력입니다.'
+					swal({title:errStr,icon:"error"});
+					$(e).val('');
+				}
 			}
-			*/
 
 			// 같은 날짜일 경우 시간 제약 조건 처리
-			/*
-			if (schStart === schEnd) {
-				if (inpName === 'start' || inpName === 'end') {
-					// 날짜가 같을 때 시간 제약 조건 적용
-					$('#schEndTime').attr('min', schStartTime);
-					$('#schStartTime').attr('max', schEndTime);
-				} else if (inpName === 'startTime' ||inpName === 'endTime') {
-					// // 시작 시간이 변경될 때 종료 시간 최소값 업데이트
-					// console.log('이거 실행 되나?? inpName === startTime')
-					// let startDate = new Date(schStart.split("-")[0],parseInt(schStart.split("-")[1])-1+"",schStart.split("-")[2],
-					// 						schStartTime.split(":")[0],schStartTime.split(":")[1]);
-					// let endDate = new Date(schEnd.split("-")[0],parseInt(schEnd.split("-")[1])-1+"",schEnd.split("-")[2],
-					// 						schEndTime.split(":")[0],schEndTime.split(":")[1]);
-					// console.log('startTime : ',startDate)
-					// console.log('startTendTimeme : ',endDate)
-					// let chk = overChk(startDate,endDate,'minute',1);
-					// console.log('chk : ',chk)
-					// if(!chk){ alert('결과 : '+ !chk+ ' validation 대상입니다. '); }
-				} 
-			} else {
-				// 다른 날짜일 경우 - 시간 제약 조건 제거
-				// console.log('다른 날짜일 경우 - 시간 제약 조건 제거')
-				$('#schEndTime').removeAttr('min');
-				$('#schStartTime').removeAttr('max');
-			}
-			*/
-
-			/*
-				const overChk = function(date1,date2,time,num){
-					let differenceInDays
-					if(time=="date"){
-						differenceInDays = (date2 - date1) / (1000 * 60 * 60 * 24);
-						console.log('date',differenceInDays)
-					}else if(time=="minute"){
-						differenceInDays = (date2 - date1) / (1000 * 60 );
-						console.log('minute',differenceInDays)
-					}
-					return differenceInDays>=num?true:false;
-				}
-			*/
-			/**/
-
-			/*
-			if(inpName == 'start'){
-				console.log(inpName);
-				console.log(schStart);
-				// 날짜 최소 설정
-				$('#schEnd').prop('min',schStart);
-			}else if(inpName == 'startTime'){
-				console.log(inpName);
-				console.log(schStartTime);
-				// 날짜 & 시간 최소 설정
-				$('#schEnd').prop('min',schStart)
-				$('#schEndTime').prop('min',schStartTime)
-
-			}else if(inpName == 'end'){
-				console.log(inpName);
-				console.log(schEnd);
-				// 날짜 최대 설정
-				$('#schStart').prop('max',schEnd)
-			}else if(inpName == 'endTime'){
-				console.log(inpName);
-				console.log(schEndTime);
-				// 날짜 & 시간 최대 설정
-				$('#schStart').prop('max',schEnd)
-				$('#schStartTime').prop('max',schEndTime)
-			}
-			*/
+			// const overChk = function(date1,date2,time,num){
+			// 	let differenceInDays
+			// 	if(time=="date"){
+			// 		differenceInDays = (date2 - date1) / (1000 * 60 * 60 * 24);
+			// 		console.log('date',differenceInDays)
+			// 	}else if(time=="minute"){
+			// 		differenceInDays = (date2 - date1) / (1000 * 60 );
+			// 		console.log('minute',differenceInDays)
+			// 	}
+			// 	return differenceInDays>=num?true:false;
+			// }
 		}
+
 		$('.dateInp').on('change',function(){
 			console.log(this);
 			dateValidate($(this));
@@ -615,6 +575,10 @@
 		// 등록된 일정 클릭시 이벤트
 		calendar.on("eventClick",info=>{
 			console.log("eventClick -> info : ", info);
+			let regEmplNo = info.event._def.extendedProps.emplNo
+			console.log('eventClick -> regEmplNo',regEmplNo);
+			$('#emplNo').val(regEmplNo);
+			
 			let popover = document.querySelector(".fc-popover");
 			$('#schdulTy').prop('disabled',true);
 
@@ -656,9 +620,23 @@
 			$('#date').val(date2Str(start))
 			console.log($('#scheduleLabel').val(info.event._def.extendedProps.lblNo));
 			dateValidate($('#schStart'));
-			dateValidate($('#schStartTime'));
+			// dateValidate($('#schStartTime'));
 			dateValidate($('#schEnd'));
-			dateValidate($('#schEndTime'));
+			// dateValidate($('#schEndTime'));
+
+			// 권한 설정 본인과 다르면 수정 / 삭제 불가능
+			console.log('비교 emplNo : ',emplNo);
+			console.log('비교 regEmplNo : ',regEmplNo);
+			console.log('비교 emplNo == regEmplNo : ',emplNo == regEmplNo);
+			if(emplNo === regEmplNo){
+				$('.form-control').attr('readonly',false);
+				$('#modalSubmit').attr('disabled',false);
+				$('#deleteBtn').attr('disabled',false);
+			}else{
+				$('.form-control').attr('readonly',true);
+				$('#modalSubmit').attr('disabled',true);
+				$('#deleteBtn').attr('disabled',true);
+			}
 		})	
 		
 		// allDay 관련 함수들 시작
@@ -898,12 +876,16 @@
 			$('#schdulTy').val(0);
 			$('#scheduleLabel').val(0);
 			$('#allDay').prop('checked',false);
-			$('')
 			// console.log("calAddFrm",calAddFrm);
 			$('#schdulTy').prop('disabled',false);
 			$('#scheduleLabel').prop('disabled',false);
 			$('.timeInput-toggle.date').css('display','block');
 			$('.timeInput-toggle.time').css('display','none');
+
+			$('.form-control').attr('readonly',false);
+			$('#modalSubmit').attr('disabled',false);
+			$('#deleteBtn').attr('disabled',false);
+
 			insModal.hide();
 		};
 		$('.fc-button').css('background-color','#0d6efd');

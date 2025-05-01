@@ -214,6 +214,7 @@ textarea {
 		<div class="modal-body">
 		  <form id="calAddFrm" name="calFrm" action="">
 			<input type="hidden" name="addUpt" id="addUpt" />
+			<input type="hidden" name="emplNo" id="emplNo" />
 			<input type="hidden" name="schdulNo" id="schdulNo" />
   
 			<div class="row g-4">
@@ -259,8 +260,8 @@ textarea {
 					<div class="col-md-6">
 						<label class="form-label fw-semibold text-dark">시간 선택</label>
 						<div class="d-flex gap-2">
-							  <input type="time" id="schStartTime" name="startTime" class="form-control" />
-							  <input type="time" id="schEndTime" name="endTime" class="form-control" />
+							  <input type="time" id="schStartTime" name="startTime" class="form-control dateInp" />
+							  <input type="time" id="schEndTime" name="endTime" class="form-control dateInp" />
 						  </div>
 					  </div>
 				</div>
@@ -270,13 +271,13 @@ textarea {
 				<input type="checkbox" id="allDay" name="allDay" class="form-check-input me-2" />
 				<label for="allDay" class="form-check-label text-dark fw-semibold">하루종일</label>
 			  </div>
-  
 			  <!-- 공개유형, 라벨 -->
 			  <div class="col-md-6">
 				<label class="form-label fw-semibold text-dark">공개유형</label>
 				<select id="schdulTy" name="schdulTy" class="form-select">
 				  <option value="0">개인</option>
 				  <option value="1">부서</option>
+				  <option value="2" style="display: ${myEmplNo == '20250000' ? 'block' : 'none'}">전체</option>
 				</select>
 			  </div>
 			  <div class="col-md-6">
@@ -287,9 +288,9 @@ textarea {
   
 			<!-- 버튼 -->
 			<div class="d-flex justify-content-end gap-2 mt-4" id="btnGroup">
-			  <button id="modalSubmit" type="button" class="btn btn-primary" onclick="fCalAdd(event)">저장</button>
-			  <button id="deleteBtn" type="button" class="btn btn-danger" style="display: none;" onclick="fCalDel(event)">삭제</button>
-			  <button type="button" class="btn btn-outline-secondary" onclick="fMClose()">취소</button>
+				<button id="modalSubmit" type="button" class="btn btn-primary" onclick="fCalAdd(event)">등록</button>
+				<button id="deleteBtn" type="button" class="btn btn-danger" style="display: none;" onclick="fCalDel(event)">삭제</button>
+				<button type="button" class="btn btn-outline-secondary" onclick="fMClose()">취소</button>
 			</div>
 		  </form>
 		</div>

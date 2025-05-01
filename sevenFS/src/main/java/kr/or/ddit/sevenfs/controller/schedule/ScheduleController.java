@@ -63,9 +63,12 @@ public class ScheduleController {
 	}
 	
 	@GetMapping("")
-	public String calendarMain(Model model) {
+	public String calendarMain(Model model,@AuthenticationPrincipal CustomUser customUser) {
 		log.info("calendarMain 실행");
+		EmployeeVO employeeVO = customUser.getEmpVO();
+		String myEmplNo = employeeVO.getEmplNo();
 		model.addAttribute("title","내 일정");
+		model.addAttribute("myEmplNo",myEmplNo);
 		return "schedule/scheduleHome";
 	}
 	/*
