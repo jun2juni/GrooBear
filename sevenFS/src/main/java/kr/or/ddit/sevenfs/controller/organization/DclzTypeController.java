@@ -64,27 +64,29 @@ public class DclzTypeController {
 		
 		// 근태 selectBox를 위한 근태현황 조회
 		List<DclzTypeVO> dclzSelList = dclztypeService.dclzSelList(emplNo);
-		Date beginDt = dclzSelList.get(0).getDclzBeginDt();
-		
-		String paramKeyword = "";
-		
-		if(keywordSearch != null && !keywordSearch.trim().isEmpty()) {
-			keyword = "";
-		} else {
-			// 키워드 없을때
-			if(keyword == null || keyword.trim().isEmpty()) {
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				sdf.applyPattern("yyyy-MM");
-				String simepleFormatted = sdf.format(beginDt);
-				//log.info("simepleFormatted : " + simepleFormatted);
-				keyword = simepleFormatted;
+		if(dclzSelList.size() != 0) {
+			Date beginDt = dclzSelList.get(0).getDclzBeginDt();
+			if(keywordSearch != null && !keywordSearch.trim().isEmpty()) {
+				keyword = "";
+			} else {
+				// 키워드 없을때
+				if(keyword == null || keyword.trim().isEmpty()) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					sdf.applyPattern("yyyy-MM");
+					String simepleFormatted = sdf.format(beginDt);
+					//log.info("simepleFormatted : " + simepleFormatted);
+					keyword = simepleFormatted;
+				}
 			}
+		}else {
+			return "redirect:/main/home";
 		}
 		
+		String paramKeyword = "";
 		model.addAttribute("paramKeyword" , keyword);
 		
-		log.info("dclz keyword : " + keyword);
-		log.info("dclz keywordSearch : " + keywordSearch);
+		//log.info("dclz keyword : " + keyword);
+		//log.info("dclz keywordSearch : " + keywordSearch);
 		
 		
 		model.addAttribute("emplNo" , emplNo);
@@ -97,23 +99,23 @@ public class DclzTypeController {
 		
 		// 게시글의 총 갯수
 		int total = dclztypeService.getTotal(map);
-		log.info("total : " + total);
+		//log.info("total : " + total);
 		ArticlePage<DclzTypeVO> articlePage = new ArticlePage<>(total, currentPage, size);
-		log.info("articlePage : " + articlePage);
+		//log.info("articlePage : " + articlePage);
 		
 		// 근태현황 대분류 개수
 		DclzTypeVO dclzCnt = dclztypeService.dclzCnt(map);
-		log.info("dclzCnt : " + dclzCnt);
+		//log.info("dclzCnt : " + dclzCnt);
 		model.addAttribute("dclzCnt" , dclzCnt);
 		
 		// 대분류에 따른 사원 상세 근태현황 목록
 		List<DclzTypeDetailVO> empDetailDclzTypeCnt = dclztypeService.empDetailDclzTypeCnt(map);
-		log.info("empDetailDclzTypeCnt" + empDetailDclzTypeCnt);
+		//log.info("empDetailDclzTypeCnt" + empDetailDclzTypeCnt);
 		model.addAttribute("empDetailDclzTypeCnt", empDetailDclzTypeCnt);		
 		
 		// 사원의 전체 근태현황 조회
 		List<DclzTypeVO> empDclzList = dclztypeService.emplDclzTypeList(map);
-		log.info("controller -> empDclzList : " + empDclzList);
+		//log.info("controller -> empDclzList : " + empDclzList);
 		model.addAttribute("empDclzList",empDclzList);
 		model.addAttribute("articlePage" , articlePage);
      	
@@ -529,7 +531,6 @@ public class DclzTypeController {
         workbook.write(outputStream);
         workbook.close();
         outputStream.close();
-
 	}
 	
 	// 연차관리에서 부여된 연차 update
