@@ -428,17 +428,7 @@ $(document).ready(function() {
 			return;
 		}
 		
-		// 지출 날짜가 'YYYY-MM-DD'형태로 입력이 되지 않았을 때
-		if($('.s_sp_date').val().length != 10) {
-			swal({
-					title: "날짜를 'YYYY-MM-DD'형태로 입력해주세요.",
-					text: "",
-					icon: "error",
-					closeOnClickOutside: false,
-					closeOnEsc: false
-				});
-			return;
-		}
+	
 		
 		
 		let jnForm = document.querySelector("#atrz_dr_form");
