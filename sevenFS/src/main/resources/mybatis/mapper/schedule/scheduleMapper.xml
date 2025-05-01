@@ -147,5 +147,18 @@ INSERT INTO SCHEDULE (
 	WHERE lbl_no = #{lblNo}
 </update>
 
+<select id="getEmplList" parameterType="String" resultType="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
+SELECT
+    empl_no
+FROM
+    employee
+WHERE DEPT_CODE = #{deptCode}
+</select>
+<select id="getEmplAllList" resultType="kr.or.ddit.sevenfs.vo.organization.EmployeeVO">
+SELECT
+    empl_no
+FROM
+    employee
+</select>
 
 </mapper>

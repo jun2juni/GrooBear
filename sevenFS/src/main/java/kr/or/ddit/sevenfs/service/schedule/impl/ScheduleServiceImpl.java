@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.or.ddit.sevenfs.mapper.schedule.ScheduleMapper;
+import kr.or.ddit.sevenfs.service.notification.NotificationService;
 import kr.or.ddit.sevenfs.service.schedule.ScheduleLabelService;
 import kr.or.ddit.sevenfs.service.schedule.ScheduleService;
+import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.schedule.ScheduleLabelVO;
 import kr.or.ddit.sevenfs.vo.schedule.ScheduleVO;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +28,9 @@ public class ScheduleServiceImpl implements ScheduleService{
 	
 	@Autowired
 	ScheduleLabelService labelService;
-
+	
+	@Autowired
+	NotificationService notificationService;
 	
 	@Override
 	public Map<String,Object> scheduleList(ScheduleVO scheduleVO) {
@@ -54,6 +59,22 @@ public class ScheduleServiceImpl implements ScheduleService{
 	
 	@Override
 	public int scheduleInsert(ScheduleVO scheduleVO) {
+		String schdulTy = scheduleVO.getSchdulTy();
+		
+		NotificationVO notificationVO = new NotificationVO();
+		notificationVO.setNtcnSj("[일정 알림]");
+		notificationVO.setNtcnCn("등록된 일정이 있습니다.");
+		// 클릭시 어디로 보내줄 것인지
+		notificationVO.setOriginPath("/myCalendar");
+		notificationVO.setSkillCode("04");
+		if(schdulTy.equals("1")) {
+			String deptCode = scheduleVO.getDeptCode();
+			List<EmployeeVO> employeeVOList = scheduleMapper.getEmplList(deptCode);
+			notificationService.insertNotification(notificationVO, employeeVOList);
+		}else if(schdulTy.equals("2")) {
+			List<EmployeeVO> employeeVOList = scheduleMapper.getEmplAllList();
+			notificationService.insertNotification(notificationVO, employeeVOList);
+		}
 		int result = scheduleMapper.scheduleInsert(scheduleVO);
 		return result;
 	}
