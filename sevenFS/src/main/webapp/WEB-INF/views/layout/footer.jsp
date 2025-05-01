@@ -31,7 +31,7 @@
 
 <%-- INFO 알림 --%>
 <div class="toast-container position-fixed end-0 p-3" style="top: 80px">
-  <div class="toast fade hide p-2 bg-white" role="alert" aria-live="assertive" id="infoSuccess" aria-atomic="true">
+  <div class="toast fade hide p-2 bg-white" role="alert" aria-live="assertive" id="infoSuccess" aria-atomic="true" data-bs-delay="10000">
     <div class="toast-header border-0">
       <span class="material-symbols-outlined">notifications</span>
       <span class="alert-title ms-2 me-auto text-bold">{{title}}</span>

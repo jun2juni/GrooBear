@@ -13,7 +13,10 @@
               <i class="lni lni-chevron-left"></i>Menu
             </button>
           </div>
- 		<h3>${title} <span class="ms-2" style='font-size:18px; color:gray;'>${copyLight}</span></h3>
+ 		<h3>
+          ${title}
+          <%--<span class="ms-2" style='font-size:18px; color:gray;'>${copyLight}</span>--%>
+        </h3>
         </div>
       </div>
       
@@ -123,7 +126,7 @@
               <li>
                <sec:authentication property="principal.empVO" var="emp" />
                 <a href="/emplDetailHeader?emplNo=${emp.emplNo}">
-                  <i class="lni lni-user"></i> 상세보기
+                  <i class="lni lni-user"></i> 마이페이지
                 </a>
               </li>
               <li>

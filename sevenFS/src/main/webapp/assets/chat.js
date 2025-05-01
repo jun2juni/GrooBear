@@ -31,6 +31,7 @@ class Alert {
 
 document.addEventListener("DOMContentLoaded", function() {
   let infoAlert = new Alert(document.getElementById('infoSuccess'));
+
   // 내 계정 알림 구독
   connectWebSocket({
     roomPath: "alert/room",
@@ -266,7 +267,9 @@ function submitMessage({messageValue, type, chttRoomNo, emplNo}) {
   // 채팅방 목록 텍스트도 변경
   document.querySelectorAll(".chatRoom").forEach((dom) => {
     if (dom.dataset.chttRoomNo === chttRoomNo) {
-      dom.querySelector(".chat-last-msg").innerHTML = messageValue;
+      console.log(type)
+      console.log(message)
+      dom.querySelector(".chat-last-msg").innerHTML = type === IMAGE || type === FILE ? "사진을 보냈습니다." : messageValue;
     }
   })
 
