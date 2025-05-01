@@ -101,16 +101,14 @@ public class ProjectTaskController {
 	}
 
 
-// 프로젝트 업무 수정
 	@PostMapping("/update")
 	public String updateTask(@ModelAttribute ProjectTaskVO taskVO,
-	                       BindingResult bindingResult,
-	                       @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
-	                       @RequestParam(value = "removeFileId", required = false) int[] removeFileIds,
-	                       @RequestParam(value = "source", required = false) String source,
-	                       RedirectAttributes ra) {
+	                         BindingResult bindingResult,
+	                         @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
+	                         @RequestParam(value = "removeFileId", required = false) int[] removeFileIds,
+	                         @RequestParam(value = "source", required = false) String source,
+	                         RedirectAttributes ra) {
 
-	    // 1. 검증 오류가 있을 경우
 	    if (bindingResult.hasErrors()) {
 	        log.error("📛 업무 수정 시 바인딩 오류 발생: {}", bindingResult);
 	        ra.addFlashAttribute("message", "업무 수정 실패: 입력값 오류");
@@ -118,29 +116,37 @@ public class ProjectTaskController {
 	    }
 
 	    log.info("📌 업무 수정 요청 - taskNo: {}", taskVO.getTaskNo());
-	    
-	    // NULL 값 처리: 업무 상태 필드가 NULL인 경우 기본값 설정
+
+	    // 업무 상태 기본값 처리
 	    if (taskVO.getTaskSttus() == null) {
-	        // 기본값으로 '대기(00)' 상태 설정
 	        taskVO.setTaskSttus("00");
 	        log.info("📌 업무 상태 NULL 감지, 기본값 '00'(대기) 설정");
 	    }
-	    
-	    // 진행률은 primitive 타입이므로 기본값은 setter에서 처리됨
 
-	    // 2. 파일 처리
-	    AttachFileVO fileVO = new AttachFileVO();
-	    fileVO.setAtchFileNo(taskVO.getAtchFileNo());
-	    fileVO.setRemoveFileId(removeFileIds);
+	    // 파일 처리 준비
+	    boolean hasUpload = uploadFiles != null && uploadFiles.length > 0;
+	    boolean hasDelete = removeFileIds != null && removeFileIds.length > 0;
 
-	    if ((uploadFiles != null && uploadFiles.length > 0) || removeFileIds != null) {
-	        int result = attachFileService.updateFileList("project/task", uploadFiles, fileVO);
-	        if (result > 0) {
-	            taskVO.setAtchFileNo(fileVO.getAtchFileNo());
-	        }
-	    }
+//	    if (hasUpload || hasDelete) {
+//	        AttachFileVO fileVO = new AttachFileVO();
+//	        fileVO.setRemoveFileId(removeFileIds);
+//
+//	        // 파일이 새로 추가되고 기존에 파일이 없던 업무일 경우
+//	        if (taskVO.getAtchFileNo() == 0 && hasUpload) {
+//	            long newAtchFileNo = attachFileService.getAttachFileNo();
+//	            taskVO.setAtchFileNo(newAtchFileNo);
+//	            fileVO.setAtchFileNo(newAtchFileNo);
+//	            log.debug("🆕 새 첨부파일 번호 생성됨: {}", newAtchFileNo);
+//	        } else {
+//	            fileVO.setAtchFileNo(taskVO.getAtchFileNo());
+//	        }
+//
+//	        int result = attachFileService.updateFileList("project/task", uploadFiles, fileVO);
+//	        log.debug("📎 파일 업데이트 결과: {}", result);
+//	    }
 
-	    int updated = projectTaskService.updateTask(taskVO);
+	    // 실제 업무 업데이트
+	    int updated = projectTaskService.updateTask(taskVO, uploadFiles, removeFileIds);
 	    ra.addFlashAttribute("message", updated > 0 ? "수정 성공" : "수정 실패");
 
 	    if ("gantt".equals(source)) {
@@ -149,6 +155,7 @@ public class ProjectTaskController {
 	        return "redirect:/project/projectDetail?prjctNo=" + taskVO.getPrjctNo();
 	    }
 	}
+
 
 	@PostMapping("/updateAjax")
 	@ResponseBody
@@ -178,7 +185,8 @@ public class ProjectTaskController {
 	            }
 	        }
 
-	        int updated = projectTaskService.updateTask(taskVO);
+	        int updated = projectTaskService.updateTask(taskVO, uploadFiles, removeFileIds);
+
 
 	        if (updated > 0) {
 	            return ResponseEntity.ok("업무 수정 성공");

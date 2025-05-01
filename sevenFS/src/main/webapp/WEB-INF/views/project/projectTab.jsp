@@ -168,7 +168,23 @@
 <%@ include file="../layout/prescript.jsp" %>
 
 <script>
-//projectTab.jsp의 script 부분 수정 (첫 번째 파일)
+
+// 탭 전환을 위한 sessionStorage 체크
+const tabToActivate = sessionStorage.getItem("tabToActivate");
+if (tabToActivate) {
+  console.log("sessionStorage로 탭 이동 요청:", tabToActivate);
+  sessionStorage.removeItem("tabToActivate"); // 사용 후 제거
+
+  if (tabToActivate === "list") {
+    const tabElement = document.querySelector('[data-bs-target="#tab2"]');
+    if (tabElement) {
+      new bootstrap.Tab(tabElement).show();
+      loadProjectList();
+    }
+  }
+}
+
+
 
 document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
@@ -889,7 +905,7 @@ window.loadGanttChart = function(prjctNo) {
       safeExecuteInlineScripts("ganttChartArea");
     })
     .catch(function(err) {
-      console.error("❌ 간트차트 로드 실패:", err);
+      console.error(" 간트차트 로드 실패:", err);
       ganttArea.innerHTML = 
         '<div class="alert alert-danger">' +
         '<p><i class="material-icons-outlined">error</i> 간트차트를 불러오지 못했습니다.</p>' +
@@ -901,6 +917,18 @@ window.loadGanttChart = function(prjctNo) {
     console.error("간트차트 영역(#ganttChartArea)을 찾을 수 없습니다.");
   }
 };
+
+
+window.openProjectListTab = function () {
+  const tabElement = document.querySelector('[data-bs-target="#tab2"]');
+  if (tabElement) {
+    new bootstrap.Tab(tabElement).show();
+    loadProjectList();
+    history.replaceState(null, '', '/project/tab');
+  }
+};
+
+
 
 </script>
 <script src="/js/project/taskAnswer.js"></script>

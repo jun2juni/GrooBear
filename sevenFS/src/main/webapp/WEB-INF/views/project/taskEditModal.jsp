@@ -106,22 +106,33 @@
 
           <div class="mb-3">
             <label class="form-label fw-semibold">첨부파일</label>
-            <input type="file" name="uploadFiles[]" class="form-control" multiple />
+            <input type="file" name="uploadFiles" class="form-control" multiple />
           </div>
 
-          <c:if test="${not empty task.attachFileList}">
-            <ul class="list-group">
-              <c:forEach var="file" items="${task.attachFileList}">
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <span>${file.fileNm}</span>
-                  <label class="form-check-label text-danger small">
-                    <input type="checkbox" name="removeFileId" value="${file.fileSn}" class="form-check-input me-1" />
-                    삭제
-                  </label>
-                </li>
-              </c:forEach>
-            </ul>
-          </c:if>
+<c:if test="${not empty task.attachFileList}">
+  <ul class="list-group mt-2">
+    <c:forEach var="file" items="${task.attachFileList}">
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-file-alt me-2 text-primary"></i>${file.fileNm}</span>
+        <div class="d-flex align-items-center gap-2">
+          <!-- 다운로드 버튼 -->
+          <button type="button" class="file-action-btn btn-outline-success"
+                  onclick="markDownloaded(this); location.href='/projectTask/download?fileName=${file.fileStrePath}'">
+            <i class="fas fa-download"></i>
+          </button>
+
+          <!-- 삭제 체크박스 -->
+          <label class="file-action-btn btn-outline-danger m-0">
+            <input type="checkbox" name="removeFileId" value="${file.fileSn}" class="form-check-input me-1"
+                   onclick="toggleDeleteActive(this)">
+            삭제
+          </label>
+        </div>
+      </li>
+    </c:forEach>
+  </ul>
+</c:if>
+
 
         </div>
         <div class="modal-footer">
@@ -133,50 +144,114 @@
   </div>
 </div>
 
-<script>
-let isHandlerAttached = false;
 
+<style>
+  .file-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 36px;
+    font-size: 14px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .file-action-btn.btn-outline-success {
+    color: #198754;
+    border: 1px solid #198754;
+    background-color: white;
+  }
+
+  .file-action-btn.btn-outline-danger {
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    background-color: white;
+  }
+
+  .file-action-btn.active-download {
+    background-color: #d1ecf1;
+    border-color: #0dcaf0;
+  }
+
+  .file-action-btn.active-delete {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+  }
+</style>
+
+
+<script>
+// IIFE 패턴에서 즉시 실행 함수로 변경하여 중복 바인딩 방지
+document.addEventListener("DOMContentLoaded", function() {
+  setupModalHandler();
+});
+
+// 모달 핸들러 설정 함수 - 중복 바인딩 방지
+let isHandlerAttached = false;
 function setupModalHandler() {
   if (isHandlerAttached) return;
-
+  
   const submitBtn = document.getElementById("submitEditTaskBtn");
   if (!submitBtn) {
-    console.error(" 수정 버튼 없음");
+    console.error("❌ 수정 버튼이 존재하지 않음");
     return;
   }
 
   submitBtn.addEventListener("click", function () {
-    console.log(" 수정 완료 버튼 클릭됨");
-
     const form = document.getElementById("taskEditForm");
-    const formData = new FormData(form);
+    if (!form) {
+      console.error("❌ 폼이 존재하지 않음");
+      return;
+    }
 
-    fetch("/projectTask/updateAjax", {
+    const formData = new FormData(form);
+    
+    // 이미 source 필드가 있는지 확인
+    if (!formData.has("source")) {
+      formData.append("source", "gantt");
+    }
+
+    fetch("/projectTask/update", {
       method: "POST",
       body: formData
     })
-    .then(res => {
-      if (!res.ok) throw new Error("서버 오류: " + res.status);
-      return res.text();
-    })
-    .then(() => {
-      const modal = bootstrap.Modal.getInstance(document.getElementById("taskEditModal"));
-      if (modal) modal.hide();
-      if (typeof loadGanttData === "function") loadGanttData();
+      .then(res => {
+        if (!res.ok) {
+          throw new Error("서버 응답 오류: " + res.status);
+        }
+        return res.text();
+      })
+      .then(() => {
+        const modal = bootstrap.Modal.getInstance(document.getElementById("taskEditModal"));
+        if (modal) modal.hide();
+        if (typeof loadGanttData === "function") loadGanttData();
 
-      swal("수정 완료!", "업무가 성공적으로 수정되었습니다.", "success");
-    })
-    .catch(err => {
-      console.error(" 업무 수정 실패:", err);
-      swal("수정 실패", "오류가 발생했습니다.\n" + err.message, "error");
-    });
-
+        swal("수정 완료!", "업무가 성공적으로 수정되었습니다.", "success");
+      })
+      .catch(err => {
+        console.error("❌ 업무 수정 실패:", err);
+        swal("수정 실패", "오류가 발생했습니다.\n" + err.message, "error");
+      });
   });
-
+  
   isHandlerAttached = true;
-  console.log(" 수정 핸들러 연결 완료");
+  console.log("✅ 모달 핸들러 설정 완료");
 }
 
-// 모달이 로드되면 자동 실행
-setupModalHandler();
+function markDownloaded(el) {
+    // 다운로드된 항목 외에는 비활성화
+    document.querySelectorAll('.file-action-btn.btn-outline-success')
+      .forEach(btn => btn.classList.remove('active-download'));
+    
+    el.classList.add('active-download');
+  }
+
+  function toggleDeleteActive(checkbox) {
+    const label = checkbox.closest('.file-action-btn');
+    label.classList.toggle('active-delete', checkbox.checked);
+  }
 </script>

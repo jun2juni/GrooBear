@@ -10,6 +10,43 @@
   <meta charset="UTF-8" />
   <title>${title}</title>
   <%@ include file="../layout/prestyle.jsp" %>
+  <style>
+  .file-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 36px;
+    font-size: 14px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .file-action-btn.btn-outline-success {
+    color: #198754;
+    border-color: #198754;
+    background-color: white;
+  }
+
+  .file-action-btn.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+    background-color: white;
+  }
+
+  .file-action-btn.active-download {
+    background-color: #d1ecf1;
+    border-color: #0dcaf0;
+  }
+
+  .file-action-btn.active-delete {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+  }
+</style>
   
 </head>
 <body>
@@ -115,22 +152,28 @@
 
               <!-- 기존 파일 리스트 -->
               <c:if test="${not empty task.attachFileList}">
-                <ul class="list-group mt-2">
-                  <c:forEach var="file" items="${task.attachFileList}">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                      <span><i class="fas fa-file-alt me-2 text-primary"></i>${file.fileNm}</span>
-                      <div>
-                        <a href="/projectTask/download?fileName=${file.fileStrePath}" class="btn btn-sm btn-outline-success me-2">
-                          <i class="fas fa-download"></i>
-                        </a>
-                        <label class="form-check-label text-danger small d-flex align-items-center">
-                          <input type="checkbox" name="removeFileId" value="${file.fileSn}" class="form-check-input me-1" />
-                          삭제
-                        </label>
-                      </div>
-                    </li>
-                  </c:forEach>
-                </ul>
+<ul class="list-group mt-2">
+  <c:forEach var="file" items="${task.attachFileList}">
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span><i class="fas fa-file-alt me-2 text-primary"></i>${file.fileNm}</span>
+      <div class="d-flex align-items-center gap-2">
+        <!-- 다운로드 버튼 -->
+        <button type="button" class="file-action-btn btn-outline-success"
+                onclick="markDownloaded(this); location.href='/projectTask/download?fileName=${file.fileStrePath}'">
+          <i class="fas fa-download"></i>
+        </button>
+
+        <!-- 삭제 체크박스 -->
+        <label class="file-action-btn btn-outline-danger m-0">
+          <input type="checkbox" name="removeFileId" value="${file.fileSn}" class="form-check-input me-1"
+                 onclick="toggleDeleteActive(this)">
+          삭제
+        </label>
+      </div>
+    </li>
+  </c:forEach>
+</ul>
+
               </c:if>
 
               <!-- 버튼 -->
@@ -198,6 +241,20 @@
     document.getElementById('chargerEmpno').value = empNo;
     document.getElementById('chargerEmpNm').value = empNm;
   }
+  
+  function markDownloaded(el) {
+	    // 기존 활성화 제거
+	    document.querySelectorAll('.file-action-btn.btn-outline-success')
+	      .forEach(btn => btn.classList.remove('active-download'));
+	    
+	    // 현재만 활성화
+	    el.classList.add('active-download');
+	  }
+
+	  function toggleDeleteActive(checkbox) {
+	    const label = checkbox.closest('.file-action-btn');
+	    label.classList.toggle('active-delete', checkbox.checked);
+	  }
 </script>
 </body>
 </html>

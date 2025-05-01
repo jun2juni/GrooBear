@@ -36,7 +36,7 @@
   </c:forEach>
 </div>
 
-<!-- 업무 상세 정보 모달 -->
+<!-- 업무 상세 모달 -->
 <div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -44,12 +44,11 @@
         <h5 class="modal-title" id="taskDetailModalLabel">업무 상세 정보</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" id="taskDetailModalContent">
-      
-      </div>
+      <div class="modal-body" id="taskDetailModalContent"></div>
     </div>
   </div>
 </div>
+
 
 
 

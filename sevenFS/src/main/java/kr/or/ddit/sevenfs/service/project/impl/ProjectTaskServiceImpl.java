@@ -75,20 +75,39 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
     }
 
     @Override
-    public int updateTask(ProjectTaskVO taskVO) {
-        // 1. taskDaycnt 계산 추가
+    @Transactional
+    public int updateTask(ProjectTaskVO taskVO, MultipartFile[] uploadFiles, int[] removeFileIds) {
+        // 1. taskDaycnt 계산
         if (taskVO.getTaskBeginDt() != null && taskVO.getTaskEndDt() != null) {
             long diff = taskVO.getTaskEndDt().getTime() - taskVO.getTaskBeginDt().getTime();
             taskVO.setTaskDaycnt((int)(diff / (1000 * 60 * 60 * 24)) + 1);
         }
 
-        // 2. 첨부파일 처리
-        if (taskVO != null && taskVO.getAtchFileNo() > 0) {
-            List<AttachFileVO> attachFiles = attachFileMapper.getFileAttachList(taskVO.getAtchFileNo());
-            taskVO.setAttachFileList(attachFiles);
+        // 2. 파일 처리
+        boolean hasUpload = uploadFiles != null && uploadFiles.length > 0;
+
+        if (hasUpload || (removeFileIds != null && removeFileIds.length > 0)) {
+            // 파일 VO 준비
+            AttachFileVO fileVO = new AttachFileVO();
+            fileVO.setAtchFileNo(taskVO.getAtchFileNo());
+            fileVO.setRemoveFileId(removeFileIds);
+
+            // 기존 파일 없고 새 파일 추가한 경우 → 새로운 atchFileNo 생성
+            if (taskVO.getAtchFileNo() == 0 && hasUpload) {
+                long newAtchFileNo = attachFileService.getAttachFileNo();
+                taskVO.setAtchFileNo(newAtchFileNo);
+                fileVO.setAtchFileNo(newAtchFileNo);
+            }
+
+            // 파일 처리
+            try {
+                attachFileService.updateFileList("project/task", uploadFiles, fileVO);
+            } catch (Exception e) {
+                log.error("파일 업데이트 실패", e);
+            }
         }
 
-        // 3. 업데이트 실행
+        // 3. 업무 업데이트
         return projectTaskMapper.updateTask(taskVO);
     }
 

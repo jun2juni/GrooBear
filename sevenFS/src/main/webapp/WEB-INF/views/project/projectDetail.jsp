@@ -183,8 +183,11 @@
 			    <i class="fas fa-plus me-1"></i> 업무 추가
 			  </button>
 			</h5>
-			<div id="taskListSection"></div>
-			
+<!-- 업무 목록 (AJAX 대상) -->
+<div id="taskListSection">
+  <c:import url="/projectTask/partialList?prjctNo=${project.prjctNo}" />
+</div>
+
  
 			<!-- 업무 상세 모달 -->
 			<div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailLabel" aria-hidden="true">
@@ -222,13 +225,13 @@
                 <i class="fas fa-trash-alt"></i> 삭제
               </button>
               <a href="/project/editForm?prjctNo=${project.prjctNo}" class="btn btn-warning me-2">수정</a>
-               <a href="/project/tab?tab=list" class="btn btn-secondary">목록</a>
+               <a href="/project/tab" class="btn btn-secondary" onclick="sessionStorage.setItem('tabToActivate', 'list')">목록</a>
             </div>
         </div>
       </div>
     </div>
   </div>
-  
+
 </div>
 </div>
 </div>
@@ -255,9 +258,10 @@ document.addEventListener("DOMContentLoaded", function () {
 	      }
 	    })
 	    .catch(err => {
-	      console.error("업무 목록 갱신 실패:", err);
-	      alert("업무 목록을 불러오지 못했습니다.");
-	    });
+	    	  console.error("업무 목록 갱신 실패:", err);
+	    	  swal("오류", "업무 목록을 불러오지 못했습니다.", "error");
+	    	});
+
 	}
 
 	function openTaskModal(taskNo) {
@@ -279,9 +283,10 @@ document.addEventListener("DOMContentLoaded", function () {
 	function editTask() {
 	  const taskDetailEl = document.querySelector('#taskDetailContent [data-task-no]');
 	  if (!taskDetailEl) {
-	    alert("업무 정보가 없습니다.");
-	    return;
-	  }
+		  swal("정보 없음", "업무 정보가 없습니다.", "warning");
+		  return;
+		}
+
 	  const taskNo = taskDetailEl.getAttribute('data-task-no');
 	  location.href = `/projectTask/editForm?taskNo=\${taskNo}`;
 	}
@@ -375,10 +380,14 @@ document.addEventListener("DOMContentLoaded", function () {
 	      });
 	    })
 	    .catch(err => {
-	      console.error("업무 목록 페이지 로드 실패:", err);
-	      alert("업무 목록을 불러오는데 실패했습니다.");
-	    });
+	    	  console.error("업무 목록 페이지 로드 실패:", err);
+	    	  swal("오류", "업무 목록을 불러오는데 실패했습니다.", "error");
+	    	});
+
 	}
+	
+	
+	
 	
 	</script>
 	<script src="/js/project/taskAnswer.js"></script>

@@ -18,7 +18,8 @@ public interface ProjectTaskService {
 
 	public ProjectTaskVO getTaskById(Long taskNo);
 
-	public int updateTask(ProjectTaskVO taskVO);
+	public int updateTask(ProjectTaskVO taskVO, MultipartFile[] uploadFiles, int[] removeFileIds);
+
 
 	public ProjectTaskVO selectTaskById(Long taskNo);
     

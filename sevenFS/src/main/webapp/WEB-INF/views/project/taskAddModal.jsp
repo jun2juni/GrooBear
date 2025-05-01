@@ -115,75 +115,78 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-	  // 상위 업무 선택 반영
-	  document.getElementById("upperTaskSelect").addEventListener("change", function () {
-	    document.getElementById("upperTaskNo").value = this.value;
-	  });
+	  // 상위 업무 선택 시 hidden input에 반영
+	  const upperTaskSelect = document.getElementById("upperTaskSelect");
+	  const upperTaskNoInput = document.getElementById("upperTaskNo");
+	  if (upperTaskSelect && upperTaskNoInput) {
+	    upperTaskSelect.addEventListener("change", function () {
+	      upperTaskNoInput.value = this.value;
+	    });
+	  }
 
-	  // 파일 리스트 표시
+	  // 파일 이름 리스트 표시
 	  const uploadInput = document.getElementById("uploadFilesField");
 	  if (uploadInput) {
 	    uploadInput.addEventListener("change", function () {
 	      const list = document.getElementById("fileNameList");
 	      list.innerHTML = "";
-	      
-	      console.log("선택된 파일 수:", this.files.length);
-	      
+
 	      Array.from(this.files).forEach(file => {
-	        console.log("파일:", file.name, "크기:", file.size);
 	        const li = document.createElement("li");
 	        li.className = "list-group-item";
-	        li.textContent = file.name + " (" + (file.size / 1024).toFixed(1) + " KB)";
+	        li.textContent = `\${file.name} (\${(file.size / 1024).toFixed(1)} KB)`;
 	        list.appendChild(li);
 	      });
 	    });
 	  }
 
-	  // 업무 등록 폼 제출
+	  // 업무 등록 폼 제출 처리
 	  const taskAddForm = document.getElementById("taskAddForm");
 	  if (taskAddForm) {
 	    taskAddForm.addEventListener("submit", function (e) {
 	      e.preventDefault();
-	      
-	      // 폼 데이터 로깅
+
 	      const formData = new FormData(this);
-	      const fileInput = document.getElementById("uploadFilesField");
-	      
-	      console.log("폼 제출 - 파일 필드:", fileInput);
-	      console.log("폼 제출 - 파일 수:", fileInput ? fileInput.files.length : 0);
-	      
-	      if (fileInput && fileInput.files.length > 0) {
-	        console.log("첫 번째 파일 이름:", fileInput.files[0].name);
-	        console.log("첫 번째 파일 크기:", fileInput.files[0].size);
-	      }
-	      
-	   // 서버로 전송
+	      const prjctNo = formData.get("prjctNo");
+
 	      fetch("/projectTask/insert", {
 	        method: "POST",
 	        body: formData
 	      })
-	      .then(res => res.json())
-	      .then(result => {
-	        if (result.success || !isNaN(Number(result.taskNo))) {
-	          swal("등록 완료!", "업무가 성공적으로 등록되었습니다.", "success")
-	            .then(() => {
-	              bootstrap.Modal.getInstance(document.getElementById("taskAddModal")).hide();
-	              document.getElementById("taskForm").reset();
-	              document.getElementById("fileNameList").innerHTML = "";
-	              window.location.href = `/project/projectDetail?prjctNo=${result.prjctNo}`;
-	            });
-	        } else {
-	          swal("등록 실패", "업무 등록에 실패했습니다.", "error");
-	        }
-	      })
-	      .catch(err => {
-	        console.error("업무 등록 실패:", err);
-	        swal("에러 발생", "업무 등록 중 오류가 발생했습니다.", "error");
-	      });
+	        .then(res => res.json())
+	        .then(result => {
+	          if (result.success || !isNaN(Number(result.taskNo))) {
+	            swal("등록 완료!", "업무가 성공적으로 등록되었습니다.", "success")
+	              .then(() => {
+	                // 모달 닫기
+	                const modal = bootstrap.Modal.getInstance(document.getElementById("taskAddModal"));
+	                if (modal) modal.hide();
 
+	                // 폼 초기화
+	                taskAddForm.reset();
+	                const list = document.getElementById("fileNameList");
+	                if (list) list.innerHTML = "";
+
+	                // 업무 목록 즉시 새로고침 (F5 없이)
+	                if (typeof loadTaskList === "function") {
+	                	console.log(" 업무 목록 갱신 시작");
+	                  loadTaskList(prjctNo);
+	                } else if (typeof refreshTaskList === "function") {
+	                  refreshTaskList(); // 대체 함수 지원
+	                }
+	              });
+	          } else {
+	            swal("등록 실패", "업무 등록에 실패했습니다.", "error");
+	          }
+	        })
+	        .catch(err => {
+	          console.error("업무 등록 실패:", err);
+	          swal("에러 발생", "업무 등록 중 오류가 발생했습니다.", "error");
+	        });
 	    });
 	  }
 	});
+
 	
 const taskAddModal = document.getElementById('taskAddModal');
 if (taskAddModal) {
@@ -220,6 +223,14 @@ if (taskAddModal) {
     }
   });
 }
-	
+
+function loadTaskList(prjctNo) {
+	  fetch(`/project/taskListPartial?prjctNo=\${prjctNo}`)
+	    .then(res => res.text())
+	    .then(html => {
+	      document.getElementById("taskListContainer").innerHTML = html;
+	    });
+	}
+
 	
 </script>
