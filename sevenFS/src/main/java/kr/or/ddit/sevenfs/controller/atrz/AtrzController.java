@@ -1634,5 +1634,19 @@ public class AtrzController {
 		model.addAttribute("title", "재직증명서");
 		return "documentForm/employmentCert";
 	}
+	
+	// 퇴사신청서 양식조회
+	@GetMapping("/selectForm/resignationForm")
+	public String resignationForm(Model model) {
+		model.addAttribute("title", "퇴사신청서");
+		return "documentForm/resignationForm";
+	}
+	
+	// 퇴사신청서 입력양식
+	@GetMapping("/selectForm/resignation")
+	public String resignation(Model model) {
+		model.addAttribute("title", "퇴사신청서");
+		return "documentForm/resignation";
+	}
 
 }

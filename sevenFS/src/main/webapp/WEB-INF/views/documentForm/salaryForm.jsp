@@ -57,6 +57,12 @@
 							<fmt:formatNumber value="${atrzVO.salaryVO.mealAllowance}" pattern="#,###원" var="mealAllowance" />
 							<td class="text-end salEnd" id="mealAllowance" style="padding-right: 20px;" >${mealAllowance}</td>
 						</tr>
+						<th scope="row" class="text-center align-middle">보너스</th>
+							<td class="text-end">
+								<fmt:formatNumber value="1000000" pattern="#,###" var="bonus" />
+								<input type="text" class="form-control text-end border-0 bg-transparent salInputNone" id="bonus" name="bonus" value="${bonus}" onkeyup="commas(this)" readonly tabindex="-1">
+							</td>
+							</tr>
 						<tr>
 							<th scope="row" class="bg-light text-center align-middle">총 지급액</th>
 							<fmt:formatNumber value="${atrzVO.salaryVO.totalDed}" pattern="#,###원" var="totalDed" />
