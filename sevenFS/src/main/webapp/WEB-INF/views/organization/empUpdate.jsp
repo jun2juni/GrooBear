@@ -372,7 +372,6 @@ function lowerDepts(upperCmmnCode, emplNo){
 	}
 	
 $(function(){
-	
 	const employeeName = $('#emplNm').val();
 	const employeeDeptCode = $('#hiddenDeptCode').val();
 	
@@ -419,7 +418,13 @@ $(function(){
 			swal({
 			  title: "수정되었습니다.",
 			  icon: "success",
-			  draggable: true
+			  draggable: true,
+			  buttons : {
+				  confirm : {
+					  text : '확인',
+					  value : true
+				  }
+			  }
 			})
 			.then((value) =>{
 				$("#emplUpdateForm").submit();

@@ -605,7 +605,17 @@ $(function(){
 		}
 		
 		if($('#yrycRemndrDaycnt'+idx).val() > 30){
-			swal('잔여 연차가 30일을 초과합니다.')
+			swal({
+				icon : 'warning',
+				text : '잔여 연차가 30일을 초과합니다.',
+				buttons : {
+					confirm : {
+						text : '확인',
+						value : 'true',
+		                closeModal: true
+					}
+				}
+			})
 			.then(() => {
 				location.href = '/dclz/vacAdmin?keywordName='+keywordName+"&keywordDept="+keywordDept;
 			})
@@ -631,22 +641,19 @@ $(function(){
 			}
 			const keywordName = urlParams.get('keywordName');
 			const keywordDept = urlParams.get('keywordDept');
-			swal({
-	            title: "정말 초기화 하시겠습니까?",
-	            icon: "warning",
-	            confirmButtonColor : '#d33',
-	            buttons: {
-	            	cancle : {
-	            		text : '취소',
-	            		value : false
-	            	},
-	            	confirm : {
-	            		text : '확인',
-	            		value : true
-	            	}
-	            },
-	            dangerMode: true
-	          })
+			swal("정말 초기화 하시겠습니까?", {
+				  dangerMode: true,
+				  buttons: {
+					  cancle : {
+						text : '취소',
+						value : false,
+					  },
+					  confirm : {
+						  text : '확인',
+						  value : true,
+					  }
+				  },
+				})
 			.then((wilDelete) => {
 				if(wilDelete){
 					if(keywordName || keywordDept){
@@ -668,11 +675,11 @@ $(function(){
 	            icon: "warning",
 	            confirmButtonColor : '#d33',
 	            buttons: {
-	            	cancle : {
+	            	confirm : {
 	            		text : '취소',
 	            		value : false
 	            	},
-	            	confirm : {
+	            	cancle : {
 	            		text : '확인',
 	            		value : true
 	            	}

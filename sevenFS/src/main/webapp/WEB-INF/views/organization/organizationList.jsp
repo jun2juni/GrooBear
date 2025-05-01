@@ -20,6 +20,7 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 	<title>${title}</title>
 	<c:import url="../layout/prestyle.jsp" />
+	<c:import url="../layout/prescript.jsp" />
 </head>
 <body>
 <c:import url="../layout/sidebar.jsp" />
@@ -48,7 +49,7 @@
 	  </div>
 	</section>
 	<c:import url="../layout/footer.jsp" />
-	<c:import url="../layout/prescript.jsp" />
+	
 	
 </main>
 

@@ -602,7 +602,14 @@ $(function(){
 		if($('#startTime').val() != null){
 			swal({
 				icon : 'warning',
-				text : '이미 출근 처리되었습니다.'
+				text : '이미 출근 처리되었습니다.',
+				buttons : {
+					confirm : {
+						text : '확인',
+						value : true,
+						closeModal : true
+					}
+				}
 			})
 			.then(() => {
 				$('#workStartButton').prop('disabled', true);

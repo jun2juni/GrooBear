@@ -70,7 +70,7 @@
                                 </c:if>
 								<div class="d-flex">
 	                                <button id="changePwButton" type="button" class="btn submit btn-success col-6 mr-10">비밀번호 변경</button>
-	                                <a href="/emplDetailHeader?emplNo=${emp.emplNo}" type="button" class="btn submit btn-dark col-6">비밀번호 변경 취소</a>
+	                                <button type="button" class="btn submit btn-dark col-6" id="passwordCancleBtn">비밀번호 변경 취소</button>
 								</div>
                         </div>
                     </div>
@@ -145,7 +145,13 @@ $(function(){
 	 	if(newPassword !== confirmPassword){
 			swal({
 				icon : 'error',
-				text : '새 비밀번호가 일치하지 않습니다.'
+				text : '새 비밀번호가 일치하지 않습니다.',
+				buttons : {
+					confirm : {
+						text : '확인',
+						value : true
+					}
+				}
 			})
 			return;
 		} 
@@ -163,7 +169,13 @@ $(function(){
 			if(res === '성공'){
 				swal({
 					icon : 'success',
-					text : '비밀번호가 변경되었습니다.'
+					text : '비밀번호가 변경되었습니다.',
+					buttons : {
+						confirm : {
+							text : '확인',
+							value : true
+						}
+					}
 				})
 				.then(() => {
 					location.href = '/emplDetailHeader?emplNo='+emplNo;
@@ -172,7 +184,13 @@ $(function(){
 			else if(res === '실패'){
 				swal({
 					icon : 'error',
-					text : '비밀번호 변경에 실패했습니다.'
+					text : '비밀번호 변경에 실패했습니다.',
+					buttons : {
+						confirm : {
+							text : '확인',
+							value : true
+						}
+					}
 				})
 				.then(() => {
 					$('#currentPassword').focus();
@@ -182,6 +200,24 @@ $(function(){
 				})
 			}
 		}) 
+	})
+	
+	// 비밀번호 취소 눌렀을경우
+	$('#passwordCancleBtn').on('click' , function(){
+		const emplNo = $('#hiddenEmplNo').val();
+		swal({
+			text : '비밀번호 변경을 취소하시겠습니까?',
+			icon : 'warning',
+			buttons : {
+				confirm : {
+					text : '확인',
+					value : true
+				}
+			}
+		})
+		.then(() => {
+			location.href = '/emplDetailHeader?emplNo='+emplNo;
+		})
 	})
 })
 	

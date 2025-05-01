@@ -149,8 +149,14 @@ function deptInsert(){
            }
        	if(departmentName != "" && departmentDesc != ""){
        		swal({
-       			'icon' : 'success',
-       			'text' : '등록되었습니다.'
+       			icon : 'success',
+       			text : '등록되었습니다.',
+       			buttons : {
+       				confirm : {
+       					text : '확인',
+       					value : true
+       				}
+       			}
        		})
             .then((value)=>{
                 $("#depInsertForm").submit();
@@ -255,7 +261,15 @@ function clickEmp(data) {
                     location.href = "/emplDelete?emplNo=" + data.node.id;
                   })
               } else {
-                swal("취소되었습니다.")
+                swal({
+                	text : '취소되었습니다.',
+                	buttons : {
+                		confirm : {
+                			text : '확인',
+                			value : true
+                		}
+                	}
+                })
                 ;
               }
             });
@@ -283,7 +297,15 @@ function clickDept(data) {
       $("#deptDeleteBtn").on("click", function(){
     	  // 하위부서팀이나 사원이 있을경우 삭제 안됨
     	  if(data.node.children.length > 0 || data.node.children_d > 0){
-    		  swal('소속된 사원이 있어 부서 삭제가 불가능합니다.')
+    		  swal({
+					 text : '소속된 사원이 있어 부서 삭제가 불가능합니다.',
+					 buttons : {
+						 confirm : {
+							 text : '확인',
+							 value : true
+						 }
+					 }
+				 })
     		  .then(() => {
 	    		  location.href = '/orglistAdmin';
     		  })
@@ -323,12 +345,12 @@ function clickDept(data) {
 	                })
 	            } else {
 	            	swal({
-	             		  title: "취소되었습니다.",
-	             		  icon: "info",
-	             		  buttons: {
-	             		    confirm: {
-	             		      text: "확인",
-	             		      value: true
+	             		  text : "취소 되었습니다.",
+	             		  icon : "info",
+	             		  buttons : {
+	             		    confirm : {
+	             		      text : '확인',
+	             		      value : true
 	             		    }
 	             		  }
 	             		});
@@ -422,7 +444,15 @@ function fSchEnder(e) {
       	 })
       	 
       	 if(!found){
-				 swal('해당 사원을 찾을 수 없습니다.')
+				 swal({
+					 text : '해당 사원을 찾을 수 없습니다.',
+					 buttons : {
+						 confirm : {
+							 text : '확인',
+							 value : true
+						 }
+					 }
+				 })
 			 }
 	
 		 })
