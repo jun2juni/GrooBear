@@ -4,7 +4,7 @@
 	<!--home 전자결재 -->
 	<!-- 결재 대기중인 문서리스트 (결재대기문서)-->
 	<select id="homeAtrzApprovalList" resultMap="atrzMap">
-		WITH my_turn_lines AS (					/* AtrzMapper.homeAtrzApprovalList */
+		WITH my_turn_lines AS (
 		    SELECT L.*
 		    FROM atrz_line L
 		    WHERE L.sanctner_empno = #{emplNo}
@@ -21,39 +21,39 @@
 		)
 		SELECT  
 		      A.atrz_doc_no
-		      ,A.drafter_empno
-		      ,A.drafter_clsf
-		      ,A.drafter_empnm
-		      ,A.drafter_dept
-		      ,A.bkmk_yn
-		      ,A.atch_file_no
-		      ,A.atrz_sj
-		      ,A.atrz_cn
-		      ,A.atrz_opinion
-		      ,A.atrz_tmpr_stre_dt
-		      ,A.atrz_drft_dt
-		      ,A.atrz_compt_dt
-		      ,A.atrz_rtrvl_dt
-		      ,A.atrz_sttus_code
-		      ,A.eltsgn_image
-		      ,A.doc_form_no
-		      ,A.atrz_delete_yn
-		      ,A.schdul_reg_yn
-		      ,L.atrz_ln_sn
-		      ,L.sanctner_empno
-		      ,L.sanctn_progrs_sttus_code
-		      ,L.atrz_ty
-		      ,L.dcrb_author_yn
-		      ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
-          	  ,(SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
+		      , A.drafter_empno
+		      , A.drafter_clsf
+		      , A.drafter_empnm
+		      , A.drafter_dept
+		      , A.bkmk_yn
+		      , A.atch_file_no
+		      , A.atrz_sj
+		      , A.atrz_cn
+		      , A.atrz_opinion
+		      , A.atrz_tmpr_stre_dt
+		      , A.atrz_drft_dt
+		      , A.atrz_compt_dt
+		      , A.atrz_rtrvl_dt
+		      , A.atrz_sttus_code
+		      , A.eltsgn_image
+		      , A.doc_form_no
+		      , A.atrz_delete_yn
+		      , A.schdul_reg_yn
+		      , L.atrz_ln_sn
+		      , L.sanctner_empno
+		      , L.sanctn_progrs_sttus_code
+		      , L.atrz_ty
+		      , L.dcrb_author_yn
+		      , (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'DEPARTMENT' AND CMMN_CODE = DRAFTER_DEPT) as DEPT_CODE_NM
+		      , (SELECT CMMN_CODE_NM FROM COMMON_CODE WHERE CMMN_CODE_GROUP = 'POSITION' AND CMMN_CODE = DRAFTER_CLSF) as CLSF_CODE_NM
 		FROM ATRZ A
 		JOIN my_turn_lines L
 		  ON A.atrz_doc_no = L.atrz_doc_no
 		WHERE A.atrz_compt_dt IS NULL
-			AND A.atrz_sttus_code IS NOT NULL
-			AND A.atrz_sttus_code = '00'
-			AND A.atrz_sttus_code != '99'
+		  AND A.atrz_sttus_code = '00'
+		  AND A.atrz_sttus_code != '99'
 		ORDER BY A.atrz_drft_dt DESC
+		FETCH FIRST 10 ROWS ONLY
 	</select>
 	
 	<!-- 기안진행문서 최신순5개 -->

@@ -416,6 +416,12 @@
 																</c:forEach>
 															</tbody>
 														</table>
+														<div style="margin-top: 20px;">
+															<!-- 페이지네이션 시작 -->
+															<c:if test="${storageArticlePage.totalPages > 1}">
+																${storageArticlePage.pagingArea}
+															</c:if>
+														</div>
 													</c:otherwise>
 												</c:choose>
 											</div>

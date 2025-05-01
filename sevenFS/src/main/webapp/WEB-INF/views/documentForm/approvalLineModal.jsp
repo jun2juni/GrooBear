@@ -7,6 +7,14 @@
 	padding: 10px 20px;
 	font-size: 1.1em;
 }
+.dragging {
+  opacity: 0.5;
+  background-color: #f0f8ff;
+}
+
+.drop-highlight {
+  background-color: #e0f7fa;
+}
 </style>
 	<!-- 결재선 지정 모달창 시작 -->
 	<div class="modal fade" id="atrzLineModal" tabindex="-1" aria-labelledby="atrzLineModalLabel" aria-hidden="true">
@@ -78,8 +86,8 @@
 						<th>이름</th>
 						<th>부서</th>
 						<th>직급</th>
-						<th hidden>권한</th>
-						<th style="visibility: hidden;">전결여부</th>
+						<th></th>
+						<!-- <th style="visibility: hidden;">전결여부</th> -->
 						</tr>
 					</thead>
 					<tbody class="s_appLine_tbody_ref"></tbody>

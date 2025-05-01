@@ -473,8 +473,6 @@ $(document).ready(function() {
 		var eap_content = $('#s_sp_co').val();
 
 		
-		// textarea에 \r \n같은 문자를 <br>로 바꿔주기
-		eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
 
 		//formData로 담아주기 위한것
 		let jnForm = document.querySelector("#atrz_dr_form");

@@ -753,34 +753,8 @@ public class AtrzServiceImpl implements AtrzService {
 			 // 📌 참조자 알림 전송
 	        log.info("atrzDetailAppUpdate->atrzDocNo:"+atrzDocNo);
 	        List<AtrzLineVO> atrzLineList = atrzMapper.selectAtrzLineList(atrzDocNo);
-	        /*
-	         atrzDetailAppUpdate->atrzLineList:[AtrzLineVO(atrzDocNo=D_20250429_00026, atrzLnSn=1, sanctnerEmpno=20250000, sanctnerClsfCode=09, 
-	         contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=1, sanctnProgrsSttusCode=10, dcrbAuthorYn=N, 
-	         contdAuthorYn=null, sanctnOpinion=승인합니다., eltsgnImage=null, sanctnConfmDt=Tue Apr 29 16:43:37 KST 2025, atrzLastLnSn=0, 
-	         atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, 
-	         aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0), AtrzLineVO(atrzDocNo=D_20250429_00026, atrzLnSn=2,
-	          sanctnerEmpno=20250001, sanctnerClsfCode=00, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, 
-	          atrzTy=0, sanctnProgrsSttusCode=00, dcrbAuthorYn=N, contdAuthorYn=null, sanctnOpinion=null, eltsgnImage=null, 
-	          sanctnConfmDt=null, atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null, befSanctnerEmpno=null, 
-	          befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0), 
-	          AtrzLineVO(atrzDocNo=D_20250429_00026, atrzLnSn=3, sanctnerEmpno=20250007, sanctnerClsfCode=02, contdEmpno=null, 
-	          contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=0, sanctnProgrsSttusCode=00, dcrbAuthorYn=N, 
-	          contdAuthorYn=null, sanctnOpinion=null, eltsgnImage=null, sanctnConfmDt=null, atrzLastLnSn=0, atrzLineList=null, 
-	          sanctnerClsfNm=null, sanctnerEmpNm=null, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null,
-	           aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0), AtrzLineVO(atrzDocNo=D_20250429_00026, atrzLnSn=4, sanctnerEmpno=20250006, 
-	           sanctnerClsfCode=02, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=0, 
-	           sanctnProgrsSttusCode=00, dcrbAuthorYn=N, contdAuthorYn=null, sanctnOpinion=null, eltsgnImage=null, sanctnConfmDt=null, 
-	           atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, 
-	           aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0), AtrzLineVO(atrzDocNo=D_20250429_00026, atrzLnSn=5, sanctnerEmpno=20250005, 
-	           sanctnerClsfCode=01, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=0, sanctnProgrsSttusCode=00, dcrbAuthorYn=N, 
-	           contdAuthorYn=null, sanctnOpinion=null, eltsgnImage=null, sanctnConfmDt=null, atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null,
-	            befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0), 
-	            AtrzLineVO(atrzDocNo=D_20250429_00026, atrzLnSn=6, sanctnerEmpno=20250003, sanctnerClsfCode=00, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, 
-	            dcrbManClsfCode=null, atrzTy=0, sanctnProgrsSttusCode=00, dcrbAuthorYn=N, contdAuthorYn=null, sanctnOpinion=null, eltsgnImage=null, sanctnConfmDt=null, 
-	            atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null, sanctnerEmpNm=null, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null, 
-	            aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0)] 
-	         */
 	        log.info("atrzDetailAppUpdate->atrzLineList:"+atrzLineList);
+	        
 	        if (atrzLineList != null && !atrzLineList.isEmpty()) {
 	            for (AtrzLineVO atrzLineVO : atrzLineList) {
 	                if (atrzLineVO.getBefSanctnerEmpno() != null && "0".equals(atrzLineVO.getAtrzTy())) {

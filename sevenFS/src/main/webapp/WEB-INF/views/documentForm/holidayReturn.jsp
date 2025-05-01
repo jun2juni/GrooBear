@@ -759,7 +759,6 @@ $(document).ready(function() {
 	var eap_content = $('#s_ho_co').val();
 
 	// textarea에 \r \n같은 문자를 <br>로 바꿔주기
-	eap_content = eap_content.replace(/(?:\r\n|\r|\n)/g,'<br/>');
 	var ho_code = $("input[name='holiCode']:checked").val();
 	var ho_start = $('#s_ho_start').val() + " " + $('#s_start_time').val();
 	var ho_start_D = $('#s_ho_start').val();
