@@ -109,6 +109,7 @@
       CMMN_CODE_NM AS cmmnCodeNm
     FROM COMMON_CODE
     WHERE CMMN_CODE_GROUP = 'DEPARTMENT'
+    AND USE_YN = 'Y'
   </select>
 
 	
