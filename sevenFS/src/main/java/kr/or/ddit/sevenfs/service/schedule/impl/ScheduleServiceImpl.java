@@ -63,15 +63,17 @@ public class ScheduleServiceImpl implements ScheduleService{
 		
 		NotificationVO notificationVO = new NotificationVO();
 		notificationVO.setNtcnSj("[일정 알림]");
-		notificationVO.setNtcnCn("등록된 일정이 있습니다.");
+		
 		// 클릭시 어디로 보내줄 것인지
 		notificationVO.setOriginPath("/myCalendar");
 		notificationVO.setSkillCode("04");
 		if(schdulTy.equals("1")) {
+			notificationVO.setNtcnCn("등록된 부서 일정이 있습니다.");
 			String deptCode = scheduleVO.getDeptCode();
 			List<EmployeeVO> employeeVOList = scheduleMapper.getEmplList(deptCode);
 			notificationService.insertNotification(notificationVO, employeeVOList);
 		}else if(schdulTy.equals("2")) {
+			notificationVO.setNtcnCn("등록된 전체 일정이 있습니다.");
 			List<EmployeeVO> employeeVOList = scheduleMapper.getEmplAllList();
 			notificationService.insertNotification(notificationVO, employeeVOList);
 		}

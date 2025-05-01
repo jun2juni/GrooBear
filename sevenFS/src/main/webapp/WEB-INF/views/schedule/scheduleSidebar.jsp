@@ -734,29 +734,54 @@
             // console.log('delLabel',e.target);
             // console.log('삭제 데이터 확인 : ','delLabel',$('#delLabelBtn').data().selLblNo);
             let lblNo = $('#lblNoInp').val();
-            $.ajax({
-                url:'/myCalendar/delLabel',
-                method:'post',
-                contentType:'application/json',
-                data: JSON.stringify({
-                        emplNo:emplNo,
-                        lblNo:lblNo,
-                        deptCode: deptCode
-                }),
-                success:function(resp){
-                    let clndr = chngData(resp);
-                    console.log('필터링된 일정',resp);
-                    window.globalCalendar.setOption('events', clndr);
 
-                    labelSideBar(resp.labelList);
-                    
-                    // 입력 필드 초기화 및 팝업 닫기
-                    document.getElementById('newLabelName').value = '';
-                    document.getElementById('labelPopup').style.display = 'none';
-                    
-                },
-                error: function(err) {
-                    console.error("필터링 실패:", err);
+            // 입력 필드 초기화 및 팝업 닫기
+            document.getElementById('newLabelName').value = '';
+            document.getElementById('labelPopup').style.display = 'none';
+            $('#newLabelName').val('');
+            $('#labelPopup').css('display','none');
+            Swal.fire({
+                title: '라벨 삭제',
+                text: '정말로 이 라벨을 삭제하시겠습니까?',
+                icon: 'warning',
+                showCancelButton: true,
+                // confirmButtonColor: '#3085d6',
+                // cancelButtonColor: '#d33',
+                confirmButtonText: '확인',
+                cancelButtonText: '취소'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/myCalendar/delLabel',
+                        method: 'post',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            emplNo: emplNo,
+                            lblNo: lblNo,
+                            deptCode: deptCode
+                        }),
+                        success: function(resp) {
+                            let clndr = chngData(resp);
+                            console.log('필터링된 일정', resp);
+                            window.globalCalendar.setOption('events', clndr);
+
+                            labelSideBar(resp.labelList);
+
+                            Swal.fire(
+                                '삭제 완료',
+                                '라벨이 삭제되었습니다.',
+                                'success'
+                            );
+                        },
+                        error: function(err) {
+                            console.error("라벨 삭제 실패:", err);
+                            Swal.fire(
+                                '삭제 실패',
+                                '라벨 삭제 중 오류가 발생했습니다.',
+                                'error'
+                            );
+                        }
+                    });
                 }
             });
         }

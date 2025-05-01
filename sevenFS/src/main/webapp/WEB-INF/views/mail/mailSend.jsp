@@ -804,13 +804,16 @@
             let url;
             if(data=="sub"){
                 url = "/mail/sendMail";
+                if($('.recpEmailInp').length==0){
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '수신 이메일 없음',
+                        text: '수신 이메일을 작성해 주세요.'
+                    });
+                    return;
+                }
             }else if(data=="temp"){
                 url = "/mail/tempStore";
-            }
-            if($('#recpEmail').get().length==0){
-                swal({title:'수신 이메일을 작성해주세요',icon:'warning'})
-                // alert('수신 이메일을 작성해주세요');
-                return 
             }
             let mailForm = new FormData();
 
@@ -868,6 +871,39 @@
                 console.log('element.value type : ', typeof(element.files[0]));
                 mailForm.append('uploadFile', element.files[0]);
             })
+
+            if(emailCn == '' || emailCn == null){
+                Swal.fire({
+                    title: '본문 내용이 없습니다.',
+                    text: '본문 내용 없이 메일을 보내시겠습니까?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '보내기',
+                    cancelButtonText: '취소'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // 본문 내용 없이 메일 전송 진행
+                        $.ajax({
+                            url: url,
+                            type: 'post',
+                            data: mailForm,
+                            processData: false,
+                            contentType: false,
+                            success: function(resp) {
+                                console.log('이메일 전송 결과 : ', resp);
+                                window.location.href = '/mail?emailClTy=0';
+                            },
+                            error: function(err) {
+                                console.log(err);
+                            }
+                        });
+                    } else {
+                        // 취소 시 동작
+                        console.log('메일 전송 취소됨');
+                    }
+                });
+                return;
+            }
 
             console.log("mailForm : ", mailForm);
             $.ajax({
@@ -944,12 +980,12 @@
             console.log('recpEmailInp 값 변경 감지 emplNm : ',emplNm);
             console.log('recpEmailInp 값 변경 감지 emplNo : ',emplNo);
             let myMail = $('#trnsmitEmail').val();
-            if(email == myMail){
-                // alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
-                swal({title:'자신의 이메일을 수신이메일란에 작성할 수 없습니다.',icon:'warning'})
-                $('#recptnEmail').val('');
-                return 
-            }
+            // if(email == myMail){
+            //     alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
+            //     swal({title:'자신의 이메일을 수신이메일란에 작성할 수 없습니다.',icon:'warning'})
+            //     $('#recptnEmail').val('');
+            //     return 
+            // }
             if(email != '' && !(isValidEmail(email))){
                 // alert('알맞지 않는 형식입니다.');
                 swal({title:'알맞지 않는 형식입니다.',icon:'warning'});
@@ -957,9 +993,8 @@
                 return
             }
             if(email != '' && validateDupl(email).length!=0){
-                // alert('이미 작성한 이메일입니다.');
-                swal({title:'이미 작성한 이메일입니다.',icon:'warning'});
-                console.log('이거 실행되면 안됨');
+                swal({title:'중복된 이메일입니다.',icon:'warning'});
+                // console.log('이거 실행되면 안됨');
                 $('#recptnEmail').val('');
                 return;
             }
@@ -1012,19 +1047,16 @@
             // console.log('refEmailInp 값 변경 감지',email);
             let myMail = $('#trnsmitEmail').val();
             if(email==myMail){
-                // alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
-                swal({title:'이미 작성한 이메일입니다.',icon:'warning'});
+                swal({title:'중복된 이메일입니다.',icon:'warning'});
                 $('#refEmailInp').val('');
                 return 
             }
             if(email!='' && !(isValidEmail(email))){
-                // alert('알맞지 않는 형식입니다.');
                 swal({title:'알맞지 않는 형식입니다.',icon:'warning'});
                 return
             }
             if(email!='' && validateDupl(email).length!=0){
-                // alert('이미 작성한 이메일입니다.');
-                swal({title:'이미 작성한 이메일입니다.',icon:'warning'});
+                swal({title:'중복된 이메일입니다.',icon:'warning'});
                 $('#refEmailInp').val('');
                 return;
             }
@@ -1085,8 +1117,7 @@
                 return;
             }
             if(email!='' && validateDupl(email).length!=0){
-                // alert('이미 작성한 이메일입니다.');
-                swal({title:'이미 작성한 이메일입니다.',icon:'warning'});
+                swal({title:'중복된 이메일입니다.',icon:'warning'});
                 $('#hiddenRefEmailInp').val('')
                 return;
             }
@@ -1190,8 +1221,7 @@
                 return;
             }
             if((emailState!='' && validateDupl(email).length!=0) && email != emailState){
-                // alert(' 수정 : 이미 작성한 이메일입니다.');
-                swal({title:'이미 작성한 이메일입니다.',icon:'warning'});
+                swal({title:'중복된 이메일입니다.',icon:'warning'});
                 spanField.text(emplNmState);
                 emailField.val(emailState);
                 return;
@@ -1256,8 +1286,7 @@
                             console.log("사번 확인2",$(sel).attr('data-emplNo'));
                             $(sel).val(resp.email).trigger('change');
                         }else{
-                            // alert('이미 작성한 이메일입니다.');
-                            swal({title:'이미 작성한 이메일입니다.',icon:'warning'});
+                            swal({title:'중복된 이메일입니다.',icon:'warning'});
                         }
                         
                     }

@@ -738,22 +738,57 @@
           if(emailClTy == '4'){
             url = "/mail/realDelete"
             console.log('realDelete')
+            Swal.fire({
+              title: '정말 삭제하시겠습니까?',
+              text: "삭제된 메일은 복구할 수 없습니다.",
+              icon: 'warning',
+              showCancelButton: true,
+              // confirmButtonColor: '#d33',
+              // cancelButtonColor: '#3085d6',
+              confirmButtonText: '확인',
+              cancelButtonText: '취소'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                $.ajax({
+                  url: url,
+                  method: 'post',
+                  data: { "emailNoList": emailNoList },
+                  success: function(resp) {
+                    Swal.fire(
+                      '삭제 완료!',
+                      '메일이 성공적으로 삭제되었습니다.',
+                      'success'
+                    ).then(() => {
+                      window.location.href = resp + '?emailClTy=' + emailClTy;
+                    });
+                  },
+                  error: function(err) {
+                    console.log(err);
+                    Swal.fire(
+                      '오류 발생!',
+                      '메일 삭제 중 문제가 발생했습니다.',
+                      'error'
+                    );
+                  }
+                });
+              }
+            });
           }else{
             url="/mail/delete"
             console.log('delete')
+            $.ajax({
+              url:url,
+              method:'post',
+              data:{"emailNoList":emailNoList},
+              success:function(resp){
+                window.location.href = resp+'?emailClTy='+emailClTy;
+              },
+              error:function(err){
+                console.log(err);
+              }
+            })
           }
           console.log('삭제 할 메일',emailNoList);
-          $.ajax({
-            url:url,
-            method:'post',
-            data:{"emailNoList":emailNoList},
-            success:function(resp){
-              window.location.href = resp+'?emailClTy='+emailClTy;
-            },
-            error:function(err){
-              console.log(err);
-            }
-          })
         })
 
         // 라벨 적용

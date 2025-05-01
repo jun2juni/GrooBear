@@ -59,6 +59,7 @@ WHERE M.EMPL_NO=#{searchVo.emplNo}
 	<choose>
 		<when test="searchVo.emailClTy == 5">
 			AND m.STARRED = 'Y'
+			AND m.email_cl_ty!='4'
 		</when>
 		<otherwise>
 			AND m.EMAIL_CL_TY = #{searchVo.emailClTy}
