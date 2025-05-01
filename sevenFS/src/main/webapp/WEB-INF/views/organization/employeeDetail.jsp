@@ -63,7 +63,6 @@
           <span class="col-8 text-medium">${empDetail.adres}<br/>
           	${empDetail.detailAdres}</span>
         </li>
-        <hr/>
       </ul>
     </div>
   </div>

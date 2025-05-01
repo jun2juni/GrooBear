@@ -153,7 +153,7 @@ String serverDate = dateFormat.format(now);
 												id="todayWorkTime">
 											<button type="button"
 												id="${todayWorkTime != null ? '' : 'workStartButton'}"
-												class="btn-sm main-btn primary-btn-light rounded-full btn-hover">출근</button>
+												class="btn-sm main-btn primary-btn-light rounded-full btn-hover beginWorkBtn">출근</button>
 											<p id="startTime">${todayWorkTime != null ? todayWorkTime : '출근 전'}</p>
 										</div>
 										<div class="content">
@@ -598,18 +598,20 @@ console.log(todEndTime); */
 $('#bbsMoreBtn').attr('href', '/bbs/bbsList?bbsCtgryNo=1');
 
 $(function(){
-	const todWoTime = $('#todayWorkTime').val();
-	if(todWoTime != null && todWoTime != ''){
-		$('#workStartButton').on('click', function(){
+	$('.beginWorkBtn').on('click' , function(){
+		if($('#startTime').val() != null){
 			swal({
-				icon : 'error',
-				text : '이미 출근이 등록되었습니다.'
+				icon : 'warning',
+				text : '이미 출근 처리되었습니다.'
 			})
 			.then(() => {
 				$('#workStartButton').prop('disabled', true);
 			})
-		})
-	}
+		}
+	})
+	
+	
+	
 	// 공지사항 눌렀을때 1전송
 	$('#notice-tab').on('click', function(e){
 		e.preventDefault();
