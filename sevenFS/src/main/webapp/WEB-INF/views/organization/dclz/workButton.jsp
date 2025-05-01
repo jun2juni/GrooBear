@@ -109,7 +109,17 @@
 						.then(resp => resp.text())
 						.then(res => {
 							if(res != null){
-								swal("퇴근이 완료되었습니다.", " ", "success")
+								swal({
+									icon : 'success',
+									text : '퇴근이 완료되었습니다.',
+									buttons: {
+										confirm : {
+											text : '확인',
+											value : 'true',
+							                closeModal: true
+										}
+									}
+								})
 								.then((value) => {
 								console.log("퇴근 시간 : " , res);
 								$("#endTime").html(res);
