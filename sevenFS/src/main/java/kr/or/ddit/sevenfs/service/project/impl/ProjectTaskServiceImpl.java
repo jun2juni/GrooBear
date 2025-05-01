@@ -278,6 +278,12 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
         return projectTaskMapper.countTasksByAssignee(prjctNo, empNo) > 0;
     }
 
+
+	@Override
+	public void uptAnsertReadingAt(Map<String, Object> paramMap) {
+		projectTaskMapper.uptAnsertReadingAt(paramMap);
+	}
+
     
 
 }

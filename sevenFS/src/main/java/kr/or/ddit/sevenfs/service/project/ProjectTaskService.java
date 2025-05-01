@@ -43,4 +43,6 @@ public interface ProjectTaskService {
     public void updateSchedule(ProjectTaskVO task);
 
 	public boolean hasTaskAssigned(int prjctNo, String empNo);
+
+	public void uptAnsertReadingAt(Map<String, Object> paramMap);
 }

@@ -49,4 +49,6 @@ public interface ProjectTaskMapper {
     
 	int nullifyUpperTaskReferences(@Param("prjctNo") long prjctNo);
 
+	public void uptAnsertReadingAt(Map<String, Object> paramMap);
+
 }

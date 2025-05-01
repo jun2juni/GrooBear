@@ -1,6 +1,7 @@
 package kr.or.ddit.sevenfs.controller.project;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
+import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.notification.NotificationVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
@@ -78,6 +80,11 @@ public class TaskAnsertController {
 
             notificationService.insertNotification(notificationVO, List.of(receiver));
         }
+        
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("taskNo", (long) taskNo);
+        paramMap.put("ansertReadingAt", "N");
+        projectTaskService.uptAnsertReadingAt(paramMap);
 
         return ResponseEntity.ok("댓글 등록 완료");
     }
@@ -85,7 +92,12 @@ public class TaskAnsertController {
 
     // 댓글 조회
     @GetMapping("/answer")
-    public List<TaskAnsertVO> getTaskAnswer(@RequestParam Map<String, Object> params) {
+    public List<TaskAnsertVO> getTaskAnswer(@RequestParam Map<String, Object> params, @AuthenticationPrincipal CustomUser customUser) {
+    	log.info("getTaskAnswer -> params : "+params);
+    	ProjectTaskVO projectTaskVO = projectTaskService.getTaskById(Long.parseLong((String)params.get("taskNo")));
+    	log.info("getTaskAnswer -> projectTaskVO : "+projectTaskVO);
+    	log.info("getTaskAnswer -> 담당자 번호 : "+projectTaskVO.getChargerEmpno());
+    	log.info("getTaskAnswer -> 내 번호 : "+customUser.getEmpVO().getEmplNo());
         return taskAnsertService.selectTaskAnswer(params);
     }
 

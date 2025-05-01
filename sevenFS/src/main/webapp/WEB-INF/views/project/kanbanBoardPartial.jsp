@@ -29,6 +29,10 @@
                ondragstart="drag(event)"
                onclick="viewCardDetails(${task.taskNo})">
             ${task.taskNm}
+            <!-- 대현이가 추가 -->
+            <c:if test="${task.ansertReaddingAt == 'N' && myEmplNo == task.chargerEmpNo}">
+              <span class="comment-indicator" id="readdingAt" data-taskno="${task.taskNo}"></span>
+            </c:if>
           </div>
         </c:forEach>
       </div>
@@ -139,6 +143,9 @@
   cursor: grab;
   transition: all 0.2s ease;
   word-break: break-word;
+  
+  /* 따로 추가한 스타일(유대현) */
+  position: relative;
 }
 
 .kanban-card:hover {
@@ -150,6 +157,18 @@
 .kanban-card.dragging {
   opacity: 0.6;
   transform: scale(0.95);
+}
+
+/* .comment-indicator에 z-index 추가 (유대현) */
+.kanban-card .comment-indicator {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  z-index: 10; /* 다른 요소 위에 표시되도록 */
 }
 
 /* 상태별 배경색 */
@@ -495,6 +514,11 @@ function viewCardDetails(taskId) {
       
       // 모달 표시
       $('#taskDetailModal').modal('show');
+   	  // 대현이가 추가
+      // 열람한 것 읽음처리(아이콘 제거)
+      console.log("여기 3 taskId",taskId);
+      console.log($('#readdingAt[data-taskno="' + taskId + '"]'));
+      $('#readdingAt[data-taskno="' + taskId + '"]').remove();
     },
     error: function(xhr, status, error) {
       console.error('업무 상세 정보를 불러오는 데 실패했습니다.', error);
@@ -619,6 +643,12 @@ function openTaskDetailModal(taskNo) {
       
       // 모달 표시
       $('#taskDetailModal').modal('show');
+   	  // 대현이가 추가한 것
+      // 열람한 것 읽음처리(아이콘 제거)
+      console.log("여기 1 taskNo",taskNo);
+      console.log($('#readdingAt[data-taskno="' + taskNo + '"]'));
+      $('#readdingAt[data-taskno="' + taskNo + '"]').remove();
+      
     },
     error: function(xhr, status, error) {
       console.error('업무 상세 정보를 불러오는 데 실패했습니다.', error);
@@ -660,6 +690,12 @@ function highlightDeadlineSoon() {
 	        const dot = card.querySelector('.comment-indicator');
 	        if (dot) dot.remove();
 	      }
+	   		// 대현이가 추가한 것
+	        // 열람한 것 읽음처리(아이콘 제거)
+	        console.log("여기 2 taskId",taskId);
+	        console.log(response)
+	        console.log($('#readdingAt[data-taskno="' + taskId + '"]'));
+	        $('#readdingAt[data-taskno="' + taskId + '"]').remove();
 	    },
 	    error: function(xhr, status, error) {
 	      alert('업무 상세 정보를 불러오는 데 실패했습니다.');

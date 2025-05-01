@@ -24,6 +24,9 @@ public class ProjectTaskEntity {
     private Long atchFileNo;
     private String parentTaskNm; // 상위 업무명 (JOIN 결과)
 
+    // 대현이가 추가함.
+    private String ansertReaddingAt;
+
     
     // VO 변환 메서드
     public GanttTaskVO toGanttVO() {
@@ -61,6 +64,9 @@ public class ProjectTaskEntity {
         vo.setTaskGrad(this.taskGrad);
         vo.setPriort(this.priort);
         vo.setProgrsrt(this.progrsrt);
+        // 대현이가 추가
+        vo.setAnsertReaddingAt(this.ansertReaddingAt);
+        vo.setChargerEmpNo(this.chargerEmpno+"");
         return vo;
     }
 }

@@ -59,6 +59,7 @@ public class ProjectTaskVO {
     private String status;
     private String priority;
 
+    private String ansertReadingAt;
 
     private List<MultipartFile> files;
     private List<AttachFileVO> attachFileList;

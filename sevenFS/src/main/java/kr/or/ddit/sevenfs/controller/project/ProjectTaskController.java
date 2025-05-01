@@ -5,6 +5,7 @@ import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.project.ProjectService;
 import kr.or.ddit.sevenfs.service.project.ProjectTaskService;
 import kr.or.ddit.sevenfs.vo.AttachFileVO;
+import kr.or.ddit.sevenfs.vo.CustomUser;
 import kr.or.ddit.sevenfs.vo.project.ProjectEmpVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -42,11 +44,23 @@ public class ProjectTaskController {
 
 	// 프로젝트 업무 상세보기
 	@GetMapping("/detail")
-	public String taskDetail(@RequestParam("taskNo") Long taskNo, Model model) {
+	public String taskDetail(@RequestParam("taskNo") Long taskNo, Model model, @AuthenticationPrincipal CustomUser customUser) {
 		ProjectTaskVO task = projectTaskService.selectTaskById(taskNo);
+		log.info("프로젝트 업무 상세보기 : " + task);
+		
+		String myEmplNo = customUser.getEmpVO().getEmplNo();
+		String chargerEmpno = task.getChargerEmpno()+"";
+		if(myEmplNo.equals(chargerEmpno)) {
+			// 읽음처리 실행
+			log.info("읽음처리 실행");
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("taskNo", taskNo);
+	        paramMap.put("ansertReadingAt", "Y");
+			projectTaskService.uptAnsertReadingAt(paramMap);
+			task.setAnsertReadingAt("Y");
+		}
 		model.addAttribute("task", task);
 		log.info("task 불러온 결과: {}", task);
-
 		return "project/taskDetailContent";
 	}
 

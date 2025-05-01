@@ -4,6 +4,8 @@ import kr.or.ddit.sevenfs.service.project.KanbanService;
 import kr.or.ddit.sevenfs.service.project.ProjectService;
 import kr.or.ddit.sevenfs.service.project.ProjectTaskService;
 import kr.or.ddit.sevenfs.vo.project.ProjectVO;
+import kr.or.ddit.sevenfs.vo.CustomUser;
+import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import kr.or.ddit.sevenfs.vo.project.GanttTaskVO;
 import kr.or.ddit.sevenfs.vo.project.KanbanTaskVO;
 import kr.or.ddit.sevenfs.vo.project.ProjectTaskEntity;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +50,8 @@ public class KanbanController {
     @GetMapping("/taskKanban")
     public String taskKanban(@RequestParam(required = false) Long prjctNo,
                              Model model,
-                             HttpServletRequest request) {
+                             HttpServletRequest request,
+                             @AuthenticationPrincipal CustomUser customUser) {
         // 전체 프로젝트 목록은 항상 제공 (좌측 목록)
         List<ProjectVO> projectList = projectService.selectAllProjects();
         model.addAttribute("projectList", projectList);
@@ -55,16 +59,22 @@ public class KanbanController {
         if (prjctNo != null) {
             // 엔티티에서 VO로 변환
             List<ProjectTaskEntity> allTaskEntities = kanbanService.getTaskEntitiesByProject(prjctNo);
+            log.info("allTaskEntities : "+allTaskEntities);
             List<KanbanTaskVO> allCards = allTaskEntities.stream()
                 .map(ProjectTaskEntity::toKanbanVO)
                 .collect(Collectors.toList());
-
+            log.info("allCards : "+allCards);
             // 상태별 필터링 후 모델에 추가
             model.addAttribute("queuedCards", filterByStatus(allCards, "00"));    // 대기
             model.addAttribute("servingCards", filterByStatus(allCards, "01"));   // 진행중
             model.addAttribute("completedCards", filterByStatus(allCards, "02")); // 완료
             model.addAttribute("feedbackCards", filterByStatus(allCards, "03"));  // 피드백
             model.addAttribute("changedCards", filterByStatus(allCards, "04"));   // 변경
+            
+            // 대현이가 추가
+            EmployeeVO employeeVO = customUser.getEmpVO();
+            String myEmplNo = employeeVO.getEmplNo();
+            model.addAttribute("myEmplNo", myEmplNo);
         }
         
         // AJAX 요청이면 partial JSP 반환

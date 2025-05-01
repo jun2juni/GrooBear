@@ -17,6 +17,10 @@ public class KanbanTaskVO implements TaskInterface {
     private Integer progrsrt;
     private Date taskEndDt; // 마감일 필드 추가
     private boolean hasNewComments; // 댓글 알림 표시 여부
+    
+    // 대현이가 추가함
+    private String ansertReaddingAt;
+    private String chargerEmpNo;
 
     // 필요 시 진행률 퍼센트 반환
     public int getProgressPercent() {
