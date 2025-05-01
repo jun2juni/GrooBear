@@ -375,7 +375,7 @@ String serverDate = dateFormat.format(now);
 
 							<input type="hidden" class="currentPage"
 								value="${articlePage.currentPage}">
-							<div class="row" style="max-height: 90%;">
+							<div class="row" style="max-height: 95%;">
 								<!-- 게시판 시작 -->
 								<div id="mainBbs" class="col-lg-6">
 									<div class="card-style mb-30" style="height: 100%;">
