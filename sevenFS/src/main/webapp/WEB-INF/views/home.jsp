@@ -137,7 +137,7 @@ String serverDate = dateFormat.format(now);
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-md-3"
-						style="position: sticky; top: 100px; z-index: 1; max-height: 80vh;">
+						style="position: sticky; top: 90px; z-index: 1; max-height: 80vh;">
 						<!-- 출퇴근-->
 						<div class="card-style mb-3"
 							style="box-shadow: 1px 1px 20px 1px rgba(0, 0, 2, 0.1);">
@@ -375,7 +375,7 @@ String serverDate = dateFormat.format(now);
 
 							<input type="hidden" class="currentPage"
 								value="${articlePage.currentPage}">
-							<div class="row" style="max-height: 100%;">
+							<div class="row" style="max-height: 90%;">
 								<!-- 게시판 시작 -->
 								<div id="mainBbs" class="col-lg-6">
 									<div class="card-style mb-30" style="height: 100%;">
@@ -609,8 +609,6 @@ $(function(){
 			})
 		}
 	})
-	
-	
 	
 	// 공지사항 눌렀을때 1전송
 	$('#notice-tab').on('click', function(e){
