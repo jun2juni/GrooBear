@@ -591,6 +591,11 @@
                 <div class="email-header-subject" style="flex: 2; text-align: left; padding-left: 20px;">제목</div>
                 <div class="email-header-date" style="flex: 1; text-align: center;">날짜</div>
               </div>
+                <c:if test="${mailVOList.size() == 0}">
+                  <div style="text-align: center; padding: 20px; font-size: 16px; color: #6b7280;">
+                    메일이 없습니다.
+                  </div>
+                </c:if>
               <!-- forEach 시작 -->
               <c:forEach items="${mailVOList}" var="mailVO">
                 <div class="email-item ${mailVO.readngAt}" data-emailclty="${mailVO.emailClTy}" data-emailNo="${mailVO.emailNo}">
@@ -624,27 +629,29 @@
               <!-- forEach 끝 -->
             </div>
           </div>
-          <!-- 페이지네이션 -->
-          <div style="margin-top: 20px;">
-           
-            <c:if test="${labelingPage != 'true'}">
-              <!-- ${labelingPage} -->
-              <page-navi
-              url="/mail?${articlePage.getSearchVo()}"
-              current="${articlePage.getCurrentPage()}"
-              show-max="10"
-              total="${articlePage.getTotalPages()}"
-              ></page-navi>
-            </c:if>
-            <c:if test="${labelingPage == 'true'}">
-              <page-navi
-              url="/mail/labeling?${articlePage.getSearchVo()}"
-              current="${articlePage.getCurrentPage()}"
-              show-max="10"
-              total="${articlePage.getTotalPages()}"
-              ></page-navi>
-            </c:if>
-          </div>
+          <c:if test="${mailVOList.size()>0}">
+            <!-- 페이지네이션 -->
+            <div style="margin-top: 20px;">
+            
+              <c:if test="${labelingPage != 'true'}">
+                <!-- ${labelingPage} -->
+                <page-navi
+                url="/mail?${articlePage.getSearchVo()}"
+                current="${articlePage.getCurrentPage()}"
+                show-max="5"
+                total="${articlePage.getTotalPages()}"
+                ></page-navi>
+              </c:if>
+              <c:if test="${labelingPage == 'true'}">
+                <page-navi
+                url="/mail/labeling?${articlePage.getSearchVo()}"
+                current="${articlePage.getCurrentPage()}"
+                show-max="5"
+                total="${articlePage.getTotalPages()}"
+                ></page-navi>
+              </c:if>
+            </div>
+          </c:if>
         </div>
         <!-- 이메일 listSection 끝 -->
          

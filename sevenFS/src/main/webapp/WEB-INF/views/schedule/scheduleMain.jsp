@@ -65,7 +65,7 @@
 			},
 			handleWindowResize:true,
 			// height: '100px', // ✅ 부모 높이에 맞춤
-			contentHeight: 650,
+			contentHeight: 630,
 			expandRows : false,
 			headerToolbar : headerToolbar,
 			initialView : 'dayGridMonth',

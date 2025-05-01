@@ -844,6 +844,10 @@
           window.location.href="/mail"
         })
 
+        $('#mailWrite').on('click',function(){
+          window.location.href="/mail/mailSend";
+        })
+
         $('.participant-item').on('click',function(){
           let emplNm = $(this).find('.participant-name').text();
           let emplEmail = $(this).find('.participant-email').text();

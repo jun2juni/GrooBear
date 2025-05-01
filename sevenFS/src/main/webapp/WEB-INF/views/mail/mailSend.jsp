@@ -644,7 +644,7 @@
                 
                 <div style="display: flex; justify-content: flex-end; gap: 10px;">
                     <button id="cancel-template" type="button" style="padding: 8px 16px; border: 1px solid #d1d5db; background-color: white; border-radius: 4px; cursor: pointer; font-size: 14px;">취소</button>
-                    <button id="save-template" type="button" style="padding: 8px 16px; border: none; background-color: #5cb85c; color: white; border-radius: 4px; cursor: pointer; font-size: 14px;">저장</button>
+                    <button id="save-template" class="btn btn-primary" type="button" style="padding: 8px 16px; border: none; color: white; border-radius: 4px; cursor: pointer; font-size: 14px;">저장</button>
                 </div>
             </div>
             <div id="popup-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); z-index: 999;"></div>
