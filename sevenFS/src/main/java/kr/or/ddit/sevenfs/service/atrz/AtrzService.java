@@ -74,9 +74,6 @@ public interface AtrzService {
 	//전자결재 상세보기
 	public AtrzVO getAtrzDetail(String atrzDocNo);
 	
-	//급여명세서 기준월에 잇는지 없는지 확인 쿼리
-	public AtrzVO getMonthlyPayDoc(String empNo);
-	
 	//2) 결재선지정 후에 제목, 내용, 등록일자, 상태 update
 	public int insertUpdateAtrz(AtrzVO atrzVO);
 	//급여명세서 결재선 지정후 제목 내용 일자 상태 업데이트
@@ -142,6 +139,7 @@ public interface AtrzService {
 	
 	//기안서 임시저장
 	public int atrzDraftStorage(AtrzVO atrzVO, List<AtrzLineVO> atrzLineList, DraftVO draftVO);
+
 	
 
 

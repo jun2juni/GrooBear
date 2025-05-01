@@ -1,5 +1,8 @@
 package kr.or.ddit.sevenfs.controller.atrz;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,6 +13,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -31,7 +41,9 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kr.or.ddit.sevenfs.mapper.atrz.AtrzMapper;
 import kr.or.ddit.sevenfs.service.AttachFileService;
 import kr.or.ddit.sevenfs.service.atrz.AtrzService;
@@ -47,6 +59,7 @@ import kr.or.ddit.sevenfs.vo.atrz.DraftVO;
 import kr.or.ddit.sevenfs.vo.atrz.HolidayVO;
 import kr.or.ddit.sevenfs.vo.atrz.SalaryVO;
 import kr.or.ddit.sevenfs.vo.atrz.SpendingVO;
+import kr.or.ddit.sevenfs.vo.organization.DclzTypeVO;
 import kr.or.ddit.sevenfs.vo.organization.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -310,7 +323,81 @@ public class AtrzController {
 		return "atrz/companion";
 
 	}
-
+	
+//	//전자결재 엑셀 다운로드
+//    @GetMapping("/atrzExcelDownload")
+//    public void downloadExcel(
+//            HttpServletResponse response,
+//            Principal principal,
+//            @RequestParam(defaultValue = "") String keyword,
+//    		@RequestParam(defaultValue = "") String keywordSearch) throws IOException {
+//        
+//    	
+//    	String emplNo = principal.getName();
+//    	
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("emplNo", emplNo);
+//        map.put("keyword", keyword);
+//        map.put("keywordSearch", keywordSearch);
+//        
+//        List<DclzTypeVO> empDclzList = dclztypeService.emplDclzTypeList(map);
+//        
+//        // Excel 파일 생성
+//        XSSFWorkbook workbook = new XSSFWorkbook();
+//        XSSFSheet sheet = workbook.createSheet("근태현황 목록");
+//        
+//        // 헤더 스타일
+//        CellStyle headerStyle = workbook.createCellStyle();
+//        XSSFFont headerFont = workbook.createFont();
+//        headerFont.setBold(true);
+//        headerStyle.setFont(headerFont);
+//        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+//        
+//        // 헤더 행 생성
+//        Row headerRow = sheet.createRow(0);
+//        String[] headers = {"번호", "근무일자", "근태유형", "업무시작", "업무종료", "총 근무시간"};
+//        for (int i = 0; i < headers.length; i++) {
+//            Cell cell = headerRow.createCell(i);
+//            cell.setCellValue(headers[i]);
+//            cell.setCellStyle(headerStyle);
+//            sheet.setColumnWidth(i, 4000); // 칼럼 너비 설정
+//        }
+//        
+//        // 데이터 행 생성
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        
+//        int rowNum = 1;
+//        for (DclzTypeVO dclz : empDclzList) {
+//        	// 총 근무시간
+//        	String workHour = dclz.getWorkHour();
+//        	String workMinutes = dclz.getWorkMinutes();
+//        	
+//            Row row = sheet.createRow(rowNum++);
+//            row.createCell(0).setCellValue(rowNum - 1);
+//            row.createCell(1).setCellValue(dclz.getDclzNo().substring(0, 4)+"-"+dclz.getDclzNo().substring(4, 6)+"-"+dclz.getDclzNo().substring(6, 8));
+//            row.createCell(2).setCellValue(dclz.getCmmnCodeNm());
+//            row.createCell(3).setCellValue(dclz.getDclzBeginDt() != null ? sdf.format(dclz.getDclzBeginDt()) : "");
+//            row.createCell(4).setCellValue(dclz.getDclzEndDt() != null ? sdf.format(dclz.getDclzEndDt()) : "");
+//            if(workHour == null || workMinutes == null) {
+//            	row.createCell(5).setCellValue("미등록");
+//            }else {
+//            	row.createCell(5).setCellValue(workHour+"시간 "+workMinutes+"분");
+//            }
+//        }
+//        
+//        // 파일 다운로드 설정
+//        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+//        String fileName = URLEncoder.encode(keyword + "월" + "_근태현황_목록" + ".xlsx", "UTF-8");
+//        response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+//        
+//        // 파일 출력
+//        ServletOutputStream outputStream = response.getOutputStream();
+//        workbook.write(outputStream);
+//        workbook.close();
+//        outputStream.close();
+//    }
+//    //전자결재 엑셀 다운로드 수정하기
+    
 	// 문서양식번호 생성
 	// 양식선택후 확인 클릭시 입력폼 뿌려지고, DB의 데이터를 가져오는 작업
 	@ResponseBody
@@ -326,6 +413,7 @@ public class AtrzController {
 		String df_code = ""; // 문서 양식 코드
 		String docPrefix = ""; // 전자결재문서번호 접두어
 		AtrzVO resultDoc = null;
+		String empNo = customUser.getEmpVO().getEmplNo();   //로그인한 사람의 정보
 
 		// 문서양식 테이블에 db저장
 		int result = 0;
@@ -347,23 +435,10 @@ public class AtrzController {
 		} else if ("기안서".equals(form)) {
 			df_code = "C";
 			return "기안서";
-
+			//여기서부터 수정해라 
 		} else if ("급여명세서".equals(form)) {
-			 // 현재 로그인한 사용자 ID 또는 사번
-		    String empNo = customUser.getEmpVO().getEmplNo();
-
-		    // 이번 달 급여명세서가 있는지 확인
-		    AtrzVO existingPayDoc = atrzService.getMonthlyPayDoc(empNo); // 구현 필요
-
-		    if (existingPayDoc != null) {
-		        // 이미 존재하면 상세 페이지로 리다이렉트
-		        return "redirect:/payDetail?docId=" + existingPayDoc.getAtrzDocNo();
-		    } else {
-		        // 없으면 문서 작성 진입
-		    	df_code = "A";
-		        return "급여명세서";
-		    }
-
+			df_code = "A";
+		    return "급여명세서";
 		} else if ("급여계좌변경신청서".equals(form)) {
 			df_code = "E";
 			return "급여계좌변경신청서";

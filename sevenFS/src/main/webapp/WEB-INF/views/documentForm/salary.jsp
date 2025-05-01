@@ -242,7 +242,7 @@ text-align: center;
 															<tr>
 															<th scope="row" class="text-center align-middle">보너스</th>
 															<td class="text-end">
-																<fmt:formatNumber value="0" pattern="#,###" var="bonus" />
+																<fmt:formatNumber value="1000000" pattern="#,###" var="bonus" />
 																<input type="text" class="form-control text-end" id="bonus" name="bonus" value="${bonus}" onkeyup="commas(this)">
 															</td>
 															</tr>

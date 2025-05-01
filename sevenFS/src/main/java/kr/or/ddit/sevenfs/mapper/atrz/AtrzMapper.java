@@ -103,8 +103,6 @@ public interface AtrzMapper {
 	
 	//급여명세서 결재선 지정후 제목 내용 일자 상태 업데이트
 	public int insertUpdateMyAtrz(AtrzVO atrzVO);
-	//급여명세서 기준월에 잇는지 없는지 확인 쿼리
-	public AtrzVO getMonthlyPayDoc(String empNo);
 	
 	//연차신청서 상세보기
 	public HolidayVO holidayDetail(String atrzDocNo);

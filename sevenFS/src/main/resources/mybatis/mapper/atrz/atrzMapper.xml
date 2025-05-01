@@ -1576,6 +1576,20 @@
 			)	
 	</insert>
 	
+	<select id="getMonthlyPayDoc" parameterType="string" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">
+	    SELECT *
+	    FROM atrz
+	    WHERE ATRZ_DOC_NO LIKE 'A%' 
+	      AND DRAFTER_EMPNO = #{empNo}
+	      AND (
+	            TO_CHAR(ATRZ_DRFT_DT, 'YYYYMM') = TO_CHAR(SYSDATE, 'YYYYMM') OR
+	            TO_CHAR(ATRZ_COMPT_DT, 'YYYYMM') = TO_CHAR(SYSDATE, 'YYYYMM')
+	          )
+	    FETCH FIRST 1 ROWS ONLY
+	</select>
+	
+	
+	
 	<insert id="insertMyAtrzLine" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
 		INSERT INTO  /* AtrzMapper.insertMyAtrzLine */
 			atrz_line 
