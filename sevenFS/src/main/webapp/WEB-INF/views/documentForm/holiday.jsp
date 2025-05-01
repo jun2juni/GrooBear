@@ -321,6 +321,10 @@ select.ui-datepicker-year {
 										style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 										<span class="material-symbols-outlined fs-5">cancel</span> 취소
 									</a>
+									<!-- 자동 입력 버튼 -->
+									<div style="margin-left: auto;">
+										<button type="button" class="btn btn-outline-warning d-flex align-items-center gap-1" onclick="fillDefaultValues()">자동입력</button>
+									</div>
 								</div>
 							</div>
 
@@ -519,6 +523,7 @@ select.ui-datepicker-year {
 									</a>
 								</div>
 							</div>
+
 						<!-- 상하 버튼 추가 -->
 						</form>
 					</div>
@@ -538,6 +543,24 @@ select.ui-datepicker-year {
 document.addEventListener("DOMContentLoaded",function(){
 	dateCnt();
 })
+//자동입력 버튼클릭시
+function fillDefaultValues() {
+	// 유형 선택 (예: 연차)
+	const radio = document.querySelector('input[name="holiCode"][value="22"]');
+    if (radio) {
+    	radio.checked = true;
+    }
+
+	// 신청기간 설정 (예: 2025-05-01)
+	document.getElementById('s_ho_start').value = '2025-05-07';
+	// 신청기간 설정 (예: 2025-05-01)
+	document.getElementById('s_ho_end').value = '2025-05-07';
+
+	// 내용 입력 (예: 개인 사유)
+	document.getElementById('s_ho_tt').value = '개인 사유로 연차 신청합니다.';
+	// 내용 입력 (예: 개인 사유)
+	document.getElementById('s_ho_co').value = '긴급한 휴식이 필요합니다';
+    };
 
 //제목 너무 길게 입력하면 입력초과 스왈
 document.getElementById('s_ho_tt').addEventListener('input', function (event) {

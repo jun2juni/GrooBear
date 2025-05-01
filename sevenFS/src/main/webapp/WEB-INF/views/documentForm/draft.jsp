@@ -151,6 +151,10 @@ padding: 10px !important;
 							style="padding: 0.4rem 1rem; font-size: 0.95rem;"> 
 							<span class="material-symbols-outlined fs-5">cancel</span> 취소
 							</a>
+							<!-- 자동 입력 버튼 -->
+							<div style="margin-left: auto;">
+								<button type="button" class="btn btn-outline-warning d-flex align-items-center gap-1" onclick="fillDefaultValues()">자동입력</button>
+							</div>
 						</div>
 					</div>
 					<!-- 새로운 버튼 -->
@@ -219,7 +223,7 @@ padding: 10px !important;
 											<div style="padding: 10px 0;">
 												<div class="s_frm_title mb-2"><b>상세 내용</b></div>
 												<textarea class="form-control"
-													style="resize: none; height: 150px;" id="s_sp_co" name="atrzCn"
+													style="resize: none; height: 150px;" id="s_dr_co" name="atrzCn"
 													required="required" rows="2" cols="20" wrap="hard" placeholder="상세내용을 입력해주세요"></textarea>
 											</div>
 
@@ -272,6 +276,39 @@ padding: 10px !important;
 </main>
 <%@ include file="../layout/prescript.jsp" %>
 <script>
+//자동입력 버튼클릭시
+function fillDefaultValues() {
+	// 내용
+	document.getElementById('s_dr_tt').value = '신규 프로젝트 “[스마트 업무지원 시스템 구축]” 추진 기안';
+	// 상세내용
+	document.getElementById('s_dr_co').value = "아래와 같이 신규 프로젝트를 추진하고자 하오니 검토 및 승인 부탁드립니다.\n\n\
+	1. 기안 목적\n\
+	본 기안서는 스마트 업무지원 시스템 구축 프로젝트의 추진을 위한 사전 승인 요청입니다. 본 프로젝트는 업무 효율성 향상과 내부 프로세스 자동화를 목표로 합니다.\n\n\
+	2. 프로젝트 개요\n\
+	- 프로젝트명: 스마트 업무지원 시스템 구축\n\
+	- 추진 배경: 내부 문서관리 및 협업 시스템의 노후화로 인한 업무 비효율 발생\n\
+	- 목표: 사용자 친화적이고 확장 가능한 업무지원 플랫폼 개발\n\n\
+	3. 주요 일정\n\
+	- 기획/요구사항 정의: 2025.05.01 ~ 2025.05.15\n\
+	- 시스템 설계 및 개발: 2025.05.16 ~ 2025.07.15\n\
+	- 테스트 및 운영 반영: 2025.07.16 ~ 2025.07.31\n\n\
+	4. 필요 인력 및 역할\n\
+	- PM: 1명 (내부)\n\
+	- 개발자: 2명 (내부 1, 외부 1)\n\
+	- 디자이너 및 QA: 1명 (외부)\n\n\
+	5. 예산 계획\n\
+	- 총 예산: 약 2,000만원\n\
+	- 외부 인력 투입 비용, 테스트 장비 임차비 등 포함\n\n\
+	6. 기대 효과\n\
+	- 전사 업무 프로세스 표준화\n\
+	- 문서 처리 속도 향상 및 이력 추적 용이\n\
+	- 사용자 중심의 UI/UX로 직원 만족도 향상\n\n\
+	7. 기타\n\
+	- 보안 및 개인정보 관련 고려사항은 별도 검토 예정\n\
+	- 외주 인력 계약은 별도 기안으로 진행 예정";
+    };
+
+
 //제목 너무 길게 입력하면 입력초과 스왈
 document.getElementById('s_dr_tt').addEventListener('input', function (event) {
         const maxLength = 60; // 최대 길이 설정
