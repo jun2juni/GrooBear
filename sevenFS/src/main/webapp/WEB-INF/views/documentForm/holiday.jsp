@@ -539,6 +539,7 @@ select.ui-datepicker-year {
 
 
 <script>
+	
 //페이지 로딩시 합계계산
 document.addEventListener("DOMContentLoaded",function(){
 	dateCnt();

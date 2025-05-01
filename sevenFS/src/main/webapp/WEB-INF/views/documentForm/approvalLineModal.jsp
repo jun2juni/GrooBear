@@ -8,102 +8,92 @@
 	font-size: 1.1em;
 }
 </style>
-<!-- 결재선 지정 모달창 시작 -->
-	<div class="modal fade" id="atrzLineModal" tabindex="-1"
-		aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-xl">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1 class="modal-title fs-5" id="exampleModalLabel">결재선지정</h1>
-					<button type="button" class="btn-close"
-						data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<div class="row">
-						<!-- 좌측 결재선사원선택부분 시작 -->
-						<div class="col-md-3 flex-grow-1">
-							<div class="s_scroll" style="float: left; border: 1px solid lightgray; height: 500px; padding: 20px; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
-								<!-- 검색창 -->
-								<div style="flex-shrink: 0; margin-bottom: 20px;">
-									<c:import url="../organization/searchBar.jsp"></c:import>
-								</div>
-								<!-- 조직도 -->
-								<div style="flex-grow: 1; overflow: auto;">
-									<c:import url="../atrz/orgList.jsp"></c:import>
-								</div>
-							</div>
-						</div>
-						<!-- 좌측 결재선사원선택부분 끝 -->
-						<!-- 결재선 추가 삭제 버튼 공간 시작-->
-						<div class="col-sm-1 d-flex flex-column align-items-center" style="padding-top: 180px;">
-
-							<!-- 위쪽 세트 -->
-							<div class="d-flex flex-column align-items-center" style="gap: 5px; margin-bottom: 80px;">
-								<button id="add_appLine" type="button" class="btn btn-secondary">
-								<i class="lni lni-arrow-right"></i>
-								</button>
-								<button id="remo_appLine" type="button" class="btn btn-secondary">
-								<i class="lni lni-arrow-left"></i>
-								</button>
-							</div>
-							<!-- 아래쪽 세트 -->
-							<div class="d-flex flex-column align-items-center" style="gap: 5px;">
-								<button id="add_attLine" type="button" class="btn btn-secondary">
-								<i class="lni lni-arrow-right"></i>
-								</button>
-								<button id="remo_attLine" type="button" class="btn btn-secondary">
-								<i class="lni lni-arrow-left"></i>
-								</button>
-							</div>
-						</div>
-						<!-- 결재선 추가 삭제 버튼 공간 끝-->
-						<!-- 결재선리스트 -->
-						<div class="col-sm-7" style="float: left; text-align: center; margin-left: 20px;">
-							<div style="font-size: 1.2em; font-weight: bold;">결재선 리스트</div>
-							<div style="border-bottom: 1px solid lightgray; margin: 20px 0;"></div>
-							<table class="table">
-								<thead>
-									<tr>
-										<th scope="col">NO</th>
-										<th scope="col">이름</th>
-										<th scope="col">부서</th>
-										<th scope="col">직급</th>
-										<th scope="col" hidden>권한</th>
-										<th scope="col">전결여부</th>
-									</tr>
-								</thead>
-								<!-- 여기에 결재선지정 사람들이 들어가야함 -->
-								<tbody class="s_appLine_tbody_new" style="text-align: center;">
-								</tbody>
-							</table>
-							<div style="margin-top: 50px;">	
-								<div style="font-size: 1.2em;font-weight: bold;">참조자 리스트</div>
-									<div style="border-bottom: 1px solid lightgray; margin: 20px 0;"></div>
-									<table class="table">
-										<thead>
-											<tr>
-												<th scope="col" hidden>NO</th>
-												<th scope="col"></th>
-												<th scope="col">이름</th>
-												<th scope="col">부서</th>
-												<th scope="col">직급</th>
-												<th scope="col" hidden>권한</th>
-												<th scope="col" style="visibility: hidden;">전결여부</th>
-											</tr>
-										</thead>
-									<tbody class="s_appLine_tbody_ref" style="text-align: center;">
-									</tbody>
-									</table>
-							</div>
-						</div>
+	<!-- 결재선 지정 모달창 시작 -->
+	<div class="modal fade" id="atrzLineModal" tabindex="-1" aria-labelledby="atrzLineModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl modal-dialog-centered">
+		<div class="modal-content rounded-4 shadow-lg">
+			<div class="modal-header border-0 pb-0">
+			<h5 class="modal-title fw-bold" id="atrzLineModalLabel">결재선 지정</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+			</div>
+	
+			<div class="modal-body pt-2">
+			<div class="row g-4">
+				<!-- 좌측: 조직도 선택 -->
+				<div class="col-md-4">
+				<div class="border rounded-4 p-3 d-flex flex-column h-100 shadow-sm">
+					<!-- 검색창 -->
+					<div class="mb-3">
+					<c:import url="../organization/searchBar.jsp" />
+					</div>
+					<!-- 조직도 -->
+					<div class="flex-grow-1 overflow-auto" style="max-height: 500px;">
+					<c:import url="../atrz/orgList.jsp" />
 					</div>
 				</div>
-				<div class="modal-footer">
-					<button type="button" class="main-btn light-btn rounded-full btn-hover modalBtn"
-						data-bs-dismiss="modal">취소</button>
-					<button id="s_add_appLine_list" type="button" class="main-btn primary-btn rounded-full btn-hover modalBtn">확인</button>
+				</div>
+	
+				<!-- 중간: 버튼 -->
+				<div class="col-md-1 d-flex flex-column justify-content-center align-items-center py-3">
+				<!-- 결재선 버튼 -->
+				<div class="d-flex flex-column gap-3">
+					<button id="add_appLine" type="button" class="btn btn-outline-success btn-lg rounded-3">→</button>
+					<button id="remo_appLine" type="button" class="btn btn-outline-danger  btn-lg rounded-3">←</button>
+				</div>
+				<!-- 참조자 버튼 -->
+				<div class="d-flex flex-column gap-3 mt-4">
+					<button id="add_attLine" type="button" class="btn btn-outline-success btn-lg rounded-3">→</button>
+					<button id="remo_attLine" type="button" class="btn btn-outline-danger  btn-lg rounded-3">←</button>
+				</div>
+				</div>
+	
+				<!-- 우측: 결재선/참조자 리스트 -->
+				<div class="col-md-7">
+				<div class="border rounded-4 p-3 shadow-sm">
+					<!-- 결재선 리스트 -->
+					<h6 class="fw-bold">결재선 리스트</h6>
+					<hr />
+					<table class="table table-hover align-middle text-center">
+					<thead class="table-light">
+						<tr>
+						<th>NO</th>
+						<th>이름</th>
+						<th>부서</th>
+						<th>직급</th>
+						<th hidden>권한</th>
+						<th>전결여부</th>
+						</tr>
+					</thead>
+					<tbody class="s_appLine_tbody_new"></tbody>
+					</table>
+	
+					<!-- 참조자 리스트 -->
+					<h6 class="fw-bold mt-5">참조자 리스트</h6>
+					<hr />
+					<table class="table table-hover align-middle text-center">
+					<thead class="table-light">
+						<tr>
+						<th hidden>NO</th>
+						<th></th>
+						<th>이름</th>
+						<th>부서</th>
+						<th>직급</th>
+						<th hidden>권한</th>
+						<th style="visibility: hidden;">전결여부</th>
+						</tr>
+					</thead>
+					<tbody class="s_appLine_tbody_ref"></tbody>
+					</table>
+				</div>
 				</div>
 			</div>
+			</div>
+	
+			<div class="modal-footer border-0 mt-3">
+			<button type="button" class="btn btn-light rounded-4 px-5 py-2" data-bs-dismiss="modal">취소</button>
+			<button id="s_add_appLine_list" type="button" class="btn btn-primary rounded-4 px-5 py-2">확인</button>
+			</div>
+		</div>
 		</div>
 	</div>
-	<!-- 결재선지정 모달창 끝 -->
+	<!-- 결재선 지정 모달창 끝 -->

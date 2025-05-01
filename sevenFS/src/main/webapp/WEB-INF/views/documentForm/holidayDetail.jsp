@@ -391,9 +391,9 @@
 																class="form-control s_ho_end d-inline-block mt-2"
 																style="width: 250px; cursor: context-menu;" value="${onlyEnDate}" disabled
 																id="s_ho_end" />
-															<div class="d-inline-block" >
+															<!-- <div class="d-inline-block" >
 																(총 <span id="s_date_calView">0</span>일) &nbsp;&nbsp;&nbsp;
-															</div>
+															</div> -->
 															<!-- <div class="d-inline-block" >
 																(총 <span id="s_date_cal">0</span>일)
 															</div> -->
@@ -541,8 +541,9 @@
 
 
 <script>
-document.addEventListener("DOMContentLoaded", ()=>{
 
+document.addEventListener("DOMContentLoaded", ()=>{
+	dateCnt(); 
 //결재하기 버튼을 눌러서 업데이트 진행하기 
 $("#atrzDetailappBtn").on("click", function() {
 	const atrzDocNo = $("#atrzDocNo").val(); // 문서 번호 가져오기
@@ -723,7 +724,103 @@ $("#atrzDetailComBtn").on("click", function () {
 		}
 	});
 
+	// 총 일수 계산 함수
+function dateCnt() {
+	// 공가(23) 또는 병가(24)일 경우 총일수를 0으로 설정
+	if ($("input[name='holiCode']:checked").val() === '23' || $("input[name='holiCode']:checked").val() === '24') {
+		$('#s_date_cal').text('0');
+		//신청종료일자를 초기화 시켜줘
+		//신청종료일자를 없애고 다시 셋팅할수있게 해줘
+		
+		return;
+	}
+	// 날짜 계산
+	var start = new Date($('#s_ho_start').val() + 'T' + $('#s_start_time').val());
+	var end = new Date($('#s_ho_end').val() + 'T' + $('#s_end_time').val());
+	// 일수 구하기
+	var diffDay = (end.getTime() - start.getTime()) / (1000*60*60*24);
+	// 시간 구하기(휴식시간 1시간 제외)
+	var diffTime = (end.getTime() - start.getTime()) / (1000*60*60) -1;
+	
+	// 신청 종료시간이 시작시간보다 빠를 때
+	if(start > end) {
+		swal({
+				title: "종료 시간이 시작 기간보다 빠를 수 없습니다!",
+				text: "신청 종료 시간을 다시 선택해주세요.",
+				icon: "error",
+				closeOnClickOutside: false,
+				closeOnEsc: false,
+				button: "확인"
+			});
+		$("#s_end_time").val('');
+	}
+	
+	if((0 < diffDay && diffDay < 1) && (0 < diffTime && diffTime < 8)) {
+		$('#s_date_cal').text('0.5'); // 반차
+		$('#s_date_calView').text('0.5'); // 반차
+	} else if(diffTime >= 1 && diffTime >= 8) {
+		
+		// 평일 계산할 cnt 선언
+		let cnt = 0;
+		while(true) {
+			let tmpDate = new Date(start); // Clone the start date
+			// 시작시간이 끝나는시간보다 크면
+			if(tmpDate.getTime() > end.getTime()) {
+				break;
+			} else { // 아니면
+				let tmp = tmpDate.getDay();
+				// 평일일 때 
+				if(tmp != 0 && tmp != 6) {
+					cnt++;
+				} 
+				start.setDate(start.getDate() + 1);
+			}
+		}
+		
+		// 날짜 계산
+		let diff = Math.abs(end.getTime() - start.getTime());
+		diff = Math.ceil(diff / (1000 * 3600 * 24));
+		
+		// cnt string으로 변환하여 일수 나타내기
+		var cntStr = String(cnt);
+		$('#s_date_cal').text(cntStr);
+		$('#s_date_calView').text(cntStr);
+		
+		// 연차사용신청일을 변수에 담기
+		let holidayUsageDates = {
+			startDate: $('#s_ho_start').val(),
+			endDate: $('#s_ho_end').val()
+		};
+		
+	} else {
+		$('#s_date_cal').text('0');
+		$('#s_date_calView').text('0');
+	}
+}
+// 오전반차 및 오후반차 선택 시 시간 설정 및 총일수 계산
+$("input[name='holiCode']").on("change", function () {
+	const selectedValue = $(this).val();
+	if (selectedValue === "20") { // 오전반차
+		$("#s_start_time").val("09:00:00").prop("disabled", true).show();
+		$("#s_end_time").val("13:00:00").prop("disabled", true).show();
+		$("#s_ho_end").val($("#s_ho_start").val()); // 종료일을 시작일과 동일하게 설정
+		$("#s_ho_end").hide();
+		$("#halfTypeArea").hide();
+	} else if (selectedValue === "21") { // 오후반차
+		$("#s_start_time").val("14:00:00").prop("disabled", true).show();
+		$("#s_end_time").val("18:00:00").prop("disabled", true).show();
+		$("#s_ho_end").val($("#s_ho_start").val()); // 종료일을 시작일과 동일하게 설정
+		$("#s_ho_end").hide();
+		$("#halfTypeArea").hide();
+	} else {
+		$("#s_start_time").val("09:00:00").prop("disabled", false).hide();
+		$("#s_end_time").val("18:00:00").prop("disabled", false).hide();
+		$("#halfTypeArea").hide();
+	}
+	dateCnt(); // 총일수 계산 호출
+});
 });//end DOMContentLoaded
+
 
 
 </script>

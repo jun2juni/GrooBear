@@ -385,8 +385,8 @@ padding: 10px !important;
 																</td>
 																<td>
 																	<select class="form-select s_select" aria-label="Default select example" disabled>
-																		<option value="C" <c:if test="${atrzVO.spendingVO.paymentMethod eq 'C'}">checked</c:if>>신용카드</option>
-																		<option value="A" <c:if test="${atrzVO.spendingVO.paymentMethod eq 'A'}">checked</c:if>>가상계좌</option>
+																		<option value="C" <c:if test="${atrzVO.spendingVO.paymentMethod eq 'C'}">selected</c:if>>신용카드</option>
+																		<option value="A" <c:if test="${atrzVO.spendingVO.paymentMethod eq 'A'}">selected</c:if>>가상계좌</option>
 																</select></td>
 															</tr>
 
