@@ -78,7 +78,7 @@ $(function(){
 			$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/bankAccountForm");
 			$("#s_document_form").html('');
 		}else if(selectValue=="s_certifi_form"){  //재직증명서
-			$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/certificationForm");
+			$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/employmentCertForm");
 			$("#s_document_form").html('');
 		}else if(selectValue=="s_resign_form"){  //퇴사신청서
 			$("#s_document_form").load("<%=request.getContextPath()%>/atrz/selectForm/resignationForm");
@@ -125,7 +125,7 @@ $(function(){
 	            } else if (result == "급여계좌변경신청서") {
 	                location.href = "selectForm/bankAccount";
 	            } else if (result == "재직증명서") {
-	                location.href = "selectForm/certification";
+	                location.href = "selectForm/employmentCert";
 	            } else {
 	                location.href = "selectForm/resignation";
 	            }

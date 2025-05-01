@@ -1620,5 +1620,19 @@ public class AtrzController {
 		model.addAttribute("title", "급여계좌변경신청서");
 		return "documentForm/bankAccount";
 	}
+	
+	// 재직증명서 양식조회
+	@GetMapping("/selectForm/employmentCertForm")
+	public String employmentCertForm(Model model) {
+		model.addAttribute("title", "재직증명서");
+		return "documentForm/employmentCertForm";
+	}
+
+	// 재직증명서 입력양식
+	@GetMapping("/selectForm/employmentCert")
+	public String employmentCert(Model model) {
+		model.addAttribute("title", "재직증명서");
+		return "documentForm/employmentCert";
+	}
 
 }
