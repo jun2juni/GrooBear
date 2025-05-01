@@ -39,7 +39,6 @@
 			    </div>
 			</div>
 			 --%>
-			
 			<div class="input-style-1 form-group col-8" style="margin-left: 15%;">
 				<label for="cmmnCodeNm" class="form-label required">신규 부서팀명 <span
 					class="text-danger">*</span></label> 
@@ -57,15 +56,20 @@
 				<button type="button" id="insertBtn"
 					class="main-btn primary-btn-light square-btn btn-hover btn-sm">확인</button>
 			</div>
+			<input type="checkbox" id="depInsertChkBox">
 		</div>
 	</div>
 </form>    
 
 <script>
 
-document.getElementById("insertBtn").addEventListener("click", function() {
-   
-});
+// 체크박스 부서 정보 입력
+$(function(){
+	$('#depInsertChkBox').on('click' , function(){
+		$('#cmmnCodeNm').val('404 팀');
+		$('#cmmnCodeDc').val('2024.05.08 신규 팀');
+	})
+})
 
 </script>
 

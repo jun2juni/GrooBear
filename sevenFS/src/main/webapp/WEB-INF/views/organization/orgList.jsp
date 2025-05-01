@@ -4,7 +4,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-
     
   	<div class="d-flex justify-content-between">
        <button type="button" id="allBtn" class="main-btn dark-btn rounded-full btn-hover btn-xs" onclick="openTree();">전체</button>    <!-- 성실 수정함 버튼 타입 버튼 추가 -->
@@ -13,7 +12,7 @@
 	            <%-- <sec:authentication property="principal" /> --%>
 	            <sec:authorize access="hasRole('ROLE_ADMIN')">
 	                <button id="deptInsert" class="main-btn dark-btn-light rounded-full btn-hover btn-xs"
-	                        data-bs-toggle="modal" data-bs-target="#deptInsertModal" onclick="deptInsert();">부서등록
+	                        data-bs-toggle="modal" data-bs-target="#deptInsertModal" onclick="deptInsert();">하위 부서 등록
 	                </button>
 	                <button id="emplInsert" class="main-btn dark-btn-light rounded-full btn-hover btn-xs"
 	                      	onclick="emplInsert();">사원등록
@@ -87,7 +86,7 @@
                 'core':
                     {
                         'data': jsonData,
-                        "check_callback" : true
+                        "check_callback" : true,
                     }
             })
         };

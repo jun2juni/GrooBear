@@ -206,6 +206,7 @@
 		            <textarea rows="4" name="partclrMatter" id="partclrMatter" placeholder="최대 100글자까지 입력 가능합니다." maxlength="100"></textarea>
 	            </div>
 	            </form>
+	            <input type="checkbox" id="empInsertChkBox">
             	<div class="invalid-feedback"></div>
 			    <div class="content text-center">
 			    <button type="submit" id="emplInsertBtn" class="main-btn primary-btn-light square-btn btn-hover btn-sm mr-5">확인</button>
@@ -230,6 +231,19 @@
 } 
  
 $(function(){
+	// 체크박스 누르면 사원정보 입력
+	$('#empInsertChkBox').on('click' , function(){
+		$('#emplNm').val('이칠이');
+		$('#telno').val('01022227777');
+		$('#selBirth').val('1999-08-23');
+		$('#emailId').val('e7e');
+		$('#selEcnyDate').val('2025-05-07');
+		$('#anslry').val('2,100,000');
+		$('#acnutno').val('2227777222277');
+		$('#bankNm').val('IBK기업은행');
+		$('#detailAdres').val('대덕인재개발원 3층');
+		$('#partclrMatter').val('2025.05.07 신규 입사자 / 5년 경력 있음');
+	})
 
 	// 급여 입력시 쉼표처리
 	const salaryInput = document.getElementById("anslry");

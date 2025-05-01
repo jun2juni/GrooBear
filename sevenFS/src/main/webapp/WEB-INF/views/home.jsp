@@ -597,13 +597,19 @@ console.log(todEndTime); */
 // 메인페이지 로딩시 공지사항 경로로 기본값 세팅
 $('#bbsMoreBtn').attr('href', '/bbs/bbsList?bbsCtgryNo=1');
 
-$(function(){	
-	// 퇴근 한번더 누르면 swal 띄우기
+$(function(){
 	const todWoTime = $('#todayWorkTime').val();
 	if(todWoTime != null && todWoTime != ''){
-		$('#workStartButton').prop('disabled', true);
+		$('#workStartButton').on('click', function(){
+			swal({
+				icon : 'error',
+				text : '이미 출근이 등록되었습니다.'
+			})
+			.then(() => {
+				$('#workStartButton').prop('disabled', true);
+			})
+		})
 	}
-	
 	// 공지사항 눌렀을때 1전송
 	$('#notice-tab').on('click', function(e){
 		e.preventDefault();

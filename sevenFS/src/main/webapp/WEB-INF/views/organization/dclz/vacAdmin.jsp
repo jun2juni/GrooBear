@@ -96,18 +96,20 @@ thead th {
               <div class="card-style">
                 <div id="searchAddClass" class="table-wrapper table-responsive fixed-header-table" style="overflow: auto;">
                <table class="table">
-                  <div class="d-flex justify-content-between align-items-center mb-40">
+                  <div class="d-flex justify-content-between align-items-center mb-20">
 	                  <h6 class="mb-0">전체사원 연차 관리</h6>
                   <div class="d-flex">
-                  <form action="/dclz/vacationExcelDownload" method="get" id="vacationExcelForm">
-                  	  <input type="hidden" id="vacationKeywordName" name="keywordName">
-                  	  <input type="hidden" id="vacationKeywordDept" name="keywordDept">
-                  	  <input type="hidden" id="vacationCurrentPage" name="currnetPage">
-	              	  <button type="submit" class="btn-xs main-btn success-btn btn-hover mr-20 rounded">엑셀 다운로드</button>
-	              </form>    
-	                  <p id="emplTotalCnt" class="mb-0 text-sm text-muted">총 ${total}명</p>
+	               	 <form action="/dclz/vacationExcelDownload" method="get" id="vacationExcelForm">
+	                  	  <input type="hidden" id="vacationKeywordName" name="keywordName">
+	                  	  <input type="hidden" id="vacationKeywordDept" name="keywordDept">
+	                  	  <input type="hidden" id="vacationCurrentPage" name="currnetPage">
+		              	  <button type="submit" class="btn-xs main-btn success-btn btn-hover mr-20 rounded">엑셀 다운로드</button>
+		              </form>    
+	                  <p id="emplTotalCnt" class="mb-0 text-sm text-muted mr-20">총 ${total}명</p>
                   </div>
                   </div>
+                 <!--  <div class="d-flex justify-content-end  mb-20">
+                  </div> -->
                     <thead>
 		            <%-- ${allEmplVacList} --%>
                       <tr>

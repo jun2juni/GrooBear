@@ -58,8 +58,8 @@
 			   	          </div>
 
 				     <div class="content text-center">
-				     <button id="updateBtn" class="main-btn success-btn-light square-btn btn-hover btn-sm mr-5">확인</button>
-				     <a href="/orglistAdmin" class="main-btn danger-btn-light square-btn btn-hover btn-sm">수정취소</a>
+				     <button id="updateBtn" class="main-btn active-btn-light btn-hover btn-sm mr-5">확인</button>
+				     <a href="/orglistAdmin" class="main-btn dark-btn-light square-btn btn-hover btn-sm">수정취소</a>
 				     </div>
 				   </div>
 				</div>   
