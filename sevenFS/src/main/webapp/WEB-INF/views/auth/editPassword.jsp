@@ -1,343 +1,217 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-
-<%-- 페이지 타이틀 설정 --%>
 <c:set var="title" scope="application" value="비밀번호 수정" />
 <sec:authentication property="principal.empVO" var="emp" />
 
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${title}</title>
-    <%@ include file="../layout/prestyle.jsp" %>
-    <style>
-       body {
-        background-color: #f4f6f9;
-        font-family: 'Noto Sans KR', sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${title}</title>
+  <%@ include file="../layout/prestyle.jsp" %>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f7fa;
     }
-
-    .auth-container {
-        display: flex;
-        max-width: 900px; /* Reduced width */
-        width: 100%;
-        min-height: 60vh; /* Adjusted height */
+    .pw-wrapper {
+      display: flex;
+      height: 100vh;
     }
-
-    .auth-left {
-        flex: 1;
-        background: linear-gradient(234deg, #cdefff 0%, #aee6f9 50%, #89c8e6 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #333;
-        padding: 2rem;
+    .pw-left {
+      flex: 1.3;
+      background: linear-gradient(to bottom right, rgba(60,246,10,0.49), rgba(19,129,248,0.68));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 60px;
     }
-
-    .auth-left h1 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
+    .pw-left h1 {
+      font-size: 2.8rem;
+      margin-bottom: 20px;
     }
-
-    .auth-left p {
-        font-size: 1.2rem;
+    .pw-left p {
+      font-size: 1.2rem;
+      max-width: 480px;
+      text-align: center;
+      line-height: 1.6;
+      font-weight: 500;
     }
-
-    .auth-right {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 3rem 2rem;
+    .pw-right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      background-color: #ffffff;
     }
-
-    .auth-card {
-        background-color: #fff;
-        padding: 2rem;
-        border-radius: 1rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        max-width: 450px; /* Reduced width */
-        margin: 0 auto; /* Center the card */
+    .pw-form {
+      width: 100%;
+      max-width: 400px;
     }
-
-    .form-group label {
-        font-weight: 500;
+    .form-label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: block;
+      color: #333;
     }
-
     .form-control {
-        border-radius: 0.5rem;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      margin-bottom: 1.2rem;
     }
-
     .btn {
-        border-radius: 0.5rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
     }
-
-    .btn-success:hover {
-        background-color: #28a745;
+    .btn:hover {
+      background-color: #0056b3;
     }
-
-    .btn-dark:hover {
-        background-color: #333;
+    .btn-cancel {
+      background-color: #6c757d;
     }
-
-    .btn + .btn {
-        margin-left: 1rem;
+    .btn-cancel:hover {
+      background-color: #5a6268;
     }
-
-    #newPasswordMsg, #pwMsg {
-        font-size: 0.875rem;
+    .alert-danger {
+      background-color: #ffe6e6;
+      color: #d63031;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 1rem;
     }
-
-    #changePwButton {
-        background-color: #b3e5fc;
-        border: none;
-        color: #0d3c61;
-        font-weight: bold;
-        border-radius: 6px;
+    .msg {
+      font-size: 0.875rem;
+      margin-top: -1rem;
+      margin-bottom: 1rem;
+      font-weight: 500;
     }
-
-    #changePwButton:hover {
-        background-color: #a0daf5;
-    }
-
-
-    #passwordCancleBtn:hover {
-        background-color: gray;
-    }
-    </style>
+  </style>
 </head>
 <body>
-
-<main class="auth-container">
-    <!-- 좌측 비주얼 영역 -->
-    <div class="auth-left">
-        <div>
-            <h1>비밀번호 변경</h1>
-            <p class="text-muted mt-3" style="font-size: 0.9rem;">
-                * 영문 대소문자, 숫자, 특수문자 포함 8~16자<br>
-                * 이전과 다른 비밀번호를 사용해주세요.
-            </p>
-        </div>
-    </div>
-
-    <!-- 우측 폼 영역 -->
-    <div class="auth-right">
-        <div class="auth-card">
-            <input type="hidden" id="hiddenEmplNo" value="${emp.emplNo}">
-
-            <div class="form-group mb-3">
-                <label for="currentPassword">현재 비밀번호</label>
-                <input type="password" id="currentPassword" class="form-control" placeholder="현재 비밀번호를 입력해주세요" required maxlength="30" />
-                <div class="invalid-feedback">현재 비밀번호를 입력해주세요.</div>
-            </div>
-
-            <div class="form-group mb-3">
-                <label for="newPassword">새 비밀번호</label>
-                <input type="password" id="newPassword" class="form-control"
-                       placeholder="새 비밀번호를 입력해주세요"
-                       pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$"
-                       oninput="inputNewPassword()" maxlength="16" required />
-                <div class="invalid-feedback">새 비밀번호를 입력해주세요.</div>
-                <p id="newPasswordMsg" style="color: red; font-weight: bold;"></p>
-            </div>
-
-            <div class="form-group mb-4">
-                <label for="confirmPassword">새 비밀번호 확인</label>
-                <input type="password" id="confirmPassword" class="form-control"
-                       placeholder="새 비밀번호를 다시 입력해주세요"
-                       oninput="inputPassword()" maxlength="30" required />
-                <div class="invalid-feedback">비밀번호 확인이 일치하지 않습니다.</div>
-                <p id="pwMsg" style="color: red; font-weight: bold;"></p>
-            </div>
-
-            <c:if test="${param.error == 'true'}">
-                <div class="alert alert-danger text-center">
-                    <strong>비밀번호 변경에 실패했습니다.</strong>
-                </div>
-            </c:if>
-
-            <div class="d-flex justify-content-between">
-                <button type="button" id="changePwButton" class="btn btn-success w-100">변경</button>
-                <button type="button" class="btn dark-btn-light w-100" id="passwordCancleBtn">취소</button>
-            </div>
-        </div>
-    </div>
-</main>
+<div class="pw-wrapper">
+  <div class="pw-left">
+    <h1 class="text-white">비밀번호 변경</h1>
+    <p>* 영문 대소문자, 숫자, 특수문자 포함 8~16자<br>* 이전과 다른 비밀번호를 사용해주세요.</p>
+  </div>
+  <div class="pw-right">
+    <form class="pw-form" novalidate>
+      <input type="hidden" id="hiddenEmplNo" value="${emp.emplNo}" />
+      <label for="currentPassword" class="form-label">현재 비밀번호</label>
+      <input type="password" id="currentPassword" class="form-control" placeholder="현재 비밀번호를 입력해주세요" maxlength="30" required />
+      <label for="newPassword" class="form-label">새 비밀번호</label>
+      <input type="password" id="newPassword" class="form-control" placeholder="새 비밀번호를 입력해주세요"
+             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$"
+             oninput="inputNewPassword()" maxlength="16" required />
+      <p id="newPasswordMsg" class="msg" style="color: tomato;"></p>
+      <label for="confirmPassword" class="form-label">새 비밀번호 확인</label>
+      <input type="password" id="confirmPassword" class="form-control" placeholder="새 비밀번호를 다시 입력해주세요"
+             oninput="inputPassword()" maxlength="30" required />
+      <p id="pwMsg" class="msg" style="color: tomato;"></p>
+      <c:if test="${param.error == 'true'}">
+        <div class="alert-danger">비밀번호 변경에 실패했습니다.</div>
+      </c:if>
+      <button type="button" class="btn mt-4 mb-3" id="changePwButton">비밀번호 변경</button>
+      <button type="button" class="btn btn-cancel" id="passwordCancleBtn">취소</button>
+    </form>
+  </div>
+</div>
 <%@ include file="../layout/prescript.jsp" %>
 <script type="text/javascript">
-	
-function inputNewPassword(){
-	// 비밀번호 형식에 맞는지 확인하기
-	let newPassword = $('#newPassword').val();
-	let confirmPassword = $('#confirmPassword').val();
-	const patternStr = $('#newPassword').attr('pattern');
-	const pattern = new RegExp(patternStr);
-	
-	
-	//console.log('newPassword : ' , newPassword);
-	//console.log('pattern : ' , pattern);
-	if(!pattern.test(newPassword)){
-		$('#newPasswordMsg').text('8~16자의 영문 대소문자, 숫자 및 특수문자 사용').css('color', 'tomato');
-		$('#changePwButton').prop('disabled', true);
-	}else{
-		$('#newPasswordMsg').text('사용 가능한 비밀번호 입니다.').css('color', 'green');
-		$('#changePwButton').prop('disabled', false);
-	}
-	
+function inputNewPassword() {
+  const newPassword = $('#newPassword').val();
+  const patternStr = $('#newPassword').attr('pattern');
+  const pattern = new RegExp(patternStr);
+  if (!pattern.test(newPassword)) {
+    $('#newPasswordMsg').text('8~16자의 영문 대소문자, 숫자 및 특수문자 사용').css('color', 'tomato');
+    $('#changePwButton').prop('disabled', true);
+  } else {
+    $('#newPasswordMsg').text('사용 가능한 비밀번호입니다.').css('color', 'green');
+    $('#changePwButton').prop('disabled', false);
+  }
 }
 
-function inputPassword(){
-	// 현재 비밀번호
-	let currentPassword = $('#currentPassword').val();
-	// 새 비밀번호
-	let newPassword = $('#newPassword').val();
-	// 새 비밀번호 확인
-	let confirmPassword = $('#confirmPassword').val();
-	//console.log('바꿀 비번 : ' , newPassword);
-	//console.log('입력중인 : ' , confirmPassword);
+function inputPassword() {
+  const newPassword = $('#newPassword').val();
+  const confirmPassword = $('#confirmPassword').val();
+  if (confirmPassword === '') {
+    $('#pwMsg').text('');
+    return;
+  }
+  if (newPassword === confirmPassword) {
+    $('#pwMsg').text('비밀번호가 일치합니다.').css('color', 'green');
+  } else {
+    $('#pwMsg').text('비밀번호가 일치하지 않습니다.').css('color', 'tomato');
+  }
+}
 
-	if(confirmPassword === ''){
-		$('#pwMsg').text('');
-		return;
-	}
-	if(newPassword === confirmPassword){
-		$('#pwMsg').text('비밀번호가 일치합니다.').css('color', 'green');
-	}else{
-		$('#pwMsg').text('비밀번호가 일치하지 않습니다.').css('color', 'tomato');
-	}
-}	
+$(function () {
+  $('#changePwButton').on('click', function () {
+    const currentPassword = $('#currentPassword').val();
+    const newPassword = $('#newPassword').val();
+    const confirmPassword = $('#confirmPassword').val();
+    if (!newPassword || !confirmPassword) {
+      swal({ icon: 'warning', text: '변경할 비밀번호를 입력해주세요.', buttons: { confirm: { text: '확인', value: true } } });
+      return;
+    }
+    const patternStr = $('#newPassword').attr('pattern');
+    const pattern = new RegExp(patternStr);
+    if (!pattern.test(newPassword)) {
+      swal({ icon: 'error', text: '비밀번호 형식이 올바르지 않습니다.', buttons: { confirm: { text: '확인', value: true } } });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      swal({ icon: 'error', text: '새 비밀번호가 일치하지 않습니다.', buttons: { confirm: { text: '확인', value: true } } });
+      return;
+    }
+    const emplNo = $('#hiddenEmplNo').val();
+    const formData = new FormData();
+    formData.append('currentPassword', currentPassword);
+    formData.append('confirmPassword', confirmPassword);
 
-$(function(){
-	// 현재 비밀번호
-	let currentPassword = $('#currentPassword').val();
-/* 	// 비밀번호 형식에 맞는지 확인하기
-	let newPassword = $('#newPassword').val();
-	let confirmPassword = $('#confirmPassword').val(); */
-	
-	//----- 비동기로 비밀번호 보내기
-	$('#changePwButton').on('click', function(){
-		
-		// 현재 비밀번호
-		let currentPassword = $('#currentPassword').val();
-		// 새 비밀번호
-		let newPassword = $('#newPassword').val();
-		// 새 비밀번호 확인
-		let confirmPassword = $('#confirmPassword').val();
-		//console.log('바꿀 비번 : ' , newPassword);
-		if(newPassword == null || newPassword == '' && confirmPassword == null || confirmPassword == ''){
-				swal({
-					icon : 'warning',
-					text : '변경할 비밀번호를 입력해주세요.',
-					buttons : {
-						confirm : {
-							text : '확인',
-							value : true
-						}
-					}
-				});
-			return ;
-		}
-		
-		// 비밀번호 형식에 맞는지 확인하기
-		const patternStr = $('#newPassword').attr('pattern');
-		const pattern = new RegExp(patternStr);
-		
-		// 로그인된 사원번호
-		const emplNo = $('#hiddenEmplNo').val();
-		//console.log('입력중인 : ' , $('#confirmPassword').val());
-	 	if(newPassword !== confirmPassword){
-			swal({
-				icon : 'error',
-				text : '새 비밀번호가 일치하지 않습니다.',
-				buttons : {
-					confirm : {
-						text : '확인',
-						value : true
-					}
-				}
-			})
-			return;
-		} 
-		const formData = new FormData();
-		formData.append('currentPassword', $('#currentPassword').val());
-		formData.append('confirmPassword', $('#confirmPassword').val());
-		
-		fetch('/auth/changePassword', {
-			method : 'POST',
-	        body : formData
-		})
-		.then(resp => resp.text())
-		.then(res => {
-			console.log('결과 확인 : ' , res);
-			if(res === '성공'){
-				swal({
-					icon : 'success',
-					text : '비밀번호가 변경되었습니다.',
-					buttons : {
-						confirm : {
-							text : '확인',
-							value : true
-						}
-					}
-				})
-				.then(() => {
-					location.href = '/emplDetailHeader?emplNo='+emplNo;
-				})
-			}
-			else if(res === '실패'){
-				swal({
-					icon : 'error',
-					text : '비밀번호 변경에 실패했습니다.',
-					buttons : {
-						confirm : {
-							text : '확인',
-							value : true
-						}
-					}
-				})
-				.then(() => {
-					$('#currentPassword').focus();
-					$('#newPassword').val('');
-					$('#confirmPassword').val('');
-					$('#pwMsg').text('');
-				})
-			}
-		}) 
-	})
-	
-	// 비밀번호 취소 눌렀을경우
-	$('#passwordCancleBtn').on('click' , function(){
-		const emplNo = $('#hiddenEmplNo').val();
-		swal({
-			text : '비밀번호 변경을 취소하시겠습니까?',
-			icon : 'warning',
-			buttons : {
-				confirm : {
-					text : '확인',
-					value : true
-				}
-			}
-		})
-		.then(() => {
-			location.href = '/emplDetailHeader?emplNo='+emplNo;
-		})
-	})
-})
-	
+    fetch('/auth/changePassword', {
+      method: 'POST',
+      body: formData
+    })
+    .then(resp => resp.text())
+    .then(res => {
+      if (res === '성공') {
+        swal({ icon: 'success', text: '비밀번호가 변경되었습니다.', buttons: { confirm: { text: '확인', value: true } } })
+          .then(() => location.href = '/emplDetailHeader?emplNo=' + emplNo);
+      } else {
+        swal({ icon: 'error', text: '비밀번호 변경에 실패했습니다.', buttons: { confirm: { text: '확인', value: true } } })
+          .then(() => {
+            $('#currentPassword').focus();
+            $('#newPassword').val('');
+            $('#confirmPassword').val('');
+            $('#pwMsg').text('');
+          });
+      }
+    });
+  });
+
+  $('#passwordCancleBtn').on('click', function () {
+    const emplNo = $('#hiddenEmplNo').val();
+    swal({ text: '비밀번호 변경을 취소하시겠습니까?', icon: 'warning', buttons: { confirm: { text: '확인', value: true } } })
+      .then(() => location.href = '/emplDetailHeader?emplNo=' + emplNo);
+  });
+});
 </script>
-
 </body>
 </html>
-	
