@@ -139,7 +139,7 @@ String serverDate = dateFormat.format(now);
 					<div class="col-md-3"
 						style="position: sticky; top: 112px; z-index: 1; max-height: 80vh;">
 						<!-- 출퇴근-->
-						<%--<div class="card-style mb-4"
+						<div class="card-style mb-4"
 							style="box-shadow: 1px 1px 20px 1px rgba(0, 0, 2, 0.1);">
 							<c:import url="./organization/dclz/workButton.jsp" />
 							<!-- 출퇴근 버튼 -->
@@ -152,7 +152,7 @@ String serverDate = dateFormat.format(now);
 											id="todayWorkTime">
 										<button type="button"
 											id="${todayWorkTime != null ? '' : 'workStartButton'}"
-											class="btn-sm main-btn primary-btn-light rounded-full btn-hover beginWorkBtn">출근</button>
+											class="btn btn-outline-primary rounded-pill px-4 py-2 beginWorkBtn">🏃 출근</button>
 										<p id="startTime">${todayWorkTime != null ? todayWorkTime : '출근 전'}</p>
 									</div>
 									<div class="content">
@@ -160,16 +160,16 @@ String serverDate = dateFormat.format(now);
 											id="workEndTime">
 										<button type="button"
 											id="${workEndButton != null ? '' : 'workEndButton'}"
-											class="btn-sm main-btn danger-btn-light rounded-full btn-hover">퇴근</button>
+											class="btn btn-outline-danger rounded-pill px-4 py-2">🚩 퇴근</button>
 										<p id="endTime">${todayWorkEndTime != null ? todayWorkEndTime : '퇴근 전'}</p>
 									</div>
 								</div>
 							</div>
-						</div>--%>
+						</div>
 						<!-- 출퇴근 -->
 						
 						<!-- 출퇴근 카드 -->
-					  <div class="card-style p-4 mb-4 text-center"
+					  <%-- <div class="card-style p-4 mb-4 text-center"
 						   style="box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); backdrop-filter: blur(12px); border-radius: 16px; background-color: rgba(255, 255, 255, 0.6);">
 					  
 						<!-- 서버 날짜 -->
@@ -209,7 +209,7 @@ String serverDate = dateFormat.format(now);
 							</p>
 						  </div>
 						</div>
-					  </div>
+					  </div> --%>
 
 
 						<!-- 메일 + 일정 -->
