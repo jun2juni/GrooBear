@@ -872,7 +872,7 @@
                 mailForm.append('uploadFile', element.files[0]);
             })
 
-            if(emailCn == '' || emailCn == null){
+            if(data!="temp"&&(emailCn == '' || emailCn == null)){
                 Swal.fire({
                     title: '본문 내용이 없습니다.',
                     text: '본문 내용 없이 메일을 보내시겠습니까?',
@@ -891,7 +891,14 @@
                             contentType: false,
                             success: function(resp) {
                                 console.log('이메일 전송 결과 : ', resp);
-                                window.location.href = '/mail?emailClTy=0';
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '메일 전송 성공',
+                                    text: '메일이 성공적으로 전송되었습니다.',
+                                    confirmButtonText: '확인'
+                                }).then(() => {
+                                    window.location.href = '/mail?emailClTy=0';
+                                });
                             },
                             error: function(err) {
                                 console.log(err);
@@ -914,7 +921,14 @@
                 contentType: false,  // FormData 처리 시 필요
                 success: function(resp) {
                     console.log('이메일 전송 결과 : ',resp);
-                    window.location.href='/mail?emailClTy=0';
+                    Swal.fire({
+                        icon: 'success',
+                        title: '메일 전송 성공',
+                        text: '메일이 성공적으로 전송되었습니다.',
+                        confirmButtonText: '확인'
+                    }).then(() => {
+                        window.location.href = '/mail?emailClTy=0';
+                    });
                 },
                 error: function(err) {
                     console.log(err);

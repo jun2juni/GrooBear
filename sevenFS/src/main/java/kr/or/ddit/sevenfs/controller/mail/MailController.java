@@ -299,6 +299,7 @@ public class MailController {
 		log.info("emailDetail -> mailVO : "+mailVO);
 //		List<AttachFileVO> attachFileVOList = mailService.getAtchFile(mailVO.getAtchFileNo());
 		List<AttachFileVO> fileList = attachFileService.getFileAttachList(mailVO.getAtchFileNo());
+		log.info("fileList : "+fileList);
 		model.addAttribute("mailVO",mailVO);
 		model.addAttribute("fileList",fileList);
 		model.addAttribute("mailLabelList", mailLabelList);

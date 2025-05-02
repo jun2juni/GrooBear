@@ -197,6 +197,7 @@
             labeling(checkedList,lblNo,resp)
             $('#labeling option:eq(0)').prop('selected',true);
             $('.email-checkbox').prop("checked",false);
+            $('.email-checkbox').trigger('change');
           },
           error:function(err){
             console.log(err);
