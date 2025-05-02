@@ -15,70 +15,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>${title}</title>
     <%@ include file="../layout/prestyle.jsp" %>
+    <style>
+       body {
+        background-color: #f4f6f9;
+        font-family: 'Noto Sans KR', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .auth-container {
+        display: flex;
+        max-width: 900px; /* Reduced width */
+        width: 100%;
+        min-height: 60vh; /* Adjusted height */
+    }
+
+    .auth-left {
+        flex: 1;
+        background: linear-gradient(234deg, #cdefff 0%, #aee6f9 50%, #89c8e6 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        padding: 2rem;
+    }
+
+    .auth-left h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .auth-left p {
+        font-size: 1.2rem;
+    }
+
+    .auth-right {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 2rem;
+    }
+
+    .auth-card {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 450px; /* Reduced width */
+        margin: 0 auto; /* Center the card */
+    }
+
+    .form-group label {
+        font-weight: 500;
+    }
+
+    .form-control {
+        border-radius: 0.5rem;
+    }
+
+    .btn {
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #28a745;
+    }
+
+    .btn-dark:hover {
+        background-color: #333;
+    }
+
+    .btn + .btn {
+        margin-left: 1rem;
+    }
+
+    #newPasswordMsg, #pwMsg {
+        font-size: 0.875rem;
+    }
+
+    #changePwButton {
+        background-color: #b3e5fc;
+        border: none;
+        color: #0d3c61;
+        font-weight: bold;
+        border-radius: 6px;
+    }
+
+    #changePwButton:hover {
+        background-color: #a0daf5;
+    }
+
+
+    #passwordCancleBtn:hover {
+        background-color: gray;
+    }
+    </style>
 </head>
 <body>
-<main id="userContainer" class="main-wrapper">
-    <section class="section">
-        <div class="container-fluid">
-            <div class="row g-0 auth-row">
-                <!-- 좌측 영역 -->
-                <div class="col-lg-6">
-                    <div class="auth-cover-wrapper bg-success-100">
-                        <div class="auth-cover">
-                            <div class="title text-center">
-                                <h1 class="text-success mb-10">비밀번호 변경</h1>
-                                <p class="text-medium">새 비밀번호를 입력해주세요</p>
-                            </div>
-                        </div>
-                    </div>
+
+<main class="auth-container">
+    <!-- 좌측 비주얼 영역 -->
+    <div class="auth-left">
+        <div>
+            <h1>비밀번호 변경</h1>
+            <p class="text-muted mt-3" style="font-size: 0.9rem;">
+                * 영문 대소문자, 숫자, 특수문자 포함 8~16자<br>
+                * 이전과 다른 비밀번호를 사용해주세요.
+            </p>
+        </div>
+    </div>
+
+    <!-- 우측 폼 영역 -->
+    <div class="auth-right">
+        <div class="auth-card">
+            <input type="hidden" id="hiddenEmplNo" value="${emp.emplNo}">
+
+            <div class="form-group mb-3">
+                <label for="currentPassword">현재 비밀번호</label>
+                <input type="password" id="currentPassword" class="form-control" placeholder="현재 비밀번호를 입력해주세요" required maxlength="30" />
+                <div class="invalid-feedback">현재 비밀번호를 입력해주세요.</div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="newPassword">새 비밀번호</label>
+                <input type="password" id="newPassword" class="form-control"
+                       placeholder="새 비밀번호를 입력해주세요"
+                       pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$"
+                       oninput="inputNewPassword()" maxlength="16" required />
+                <div class="invalid-feedback">새 비밀번호를 입력해주세요.</div>
+                <p id="newPasswordMsg" style="color: red; font-weight: bold;"></p>
+            </div>
+
+            <div class="form-group mb-4">
+                <label for="confirmPassword">새 비밀번호 확인</label>
+                <input type="password" id="confirmPassword" class="form-control"
+                       placeholder="새 비밀번호를 다시 입력해주세요"
+                       oninput="inputPassword()" maxlength="30" required />
+                <div class="invalid-feedback">비밀번호 확인이 일치하지 않습니다.</div>
+                <p id="pwMsg" style="color: red; font-weight: bold;"></p>
+            </div>
+
+            <c:if test="${param.error == 'true'}">
+                <div class="alert alert-danger text-center">
+                    <strong>비밀번호 변경에 실패했습니다.</strong>
                 </div>
+            </c:if>
 
-                <!-- 우측 폼 영역 -->
-                <input type="hidden" id="hiddenEmplNo" value="${emp.emplNo}">
-                <div class="col-lg-6">
-                    <div class="signin-wrapper">
-                        <div class="form-wrapper">
-                                <div class="input-style-1 form-group">
-                                    <label for="currentPassword" class="form-label">현재 비밀번호</label>
-                                    <input type="password" name="currentPassword" class="form-control" id="currentPassword"
-                                           placeholder="현재 비밀번호를 입력해주세요" required maxlength="30">
-                                    <div class="invalid-feedback">현재 비밀번호를 입력해주세요.</div>
-                                </div>
-
-                                <div class="input-style-1 form-group">
-                                    <label for="newPassword" class="form-label">새 비밀번호</label>
-                                    <input type="password"  class="form-control" id="newPassword" 
-                                    		 pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$"
-                                    		 oninput="inputNewPassword()"
-                                           placeholder="새 비밀번호를 입력해주세요" required maxlength="16">
-                                    <div class="invalid-feedback">새 비밀번호를 입력해주세요.</div>
-                                    <p id="newPasswordMsg" style="color: red; font-weight: bold;"></p>
-                                </div>
-
-                                <div class="input-style-1 form-group">
-                                    <label for="confirmPassword" class="form-label">새 비밀번호 확인</label>
-                                    <input type="password" name="confirmPassword" class="form-control" id="confirmPassword"
-                                          oninput="inputPassword()" placeholder="새 비밀번호를 다시 입력해주세요" required maxlength="30">
-                                    <div class="invalid-feedback">비밀번호 확인이 일치하지 않습니다.</div>
-                                    <p id="pwMsg" style="color: red; font-weight: bold;"></p>
-                                </div>
-
-                                <c:if test="${param.error == 'true'}">
-                                    <div class="alert alert-danger text-center">
-                                        <strong>비밀번호 변경에 실패했습니다.</strong>
-                                    </div>
-                                </c:if>
-								<div class="d-flex">
-	                                <button id="changePwButton" type="button" class="btn submit btn-success col-6 mr-10">비밀번호 변경</button>
-	                                <button type="button" class="btn submit btn-dark col-6" id="passwordCancleBtn">비밀번호 변경 취소</button>
-								</div>
-                        </div>
-                    </div>
-                </div>
-                <!-- end col -->
+            <div class="d-flex justify-content-between">
+                <button type="button" id="changePwButton" class="btn btn-success w-100">변경</button>
+                <button type="button" class="btn dark-btn-light w-100" id="passwordCancleBtn">취소</button>
             </div>
         </div>
-    </section>
+    </div>
 </main>
 <%@ include file="../layout/prescript.jsp" %>
 <script type="text/javascript">
@@ -86,8 +181,11 @@
 function inputNewPassword(){
 	// 비밀번호 형식에 맞는지 확인하기
 	let newPassword = $('#newPassword').val();
+	let confirmPassword = $('#confirmPassword').val();
 	const patternStr = $('#newPassword').attr('pattern');
 	const pattern = new RegExp(patternStr);
+	
+	
 	//console.log('newPassword : ' , newPassword);
 	//console.log('pattern : ' , pattern);
 	if(!pattern.test(newPassword)){
@@ -124,9 +222,13 @@ function inputPassword(){
 $(function(){
 	// 현재 비밀번호
 	let currentPassword = $('#currentPassword').val();
+/* 	// 비밀번호 형식에 맞는지 확인하기
+	let newPassword = $('#newPassword').val();
+	let confirmPassword = $('#confirmPassword').val(); */
 	
 	//----- 비동기로 비밀번호 보내기
 	$('#changePwButton').on('click', function(){
+		
 		// 현재 비밀번호
 		let currentPassword = $('#currentPassword').val();
 		// 새 비밀번호
@@ -134,6 +236,19 @@ $(function(){
 		// 새 비밀번호 확인
 		let confirmPassword = $('#confirmPassword').val();
 		//console.log('바꿀 비번 : ' , newPassword);
+		if(newPassword == null || newPassword == '' && confirmPassword == null || confirmPassword == ''){
+				swal({
+					icon : 'warning',
+					text : '변경할 비밀번호를 입력해주세요.',
+					buttons : {
+						confirm : {
+							text : '확인',
+							value : true
+						}
+					}
+				});
+			return ;
+		}
 		
 		// 비밀번호 형식에 맞는지 확인하기
 		const patternStr = $('#newPassword').attr('pattern');
@@ -225,3 +340,4 @@ $(function(){
 
 </body>
 </html>
+	
