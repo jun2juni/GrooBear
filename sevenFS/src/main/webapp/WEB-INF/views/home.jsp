@@ -137,109 +137,146 @@ String serverDate = dateFormat.format(now);
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-md-3"
-						style="position: sticky; top: 90px; z-index: 1; max-height: 80vh;">
+						style="position: sticky; top: 112px; z-index: 1; max-height: 80vh;">
 						<!-- 출퇴근-->
-						<div class="card-style mb-3"
+						<%--<div class="card-style mb-4"
 							style="box-shadow: 1px 1px 20px 1px rgba(0, 0, 2, 0.1);">
 							<c:import url="./organization/dclz/workButton.jsp" />
 							<!-- 출퇴근 버튼 -->
-							<div class="">
-								<div class=" text-center">
-									<span class="status-btn dark-btn text-center mt-30"><%=serverDate%></span>
-									<div id="clock" style="font-size: 24px; font-weight: bold;"></div>
-									<div class="d-flex mb-30 mt-3 justify-content-center">
-										<div class="content mr-30">
-											<input type="hidden" id="inputTodWorkTime" value="${todayWorkTime}"
-												id="todayWorkTime">
-											<button type="button"
-												id="${todayWorkTime != null ? '' : 'workStartButton'}"
-												class="btn-sm main-btn primary-btn-light rounded-full btn-hover beginWorkBtn">출근</button>
-											<p id="startTime">${todayWorkTime != null ? todayWorkTime : '출근 전'}</p>
-										</div>
-										<div class="content">
-											<input type="hidden" value="${todayWorkEndTime}"
-												id="workEndTime">
-											<button type="button"
-												id="${workEndButton != null ? '' : 'workEndButton'}"
-												class="btn-sm main-btn danger-btn-light rounded-full btn-hover">퇴근</button>
-											<p id="endTime">${todayWorkEndTime != null ? todayWorkEndTime : '퇴근 전'}</p>
-										</div>
+							<div class=" text-center">
+								<span class="status-btn dark-btn text-center mt-20"><%=serverDate%></span>
+								<div id="clock" style="font-size: 24px; font-weight: bold;"></div>
+								<div class="d-flex mb-10 mt-3 justify-content-center">
+									<div class="content mr-30">
+										<input type="hidden" id="inputTodWorkTime" value="${todayWorkTime}"
+											id="todayWorkTime">
+										<button type="button"
+											id="${todayWorkTime != null ? '' : 'workStartButton'}"
+											class="btn-sm main-btn primary-btn-light rounded-full btn-hover beginWorkBtn">출근</button>
+										<p id="startTime">${todayWorkTime != null ? todayWorkTime : '출근 전'}</p>
+									</div>
+									<div class="content">
+										<input type="hidden" value="${todayWorkEndTime}"
+											id="workEndTime">
+										<button type="button"
+											id="${workEndButton != null ? '' : 'workEndButton'}"
+											class="btn-sm main-btn danger-btn-light rounded-full btn-hover">퇴근</button>
+										<p id="endTime">${todayWorkEndTime != null ? todayWorkEndTime : '퇴근 전'}</p>
 									</div>
 								</div>
 							</div>
-						</div>
+						</div>--%>
 						<!-- 출퇴근 -->
+						
+						<!-- 출퇴근 카드 -->
+					  <div class="card-style p-4 mb-4 text-center"
+						   style="box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); backdrop-filter: blur(12px); border-radius: 16px; background-color: rgba(255, 255, 255, 0.6);">
+					  
+						<!-- 서버 날짜 -->
+						<div class="mb-2">
+						  <span class="badge bg-secondary text-white px-3 py-2 fs-6 rounded-pill"><%= serverDate %></span>
+						</div>
+					 
+						<!-- 현재 시계 -->
+						<div id="clock" class="mb-4 fs-4 fw-bold text-dark"></div>
+					 
+						<!-- 출근 / 퇴근 버튼 -->
+						<div class="d-flex justify-content-center gap-5">
+						  
+						  <!-- 출근 -->
+						  <div>
+							<input type="hidden" id="inputTodWorkTime" value="${todayWorkTime}" />
+							<button type="button"
+									id="${todayWorkTime != null ? '' : 'workStartButton'}"
+									class="btn btn-outline-primary rounded-pill px-4 py-2 beginWorkBtn">
+							  🏃 출근
+							</button>
+							<p id="startTime" class="mt-2 text-muted">
+							  ${todayWorkTime != null ? todayWorkTime : '출근 전'}
+							</p>
+						  </div>
+					  
+						  <!-- 퇴근 -->
+						  <div>
+							<input type="hidden" id="workEndTime" value="${todayWorkEndTime}" />
+							<button type="button"
+									id="${workEndButton != null ? '' : 'workEndButton'}"
+									class="btn btn-outline-danger rounded-pill px-4 py-2">
+							  🏁 퇴근
+							</button>
+							<p id="endTime" class="mt-2 text-muted">
+							  ${todayWorkEndTime != null ? todayWorkEndTime : '퇴근 전'}
+							</p>
+						  </div>
+						</div>
+					  </div>
+
 
 						<!-- 메일 + 일정 -->
-						<div class="card-style mb-3 d-flex justify-content-center align-items-center"
-							style="box-shadow: 1px 1px 20px 1px rgba(0, 0, 2, 0.1); backdrop-filter: blur(15px);">
-							<div class="d-flex justify-content-center gap-1">
-								<!-- 메일 위젯 -->
-								<div class="text-center">
-									<a href="/mail" class="text-sm text-dark">
-										미확인 <span class="text-xl text-bold text-dark ml-2">${notReadMail}</span>건
+						  <!-- 메일 + 일정 카드 -->
+					  <div class="card-style mb-4 d-flex justify-content-center align-items-center p-4"
+						  style="box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); backdrop-filter: blur(12px); border-radius: 16px; background-color: rgba(255, 255, 255, 0.6);">
+						  
+						  <div class="d-flex justify-content-center gap-5 w-100">
+							  <!-- 메일 위젯 -->
+							  <div class="text-center flex-fill">
+								  <a href="/mail" class="text-dark text-decoration-none">
+									  <div class="fw-semibold mb-2">미확인 메일</div>
+									  <div class="fw-bold text-primary">${notReadMail}건</div>
+								  </a>
+								  <div class="mt-3">
+									  <a href="/mail/mailSend" class="btn btn-outline-primary rounded-pill">
+										  <i class="lni lni-envelope me-1 align-middle mb-1"></i> 메일쓰기
+									  </a>
+								  </div>
+							  </div>
+					  
+							  <!-- 일정 위젯 -->
+							  <div class="text-center flex-fill">
+								  <a href="/myCalendar" class="text-dark text-decoration-none">
+									  <div class="fw-semibold mb-2">오늘 일정</div>
+									  <div class="fw-bold text-success">${todayCalendarCnt}건</div>
+								  </a>
+								  <div class="mt-3">
+									 <a href="/myCalendar?openModal=true" class="btn btn-outline-success rounded-pill">
+									  <i class="lni lni-calendar me-1 align-middle mb-1"></i> 일정등록
 									</a>
-									<div class="rounded-4 mt-2" style="background-color: rgb(230, 230, 250, 0.5); display: inline-block;">
-										<a href="/mail/mailSend" class="btn-sm main-btn square-btn btn-hover text-dark"
-											style="padding: 10px;">
-											<i class="lni lni-envelope"></i>메일쓰기
-										</a>
-									</div>
-									<!-- <div class="d-flex flex-column text-center"> -->
-									<!-- </div> -->
-								</div>
-								<!-- 메일 위젯 -->
-								<!-- 일정 위젯 -->
-								<div class="text-center">
-									<a href="/myCalendar" class="text-sm text-dark">오늘 일정 
-										<span class="text-xl text-bold text-dark ml-2">${todayCalendarCnt}</span>건
-									</a>
-									<div class="rounded-4 mt-2" style="background-color: rgb(230, 230, 250, 0.5); display: inline-block;">
-										<a href="/myCalendar?openModal=true"
-											class="btn-sm main-btn square-btn btn-hover text-dark"
-											style="padding: 10px;"> <i class="lni lni-calendar"></i>
-											일정등록
-										</a>
-									</div>
-									<!-- <div class="d-flex flex-column text-center"> -->
-									<!-- </div> -->
-								</div>
-								<!-- 일정 위젯 -->
-							</div>
-							<!-- 메일 + 일정 -->
-						</div>
-
+								  </div>
+							  </div>
+						  </div>
+					  </div>
+					  
 						<!-- 알림 -->
-						<div
-							style="box-shadow: 1px 1px 20px 1px rgba(0, 0, 2, 0.1); backdrop-filter: blur(15px);">
-							<!--커뮤니티 인서트   -->
-							<div class="card-style mb-3	">
-								<div class="row mb-4">
-									<div class="text-bold">
-										<a href="/comunity/comunityClubList">👨‍👦‍👦 <span class="text-dark text-bold ml-3">커뮤니티</span></a>
-									</div>
-								</div>
-								<div class="">
-									<div class="mb-4">
-										<button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#emojiModal">
-										  이모지 등록하기
-										</button>
-									</div>
-									<hr />
-									<div class="mb-4">
-										<button type="button" class="btn btn-secondary w-100" data-bs-toggle="modal" data-bs-target="#100Modal">
-										  T.T-MI 등록하기
-										</button>
-									</div>
-									<hr />
-									<div class="mb-4">
-										<button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#todayModal">
-										  오늘의 한 줄 등록하기
-										</button>
-									</div>
-								</div>
-							</div>
+					  <div class="card-style p-4 mb-4"
+						   style="box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); backdrop-filter: blur(12px); border-radius: 16px; background-color: rgba(255, 255, 255, 0.6);">
+					  
+						<!-- 헤더: 커뮤니티 제목 -->
+						<div class="mb-4">
+						  <a href="/comunity/comunityClubList" class="text-decoration-none">
+							<span style="font-size: 1.4rem;">👨‍👦‍👦</span>
+							<span class="fw-bold text-dark ms-2">커뮤니티</span>
+						  </a>
 						</div>
+					 
+						<!-- 버튼 목록 -->
+						<div class="d-flex flex-column gap-3">
+						  <button type="button" class="btn btn-outline-primary w-100 rounded-pill py-2"
+								  data-bs-toggle="modal" data-bs-target="#emojiModal">
+							😊 이모지 등록하기
+						  </button>
+					  
+						  <button type="button" class="btn btn-outline-secondary w-100 rounded-pill py-2"
+								  data-bs-toggle="modal" data-bs-target="#100Modal">
+							💬 T.T-MI 등록하기
+						  </button>
+					  
+						  <button type="button" class="btn btn-outline-success w-100 rounded-pill py-2"
+								  data-bs-toggle="modal" data-bs-target="#todayModal">
+							✍️ 오늘의 한 줄 등록하기
+						  </button>
+						</div>
+					  </div>
+
 						<!-- 알림 -->
 						<!-- todo list -->
 						<!--  <div class="card-style mb-3" style="box-shadow: 1px 1px 20px 1px rgba(0,0,2,0.1);">
