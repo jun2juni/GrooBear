@@ -202,7 +202,7 @@ String serverDate = dateFormat.format(now);
 							<button type="button"
 									id="${workEndButton != null ? '' : 'workEndButton'}"
 									class="btn btn-outline-danger rounded-pill px-4 py-2">
-							  🏁 퇴근
+							  🚩 퇴근
 							</button>
 							<p id="endTime" class="mt-2 text-muted">
 							  ${todayWorkEndTime != null ? todayWorkEndTime : '퇴근 전'}
