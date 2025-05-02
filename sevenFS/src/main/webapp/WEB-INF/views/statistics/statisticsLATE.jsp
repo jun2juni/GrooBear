@@ -166,23 +166,23 @@
 														<div class="select-style-1 form-group w-fit"">
 															<label for="startYears" class="form-label"> 시작년도</label> 
 															<select name="startYearsY" class="form-select" id="startYearsY">
-																<option selected="" disabled="" readonly="" value="startYearsY">조회를 시작 할 년도를 선택해주세요</option>
+																<option selected="" disabled="" readonly="" value="startYearsY">시작년도를 선택해주세요</option>
 																<option value="202101">2021</option>
 																<option value="202201">2022</option>
 																<option value="202301">2023</option>
-																<option value="202401">2024</option>
+																<option value="202401" selected>2024</option>
 																<option value="202501">2025</option>
 															</select>
 														</div>
 														<div class="select-style-1 form-group w-fit">
 															<label for="endYearsY" class="form-label"> 종료년도 </label>
 															<select name="endYearsY" class="form-select" id="endYearsY">
-																<option selected="" disabled="" readonly="" value="endYearsY">조회를 종료 할 년도를 선택해주세요</option>
+																<option selected="" disabled="" readonly="" value="endYearsY">종료년도를 선택해주세요</option>
 																<option value="202112">2021</option>
 																<option value="202212">2022</option>
 																<option value="202312">2023</option>
 																<option value="202412">2024</option>
-																<option value="202512">2025</option>
+																<option value="202512" selected>2025</option>
 															</select>
 														</div>
 														<!--셀렉트 끝  -->

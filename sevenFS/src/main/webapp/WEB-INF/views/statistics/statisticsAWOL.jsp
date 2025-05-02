@@ -125,7 +125,7 @@
 											<!-- 기본적으로 숨겨둠 -->
 											<div id="dynamicInputYears" style="display: none;">
 											    <div class="card-header mt-3">
-											     <h3>연간선택</h5>
+											     <h3>연간선택</h3>
 											    </div>
 											    <div class="card-body">
 											        <!-- flex로 가로정렬 + 너비조정 + 텍스트 깨짐 방지 -->
@@ -134,11 +134,11 @@
 											            <div class="select-style-1 form-group mt-2" style="min-width: 200px;">
 											                <label for="startYearsY" class="form-label" style="white-space: nowrap;">시작년도</label>
 											                <select name="startYearsY" class="form-select" id="startYearsY" required>
-											                    <option selected disabled readonly value="startYearsY">조회를 시작 할 년도를 선택해주세요</option>
+											                    <option disabled readonly value="startYearsY">시작년도를 선택해주세요</option>
 											                    <option value="202101">2021</option>
 											                    <option value="202201">2022</option>
 											                    <option value="202301">2023</option>
-											                    <option value="202401">2024</option>
+											                    <option value="202401" selected>2024</option>
 											                    <option value="202501">2025</option>
 											                </select>
 											            </div>
@@ -147,12 +147,12 @@
 											            <div class="select-style-1 form-group" style="min-width: 200px;">
 											                <label for="endYearsY" class="form-label" style="white-space: nowrap;">종료년도</label>
 											                <select name="endYearsY" class="form-select" id="endYearsY" required>
-											                    <option selected disabled readonly value="endYearsY">조회를 종료 할 년도를 선택해주세요</option>
+											                    <option disabled readonly value="endYearsY">종료년도를 선택해주세요</option>
 											                    <option value="202112">2021</option>
 											                    <option value="202212">2022</option>
 											                    <option value="202312">2023</option>
 											                    <option value="202412">2024</option>
-											                    <option value="202512">2025</option>
+											                    <option value="202512" selected>2025</option>
 											                </select>
 											            </div>
 											        </div>
@@ -171,11 +171,11 @@
 											            <div class="select-style-1 form-group" style="min-width: 200px;">
 											                <label for="startYearsM" class="form-label" style="white-space: nowrap;">시작년도</label>
 											                <select name="startYearsM" class="form-select" id="startYearsM">
-											                    <option selected readonly value="">조회 년도를 선택 해주세요</option>
+											                    <option  readonly value="">조회 년도를 선택 해주세요</option>
 											                    <option value="2021">2021</option>
 											                    <option value="2022">2022</option>
 											                    <option value="2023">2023</option>
-											                    <option value="2024">2024</option>
+											                    <option value="2024" selected>2024</option>
 											                    <option value="2025">2025</option>
 											                </select>
 											            </div>
@@ -186,8 +186,8 @@
 											            <div class="select-style-1 form-group" style="min-width: 200px;">
 											                <label for="startMonths" class="form-label" style="white-space: nowrap;">시작월</label>
 											                <select name="startMonths" class="form-select" id="startMonths">
-											                    <option selected disabled readonly value="">조회를 시작 할 월을 선택해주세요</option>
-											                    <option value="01">1월</option>
+											                    <option disabled readonly value="">조회를 시작 할 월을 선택해주세요</option>
+											                    <option value="01" selected>1월</option>
 											                    <option value="02">2월</option>
 											                    <option value="03">3월</option>
 											                    <option value="04">4월</option>
@@ -205,7 +205,7 @@
 											            <div class="select-style-1 form-group" style="min-width: 200px;">
 											                <label for="endMonths" class="form-label" style="white-space: nowrap;">종료월</label>
 											                <select name="endMonths" class="form-select" id="endMonths">
-											                    <option selected disabled readonly value="">조회를 종료 할 월을 선택해주세요</option>
+											                    <option disabled readonly value="">조회를 종료 할 월을 선택해주세요</option>
 											                    <option value="01">1월</option>
 											                    <option value="02">2월</option>
 											                    <option value="03">3월</option>
@@ -217,7 +217,7 @@
 											                    <option value="09">9월</option>
 											                    <option value="10">10월</option>
 											                    <option value="11">11월</option>
-											                    <option value="12">12월</option>
+											                    <option value="12" selected>12월</option>
 											                </select>
 											            </div>
 											        </div>
