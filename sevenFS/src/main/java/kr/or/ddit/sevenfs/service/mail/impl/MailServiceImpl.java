@@ -67,7 +67,7 @@ public class MailServiceImpl implements MailService{
 	public int sendMail(MailVO mailVO, MultipartFile[] uploadFile) {
 		/*
 		 *  emailTrnsmisTy
-	 		전송타입 0 참조x, 1 참조, 2 숨은 참조
+	 		전송타입 0 보낸 메일,1 받은 메일, 2 참조, 3 숨은 참조
 	 		
 			emailClTy 메일함분류시 사용 0 보낸메일, 1 받은메일, 2 임시메일, 3 스팸함, 4 휴지통
 		 * */

@@ -18,7 +18,7 @@
 		  <div class="d-flex justify-content-between align-items-center">
 		    <h3 class="mb-0 d-flex w-100 justify-content-between align-items-center">
 		      <span>일정 필터</span>
-		      <button id="addLabelBtn" type="button" class="btn btn-primary btn-sm">추가</button>
+		      <button id="addLabelBtn" type="button" class="btn btn-primary btn-sm">라벨 추가</button>
 		    </h3>
 		  </div>
 			<br>
@@ -607,10 +607,12 @@
                         modalLblSel(response)
                     }
                     console.log("라벨 추가 성공:", response);
+                    $('.label-filter[value='+response.lblNo+']').attr('checked',true)
                     
                     // 입력 필드 초기화 및 팝업 닫기
                     document.getElementById('newLabelName').value = '';
                     document.getElementById('labelPopup').style.display = 'none';
+
                 },
                 error: function(err) {
                     console.error("라벨 추가 실패:", err);

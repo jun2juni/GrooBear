@@ -141,13 +141,18 @@
 		}
 
 		const overChk = function(date1,date2,time,num){
+			console.log('overChk 실행')
+			// console.log('overChk 실행 date1 : ',date1)
+			// console.log('overChk 실행 date2 : ',date2)
+			// console.log('overChk 실행 time : ',time)
+			// console.log('overChk 실행 num : ',num)
 			let differenceInDays
 			if(time=="date"){
 				differenceInDays = (date2 - date1) / (1000 * 60 * 60 * 24);
-// 				console.log('date',differenceInDays)
+				// console.log('date',differenceInDays)
 			}else if(time=="minute"){
 				differenceInDays = (date2 - date1) / (1000 * 60 );
-				console.log('minute',differenceInDays)
+				// console.log('minute',differenceInDays)
 			}
 			return differenceInDays>=num?true:false;
 		}
@@ -175,6 +180,7 @@
 			dataMap.scheduleList.forEach(data=>{
 				let startDate = new Date(data.schdulBeginDt);
 				let endDate = new Date(data.schdulEndDt);
+				// chk true면 하루 이상 false면 하루 미만
 				let chk = overChk(startDate,endDate,'date',1);
 				// console.log("dataMap.data : " , data);
 				// console.log("dataMap.labelList : ",dataMap.labelList);
@@ -210,12 +216,6 @@
 					}
 					borderColor=lblColor
 				}
-				// console.log("lblColor : ",lblColor);
-				// console.log("borderColor : ",borderColor);
-				// console.log("chngData -> schdulNo : ",data.schdulNo);
-
-				// console.log('chngData -> : startDate',startDate);
-				// console.log('chngData -> : endDate',endDate);
 
 				returnData.push({
 				   "emplNo":data.emplNo,
@@ -234,7 +234,6 @@
 				   "borderColor":borderColor,
 				   "textColor":textColor,
 				   "allDay":chk
-				//    "allDay":false
 				})
 			});
 			return returnData;
@@ -251,19 +250,20 @@
 		calendar.on("eventDrop", function(info) {
 			console.log("eventDrop : ",info);
 			let updData = mkUptData(info);
-			        $.ajax({
-			            url:"/myCalendar/uptEvent",
-			            type:"post",
-			            data:JSON.stringify(updData),
-						contentType:'application/json',
-			            success:function(response) {
-			                console.log("upt 개수 response : ",response);
-			                // refresh(); // 인자 없이 호출
-			            },
-			            error: function(xhr, status, error) {
-			                console.error("AJAX 오류:", error);
-			            }
-				    });
+			console.log(info);
+			$.ajax({
+				url:"/myCalendar/uptEvent",
+				type:"post",
+				data:JSON.stringify(updData),
+				contentType:'application/json',
+				success:function(response) {
+					console.log("upt 개수 response : ",response);
+					// refresh(); // 인자 없이 호출
+				},
+				error: function(xhr, status, error) {
+					console.error("AJAX 오류:", error);
+				}
+			});
 		})
 
 		const selectEvent = function(info){
@@ -289,13 +289,15 @@
 			let endDate;
 			if(info.date){
 				// 하루만 선택
-			// console.log("aaaaa",typeof(info.date));
+				// console.log("aaaaa",typeof(info.date));
 				startDate = info.date;
 				endDate = new Date(info.date);
     			endDate.setDate(endDate.getDate() + 1); // 날짜를 1일 증가시킴
     			// endDate.setDate(endDate.getDate());
 				console.log('하루만 선택 startDate',startDate);
 				console.log('하루만 선택 endDate',endDate);
+				// $('#schEnd').attr('min', startDate);
+    			// $('#schStart').attr('max', endDate);
 				
 			}else{
 				// 여러날 선택
@@ -305,6 +307,8 @@
 					endDate = new Date(info.end)
 					console.log('복수일 선택 startDate',startDate);
 					console.log('복수일 선택 endDate',endDate);
+					// $('#schEnd').attr('min', startDate);
+    				// $('#schStart').attr('max', endDate);
 					// $('.timeInput-toggle.date').css('display','none');
 					// $('.timeInput-toggle.time').css('display','block');
 					// $("#allDay").prop("checked",true);
@@ -313,8 +317,12 @@
 					endDate = new Date(info.end-1)
 					console.log('복수일 선택 startDate',startDate);
 					console.log('복수일 선택 endDate',endDate);
+					// $('#schEnd').attr('min', startDate);
+    				// $('#schStart').attr('max', endDate);
 				}
 			}
+			// $('#schEnd').attr('min', startDate);
+    		// $('#schStart').attr('max', endDate);
 
 			// console.log('startDate : ',startDate,'  endDate : ',endDate);
 			
@@ -372,6 +380,11 @@
 				dateValidate($('#schEndTime'));
 				*/
 			}
+
+			// console.log("$('#schEnd').attr('min', startDate);",date2Str(startDate))
+			// console.log("$('#schStart').attr('max', endDate);",date2Str(endDate))
+			$('#schEnd').attr('min', date2Str(startDate));
+    		$('#schStart').attr('max', date2Str(endDate));
 		}
 
 	// 클릭 및 드래그 선택 이벤트 끝
@@ -573,7 +586,7 @@
 	// 클릭 및 드래그 선택 이벤트 끝
 
 		// 등록된 일정 클릭시 이벤트
-		calendar.on("eventClick",info=>{
+		calendar.on("eventClick",info => {
 			console.log("eventClick -> info : ", info);
 			let regEmplNo = info.event._def.extendedProps.emplNo
 			console.log('eventClick -> regEmplNo',regEmplNo);
@@ -606,8 +619,25 @@
 			// if($("#deleteBtn").length==0){
 				// $("#btnGroup").append('<button type="button" id="deleteBtn" class="main-btn btn btn-danger btn-hover" onclick="fCalDel(event)">삭제</button>');
 			// }
+
 			let start = info.event.start;
 			let end = info.event.end;
+
+			// dateTimeChk가 false면 allDay 체크 시간, true면 allDay 체크 해제
+			let dateTimeChk = overChk(start,end,"date",1);
+			if(dateTimeChk){
+				$('#allDay').prop('checked',false);
+				$('.timeInput-toggle.date').css('display','block');
+				$('.timeInput-toggle.time').css('display','none');
+			}else{
+				$('#allDay').prop('checked',true);
+				$('.timeInput-toggle.date').css('display','none');
+				$('.timeInput-toggle.time').css('display','block');
+			}
+			// console.log('start : ',start);
+			// console.log('end : ',end);
+			// console.log('dateTimeChk : ',dateTimeChk);
+
 			$('#addUpt').val("update");
 			$('#schdulNo').val(info.event._def.publicId);
 			$('#schStart').val(date2Str(start));
@@ -746,6 +776,9 @@
 
 		window.fCalAdd= function(e){
 			// 여기 분기처리 해야함!
+			let allDayChk = $('#allDay').is(':checked');
+			console.log('allDayChk : ',allDayChk);
+
 			// 하루종일 체크 여부에 따라 input 선택하는거 달라짐
 
 			// e는 버튼을 가져오려고
@@ -768,21 +801,30 @@
 			}
 
 			let {startDate,endDate} = clickEvent2Date(e);
+			console.log('=====테스트!!=====');
 			console.log("fCalAdd -> startDate : ",startDate);
 			console.log("fCalAdd -> endDate : ",endDate);
 			
-			// return
-
 			let frmData = new FormData();
 			frmData.append("emplNo",emplNo);
 			frmData.append("deptCode",deptCode);
 			frmData.append("lblNo",e.target.form.lblNo.value);
-			frmData.append("schdulBeginDt",startDate);
-			frmData.append("schdulEndDt",endDate);
+			
 			frmData.append("schdulTy",e.target.form.schdulTy.value);
 			frmData.append("schdulSj",e.target.form.schdulSj.value);
 			frmData.append("schdulCn",e.target.form.content.value);
 			frmData.append("lblNo",e.target.form.lblNo.value);
+
+			if(allDayChk){
+				// 하루 날짜 + 시작시간 + 종료시간
+				frmData.append("schdulBeginDt",startDate);
+				frmData.append("schdulEndDt",endDate);
+			}else{
+				// 시작 날짜 + 종료날짜
+				frmData.append("schdulBeginDt",startDate);
+				frmData.append("schdulEndDt",endDate);
+			}
+
 			console.log("fCalAdd -> frmData : ",frmData);			
 			if(status=="add"){
 				postUrl = "/myCalendar/addCalendar";
@@ -790,6 +832,7 @@
 				postUrl="/myCalendar/uptCalendar";
 				frmData.append("schdulNo",e.target.form.schdulNo.value);
 			}
+
 			$('#schdulTy').prop('disabeld',false);
 			$('#scheduleLabel').prop('disabeld',false);
 			$.ajax({
@@ -817,6 +860,7 @@
 		// 수정 데이터 만드는 함수
 		function mkUptData(info){
 			console.log("mkUptData -> info", info);
+
 			let uptData = {
 				schdulNo:info.event._def.publicId,
 				schdulTy:info.event._def.extendedProps.schdulTy,
@@ -829,6 +873,7 @@
 			console.log("mkUptData -> uptData", uptData);
 			return uptData;
 		}
+
 		window.fCalDel = function(e){
 			// if(!confirm('삭제하시겠습니까??')) { return; }
 			Swal.fire({

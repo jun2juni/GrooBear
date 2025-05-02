@@ -251,7 +251,7 @@ textarea {
 
 				<div class="timeInput-toggle time" style="display: none;">
 					<!-- 시작/종료 일시 -->
-					<div class="col-md-6">
+					<div class="col-md-6 mb-3">
 						<label class="form-label fw-semibold text-dark">날짜 선택</label>
 						<div class="d-flex gap-2">
 							<input type="date" id="date" name="date" class="form-control dateInp" />
@@ -269,7 +269,7 @@ textarea {
 			  <!-- 하루종일 체크 -->
 			  <div class="col-12 d-flex align-items-center">
 				<input type="checkbox" id="allDay" name="allDay" class="form-check-input me-2" />
-				<label for="allDay" class="form-check-label text-dark fw-semibold">하루종일</label>
+				<label for="allDay" class="form-check-label text-dark fw-semibold">시간 지정</label>
 			  </div>
 			  <!-- 공개유형, 라벨 -->
 			  <div class="col-md-6">
