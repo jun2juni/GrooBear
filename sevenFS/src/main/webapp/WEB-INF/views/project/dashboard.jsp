@@ -42,7 +42,7 @@
     font-size: 0.85em;
   }
   .scroll-table {
-    max-height: 750px;
+    max-height: 650px;
     overflow-y: auto;
   }
   thead th {
@@ -55,7 +55,7 @@
     background-color: rgba(0, 123, 255, 0.1);
   }
   .project-title-big {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
   }
   th.asc::after {
     content: ' ▲';
@@ -141,19 +141,14 @@
   <!-- 프로젝트 상태 카드 -->
   <div class="row mb-4">
     <div class="col-md-4">
-      <div class="card dashboard-card shadow h-100 border-white border-2 d-flex align-items-center justify-content-center bg-success p-2 text-white">
-        <div class="card-body d-flex align-items-center justify-content-center">
-          <i class="material-icons text-warning me-3 fs-1">work</i>
-			<h5 id="projectCountText" class="mb-0 fw-bold text-white project-title-big text-center">
-			  프로젝트 진행중
-			  <br>
-			  <c:forEach var="status" items="${projectStatus}">
-			    <c:if test="${status.STATUS_NM eq '진행중'}">
-			      <strong class="fs-2">${status.CNT}</strong> <span class="text-sm">건</span>
-			    </c:if>
-			  </c:forEach>
-			</h5>
-
+      <div class="card dashboard-card shadow h-100 border-white border-2 d-flex align-items-center justify-content-center bg-success text-white">
+        <div class="d-flex flex-column align-items-center justify-content-center">
+			<h6 id="projectCountText" class="mb-0 fw-bold text-white project-title-big text-center">진행중 프로젝트</h6>
+            <c:forEach var="status" items="${projectStatus}">
+              <c:if test="${status.STATUS_NM eq '진행중'}">
+                <div><strong class="fs-2">${status.CNT}</strong> <span class="ms-1 text-sm">건</span></div>
+              </c:if>
+            </c:forEach>
         </div>
       </div>
     </div>
@@ -162,21 +157,21 @@
     <div class="col-md-8">
       <div class="row g-3">
         <c:set var="labels" value="진행중인 업무,완료된 업무,업무 피드백 사항,피드백 반영한 업무"/>
-        <c:set var="badgeClasses" value="badge-soft-yellow,badge-soft-green,badge-soft-orange,badge-soft-blue"/>
+        <c:set var="badgeColors" value="primary,success,warning,info"/>
         <c:set var="statusIndex" value="0"/>
         <c:forEach var="label" items="${fn:split(labels, ',')}">
-          <c:set var="badgeClass" value="${fn:split(badgeClasses, ',')[statusIndex]}"/>
-          <div class="col-6 col-md-6">
-            <div class="card h-100 text-center dashboard-card">
-              <div class="card-body">
-                <div class="fw-bold ${badgeClass} mb-2 py-1 rounded">${label}</div>
-                <div class="fs-5 fw-bold">
-                  <c:choose>
-                    <c:when test="${taskMainStatus[statusIndex] != null}">${taskMainStatus[statusIndex].CNT}</c:when>
-                    <c:otherwise>0</c:otherwise>
-                  </c:choose>
-                  <span class="text-sm">건</span>
-                </div>
+          <c:set var="badgeColor" value="${fn:split(badgeColors, ',')[statusIndex]}"/>
+          <div class="col-6 col-md-3">
+            <div class="card text-center p-3" style=" box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+              <div class="fw-semibold text-${badgeColor} mb-2">${label}</div>
+              <div class="fs-4 fw-bold text-dark">
+                <c:choose>
+                  <c:when test="${taskMainStatus[statusIndex] != null}">
+                    ${taskMainStatus[statusIndex].CNT}
+                  </c:when>
+                  <c:otherwise>0</c:otherwise>
+                </c:choose>
+                <span class="fs-6 text-muted">건</span>
               </div>
             </div>
           </div>
