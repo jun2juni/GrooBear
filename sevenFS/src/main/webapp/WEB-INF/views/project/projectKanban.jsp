@@ -57,8 +57,8 @@
                   <div class="info-row">
                     <i class="fas fa-calendar-alt"></i>
                     <!-- 날짜 표시 (JS 포맷팅 예정) -->
-					<span class="project-dates" 
-					      data-begin="${project.prjctBeginDate}" 
+					<span class="project-dates"
+					      data-begin="${project.prjctBeginDate}"
 					      data-end="${project.prjctEndDate}">
 					  ${project.prjctBeginDate} ~ ${project.prjctEndDate}
 					</span>
@@ -137,7 +137,8 @@
 
 .column-body {
   flex: 1;
-  padding: 12px;
+  /*padding: 18px 14px;*/
+  padding: 18px 18px 18px 14px;
   overflow-y: auto;
   min-height: 100px;
 }
@@ -147,7 +148,7 @@
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
-  margin-bottom: 12px;
+  margin-bottom: 24px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
   overflow: hidden;
@@ -535,5 +536,4 @@ document.addEventListener("DOMContentLoaded", function() {
 
   updateStatusCounts();
 });
-
 </script>

@@ -28,23 +28,31 @@
       <!-- 검색 폼 -->
       <div class="row mb-4">
         <div class="col-md-12">
-          <div class="d-flex align-items-center justify-content-between">
-            <form id="searchForm" class="input-group" style="max-width: 700px;">
-              <input type="text" id="keywordInput" class="form-control" placeholder="프로젝트명, 카테고리, 담당자 검색" value="${param.keyword}">
-              <button type="submit" class="btn btn-primary d-flex align-items-center">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+            
+            <!-- 검색 폼 -->
+            <form id="searchForm" class="input-group flex-grow-1" style="max-width: 600px;">
+              <input type="text" id="keywordInput" name="keyword"
+                     class="form-control" placeholder="프로젝트명, 카테고리, 담당자 검색"
+                     value="${param.keyword}">
+              <button type="submit" class="btn btn-primary d-flex align-items-center px-3">
                 <span class="material-icons-outlined">search</span>
                 <span class="ms-1">검색</span>
               </button>
             </form>
             
+            <!-- 우측 버튼 영역 -->
             <div class="d-flex gap-2">
-              <a href="/project/downloadExcel?keyword=${param.keyword}" class="btn btn-outline-secondary">엑셀 다운로드</a>
-              <a href="/project/insert" class="btn btn-success d-flex align-items-center">
-                <span class="material-icons-outlined me-1">add</span>
-                프로젝트 생성
+              <a href="/project/downloadExcel?keyword=${param.keyword}" class="btn btn-outline-secondary d-flex align-items-center px-3">
+                <span class="material-icons-outlined me-1">download</span> 엑셀 다운로드
+              </a>
+              <a href="/project/insert" class="btn btn-success d-flex align-items-center px-3">
+                <i class="fas fa-plus-circle me-1"></i> 프로젝트 생성
               </a>
             </div>
+          
           </div>
+
         </div>
       </div>
 <!-- 총 건수 표시 -->
