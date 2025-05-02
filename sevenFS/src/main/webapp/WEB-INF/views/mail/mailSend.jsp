@@ -624,7 +624,6 @@
 
 
     $(document).ready(function(){
-        // console.log("${myEmpInfo}")
 
         $('#addTemplate').on('click', function() {
             console.log('템플릿 추가');
@@ -664,7 +663,11 @@
                 const templateTitle = $('#template-title').val().trim();
                 if (templateTitle === '') {
                     // 알림창 표시
-                    alert('템플릿 제목을 입력해주세요.');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '입력 필요',
+                        text: '템플릿 제목을 입력해주세요.'
+                    });
                     return;
                 }
                 
@@ -695,7 +698,11 @@
                     },
                     error: function(err) {
                         console.log('템플릿 추가 실패: ', err);
-                        alert('템플릿 저장에 실패했습니다.');
+                        Swal.fire({
+                            icon: 'error',
+                            title: '저장 실패',
+                            text: '템플릿 저장에 실패했습니다.'
+                        });
                         // $('#template-popup').remove();
                         // $('#popup-overlay').remove();
                     }
@@ -995,17 +1002,16 @@
             console.log('recpEmailInp 값 변경 감지 emplNo : ',emplNo);
             let myMail = $('#trnsmitEmail').val();
             // if(email == myMail){
-            //     alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
             //     swal({title:'자신의 이메일을 수신이메일란에 작성할 수 없습니다.',icon:'warning'})
             //     $('#recptnEmail').val('');
             //     return 
             // }
             if(email != '' && !(isValidEmail(email))){
-                // alert('알맞지 않는 형식입니다.');
                 swal({title:'알맞지 않는 형식입니다.',icon:'warning'});
                 $('#recptnEmail').val('');
                 return
             }
+
             if(email != '' && validateDupl(email).length!=0){
                 swal({title:'중복된 이메일입니다.',icon:'warning'});
                 // console.log('이거 실행되면 안됨');
@@ -1120,13 +1126,11 @@
             // console.log('hiddenRefEmailInp 값 변경 감지',email);
             let myMail = $('#trnsmitEmail').val();
             if(email==myMail){
-                // alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
                 swal({title:'자신의 이메일을 수신이메일란에 작성할 수 없습니다.',icon:'warning'});
                 $('#hiddenRefEmailInp').val('');
                 return;
             }
             if(email!='' && !(isValidEmail(email))){
-                // alert('알맞지 않는 형식입니다.');
                 swal({title:'알맞지 않는 형식입니다.',icon:'warning'});
                 return;
             }
@@ -1221,14 +1225,12 @@
                 spanField.text(emplNmState);
             }
             if(email==myMail){
-                // alert('자신의 이메일을 수신이메일란에 작성할 수 없습니다.');
                 swal({title:'자신의 이메일을 수신이메일란에 작성할 수 없습니다.',icon:'warning'});
                 spanField.text(emplNmState);
                 emailField.val(emailState);
                 return;
             }
             if(emailState!='' && !(isValidEmail(email))){
-                // alert('알맞지 않는 형식입니다.');
                 swal({title:'알맞지 않는 형식입니다.',icon:'warning'});
                 spanField.text(emplNmState);
                 emailField.val(emailState);
