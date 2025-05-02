@@ -275,7 +275,7 @@ public class AtrzServiceImpl implements AtrzService {
 		//허성진씨 줄바꿈이 안먹히자나~~~~~
 		notificationVO.setNtcnSj("[전자결재 알림]");
 		//알림 내용을 셋팅해준다 ntcnCn	내용
-		notificationVO.setNtcnCn(atrzVO.getDrafterEmpnm() +" 님이 결재기안을 요청하였습니다.");
+		notificationVO.setNtcnCn(atrzVO.getDrafterEmpnm() +" 님이 연차신청서의 결재를 요청하였습니다.");
 		notificationVO.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo="+atrzVO.getAtrzDocNo());
 		notificationVO.setSkillCode("02");
 		
@@ -387,7 +387,7 @@ public class AtrzServiceImpl implements AtrzService {
 		//허성진씨 줄바꿈이 안먹히자나~~~~~
 		notificationVO.setNtcnSj("[전자결재 알림]");
 		//알림 내용을 셋팅해준다 ntcnCn	내용
-		notificationVO.setNtcnCn(atrzVO.getDrafterEmpnm() +" 님이 결재기안을 요청하였습니다.");
+		notificationVO.setNtcnCn(atrzVO.getDrafterEmpnm() +" 님이 지출결의서의 결재를 요청하였습니다.");
 		notificationVO.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo="+atrzVO.getAtrzDocNo());
 		notificationVO.setSkillCode("02");
 		
@@ -533,7 +533,7 @@ public class AtrzServiceImpl implements AtrzService {
 		//허성진씨 줄바꿈이 안먹히자나~~~~~
 		notificationVO.setNtcnSj("[전자결재 알림]");
 		//알림 내용을 셋팅해준다 ntcnCn	내용
-		notificationVO.setNtcnCn(atrzVO.getDrafterEmpnm() +" 님이 결재기안을 요청하였습니다.");
+		notificationVO.setNtcnCn(atrzVO.getDrafterEmpnm() +" 님이 기안서의 결재를 요청하였습니다.");
 		notificationVO.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo="+atrzVO.getAtrzDocNo());
 		notificationVO.setSkillCode("02");
 		
@@ -629,22 +629,33 @@ public class AtrzServiceImpl implements AtrzService {
 		List<EmployeeVO> employeeVOList = new ArrayList<>();
 		EmployeeVO employeeVO = new EmployeeVO();
 		
-		if(nextEmpNo != null && !"10".equals(sanctnSttusCode)) {
-			employeeVO.setEmplNo(nextEmpNo);
-			
+		// 다음 결재자가 참조자가 아닌 경우에만 알림 전송
+		AtrzLineVO nextLineVO = atrzMapper.getAtrzLineInfoByEmpNo(atrzDocNo, nextEmpNo);
+		if (nextEmpNo != null && !"10".equals(sanctnSttusCode) && nextLineVO != null && !"0".equals(nextLineVO.getAtrzTy())) {
+		    employeeVO.setEmplNo(nextEmpNo);
 		    employeeVOList.add(employeeVO);
+
+		    NotificationVO notificationVO = new NotificationVO();
+		    notificationVO.setNtcnSj("[전자결재 알림]");
 		    
-		    //알림 보낼 것 구성
-			NotificationVO notificationVO = new NotificationVO();
-			notificationVO.setNtcnSj("[전자결재 알림]");
-			AtrzVO notifiAtrzVO =atrzMapper.selectAtrzDetail(atrzVO.getAtrzDocNo());
-			log.info("notificationVo-> notifiAtrzVO:"+notifiAtrzVO);
-			log.info("notificationVo-> employeeVO:"+employeeVO);
-		    notificationVO.setNtcnCn(notifiAtrzVO.getDrafterEmpnm() + " 님이 결재기안을 요청하였습니다.");
+		    // 📌 여기에 삽입
+		    String docNo = atrzVO.getAtrzDocNo();
+		    char firstChar = docNo.charAt(0);
+		    String docTypeNm = "";
+		    switch (firstChar) {
+		        case 'H': docTypeNm = "연차신청서"; break;
+		        case 'S': docTypeNm = "지출결의서"; break;
+		        case 'D': docTypeNm = "기안서"; break;
+		        default: docTypeNm = "전자결재 문서"; break;
+		    }
+		    
+		    AtrzVO notifiAtrzVO = atrzMapper.selectAtrzDetail(atrzVO.getAtrzDocNo());
+		    log.info("notificationVo-> notifiAtrzVO:"+notifiAtrzVO);
+		    log.info("notificationVo-> employeeVO:"+employeeVO);
+		    notificationVO.setNtcnCn(notifiAtrzVO.getDrafterEmpnm() + " 님이 " + docTypeNm + "의 결재를 요청하였습니다.");
 		    notificationVO.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo=" + atrzVO.getAtrzDocNo());
 		    notificationVO.setSkillCode("02");
-			
-		    // 알림 전송
+
 		    notificationService.insertNotification(notificationVO, employeeVOList);
 		}
 	    
@@ -714,7 +725,7 @@ public class AtrzServiceImpl implements AtrzService {
 	        			} else if ("26".equals(holiCode)) {
 	        			    holiName = "오후반차";
 	        			} else {
-	        			    holiName = "휴가"; // 예외처리
+	        			    holiName = "연차"; // 예외처리
 	        			}
 	        			//일정등록에 갈값 넣어주기
 	        			AtrzVO atrzVOSchedule = atrzMapper.selectAtrzDetail(atrzDocNo);
@@ -753,23 +764,34 @@ public class AtrzServiceImpl implements AtrzService {
 			 // 📌 참조자 알림 전송
 	        log.info("atrzDetailAppUpdate->atrzDocNo:"+atrzDocNo);
 	        List<AtrzLineVO> atrzLineList = atrzMapper.selectAtrzLineList(atrzDocNo);
-	        log.info("atrzDetailAppUpdate->atrzLineList:"+atrzLineList);
+	        /*
+	         atrzDetailAppUpdate->atrzLineListv(참조자 알림확인용):[AtrzLineVO(atrzDocNo=S_20250502_00001, atrzLnSn=1, sanctnerEmpno=20250005, 
+	         sanctnerClsfCode=01, contdEmpno=null, contdClsfCode=null, dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=1, sanctnProgrsSttusCode=10,
+	          dcrbAuthorYn=N, contdAuthorYn=null, sanctnOpinion=승인합니다., eltsgnImage=null, sanctnConfmDt=Fri May 02 10:15:25 KST 2025, 
+	          atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null, sanctnerDeptNm=null, sanctnerEmpNm=null, befSanctnerEmpno=null, 
+	          befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0), 
+	          AtrzLineVO(atrzDocNo=S_20250502_00001, atrzLnSn=2, sanctnerEmpno=20250004, sanctnerClsfCode=02, contdEmpno=null, contdClsfCode=null, 
+	          dcrbManEmpno=null, dcrbManClsfCode=null, atrzTy=1, sanctnProgrsSttusCode=10, dcrbAuthorYn=N, contdAuthorYn=null, sanctnOpinion=승인합니다.,
+	           eltsgnImage=null, sanctnConfmDt=Fri May 02 10:15:34 KST 2025, atrzLastLnSn=0, atrzLineList=null, sanctnerClsfNm=null, sanctnerDeptNm=null,
+	            sanctnerEmpNm=null, befSanctnerEmpno=null, befSanctnProgrsSttusCode=null, aftSanctnerEmpno=null, aftSanctnProgrsSttusCode=null, maxAtrzLnSn=0)]
+	         */
+	        log.info("atrzDetailAppUpdate->atrzLineListv(참조자 알림확인용):"+atrzLineList);
 	        
 	        if (atrzLineList != null && !atrzLineList.isEmpty()) {
 	            for (AtrzLineVO atrzLineVO : atrzLineList) {
-	                if (atrzLineVO.getBefSanctnerEmpno() != null && "0".equals(atrzLineVO.getAtrzTy())) {
-	                    EmployeeVO atrzTyEmp = new EmployeeVO();
-	                    atrzTyEmp.setEmplNo(atrzLineVO.getSanctnerEmpno());
+	            	if ("0".equals(atrzLineVO.getAtrzTy())) {
+	            	    EmployeeVO atrzTyEmp = new EmployeeVO();
+	            	    atrzTyEmp.setEmplNo(atrzLineVO.getSanctnerEmpno());
 
-	                    NotificationVO refNotification = new NotificationVO();
-	                    refNotification.setNtcnSj("[전자결재 알림]");
-	                    refNotification.setNtcnCn(atrzVOApp.getDrafterEmpnm() + " 님의 결재완료된 문서가 참조되었습니다.");
-	                    refNotification.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo=" + atrzVO.getAtrzDocNo());
-	                    refNotification.setSkillCode("02");
+	            	    NotificationVO refNotification = new NotificationVO();
+	            	    refNotification.setNtcnSj("[전자결재 알림]");
+	            	    refNotification.setNtcnCn(atrzVOApp.getDrafterEmpnm() + " 님의 결재완료된 " + docTypeNm + "의 참조되었습니다.");
+	            	    refNotification.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo=" + atrzVO.getAtrzDocNo());
+	            	    refNotification.setSkillCode("02");
 
-	                    List<EmployeeVO> singleRefList = Collections.singletonList(atrzTyEmp);
-	                    notificationService.insertNotification(refNotification, singleRefList);
-	                }
+	            	    List<EmployeeVO> singleRefList = Collections.singletonList(atrzTyEmp);
+	            	    notificationService.insertNotification(refNotification, singleRefList);
+	            	}
 	            }
 	        }
 	        // 📌 결재완료 알림 전송
@@ -778,7 +800,7 @@ public class AtrzServiceImpl implements AtrzService {
 
 	        NotificationVO notificationVOFinish = new NotificationVO();
 	        notificationVOFinish.setNtcnSj("[전자결재 알림]");
-	        notificationVOFinish.setNtcnCn(atrzVOApp.getDrafterEmpnm() + " 님 기안하신 " + docTypeNm + " 가 최종 완료되었습니다.");
+	        notificationVOFinish.setNtcnCn(atrzVOApp.getDrafterEmpnm() + " 님 기안하신 " + docTypeNm + "가 최종 완료되었습니다.");
 	        notificationVOFinish.setOriginPath("/atrz/selectForm/atrzDetail?atrzDocNo=" + atrzVO.getAtrzDocNo());
 	        notificationVOFinish.setSkillCode("02");
 

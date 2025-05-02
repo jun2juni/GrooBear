@@ -2375,6 +2375,14 @@
 			,SANCTN_OPINION = #{atrzLineVOList[0].sanctnOpinion}
 		WHERE ATRZ_DOC_NO = #{atrzDocNo} AND SANCTNER_EMPNO = #{emplNo}
 	</update>
+
+	<!-- 최종결재자가 결재하는경우 다음사람이 결재자인경우에만 알림 보내기 용 -->
+	<select id="getAtrzLineInfoByEmpNo" resultType="kr.or.ddit.sevenfs.vo.atrz.AtrzLineVO">
+		  SELECT * 
+		  FROM ATRZ_LINE 
+		  WHERE ATRZ_DOC_NO = #{atrzDocNo}
+		    AND SANCTNER_EMPNO = #{emplNo}
+	</select>	
 	
 	<!-- 전자결재문서 수정 -->
 	<update id="atrzStatusFinalUpdate" parameterType="kr.or.ddit.sevenfs.vo.atrz.AtrzVO">

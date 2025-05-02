@@ -200,6 +200,10 @@ public interface AtrzMapper {
 	
 	//기안서 기안완료시
 	public DraftVO selectDraftByDocNo(String docNo);
+	
+	
+	//최종결재자 결재시 다음결재자에게만 알림 보내기 위한것 
+	public AtrzLineVO getAtrzLineInfoByEmpNo(@Param("atrzDocNo") String atrzDocNo, @Param("emplNo") String emplNo);
 
 
 	
