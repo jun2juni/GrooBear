@@ -59,16 +59,16 @@
 											data-bs-target="#content2" type="button" role="tab"
 											aria-controls="content2" aria-selected="false">직원관리</button>
 									</li>
-									<li class="nav-item" role="presentation">
+									<!-- <li class="nav-item" role="presentation">
 										<button class="nav-link" id="tab3" data-bs-toggle="tab"
 											data-bs-target="#content3" type="button" role="tab"
 											aria-controls="content3" aria-selected="false">재무</button>
-									</li>
-									<li class="nav-item" role="presentation">
+									</li> -->
+									<!-- <li class="nav-item" role="presentation">
 										<button class="nav-link" id="tab4" data-bs-toggle="tab"
 											data-bs-target="#content4" type="button" role="tab"
 											aria-controls="content4" aria-selected="false">프로젝트관리</button>
-									</li>
+									</li> -->
 								</ul>
 							</div>
 							<!-- 상위탭 시작  -->
