@@ -622,6 +622,7 @@
 
 			let start = info.event.start;
 			let end = info.event.end;
+			// console.log('테스트 ======================================= end : ',end);
 
 			// dateTimeChk가 false면 allDay 체크 시간, true면 allDay 체크 해제
 			let dateTimeChk = overChk(start,end,"date",1);
@@ -629,6 +630,7 @@
 				$('#allDay').prop('checked',false);
 				$('.timeInput-toggle.date').css('display','block');
 				$('.timeInput-toggle.time').css('display','none');
+				end.setDate(end.getDate()-1);
 			}else{
 				$('#allDay').prop('checked',true);
 				$('.timeInput-toggle.date').css('display','none');
