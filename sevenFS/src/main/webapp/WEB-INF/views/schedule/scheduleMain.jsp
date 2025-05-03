@@ -457,6 +457,7 @@
 
 		calendar.on("dateClick",function(info){
 			let chk = checkDblClk();
+			$('#schdulTy').prop('disabled',false);
 			// $('#schdulTy').prop('disabeld',false);
 			// $('#scheduleLabel').prop('disabeld',false);
 			if(chk && (info.view.type!='timeGridDay' && info.view.type!='timeGridWeek')){
@@ -555,6 +556,7 @@
 		// 일자 선택 이벤트
 		calendar.on("select", function(info) {
 			let chk = checkDblClkSel();
+			$('#schdulTy').prop('disabled',false);
 			let startDate = new Date(info.start);
 			let endDate = new Date(info.end);
 			// $('#schdulTy').prop('disabeld',false);
@@ -594,6 +596,7 @@
 			
 			let popover = document.querySelector(".fc-popover");
 			$('#schdulTy').prop('disabled',true);
+			
 
 			$('#allDay').prop('checked',false);
 			$('.timeInput-toggle.time').css('display','none');
