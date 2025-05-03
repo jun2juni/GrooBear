@@ -19,10 +19,9 @@
 </head>
 <style>
     .col-sm-12 img {
-        width: 100px;
-        height: 100px;
+        width: 200px;
     }
-    .ck-editor__editable {
+	.ck-editor__editable {
 	    min-height: 300px;
 	}
 </style>
