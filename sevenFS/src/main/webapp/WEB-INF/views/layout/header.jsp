@@ -17,6 +17,15 @@
           ${title}
           <%--<span class="ms-2" style='font-size:18px; color:gray;'>${copyLight}</span>--%>
         </h3>
+          
+          <%--임시--%>
+          <div class="d-flex justify-content-center my-3 position-absolute top-0 start-50 translate-middle" style="transform: translate(-67%, 17%) !important;">
+            <span class="badge bg-danger text-white px-4 py-2" style="font-size: 1.2rem; border-radius: 30px;">
+              🎥 "${myEmpInfo.emplNm}" 님 화면 시청 중
+            </span>
+          </div>
+          <%--임시--%>
+
         </div>
       </div>
       
