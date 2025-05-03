@@ -40,6 +40,8 @@ function fillDefaultValues() {
 		// 메인에서 일정등록 눌렀을시에만 실행 (myCalendar?openModal=true 일 때)
 		let openModal = "${param.openModal}";
 		console.log("openModal : ", openModal);
+		$('#addUpt').val('add');
+		console.log("openModal : ", $('#addUpt').val());
 		if(openModal){
 			insModal.show();
 			$('.form-control').attr('readonly',false);
