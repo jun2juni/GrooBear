@@ -50,7 +50,7 @@
    			<!-- 기본 정보 입력 안내 -->
 		<div class="card-style chat-about h-100" style="justify-content: center;">
 			<input type="hidden" name="emplNo" value="${emplDetail.emplNo}">
-		    <input type="checkbox" id="empInsertChkBox">
+		    <button type="button" class="btn btn-outline-warning d-flex align-items-center gap-1" id="empInsertChkBox">자동입력</button>
 				<form action="/emplInsertPost" method="post" id="emplInsertForm" class="needs-validation" novalidate>
 				  <div class=" form-group col-12" style="display: flex;">
 				  	<div class="input-style-1 form-group col-2" style="margin-left: 15%">

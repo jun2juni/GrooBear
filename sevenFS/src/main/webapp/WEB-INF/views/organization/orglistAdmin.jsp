@@ -298,6 +298,7 @@ function clickDept(data) {
     	  // 하위부서팀이나 사원이 있을경우 삭제 안됨
     	  if(data.node.children.length > 0 || data.node.children_d > 0){
     		  swal({
+    			  	 icon : 'warning',
 					 text : '소속된 사원이 있어 부서 삭제가 불가능합니다.',
 					 buttons : {
 						 confirm : {
@@ -311,20 +312,20 @@ function clickDept(data) {
     		  })
     	  }
     	  else{
-	    	  swal({
-	              title: "정말 삭제하시겠습니까?",
-	              icon: "warning",
-	              buttons : {
-	            	  cancle : {
-	            		  text : '삭제 취소',
-	            		  value : false
-	            	  },
-	            	  confirm : {
-	            		  text : '확인',
-	            		  value : true
-	            	  }
-	              }
-	              })
+    		  swal("정말 삭제 하시겠습니까?", {
+    			  icon: "warning",
+				  dangerMode: true,
+				  buttons: {
+					  cancle : {
+						text : '취소',
+						value : false,
+					  },
+					  confirm : {
+						  text : '확인',
+						  value : true,
+					  }
+				  },
+				})
 	          .then((willDelete) => {
 	            if (willDelete) {
 	              fetch("deptDelete?cmmnCode="+ data.node.id,{

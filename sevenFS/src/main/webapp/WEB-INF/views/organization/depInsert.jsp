@@ -56,7 +56,7 @@
 				<button type="button" id="insertBtn"
 					class="main-btn primary-btn-light square-btn btn-hover btn-sm">확인</button>
 			</div>
-			<input type="checkbox" id="depInsertChkBox">
+			<button type="button" class="btn btn-outline-warning d-flex align-items-center gap-1" id="depInsertDataButton">자동입력</button>
 		</div>
 	</div>
 </form>    
@@ -65,7 +65,7 @@
 
 // 체크박스 부서 정보 입력
 $(function(){
-	$('#depInsertChkBox').on('click' , function(){
+	$('#depInsertDataButton').on('click' , function(){
 		$('#cmmnCodeNm').val('404 팀');
 		$('#cmmnCodeDc').val('2024.05.08 신규 팀');
 	})
