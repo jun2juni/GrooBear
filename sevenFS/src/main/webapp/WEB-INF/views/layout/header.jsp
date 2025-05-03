@@ -9,8 +9,8 @@
       <div class="col-lg-5 col-md-5 col-6">
         <div class="header-left d-flex align-items-center">
           <div class="menu-toggle-btn mr-15">
-            <button id="menu-toggle" class="main-btn primary-btn btn-hover groobear-btn">
-              <i class="lni lni-chevron-left"></i>Menu
+            <button id="menu-toggle" class="main-btn primary-btn btn-hover groobear-btn text-bold">
+              <i class="lni lni-chevron-left"></i>MENU
             </button>
           </div>
  		<h3>
