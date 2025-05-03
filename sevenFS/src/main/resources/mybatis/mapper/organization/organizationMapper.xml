@@ -101,6 +101,7 @@
 		    AND pos.CMMN_CODE_GROUP = 'POSITION'
 		WHERE emp.ENABLED = '1'
 	</select>
+	
 		<!-- 부서조회쿼리 -채성실 -->
   <select id="selectDeptList" resultType="kr.or.ddit.sevenfs.vo.organization.DepartmentVO">
     SELECT
@@ -132,15 +133,6 @@
         WHERE cc.cmmn_code_group='DEPARTMENT'
 		  AND e.EMPL_NO = #{emplNo}
 		  AND ENABLED = '1'
-	</select>
-	
-	<!-- 사원이름으로 상세보기 -->
-	<select id="searchNameEmpDet">
-		SELECT emp.EMPL_NO
-				,
-				
-		FROM EMPLOYEE
-		WHERE empl_nm = '박호산나'
 	</select>
 	
 	<!-- 사원 상세부서 -->
