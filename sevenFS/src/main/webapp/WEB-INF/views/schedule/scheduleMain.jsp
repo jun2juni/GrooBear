@@ -1007,15 +1007,11 @@ function fillDefaultValues() {
 	<jsp:include page="scheduleSidebar.jsp"></jsp:include>
 	<jsp:include page="scheduleFormModal.jsp"></jsp:include>
 	<div id="contentContainer" style="height:100%;" >
-		<div id='myCalendar' style="height:100%;" ></div>
+		<div id='myCalendar' style="height:100%;"></div>
 	</div>
 	
 </body>
 <style>
-	/* .fc-event-title-container{
-		display: grid;
-		align-items: center;
-	} */
 	.fc-button.fc-button-primary {
 		border: none !important;
 	}
@@ -1041,13 +1037,20 @@ function fillDefaultValues() {
 		display: none;
 	}
 	#calendarContainer{
-		height: 80vh;
+		/* height: 80vh; */
+		height: 78vh;
 		position: relative;
 		top: -20px;
 	}
 	#calendarContent{
 		background-color: white;
 	}
+	.container-fluid{
+		background-color: white;
+	}
+	/* .footer{
+		background-color: white;
+	} */
 
 	:is(.fc-day-mon, .fc-day-tue, .fc-day-wed, .fc-day-thu, .fc-day-fri) .fc-daygrid-day-number,
 	:is(.fc-day-mon, .fc-day-tue, .fc-day-wed, .fc-day-thu, .fc-day-fri) .fc-col-header-cell-cushion,
@@ -1066,7 +1069,5 @@ function fillDefaultValues() {
 	.fc-day-sat .fc-daygrid-day-number {
 		color : blue;
 	}
-	/* .fc-timegrid-slot .fc-daygrid-day-frame:hover {
-	} */
 </style>
 </html>

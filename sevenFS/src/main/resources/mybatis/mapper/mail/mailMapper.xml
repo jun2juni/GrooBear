@@ -42,7 +42,6 @@ SELECT E.EMPL_NM
     ,M.trnsmit_email
     ,M.recptn_email
     ,M.email_sj
-    ,M.email_cn
     ,M.atch_file_no
     ,M.trnsmit_dt
     ,M.readng_at
@@ -91,29 +90,28 @@ AND M.DEL_AT = 'N'
 
 <select id="mailLabeling" parameterType="int" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO">
 	SELECT E.EMPL_NM
-    ,M.email_no
-    ,M.empl_no
-    ,M.lbl_no
-    ,M.email_trnsmis_ty
-    ,M.email_cl_ty
-    ,M.trnsmit_email
-    ,M.recptn_email
-    ,M.email_sj
-    ,M.email_cn
-    ,M.atch_file_no
-    ,M.trnsmit_dt
-    ,M.readng_at
-    ,M.email_group_no
-    ,M.starred
-    ,ML.LBL_NO
-    ,ML.LBL_COL
-    ,ML.LBL_NM
-FROM MAIL M
-INNER JOIN EMPLOYEE E ON M.EMPL_NO = E.EMPL_NO
-LEFT JOIN MAIL_LABEL ML ON M.lbl_no = ML.lbl_no
-where m.lbl_no = #{lblNo}
-  and (m.email_cl_ty = '0' or m.email_cl_ty = '1')
-ORDER BY M.trnsmit_dt DESC
+	    ,M.email_no
+	    ,M.empl_no
+	    ,M.lbl_no
+	    ,M.email_trnsmis_ty
+	    ,M.email_cl_ty
+	    ,M.trnsmit_email
+	    ,M.recptn_email
+	    ,M.email_sj
+	    ,M.atch_file_no
+	    ,M.trnsmit_dt
+	    ,M.readng_at
+	    ,M.email_group_no
+	    ,M.starred
+	    ,ML.LBL_NO
+	    ,ML.LBL_COL
+	    ,ML.LBL_NM
+	FROM MAIL M
+	INNER JOIN EMPLOYEE E ON M.EMPL_NO = E.EMPL_NO
+	LEFT JOIN MAIL_LABEL ML ON M.lbl_no = ML.lbl_no
+	where m.lbl_no = #{lblNo}
+	  and (m.email_cl_ty = '0' or m.email_cl_ty = '1')
+	ORDER BY M.trnsmit_dt DESC
 </select>
 
 <select id="emailDetail" parameterType="kr.or.ddit.sevenfs.vo.mail.MailVO" resultType="kr.or.ddit.sevenfs.vo.mail.MailVO">

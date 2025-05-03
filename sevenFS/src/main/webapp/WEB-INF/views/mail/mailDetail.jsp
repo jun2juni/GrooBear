@@ -655,7 +655,7 @@
                         </button>
                         <!-- 라벨 지정 select 추가 -->
                         <select name="label" id="labeling" class="label-select forward-button" style="margin: 0 10px; padding: 5px;">
-                          <option value="" disabled selected>라벨</option>
+                          <option value="" disabled selected>라벨 적용</option>
                           <c:forEach items="${mailLabelList}" var="mailLabel">
                             <option value="${mailLabel.lblNo}">${mailLabel.lblNm}</option>
                           </c:forEach>
