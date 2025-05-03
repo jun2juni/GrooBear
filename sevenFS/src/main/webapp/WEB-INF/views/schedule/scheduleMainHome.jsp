@@ -417,6 +417,7 @@
                 // 날짜 문자열인 경우 타임존 이슈를 방지하기 위해 직접 파싱
                 let startDate, endDate;
                 
+                // 시작날짜 설정
                 if (typeof data.schdulBeginDt === 'string') {
                     // 문자열 형식이 "YYYY-MM-DD" 또는 "YYYY-MM-DD HH:MM:SS" 형태라고 가정
                     if (data.schdulBeginDt.includes('T') || data.schdulBeginDt.includes(' ')) {
@@ -438,11 +439,13 @@
                     startDate = new Date(data.schdulBeginDt);
                 }
                 
+                // 종료날짜 설정
                 if (typeof data.schdulEndDt === 'string') {
                     // 문자열 형식이 "YYYY-MM-DD" 또는 "YYYY-MM-DD HH:MM:SS" 형태라고 가정
                     if (data.schdulEndDt.includes('T') || data.schdulEndDt.includes(' ')) {
                         // ISO 형식이나 공백으로 구분된 날짜 시간
                         endDate = new Date(data.schdulEndDt);
+                        endDate.setDate(endDate.getDate()-1);
                     } else {
                         // 날짜만 있는 경우 (YYYY-MM-DD)
                         const parts = data.schdulEndDt.split('-');
@@ -456,10 +459,12 @@
                             endDate.setHours(23, 59, 59, 999);
                         } else {
                             endDate = new Date(data.schdulEndDt);
+                            endDate.setDate(endDate.getDate()-1);
                         }
                     }
                 } else {
                     endDate = new Date(data.schdulEndDt);
+                    endDate.setDate(endDate.getDate()-1);
                 }
                 
                 // 종료일이 시작일보다 빠르거나 같은 경우, 종료일을 시작일의 23:59:59로 설정
