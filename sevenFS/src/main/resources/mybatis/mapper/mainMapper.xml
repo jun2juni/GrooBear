@@ -173,14 +173,16 @@
 
 <!-- 사원 한명의 오늘 일정 갯수 (개인 + 부서) -->
 <select id="getEmplTodayCalendar" parameterType="hashMap">
-	SELECT  COUNT(*)
+	SELECT COUNT(*)
 	FROM SCHEDULE
-          WHERE (
-           (SCHDUL_TY = '1' AND DEPT_CODE = #{deptCode})
-        OR (SCHDUL_TY = '0' AND EMPL_NO = #{emplNo})
-           )
-       AND TO_CHAR(SCHDUL_BEGIN_DT, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
-       AND TO_CHAR(SCHDUL_END_DT, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+	WHERE (
+	    (SCHDUL_TY = '1' AND DEPT_CODE = #{deptCode})
+	    OR (SCHDUL_TY = '0' AND EMPL_NO = #{emplNo})
+	)
+	AND (
+	    TO_CHAR(SCHDUL_BEGIN_DT, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+	    OR TO_CHAR(SCHDUL_END_DT, 'YYYY-MM-DD') = TO_CHAR(SYSDATE + 1, 'YYYY-MM-DD')
+	)
 </select>
 
 
