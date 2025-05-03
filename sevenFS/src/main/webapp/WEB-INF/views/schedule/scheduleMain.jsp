@@ -10,9 +10,10 @@
 //자동입력 버튼클릭시
 function fillDefaultValues() {
 	// 내용
-	document.getElementById('schTitle').value = '일정제목을 입력해주세요 유대현쿤';
+	document.getElementById('schTitle').value = '통합 업무관리 시스템 구축 프로젝트 사전 회의';
 	// 상세내용
-	document.getElementById('schContent').value = '일정내용을 입력해주세요 유대현쿤';
+	document.getElementById('schContent').value = '조직 내 문서관리, 업무요청, 일정공유, 피드백 등 주요 기능을 통합한 SaaS 기반의 내부 시스템을 구축하는 프로젝트입니다.\n' +
+  													'사용자의 실질적인 업무 흐름에 맞춘 화면 설계와 기능 통합을 중점적으로 수행에 대한 내용을 미리 설계, 준비 합니다.';;
 };	
 //** 2025/05/03길준희 자동입력 버튼 추가함
 
