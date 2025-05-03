@@ -298,7 +298,7 @@
     <div class="card-header text-center fw-bold d-flex justify-content-between align-items-center">
       <span class="mx-auto">내가 참여한 프로젝트</span>
     </div>
-    <div class="card-body scroll-table">
+    <div class="card-body pt-0 scroll-table">
       <table class="table table-bordered text-center hover-highlight" id="myProjectTable">
         <thead class="table-light">
           <tr>
