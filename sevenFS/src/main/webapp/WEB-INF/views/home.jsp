@@ -120,6 +120,13 @@ String serverDate = dateFormat.format(now);
   max-height: 300px;
   overflow-y: auto;
 }
+
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: #f8f9fa;
+  }
 </style>
 <meta charset="UTF-8" />
 <meta name="viewport"
@@ -371,14 +378,14 @@ String serverDate = dateFormat.format(now);
 							<!-- 프로젝트 -->
 							<div class="col-lg-12">
 								<div class="card-style mb-30">
-								<div class="d-flex justify-content-between align-items-center mb-3">
-									  <h6 class="mb-0 fw-bold">진행중인 프로젝트 (마감 임박 업무)</h6>
-									  <a href="/project/tab?tab=list" class="text-sm fw-bolder" style="color: #4a6cf7;">
-									    더보기 
-									    <span class="material-symbols-outlined align-middle">chevron_right</span>
-									  </a>
-									</div>
-									 <div class="card-body scroll-table">
+								  <div class="d-flex justify-content-between align-items-center mb-3">
+									<h6 class="mb-0 fw-bold">진행중인 프로젝트 (마감 임박 업무)</h6>
+									<a href="/project/tab?tab=list" class="text-sm fw-bolder" style="color: #4a6cf7;">
+									  더보기
+									  <span class="material-symbols-outlined align-middle">chevron_right</span>
+									</a>
+								  </div>
+								  <div class="card-body scroll-table">
 								    <table class="table table-bordered text-center hover-highlight" id="urgentTaskTable">
 								      <thead class="table-light">
 								        <tr>
