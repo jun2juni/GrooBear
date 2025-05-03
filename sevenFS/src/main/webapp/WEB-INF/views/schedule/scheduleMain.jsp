@@ -6,6 +6,16 @@
 <title>Insert title here</title>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="text/javascript">
+//** 2025/05/03길준희 자동입력 버튼 추가함
+//자동입력 버튼클릭시
+function fillDefaultValues() {
+	// 내용
+	document.getElementById('schTitle').value = '일정제목을 입력해주세요 유대현쿤';
+	// 상세내용
+	document.getElementById('schContent').value = '일정내용을 입력해주세요 유대현쿤';
+};	
+//** 2025/05/03길준희 자동입력 버튼 추가함
+
 	document.addEventListener('DOMContentLoaded', function() {
 	    $('.nav-item-myCalendar').addClass('active');
 		let emplNo = "${myEmpInfo.emplNo}";

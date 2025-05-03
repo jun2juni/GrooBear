@@ -288,6 +288,9 @@ textarea {
   
 			<!-- 버튼 -->
 			<div class="d-flex justify-content-end gap-2 mt-4" id="btnGroup">
+				<!--길준희 자동입력 버튼추가함 -->
+				<button type="button" class="btn btn-outline-warning d-flex align-items-center gap-1" onclick="fillDefaultValues()">자동입력</button>
+				<!--길준희 자동입력 버튼추가함 -->
 				<button id="modalSubmit" type="button" class="btn btn-primary" onclick="fCalAdd(event)">등록</button>
 				<button id="deleteBtn" type="button" class="btn btn-danger" style="display: none;" onclick="fCalDel(event)">삭제</button>
 				<button type="button" class="btn btn-outline-secondary" onclick="fMClose()">취소</button>
