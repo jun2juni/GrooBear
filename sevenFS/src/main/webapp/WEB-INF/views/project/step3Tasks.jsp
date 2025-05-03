@@ -41,6 +41,13 @@
             <input type="hidden" id="chargerEmpno" />
           </div>
           
+          <!-- 업무 자동입력 버튼 -->
+		<div class="mt-2">
+		  <button type="button" class="btn btn-outline-secondary me-2" onclick="autoFillTask1()">업무1 자동입력</button>
+		  <button type="button" class="btn btn-outline-secondary" onclick="autoFillTask2()">업무2 자동입력</button>
+		</div>
+          
+          
           <!-- 담당자 선택 -->
           <div class="col-md-12 mt-2">
             <label class="form-label fw-semibold">담당자 선택</label>
@@ -139,3 +146,21 @@
     </div>
   </div>
 </div>
+<script>
+function autoFillTask1() {
+	  document.getElementById('taskNm').value = "업무 프로세스 설계";
+	  document.getElementById('taskCn').value =
+	    `그루베어 프로젝트의 전체 업무 흐름을 설계하고, 각 단계별 담당 역할과 책임 범위를 정의합니다. 
+	주요 산출물은 업무 프로세스 다이어그램, 업무 분담표입니다.`;
+	  document.getElementById('parentTaskNm').value = ""; // 상위업무는 비워둠
+	}
+
+	function autoFillTask2() {
+	  document.getElementById('taskNm').value = "세부 기능 정의서 작성";
+	  document.getElementById('taskCn').value =
+	    `업무 프로세스를 기반으로 각 기능의 상세 정의서를 작성합니다. 
+	입력 항목, 처리 로직, 예외 처리 방식 등을 문서로 정리합니다.`;
+	  // 상위업무 입력은 생략
+	}
+
+</script>

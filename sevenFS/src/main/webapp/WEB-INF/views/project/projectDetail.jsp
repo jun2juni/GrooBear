@@ -17,24 +17,24 @@
 <script>
    const loginUserEmplNo = "${myEmpInfo.emplNo}";
 </script>
-  <style type="text/css">
-    
-    /* 1. 업무명 컬럼 너비 조정 */
-    .task-name-col { 
-      width: 30%; 
-      min-width: 250px; 
-      max-width: 30%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    
-    /* 4. 참여인원 호버 효과 제거 */
-.participant-btn {
-  pointer-events: none;
-}
+<style type="text/css">
+   
+   /* 1. 업무명 컬럼 너비 조정 */
+   .task-name-col { 
+     width: 30%; 
+     min-width: 250px; 
+     max-width: 30%;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     white-space: nowrap;
+   }
+   
+	   /* 4. 참여인원 호버 효과 제거 */
+	.participant-btn {
+	  pointer-events: none;
+	}
 
-  </style>
+ </style>
 </head>
 <body>
 <%@ include file="../layout/sidebar.jsp" %>
@@ -63,7 +63,6 @@
                       </h4>
                       <span class="text-muted">프로젝트 번호: ${project.prjctNo}</span>
                     </div>
-					
 					<div class="row mt-4">
 					  <div class="col-6">
 						<!-- 1. 기본 정보 -->
@@ -155,14 +154,13 @@
 							</div>
 							<div class="col-md-12">
 							  <div class="border-top pt-3">
-           				   <span class="badge bg-secondary text-white mb-2 px-2 py-1">
-           					 <i class="fas fa-user-clock me-1"></i> 참조자
-           				   </span>
+	           				   <span class="badge bg-secondary text-white mb-2 px-2 py-1">
+	           					 <i class="fas fa-user-clock me-1"></i> 참조자
+	           				   </span>
 								<div class="d-flex flex-wrap gap-2 small text-muted">
 								  <c:forEach var="emp" items="${project.observerList}">
 									<!-- 4. 호버 효과 제거 -->
-									<div
-										class="participant-btn btn btn-outline-secondary rounded-3 text-start shadow-sm"
+									<div class="participant-btn btn btn-outline-secondary rounded-3 text-start shadow-sm"
 										style="min-width: 120px; font-size: 0.85rem; border-width: 1px;">
 									  <i class="fas fa-user-clock me-1"></i> ${emp.emplNm}
 									  <div class="text-muted small">${emp.posNm}</div>
@@ -183,12 +181,11 @@
 			    <i class="fas fa-plus me-1"></i> 업무 추가
 			  </button>
 			</h5>
-<!-- 업무 목록 (AJAX 대상) -->
-<div id="taskListSection">
-  <c:import url="/projectTask/partialList?prjctNo=${project.prjctNo}" />
-</div>
+			<!-- 업무 목록 (AJAX 대상) -->
+			<div id="taskListSection">
+			  <c:import url="/projectTask/partialList?prjctNo=${project.prjctNo}" />
+			</div>
 
- 
 			<!-- 업무 상세 모달 -->
 			<div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailLabel" aria-hidden="true">
 			  <div class="modal-dialog modal-lg">
@@ -214,11 +211,9 @@
 			          <button type="button" class="btn btn-danger" onclick="deleteTask()">삭제하기</button>
 			        </div>
 			      </div>
-			      
 			    </div>
 			  </div>
 			</div>
-
           </div>
             <div class="d-flex justify-content-end m-3">
               <button class="btn btn-outline-danger me-2" onclick="deleteCurrentProject(${project.prjctNo})">
@@ -382,15 +377,12 @@ document.addEventListener("DOMContentLoaded", function () {
 	    .catch(err => {
 	    	  console.error("업무 목록 페이지 로드 실패:", err);
 	    	  swal("오류", "업무 목록을 불러오는데 실패했습니다.", "error");
-	    	});
+	    	});      
 
 	}
 	
-	
-	
-	
-	</script>
-	<script src="/js/project/taskAnswer.js"></script>
+</script>
+<script src="/js/project/taskAnswer.js"></script>
 		
-	</body>
+</body>
 </html>

@@ -231,9 +231,6 @@ function executeInlineScripts(container) {
 	});
 
 
-
-
-
   gantt.attachEvent("onAfterTaskUpdate", function (id, task) {
     const updateData = {
       taskNo: id,

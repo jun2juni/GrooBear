@@ -33,13 +33,18 @@
             </div>
           </div>
 
-          <!-- 프로젝트 내용 -->
-          <div class="col-12">
-            <div class="mb-4">
-              <label class="form-label fw-semibold">프로젝트 내용 <span class="text-danger">*</span></label>
-              <textarea name="prjctCn" placeholder="프로젝트의 목적, 범위, 기대효과 등을 자세히 기술해주세요" rows="5" class="form-control" required style="width: 95%;"></textarea>
-            </div>
-          </div>
+		<!-- 프로젝트 내용 -->
+		<div class="col-12">
+		  <div class="mb-4">
+		    <label class="form-label fw-semibold">프로젝트 내용 <span class="text-danger">*</span></label>
+		    <textarea name="prjctCn" id="prjctCn" placeholder="프로젝트의 목적, 범위, 기대효과 등을 자세히 기술해주세요" rows="5" class="form-control" required style="width: 95%;"></textarea>
+		  </div>
+		</div>
+
+		<div class="text-end">
+		  <button type="button" class="btn btn-outline-secondary" onclick="autoFillProject()">기본값 자동입력</button>
+		</div>
+
 
           <!-- 날짜 및 상태 정보 -->
           <div class="col-md-3">
@@ -125,6 +130,29 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+function autoFillProject() {
+	  const nameInput = document.getElementById('prjctNm');
+	  const descInput = document.getElementById('prjctCn');
+
+	  const isNameFilled = nameInput && nameInput.value.trim() !== '';
+	  const isDescFilled = descInput && descInput.value.trim() !== '';
+
+	  if (isNameFilled || isDescFilled) {
+	    const overwrite = confirm("이미 입력된 내용이 있습니다. 덮어쓰시겠습니까?");
+	    if (!overwrite) return;
+	  }
+
+	  // 자동입력 값 설정
+	  if (nameInput) {
+	    nameInput.value = "그루베어 그룹웨어 협업 시스템 구축 [📝 신규 프로젝트]";
+	  }
+
+	  if (descInput) {
+	    descInput.value = `본 프로젝트는 사내 협업 강화를 위한 그룹웨어 시스템을 개발하는 것을 목표로 합니다. 
+	업무 분담, 일정 관리, 문서 공유, 조직도 기반의 커뮤니케이션 기능을 통합 제공함으로써 
+	프로젝트 생산성과 효율성을 향상시키고자 합니다.`;
+	  }
+	}
 
 
 </script>

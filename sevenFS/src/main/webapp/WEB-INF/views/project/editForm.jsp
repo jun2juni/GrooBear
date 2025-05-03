@@ -121,7 +121,6 @@
 			  </div>
 			</div>
 
-
           <!-- 참여자 테이블 include -->
           <jsp:include page="editFormMembers.jsp" />
 
@@ -133,35 +132,35 @@
       </div>
       </div>
       
-      <!-- 조직도 모달 -->
-<div class="modal fade" id="orgChartModal" tabindex="-1" aria-labelledby="orgChartModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-    
-      <div class="modal-header">
-        <h5 class="modal-title">
-          <i class="fas fa-sitemap text-primary me-2"></i> 조직도
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-      </div>
-      
-      <div class="modal-body p-4">
-        <!--  검색창 먼저 -->
-        <c:import url="../organization/searchBar.jsp" />
-        
-        <!-- 조직도 트리 -->
-        <div class="card-style overflow-scroll mt-3" style="max-height: 75vh;">
-          <c:import url="../organization/orgList.jsp" />
-        </div>
-      </div>
-      
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-      </div>
-      
-    </div>
-  </div>
-</div>
+	      <!-- 조직도 모달 -->
+	<div class="modal fade" id="orgChartModal" tabindex="-1" aria-labelledby="orgChartModalLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-xl">
+	    <div class="modal-content">
+	    
+	      <div class="modal-header">
+	        <h5 class="modal-title">
+	          <i class="fas fa-sitemap text-primary me-2"></i> 조직도
+	        </h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+	      </div>
+	      
+	      <div class="modal-body p-4">
+	        <!--  검색창 먼저 -->
+	        <c:import url="../organization/searchBar.jsp" />
+	        
+	        <!-- 조직도 트리 -->
+	        <div class="card-style overflow-scroll mt-3" style="max-height: 75vh;">
+	          <c:import url="../organization/orgList.jsp" />
+	        </div>
+	      </div>
+	      
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+	      </div>
+	      
+	    </div>
+	  </div>
+	</div>
 
       
     </section>
