@@ -279,9 +279,9 @@
 <c:import url="../layout/sidebar.jsp" />
 <main class="main-wrapper">
 	<c:import url="../layout/header.jsp" />
-    <section class="section" style=" padding-left: 40px; padding-right: 40px; z-index: 999; display: flex; flex-direction: row; align-items: stretch; height: 100vh;">
+    <section class="section" style=" padding-left: 40px; padding-right: 40px; z-index: 999; display: flex; flex-direction: row; align-items: stretch; ">
         <!--  사이드바 시작 -->
-        <div id="fixed" style="margin: 0px; position: sticky; top: 0; width: 260px; height: 100%; overflow-y: auto; flex-shrink: 0;">
+        <div id="fixed" style="margin: 0px; position: sticky; top: 112px; width: 260px; height: 80vh; overflow-y: auto; flex-shrink: 0;">
             <div class="email-sidebar" style="width: 100%; height: 100%; background-color: #ffffff; border-right: 1px solid #e0e0e0; padding-top: 12px;">
                 <div class="sidebar-compose">
                     <button class="compose-button" id="mailWrite">
