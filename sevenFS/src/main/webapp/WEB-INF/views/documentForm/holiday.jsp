@@ -539,7 +539,7 @@ select.ui-datepicker-year {
 
 
 <script>
-	
+	//<input class="form-check-input" type="radio" checked name="holiCode" id="flexRadioDefault3" value="22"> 
 //페이지 로딩시 합계계산
 document.addEventListener("DOMContentLoaded",function(){
 	dateCnt();
@@ -556,11 +556,13 @@ function fillDefaultValues() {
 	document.getElementById('s_ho_start').value = '2025-05-07';
 	// 신청기간 설정 (예: 2025-05-01)
 	document.getElementById('s_ho_end').value = '2025-05-07';
+	document.getElementById('flexRadioDefault3').value = '22';
 
 	// 내용 입력 (예: 개인 사유)
 	document.getElementById('s_ho_tt').value = '개인 사유로 연차 신청합니다.';
 	// 내용 입력 (예: 개인 사유)
 	document.getElementById('s_ho_co').value = '긴급한 휴식이 필요합니다';
+	dateCnt();
     };
 
 //제목 너무 길게 입력하면 입력초과 스왈
@@ -586,7 +588,10 @@ document.getElementById('s_ho_tt').addEventListener('input', function (event) {
             return;
         }
     });
-
+//날짜 입력값 확인 
+function isValidateFormat(dataStr){
+	
+}
 
 // 총 일수 계산 함수
 function dateCnt() {
@@ -726,7 +731,7 @@ $(document).ready(function() {
 			button: "확인"
 		});
 		return;
-	}
+	};
 
 	//연차유형이 선택되지 않았을경우
 	if (!$("input[name='holiCode']:checked").val()) {
@@ -739,7 +744,7 @@ $(document).ready(function() {
 			button: "확인"
 		});
 		return false;
-	}
+	};
 	
 	// 날짜 계산
 	var start = new Date($('#s_ho_start').val() + 'T' + $('#s_start_time').val());
@@ -758,19 +763,7 @@ $(document).ready(function() {
 			});
 		$("#s_end_time").val('');
 	}
-	//select박스가비어있을때 연차유형이 선택되지 않았습니다.라고 알림 띄어줘
-	if (!$("input[name='holiCode']:checked").val()) 
-		{
-			swal({
-				title: "연차유형이 선택되지 않았습니다.",
-				text: "연차유형을 선택해주세요.",
-				icon: "error",
-				closeOnClickOutside: false,
-				closeOnEsc: false,
-				button: "확인"
-			});
-			return;
-		}
+	
 
 	//신청시간과 종료일자가 비어있을때
 	if(ho_start_D == "" || ho_end_D ==""){
@@ -783,7 +776,7 @@ $(document).ready(function() {
 				button: "확인"
 			});
 		return;
-	}
+	};
 	// 제목, 내용이 비어있을 때
 	if(eap_title == "" || eap_content == "") {
 		swal({
@@ -795,7 +788,7 @@ $(document).ready(function() {
 				button: "확인"
 			});
 		return;
-	}
+	};
 	//라디오 버튼 23 24인경우에는 신청휴가일수가 사용가능한 휴가일수보다 많아도 기안이 작성된다.
 	if(ho_code == '23' || ho_code == '24') {
 		// 아무것도 안함

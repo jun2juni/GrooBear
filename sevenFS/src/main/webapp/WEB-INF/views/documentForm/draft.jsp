@@ -351,7 +351,19 @@ $(document).ready(function() {
 					closeOnEsc: false
 				});
 			return;
-		}
+		};
+
+		if ($(".s_appLine_tbody_new .clsTr").length === 0) {
+		swal({
+			title: "결재선이 지정되지 않았습니다.",
+			text: "결재선을 지정해주세요.",
+			icon: "error",
+			closeOnClickOutside: false,
+			closeOnEsc: false,
+			button: "확인"
+		});
+		return;
+		};
 		
 		
 		var eap_content = $('#s_sp_co').val();
@@ -405,7 +417,7 @@ $(document).ready(function() {
 					console.log("code: " + request.status)
 					console.log("message: " + request.responseText)
 					console.log("error: " + error);
-            }
+            };
 
 		$.ajax({
 			url:"/atrz/atrzDraftInsert",
@@ -455,7 +467,7 @@ $(document).ready(function() {
 			button: "확인"
 		});
 		return;
-		}
+		};
 
 		// 제목, 내용이 비어있을 때
 		if($('#s_dr_tt').val() == "" || $('#s_sp_co').val() == "") {
@@ -467,7 +479,7 @@ $(document).ready(function() {
 					closeOnEsc: false
 				});
 			return;
-		}
+		};
 		
 		
 		var eap_content = $('#s_sp_co').val();
@@ -504,7 +516,7 @@ $(document).ready(function() {
 				sanctnerClsfCode: auth.clsfCode,
 			}
 			atrzLineList.push(atrzLine);			
-		}
+		};
 		console.log("atrzLineList",atrzLineList);
 
 		formData.append("atrzLineList",new Blob([JSON.stringify(atrzLineList)],{type:"application/json"}));
@@ -546,9 +558,9 @@ $(document).ready(function() {
 				}
 			},
 			error: junyError
-		})
+		});
 		//지출결의서 임시저장 끝
-	})
+	});
 
 
 
@@ -666,7 +678,7 @@ $(document).ready(function() {
 			}
 		});
 	
-	}//end addAppLine()
+	};//end addAppLine()
 	
 	//결재자 리스트 삭제
 	$(document).on("click", "#remo_appLine",function(){
@@ -689,7 +701,7 @@ $(document).ready(function() {
 					button: "확인"
 				});
 					return;
-			}
+			};
 		});
 
 		// 우선 버튼을 누르면 정말로 기안을 취소하시겠습니까라고 알려준다.
@@ -739,7 +751,7 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 			// history state push (현재 상태 저장)
 			if (hasDoc) {
 				history.pushState(null, document.title, location.href);
-			}
+			};
 
 			window.addEventListener('popstate', function (event) {
 				if (hasDoc && !isCanceled) {
@@ -775,7 +787,7 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 					history.pushState(null, document.title, location.href);
 					}
 				});
-				}
+				};
 			});
 
 
@@ -784,7 +796,7 @@ $(".atrzLineCancelBtn").on("click", function(event) {
 		$(".clsTr").each(function(index) {
 			$(this).find("th").first().text(index + 1);
 		});
-	}
+	};
 
 	//참조자 리스트 삭제
 	$(document).on("click", "#remo_attLine", function() {

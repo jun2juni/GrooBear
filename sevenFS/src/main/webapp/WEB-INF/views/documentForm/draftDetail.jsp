@@ -528,7 +528,7 @@ padding: 10px !important;
 												<div style="padding: 10px 0;">
 													<div class="s_frm_title mb-2"><b>상세 내용</b></div>
 													<textarea class="form-control" disabled
-														style="resize: none; height: 150px;" id="s_sp_co" name="atrzCn" 
+														style="resize: none; height: 300px;" id="s_sp_co" name="atrzCn" 
 														required="required" rows="2" cols="20" wrap="hard">${atrzVO.atrzCn}</textarea>
 												</div>
 
