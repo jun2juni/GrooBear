@@ -444,7 +444,7 @@ function fSchEnder(e) {
 	        	 }
       	 })
       	 
-      	 if(!found){
+      	 /* if(!found){
 				 swal({
 					 text : '해당 사원을 찾을 수 없습니다.',
 					 buttons : {
@@ -454,7 +454,7 @@ function fSchEnder(e) {
 						 }
 					 }
 				 })
-			 }
+			 } */
 	
 		 })
     }
