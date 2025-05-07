@@ -267,12 +267,12 @@ $('#jstree').on('ready.jstree', function() {
 	        	 }
         	 })
         	 
-        	 if(!found){
+        	 /* if(!found){
 				 swal('해당 사원을 찾을 수 없습니다.')
 				 .then((result) => {
 					 $("#schName").focus();
 				 })
-			 }
+			 } */
 	
 		 })
       }
