@@ -1,14 +1,17 @@
-# 🧾 전자결재 시스템 - Final Project
+# 🧾 7FS Final Project - 그룹웨어 시스템
+
 
 > 전자결재 중심의 그룹웨어 시스템  
 > 사내 문서 기안 · 결재선 지정 · 연차 신청 · 결재 흐름 관리 등 통합 전자결재 기능을 제공합니다.
 
 ---
 
-## 📌 프로젝트 개요
-
-- 🗓 개발 기간: 202X.XX ~ 202X.XX
-- 👥 참여 인원: 4명 (전자결재 담당: 본인)
+## 📅 프로젝트 개요
+- 프로젝트 : 모든회사가 적용될수있는 그룹웨어
+- 🗓 개발 기간: 2025.03.28 ~ 2025.04.25
+- 👥 기획 및 제작: 허성진, 채성실, 백현명, 길준희, 박호산나, 유대현, 박현준 (7명)
+- 분류: 팀프로젝트
+- 사용기술 : <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
 - ⚙️ 개발 환경: Java 11, Spring Boot, Oracle DB, MyBatis, JSP, JavaScript
 
 ---
